@@ -1,0 +1,420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{04C338DD-CE0C-4745-BC67-B8D89BB8C1AD}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>SchoolSystem</RootNamespace>
+    <AssemblyName>SchoolSystem</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
+      <HintPath>packages\BouncyCastle.Cryptography.2.6.2\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ClosedXML, Version=0.105.0.0, Culture=neutral, PublicKeyToken=fd1eb21b62ae805b, processorArchitecture=MSIL">
+      <HintPath>packages\ClosedXML.0.105.0\lib\netstandard2.0\ClosedXML.dll</HintPath>
+    </Reference>
+    <Reference Include="ClosedXML.Parser, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1d5f7376574c51ec, processorArchitecture=MSIL">
+      <HintPath>packages\ClosedXML.Parser.2.0.0\lib\netstandard2.0\ClosedXML.Parser.dll</HintPath>
+    </Reference>
+    <Reference Include="ClosedXML.Report, Version=1.0.0.0, Culture=neutral, PublicKeyToken=b5435ca1fa2ab9d6, processorArchitecture=MSIL">
+      <HintPath>packages\ClosedXML.Report.0.2.12\lib\netstandard2.0\ClosedXML.Report.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=3.1.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>packages\DocumentFormat.OpenXml.3.1.1\lib\net46\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml.Framework, Version=3.1.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>packages\DocumentFormat.OpenXml.Framework.3.1.1\lib\net46\DocumentFormat.OpenXml.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="ExcelNumberFormat, Version=1.1.0.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
+      <HintPath>packages\ExcelNumberFormat.1.1.0\lib\net20\ExcelNumberFormat.dll</HintPath>
+    </Reference>
+    <Reference Include="iTextSharp.LGPLv2.Core, Version=3.8.1.0, Culture=neutral, PublicKeyToken=51d712e21b66ad36, processorArchitecture=MSIL">
+      <HintPath>packages\iTextSharp.LGPLv2.Core.3.8.1\lib\net462\iTextSharp.LGPLv2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.HashCode, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Bcl.HashCode.1.1.1\lib\net461\Microsoft.Bcl.HashCode.dll</HintPath>
+    </Reference>
+    <Reference Include="MoreLinq, Version=4.4.0.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <HintPath>packages\morelinq.4.4.0\lib\netstandard2.0\MoreLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="RBush, Version=4.0.0.0, Culture=neutral, PublicKeyToken=c77e27b81f4d0187, processorArchitecture=MSIL">
+      <HintPath>packages\RBush.Signed.4.0.0\lib\net47\RBush.dll</HintPath>
+    </Reference>
+    <Reference Include="SixLabors.Fonts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d998eea7b14cab13, processorArchitecture=MSIL">
+      <HintPath>packages\SixLabors.Fonts.1.0.0\lib\netstandard2.0\SixLabors.Fonts.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp, Version=4.148.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>packages\SkiaSharp.4.148.0\lib\net462\SkiaSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Linq.Dynamic.Core, Version=1.6.0.2, Culture=neutral, PublicKeyToken=0f07ec44de6ac832, processorArchitecture=MSIL">
+      <HintPath>packages\System.Linq.Dynamic.Core.1.6.0.2\lib\net46\System.Linq.Dynamic.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DataAccess\BookRepository.cs" />
+    <Compile Include="DataAccess\BorrowingRepository.cs" />
+    <Compile Include="DataAccess\BusRepository.cs" />
+    <Compile Include="DataAccess\BusRouteRepository.cs" />
+    <Compile Include="DataAccess\ClassRepository.cs" />
+    <Compile Include="DataAccess\ContractRepository.cs" />
+    <Compile Include="DataAccess\DbConnection.cs" />
+    <Compile Include="DataAccess\EnrollmentRepository.cs" />
+    <Compile Include="DataAccess\ExpenseRepository.cs" />
+    <Compile Include="DataAccess\FeePlanRepository.cs" />
+    <Compile Include="DataAccess\FeeRepository.cs" />
+    <Compile Include="DataAccess\GradeRepository.cs" />
+    <Compile Include="DataAccess\MarkRepository.cs" />
+    <Compile Include="DataAccess\PayrollRepository.cs" />
+    <Compile Include="DataAccess\ReportRepository.cs" />
+    <Compile Include="DataAccess\RoomRepository.cs" />
+    <Compile Include="DataAccess\StudentAttendanceRepository.cs" />
+    <Compile Include="DataAccess\StudentClassRepository.cs" />
+    <Compile Include="DataAccess\StudentRepository.cs" />
+    <Compile Include="DataAccess\SubjectRepository.cs" />
+    <Compile Include="DataAccess\TeacherAttendanceRepository.cs" />
+    <Compile Include="DataAccess\TeacherContractRepository.cs" />
+    <Compile Include="DataAccess\TeacherRepository.cs" />
+    <Compile Include="DataAccess\TimetableRepository.cs" />
+    <Compile Include="DataAccess\UserRepository.cs" />
+    <Compile Include="DataAccess\VoucherRepository.cs" />
+    <Compile Include="Helpers\MenuRenderer.cs" />
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Book.cs" />
+    <Compile Include="Models\Borrowing.cs" />
+    <Compile Include="Models\Bus.cs" />
+    <Compile Include="Models\BusRoute.cs" />
+    <Compile Include="Models\FeePlan.cs" />
+    <Compile Include="Models\Room.cs" />
+    <Compile Include="Models\SchoolClass.cs" />
+    <Compile Include="Models\Enrollment.cs" />
+    <Compile Include="Models\Expense.cs" />
+    <Compile Include="Models\Fee.cs" />
+    <Compile Include="Models\Marks.cs" />
+    <Compile Include="Models\Payroll.cs" />
+    <Compile Include="Models\ReportRequest.cs" />
+    <Compile Include="Models\StudentAttendance.cs" />
+    <Compile Include="Models\StudentClass.cs" />
+    <Compile Include="Models\StudentGrade.cs" />
+    <Compile Include="Models\Students.cs" />
+    <Compile Include="Models\Subjects.cs" />
+    <Compile Include="Models\TeacherAttendance.cs" />
+    <Compile Include="Models\TeacherContract.cs" />
+    <Compile Include="Models\Teachers.cs" />
+    <Compile Include="Models\TimetableEntry.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\Voucher.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\CurrentUser.cs" />
+    <Compile Include="Security\PasswordHasher.cs" />
+    <Compile Include="Security\PermissionKeys.cs" />
+    <Compile Include="Services\BookService.cs" />
+    <Compile Include="Services\BorrowingService.cs" />
+    <Compile Include="Services\BusRouteService.cs" />
+    <Compile Include="Services\BusService.cs" />
+    <Compile Include="Services\ClassService.cs" />
+    <Compile Include="Services\ContractService.cs" />
+    <Compile Include="Services\DashboardService.cs" />
+    <Compile Include="Services\EnrollmentService.cs" />
+    <Compile Include="Services\ExpenseService.cs" />
+    <Compile Include="Services\FeePlanService.cs" />
+    <Compile Include="Services\FeeService.cs" />
+    <Compile Include="Services\GradeService.cs" />
+    <Compile Include="Services\MarkService.cs" />
+    <Compile Include="Services\PayrollService.cs" />
+    <Compile Include="Services\ReportService.cs" />
+    <Compile Include="Services\RoomService.cs" />
+    <Compile Include="Services\StudentAttendanceService.cs" />
+    <Compile Include="Services\StudentClassService.cs" />
+    <Compile Include="Services\StudentService.cs" />
+    <Compile Include="Services\SubjectService.cs" />
+    <Compile Include="Services\TeacherAttendanceService.cs" />
+    <Compile Include="Services\TeacherContractService.cs" />
+    <Compile Include="Services\TeacherService.cs" />
+    <Compile Include="Services\TimetableService.cs" />
+    <Compile Include="Services\UserService.cs" />
+    <Compile Include="Services\VoucherService.cs" />
+    <Compile Include="UI\ClassAssignmentForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ClassAssignmentForm.Designer.cs">
+      <DependentUpon>ClassAssignmentForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ClassesForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ClassesForm.Designer.cs">
+      <DependentUpon>ClassesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\DailyAttendanceForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\DailyAttendanceForm.Designer.cs">
+      <DependentUpon>DailyAttendanceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\DashboardHome.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\DashboardHome.Designer.cs">
+      <DependentUpon>DashboardHome.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\EnrollmentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\EnrollmentForm.Designer.cs">
+      <DependentUpon>EnrollmentForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ExpensesForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ExpensesForm.Designer.cs">
+      <DependentUpon>ExpensesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\FeePlansForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\FeePlansForm.Designer.cs">
+      <DependentUpon>FeePlansForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\FeesForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\FeesForm.Designer.cs">
+      <DependentUpon>FeesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\GradeEntryForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\GradeEntryForm.Designer.cs">
+      <DependentUpon>GradeEntryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\LibraryForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\LibraryForm.Designer.cs">
+      <DependentUpon>LibraryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\PayrollForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\PayrollForm.Designer.cs">
+      <DependentUpon>PayrollForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ReportCenterForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ReportCenterForm.Designer.cs">
+      <DependentUpon>ReportCenterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\StaffAttendanceForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\StaffAttendanceForm.Designer.cs">
+      <DependentUpon>StaffAttendanceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\StudentsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\StudentsForm.Designer.cs">
+      <DependentUpon>StudentsForm.cs</DependentUpon>
+    </Compile>
+
+    <Compile Include="UI\SubjectsForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\SubjectsForm.Designer.cs">
+      <DependentUpon>SubjectsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TeachersForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\TeachersForm.Designer.cs">
+      <DependentUpon>TeachersForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TimetableForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\TimetableForm.Designer.cs">
+      <DependentUpon>TimetableForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TransportForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\TransportForm.Designer.cs">
+      <DependentUpon>TransportForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\UsersForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\UsersForm.Designer.cs">
+      <DependentUpon>UsersForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\VouchersForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\VouchersForm.Designer.cs">
+      <DependentUpon>VouchersForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\WelcomeScreen.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\WelcomeScreen.Designer.cs">
+      <DependentUpon>WelcomeScreen.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="UI\ClassAssignmentForm.resx">
+      <DependentUpon>ClassAssignmentForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ClassesForm.resx">
+      <DependentUpon>ClassesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\DailyAttendanceForm.resx">
+      <DependentUpon>DailyAttendanceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\EnrollmentForm.resx">
+      <DependentUpon>EnrollmentForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ExpensesForm.resx">
+      <DependentUpon>ExpensesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\FeePlansForm.resx">
+      <DependentUpon>FeePlansForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\FeesForm.resx">
+      <DependentUpon>FeesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\GradeEntryForm.resx">
+      <DependentUpon>GradeEntryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\LibraryForm.resx">
+      <DependentUpon>LibraryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\PayrollForm.resx">
+      <DependentUpon>PayrollForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ReportCenterForm.resx">
+      <DependentUpon>ReportCenterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\StaffAttendanceForm.resx">
+      <DependentUpon>StaffAttendanceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\StudentsForm.resx">
+      <DependentUpon>StudentsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SubjectsForm.resx">
+      <DependentUpon>SubjectsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TeachersForm.resx">
+      <DependentUpon>TeachersForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\TimetableForm.resx">
+      <DependentUpon>TimetableForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\UsersForm.resx">
+      <DependentUpon>UsersForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\VouchersForm.resx">
+      <DependentUpon>VouchersForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="packages\SkiaSharp.NativeAssets.macOS.4.148.0\build\net462\SkiaSharp.NativeAssets.macOS.targets" Condition="Exists('packages\SkiaSharp.NativeAssets.macOS.4.148.0\build\net462\SkiaSharp.NativeAssets.macOS.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\SkiaSharp.NativeAssets.macOS.4.148.0\build\net462\SkiaSharp.NativeAssets.macOS.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SkiaSharp.NativeAssets.macOS.4.148.0\build\net462\SkiaSharp.NativeAssets.macOS.targets'))" />
+    <Error Condition="!Exists('packages\SkiaSharp.NativeAssets.Win32.4.148.0\build\net462\SkiaSharp.NativeAssets.Win32.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\SkiaSharp.NativeAssets.Win32.4.148.0\build\net462\SkiaSharp.NativeAssets.Win32.targets'))" />
+  </Target>
+  <Import Project="packages\SkiaSharp.NativeAssets.Win32.4.148.0\build\net462\SkiaSharp.NativeAssets.Win32.targets" Condition="Exists('packages\SkiaSharp.NativeAssets.Win32.4.148.0\build\net462\SkiaSharp.NativeAssets.Win32.targets')" />
+</Project>

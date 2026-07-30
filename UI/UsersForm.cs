@@ -1,0 +1,617 @@
+﻿using System;
+using System.Data;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using SchoolSystem.Models;
+using SchoolSystem.Services;
+using SchoolSystem.Security;
+
+namespace SchoolSystem.UI
+{
+    public partial class UsersForm : UserControl
+    {
+        private readonly UserService userService = new UserService();
+
+        private int selectedUserId = 0;
+        private DataTable allUsers;
+        private bool isLoading = false;
+
+        public UsersForm()
+        {
+            InitializeComponent();
+            Dock = DockStyle.Fill;
+            Load += UsersForm_Load;
+        }
+
+        private async void UsersForm_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                isLoading = true;
+
+                userService.EnsureDefaultAdmin();
+
+                LoadRoles();
+                LoadPermissions();
+
+                await LoadUsersAsync();
+
+                ClearInputs();
+            }
+            catch (Exception ex)
+            {
+                ShowError("حدث خطأ أثناء تحميل واجهة المستخدمين:\n" + ex.Message);
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+
+        private void LoadRoles()
+        {
+            cmbRole.Items.Clear();
+
+            cmbRole.Items.Add("مدير النظام");
+            cmbRole.Items.Add("الإدارة");
+            cmbRole.Items.Add("شؤون الطلاب");
+            cmbRole.Items.Add("المعلمون");
+            cmbRole.Items.Add("المالية");
+            cmbRole.Items.Add("المكتبة");
+            cmbRole.Items.Add("النقل");
+            cmbRole.Items.Add("التقارير");
+
+            if (cmbRole.Items.Count > 0)
+                cmbRole.SelectedIndex = 0;
+
+            cmbRole.SelectedIndexChanged -= cmbRole_SelectedIndexChanged;
+            cmbRole.SelectedIndexChanged += cmbRole_SelectedIndexChanged;
+        }
+
+        private void LoadPermissions()
+        {
+            checkedListPermissions.Items.Clear();
+
+            AddPermission(PermissionKeys.DashboardView, "عرض لوحة التحكم");
+
+            AddPermission(PermissionKeys.StudentsView, "عرض الطلاب");
+            AddPermission(PermissionKeys.StudentsManage, "إدارة الطلاب");
+            AddPermission(PermissionKeys.EnrollmentManage, "القبول والتسجيل");
+            AddPermission(PermissionKeys.ClassAssignmentManage, "توزيع الطلاب على الفصول");
+
+            AddPermission(PermissionKeys.TeachersManage, "إدارة المعلمين");
+            AddPermission(PermissionKeys.StaffAttendanceManage, "حضور وانصراف الموظفين");
+            AddPermission(PermissionKeys.PayrollManage, "الرواتب والعقود");
+
+            AddPermission(PermissionKeys.SubjectsManage, "إدارة المواد");
+            AddPermission(PermissionKeys.ClassesManage, "إدارة الصفوف والفصول");
+            AddPermission(PermissionKeys.TimetableManage, "الجداول الدراسية");
+
+            AddPermission(PermissionKeys.AttendanceManage, "حضور الطلاب");
+            AddPermission(PermissionKeys.GradesManage, "إدارة الدرجات");
+
+            AddPermission(PermissionKeys.FeesManage, "الرسوم الدراسية");
+            AddPermission(PermissionKeys.VouchersManage, "السندات قبض/صرف");
+            AddPermission(PermissionKeys.ExpensesManage, "المصروفات");
+
+            AddPermission(PermissionKeys.LibraryManage, "المكتبة");
+            AddPermission(PermissionKeys.TransportManage, "النقل");
+
+            AddPermission(PermissionKeys.ReportsView, "التقارير");
+            AddPermission(PermissionKeys.UsersManage, "إدارة المستخدمين والصلاحيات");
+
+            ApplyRolePreset();
+        }
+
+        private void AddPermission(string key, string text)
+        {
+            checkedListPermissions.Items.Add(key + " - " + text);
+        }
+
+        private async Task LoadUsersAsync()
+        {
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                allUsers = await Task.Run(() => userService.GetAllUsers());
+
+                ApplyFilter(txtSearch.Text.Trim());
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void ApplyFilter(string searchText)
+        {
+            if (allUsers == null)
+                return;
+
+            DataView dv = allUsers.DefaultView;
+
+            string filter = "";
+            string safe = EscapeFilter(searchText);
+
+            if (!string.IsNullOrWhiteSpace(safe))
+            {
+                filter =
+                    "(FullName LIKE '%" + safe + "%' " +
+                    "OR UserName LIKE '%" + safe + "%' " +
+                    "OR RoleName LIKE '%" + safe + "%' " +
+                    "OR Email LIKE '%" + safe + "%' " +
+                    "OR Phone LIKE '%" + safe + "%')";
+            }
+
+            dv.RowFilter = filter;
+
+            dataGridViewUsers.DataSource = dv;
+
+            lblRecordCount.Text = "عدد المستخدمين: " + dv.Count;
+
+            FormatGrid();
+        }
+
+        private string EscapeFilter(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return "";
+
+            return value
+                .Replace("'", "''")
+                .Replace("[", "[[]")
+                .Replace("%", "[%]")
+                .Replace("*", "[*]");
+        }
+
+        private void FormatGrid()
+        {
+            if (dataGridViewUsers.Columns.Count == 0)
+                return;
+
+            SetHeader("UserID", "الرقم");
+            SetHeader("FullName", "الاسم الكامل");
+            SetHeader("UserName", "اسم المستخدم");
+            SetHeader("RoleName", "الدور");
+            SetHeader("Permissions", "الصلاحيات");
+            SetHeader("Email", "البريد");
+            SetHeader("Phone", "الهاتف");
+            SetHeader("IsActive", "نشط");
+            SetHeader("MustChangePassword", "تغيير كلمة المرور");
+            SetHeader("LastLoginAt", "آخر دخول");
+            SetHeader("CreatedAt", "تاريخ الإنشاء");
+            SetHeader("UpdatedAt", "آخر تعديل");
+
+            dataGridViewUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            if (dataGridViewUsers.Columns.Contains("UserID"))
+                dataGridViewUsers.Columns["UserID"].Width = 60;
+        }
+
+        private void SetHeader(string columnName, string headerText)
+        {
+            if (dataGridViewUsers.Columns.Contains(columnName))
+                dataGridViewUsers.Columns[columnName].HeaderText = headerText;
+        }
+
+        private void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            ApplyFilter(txtSearch.Text.Trim());
+        }
+
+        private void cmbRole_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!isLoading)
+                ApplyRolePreset();
+        }
+
+        private void ApplyRolePreset()
+        {
+            if (checkedListPermissions.Items.Count == 0 || cmbRole.SelectedItem == null)
+                return;
+
+            ClearPermissionChecks();
+
+            string role = cmbRole.SelectedItem.ToString();
+
+            if (role == "مدير النظام")
+            {
+                CheckAllPermissions();
+                return;
+            }
+
+            if (role == "الإدارة")
+            {
+                CheckPermission(PermissionKeys.DashboardView);
+                CheckPermission(PermissionKeys.StudentsView);
+                CheckPermission(PermissionKeys.ReportsView);
+                return;
+            }
+
+            if (role == "شؤون الطلاب")
+            {
+                CheckPermission(PermissionKeys.DashboardView);
+                CheckPermission(PermissionKeys.StudentsView);
+                CheckPermission(PermissionKeys.StudentsManage);
+                CheckPermission(PermissionKeys.EnrollmentManage);
+                CheckPermission(PermissionKeys.ClassAssignmentManage);
+                CheckPermission(PermissionKeys.AttendanceManage);
+                CheckPermission(PermissionKeys.GradesManage);
+                return;
+            }
+
+            if (role == "المعلمون")
+            {
+                CheckPermission(PermissionKeys.DashboardView);
+                CheckPermission(PermissionKeys.StudentsView);
+                CheckPermission(PermissionKeys.AttendanceManage);
+                CheckPermission(PermissionKeys.GradesManage);
+                return;
+            }
+
+            if (role == "المالية")
+            {
+                CheckPermission(PermissionKeys.DashboardView);
+                CheckPermission(PermissionKeys.FeesManage);
+                CheckPermission(PermissionKeys.VouchersManage);
+                CheckPermission(PermissionKeys.ExpensesManage);
+                CheckPermission(PermissionKeys.PayrollManage);
+                CheckPermission(PermissionKeys.ReportsView);
+                return;
+            }
+
+            if (role == "المكتبة")
+            {
+                CheckPermission(PermissionKeys.LibraryManage);
+                return;
+            }
+
+            if (role == "النقل")
+            {
+                CheckPermission(PermissionKeys.TransportManage);
+                return;
+            }
+
+            if (role == "التقارير")
+            {
+                CheckPermission(PermissionKeys.ReportsView);
+                return;
+            }
+        }
+
+        private void ClearPermissionChecks()
+        {
+            for (int i = 0; i < checkedListPermissions.Items.Count; i++)
+                checkedListPermissions.SetItemChecked(i, false);
+        }
+
+        private void CheckAllPermissions()
+        {
+            for (int i = 0; i < checkedListPermissions.Items.Count; i++)
+                checkedListPermissions.SetItemChecked(i, true);
+        }
+
+        private void CheckPermission(string permissionKey)
+        {
+            for (int i = 0; i < checkedListPermissions.Items.Count; i++)
+            {
+                string item = checkedListPermissions.Items[i].ToString();
+
+                if (item.StartsWith(permissionKey))
+                    checkedListPermissions.SetItemChecked(i, true);
+            }
+        }
+
+        private string GetSelectedPermissions()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (object item in checkedListPermissions.CheckedItems)
+            {
+                string text = item.ToString();
+                string key = text.Split('-')[0].Trim();
+
+                if (sb.Length > 0)
+                    sb.Append(",");
+
+                sb.Append(key);
+            }
+
+            return sb.ToString();
+        }
+
+        private void SetPermissionsFromString(string permissions)
+        {
+            ClearPermissionChecks();
+
+            if (string.IsNullOrWhiteSpace(permissions))
+                return;
+
+            string[] parts = permissions.Split(',');
+
+            for (int i = 0; i < checkedListPermissions.Items.Count; i++)
+            {
+                string item = checkedListPermissions.Items[i].ToString();
+
+                foreach (string part in parts)
+                {
+                    string key = part.Trim();
+
+                    if (!string.IsNullOrWhiteSpace(key) && item.StartsWith(key))
+                        checkedListPermissions.SetItemChecked(i, true);
+                }
+            }
+        }
+
+        private User BuildUserModel()
+        {
+            return new User
+            {
+                UserID = selectedUserId,
+                FullName = txtFullName.Text.Trim(),
+                UserName = txtUserName.Text.Trim(),
+                RoleName = cmbRole.Text.Trim(),
+                Permissions = GetSelectedPermissions(),
+                Email = txtEmail.Text.Trim(),
+                Phone = txtPhone.Text.Trim(),
+                IsActive = chkIsActive.Checked,
+                MustChangePassword = chkMustChangePassword.Checked,
+                Password = txtPassword.Text.Trim()
+            };
+        }
+
+        private bool ValidateInputs(bool isUpdate)
+        {
+            if (string.IsNullOrWhiteSpace(txtFullName.Text))
+            {
+                ShowWarning("أدخل الاسم الكامل.");
+                txtFullName.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtUserName.Text))
+            {
+                ShowWarning("أدخل اسم المستخدم.");
+                txtUserName.Focus();
+                return false;
+            }
+
+            if (txtUserName.Text.Contains(" "))
+            {
+                ShowWarning("اسم المستخدم لا يجب أن يحتوي على مسافات.");
+                txtUserName.Focus();
+                return false;
+            }
+
+            if (cmbRole.SelectedItem == null)
+            {
+                ShowWarning("اختر الدور.");
+                cmbRole.Focus();
+                return false;
+            }
+
+            if (checkedListPermissions.CheckedItems.Count == 0)
+            {
+                ShowWarning("اختر صلاحية واحدة على الأقل.");
+                return false;
+            }
+
+            bool updatePassword = !isUpdate || !string.IsNullOrWhiteSpace(txtPassword.Text);
+
+            if (updatePassword)
+            {
+                if (string.IsNullOrWhiteSpace(txtPassword.Text))
+                {
+                    ShowWarning("أدخل كلمة المرور.");
+                    txtPassword.Focus();
+                    return false;
+                }
+
+                if (txtPassword.Text.Length < 6)
+                {
+                    ShowWarning("كلمة المرور يجب ألا تقل عن 6 أحرف.");
+                    txtPassword.Focus();
+                    return false;
+                }
+
+                if (txtPassword.Text != txtConfirmPassword.Text)
+                {
+                    ShowWarning("كلمة المرور وتأكيدها غير متطابقين.");
+                    txtConfirmPassword.Focus();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private async void btnAdd_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!ValidateInputs(false))
+                    return;
+
+                User user = BuildUserModel();
+
+                await Task.Run(() => userService.AddUser(user, txtPassword.Text));
+
+                ShowInfo("تمت إضافة المستخدم بنجاح.");
+
+                await LoadUsersAsync();
+                ClearInputs();
+            }
+            catch (Exception ex)
+            {
+                ShowError("خطأ أثناء الإضافة:\n" + ex.Message);
+            }
+        }
+
+        private async void btnUpdate_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (selectedUserId <= 0)
+                {
+                    ShowWarning("اختر مستخدماً من الجدول أولاً.");
+                    return;
+                }
+
+                if (!ValidateInputs(true))
+                    return;
+
+                User user = BuildUserModel();
+                bool updatePassword = !string.IsNullOrWhiteSpace(txtPassword.Text);
+
+                bool updated = await Task.Run(() =>
+                    userService.UpdateUser(user, txtPassword.Text, updatePassword));
+
+                ShowInfo(updated ? "تم تعديل المستخدم بنجاح." : "لم يتم تعديل المستخدم.");
+
+                await LoadUsersAsync();
+                ClearInputs();
+            }
+            catch (Exception ex)
+            {
+                ShowError("خطأ أثناء التعديل:\n" + ex.Message);
+            }
+        }
+
+        private async void btnDelete_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (selectedUserId <= 0)
+                {
+                    ShowWarning("اختر مستخدماً من الجدول أولاً.");
+                    return;
+                }
+
+                DialogResult result = MessageBox.Show(
+                    "هل تريد حذف هذا المستخدم؟",
+                    "تأكيد الحذف",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2,
+                    MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+
+                if (result != DialogResult.Yes)
+                    return;
+
+                bool deleted = await Task.Run(() => userService.DeleteUser(selectedUserId));
+
+                ShowInfo(deleted ? "تم حذف المستخدم بنجاح." : "لم يتم حذف المستخدم.");
+
+                await LoadUsersAsync();
+                ClearInputs();
+            }
+            catch (Exception ex)
+            {
+                ShowError("خطأ أثناء الحذف:\n" + ex.Message);
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            ClearInputs();
+        }
+
+        private async void btnRefresh_Click(object sender, EventArgs e)
+        {
+            await LoadUsersAsync();
+            ClearInputs();
+        }
+
+        private void dataGridViewUsers_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || dataGridViewUsers.Rows.Count == 0)
+                return;
+
+            DataRowView rowView = dataGridViewUsers.Rows[e.RowIndex].DataBoundItem as DataRowView;
+
+            if (rowView != null)
+                FillFieldsFromRow(rowView.Row);
+        }
+
+        private void FillFieldsFromRow(DataRow row)
+        {
+            selectedUserId = Convert.ToInt32(row["UserID"]);
+
+            txtFullName.Text = row["FullName"] == DBNull.Value ? "" : row["FullName"].ToString();
+            txtUserName.Text = row["UserName"] == DBNull.Value ? "" : row["UserName"].ToString();
+
+            string roleName = row["RoleName"] == DBNull.Value ? "" : row["RoleName"].ToString();
+
+            if (cmbRole.Items.Contains(roleName))
+                cmbRole.SelectedItem = roleName;
+            else
+                cmbRole.Text = roleName;
+
+            txtEmail.Text = row["Email"] == DBNull.Value ? "" : row["Email"].ToString();
+            txtPhone.Text = row["Phone"] == DBNull.Value ? "" : row["Phone"].ToString();
+
+            chkIsActive.Checked = row["IsActive"] != DBNull.Value && Convert.ToBoolean(row["IsActive"]);
+            chkMustChangePassword.Checked = row["MustChangePassword"] != DBNull.Value && Convert.ToBoolean(row["MustChangePassword"]);
+
+            txtPassword.Clear();
+            txtConfirmPassword.Clear();
+
+            string permissions = row["Permissions"] == DBNull.Value ? "" : row["Permissions"].ToString();
+            SetPermissionsFromString(permissions);
+        }
+
+        private void chkShowPassword_CheckedChanged(object sender, EventArgs e)
+        {
+            bool show = chkShowPassword.Checked;
+
+            txtPassword.PasswordChar = show ? '\0' : '●';
+            txtConfirmPassword.PasswordChar = show ? '\0' : '●';
+        }
+
+        private void ClearInputs()
+        {
+            selectedUserId = 0;
+
+            txtFullName.Clear();
+            txtUserName.Clear();
+            txtPassword.Clear();
+            txtConfirmPassword.Clear();
+            txtEmail.Clear();
+            txtPhone.Clear();
+
+            if (cmbRole.Items.Count > 0)
+                cmbRole.SelectedIndex = 0;
+
+            chkIsActive.Checked = true;
+            chkMustChangePassword.Checked = true;
+            chkShowPassword.Checked = false;
+
+            txtPassword.PasswordChar = '●';
+            txtConfirmPassword.PasswordChar = '●';
+
+            ApplyRolePreset();
+
+            txtFullName.Focus();
+        }
+
+        private void ShowInfo(string message)
+        {
+            MessageBox.Show(message, "معلومة", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+        }
+
+        private void ShowWarning(string message)
+        {
+            MessageBox.Show(message, "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+        }
+
+        private void ShowError(string message)
+        {
+            MessageBox.Show(message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+        }
+    }
+}

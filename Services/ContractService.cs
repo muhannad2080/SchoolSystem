@@ -1,0 +1,175 @@
+﻿using System;
+using System.Data;
+using System.Text.RegularExpressions;
+using SchoolSystem.DataAccess;
+using SchoolSystem.Models;
+
+namespace SchoolSystem.Services
+{
+    public class ContractService
+    {
+        private readonly TeacherContractRepository repository = new TeacherContractRepository();
+
+        public DataTable GetAllContracts()
+        {
+            return repository.GetAllContracts();
+        }
+
+        public bool AddContract(TeacherContract contract)
+        {
+            CalculateSalary(contract);
+            ValidateContract(contract, false);
+
+            if (repository.ContractNumberExists(contract.ContractNumber))
+                throw new ArgumentException("رقم العقد مستخدم مسبقاً.");
+
+            if (contract.ContractStatus == "ساري" && repository.HasActiveContract(contract.TeacherID))
+                throw new ArgumentException("يوجد عقد ساري لهذا المعلم.");
+
+            return repository.AddContract(contract);
+        }
+
+        public bool UpdateContract(TeacherContract contract)
+        {
+            CalculateSalary(contract);
+            ValidateContract(contract, true);
+
+            if (repository.ContractNumberExists(contract.ContractNumber, contract.ContractID))
+                throw new ArgumentException("رقم العقد مستخدم في عقد آخر.");
+
+            if (contract.ContractStatus == "ساري" && repository.HasActiveContract(contract.TeacherID, contract.ContractID))
+                throw new ArgumentException("يوجد عقد ساري آخر لهذا المعلم.");
+
+            return repository.UpdateContract(contract);
+        }
+
+        public bool DeleteContract(int contractId)
+        {
+            if (contractId <= 0)
+                throw new ArgumentException("رقم العقد غير صحيح.");
+
+            return repository.DeleteContract(contractId);
+        }
+
+        public bool HasActiveContract(int teacherId)
+        {
+            return repository.HasActiveContract(teacherId);
+        }
+
+        public bool HasActiveContract(int teacherId, int excludedContractId)
+        {
+            return repository.HasActiveContract(teacherId, excludedContractId);
+        }
+
+        public void CalculateSalary(TeacherContract contract)
+        {
+            if (contract == null)
+                return;
+
+            contract.TotalSalary =
+                contract.BasicSalary +
+                contract.HousingAllowance +
+                contract.TransportAllowance +
+                contract.OtherAllowances;
+
+            contract.NetSalary = contract.TotalSalary - contract.Deductions;
+
+            if (contract.NetSalary < 0)
+                contract.NetSalary = 0;
+        }
+
+        private void ValidateContract(TeacherContract contract, bool isUpdate)
+        {
+            if (contract == null)
+                throw new ArgumentException("بيانات العقد غير صحيحة.");
+
+            if (isUpdate && contract.ContractID <= 0)
+                throw new ArgumentException("اختر عقداً صحيحاً للتعديل.");
+
+            if (contract.TeacherID <= 0)
+                throw new ArgumentException("يجب اختيار المعلم.");
+
+            if (string.IsNullOrWhiteSpace(contract.ContractNumber))
+                throw new ArgumentException("رقم العقد مطلوب.");
+
+            if (!IsValidContractNumber(contract.ContractNumber))
+                throw new ArgumentException("رقم العقد يجب أن يحتوي على حروف أو أرقام أو شرطة فقط.");
+
+            if (string.IsNullOrWhiteSpace(contract.ContractType))
+                throw new ArgumentException("يجب اختيار نوع العقد.");
+
+            if (!IsValidContractType(contract.ContractType))
+                throw new ArgumentException("نوع العقد غير صحيح.");
+
+            if (string.IsNullOrWhiteSpace(contract.ContractStatus))
+                throw new ArgumentException("يجب اختيار حالة العقد.");
+
+            if (!IsValidContractStatus(contract.ContractStatus))
+                throw new ArgumentException("حالة العقد غير صحيحة.");
+
+            if (contract.BasicSalary <= 0)
+                throw new ArgumentException("الراتب الأساسي يجب أن يكون أكبر من صفر.");
+
+            if (contract.HousingAllowance < 0 ||
+                contract.TransportAllowance < 0 ||
+                contract.OtherAllowances < 0 ||
+                contract.Deductions < 0)
+                throw new ArgumentException("المبالغ المالية لا يمكن أن تكون سالبة.");
+
+            if (contract.Deductions > contract.TotalSalary)
+                throw new ArgumentException("الخصومات لا يمكن أن تكون أكبر من إجمالي المستحقات.");
+
+            if (contract.EndDate.HasValue &&
+                contract.EndDate.Value.Date < contract.StartDate.Date)
+                throw new ArgumentException("تاريخ نهاية العقد يجب أن يكون بعد تاريخ البداية.");
+
+            if (string.IsNullOrWhiteSpace(contract.PaymentMethod))
+                throw new ArgumentException("يجب اختيار طريقة الصرف.");
+
+            if (!IsValidPaymentMethod(contract.PaymentMethod))
+                throw new ArgumentException("طريقة الصرف غير صحيحة.");
+
+            if (!string.IsNullOrWhiteSpace(contract.Notes) &&
+                !IsValidNotes(contract.Notes))
+                throw new ArgumentException("الملاحظات تحتوي على رموز غير مسموحة.");
+        }
+
+        private bool IsValidContractNumber(string value)
+        {
+            return Regex.IsMatch(value, @"^[a-zA-Z0-9\-_\/]+$");
+        }
+
+        private bool IsValidNotes(string value)
+        {
+            return Regex.IsMatch(value, @"^[\u0600-\u06FFa-zA-Z0-9\s\.\،\,\-\_\/]+$");
+        }
+
+        private bool IsValidContractType(string value)
+        {
+            return value == "دائم" ||
+                   value == "مؤقت" ||
+                   value == "موسمي" ||
+                   value == "مستشار" ||
+                   value == "دوام كامل" ||
+                   value == "دوام جزئي" ||
+                   value == "بالساعة" ||
+                   value == "تعاقد سنوي";
+        }
+
+        private bool IsValidContractStatus(string value)
+        {
+            return value == "ساري" ||
+                   value == "منتهي" ||
+                   value == "موقوف" ||
+                   value == "ملغي";
+        }
+
+        private bool IsValidPaymentMethod(string value)
+        {
+            return value == "نقداً" ||
+                   value == "حوالة" ||
+                   value == "بنك" ||
+                   value == "محفظة إلكترونية";
+        }
+    }
+}
