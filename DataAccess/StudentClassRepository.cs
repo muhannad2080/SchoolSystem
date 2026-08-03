@@ -15,7 +15,7 @@ namespace SchoolSystem.DataAccess
                     SELECT 
                         s.StudentID,
                         s.StudentNumber,
-                        s.StudentName,
+                        s.FullName AS StudentName,
                         s.Gender,
                         s.Phone
                     FROM Students s
@@ -27,7 +27,7 @@ namespace SchoolSystem.DataAccess
                           WHERE sc.StudentID = s.StudentID
                             AND sc.AcademicYear = @AcademicYear
                       )
-                    ORDER BY s.StudentName";
+                    ORDER BY s.FullName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -52,7 +52,7 @@ namespace SchoolSystem.DataAccess
                         sc.StudentClassID,
                         sc.StudentID,
                         s.StudentNumber,
-                        s.StudentName,
+                        s.FullName AS StudentName,
                         s.Gender,
                         s.Phone,
                         sc.ClassID,
@@ -66,7 +66,7 @@ namespace SchoolSystem.DataAccess
                     WHERE sc.ClassID = @ClassID
                       AND sc.Section = @Section
                       AND sc.AcademicYear = @AcademicYear
-                    ORDER BY s.StudentName";
+                    ORDER BY s.FullName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

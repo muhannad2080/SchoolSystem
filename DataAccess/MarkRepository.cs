@@ -11,8 +11,8 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(
-                @"SELECT m.MarkID, m.StudentID, s.StudentName,
-                  m.SubjectID, sub.SubjectName, m.TeacherID, t.TeacherName,
+                @"SELECT m.MarkID, m.StudentID, s.FullName AS StudentName,
+                  m.SubjectID, sub.SubjectName, m.TeacherID, t.FullName AS TeacherName,
                   m.Mark, m.ExamType, m.CreatedAt
                   FROM Marks m
                   INNER JOIN Students s ON m.StudentID = s.StudentID

@@ -15,7 +15,7 @@ namespace SchoolSystem.DataAccess
                     SELECT
                         f.FeeID,
                         f.StudentID,
-                        s.StudentName,
+                        s.FullName AS StudentName,
                         s.ClassID,
                         c.ClassName,
                         f.FeePlanID,

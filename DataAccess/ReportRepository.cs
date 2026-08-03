@@ -94,7 +94,7 @@ namespace SchoolSystem.DataAccess
                 SELECT
                     s.StudentID AS [رقم الطالب],
                     s.StudentNumber AS [الرقم الأكاديمي],
-                    s.StudentName AS [اسم الطالب],
+                    s.FullName AS [اسم الطالب],
                     s.Gender AS [الجنس],
                     s.BirthDate AS [تاريخ الميلاد],
                     c.ClassName AS [الصف],
@@ -122,9 +122,9 @@ namespace SchoolSystem.DataAccess
                 query += " AND ISNULL(s.Status, '') = @Status";
 
             if (!string.IsNullOrWhiteSpace(request.SearchText))
-                query += " AND (s.StudentName LIKE @Search OR s.StudentNumber LIKE @Search OR s.GuardianPhone LIKE @Search)";
+                query += " AND (s.FullName LIKE @Search OR s.StudentNumber LIKE @Search OR s.GuardianPhone LIKE @Search)";
 
-            query += " ORDER BY s.StudentName";
+            query += " ORDER BY s.FullName";
 
             return ExecuteQuery(query, request);
         }
@@ -169,7 +169,7 @@ namespace SchoolSystem.DataAccess
                     e.EnrollmentID AS [رقم الطلب],
                     e.ApplicationDate AS [تاريخ التقديم],
                     e.ApplicationType AS [نوع التسجيل],
-                    e.StudentName AS [اسم الطالب],
+                    e.FullName AS [اسم الطالب],
                     e.Gender AS [الجنس],
                     c.ClassName AS [الصف],
                     e.Section AS [الشعبة],
@@ -199,7 +199,7 @@ namespace SchoolSystem.DataAccess
                 query += " AND e.Status = @Status";
 
             if (!string.IsNullOrWhiteSpace(request.SearchText))
-                query += " AND (e.StudentName LIKE @Search OR e.GuardianPhone LIKE @Search OR e.NationalId LIKE @Search)";
+                query += " AND (e.FullName LIKE @Search OR e.GuardianPhone LIKE @Search OR e.NationalId LIKE @Search)";
 
             query += " ORDER BY e.EnrollmentID DESC";
 
@@ -215,7 +215,7 @@ namespace SchoolSystem.DataAccess
                 SELECT
                     sc.StudentClassID AS [رقم التوزيع],
                     s.StudentNumber AS [الرقم الأكاديمي],
-                    s.StudentName AS [اسم الطالب],
+                    s.FullName AS [اسم الطالب],
                     s.Gender AS [الجنس],
                     c.ClassName AS [الصف],
                     sc.Section AS [الشعبة],
@@ -236,9 +236,9 @@ namespace SchoolSystem.DataAccess
                 query += " AND sc.Section = @Section";
 
             if (!string.IsNullOrWhiteSpace(request.SearchText))
-                query += " AND (s.StudentName LIKE @Search OR s.StudentNumber LIKE @Search)";
+                query += " AND (s.FullName LIKE @Search OR s.StudentNumber LIKE @Search)";
 
-            query += " ORDER BY c.ClassName, sc.Section, s.StudentName";
+            query += " ORDER BY c.ClassName, sc.Section, s.FullName";
 
             return ExecuteQuery(query, request);
         }
