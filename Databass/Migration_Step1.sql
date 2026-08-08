@@ -43,7 +43,7 @@ BEGIN
 END
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Students]') AND name = N'Status')
-    ALTER TABLE Students ADD Status NVARCHAR(30) DEFAULT N'نشط';
+    ALTER TABLE Students ADD Status NVARCHAR(30) NOT NULL CONSTRAINT DF_Students_Status DEFAULT N'نشط' WITH VALUES;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Students]') AND name = N'GuardianName')
     ALTER TABLE Students ADD GuardianName NVARCHAR(200) NULL;
@@ -229,7 +229,7 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[St
     ALTER TABLE StudentClasses ADD Section NVARCHAR(50) NULL;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[StudentClasses]') AND name = N'AssignedDate')
-    ALTER TABLE StudentClasses ADD AssignedDate DATETIME DEFAULT GETDATE();
+    ALTER TABLE StudentClasses ADD AssignedDate DATETIME NOT NULL CONSTRAINT DF_StudentClasses_AssignedDate DEFAULT GETDATE() WITH VALUES;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[StudentClasses]') AND name = N'AssignedBy')
     ALTER TABLE StudentClasses ADD AssignedBy INT NULL;
