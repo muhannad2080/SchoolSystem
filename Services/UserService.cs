@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
 using SchoolSystem.Security;
@@ -22,6 +23,7 @@ namespace SchoolSystem.Services
 
         public bool AddUser(User user, string password)
         {
+            NormalizeUser(user);
             ValidateUser(user);
 
             password = NormalizeDigits(password);
@@ -48,6 +50,7 @@ namespace SchoolSystem.Services
             if (user.UserID <= 0)
                 throw new Exception("رقم المستخدم غير صحيح.");
 
+            NormalizeUser(user);
             ValidateUser(user);
 
             if (userRepository.UserNameExists(user.UserName, user.UserID))
@@ -192,6 +195,9 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(user.FullName))
                 throw new Exception("أدخل الاسم الكامل.");
 
+            if (ContainsDigits(user.FullName))
+                throw new Exception("الاسم الكامل لا يجب أن يحتوي على أرقام.");
+
             if (string.IsNullOrWhiteSpace(user.UserName))
                 throw new Exception("أدخل اسم المستخدم.");
 
@@ -203,6 +209,57 @@ namespace SchoolSystem.Services
 
             if (string.IsNullOrWhiteSpace(user.Permissions))
                 throw new Exception("يجب اختيار صلاحية واحدة على الأقل.");
+
+            if (!string.IsNullOrWhiteSpace(user.Email) && !IsValidEmail(user.Email))
+                throw new Exception("البريد الإلكتروني غير صحيح.");
+
+            if (!string.IsNullOrWhiteSpace(user.Phone))
+            {
+                string phone = NormalizeDigits(user.Phone).Trim();
+
+                if (!phone.All(char.IsDigit))
+                    throw new Exception("رقم الهاتف يجب أن يحتوي على أرقام فقط.");
+
+                if (phone.Length < 7 || phone.Length > 15)
+                    throw new Exception("رقم الهاتف غير صحيح.");
+            }
+        }
+
+        private void NormalizeUser(User user)
+        {
+            if (user == null)
+                return;
+
+            user.FullName = NormalizeDigits(user.FullName).Trim();
+            user.UserName = NormalizeDigits(user.UserName).Trim();
+            user.RoleName = NormalizeDigits(user.RoleName).Trim();
+            user.Permissions = NormalizeDigits(user.Permissions).Trim();
+            user.Email = NormalizeDigits(user.Email).Trim();
+            user.Phone = NormalizeDigits(user.Phone).Trim();
+        }
+
+        private bool ContainsDigits(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            return NormalizeDigits(value).Any(char.IsDigit);
+        }
+
+        private bool IsValidEmail(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            try
+            {
+                var address = new System.Net.Mail.MailAddress(value.Trim());
+                return address.Address.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private string NormalizeDigits(string value)

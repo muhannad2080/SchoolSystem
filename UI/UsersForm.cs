@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -171,6 +172,21 @@ namespace SchoolSystem.UI
             if (dataGridViewUsers.Columns.Count == 0)
                 return;
 
+            dataGridViewUsers.ReadOnly = true;
+            dataGridViewUsers.AllowUserToAddRows = false;
+            dataGridViewUsers.AllowUserToDeleteRows = false;
+            dataGridViewUsers.MultiSelect = false;
+            dataGridViewUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewUsers.RowHeadersVisible = false;
+            dataGridViewUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewUsers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dataGridViewUsers.EnableHeadersVisualStyles = false;
+            dataGridViewUsers.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            dataGridViewUsers.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            dataGridViewUsers.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            dataGridViewUsers.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            dataGridViewUsers.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+
             SetHeader("UserID", "الرقم");
             SetHeader("FullName", "الاسم الكامل");
             SetHeader("UserName", "اسم المستخدم");
@@ -184,10 +200,8 @@ namespace SchoolSystem.UI
             SetHeader("CreatedAt", "تاريخ الإنشاء");
             SetHeader("UpdatedAt", "آخر تعديل");
 
-            dataGridViewUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
             if (dataGridViewUsers.Columns.Contains("UserID"))
-                dataGridViewUsers.Columns["UserID"].Width = 60;
+                dataGridViewUsers.Columns["UserID"].Visible = false;
         }
 
         private void SetHeader(string columnName, string headerText)
@@ -355,7 +369,7 @@ namespace SchoolSystem.UI
                 RoleName = cmbRole.Text.Trim(),
                 Permissions = GetSelectedPermissions(),
                 Email = txtEmail.Text.Trim(),
-                Phone = txtPhone.Text.Trim(),
+                Phone = NormalizeDigits(txtPhone.Text).Trim(),
                 IsActive = chkIsActive.Checked,
                 MustChangePassword = chkMustChangePassword.Checked,
                 Password = txtPassword.Text.Trim()
@@ -364,23 +378,42 @@ namespace SchoolSystem.UI
 
         private bool ValidateInputs(bool isUpdate)
         {
-            if (string.IsNullOrWhiteSpace(txtFullName.Text))
+            string fullName = txtFullName.Text.Trim();
+            string userName = txtUserName.Text.Trim();
+            string email = txtEmail.Text.Trim();
+            string phone = NormalizeDigits(txtPhone.Text).Trim();
+
+            if (string.IsNullOrWhiteSpace(fullName))
             {
                 ShowWarning("أدخل الاسم الكامل.");
                 txtFullName.Focus();
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtUserName.Text))
+            if (ContainsDigits(fullName))
+            {
+                ShowWarning("الاسم الكامل لا يجب أن يحتوي على أرقام.");
+                txtFullName.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(userName))
             {
                 ShowWarning("أدخل اسم المستخدم.");
                 txtUserName.Focus();
                 return false;
             }
 
-            if (txtUserName.Text.Contains(" "))
+            if (userName.Contains(" "))
             {
                 ShowWarning("اسم المستخدم لا يجب أن يحتوي على مسافات.");
+                txtUserName.Focus();
+                return false;
+            }
+
+            if (userName.Length < 3)
+            {
+                ShowWarning("اسم المستخدم يجب ألا يقل عن 3 أحرف.");
                 txtUserName.Focus();
                 return false;
             }
@@ -420,6 +453,30 @@ namespace SchoolSystem.UI
                 {
                     ShowWarning("كلمة المرور وتأكيدها غير متطابقين.");
                     txtConfirmPassword.Focus();
+                    return false;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(email) && !IsValidEmail(email))
+            {
+                ShowWarning("البريد الإلكتروني غير صحيح.");
+                txtEmail.Focus();
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(phone))
+            {
+                if (!phone.All(char.IsDigit))
+                {
+                    ShowWarning("رقم الهاتف يجب أن يحتوي على أرقام فقط.");
+                    txtPhone.Focus();
+                    return false;
+                }
+
+                if (phone.Length < 7 || phone.Length > 15)
+                {
+                    ShowWarning("رقم الهاتف غير صحيح.");
+                    txtPhone.Focus();
                     return false;
                 }
             }
@@ -560,6 +617,48 @@ namespace SchoolSystem.UI
 
             string permissions = row["Permissions"] == DBNull.Value ? "" : row["Permissions"].ToString();
             SetPermissionsFromString(permissions);
+        }
+
+        private bool ContainsDigits(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            return NormalizeDigits(value).Any(char.IsDigit);
+        }
+
+        private bool IsValidEmail(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            try
+            {
+                var address = new System.Net.Mail.MailAddress(value.Trim());
+                return address.Address.Equals(value.Trim(), StringComparison.OrdinalIgnoreCase);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private string NormalizeDigits(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return "";
+
+            return value
+                .Replace('٠', '0')
+                .Replace('١', '1')
+                .Replace('٢', '2')
+                .Replace('٣', '3')
+                .Replace('٤', '4')
+                .Replace('٥', '5')
+                .Replace('٦', '6')
+                .Replace('٧', '7')
+                .Replace('٨', '8')
+                .Replace('٩', '9');
         }
 
         private void chkShowPassword_CheckedChanged(object sender, EventArgs e)

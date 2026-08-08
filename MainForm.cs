@@ -19,6 +19,8 @@ namespace SchoolSystem
 
             ApplyModernMenuStyle();
 
+            UpdateCurrentUserLabel();
+
             timerClock.Start();
 
             LoadWelcomeScreen();
@@ -89,6 +91,22 @@ namespace SchoolSystem
             this.Text = "نظام إدارة المدرسة";
         }
 
+        private void UpdateCurrentUserLabel()
+        {
+            if (!CurrentUser.IsLoggedIn || CurrentUser.User == null)
+                return;
+
+            string displayName = CurrentUser.User.FullName;
+
+            if (string.IsNullOrWhiteSpace(displayName))
+                displayName = CurrentUser.User.UserName;
+
+            if (string.IsNullOrWhiteSpace(displayName))
+                displayName = "مستخدم";
+
+            lblUsername.Text = "👤 " + displayName;
+        }
+
         private void StyleDropDownItems(ToolStripMenuItem parent)
         {
             parent.DropDown.BackColor = Color.White;
@@ -115,20 +133,30 @@ namespace SchoolSystem
 
         private void LoadWelcomeScreen()
         {
-            panelContent.Controls.Clear();
+            ClearPanelContent();
 
             var welcome = new WelcomeScreen();
-            welcome.SystemName = " فريق خليها على الله";
+            welcome.SystemName = "أهلاً بك في نظام إدارة المدرسة";
             welcome.Dock = DockStyle.Fill;
 
             panelContent.Controls.Add(welcome);
+        }
+
+        private void ClearPanelContent()
+        {
+            while (panelContent.Controls.Count > 0)
+            {
+                Control existing = panelContent.Controls[0];
+                panelContent.Controls.RemoveAt(0);
+                existing.Dispose();
+            }
         }
 
         public void LoadUserControl(UserControl uc)
         {
             try
             {
-                panelContent.Controls.Clear();
+                ClearPanelContent();
 
                 uc.Dock = DockStyle.Fill;
 
@@ -144,7 +172,7 @@ namespace SchoolSystem
         {
             try
             {
-                panelContent.Controls.Clear();
+                ClearPanelContent();
 
                 form.TopLevel = false;
                 form.FormBorderStyle = FormBorderStyle.None;
@@ -161,7 +189,7 @@ namespace SchoolSystem
 
         private void ShowLoadError(string message)
         {
-            panelContent.Controls.Clear();
+            ClearPanelContent();
 
             Label errorLabel = new Label
             {
@@ -264,7 +292,7 @@ namespace SchoolSystem
         {
             try
             {
-                panelContent.Controls.Clear();
+                ClearPanelContent();
 
                 var dashboard = new DashboardHome();
                 dashboard.Dock = DockStyle.Fill;

@@ -7,7 +7,7 @@ namespace SchoolSystem.DataAccess
     {
         private static readonly string connectionString = 
             ConfigurationManager.ConnectionStrings["SchoolDBConnection"]?.ConnectionString ?? 
-            @"Server=MUHANNADALJRADI;Database=SchoolDB;Trusted_Connection=True;";
+            @"Data Source=.;Initial Catalog=SchoolDB;Integrated Security=True;MultipleActiveResultSets=True;";
 
         public static SqlConnection GetConnection()
         {
