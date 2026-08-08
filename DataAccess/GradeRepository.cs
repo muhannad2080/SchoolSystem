@@ -62,7 +62,7 @@ namespace SchoolSystem.DataAccess
                     SELECT
                         s.StudentID,
                         s.StudentNumber,
-                        s.StudentName,
+                        s.FullName AS StudentName,
                         s.Gender,
                         ISNULL(g.GradeID, 0) AS GradeID,
                         ISNULL(g.Quiz1, 0) AS Quiz1,
@@ -83,7 +83,7 @@ namespace SchoolSystem.DataAccess
                       AND ISNULL(s.Section, N'') = @Section
                       AND ISNULL(s.AcademicYear, N'') = @AcademicYear
                       AND ISNULL(s.Status, N'منتظم') = N'منتظم'
-                    ORDER BY s.StudentName";
+                                        ORDER BY s.FullName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

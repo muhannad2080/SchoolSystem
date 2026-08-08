@@ -12,7 +12,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(
-                @"SELECT p.PayrollID, p.TeacherID, t.TeacherName, p.SalaryMonth, p.SalaryYear,
+                                @"SELECT p.PayrollID, p.TeacherID, t.FullName AS TeacherName, p.SalaryMonth, p.SalaryYear,
                   p.BasicSalary, p.Allowances, p.Deductions, p.NetSalary, p.PaymentDate, p.Notes
                   FROM Payroll p
                   INNER JOIN Teachers t ON p.TeacherID = t.TeacherID
