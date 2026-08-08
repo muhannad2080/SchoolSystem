@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Services;
 using SchoolSystem.Security;
+using SchoolSystem.Helpers;
 
 namespace SchoolSystem.UI
 {
@@ -14,6 +15,17 @@ namespace SchoolSystem.UI
         public LoginForm()
         {
             InitializeComponent();
+            UIHelper.ApplyTheme(this);
+            panelBackground.BackColor = UIHelper.PrimaryColor;
+            panelCard.BackColor = Color.White;
+            panelCard.Padding = new Padding(18);
+            lblIcon.ForeColor = UIHelper.AccentColor;
+            lblTitle.ForeColor = UIHelper.PrimaryColor;
+            lblSubtitle.ForeColor = Color.FromArgb(100, 116, 139);
+            UIHelper.StyleTextBox(txtUserName);
+            UIHelper.StyleTextBox(txtPassword);
+            UIHelper.StylePrimaryButton(btnLogin);
+            UIHelper.StyleButton(btnExit, UIHelper.NeutralColor);
 
             try
             {

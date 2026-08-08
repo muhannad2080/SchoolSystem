@@ -3,6 +3,7 @@ using System.Data;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -14,6 +15,7 @@ namespace SchoolSystem.UI
         public DashboardHome()
         {
             InitializeComponent();
+            UIHelper.ApplyTheme(this);
             this.Dock = DockStyle.Fill;
             this.Load += DashboardHome_Load;
         }
@@ -30,6 +32,8 @@ namespace SchoolSystem.UI
             try
             {
                 Cursor = Cursors.WaitCursor;
+
+                panelCards.Controls.Clear();
 
                 int studentCount = await Task.Run(() => dashboardService.GetStudentCount());
                 int teacherCount = await Task.Run(() => dashboardService.GetTeacherCount());
@@ -95,6 +99,17 @@ namespace SchoolSystem.UI
 
         private void LoadChart()
         {
+            for (int i = panelChart.Controls.Count - 1; i >= 0; i--)
+            {
+                Control control = panelChart.Controls[i];
+
+                if (control != lblChartTitle)
+                {
+                    panelChart.Controls.RemoveAt(i);
+                    control.Dispose();
+                }
+            }
+
             DataTable dt = dashboardService.GetStudentsPerClass();
             if (dt == null || dt.Rows.Count == 0)
             {
@@ -157,6 +172,17 @@ namespace SchoolSystem.UI
         {
             try
             {
+                for (int i = panelAlerts.Controls.Count - 1; i >= 0; i--)
+                {
+                    Control control = panelAlerts.Controls[i];
+
+                    if (control != lblAlertsTitle)
+                    {
+                        panelAlerts.Controls.RemoveAt(i);
+                        control.Dispose();
+                    }
+                }
+
                 int pendingFees = await Task.Run(() => dashboardService.GetPendingFeesCount());
                 int todayAbsence = await Task.Run(() => dashboardService.GetTodayAbsenceCount());
 
