@@ -66,8 +66,14 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[St
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Students]') AND name = N'District')
     ALTER TABLE Students ADD District NVARCHAR(100) NULL;
 
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Students]') AND name = N'Address')
+    ALTER TABLE Students ADD Address NVARCHAR(300) NULL;
+
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Students]') AND name = N'Photo')
     ALTER TABLE Students ADD Photo VARBINARY(MAX) NULL;
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Students]') AND name = N'CreatedAt')
+    ALTER TABLE Students ADD CreatedAt DATETIME NOT NULL CONSTRAINT DF_Students_CreatedAt DEFAULT GETDATE() WITH VALUES;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Students]') AND name = N'UpdatedAt')
     ALTER TABLE Students ADD UpdatedAt DATETIME NULL;
@@ -96,6 +102,9 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Te
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'Nationality')
     ALTER TABLE Teachers ADD Nationality NVARCHAR(100) NULL;
 
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'Phone')
+    ALTER TABLE Teachers ADD Phone NVARCHAR(30) NULL;
+
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'NationalID')
     ALTER TABLE Teachers ADD NationalID NVARCHAR(50) NULL;
 
@@ -108,23 +117,29 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Te
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'Specialization')
     ALTER TABLE Teachers ADD Specialization NVARCHAR(100) NULL;
 
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'Address')
+    ALTER TABLE Teachers ADD Address NVARCHAR(300) NULL;
+
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'HireDate')
     ALTER TABLE Teachers ADD HireDate DATE NULL;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'BasicSalary')
-    ALTER TABLE Teachers ADD BasicSalary DECIMAL(18, 2) DEFAULT 0;
+    ALTER TABLE Teachers ADD BasicSalary DECIMAL(18, 2) NOT NULL CONSTRAINT DF_Teachers_BasicSalary DEFAULT 0 WITH VALUES;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'TransportAllowance')
-    ALTER TABLE Teachers ADD TransportAllowance DECIMAL(18, 2) DEFAULT 0;
+    ALTER TABLE Teachers ADD TransportAllowance DECIMAL(18, 2) NOT NULL CONSTRAINT DF_Teachers_TransportAllowance DEFAULT 0 WITH VALUES;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'HousingAllowance')
-    ALTER TABLE Teachers ADD HousingAllowance DECIMAL(18, 2) DEFAULT 0;
+    ALTER TABLE Teachers ADD HousingAllowance DECIMAL(18, 2) NOT NULL CONSTRAINT DF_Teachers_HousingAllowance DEFAULT 0 WITH VALUES;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'Status')
-    ALTER TABLE Teachers ADD Status NVARCHAR(50) DEFAULT N'نشط';
+    ALTER TABLE Teachers ADD Status NVARCHAR(50) NOT NULL CONSTRAINT DF_Teachers_Status DEFAULT N'نشط' WITH VALUES;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'Notes')
     ALTER TABLE Teachers ADD Notes NVARCHAR(MAX) NULL;
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'CreatedAt')
+    ALTER TABLE Teachers ADD CreatedAt DATETIME NOT NULL CONSTRAINT DF_Teachers_CreatedAt DEFAULT GETDATE() WITH VALUES;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Teachers]') AND name = N'UpdatedAt')
     ALTER TABLE Teachers ADD UpdatedAt DATETIME NULL;
@@ -161,8 +176,14 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Us
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'Phone')
     ALTER TABLE Users ADD Phone NVARCHAR(30) NULL;
 
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'IsActive')
+    ALTER TABLE Users ADD IsActive BIT NOT NULL CONSTRAINT DF_Users_IsActive DEFAULT 1 WITH VALUES;
+
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'MustChangePassword')
-    ALTER TABLE Users ADD MustChangePassword BIT DEFAULT 0;
+    ALTER TABLE Users ADD MustChangePassword BIT NOT NULL CONSTRAINT DF_Users_MustChangePassword DEFAULT 0 WITH VALUES;
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'CreatedAt')
+    ALTER TABLE Users ADD CreatedAt DATETIME NOT NULL CONSTRAINT DF_Users_CreatedAt DEFAULT GETDATE() WITH VALUES;
 
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'LastLoginAt')
     ALTER TABLE Users ADD LastLoginAt DATETIME NULL;
