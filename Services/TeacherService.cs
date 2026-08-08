@@ -21,6 +21,16 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllTeachers() => _repository.GetAllTeachers();
 
+        public bool IsNationalIDUnique(string nationalID, int? excludeTeacherId = null)
+        {
+            return _repository.IsNationalIDUnique(nationalID, excludeTeacherId);
+        }
+
+        public bool IsEmailUnique(string email, int? excludeTeacherId = null)
+        {
+            return _repository.IsEmailUnique(email, excludeTeacherId);
+        }
+
         public void AddTeacher(Teacher teacher)
         {
             ValidateTeacher(teacher);
