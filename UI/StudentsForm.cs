@@ -34,6 +34,181 @@ namespace SchoolSystem.UI
             LoadStudents();
         }
 
+        private void btnChooseImage_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "ملفات الصور|*.jpg;*.jpeg;*.png;*.bmp;*.gif";
+                ofd.Title = "اختر صورة الطالب";
+
+                if (ofd.ShowDialog() != DialogResult.OK)
+                    return;
+
+                try
+                {
+                    FileInfo fileInfo = new FileInfo(ofd.FileName);
+
+                    if (fileInfo.Length > 2 * 1024 * 1024)
+                    {
+                        UIHelper.ShowWarning("حجم الصورة كبير جدًا. الرجاء اختيار صورة أصغر من 2 ميجابايت.");
+                        return;
+                    }
+
+                    byte[] imageBytes = File.ReadAllBytes(ofd.FileName);
+
+                    if (picStudent.Image != null)
+                    {
+                        picStudent.Image.Dispose();
+                        picStudent.Image = null;
+                    }
+
+                    using (MemoryStream ms = new MemoryStream(imageBytes))
+                    using (Image selectedImage = Image.FromStream(ms))
+                    {
+                        _selectedPhoto = imageBytes;
+                        picStudent.Image = new Bitmap(selectedImage);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    UIHelper.ShowError("تعذر تحميل الصورة: " + ex.Message);
+                }
+            }
+        }
+
+        private void btnRemoveImage_Click(object sender, EventArgs e)
+        {
+            _selectedPhoto = null;
+
+            if (picStudent.Image != null)
+            {
+                picStudent.Image.Dispose();
+                picStudent.Image = null;
+            }
+        }
+
+        private void dgvStudents_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvStudents.CurrentRow == null || dgvStudents.CurrentRow.DataBoundItem == null)
+                return;
+
+            DataGridViewRow row = dgvStudents.CurrentRow;
+
+            if (row.Cells["StudentId"].Value == null || row.Cells["StudentId"].Value == DBNull.Value)
+                return;
+
+            int id = Convert.ToInt32(row.Cells["StudentId"].Value);
+            Student student = _currentStudents.FirstOrDefault(s => s.StudentId == id);
+
+            if (student != null && student.StudentId != _selectedStudentId)
+                FillForm(student);
+        }
+
+        private void txtSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                ApplyFilters();
+            }
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            if (Parent != null)
+            {
+                Parent.Controls.Remove(this);
+                Dispose();
+            }
+            else
+            {
+                Close();
+            }
+        }
+
+        private void btnPrint_Click(object sender, EventArgs e)
+        {
+            if (_selectedStudentId == 0)
+            {
+                UIHelper.ShowWarning("اختر طالبًا أولاً قبل الطباعة.");
+                return;
+            }
+
+            UIHelper.ShowInfo("ميزة طباعة بطاقة الطالب قيد التجهيز.");
+        }
+
+        private void btnExportExcel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_currentStudents == null || _currentStudents.Count == 0)
+                {
+                    UIHelper.ShowWarning("لا توجد بيانات لتصديرها.");
+                    return;
+                }
+
+                using (SaveFileDialog sfd = new SaveFileDialog())
+                {
+                    sfd.Filter = "ملفات Excel (*.xlsx)|*.xlsx";
+                    sfd.FileName = "Students_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".xlsx";
+
+                    if (sfd.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    using (var workbook = new ClosedXML.Excel.XLWorkbook())
+                    {
+                        var ws = workbook.Worksheets.Add("الطلاب");
+                        ws.RightToLeft = true;
+
+                        ws.Cell(1, 1).Value = "رقم الطالب";
+                        ws.Cell(1, 2).Value = "الاسم";
+                        ws.Cell(1, 3).Value = "الجنس";
+                        ws.Cell(1, 4).Value = "الصف";
+                        ws.Cell(1, 5).Value = "الهاتف";
+                        ws.Cell(1, 6).Value = "الحالة";
+
+                        for (int i = 0; i < _currentStudents.Count; i++)
+                        {
+                            Student s = _currentStudents[i];
+                            int row = i + 2;
+
+                            ws.Cell(row, 1).Value = s.StudentNumber;
+                            ws.Cell(row, 2).Value = s.FullName;
+                            ws.Cell(row, 3).Value = s.Gender;
+                            ws.Cell(row, 4).Value = s.CurrentClassName;
+                            ws.Cell(row, 5).Value = s.StudentPhone;
+                            ws.Cell(row, 6).Value = s.Status;
+                        }
+
+                        ws.Columns().AdjustToContents();
+                        workbook.SaveAs(sfd.FileName);
+                    }
+                }
+
+                UIHelper.ShowInfo("تم تصدير البيانات بنجاح.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowError("فشل التصدير: " + ex.Message);
+            }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            ClearForm();
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            if (_selectedStudentId == 0)
+            {
+                UIHelper.ShowWarning("اختر طالبًا من الجدول أولاً.");
+                return;
+            }
+
+            btnSave_Click(sender, e);
+        }
+
         private void ApplyCustomStyles()
         {
             UIHelper.StyleDataGridView(dgvStudents);
