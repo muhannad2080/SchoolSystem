@@ -20,8 +20,7 @@ namespace SchoolSystem.UI
 
         private void btnStudents_Click(object sender, EventArgs e)
         {
-            // استخدام MainForm.Instance لاستدعاء LoadUserControl
-           // MainForm.Instance?.LoadUserControl(new StudentsForm());
+            MainForm.Instance?.LoadFormInPanel(new StudentsForm());
         }
 
         private void btnTeachers_Click(object sender, EventArgs e)

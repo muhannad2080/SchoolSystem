@@ -326,21 +326,40 @@ namespace SchoolSystem.UI
             }
         }
 
-        private Student GetStudentFromForm()
+                private Student GetStudentFromForm()
         {
-            return new Student {
+            string fullName = txtFullName.Text.Trim();
+            if (string.IsNullOrEmpty(fullName))
+                throw new Exception("اسم الطالب مطلوب.");
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(fullName, @"\d"))
+                throw new Exception("اسم الطالب لا يجب أن يحتوي على أرقام.");
+
+            string phone = txtPhone.Text.Trim();
+            if (!string.IsNullOrEmpty(phone) && !System.Text.RegularExpressions.Regex.IsMatch(phone, @"^[0-9+\-\s]{7,15}$"))
+                throw new Exception("رقم هاتف الطالب غير صحيح.");
+
+            string guardianPhone = txtGuardianPhone.Text.Trim();
+            if (!string.IsNullOrEmpty(guardianPhone) && !System.Text.RegularExpressions.Regex.IsMatch(guardianPhone, @"^[0-9+\-\s]{7,15}$"))
+                throw new Exception("رقم هاتف ولي الأمر غير صحيح.");
+
+            if (dtpBirthDate.Value > DateTime.Today)
+                throw new Exception("تاريخ الميلاد لا يمكن أن يكون في المستقبل.");
+
+            return new Student
+            {
                 StudentId = _selectedStudentId,
-                FullName = txtFullName.Text.Trim(),
+                FullName = fullName,
                 Gender = cmbGender.Text,
                 BirthDate = dtpBirthDate.Value,
                 BirthPlace = txtBirthPlace.Text.Trim(),
                 Nationality = txtNationality.Text.Trim(),
                 NationalId = txtNationalId.Text.Trim(),
-                StudentPhone = txtPhone.Text.Trim(),
+                StudentPhone = phone,
                 Status = cmbStatus.Text,
                 GuardianName = txtGuardianName.Text.Trim(),
                 GuardianRelation = txtGuardianRelation.Text.Trim(),
-                GuardianPhone = txtGuardianPhone.Text.Trim(),
+                GuardianPhone = guardianPhone,
                 GuardianEmail = txtGuardianEmail.Text.Trim(),
                 GuardianJob = txtGuardianJob.Text.Trim(),
                 Governorate = txtGovernorate.Text.Trim(),
