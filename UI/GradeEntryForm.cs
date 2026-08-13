@@ -186,24 +186,64 @@ namespace SchoolSystem.UI
             await LoadGradesAsync();
         }
 
+        private bool IsValidAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
+                return false;
+            if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
+                return false;
+
+            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
+        }
+
+        private bool ValidateGradeFilters()
+        {
+            if (GetClassId() <= 0)
+            {
+                ShowWarning("يرجى اختيار الصف.");
+                return false;
+            }
+            if (GetSubjectId() <= 0)
+            {
+                ShowWarning("يرجى اختيار المادة.");
+                return false;
+            }
+            if (cmbSection.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbSection.Text))
+            {
+                ShowWarning("يرجى اختيار الشعبة.");
+                cmbSection.Focus();
+                return false;
+            }
+            if (cmbTerm.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbTerm.Text))
+            {
+                ShowWarning("يرجى اختيار الفصل الدراسي.");
+                cmbTerm.Focus();
+                return false;
+            }
+            if (!IsValidAcademicYear(txtAcademicYear.Text))
+            {
+                ShowWarning("أدخل العام الدراسي بالصيغة الصحيحة: 2025/2026.");
+                txtAcademicYear.Focus();
+                return false;
+            }
+            return true;
+        }
+
         private async Task LoadGradesAsync()
         {
             try
             {
+                if (!ValidateGradeFilters())
+                    return;
+
                 int classId = GetClassId();
                 int subjectId = GetSubjectId();
-
-                if (classId <= 0)
-                {
-                    ShowWarning("يرجى اختيار الصف.");
-                    return;
-                }
-
-                if (subjectId <= 0)
-                {
-                    ShowWarning("لا توجد مادة محددة لهذا الصف.");
-                    return;
-                }
 
                 Cursor = Cursors.WaitCursor;
 
@@ -297,6 +337,12 @@ namespace SchoolSystem.UI
 
             decimal total = q1 + q2 + cw + final;
 
+            if (q1 < 0 || q2 < 0 || cw < 0 || final < 0)
+            {
+                ShowWarning("لا يمكن إدخال درجة سالبة.");
+                return;
+            }
+
             if (total > 100)
             {
                 ShowWarning("المجموع لا يمكن أن يتجاوز 100.");
@@ -311,6 +357,19 @@ namespace SchoolSystem.UI
 
             if (dataGridViewGrades.Columns.Contains("ResultStatus"))
                 row.Cells["ResultStatus"].Value = total >= 50 ? "ناجح" : "راسب";
+        }
+
+        private bool TryGetGrade(DataGridViewRow row, string columnName, out decimal result)
+        {
+            result = 0;
+            if (!dataGridViewGrades.Columns.Contains(columnName))
+                return true;
+
+            object value = row.Cells[columnName].Value;
+            if (value == null || value == DBNull.Value || string.IsNullOrWhiteSpace(value.ToString()))
+                return true;
+
+            return UIHelper.TryParseDecimal(value.ToString(), out result);
         }
 
         private decimal GetDecimal(DataGridViewRow row, string columnName)
@@ -356,23 +415,38 @@ namespace SchoolSystem.UI
                 return;
             }
 
+            if (!ValidateGradeFilters())
+                return;
+
             int classId = GetClassId();
             int subjectId = GetSubjectId();
 
-            if (classId <= 0)
-            {
-                ShowWarning("يرجى اختيار الصف.");
-                return;
-            }
-
-            if (subjectId <= 0)
-            {
-                ShowWarning("يرجى اختيار المادة.");
-                return;
-            }
-
             try
             {
+                foreach (DataGridViewRow validationRow in dataGridViewGrades.Rows)
+                {
+                    if (validationRow.IsNewRow)
+                        continue;
+
+                    decimal q1;
+                    decimal q2;
+                    decimal cw;
+                    decimal final;
+                    if (!TryGetGrade(validationRow, "Quiz1", out q1) ||
+                        !TryGetGrade(validationRow, "Quiz2", out q2) ||
+                        !TryGetGrade(validationRow, "CourseWork", out cw) ||
+                        !TryGetGrade(validationRow, "FinalExam", out final))
+                    {
+                        ShowWarning("توجد درجة غير صالحة. أدخل أرقامًا فقط بين 0 و100.");
+                        return;
+                    }
+                    if (q1 < 0 || q2 < 0 || cw < 0 || final < 0 || q1 + q2 + cw + final > 100)
+                    {
+                        ShowWarning("يجب أن تكون الدرجات غير سالبة وأن لا يتجاوز مجموع الطالب 100.");
+                        return;
+                    }
+                }
+
                 Cursor = Cursors.WaitCursor;
 
                 int success = 0;

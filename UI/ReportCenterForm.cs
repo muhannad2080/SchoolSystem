@@ -10,6 +10,7 @@ using ClosedXML.Excel;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -176,6 +177,45 @@ namespace SchoolSystem.UI
             }
         }
 
+        private bool IsValidAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
+                return false;
+            if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
+                return false;
+
+            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
+        }
+
+        private bool ValidateReportFilters()
+        {
+            if (cmbReportType.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbReportType.Text))
+            {
+                ShowWarning("يرجى اختيار نوع التقرير.");
+                cmbReportType.Focus();
+                return false;
+            }
+            if (!IsValidAcademicYear(txtAcademicYear.Text))
+            {
+                ShowWarning("أدخل العام الدراسي بالصيغة الصحيحة: 2025/2026.");
+                txtAcademicYear.Focus();
+                return false;
+            }
+            if (dtpFromDate.Value.Date > dtpToDate.Value.Date)
+            {
+                ShowWarning("تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساويًا له.");
+                dtpFromDate.Focus();
+                return false;
+            }
+            return true;
+        }
+
         private ReportRequest BuildRequest()
         {
             ReportRequest request = new ReportRequest();
@@ -213,6 +253,9 @@ namespace SchoolSystem.UI
         {
             try
             {
+                if (!ValidateReportFilters())
+                    return;
+
                 Cursor = Cursors.WaitCursor;
 
                 ReportRequest request = BuildRequest();

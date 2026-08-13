@@ -95,17 +95,58 @@ namespace SchoolSystem.UI
             await LoadAttendanceAsync();
         }
 
+        private bool IsValidAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
+                return false;
+            if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
+                return false;
+
+            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
+        }
+
+        private bool ValidateAttendanceFilters()
+        {
+            if (GetClassId() <= 0)
+            {
+                ShowWarning("يرجى اختيار الصف.");
+                return false;
+            }
+            if (cmbSection.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbSection.Text))
+            {
+                ShowWarning("يرجى اختيار الشعبة.");
+                cmbSection.Focus();
+                return false;
+            }
+            if (!IsValidAcademicYear(txtAcademicYear.Text))
+            {
+                ShowWarning("أدخل العام الدراسي بالصيغة الصحيحة: 2025/2026.");
+                txtAcademicYear.Focus();
+                return false;
+            }
+            if (dtpDate.Value.Date > DateTime.Today)
+            {
+                ShowWarning("لا يمكن تسجيل حضور بتاريخ مستقبلي.");
+                dtpDate.Focus();
+                return false;
+            }
+            return true;
+        }
+
         private async Task LoadAttendanceAsync()
         {
             try
             {
-                int classId = GetClassId();
-
-                if (classId <= 0)
-                {
-                    ShowWarning("يرجى اختيار الصف.");
+                if (!ValidateAttendanceFilters())
                     return;
-                }
+
+                int classId = GetClassId();
 
                 Cursor = Cursors.WaitCursor;
 
@@ -218,14 +259,26 @@ namespace SchoolSystem.UI
 
             try
             {
-                int classId = GetClassId();
-
-                if (classId <= 0)
-                {
-                    ShowWarning("يرجى اختيار الصف.");
+                if (!ValidateAttendanceFilters())
                     return;
+
+                if (dataGridViewAttendance.Columns.Contains("Status") && dataGridViewAttendance.Rows.Count > 0)
+                {
+                    foreach (DataGridViewRow validationRow in dataGridViewAttendance.Rows)
+                    {
+                        if (validationRow.IsNewRow)
+                            continue;
+
+                        string status = Convert.ToString(validationRow.Cells["Status"].Value).Trim();
+                        if (status != "حاضر" && status != "غائب" && status != "متأخر" && status != "مستأذن")
+                        {
+                            ShowWarning("توجد حالة حضور غير صالحة. يرجى اختيار حالة لكل طالب.");
+                            return;
+                        }
+                    }
                 }
 
+                int classId = GetClassId();
                 Cursor = Cursors.WaitCursor;
 
                 int savedCount = 0;
