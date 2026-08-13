@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
@@ -14,11 +15,21 @@ namespace SchoolSystem.Services
         public TeacherService()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["SchoolDBConnection"]?.ConnectionString 
-                                   ?? @"Server=MUHANNADALJRADI;Database=SchoolDB;Trusted_Connection=True;";
+                                   ?? @"Data Source=.;Initial Catalog=SchoolDB;Integrated Security=True;MultipleActiveResultSets=True;";
             _repository = new TeacherRepository(connectionString);
         }
 
         public DataTable GetAllTeachers() => _repository.GetAllTeachers();
+
+        public bool IsNationalIDUnique(string nationalID, int? excludeTeacherId = null)
+        {
+            return _repository.IsNationalIDUnique(nationalID, excludeTeacherId);
+        }
+
+        public bool IsEmailUnique(string email, int? excludeTeacherId = null)
+        {
+            return _repository.IsEmailUnique(email, excludeTeacherId);
+        }
 
         public void AddTeacher(Teacher teacher)
         {
@@ -66,11 +77,22 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(teacher.FullName))
                 throw new Exception("الاسم الكامل مطلوب.");
 
+            if (ContainsDigits(teacher.FullName))
+                throw new Exception("الاسم الكامل لا يجب أن يحتوي على أرقام.");
+
             if (string.IsNullOrWhiteSpace(teacher.Gender))
                 throw new Exception("يرجى اختيار الجنس.");
 
             if (string.IsNullOrWhiteSpace(teacher.Phone))
                 throw new Exception("رقم الهاتف مطلوب.");
+
+            string phone = NormalizeDigits(teacher.Phone).Trim();
+
+            if (!phone.All(char.IsDigit))
+                throw new Exception("رقم الهاتف يجب أن يحتوي على أرقام فقط.");
+
+            if (phone.Length < 7 || phone.Length > 15)
+                throw new Exception("رقم الهاتف غير صحيح.");
 
             if (!teacher.HireDate.HasValue)
                 throw new Exception("تاريخ التعيين مطلوب.");
@@ -95,6 +117,32 @@ namespace SchoolSystem.Services
                 if (!Regex.IsMatch(teacher.NationalID, @"^[0-9]{6,20}$"))
                     throw new Exception("رقم الهوية يجب أن يحتوي على أرقام فقط.");
             }
+        }
+
+        private bool ContainsDigits(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            return NormalizeDigits(value).Any(char.IsDigit);
+        }
+
+        private string NormalizeDigits(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return "";
+
+            return value
+                .Replace('٠', '0')
+                .Replace('١', '1')
+                .Replace('٢', '2')
+                .Replace('٣', '3')
+                .Replace('٤', '4')
+                .Replace('٥', '5')
+                .Replace('٦', '6')
+                .Replace('٧', '7')
+                .Replace('٨', '8')
+                .Replace('٩', '9');
         }
     }
 }

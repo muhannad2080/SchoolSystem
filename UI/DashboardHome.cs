@@ -3,6 +3,7 @@ using System.Data;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -14,15 +15,29 @@ namespace SchoolSystem.UI
         public DashboardHome()
         {
             InitializeComponent();
+            UIHelper.ApplyTheme(this);
             this.Dock = DockStyle.Fill;
             this.Load += DashboardHome_Load;
         }
 
         private async void DashboardHome_Load(object sender, EventArgs e)
         {
-            await LoadStatisticsAsync();
-            LoadChart();
-            LoadAlerts();
+            try
+            {
+                await LoadStatisticsAsync();
+                DataTable studentsPerClass = await Task.Run(() => dashboardService.GetStudentsPerClass());
+                RenderChart(studentsPerClass);
+                await LoadAlertsAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                MessageBox.Show(
+                    "تعذر تحميل بعض بيانات لوحة التحكم. يمكنك متابعة العمل والمحاولة مرة أخرى.",
+                    "لوحة التحكم",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
 
         private async Task LoadStatisticsAsync()
@@ -31,23 +46,32 @@ namespace SchoolSystem.UI
             {
                 Cursor = Cursors.WaitCursor;
 
-                int studentCount = await Task.Run(() => dashboardService.GetStudentCount());
-                int teacherCount = await Task.Run(() => dashboardService.GetTeacherCount());
-                int subjectCount = await Task.Run(() => dashboardService.GetSubjectCount());
-                int classCount = await Task.Run(() => dashboardService.GetClassCount());
+                panelCards.Controls.Clear();
 
-                CreateCard("👨‍🎓  الطلاب", studentCount.ToString(), Color.FromArgb(41, 128, 185), 0);
-                CreateCard("👨‍🏫  المعلمين", teacherCount.ToString(), Color.FromArgb(39, 174, 96), 1);
-                CreateCard("📚  المواد", subjectCount.ToString(), Color.FromArgb(142, 68, 173), 2);
-                CreateCard("🏫  الفصول", classCount.ToString(), Color.FromArgb(230, 126, 34), 3);
-                CreateCard("💰  الرسوم", "0", Color.FromArgb(192, 57, 43), 4); // سنحدثه لاحقاً
+                Task<int> studentsTask = Task.Run(() => dashboardService.GetStudentCount());
+                Task<int> teachersTask = Task.Run(() => dashboardService.GetTeacherCount());
+                Task<int> subjectsTask = Task.Run(() => dashboardService.GetSubjectCount());
+                Task<int> classesTask = Task.Run(() => dashboardService.GetClassCount());
+                Task<int> pendingFeesTask = Task.Run(() => dashboardService.GetPendingFeesCount());
+                await Task.WhenAll(studentsTask, teachersTask, subjectsTask, classesTask, pendingFeesTask);
+
+                CreateCard("الطلاب", studentsTask.Result.ToString(), Color.FromArgb(41, 128, 185), 0);
+                CreateCard("المعلمون", teachersTask.Result.ToString(), Color.FromArgb(39, 174, 96), 1);
+                CreateCard("المواد الدراسية", subjectsTask.Result.ToString(), Color.FromArgb(142, 68, 173), 2);
+                CreateCard("الفصول", classesTask.Result.ToString(), Color.FromArgb(230, 126, 34), 3);
+                CreateCard("رسوم غير مدفوعة", pendingFeesTask.Result.ToString(), Color.FromArgb(192, 57, 43), 4);
 
                 Cursor = Cursors.Default;
             }
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("خطأ في تحميل الإحصائيات: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                MessageBox.Show(
+                    "تعذر تحميل إحصائيات لوحة التحكم حاليًا.",
+                    "لوحة التحكم",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
         }
 
@@ -93,9 +117,19 @@ namespace SchoolSystem.UI
             panelCards.Controls.Add(card, columnIndex, 0);
         }
 
-        private void LoadChart()
+        private void RenderChart(DataTable dt)
         {
-            DataTable dt = dashboardService.GetStudentsPerClass();
+            for (int i = panelChart.Controls.Count - 1; i >= 0; i--)
+            {
+                Control control = panelChart.Controls[i];
+
+                if (control != lblChartTitle)
+                {
+                    panelChart.Controls.RemoveAt(i);
+                    control.Dispose();
+                }
+            }
+
             if (dt == null || dt.Rows.Count == 0)
             {
                 Label lblNoData = new Label
@@ -153,20 +187,32 @@ namespace SchoolSystem.UI
             }
         }
 
-        private async void LoadAlerts()
+        private async Task LoadAlertsAsync()
         {
             try
             {
+                for (int i = panelAlerts.Controls.Count - 1; i >= 0; i--)
+                {
+                    Control control = panelAlerts.Controls[i];
+
+                    if (control != lblAlertsTitle)
+                    {
+                        panelAlerts.Controls.RemoveAt(i);
+                        control.Dispose();
+                    }
+                }
+
                 int pendingFees = await Task.Run(() => dashboardService.GetPendingFeesCount());
                 int todayAbsence = await Task.Run(() => dashboardService.GetTodayAbsenceCount());
 
                 lblPendingFees.Text = $"⚠️  رسوم غير مدفوعة: {pendingFees}";
                 lblTodayAbsence.Text = $"📅  غياب اليوم: {todayAbsence}";
             }
-            catch
+            catch (Exception ex)
             {
-                lblPendingFees.Text = "⚠️  رسوم غير مدفوعة: --";
-                lblTodayAbsence.Text = "📅  غياب اليوم: --";
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                lblPendingFees.Text = "رسوم غير مدفوعة: --";
+                lblTodayAbsence.Text = "غياب اليوم: --";
             }
         }
     }
