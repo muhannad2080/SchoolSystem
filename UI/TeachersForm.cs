@@ -93,7 +93,8 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل الاتصال بقاعدة البيانات:\n" + ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                LogException("LoadTeachers", ex);
+                ShowSafeError("تعذر تحميل بيانات المعلمين. تحقق من الاتصال وحاول مرة أخرى.");
             }
             finally
             {
@@ -107,7 +108,8 @@ namespace SchoolSystem.UI
             DataView dv = _allTeachers.DefaultView;
             if (!string.IsNullOrWhiteSpace(search))
             {
-                dv.RowFilter = $"FullName LIKE '%{search}%' OR EmployeeNumber LIKE '%{search}%' OR Specialization LIKE '%{search}%'";
+                string safeSearch = EscapeFilter(search);
+                dv.RowFilter = $"FullName LIKE '%{safeSearch}%' OR EmployeeNumber LIKE '%{safeSearch}%' OR Specialization LIKE '%{safeSearch}%'";
             }
             else
             {
@@ -130,6 +132,18 @@ namespace SchoolSystem.UI
                 dataGridViewTeachers.Columns["Specialization"].HeaderText = "التخصص";
             if (dataGridViewTeachers.Columns.Contains("Status"))
                 dataGridViewTeachers.Columns["Status"].HeaderText = "الحالة";
+        }
+
+        private string EscapeFilter(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return "";
+
+            return value.Trim()
+                .Replace("'", "''")
+                .Replace("[", "[[]")
+                .Replace("%", "[%]")
+                .Replace("*", "[*]");
         }
 
         private bool ValidateInputs()
@@ -276,7 +290,8 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("خطأ: " + ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogException("AddTeacher", ex);
+                ShowSafeError(GetOperationError("الإضافة", ex));
             }
         }
 
@@ -298,7 +313,8 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("خطأ: " + ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LogException("UpdateTeacher", ex);
+                ShowSafeError(GetOperationError("التعديل", ex));
             }
         }
 
@@ -320,7 +336,8 @@ namespace SchoolSystem.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("خطأ: " + ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    LogException("DeleteTeacher", ex);
+                    ShowSafeError(GetOperationError("الحذف", ex));
                 }
             }
         }
@@ -364,6 +381,37 @@ namespace SchoolSystem.UI
                 nudHousingAllowance.Value = Convert.ToDecimal(row.Cells["HousingAllowance"].Value);
                 cmbStatus.Text = row.Cells["Status"].Value?.ToString();
                 txtNotes.Text = row.Cells["Notes"].Value?.ToString();
+            }
+        }
+
+        private string GetOperationError(string operation, Exception ex)
+        {
+            if (ex is UnauthorizedAccessException)
+                return ex.Message;
+
+            return "تعذر تنفيذ " + operation + " المعلم. تحقق من البيانات والاتصال ثم حاول مرة أخرى.";
+        }
+
+        private void ShowSafeError(string message)
+        {
+            MessageBox.Show(message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error,
+                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+        }
+
+        private void LogException(string operation, Exception ex)
+        {
+            try
+            {
+                string directory = System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "SchoolSystem", "Logs");
+                System.IO.Directory.CreateDirectory(directory);
+                System.IO.File.AppendAllText(System.IO.Path.Combine(directory, "errors.log"),
+                    DateTime.Now.ToString("s") + " [" + operation + "] " + ex + Environment.NewLine);
+            }
+            catch
+            {
+                // لا نسمح لفشل التسجيل بأن يعطل الواجهة.
             }
         }
 
