@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using System.IO;
 
 using System.Windows.Forms;
 
@@ -535,18 +534,7 @@ namespace SchoolSystem.Helpers
 
         public static void LogException(string operation, Exception exception)
         {
-            try
-            {
-                string logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SchoolSystem", "Logs");
-                Directory.CreateDirectory(logDirectory);
-                string logPath = Path.Combine(logDirectory, "errors.log");
-                File.AppendAllText(logPath,
-                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " | " + operation + " | " + exception + Environment.NewLine);
-            }
-            catch
-            {
-                // لا نسمح بفشل التسجيل أن يعطل واجهة المستخدم.
-            }
+            ApplicationLogger.LogException(operation, exception, "errors.log");
         }
 
         public static void ShowInfo(string message)

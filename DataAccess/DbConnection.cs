@@ -1,17 +1,26 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Data.SqlClient;
 
 namespace SchoolSystem.DataAccess
 {
     public static class DbConnection
     {
-        private static readonly string connectionString = 
-            ConfigurationManager.ConnectionStrings["SchoolDBConnection"]?.ConnectionString ?? 
-            @"Server=MUHANNADALJRADI;Database=SchoolDB;Trusted_Connection=True;";
+        public static string GetConnectionString()
+        {
+            var settings = ConfigurationManager.ConnectionStrings["SchoolDBConnection"];
+            if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionString))
+            {
+                throw new InvalidOperationException(
+                    "لم يتم إعداد اتصال قاعدة البيانات. يرجى ضبط SchoolDBConnection في ملف إعداد التطبيق.");
+            }
+
+            return settings.ConnectionString;
+        }
 
         public static SqlConnection GetConnection()
         {
-            return new SqlConnection(connectionString);
+            return new SqlConnection(GetConnectionString());
         }
     }
 }

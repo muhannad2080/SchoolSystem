@@ -4,6 +4,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess.Repositories;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -22,11 +23,13 @@ namespace SchoolSystem.Services
 
         public List<Student> GetAll()
         {
+            EnsureCanManageStudents();
             return _studentRepository.GetAll();
         }
 
         public Student GetById(int studentId)
         {
+            EnsureCanManageStudents();
             if (studentId <= 0)
                 throw new ArgumentException("رقم الطالب غير صحيح.");
 
@@ -35,6 +38,7 @@ namespace SchoolSystem.Services
 
         public List<Student> Search(string keyword)
         {
+            EnsureCanManageStudents();
             if (string.IsNullOrWhiteSpace(keyword))
                 return GetAll();
 
@@ -43,6 +47,7 @@ namespace SchoolSystem.Services
 
         public int Add(Student student)
         {
+            EnsureCanManageStudents();
             ValidateStudent(student);
 
             student.StudentNumber = _studentRepository.GenerateNextStudentNumber();
@@ -58,6 +63,7 @@ namespace SchoolSystem.Services
 
         public void Update(Student student)
         {
+            EnsureCanManageStudents();
             if (student == null)
                 throw new Exception("بيانات الطالب غير صحيحة.");
 
@@ -77,6 +83,7 @@ namespace SchoolSystem.Services
 
         public void Delete(int studentId)
         {
+            EnsureCanManageStudents();
             if (studentId <= 0)
                 throw new Exception("يرجى اختيار طالب من الجدول قبل الحذف.");
 
@@ -85,6 +92,7 @@ namespace SchoolSystem.Services
 
         public string GenerateNextStudentNumber()
         {
+            EnsureCanManageStudents();
             return _studentRepository.GenerateNextStudentNumber();
         }
 
@@ -191,6 +199,12 @@ namespace SchoolSystem.Services
         // =====================================================
         // Validation
         // =====================================================
+
+        private static void EnsureCanManageStudents()
+        {
+            if (!CurrentUser.HasPermission(PermissionKeys.StudentsManage))
+                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة الطلاب.");
+        }
 
         private void ValidateStudent(Student student)
         {

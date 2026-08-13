@@ -1,7 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using SchoolSystem.Helpers;
 using SchoolSystem.UI;
 
 namespace SchoolSystem
@@ -48,26 +48,7 @@ namespace SchoolSystem
 
         private static void LogException(Exception exception)
         {
-            try
-            {
-                string directory = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "SchoolSystem",
-                    "Logs");
-                Directory.CreateDirectory(directory);
-                string path = Path.Combine(directory, "application-errors.log");
-                File.AppendAllText(
-                    path,
-                    string.Format(
-                        "[{0:yyyy-MM-dd HH:mm:ss}] {1}{2}",
-                        DateTime.Now,
-                        exception,
-                        Environment.NewLine));
-            }
-            catch
-            {
-                // لا نسمح لفشل التسجيل بأن يتسبب في خطأ إضافي.
-            }
+            ApplicationLogger.LogException("خطأ عام في التطبيق", exception);
         }
     }
 }

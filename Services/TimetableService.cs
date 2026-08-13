@@ -3,6 +3,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -12,11 +13,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetTeachers()
         {
+            EnsureCanManageTimetable();
             return repository.GetTeachers();
         }
 
         public DataTable GetSubjectsByClass(int classId)
         {
+            EnsureCanManageTimetable();
             if (classId <= 0)
                 return new DataTable();
 
@@ -25,11 +28,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllTimetable()
         {
+            EnsureCanManageTimetable();
             return repository.GetAllTimetable();
         }
 
         public bool AddTimetable(TimetableEntry item)
         {
+            EnsureCanManageTimetable();
             Validate(item);
 
             if (repository.HasClassConflict(item))
@@ -46,6 +51,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateTimetable(TimetableEntry item)
         {
+            EnsureCanManageTimetable();
             Validate(item);
 
             if (item.TimetableID <= 0)
@@ -65,10 +71,17 @@ namespace SchoolSystem.Services
 
         public bool DeleteTimetable(int timetableId)
         {
+            EnsureCanManageTimetable();
             if (timetableId <= 0)
                 throw new ArgumentException("رقم الحصة غير صحيح.");
 
             return repository.DeleteTimetable(timetableId);
+        }
+
+        private static void EnsureCanManageTimetable()
+        {
+            if (!CurrentUser.HasPermission(PermissionKeys.TimetableManage))
+                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة الجدول الدراسي.");
         }
 
         private void Validate(TimetableEntry item)

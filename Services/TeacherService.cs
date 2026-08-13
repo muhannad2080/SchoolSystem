@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Configuration;
+
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -15,9 +15,8 @@ namespace SchoolSystem.Services
 
         public TeacherService()
         {
-            string connectionString = ConfigurationManager.ConnectionStrings["SchoolDBConnection"]?.ConnectionString 
-                                   ?? @"Data Source=.;Initial Catalog=SchoolDB;Integrated Security=True;MultipleActiveResultSets=True;";
-            _repository = new TeacherRepository(connectionString);
+                        _repository = new TeacherRepository(DbConnection.GetConnectionString());
+
         }
 
         public DataTable GetAllTeachers()
