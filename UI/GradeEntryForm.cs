@@ -45,7 +45,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 isLoading = false;
-                ShowError("حدث خطأ أثناء تحميل واجهة الدرجات:\n" + ex.Message);
+                UIHelper.ShowException("تحميل واجهة الدرجات", ex);
             }
         }
 
@@ -171,7 +171,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء تحميل مواد الصف:\n" + ex.Message);
+                UIHelper.ShowException("تحميل مواد الصف", ex);
             }
         }
 
@@ -226,7 +226,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                ShowError("خطأ أثناء تحميل الطلاب والدرجات:\n" + ex.Message);
+                UIHelper.ShowException("تحميل الطلاب والدرجات", ex);
             }
         }
 
@@ -415,7 +415,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                ShowError("خطأ أثناء حفظ الدرجات:\n" + ex.Message);
+                UIHelper.ShowException("حفظ الدرجات", ex);
             }
         }
 
@@ -471,7 +471,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء حذف الدرجة:\n" + ex.Message);
+                UIHelper.ShowException("حذف الدرجة", ex);
             }
         }
 

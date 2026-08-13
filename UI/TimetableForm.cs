@@ -46,7 +46,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 isLoading = false;
-                ShowError("حدث خطأ أثناء تحميل واجهة الجدول الدراسي:\n" + ex.Message);
+                UIHelper.ShowException("تحميل واجهة الجدول الدراسي", ex);
             }
         }
 
@@ -289,7 +289,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء الإضافة:\n" + ex.Message);
+                UIHelper.ShowException("إضافة الحصة", ex);
             }
         }
 
@@ -321,7 +321,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء التعديل:\n" + ex.Message);
+                UIHelper.ShowException("تعديل الحصة", ex);
             }
         }
 
@@ -361,7 +361,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء الحذف:\n" + ex.Message);
+                UIHelper.ShowException("حذف الحصة", ex);
             }
         }
 

@@ -44,7 +44,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                ShowError("حدث خطأ أثناء تحميل واجهة المواد:\n" + ex.Message);
+                UIHelper.ShowException("تحميل واجهة المواد", ex);
             }
         }
 
@@ -116,7 +116,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء تحميل المواد:\n" + ex.Message);
+                UIHelper.ShowException("تحميل المواد", ex);
             }
         }
 
@@ -225,7 +225,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء التعديل:\n" + ex.Message);
+                UIHelper.ShowException("تعديل المادة", ex);
             }
         }
 

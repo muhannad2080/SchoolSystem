@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -58,7 +59,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("حدث خطأ أثناء تحميل شاشة النقل:\n" + ex.Message);
+                UIHelper.ShowException("تحميل شاشة النقل", ex);
             }
             finally
             {
@@ -238,7 +239,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل إضافة الحافلة:\n" + ex.Message);
+                UIHelper.ShowException("إضافة الحافلة", ex);
             }
         }
 
@@ -267,7 +268,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل تعديل الحافلة:\n" + ex.Message);
+                UIHelper.ShowException("تعديل الحافلة", ex);
             }
         }
 
@@ -300,7 +301,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل حذف الحافلة:\n" + ex.Message);
+                UIHelper.ShowException("حذف الحافلة", ex);
             }
         }
 
@@ -510,7 +511,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل إضافة المسار:\n" + ex.Message);
+                UIHelper.ShowException("إضافة المسار", ex);
             }
         }
 
@@ -538,7 +539,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل تعديل المسار:\n" + ex.Message);
+                UIHelper.ShowException("تعديل المسار", ex);
             }
         }
 
@@ -570,7 +571,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل حذف المسار:\n" + ex.Message);
+                UIHelper.ShowException("حذف المسار", ex);
             }
         }
 

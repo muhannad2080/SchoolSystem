@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -57,7 +58,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("حدث خطأ أثناء تحميل شاشة المكتبة:\n" + ex.Message);
+                UIHelper.ShowException("تحميل شاشة المكتبة", ex);
             }
             finally
             {
@@ -276,7 +277,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل إضافة الكتاب:\n" + ex.Message);
+                UIHelper.ShowException("إضافة الكتاب", ex);
             }
         }
 
@@ -305,7 +306,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل تعديل الكتاب:\n" + ex.Message);
+                UIHelper.ShowException("تعديل الكتاب", ex);
             }
         }
 
@@ -338,7 +339,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل حذف الكتاب:\n" + ex.Message);
+                UIHelper.ShowException("حذف الكتاب", ex);
             }
         }
 
@@ -387,7 +388,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("خطأ في تحميل المستعيرين:\n" + ex.Message);
+                UIHelper.ShowException("تحميل المستعيرين", ex);
             }
         }
 
@@ -527,7 +528,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل إعارة الكتاب:\n" + ex.Message);
+                UIHelper.ShowException("إعارة الكتاب", ex);
             }
         }
 
@@ -554,7 +555,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل استرجاع الكتاب:\n" + ex.Message);
+                UIHelper.ShowException("استرجاع الكتاب", ex);
             }
         }
 

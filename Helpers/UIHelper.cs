@@ -1,5 +1,7 @@
 using System;
 using System.Drawing;
+using System.IO;
+
 using System.Windows.Forms;
 
 namespace SchoolSystem.Helpers
@@ -524,7 +526,31 @@ namespace SchoolSystem.Helpers
                 MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
         }
 
+                public static void ShowException(string operation, Exception exception)
+        {
+            string safeOperation = string.IsNullOrWhiteSpace(operation) ? "العملية" : operation.Trim();
+            LogException(safeOperation, exception);
+            ShowError("تعذر إتمام " + safeOperation + ". تحقق من البيانات أو الاتصال بقاعدة البيانات ثم حاول مرة أخرى.");
+        }
+
+        public static void LogException(string operation, Exception exception)
+        {
+            try
+            {
+                string logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SchoolSystem", "Logs");
+                Directory.CreateDirectory(logDirectory);
+                string logPath = Path.Combine(logDirectory, "errors.log");
+                File.AppendAllText(logPath,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + " | " + operation + " | " + exception + Environment.NewLine);
+            }
+            catch
+            {
+                // لا نسمح بفشل التسجيل أن يعطل واجهة المستخدم.
+            }
+        }
+
         public static void ShowInfo(string message)
+
         {
             MessageBox.Show(
                 message,

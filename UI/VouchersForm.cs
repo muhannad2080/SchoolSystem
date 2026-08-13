@@ -40,7 +40,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("حدث خطأ أثناء تحميل السندات:\n" + ex.Message);
+                UIHelper.ShowException("تحميل السندات", ex);
             }
             finally
             {
@@ -371,7 +371,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل إضافة السند:\n" + ex.Message);
+                UIHelper.ShowException("إضافة السند", ex);
             }
         }
 
@@ -399,7 +399,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل تعديل السند:\n" + ex.Message);
+                UIHelper.ShowException("تعديل السند", ex);
             }
         }
 
@@ -431,7 +431,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل حذف السند:\n" + ex.Message);
+                UIHelper.ShowException("حذف السند", ex);
             }
         }
 
