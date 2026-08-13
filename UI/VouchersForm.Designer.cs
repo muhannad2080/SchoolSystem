@@ -16,7 +16,7 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.panelTitle = new System.Windows.Forms.Panel();
+            this.panelTitle = new Krypton.Toolkit.KryptonPanel();
             this.lblTitle = new System.Windows.Forms.Label();
             this.panelFields = new System.Windows.Forms.Panel();
             this.tableLayoutFields = new System.Windows.Forms.TableLayoutPanel();
@@ -567,7 +567,7 @@
 
         }
 
-        private System.Windows.Forms.Panel panelTitle;
+        private Krypton.Toolkit.KryptonPanel panelTitle;
         private System.Windows.Forms.Label lblTitle;
 
         private System.Windows.Forms.Panel panelFields;
