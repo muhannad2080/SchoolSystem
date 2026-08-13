@@ -41,7 +41,8 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("حدث خطأ أثناء تحميل واجهة المستخدمين:\n" + ex.Message);
+                LogException("UsersForm_Load", ex);
+                ShowError("تعذر تحميل بيانات المستخدمين. تحقق من الاتصال وحاول مرة أخرى.");
             }
             finally
             {
@@ -445,7 +446,8 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء الإضافة:\n" + ex.Message);
+                LogException("AddUser", ex);
+                ShowError(GetSafeOperationError("الإضافة", ex));
             }
         }
 
@@ -475,7 +477,8 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء التعديل:\n" + ex.Message);
+                LogException("UpdateUser", ex);
+                ShowError(GetSafeOperationError("التعديل", ex));
             }
         }
 
@@ -509,7 +512,8 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء الحذف:\n" + ex.Message);
+                LogException("DeleteUser", ex);
+                ShowError(GetSafeOperationError("الحذف", ex));
             }
         }
 
@@ -606,6 +610,32 @@ namespace SchoolSystem.UI
         {
             MessageBox.Show(message, "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
                 MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+        }
+
+        private string GetSafeOperationError(string operation, Exception ex)
+        {
+            if (ex is UnauthorizedAccessException || ex is InvalidOperationException)
+                return ex.Message;
+
+            return "تعذر تنفيذ " + operation + " المستخدم. تحقق من البيانات والاتصال ثم حاول مرة أخرى.";
+        }
+
+        private void LogException(string operation, Exception ex)
+        {
+            try
+            {
+                string directory = System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "SchoolSystem", "Logs");
+                System.IO.Directory.CreateDirectory(directory);
+                string path = System.IO.Path.Combine(directory, "errors.log");
+                System.IO.File.AppendAllText(path,
+                    DateTime.Now.ToString("s") + " [" + operation + "] " + ex + Environment.NewLine);
+            }
+            catch
+            {
+                // لا نسمح لفشل التسجيل بأن يعطل واجهة المستخدم.
+            }
         }
 
         private void ShowError(string message)

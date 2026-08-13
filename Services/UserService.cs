@@ -17,11 +17,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllUsers()
         {
+            EnsureCanManageUsers();
             return userRepository.GetAllUsers();
         }
 
         public bool AddUser(User user, string password)
         {
+            EnsureCanManageUsers();
             ValidateUser(user);
 
             password = NormalizeDigits(password);
@@ -45,6 +47,8 @@ namespace SchoolSystem.Services
 
         public bool UpdateUser(User user, string password, bool updatePassword)
         {
+            EnsureCanManageUsers();
+
             if (user.UserID <= 0)
                 throw new Exception("رقم المستخدم غير صحيح.");
 
@@ -74,10 +78,15 @@ namespace SchoolSystem.Services
 
         public bool DeleteUser(int userId)
         {
+            EnsureCanManageUsers();
+
             if (userId <= 0)
                 throw new Exception("رقم المستخدم غير صحيح.");
 
             User user = userRepository.GetUserById(userId);
+
+            if (user != null && CurrentUser.User != null && user.UserID == CurrentUser.User.UserID)
+                throw new InvalidOperationException("لا يمكن حذف حساب المستخدم المسجل دخوله حالياً.");
 
             if (user == null)
                 throw new Exception("المستخدم غير موجود.");
@@ -86,6 +95,12 @@ namespace SchoolSystem.Services
                 throw new Exception("لا يمكن حذف آخر مدير نظام.");
 
             return userRepository.DeleteUser(userId);
+        }
+
+        private static void EnsureCanManageUsers()
+        {
+            if (!CurrentUser.HasPermission(PermissionKeys.UsersManage))
+                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة المستخدمين والصلاحيات.");
         }
 
         public User Authenticate(string userName, string password)
