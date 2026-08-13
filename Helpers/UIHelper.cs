@@ -185,8 +185,22 @@ namespace SchoolSystem.Helpers
                 else if (child is Label label)
                 {
                     label.ForeColor = TextColor;
+                    label.Margin = new Padding(3, 5, 3, 5);
                     if (!label.AutoSize)
                         label.AutoEllipsis = true;
+
+                    string labelKey = ((label.Name ?? string.Empty) + " " + (label.Text ?? string.Empty)).ToLowerInvariant();
+                    if (labelKey.Contains("title") || labelKey.Contains("header") || labelKey.Contains("عنوان") || labelKey.Contains("رئيسي"))
+                    {
+                        label.ForeColor = PrimaryColor;
+                        label.Font = new Font("Tahoma", 14F, FontStyle.Bold);
+                        label.Margin = new Padding(3, 8, 3, 8);
+                    }
+                    else if (labelKey.Contains("section") || labelKey.Contains("قسم") || labelKey.Contains("بيانات"))
+                    {
+                        label.ForeColor = MutedTextColor;
+                        label.Font = new Font("Tahoma", 11F, FontStyle.Bold);
+                    }
                 }
                 else if (child is LinkLabel linkLabel)
                 {
@@ -210,6 +224,9 @@ namespace SchoolSystem.Helpers
                     dateTimePicker.CalendarFont = new Font("Tahoma", 10F);
                     dateTimePicker.CalendarForeColor = TextColor;
                     dateTimePicker.CalendarMonthBackground = SurfaceColor;
+                    dateTimePicker.BackColor = SurfaceColor;
+                    dateTimePicker.ForeColor = TextColor;
+                    dateTimePicker.Margin = new Padding(3, 4, 3, 4);
                 }
                 else if (child is NumericUpDown numericUpDown)
                 {
