@@ -15,6 +15,7 @@ namespace SchoolSystem
         public MainForm()
         {
             InitializeComponent();
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
 
             Instance = this;
 

@@ -20,6 +20,7 @@ namespace SchoolSystem.UI
         public StudentsForm()
         {
             InitializeComponent();
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             _studentService = new StudentService();
             _currentStudents = new List<Student>();
             

@@ -17,7 +17,10 @@ namespace SchoolSystem.Helpers
         public static readonly Color ExportColor = Color.FromArgb(13, 148, 136);
         public static readonly Color SearchColor = Color.FromArgb(37, 99, 235);
         public static readonly Color BackgroundColor = Color.FromArgb(248, 250, 252);
-        public static readonly Color TextColor = Color.FromArgb(30, 41, 59);
+        public static readonly Color SurfaceColor = Color.White;
+        public static readonly Color BorderColor = Color.FromArgb(203, 213, 225);
+        public static readonly Color MutedTextColor = Color.FromArgb(71, 85, 105);
+        public static readonly Color TextColor = Color.FromArgb(15, 23, 42);
 
         public static void ApplyStyle(Form form)
         {
@@ -171,11 +174,11 @@ namespace SchoolSystem.Helpers
             {
                 if (child is Panel panel)
                 {
-                    panel.BackColor = Color.White;
+                    panel.BackColor = SurfaceColor;
                 }
                 else if (child is GroupBox groupBox)
                 {
-                    groupBox.BackColor = Color.White;
+                    groupBox.BackColor = SurfaceColor;
                     groupBox.ForeColor = TextColor;
                     groupBox.Font = new Font("Tahoma", 10F, FontStyle.Bold);
                 }
@@ -184,6 +187,12 @@ namespace SchoolSystem.Helpers
                     label.ForeColor = TextColor;
                     if (!label.AutoSize)
                         label.AutoEllipsis = true;
+                }
+                else if (child is LinkLabel linkLabel)
+                {
+                    linkLabel.LinkColor = SearchColor;
+                    linkLabel.ActiveLinkColor = AccentColor;
+                    linkLabel.Font = new Font("Tahoma", 10F, FontStyle.Underline);
                 }
                 else if (child is TextBox textBox)
                 {
@@ -198,10 +207,26 @@ namespace SchoolSystem.Helpers
                 else if (child is DateTimePicker dateTimePicker)
                 {
                     dateTimePicker.Font = new Font("Tahoma", 10F);
+                    dateTimePicker.CalendarFont = new Font("Tahoma", 10F);
+                    dateTimePicker.CalendarForeColor = TextColor;
+                    dateTimePicker.CalendarMonthBackground = SurfaceColor;
                 }
                 else if (child is NumericUpDown numericUpDown)
                 {
                     numericUpDown.Font = new Font("Tahoma", 10F);
+                    numericUpDown.BackColor = SurfaceColor;
+                    numericUpDown.ForeColor = TextColor;
+                    numericUpDown.BorderStyle = BorderStyle.FixedSingle;
+                }
+                else if (child is CheckBox checkBox)
+                {
+                    checkBox.Font = new Font("Tahoma", 10F);
+                    checkBox.ForeColor = TextColor;
+                }
+                else if (child is RadioButton radioButton)
+                {
+                    radioButton.Font = new Font("Tahoma", 10F);
+                    radioButton.ForeColor = TextColor;
                 }
                 else if (child is DataGridView dataGridView)
                 {
@@ -292,16 +317,22 @@ namespace SchoolSystem.Helpers
             dgv.ColumnHeadersHeight = 40;
 
             dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(224, 231, 255);
-            dgv.DefaultCellStyle.SelectionForeColor = PrimaryColor;
-            dgv.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
-            
-            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(249, 250, 251);
+            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
+            dgv.DefaultCellStyle.SelectionForeColor = TextColor;
+            dgv.DefaultCellStyle.ForeColor = TextColor;
+            dgv.DefaultCellStyle.Font = new Font("Tahoma", 10F);
+            dgv.DefaultCellStyle.Padding = new Padding(6, 3, 6, 3);
+            dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+            dgv.RowsDefaultCellStyle.BackColor = SurfaceColor;
+            dgv.RowsDefaultCellStyle.ForeColor = TextColor;
             dgv.RowTemplate.Height = 35;
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgv.AllowUserToAddRows = false;
             dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv.GridColor = Color.FromArgb(229, 231, 235);
+            dgv.GridColor = BorderColor;
+            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(6, 4, 6, 4);
         }
 
         public static void StyleButton(Button btn, Color backColor)
@@ -310,9 +341,12 @@ namespace SchoolSystem.Helpers
             btn.BackColor = backColor;
             btn.ForeColor = Color.White;
             btn.FlatAppearance.BorderSize = 0;
+            btn.FlatAppearance.MouseOverBackColor = Lighten(backColor, 0.10f);
+            btn.FlatAppearance.MouseDownBackColor = Darken(backColor, 0.10f);
             btn.Cursor = Cursors.Hand;
             btn.Font = new Font("Tahoma", 10F, FontStyle.Bold);
             btn.Height = 38;
+            btn.Padding = new Padding(10, 0, 10, 0);
         }
 
         public static void StyleButton(KryptonButton btn, Color backColor)
@@ -326,6 +360,22 @@ namespace SchoolSystem.Helpers
             btn.Font = new Font("Tahoma", 10F, FontStyle.Bold);
             btn.Height = 38;
             btn.MinimumSize = new Size(90, 38);
+        }
+
+        private static Color Lighten(Color color, float amount)
+        {
+            int r = color.R + (int)((255 - color.R) * amount);
+            int g = color.G + (int)((255 - color.G) * amount);
+            int b = color.B + (int)((255 - color.B) * amount);
+            return Color.FromArgb(r, g, b);
+        }
+
+        private static Color Darken(Color color, float amount)
+        {
+            int r = color.R - (int)(color.R * amount);
+            int g = color.G - (int)(color.G * amount);
+            int b = color.B - (int)(color.B * amount);
+            return Color.FromArgb(r, g, b);
         }
 
         public static void StylePrimaryButton(Button btn) => StyleButton(btn, AccentColor);
@@ -348,7 +398,10 @@ namespace SchoolSystem.Helpers
         public static void StyleTextBox(TextBox txt)
         {
             txt.BorderStyle = BorderStyle.FixedSingle;
+            txt.BackColor = SurfaceColor;
+            txt.ForeColor = TextColor;
             txt.Font = new Font("Tahoma", 10F);
+            txt.Margin = new Padding(3, 4, 3, 4);
         }
 
         public static void StyleTextBox(KryptonTextBox txt)
@@ -364,7 +417,10 @@ namespace SchoolSystem.Helpers
         public static void StyleComboBox(ComboBox cmb)
         {
             cmb.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmb.BackColor = SurfaceColor;
+            cmb.ForeColor = TextColor;
             cmb.Font = new Font("Tahoma", 10F);
+            cmb.Margin = new Padding(3, 4, 3, 4);
         }
 
         public static void ShowException(string operation, Exception exception)

@@ -19,6 +19,7 @@ namespace SchoolSystem.UI
         public SubjectsForm()
         {
             InitializeComponent();
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
 
             Dock = DockStyle.Fill;
 

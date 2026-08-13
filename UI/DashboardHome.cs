@@ -15,6 +15,7 @@ namespace SchoolSystem.UI
         public DashboardHome()
         {
             InitializeComponent();
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             UIHelper.ApplyTheme(this);
             this.Dock = DockStyle.Fill;
             this.Load += DashboardHome_Load;

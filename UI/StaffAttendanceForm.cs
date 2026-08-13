@@ -20,6 +20,7 @@ namespace SchoolSystem.UI
         public StaffAttendanceForm()
         {
             InitializeComponent();
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             this.Dock = DockStyle.Fill;
             this.Load += StaffAttendanceForm_Load;
         }
