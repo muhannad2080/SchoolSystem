@@ -22,7 +22,7 @@ namespace SchoolSystem.UI.Students
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.panelTitle = new System.Windows.Forms.Panel();
+            this.panelTitle = new Krypton.Toolkit.KryptonPanel();
             this.lblTitle = new System.Windows.Forms.Label();
             this.mainContainer = new System.Windows.Forms.TableLayoutPanel();
             this.panelTop = new System.Windows.Forms.Panel();
@@ -582,7 +582,7 @@ namespace SchoolSystem.UI.Students
 
         #endregion
 
-        private System.Windows.Forms.Panel panelTitle;
+        private Krypton.Toolkit.KryptonPanel panelTitle;
         private System.Windows.Forms.Label lblTitle;
 
         private System.Windows.Forms.TableLayoutPanel mainContainer;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Services;
+using SchoolSystem.Helpers;
 
 namespace SchoolSystem.UI
 {
@@ -459,16 +460,24 @@ namespace SchoolSystem.UI
             }
 
             decimal fee = 0;
-            if (!string.IsNullOrWhiteSpace(txtRegistrationFee.Text) && !decimal.TryParse(txtRegistrationFee.Text, out fee))
+            if (!string.IsNullOrWhiteSpace(txtRegistrationFee.Text) &&
+                (!UIHelper.TryParseDecimal(txtRegistrationFee.Text, out fee) || fee < 0))
             {
-                errorProvider1.SetError(txtRegistrationFee, "رقم غير صحيح.");
+                errorProvider1.SetError(txtRegistrationFee, "أدخل مبلغاً رقمياً غير سالب.");
                 isValid = false;
             }
 
             decimal paid = 0;
-            if (!string.IsNullOrWhiteSpace(txtPaidAmount.Text) && !decimal.TryParse(txtPaidAmount.Text, out paid))
+            if (!string.IsNullOrWhiteSpace(txtPaidAmount.Text) &&
+                (!UIHelper.TryParseDecimal(txtPaidAmount.Text, out paid) || paid < 0))
             {
-                errorProvider1.SetError(txtPaidAmount, "رقم غير صحيح.");
+                errorProvider1.SetError(txtPaidAmount, "أدخل مبلغاً رقمياً غير سالب.");
+                isValid = false;
+            }
+
+            if (isValid && paid > fee && fee > 0)
+            {
+                errorProvider1.SetError(txtPaidAmount, "لا يجوز أن يتجاوز المدفوع قيمة رسوم التسجيل.");
                 isValid = false;
             }
 

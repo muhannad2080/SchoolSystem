@@ -278,13 +278,20 @@ namespace SchoolSystem.Helpers
             dgv.BackgroundColor = Color.White;
             dgv.BorderStyle = BorderStyle.None;
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+            dgv.RightToLeft = RightToLeft.Yes;
+            dgv.RowHeadersVisible = false;
+            dgv.MultiSelect = false;
+            dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            dgv.AllowUserToResizeRows = false;
             
             dgv.EnableHeadersVisualStyles = false;
             dgv.ColumnHeadersDefaultCellStyle.BackColor = PrimaryColor;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgv.ColumnHeadersHeight = 40;
 
+            dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(224, 231, 255);
             dgv.DefaultCellStyle.SelectionForeColor = PrimaryColor;
             dgv.DefaultCellStyle.Font = new Font("Segoe UI", 10F);
