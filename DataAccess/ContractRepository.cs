@@ -11,7 +11,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(
-                @"SELECT c.ContractID, c.TeacherID, t.TeacherName, c.BasicSalary,
+                                @"SELECT c.ContractID, c.TeacherID, t.FullName AS TeacherName, c.BasicSalary,
                   c.HousingAllowance, c.TransportAllowance, c.OtherAllowances,
                   (c.BasicSalary + c.HousingAllowance + c.TransportAllowance + c.OtherAllowances) AS TotalSalary,
                   c.StartDate, c.EndDate, c.ContractType, c.Notes

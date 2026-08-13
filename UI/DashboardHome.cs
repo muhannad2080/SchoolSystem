@@ -22,22 +22,9 @@ namespace SchoolSystem.UI
 
         private async void DashboardHome_Load(object sender, EventArgs e)
         {
-            try
-            {
-                await LoadStatisticsAsync();
-                DataTable studentsPerClass = await Task.Run(() => dashboardService.GetStudentsPerClass());
-                RenderChart(studentsPerClass);
-                await LoadAlertsAsync();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-                MessageBox.Show(
-                    "تعذر تحميل بعض بيانات لوحة التحكم. يمكنك متابعة العمل والمحاولة مرة أخرى.",
-                    "لوحة التحكم",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-            }
+            await LoadStatisticsAsync();
+            LoadChart();
+            LoadAlerts();
         }
 
         private async Task LoadStatisticsAsync()
@@ -48,30 +35,23 @@ namespace SchoolSystem.UI
 
                 panelCards.Controls.Clear();
 
-                Task<int> studentsTask = Task.Run(() => dashboardService.GetStudentCount());
-                Task<int> teachersTask = Task.Run(() => dashboardService.GetTeacherCount());
-                Task<int> subjectsTask = Task.Run(() => dashboardService.GetSubjectCount());
-                Task<int> classesTask = Task.Run(() => dashboardService.GetClassCount());
-                Task<int> pendingFeesTask = Task.Run(() => dashboardService.GetPendingFeesCount());
-                await Task.WhenAll(studentsTask, teachersTask, subjectsTask, classesTask, pendingFeesTask);
+                int studentCount = await Task.Run(() => dashboardService.GetStudentCount());
+                int teacherCount = await Task.Run(() => dashboardService.GetTeacherCount());
+                int subjectCount = await Task.Run(() => dashboardService.GetSubjectCount());
+                int classCount = await Task.Run(() => dashboardService.GetClassCount());
 
-                CreateCard("الطلاب", studentsTask.Result.ToString(), Color.FromArgb(41, 128, 185), 0);
-                CreateCard("المعلمون", teachersTask.Result.ToString(), Color.FromArgb(39, 174, 96), 1);
-                CreateCard("المواد الدراسية", subjectsTask.Result.ToString(), Color.FromArgb(142, 68, 173), 2);
-                CreateCard("الفصول", classesTask.Result.ToString(), Color.FromArgb(230, 126, 34), 3);
-                CreateCard("رسوم غير مدفوعة", pendingFeesTask.Result.ToString(), Color.FromArgb(192, 57, 43), 4);
+                CreateCard("👨‍🎓  الطلاب", studentCount.ToString(), Color.FromArgb(41, 128, 185), 0);
+                CreateCard("👨‍🏫  المعلمين", teacherCount.ToString(), Color.FromArgb(39, 174, 96), 1);
+                CreateCard("📚  المواد", subjectCount.ToString(), Color.FromArgb(142, 68, 173), 2);
+                CreateCard("🏫  الفصول", classCount.ToString(), Color.FromArgb(230, 126, 34), 3);
+                CreateCard("💰  الرسوم", "0", Color.FromArgb(192, 57, 43), 4); // سنحدثه لاحقاً
 
                 Cursor = Cursors.Default;
             }
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-                MessageBox.Show(
-                    "تعذر تحميل إحصائيات لوحة التحكم حاليًا.",
-                    "لوحة التحكم",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                MessageBox.Show("خطأ في تحميل الإحصائيات: " + ex.Message);
             }
         }
 
@@ -117,7 +97,7 @@ namespace SchoolSystem.UI
             panelCards.Controls.Add(card, columnIndex, 0);
         }
 
-        private void RenderChart(DataTable dt)
+        private void LoadChart()
         {
             for (int i = panelChart.Controls.Count - 1; i >= 0; i--)
             {
@@ -130,6 +110,7 @@ namespace SchoolSystem.UI
                 }
             }
 
+            DataTable dt = dashboardService.GetStudentsPerClass();
             if (dt == null || dt.Rows.Count == 0)
             {
                 Label lblNoData = new Label
@@ -187,7 +168,7 @@ namespace SchoolSystem.UI
             }
         }
 
-        private async Task LoadAlertsAsync()
+        private async void LoadAlerts()
         {
             try
             {
@@ -208,11 +189,10 @@ namespace SchoolSystem.UI
                 lblPendingFees.Text = $"⚠️  رسوم غير مدفوعة: {pendingFees}";
                 lblTodayAbsence.Text = $"📅  غياب اليوم: {todayAbsence}";
             }
-            catch (Exception ex)
+            catch
             {
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-                lblPendingFees.Text = "رسوم غير مدفوعة: --";
-                lblTodayAbsence.Text = "غياب اليوم: --";
+                lblPendingFees.Text = "⚠️  رسوم غير مدفوعة: --";
+                lblTodayAbsence.Text = "📅  غياب اليوم: --";
             }
         }
     }

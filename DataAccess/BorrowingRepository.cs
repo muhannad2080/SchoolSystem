@@ -21,7 +21,7 @@ namespace SchoolSystem.DataAccess
                         br.BorrowerType,
                         br.BorrowerID,
                         CASE 
-                            WHEN br.BorrowerType = N'طالب' THEN s.StudentName
+                            WHEN br.BorrowerType = N'طالب' THEN s.FullName
                             WHEN br.BorrowerType = N'معلم' THEN " + teacherNameColumn + @"
                             ELSE N''
                         END AS BorrowerName,

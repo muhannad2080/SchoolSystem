@@ -1,11 +1,10 @@
 ﻿using System;
-
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
-using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -15,31 +14,25 @@ namespace SchoolSystem.Services
 
         public TeacherService()
         {
-                        _repository = new TeacherRepository(DbConnection.GetConnectionString());
-
+            string connectionString = ConfigurationManager.ConnectionStrings["SchoolDBConnection"]?.ConnectionString 
+                                   ?? @"Data Source=.;Initial Catalog=SchoolDB;Integrated Security=True;MultipleActiveResultSets=True;";
+            _repository = new TeacherRepository(connectionString);
         }
 
-        public DataTable GetAllTeachers()
-        {
-            EnsureCanManageTeachers();
-            return _repository.GetAllTeachers();
-        }
+        public DataTable GetAllTeachers() => _repository.GetAllTeachers();
 
         public bool IsNationalIDUnique(string nationalID, int? excludeTeacherId = null)
         {
-            EnsureCanManageTeachers();
             return _repository.IsNationalIDUnique(nationalID, excludeTeacherId);
         }
 
         public bool IsEmailUnique(string email, int? excludeTeacherId = null)
         {
-            EnsureCanManageTeachers();
             return _repository.IsEmailUnique(email, excludeTeacherId);
         }
 
         public void AddTeacher(Teacher teacher)
         {
-            EnsureCanManageTeachers();
             ValidateTeacher(teacher);
             
             if (!_repository.IsNationalIDUnique(teacher.NationalID))
@@ -53,8 +46,6 @@ namespace SchoolSystem.Services
 
         public void UpdateTeacher(Teacher teacher)
         {
-            EnsureCanManageTeachers();
-
             if (teacher.TeacherID <= 0)
                 throw new Exception("يرجى اختيار معلم للتعديل.");
 
@@ -71,24 +62,12 @@ namespace SchoolSystem.Services
 
         public void DeleteTeacher(int teacherId)
         {
-            EnsureCanManageTeachers();
-
             if (teacherId <= 0)
                 throw new Exception("يرجى اختيار معلم للحذف.");
             _repository.DeleteTeacher(teacherId);
         }
 
-        public int GetMaxEmployeeNumberSuffix(int year)
-        {
-            EnsureCanManageTeachers();
-            return _repository.GetMaxEmployeeNumberSuffix(year);
-        }
-
-        private static void EnsureCanManageTeachers()
-        {
-            if (!CurrentUser.HasPermission(PermissionKeys.TeachersManage))
-                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة المعلمين.");
-        }
+        public int GetMaxEmployeeNumberSuffix(int year) => _repository.GetMaxEmployeeNumberSuffix(year);
 
         public void ValidateTeacher(Teacher teacher)
         {
