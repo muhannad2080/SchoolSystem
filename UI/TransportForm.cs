@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
@@ -164,6 +165,22 @@ namespace SchoolSystem.UI
             {
                 MessageBox.Show("أدخل سعة صحيحة للحافلة.");
                 txtCapacity.Focus();
+                return false;
+            }
+
+            if (txtBusNumber.Text.Trim().Length > 30 || txtDriverName.Text.Trim().Length > 150 ||
+                txtDriverPhone.Text.Trim().Length > 30 || txtNotes.Text.Trim().Length > 1000)
+            {
+                MessageBox.Show("تجاوز أحد حقول الحافلة الحد المسموح به.");
+                return false;
+            }
+
+            string phone = txtDriverPhone.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(phone) && (phone.Length < 7 || phone.Length > 15 ||
+                !phone.All(char.IsDigit)))
+            {
+                MessageBox.Show("رقم هاتف السائق يجب أن يحتوي على أرقام من 7 إلى 15 خانة.");
+                txtDriverPhone.Focus();
                 return false;
             }
 
@@ -390,13 +407,34 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            decimal fee;
-            if (!string.IsNullOrWhiteSpace(txtFee.Text) &&
-                !decimal.TryParse(txtFee.Text.Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out fee) &&
-                !decimal.TryParse(txtFee.Text.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out fee))
+            if (string.IsNullOrWhiteSpace(txtStartPoint.Text) || string.IsNullOrWhiteSpace(txtEndPoint.Text))
             {
-                MessageBox.Show("أدخل رسوم نقل صحيحة.");
+                MessageBox.Show("أدخل نقطة البداية ونقطة النهاية.");
+                txtStartPoint.Focus();
+                return false;
+            }
+
+            if (dtpArrival.Value.TimeOfDay <= dtpDeparture.Value.TimeOfDay)
+            {
+                MessageBox.Show("وقت الوصول يجب أن يكون بعد وقت الانطلاق.");
+                dtpArrival.Focus();
+                return false;
+            }
+
+            decimal fee = 0;
+            if (!string.IsNullOrWhiteSpace(txtFee.Text) &&
+                (!decimal.TryParse(txtFee.Text.Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out fee) &&
+                 !decimal.TryParse(txtFee.Text.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out fee) || fee < 0))
+            {
+                MessageBox.Show("أدخل رسوم نقل رقمية غير سالبة.");
                 txtFee.Focus();
+                return false;
+            }
+
+            if (txtRouteName.Text.Trim().Length > 150 || txtStartPoint.Text.Trim().Length > 200 ||
+                txtEndPoint.Text.Trim().Length > 200 || txtRouteNotes.Text.Trim().Length > 1000)
+            {
+                MessageBox.Show("تجاوز أحد حقول المسار الحد المسموح به.");
                 return false;
             }
 

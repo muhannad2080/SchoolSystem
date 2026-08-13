@@ -181,12 +181,20 @@ namespace SchoolSystem.UI
             if (!string.IsNullOrWhiteSpace(txtPublicationYear.Text))
             {
                 int year;
-                if (!int.TryParse(txtPublicationYear.Text.Trim(), out year) || year < 0)
+                if (!int.TryParse(txtPublicationYear.Text.Trim(), out year) || year < 1000 || year > DateTime.Today.Year)
                 {
-                    MessageBox.Show("سنة النشر غير صحيحة.");
+                    MessageBox.Show("سنة النشر يجب أن تكون بين 1000 والسنة الحالية.");
                     txtPublicationYear.Focus();
                     return false;
                 }
+            }
+
+            if (txtTitle.Text.Trim().Length > 250 || txtAuthor.Text.Trim().Length > 150 ||
+                txtISBN.Text.Trim().Length > 30 || txtPublisher.Text.Trim().Length > 150 ||
+                txtShelf.Text.Trim().Length > 80 || txtBookNotes.Text.Trim().Length > 1000)
+            {
+                MessageBox.Show("تجاوز أحد حقول الكتاب الحد المسموح به.");
+                return false;
             }
 
             return true;
@@ -471,10 +479,32 @@ namespace SchoolSystem.UI
                 return false;
             }
 
+            if (cmbBorrowerType.SelectedIndex < 0 ||
+                (cmbBorrowerType.Text != "طالب" && cmbBorrowerType.Text != "معلم"))
+            {
+                MessageBox.Show("اختر نوع المستعير بشكل صحيح.");
+                cmbBorrowerType.Focus();
+                return false;
+            }
+
+            if (dtpBorrowDate.Value.Date > DateTime.Today)
+            {
+                MessageBox.Show("لا يمكن تسجيل إعارة بتاريخ مستقبلي.");
+                dtpBorrowDate.Focus();
+                return false;
+            }
+
             if (dtpDueDate.Value.Date < dtpBorrowDate.Value.Date)
             {
                 MessageBox.Show("تاريخ الإرجاع يجب أن يكون بعد تاريخ الإعارة أو مساوياً له.");
                 dtpDueDate.Focus();
+                return false;
+            }
+
+            if (txtBorrowNotes.Text.Trim().Length > 1000)
+            {
+                MessageBox.Show("تجاوزت الملاحظات الحد المسموح به.");
+                txtBorrowNotes.Focus();
                 return false;
             }
 
