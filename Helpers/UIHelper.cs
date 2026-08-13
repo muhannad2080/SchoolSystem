@@ -2,11 +2,14 @@ using System;
 using System.Drawing;
 
 using System.Windows.Forms;
+using Krypton.Toolkit;
 
 namespace SchoolSystem.Helpers
 {
     public static class UIHelper
     {
+        private static readonly KryptonManager KryptonThemeManager = new KryptonManager();
+
         // =========================
         // ألوان النظام الموحدة
         // =========================
@@ -40,12 +43,77 @@ namespace SchoolSystem.Helpers
 
         public static void ApplyStyle(Form form)
         {
+            ApplyKryptonTheme();
             ApplyTheme(form);
         }
 
         public static void ApplyStyle(UserControl uc)
         {
+            ApplyKryptonTheme();
             ApplyTheme(uc);
+        }
+
+        /// <summary>
+        /// يضبط لوحة Krypton العامة مرة واحدة قبل إنشاء أو تنسيق عناصر Krypton.
+        /// </summary>
+        public static void ApplyKryptonTheme()
+        {
+            KryptonThemeManager.GlobalPaletteMode = PaletteMode.Office2010Blue;
+            KryptonThemeManager.BaseFont = DefaultFont;
+        }
+
+        /// <summary>
+        /// يطبق قواعد RTL والخطوط الأساسية على عناصر Krypton الموجودة داخل الجذر.
+        /// يمكن استدعاؤه تدريجيًا أثناء تحويل الواجهات دون تغيير منطقها.
+        /// </summary>
+        public static void ApplyKryptonTheme(Control root)
+        {
+            ApplyKryptonTheme();
+            if (root == null)
+                return;
+
+            ApplyKryptonThemeRecursive(root);
+        }
+
+        private static void ApplyKryptonThemeRecursive(Control control)
+        {
+            foreach (Control child in control.Controls)
+            {
+                child.RightToLeft = RightToLeft.Yes;
+                child.Font = DefaultFont;
+
+                if (child is KryptonButton kryptonButton)
+                {
+                    kryptonButton.ForeColor = Color.White;
+                    kryptonButton.Font = DefaultBoldFont;
+                    kryptonButton.MinimumSize = new Size(90, 38);
+                    kryptonButton.Cursor = Cursors.Hand;
+                }
+                else if (child is KryptonTextBox kryptonTextBox)
+                {
+                    kryptonTextBox.ForeColor = TextColor;
+                    kryptonTextBox.Font = DefaultFont;
+                    kryptonTextBox.MinimumSize = new Size(120, 34);
+                }
+                else if (child is KryptonComboBox kryptonComboBox)
+                {
+                    kryptonComboBox.ForeColor = TextColor;
+                    kryptonComboBox.Font = DefaultFont;
+                    kryptonComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                    kryptonComboBox.MinimumSize = new Size(120, 34);
+                }
+                else if (child is KryptonLabel kryptonLabel)
+                {
+                    kryptonLabel.ForeColor = TextColor;
+                    kryptonLabel.Font = DefaultFont;
+                }
+                else if (child is KryptonPanel kryptonPanel)
+                {
+                    kryptonPanel.BackColor = CardColor;
+                }
+
+                ApplyKryptonThemeRecursive(child);
+            }
         }
 
         public static void ApplyTheme(Control root)
@@ -263,6 +331,17 @@ namespace SchoolSystem.Helpers
             txt.Margin = new Padding(4);
         }
 
+        public static void StyleTextBox(KryptonTextBox txt)
+        {
+            if (txt == null)
+                return;
+
+            txt.Font = DefaultFont;
+            txt.BackColor = txt.ReadOnly ? Color.FromArgb(241, 245, 249) : Color.White;
+            txt.ForeColor = TextColor;
+            txt.Margin = new Padding(4);
+        }
+
         public static void StyleComboBox(ComboBox cmb)
         {
             if (cmb == null)
@@ -376,6 +455,20 @@ namespace SchoolSystem.Helpers
             btn.UseVisualStyleBackColor = false;
         }
 
+        public static void StyleButton(KryptonButton btn, Color backColor)
+        {
+            if (btn == null)
+                return;
+
+            btn.BackColor = backColor;
+            btn.ForeColor = Color.White;
+            btn.Cursor = Cursors.Hand;
+            btn.Font = DefaultBoldFont;
+            btn.Height = 40;
+            btn.MinimumSize = new Size(85, 36);
+            btn.Margin = new Padding(5, 4, 5, 4);
+        }
+
         public static void StylePrimaryButton(Button btn)
         {
             StyleButton(btn, AccentColor);
@@ -476,6 +569,33 @@ namespace SchoolSystem.Helpers
             textBox.KeyPress += NoNumbers_KeyPress;
         }
 
+        public static void AllowOnlyNumbers(Control control)
+        {
+            if (control == null)
+                return;
+
+            control.KeyPress -= NumbersOnly_KeyPress;
+            control.KeyPress += NumbersOnly_KeyPress;
+        }
+
+        public static void AllowOnlyDecimal(Control control)
+        {
+            if (control == null)
+                return;
+
+            control.KeyPress -= DecimalOnly_KeyPress;
+            control.KeyPress += DecimalOnly_KeyPress;
+        }
+
+        public static void PreventNumbers(Control control)
+        {
+            if (control == null)
+                return;
+
+            control.KeyPress -= NoNumbers_KeyPress;
+            control.KeyPress += NoNumbers_KeyPress;
+        }
+
         private static void NumbersOnly_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (char.IsControl(e.KeyChar))
@@ -490,12 +610,12 @@ namespace SchoolSystem.Helpers
             if (char.IsControl(e.KeyChar))
                 return;
 
-            TextBox textBox = sender as TextBox;
+            Control control = sender as Control;
 
             if (char.IsDigit(e.KeyChar))
                 return;
 
-            if (e.KeyChar == '.' && textBox != null && !textBox.Text.Contains("."))
+            if (e.KeyChar == '.' && control != null && !control.Text.Contains("."))
                 return;
 
             e.Handled = true;

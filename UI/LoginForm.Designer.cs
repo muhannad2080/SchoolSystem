@@ -15,15 +15,15 @@
 
         private void InitializeComponent()
         {
-            this.panelBackground = new System.Windows.Forms.Panel();
-            this.panelCard = new System.Windows.Forms.Panel();
-            this.lblIcon = new System.Windows.Forms.Label();
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.lblSubtitle = new System.Windows.Forms.Label();
-            this.txtUserName = new System.Windows.Forms.TextBox();
-            this.txtPassword = new System.Windows.Forms.TextBox();
-            this.btnLogin = new System.Windows.Forms.Button();
-            this.btnExit = new System.Windows.Forms.Button();
+            this.panelBackground = new Krypton.Toolkit.KryptonPanel();
+            this.panelCard = new Krypton.Toolkit.KryptonPanel();
+            this.lblIcon = new Krypton.Toolkit.KryptonLabel();
+            this.lblTitle = new Krypton.Toolkit.KryptonLabel();
+            this.lblSubtitle = new Krypton.Toolkit.KryptonLabel();
+            this.txtUserName = new Krypton.Toolkit.KryptonTextBox();
+            this.txtPassword = new Krypton.Toolkit.KryptonTextBox();
+            this.btnLogin = new Krypton.Toolkit.KryptonButton();
+            this.btnExit = new Krypton.Toolkit.KryptonButton();
 
             this.panelBackground.SuspendLayout();
             this.panelCard.SuspendLayout();
@@ -95,7 +95,6 @@
             // 
             // txtUserName
             // 
-            this.txtUserName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtUserName.Font = new System.Drawing.Font("Tahoma", 11F);
             this.txtUserName.ForeColor = System.Drawing.Color.Gray;
             this.txtUserName.Location = new System.Drawing.Point(60, 190);
@@ -110,7 +109,6 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtPassword.Font = new System.Drawing.Font("Tahoma", 11F);
             this.txtPassword.ForeColor = System.Drawing.Color.Gray;
             this.txtPassword.Location = new System.Drawing.Point(60, 240);
@@ -127,8 +125,6 @@
             // 
             this.btnLogin.BackColor = System.Drawing.Color.FromArgb(33, 42, 57);
             this.btnLogin.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnLogin.FlatAppearance.BorderSize = 0;
-            this.btnLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLogin.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold);
             this.btnLogin.ForeColor = System.Drawing.Color.White;
             this.btnLogin.Location = new System.Drawing.Point(60, 300);
@@ -136,7 +132,6 @@
             this.btnLogin.Size = new System.Drawing.Size(300, 45);
             this.btnLogin.TabIndex = 5;
             this.btnLogin.Text = "تسجيل الدخول";
-            this.btnLogin.UseVisualStyleBackColor = false;
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
 
             // 
@@ -144,8 +139,6 @@
             // 
             this.btnExit.BackColor = System.Drawing.Color.White;
             this.btnExit.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnExit.FlatAppearance.BorderSize = 0;
-            this.btnExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExit.Font = new System.Drawing.Font("Tahoma", 10F);
             this.btnExit.ForeColor = System.Drawing.Color.DimGray;
             this.btnExit.Location = new System.Drawing.Point(60, 360);
@@ -153,7 +146,6 @@
             this.btnExit.Size = new System.Drawing.Size(300, 35);
             this.btnExit.TabIndex = 6;
             this.btnExit.Text = "إغلاق";
-            this.btnExit.UseVisualStyleBackColor = false;
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
 
             // 
@@ -178,14 +170,14 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel panelBackground;
-        private System.Windows.Forms.Panel panelCard;
-        private System.Windows.Forms.Label lblIcon;
-        private System.Windows.Forms.Label lblTitle;
-        private System.Windows.Forms.Label lblSubtitle;
-        private System.Windows.Forms.TextBox txtUserName;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.Button btnLogin;
-        private System.Windows.Forms.Button btnExit;
+        private Krypton.Toolkit.KryptonPanel panelBackground;
+        private Krypton.Toolkit.KryptonPanel panelCard;
+        private Krypton.Toolkit.KryptonLabel lblIcon;
+        private Krypton.Toolkit.KryptonLabel lblTitle;
+        private Krypton.Toolkit.KryptonLabel lblSubtitle;
+        private Krypton.Toolkit.KryptonTextBox txtUserName;
+        private Krypton.Toolkit.KryptonTextBox txtPassword;
+        private Krypton.Toolkit.KryptonButton btnLogin;
+        private Krypton.Toolkit.KryptonButton btnExit;
     }
 }
