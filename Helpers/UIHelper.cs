@@ -23,12 +23,14 @@ namespace SchoolSystem.Helpers
         {
             ApplyKryptonTheme();
             ApplyTheme(form);
+            ApplyKryptonTheme((Control)form);
         }
 
         public static void ApplyStyle(UserControl uc)
         {
             ApplyKryptonTheme();
             ApplyTheme(uc);
+            ApplyKryptonTheme((Control)uc);
         }
 
         public static void ApplyKryptonTheme()
