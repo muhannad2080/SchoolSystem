@@ -19,7 +19,7 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ReportCenterForm));
-            this.panelTitle = new System.Windows.Forms.Panel();
+            this.panelTitle = new Krypton.Toolkit.KryptonPanel();
             this.lblTitle = new System.Windows.Forms.Label();
             this.mainContainer = new System.Windows.Forms.TableLayoutPanel();
             this.groupBoxFilters = new System.Windows.Forms.GroupBox();
@@ -531,7 +531,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel panelTitle;
+        private Krypton.Toolkit.KryptonPanel panelTitle;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.TableLayoutPanel mainContainer;
 
