@@ -215,10 +215,7 @@ namespace SchoolSystem.UI
 
         private decimal ReadDecimal(string text)
         {
-            if (decimal.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out decimal value))
-                return value;
-
-            if (decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
+            if (UIHelper.TryParseDecimal(text, out decimal value))
                 return value;
 
             return 0;
@@ -226,25 +223,37 @@ namespace SchoolSystem.UI
 
         private bool ValidateInputs()
         {
-            decimal amount = ReadDecimal(txtAmount.Text);
-
-            if (amount <= 0)
+            if (!UIHelper.TryParseDecimal(txtAmount.Text, out decimal amount) || amount <= 0)
             {
-                MessageBox.Show("أدخل مبلغاً صحيحاً أكبر من صفر.");
+                UIHelper.ShowWarning("أدخل مبلغاً رقمياً صحيحاً أكبر من صفر.");
                 txtAmount.Focus();
                 return false;
             }
 
             if (cmbCategory.SelectedItem == null || string.IsNullOrWhiteSpace(cmbCategory.Text))
             {
-                MessageBox.Show("اختر فئة المصروف.");
+                UIHelper.ShowWarning("اختر فئة المصروف.");
                 cmbCategory.Focus();
+                return false;
+            }
+
+            if (cmbPaymentMethod.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbPaymentMethod.Text))
+            {
+                UIHelper.ShowWarning("اختر طريقة دفع المصروف.");
+                cmbPaymentMethod.Focus();
+                return false;
+            }
+
+            if (dtpExpenseDate.Value.Date > DateTime.Today)
+            {
+                UIHelper.ShowWarning("تاريخ المصروف لا يمكن أن يكون في المستقبل.");
+                dtpExpenseDate.Focus();
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(txtDescription.Text))
             {
-                MessageBox.Show("أدخل بيان المصروف.");
+                UIHelper.ShowWarning("أدخل بيان المصروف.");
                 txtDescription.Focus();
                 return false;
             }
@@ -327,14 +336,14 @@ namespace SchoolSystem.UI
 
                 await Task.Run(() => expenseService.AddExpense(expense));
 
-                MessageBox.Show("تمت إضافة المصروف وإنشاء سند صرف تلقائي بنجاح.");
+                UIHelper.ShowInfo("تمت إضافة المصروف وإنشاء سند صرف تلقائي بنجاح.");
 
                 await LoadExpensesAsync();
                 ClearInputs();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل إضافة المصروف:\n" + ex.Message);
+                UIHelper.ShowException("إضافة المصروف", ex);
             }
         }
 
@@ -344,7 +353,7 @@ namespace SchoolSystem.UI
             {
                 if (selectedExpenseId == 0)
                 {
-                    MessageBox.Show("اختر المصروف من الجدول أولاً.");
+                    UIHelper.ShowWarning("اختر المصروف من الجدول أولاً.");
                     return;
                 }
 
@@ -355,14 +364,14 @@ namespace SchoolSystem.UI
 
                 bool result = await Task.Run(() => expenseService.UpdateExpense(expense));
 
-                MessageBox.Show(result ? "تم تعديل المصروف بنجاح." : "لم يتم تعديل المصروف.");
+                if (result) UIHelper.ShowInfo("تم تعديل المصروف بنجاح."); else UIHelper.ShowWarning("لم يتم العثور على المصروف.");
 
                 await LoadExpensesAsync();
                 ClearInputs();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل تعديل المصروف:\n" + ex.Message);
+                UIHelper.ShowException("تعديل المصروف", ex);
             }
         }
 
@@ -372,29 +381,27 @@ namespace SchoolSystem.UI
             {
                 if (selectedExpenseId == 0)
                 {
-                    MessageBox.Show("اختر المصروف من الجدول أولاً.");
+                    UIHelper.ShowWarning("اختر المصروف من الجدول أولاً.");
                     return;
                 }
 
-                DialogResult confirm = MessageBox.Show(
+                bool confirm = UIHelper.ShowConfirmation(
                     "هل تريد حذف المصروف المحدد؟\nملاحظة: السندات المرتبطة لن تُحذف للحفاظ على الأثر المالي.",
-                    "تأكيد الحذف",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                    "تأكيد الحذف");
 
-                if (confirm != DialogResult.Yes)
+                if (!confirm)
                     return;
 
                 bool result = await Task.Run(() => expenseService.DeleteExpense(selectedExpenseId));
 
-                MessageBox.Show(result ? "تم حذف المصروف." : "لم يتم حذف المصروف.");
+                if (result) UIHelper.ShowInfo("تم حذف المصروف."); else UIHelper.ShowWarning("لم يتم العثور على المصروف.");
 
                 await LoadExpensesAsync();
                 ClearInputs();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل حذف المصروف:\n" + ex.Message);
+                UIHelper.ShowException("حذف المصروف", ex);
             }
         }
 

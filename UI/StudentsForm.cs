@@ -335,6 +335,23 @@ namespace SchoolSystem.UI
             if (System.Text.RegularExpressions.Regex.IsMatch(fullName, @"\d"))
                 throw new Exception("اسم الطالب لا يجب أن يحتوي على أرقام.");
 
+            if (cmbGender.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbGender.Text))
+                throw new Exception("يرجى اختيار جنس الطالب.");
+
+            if (cmbStatus.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbStatus.Text))
+                throw new Exception("يرجى اختيار حالة الطالب.");
+
+            string[] textValues = { txtBirthPlace.Text, txtNationality.Text, txtGovernorate.Text, txtDistrict.Text, txtGuardianName.Text };
+            foreach (string value in textValues)
+            {
+                if (!string.IsNullOrWhiteSpace(value) && System.Text.RegularExpressions.Regex.IsMatch(value, @"\d"))
+                    throw new Exception("الحقول النصية لا يجب أن تحتوي على أرقام.");
+            }
+
+            string nationalId = txtNationalId.Text.Trim();
+            if (!string.IsNullOrEmpty(nationalId) && !System.Text.RegularExpressions.Regex.IsMatch(nationalId, @"^[0-9]{6,20}$"))
+                throw new Exception("رقم الهوية يجب أن يتكون من أرقام فقط وبطول صحيح.");
+
             string phone = txtPhone.Text.Trim();
             if (!string.IsNullOrEmpty(phone) && !System.Text.RegularExpressions.Regex.IsMatch(phone, @"^[0-9+\-\s]{7,15}$"))
                 throw new Exception("رقم هاتف الطالب غير صحيح.");

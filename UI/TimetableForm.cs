@@ -254,19 +254,38 @@ namespace SchoolSystem.UI
 
         private TimetableEntry BuildModel()
         {
-            TimetableEntry item = new TimetableEntry();
+            int classId = GetClassId();
+            int subjectId = GetSubjectId();
+            int teacherId = GetTeacherId();
+            string academicYear = txtYear.Text.Trim();
+            TimeSpan startTime = dtpStart.Value.TimeOfDay;
+            TimeSpan endTime = dtpEnd.Value.TimeOfDay;
 
+            if (classId <= 0 || cmbClass.SelectedIndex < 0)
+                throw new InvalidOperationException("يرجى اختيار الصف.");
+            if (subjectId <= 0 || cmbSubject.SelectedIndex < 0)
+                throw new InvalidOperationException("يرجى اختيار المادة.");
+            if (teacherId <= 0 || cmbTeacher.SelectedIndex < 0)
+                throw new InvalidOperationException("يرجى اختيار المعلم.");
+            if (string.IsNullOrWhiteSpace(academicYear) || !System.Text.RegularExpressions.Regex.IsMatch(academicYear, @"^[0-9]{4}(/[0-9]{4})?$") )
+                throw new InvalidOperationException("السنة الدراسية غير صحيحة.");
+            if (cmbDay.SelectedIndex < 0 || cmbTerm.SelectedIndex < 0)
+                throw new InvalidOperationException("يرجى اختيار اليوم والفصل الدراسي.");
+            if (endTime <= startTime)
+                throw new InvalidOperationException("وقت نهاية الحصة يجب أن يكون بعد وقت بدايتها.");
+
+            TimetableEntry item = new TimetableEntry();
             item.TimetableID = selectedTimetableId;
-            item.ClassID = GetClassId();
-            item.Section = cmbSection.Text;
-            item.SubjectID = GetSubjectId();
-            item.TeacherID = GetTeacherId();
-            item.AcademicYear = txtYear.Text.Trim();
+            item.ClassID = classId;
+            item.Section = cmbSection.Text.Trim();
+            item.SubjectID = subjectId;
+            item.TeacherID = teacherId;
+            item.AcademicYear = academicYear;
             item.TermName = cmbTerm.Text;
             item.DayName = cmbDay.Text;
             item.PeriodNo = Convert.ToInt32(nudPeriodNo.Value);
-            item.StartTime = dtpStart.Value.TimeOfDay;
-            item.EndTime = dtpEnd.Value.TimeOfDay;
+            item.StartTime = startTime;
+            item.EndTime = endTime;
             item.RoomName = txtRoom.Text.Trim();
             item.Notes = txtNotes.Text.Trim();
             item.IsActive = chkIsActive.Checked;
