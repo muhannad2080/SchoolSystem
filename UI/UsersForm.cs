@@ -184,11 +184,12 @@ namespace SchoolSystem.UI
             dataGridViewUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewUsers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridViewUsers.EnableHeadersVisualStyles = false;
-            dataGridViewUsers.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            dataGridViewUsers.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryDarkColor;
             dataGridViewUsers.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
             dataGridViewUsers.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             dataGridViewUsers.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
-            dataGridViewUsers.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            dataGridViewUsers.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+            dataGridViewUsers.AlternatingRowsDefaultCellStyle.BackColor = UIHelper.AlternateRowColor;
 
             SetHeader("UserID", "الرقم");
             SetHeader("FullName", "الاسم الكامل");

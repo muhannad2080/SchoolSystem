@@ -10,6 +10,7 @@ namespace SchoolSystem.Helpers
         private static readonly KryptonManager KryptonThemeManager = new KryptonManager();
 
         public static readonly Color PrimaryColor = Color.FromArgb(30, 41, 59);
+        public static readonly Color PrimaryDarkColor = Color.FromArgb(15, 23, 42);
         public static readonly Color AccentColor = Color.FromArgb(15, 118, 110);
         public static readonly Color SuccessColor = Color.FromArgb(22, 163, 74);
         public static readonly Color DangerColor = Color.FromArgb(198, 40, 40);
@@ -18,6 +19,8 @@ namespace SchoolSystem.Helpers
         public static readonly Color SearchColor = Color.FromArgb(37, 99, 235);
         public static readonly Color BackgroundColor = Color.FromArgb(248, 250, 252);
         public static readonly Color SurfaceColor = Color.White;
+        public static readonly Color DisabledSurfaceColor = Color.FromArgb(243, 244, 246);
+        public static readonly Color AlternateRowColor = Color.FromArgb(248, 250, 252);
         public static readonly Color BorderColor = Color.FromArgb(203, 213, 225);
         public static readonly Color MutedTextColor = Color.FromArgb(71, 85, 105);
         public static readonly Color TextColor = Color.FromArgb(15, 23, 42);

@@ -56,8 +56,10 @@ namespace SchoolSystem.UI
             txtSubjectName.ReadOnly = true;
             cmbClass.Enabled = false;
 
-            txtSubjectCode.BackColor = System.Drawing.Color.FromArgb(243, 244, 246);
-            txtSubjectName.BackColor = System.Drawing.Color.FromArgb(243, 244, 246);
+            txtSubjectCode.BackColor = UIHelper.DisabledSurfaceColor;
+            txtSubjectName.BackColor = UIHelper.DisabledSurfaceColor;
+            txtSubjectCode.ForeColor = UIHelper.MutedTextColor;
+            txtSubjectName.ForeColor = UIHelper.MutedTextColor;
 
             btnAdd.Text = "تثبيت المواد";
             btnDelete.Enabled = false;
