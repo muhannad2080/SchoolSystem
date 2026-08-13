@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -109,7 +110,7 @@ namespace SchoolSystem.UI
 
             DataView dv = allExpenses.DefaultView;
 
-            string searchText = EscapeFilter(txtSearch.Text.Trim());
+            string searchText = UIHelper.EscapeDataViewFilterValue(txtSearch.Text);
             string selectedCategory = cmbFilterCategory.SelectedItem == null
                 ? "كل الفئات"
                 : cmbFilterCategory.SelectedItem.ToString();
@@ -132,7 +133,7 @@ namespace SchoolSystem.UI
                 if (!string.IsNullOrWhiteSpace(filter))
                     filter += " AND ";
 
-                filter += "Category = '" + EscapeFilter(selectedCategory) + "'";
+                filter += "Category = '" + UIHelper.EscapeDataViewFilterValue(selectedCategory) + "'";
             }
 
             dv.RowFilter = filter;

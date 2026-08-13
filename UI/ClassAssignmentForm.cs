@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI.Students
@@ -302,7 +303,7 @@ namespace SchoolSystem.UI.Students
                 return;
             }
 
-            string safe = keyword.Replace("'", "''");
+            string safe = UIHelper.EscapeDataViewFilterValue(keyword);
 
             DataView dv = unassignedStudents.DefaultView;
 

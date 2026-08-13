@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 using SchoolSystem.Security;
 
@@ -134,7 +135,7 @@ namespace SchoolSystem.UI
             DataView dv = allUsers.DefaultView;
 
             string filter = "";
-            string safe = EscapeFilter(searchText);
+            string safe = UIHelper.EscapeDataViewFilterValue(searchText);
 
             if (!string.IsNullOrWhiteSpace(safe))
             {

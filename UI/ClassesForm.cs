@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -259,7 +260,7 @@ namespace SchoolSystem.UI
             if (classesTable == null)
                 return;
 
-            string safe = txtClassSearch.Text.Trim().Replace("'", "''");
+            string safe = UIHelper.EscapeDataViewFilterValue(txtClassSearch.Text);
 
             if (string.IsNullOrWhiteSpace(safe))
             {
@@ -540,7 +541,7 @@ namespace SchoolSystem.UI
             if (roomsTable == null)
                 return;
 
-            string safe = txtRoomSearch.Text.Trim().Replace("'", "''");
+            string safe = UIHelper.EscapeDataViewFilterValue(txtRoomSearch.Text);
 
             if (string.IsNullOrWhiteSpace(safe))
             {

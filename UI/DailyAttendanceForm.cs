@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -316,7 +317,7 @@ namespace SchoolSystem.UI
             if (currentAttendanceTable == null)
                 return;
 
-            string safe = txtSearch.Text.Trim().Replace("'", "''");
+            string safe = UIHelper.EscapeDataViewFilterValue(txtSearch.Text);
 
             if (string.IsNullOrWhiteSpace(safe))
             {

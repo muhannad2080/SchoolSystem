@@ -137,6 +137,21 @@ namespace SchoolSystem.Helpers
             }
         }
 
+        /// <summary>
+        /// يهرب قيمة البحث قبل استخدامها داخل DataView.RowFilter.
+        /// </summary>
+        public static string EscapeDataViewFilterValue(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return "";
+
+            return value.Trim()
+                .Replace("'", "''")
+                .Replace("[", "[[]")
+                .Replace("%", "[%]")
+                .Replace("*", "[*]");
+        }
+
         // =========================
         // Panels / Containers
         // =========================

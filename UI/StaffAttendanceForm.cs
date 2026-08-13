@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -94,7 +95,7 @@ namespace SchoolSystem.UI
 
             if (!string.IsNullOrWhiteSpace(searchText))
             {
-                string safeText = searchText.Replace("'", "''");
+                string safeText = UIHelper.EscapeDataViewFilterValue(searchText);
                 dv.RowFilter =
                     "TeacherName LIKE '%" + safeText + "%' OR " +
                     "Status LIKE '%" + safeText + "%' OR " +

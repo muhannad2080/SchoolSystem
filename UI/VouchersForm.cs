@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -89,7 +90,7 @@ namespace SchoolSystem.UI
 
             DataView dv = allVouchers.DefaultView;
 
-            string searchText = EscapeFilter(txtSearch.Text.Trim());
+            string searchText = UIHelper.EscapeDataViewFilterValue(txtSearch.Text);
             string selectedType = cmbFilterType.SelectedItem == null
                 ? "كل السندات"
                 : cmbFilterType.SelectedItem.ToString();
@@ -113,7 +114,7 @@ namespace SchoolSystem.UI
                 if (!string.IsNullOrWhiteSpace(filter))
                     filter += " AND ";
 
-                filter += "VoucherType = '" + EscapeFilter(selectedType) + "'";
+                filter += "VoucherType = '" + UIHelper.EscapeDataViewFilterValue(selectedType) + "'";
             }
 
             dv.RowFilter = filter;

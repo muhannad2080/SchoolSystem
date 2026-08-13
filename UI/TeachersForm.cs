@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -108,7 +109,7 @@ namespace SchoolSystem.UI
             DataView dv = _allTeachers.DefaultView;
             if (!string.IsNullOrWhiteSpace(search))
             {
-                string safeSearch = EscapeFilter(search);
+                string safeSearch = UIHelper.EscapeDataViewFilterValue(search);
                 dv.RowFilter = $"FullName LIKE '%{safeSearch}%' OR EmployeeNumber LIKE '%{safeSearch}%' OR Specialization LIKE '%{safeSearch}%'";
             }
             else
