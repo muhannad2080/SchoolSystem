@@ -17,7 +17,7 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.panelTitle = new System.Windows.Forms.Panel();
+            this.panelTitle = new Krypton.Toolkit.KryptonPanel();
             this.lblFormTitle = new System.Windows.Forms.Label();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabBooks = new System.Windows.Forms.TabPage();
@@ -759,7 +759,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel panelTitle;
+        private Krypton.Toolkit.KryptonPanel panelTitle;
         private System.Windows.Forms.Label lblFormTitle;
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabBooks;
