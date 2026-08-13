@@ -235,3 +235,75 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[St
     ALTER TABLE StudentClasses ADD AssignedBy INT NULL;
 
 GO
+
+-- 12. إصلاح صلاحيات المستخدمين الحاليين وإضافة حماية اسم المستخدم
+-- لا نغيّر الصلاحيات المخصصة يدويًا؛ نملأ الصلاحيات فقط للحسابات الفارغة.
+IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'Permissions')
+BEGIN
+    UPDATE Users
+    SET Permissions = N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,Teachers.Manage,StaffAttendance.Manage,Payroll.Manage,Subjects.Manage,Classes.Manage,Timetable.Manage,Attendance.Manage,Grades.Manage,Fees.Manage,Vouchers.Manage,Expenses.Manage,Library.Manage,Transport.Manage,Reports.View,Users.Manage',
+        UpdatedAt = GETDATE()
+    WHERE RoleName = N'مدير النظام'
+      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
+
+    UPDATE Users
+    SET Permissions = N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,Teachers.Manage,Subjects.Manage,Classes.Manage,Timetable.Manage,Attendance.Manage,Grades.Manage,Reports.View',
+        UpdatedAt = GETDATE()
+    WHERE RoleName = N'الإدارة'
+      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
+
+    UPDATE Users
+    SET Permissions = N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,Attendance.Manage,Grades.Manage,Reports.View',
+        UpdatedAt = GETDATE()
+    WHERE RoleName = N'شؤون الطلاب'
+      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
+
+    UPDATE Users
+    SET Permissions = N'Dashboard.View,Students.View,Attendance.Manage,Grades.Manage,Timetable.Manage,Reports.View',
+        UpdatedAt = GETDATE()
+    WHERE RoleName = N'المعلمون'
+      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
+
+    UPDATE Users
+    SET Permissions = N'Dashboard.View,Fees.Manage,Vouchers.Manage,Expenses.Manage,Payroll.Manage,Reports.View',
+        UpdatedAt = GETDATE()
+    WHERE RoleName = N'المالية'
+      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
+
+    UPDATE Users
+    SET Permissions = N'Dashboard.View,Library.Manage,Reports.View',
+        UpdatedAt = GETDATE()
+    WHERE RoleName = N'المكتبة'
+      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
+
+    UPDATE Users
+    SET Permissions = N'Dashboard.View,Transport.Manage,Reports.View',
+        UpdatedAt = GETDATE()
+    WHERE RoleName = N'النقل'
+      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
+
+    UPDATE Users
+    SET Permissions = N'Dashboard.View,Reports.View',
+        UpdatedAt = GETDATE()
+    WHERE RoleName = N'التقارير'
+      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
+END
+GO
+
+IF NOT EXISTS (
+    SELECT 1 FROM sys.indexes
+    WHERE name = N'UX_Users_UserName'
+      AND object_id = OBJECT_ID(N'[dbo].[Users]')
+)
+AND NOT EXISTS (
+    SELECT UserName FROM Users
+    GROUP BY UserName
+    HAVING COUNT(*) > 1
+)
+BEGIN
+    CREATE UNIQUE INDEX UX_Users_UserName ON Users(UserName);
+END
+GO
+
+PRINT N'تم تحديث بنية المستخدمين والصلاحيات بنجاح.';
+GO

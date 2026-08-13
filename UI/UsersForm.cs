@@ -230,71 +230,9 @@ namespace SchoolSystem.UI
 
             ClearPermissionChecks();
 
-            string role = cmbRole.SelectedItem.ToString();
-
-            if (role == "مدير النظام")
-            {
-                CheckAllPermissions();
-                return;
-            }
-
-            if (role == "الإدارة")
-            {
-                CheckPermission(PermissionKeys.DashboardView);
-                CheckPermission(PermissionKeys.StudentsView);
-                CheckPermission(PermissionKeys.ReportsView);
-                return;
-            }
-
-            if (role == "شؤون الطلاب")
-            {
-                CheckPermission(PermissionKeys.DashboardView);
-                CheckPermission(PermissionKeys.StudentsView);
-                CheckPermission(PermissionKeys.StudentsManage);
-                CheckPermission(PermissionKeys.EnrollmentManage);
-                CheckPermission(PermissionKeys.ClassAssignmentManage);
-                CheckPermission(PermissionKeys.AttendanceManage);
-                CheckPermission(PermissionKeys.GradesManage);
-                return;
-            }
-
-            if (role == "المعلمون")
-            {
-                CheckPermission(PermissionKeys.DashboardView);
-                CheckPermission(PermissionKeys.StudentsView);
-                CheckPermission(PermissionKeys.AttendanceManage);
-                CheckPermission(PermissionKeys.GradesManage);
-                return;
-            }
-
-            if (role == "المالية")
-            {
-                CheckPermission(PermissionKeys.DashboardView);
-                CheckPermission(PermissionKeys.FeesManage);
-                CheckPermission(PermissionKeys.VouchersManage);
-                CheckPermission(PermissionKeys.ExpensesManage);
-                CheckPermission(PermissionKeys.PayrollManage);
-                CheckPermission(PermissionKeys.ReportsView);
-                return;
-            }
-
-            if (role == "المكتبة")
-            {
-                CheckPermission(PermissionKeys.LibraryManage);
-                return;
-            }
-
-            if (role == "النقل")
-            {
-                CheckPermission(PermissionKeys.TransportManage);
-                return;
-            }
-
-            if (role == "التقارير")
-            {
-                CheckPermission(PermissionKeys.ReportsView);
-                return;
-            }
+            string permissions = PermissionKeys.GetRoleDefaults(cmbRole.SelectedItem.ToString());
+            foreach (string permission in permissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                CheckPermission(permission.Trim());
         }
 
         private void ClearPermissionChecks()

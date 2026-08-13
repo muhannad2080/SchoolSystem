@@ -1,4 +1,8 @@
-﻿namespace SchoolSystem.Security
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace SchoolSystem.Security
 {
     public static class PermissionKeys
     {
@@ -29,5 +33,91 @@
 
         public const string ReportsView = "Reports.View";
         public const string UsersManage = "Users.Manage";
+
+        public static IReadOnlyList<string> All
+        {
+            get
+            {
+                return new[]
+                {
+                    DashboardView,
+                    StudentsView,
+                    StudentsManage,
+                    EnrollmentManage,
+                    ClassAssignmentManage,
+                    TeachersManage,
+                    StaffAttendanceManage,
+                    PayrollManage,
+                    SubjectsManage,
+                    ClassesManage,
+                    TimetableManage,
+                    AttendanceManage,
+                    GradesManage,
+                    FeesManage,
+                    VouchersManage,
+                    ExpensesManage,
+                    LibraryManage,
+                    TransportManage,
+                    ReportsView,
+                    UsersManage
+                };
+            }
+        }
+
+        public static string Serialize(IEnumerable<string> permissions)
+        {
+            if (permissions == null)
+                return "";
+
+            return string.Join(",", permissions
+                .Where(p => !string.IsNullOrWhiteSpace(p))
+                .Select(p => p.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase));
+        }
+
+        public static string GetRoleDefaults(string roleName)
+        {
+            switch ((roleName ?? "").Trim())
+            {
+                case "مدير النظام":
+                    return Serialize(All);
+                case "الإدارة":
+                    return Serialize(new[]
+                    {
+                        DashboardView, StudentsView, StudentsManage,
+                        EnrollmentManage, ClassAssignmentManage,
+                        TeachersManage, SubjectsManage, ClassesManage,
+                        TimetableManage, AttendanceManage, GradesManage,
+                        ReportsView
+                    });
+                case "شؤون الطلاب":
+                    return Serialize(new[]
+                    {
+                        DashboardView, StudentsView, StudentsManage,
+                        EnrollmentManage, ClassAssignmentManage,
+                        AttendanceManage, GradesManage, ReportsView
+                    });
+                case "المعلمون":
+                    return Serialize(new[]
+                    {
+                        DashboardView, StudentsView, AttendanceManage,
+                        GradesManage, TimetableManage, ReportsView
+                    });
+                case "المالية":
+                    return Serialize(new[]
+                    {
+                        DashboardView, FeesManage, VouchersManage,
+                        ExpensesManage, PayrollManage, ReportsView
+                    });
+                case "المكتبة":
+                    return Serialize(new[] { DashboardView, LibraryManage, ReportsView });
+                case "النقل":
+                    return Serialize(new[] { DashboardView, TransportManage, ReportsView });
+                case "التقارير":
+                    return Serialize(new[] { DashboardView, ReportsView });
+                default:
+                    return "";
+            }
+        }
     }
 }

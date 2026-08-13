@@ -289,6 +289,27 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        public bool UpdatePermissions(int userId, string permissions)
+        {
+            using (SqlConnection con = DbConnection.GetConnection())
+            {
+                const string query = @"
+                    UPDATE Users SET
+                        Permissions = @Permissions,
+                        UpdatedAt = GETDATE()
+                    WHERE UserID = @UserID";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    cmd.Parameters.AddWithValue("@Permissions", string.IsNullOrWhiteSpace(permissions) ? (object)DBNull.Value : permissions);
+
+                    con.Open();
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
         public void UpdateLastLogin(int userId)
         {
             using (SqlConnection con = DbConnection.GetConnection())
