@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -16,11 +17,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllFees()
         {
+            EnsureCanManageFees();
             return feeRepository.GetAllFees();
         }
 
         public int AddFee(Fee fee)
         {
+            EnsureCanManageFees();
             ValidateFee(fee);
             PrepareFee(fee);
             return feeRepository.AddFee(fee);
@@ -28,6 +31,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateFee(Fee fee)
         {
+            EnsureCanManageFees();
             if (fee.FeeID <= 0)
                 throw new Exception("رقم سجل الرسوم غير صحيح.");
 
@@ -38,6 +42,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteFee(int feeId)
         {
+            EnsureCanManageFees();
             if (feeId <= 0)
                 throw new Exception("رقم سجل الرسوم غير صحيح.");
 
@@ -46,6 +51,7 @@ namespace SchoolSystem.Services
 
         public int GenerateStudentFeesFromPlans(int studentId, string academicYear)
         {
+            EnsureCanManageFees();
             if (studentId <= 0)
                 throw new Exception("يجب اختيار الطالب.");
 
@@ -53,6 +59,12 @@ namespace SchoolSystem.Services
                 throw new Exception("يجب اختيار العام الدراسي.");
 
             return feeRepository.GenerateStudentFeesFromPlans(studentId, academicYear);
+        }
+
+        private static void EnsureCanManageFees()
+        {
+            if (!CurrentUser.HasPermission(PermissionKeys.FeesManage))
+                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة الرسوم.");
         }
 
         private void ValidateFee(Fee fee)

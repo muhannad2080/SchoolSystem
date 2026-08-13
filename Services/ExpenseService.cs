@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -18,11 +19,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllExpenses()
         {
+            EnsureCanManageExpenses();
             return expenseRepository.GetAllExpenses();
         }
 
         public int AddExpense(Expense expense)
         {
+            EnsureCanManageExpenses();
             ValidateExpense(expense);
 
             if (string.IsNullOrWhiteSpace(expense.ExpenseNumber))
@@ -46,6 +49,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateExpense(Expense expense)
         {
+            EnsureCanManageExpenses();
             if (expense.ExpenseID <= 0)
                 throw new Exception("رقم المصروف غير صحيح.");
 
@@ -97,10 +101,17 @@ namespace SchoolSystem.Services
 
         public bool DeleteExpense(int expenseId)
         {
+            EnsureCanManageExpenses();
             if (expenseId <= 0)
                 throw new Exception("رقم المصروف غير صحيح.");
 
             return expenseRepository.DeleteExpense(expenseId);
+        }
+
+        private static void EnsureCanManageExpenses()
+        {
+            if (!CurrentUser.HasPermission(PermissionKeys.ExpensesManage))
+                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة المصروفات.");
         }
 
         private void ValidateExpense(Expense expense)

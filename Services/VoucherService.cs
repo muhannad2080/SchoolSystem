@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -16,11 +17,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllVouchers()
         {
+            EnsureCanManageVouchers();
             return voucherRepository.GetAllVouchers();
         }
 
         public bool AddVoucher(Voucher voucher)
         {
+            EnsureCanManageVouchers();
             ValidateVoucher(voucher);
 
             if (string.IsNullOrWhiteSpace(voucher.VoucherNumber))
@@ -31,6 +34,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateVoucher(Voucher voucher)
         {
+            EnsureCanManageVouchers();
             if (voucher.VoucherID <= 0)
                 throw new Exception("رقم السند غير صحيح.");
 
@@ -41,6 +45,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteVoucher(int voucherId)
         {
+            EnsureCanManageVouchers();
             if (voucherId <= 0)
                 throw new Exception("رقم السند غير صحيح.");
 
@@ -96,6 +101,12 @@ namespace SchoolSystem.Services
             };
 
             return AddVoucher(voucher);
+        }
+
+        private static void EnsureCanManageVouchers()
+        {
+            if (!CurrentUser.HasPermission(PermissionKeys.VouchersManage))
+                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة السندات.");
         }
 
         private void ValidateVoucher(Voucher voucher)

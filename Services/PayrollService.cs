@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -9,13 +10,21 @@ namespace SchoolSystem.Services
     {
         private readonly PayrollRepository repository = new PayrollRepository();
 
-        public DataTable GetAllPayrolls() => repository.GetAllPayrolls();
+        public DataTable GetAllPayrolls()
+        {
+            EnsureCanManagePayroll();
+            return repository.GetAllPayrolls();
+        }
 
         public bool PayrollExists(int teacherId, int month, int year, int excludeId = 0)
-            => repository.PayrollExists(teacherId, month, year, excludeId);
+        {
+            EnsureCanManagePayroll();
+            return repository.PayrollExists(teacherId, month, year, excludeId);
+        }
 
         public void AddPayroll(Payroll payroll)
         {
+            EnsureCanManagePayroll();
             ValidatePayroll(payroll);
             if (repository.PayrollExists(payroll.TeacherID, payroll.SalaryMonth, payroll.SalaryYear))
                 throw new Exception("تم صرف راتب هذا المعلم لهذا الشهر مسبقاً.");
@@ -25,6 +34,7 @@ namespace SchoolSystem.Services
 
         public bool UpdatePayroll(Payroll payroll)
         {
+            EnsureCanManagePayroll();
             ValidatePayroll(payroll);
             if (repository.PayrollExists(payroll.TeacherID, payroll.SalaryMonth, payroll.SalaryYear, payroll.PayrollID))
                 throw new Exception("تم صرف راتب هذا المعلم لهذا الشهر مسبقاً.");
@@ -34,9 +44,16 @@ namespace SchoolSystem.Services
 
         public bool DeletePayroll(int payrollId)
         {
+            EnsureCanManagePayroll();
             if (payrollId <= 0)
                 throw new Exception("رقم سجل الراتب غير صحيح.");
             return repository.DeletePayroll(payrollId);
+        }
+
+        private static void EnsureCanManagePayroll()
+        {
+            if (!CurrentUser.HasPermission(PermissionKeys.PayrollManage))
+                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة الرواتب.");
         }
 
         private void ValidatePayroll(Payroll payroll)
