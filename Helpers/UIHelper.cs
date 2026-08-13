@@ -24,6 +24,7 @@ namespace SchoolSystem.Helpers
             ApplyKryptonTheme();
             ApplyTheme(form);
             ApplyKryptonTheme((Control)form);
+            ApplyResponsiveLayout(form);
         }
 
         public static void ApplyStyle(UserControl uc)
@@ -31,6 +32,63 @@ namespace SchoolSystem.Helpers
             ApplyKryptonTheme();
             ApplyTheme(uc);
             ApplyKryptonTheme((Control)uc);
+            ApplyResponsiveLayout(uc);
+        }
+
+        public static void ApplyResponsiveLayout(Control root)
+        {
+            if (root == null)
+                return;
+
+            if (root is Form form)
+            {
+                form.AutoScaleMode = AutoScaleMode.Font;
+                form.AutoSizeMode = AutoSizeMode.GrowOnly;
+                form.RightToLeft = RightToLeft.Yes;
+                form.RightToLeftLayout = true;
+                form.AutoScroll = true;
+            }
+
+            ApplyResponsiveLayoutRecursive(root);
+        }
+
+        private static void ApplyResponsiveLayoutRecursive(Control control)
+        {
+            foreach (Control child in control.Controls)
+            {
+                if (child is DataGridView grid)
+                {
+                    grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                    grid.ScrollBars = ScrollBars.Both;
+                    grid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                }
+                else if (child is TableLayoutPanel layout)
+                {
+                    layout.AutoSize = false;
+                    layout.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+                }
+
+                ApplyResponsiveLayoutRecursive(child);
+            }
+        }
+
+        public static bool TryParseDecimal(string value, out decimal number)
+        {
+            return decimal.TryParse((value ?? string.Empty).Trim(),
+                System.Globalization.NumberStyles.Number,
+                System.Globalization.CultureInfo.CurrentCulture,
+                out number);
+        }
+
+        public static bool IsRequired(string value)
+        {
+            return !string.IsNullOrWhiteSpace(value);
+        }
+
+        public static bool IsNumeric(string value)
+        {
+            decimal ignored;
+            return TryParseDecimal(value, out ignored);
         }
 
         public static void ApplyKryptonTheme()
