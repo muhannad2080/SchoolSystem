@@ -1,5 +1,6 @@
 ﻿using SchoolSystem.UI;
 using SchoolSystem.Security;
+using SchoolSystem.Helpers;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -31,8 +32,6 @@ namespace SchoolSystem
             Color mainColor = Color.FromArgb(30, 41, 59);
             Color accentColor = Color.FromArgb(15, 118, 110);
             Color contentBack = Color.FromArgb(248, 250, 252);
-            Color textDark = Color.FromArgb(30, 41, 59);
-
             menuStripMain.BackColor = mainColor;
             menuStripMain.ForeColor = Color.White;
             menuStripMain.Font = new Font("Tahoma", 10F, FontStyle.Bold);
@@ -65,8 +64,7 @@ namespace SchoolSystem
             lblUsername.TextAlign = ContentAlignment.MiddleCenter;
             lblUsername.Padding = new Padding(12, 0, 12, 0);
 
-            if (!lblUsername.Text.Contains("👤"))
-                lblUsername.Text = "👤 " + lblUsername.Text;
+            lblUsername.Text = (lblUsername.Text ?? string.Empty).Replace("👤 ", string.Empty).Trim();
 
             lblDateTime.ForeColor = Color.FromArgb(100, 116, 139);
             lblDateTime.Font = new Font("Tahoma", 10F);
@@ -115,7 +113,7 @@ namespace SchoolSystem
 
         private void LoadWelcomeScreen()
         {
-            panelContent.Controls.Clear();
+            ClearContentPanel();
 
             var welcome = new WelcomeScreen();
             welcome.SystemName = " فريق خليها على الله";
@@ -128,15 +126,18 @@ namespace SchoolSystem
         {
             try
             {
-                panelContent.Controls.Clear();
+                if (uc == null)
+                    throw new ArgumentNullException("uc");
 
+                ClearContentPanel();
                 uc.Dock = DockStyle.Fill;
 
                 panelContent.Controls.Add(uc);
             }
             catch (Exception ex)
             {
-                ShowLoadError("⚠️ فشل تحميل الواجهة:\n" + ex.Message);
+                UIHelper.ShowException("تحميل الواجهة", ex);
+                ShowLoadError("تعذر تحميل الواجهة. حاول مرة أخرى أو تواصل مع مسؤول النظام.");
             }
         }
 
@@ -144,8 +145,10 @@ namespace SchoolSystem
         {
             try
             {
-                panelContent.Controls.Clear();
+                if (form == null)
+                    throw new ArgumentNullException("form");
 
+                ClearContentPanel();
                 form.TopLevel = false;
                 form.FormBorderStyle = FormBorderStyle.None;
                 form.Dock = DockStyle.Fill;
@@ -155,7 +158,27 @@ namespace SchoolSystem
             }
             catch (Exception ex)
             {
-                ShowLoadError("⚠️ فشل تحميل الواجهة:\n" + ex.Message);
+                UIHelper.ShowException("تحميل الواجهة", ex);
+                ShowLoadError("تعذر تحميل الواجهة. حاول مرة أخرى أو تواصل مع مسؤول النظام.");
+            }
+        }
+
+        private void ClearContentPanel()
+        {
+            Control[] controls = new Control[panelContent.Controls.Count];
+            panelContent.Controls.CopyTo(controls, 0);
+            panelContent.Controls.Clear();
+
+            foreach (Control control in controls)
+            {
+                try
+                {
+                    control.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    UIHelper.LogException("تحرير موارد الواجهة", ex);
+                }
             }
         }
 
@@ -167,7 +190,7 @@ namespace SchoolSystem
             {
                 Text = message,
                 Font = new Font("Tahoma", 12, FontStyle.Bold),
-                ForeColor = Color.Red,
+                ForeColor = Color.FromArgb(185, 28, 28),
                 TextAlign = ContentAlignment.MiddleCenter,
                 Dock = DockStyle.Fill
             };
@@ -273,7 +296,8 @@ namespace SchoolSystem
             }
             catch (Exception ex)
             {
-                ShowLoadError("⚠️ فشل تحميل لوحة التحكم:\n" + ex.Message);
+                UIHelper.ShowException("تحميل لوحة التحكم", ex);
+                ShowLoadError("تعذر تحميل لوحة التحكم. حاول مرة أخرى أو تواصل مع مسؤول النظام.");
             }
         }
 
