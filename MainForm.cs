@@ -60,12 +60,10 @@ namespace SchoolSystem
             lblSystemTitle.Font = new Font("Tahoma", 16F, FontStyle.Bold);
             lblSystemTitle.ForeColor = Color.FromArgb(15, 23, 42);
             lblSystemTitle.Text = "نظام إدارة المدرسة";
-            lblSystemTitle.TextAlign = ContentAlignment.MiddleRight;
 
             lblUsername.BackColor = Color.FromArgb(241, 245, 249);
             lblUsername.ForeColor = accentColor;
             lblUsername.Font = new Font("Tahoma", 10F, FontStyle.Bold);
-            lblUsername.TextAlign = ContentAlignment.MiddleCenter;
             lblUsername.Padding = new Padding(12, 0, 12, 0);
 
             if (!lblUsername.Text.Contains("👤"))
@@ -73,7 +71,6 @@ namespace SchoolSystem
 
             lblDateTime.ForeColor = Color.FromArgb(100, 116, 139);
             lblDateTime.Font = new Font("Tahoma", 10F);
-            lblDateTime.TextAlign = ContentAlignment.MiddleLeft;
 
             panelContent.BackColor = contentBack;
             panelContent.Padding = new Padding(18);

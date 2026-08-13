@@ -17,12 +17,12 @@
         {
             this.tableLayoutMain = new System.Windows.Forms.TableLayoutPanel();
             this.panelCards = new System.Windows.Forms.TableLayoutPanel();
-            this.panelChart = new System.Windows.Forms.Panel();
-            this.lblChartTitle = new System.Windows.Forms.Label();
-            this.panelAlerts = new System.Windows.Forms.Panel();
-            this.lblAlertsTitle = new System.Windows.Forms.Label();
-            this.lblPendingFees = new System.Windows.Forms.Label();
-            this.lblTodayAbsence = new System.Windows.Forms.Label();
+            this.panelChart = new Krypton.Toolkit.KryptonPanel();
+            this.lblChartTitle = new Krypton.Toolkit.KryptonLabel();
+            this.panelAlerts = new Krypton.Toolkit.KryptonPanel();
+            this.lblAlertsTitle = new Krypton.Toolkit.KryptonLabel();
+            this.lblPendingFees = new Krypton.Toolkit.KryptonLabel();
+            this.lblTodayAbsence = new Krypton.Toolkit.KryptonLabel();
 
             this.tableLayoutMain.SuspendLayout();
             this.panelCards.SuspendLayout();
@@ -71,8 +71,7 @@
             this.panelChart.BackColor = System.Drawing.Color.White;
             this.panelChart.Controls.Add(this.lblChartTitle);
             this.panelChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelChart.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelChart.Padding = new System.Windows.Forms.Padding(10);
+                        this.panelChart.Padding = new System.Windows.Forms.Padding(10);
 
             this.lblChartTitle.Text = "📊  توزيع الطلاب في الفصول";
             this.lblChartTitle.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
@@ -91,8 +90,7 @@
             this.panelAlerts.Controls.Add(this.lblTodayAbsence);
             this.tableLayoutMain.SetRowSpan(this.panelAlerts, 2);
             this.panelAlerts.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelAlerts.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelAlerts.Padding = new System.Windows.Forms.Padding(10);
+                        this.panelAlerts.Padding = new System.Windows.Forms.Padding(10);
 
             this.lblAlertsTitle.Text = "🔔  تنبيهات";
             this.lblAlertsTitle.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
@@ -124,11 +122,11 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutMain;
         private System.Windows.Forms.TableLayoutPanel panelCards;
-        private System.Windows.Forms.Panel panelChart;
-        private System.Windows.Forms.Label lblChartTitle;
-        private System.Windows.Forms.Panel panelAlerts;
-        private System.Windows.Forms.Label lblAlertsTitle;
-        private System.Windows.Forms.Label lblPendingFees;
-        private System.Windows.Forms.Label lblTodayAbsence;
+        private Krypton.Toolkit.KryptonPanel panelChart;
+        private Krypton.Toolkit.KryptonLabel lblChartTitle;
+        private Krypton.Toolkit.KryptonPanel panelAlerts;
+        private Krypton.Toolkit.KryptonLabel lblAlertsTitle;
+        private Krypton.Toolkit.KryptonLabel lblPendingFees;
+        private Krypton.Toolkit.KryptonLabel lblTodayAbsence;
     }
 }

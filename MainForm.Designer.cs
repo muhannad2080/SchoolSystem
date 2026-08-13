@@ -45,11 +45,11 @@
             this.tsmiUsers = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiReports = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLogout = new System.Windows.Forms.ToolStripMenuItem();
-            this.panelTop = new System.Windows.Forms.Panel();
-            this.lblDateTime = new System.Windows.Forms.Label();
-            this.lblUsername = new System.Windows.Forms.Label();
-            this.lblSystemTitle = new System.Windows.Forms.Label();
-            this.panelContent = new System.Windows.Forms.Panel();
+            this.panelTop = new Krypton.Toolkit.KryptonPanel();
+            this.lblDateTime = new Krypton.Toolkit.KryptonLabel();
+            this.lblUsername = new Krypton.Toolkit.KryptonLabel();
+            this.lblSystemTitle = new Krypton.Toolkit.KryptonLabel();
+            this.panelContent = new Krypton.Toolkit.KryptonPanel();
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.lblDBStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblOnlineUsers = new System.Windows.Forms.ToolStripStatusLabel();
@@ -275,7 +275,6 @@
             this.lblDateTime.Size = new System.Drawing.Size(350, 26);
             this.lblDateTime.TabIndex = 0;
             this.lblDateTime.Text = "الخميس, 08/07/2026  10:30:45";
-            this.lblDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 
             // lblUsername
             this.lblUsername.Anchor = System.Windows.Forms.AnchorStyles.Top;
@@ -288,7 +287,6 @@
             this.lblUsername.Size = new System.Drawing.Size(225, 34);
             this.lblUsername.TabIndex = 1;
             this.lblUsername.Text = "👤 مدير النظام";
-            this.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // lblSystemTitle
             this.lblSystemTitle.Anchor = System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Top;
@@ -299,7 +297,6 @@
             this.lblSystemTitle.Size = new System.Drawing.Size(350, 40);
             this.lblSystemTitle.TabIndex = 2;
             this.lblSystemTitle.Text = "نظام إدارة المدرسة";
-            this.lblSystemTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 
             // panelContent
             this.panelContent.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
@@ -399,12 +396,12 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiReports;
         private System.Windows.Forms.ToolStripMenuItem tsmiLogout;
 
-        private System.Windows.Forms.Panel panelTop;
-        private System.Windows.Forms.Label lblSystemTitle;
-        private System.Windows.Forms.Label lblUsername;
-        private System.Windows.Forms.Label lblDateTime;
+        private Krypton.Toolkit.KryptonPanel panelTop;
+        private Krypton.Toolkit.KryptonLabel lblSystemTitle;
+        private Krypton.Toolkit.KryptonLabel lblUsername;
+        private Krypton.Toolkit.KryptonLabel lblDateTime;
 
-        private System.Windows.Forms.Panel panelContent;
+        private Krypton.Toolkit.KryptonPanel panelContent;
 
         private System.Windows.Forms.StatusStrip statusStripMain;
         private System.Windows.Forms.ToolStripStatusLabel lblDBStatus;
