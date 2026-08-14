@@ -500,16 +500,32 @@ namespace SchoolSystem.Helpers
 
         private static string GetSafeExceptionDetail(Exception exception)
         {
-            SqlException sqlException = exception as SqlException;
-            if (sqlException != null)
+            Exception current = exception;
+            while (current != null)
             {
-                if (sqlException.Number == 208)
-                    return "الجدول المطلوب غير موجود في قاعدة البيانات. شغّل ملف Migration المناسب.";
-                if (sqlException.Number == 207)
-                    return "أحد الأعمدة المطلوبة غير موجود أو اسمه مختلف في قاعدة البيانات. شغّل آخر Migration.";
-                if (sqlException.Number == 18456 || sqlException.Number == 53 || sqlException.Number == -1)
-                    return "تعذر الاتصال بخادم SQL Server أو رفضت بيانات الاعتماد الاتصال.";
-                return "رفض SQL Server الاستعلام (رقم الخطأ " + sqlException.Number + ").";
+                SqlException sqlException = current as SqlException;
+                if (sqlException != null)
+                {
+                    if (sqlException.Number == 208)
+                        return "الجدول المطلوب غير موجود في قاعدة البيانات. شغّل ملف Migration المناسب.";
+                    if (sqlException.Number == 207)
+                        return "أحد الأعمدة المطلوبة غير موجود أو اسمه مختلف في قاعدة البيانات. شغّل آخر Migration.";
+                    if (sqlException.Number == 229)
+                        return "لا تملك صلاحية تنفيذ هذه العملية. اطلب من مدير النظام منح الصلاحية المناسبة.";
+                    if (sqlException.Number == 2601 || sqlException.Number == 2627)
+                        return "البيانات موجودة مسبقاً ولا يمكن تكرارها.";
+                    if (sqlException.Number == 547)
+                        return "لا يمكن تنفيذ العملية لأن السجل مرتبط ببيانات أخرى. عالج الارتباط أو عطّل السجل بدلاً من حذفه.";
+                    if (sqlException.Number == 18456 || sqlException.Number == 53 || sqlException.Number == -1)
+                        return "تعذر الاتصال بخادم SQL Server أو رفضت بيانات الاعتماد الاتصال.";
+                    if (sqlException.Number >= 51000 && sqlException.Number <= 51999)
+                        return string.IsNullOrWhiteSpace(sqlException.Message)
+                            ? "رفضت قاعدة البيانات العملية لحماية ترابط البيانات."
+                            : sqlException.Message;
+                    return "رفض SQL Server الاستعلام (رقم الخطأ " + sqlException.Number + ").";
+                }
+
+                current = current.InnerException;
             }
 
             string message = exception == null ? string.Empty : exception.Message;
