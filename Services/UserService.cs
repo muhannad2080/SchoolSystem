@@ -18,11 +18,16 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllUsers()
         {
+            CurrentUser.DemandPermission(PermissionKeys.UsersManage, "ليس لديك صلاحية إدارة المستخدمين.");
             return userRepository.GetAllUsers();
         }
 
         public bool AddUser(User user, string password)
         {
+            // السماح بالتهيئة الأولى فقط عندما لا يوجد أي حساب، ثم اشتراط Users.Manage دائمًا.
+            if (userRepository.CountUsers() > 0)
+                CurrentUser.DemandPermission(PermissionKeys.UsersManage, "ليس لديك صلاحية إدارة المستخدمين.");
+
             NormalizeUser(user);
 
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
@@ -51,6 +56,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateUser(User user, string password, bool updatePassword)
         {
+            CurrentUser.DemandPermission(PermissionKeys.UsersManage, "ليس لديك صلاحية إدارة المستخدمين.");
             if (user.UserID <= 0)
                 throw new Exception("رقم المستخدم غير صحيح.");
 
@@ -97,6 +103,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteUser(int userId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.UsersManage, "ليس لديك صلاحية إدارة المستخدمين.");
             if (userId <= 0)
                 throw new Exception("رقم المستخدم غير صحيح.");
 
@@ -170,6 +177,7 @@ namespace SchoolSystem.Services
 
         public bool ResetPasswordByUserName(string userName, string newPassword)
         {
+            CurrentUser.DemandPermission(PermissionKeys.UsersManage, "ليس لديك صلاحية إدارة كلمات مرور المستخدمين.");
             userName = NormalizeDigits(userName).Trim();
             newPassword = NormalizeDigits(newPassword).Trim();
 
