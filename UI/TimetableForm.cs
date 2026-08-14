@@ -276,6 +276,24 @@ namespace SchoolSystem.UI
                 dataGridViewTimetable.Columns[columnName].Visible = false;
         }
 
+        private bool IsValidAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
+                return false;
+
+            if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
+                return false;
+
+            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
+        }
+
         private TimetableEntry BuildModel()
         {
             int classId = GetClassId();
@@ -291,8 +309,8 @@ namespace SchoolSystem.UI
                 throw new InvalidOperationException("يرجى اختيار المادة.");
             if (teacherId <= 0 || cmbTeacher.SelectedIndex < 0)
                 throw new InvalidOperationException("يرجى اختيار المعلم.");
-            if (string.IsNullOrWhiteSpace(academicYear) || !System.Text.RegularExpressions.Regex.IsMatch(academicYear, @"^[0-9]{4}(/[0-9]{4})?$") )
-                throw new InvalidOperationException("السنة الدراسية غير صحيحة.");
+            if (!IsValidAcademicYear(academicYear))
+                throw new InvalidOperationException("أدخل العام الدراسي بالصيغة الصحيحة، مثل 2025/2026.");
             if (cmbDay.SelectedIndex < 0 || cmbTerm.SelectedIndex < 0)
                 throw new InvalidOperationException("يرجى اختيار اليوم والفصل الدراسي.");
             if (endTime <= startTime)
