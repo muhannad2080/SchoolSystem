@@ -62,6 +62,12 @@ namespace SchoolSystem.UI
             btnRefresh.Click -= btnRefresh_Click;
             btnRefresh.Click += btnRefresh_Click;
 
+            cmbClass.SelectedIndexChanged -= cmbClass_SelectedIndexChanged;
+            cmbClass.SelectedIndexChanged += cmbClass_SelectedIndexChanged;
+
+            txtAcademicYear.Leave -= txtAcademicYear_Leave;
+            txtAcademicYear.Leave += txtAcademicYear_Leave;
+
             btnExportExcel.Click -= btnExportExcel_Click;
             btnExportExcel.Click += btnExportExcel_Click;
 
@@ -88,6 +94,7 @@ namespace SchoolSystem.UI
 
                 LoadStaticData();
                 await LoadClassesAsync();
+                await LoadSectionsAsync();
 
                 Cursor = Cursors.Default;
             }
@@ -114,15 +121,9 @@ namespace SchoolSystem.UI
             if (cmbReportType.Items.Count > 0)
                 cmbReportType.SelectedIndex = 0;
 
+            cmbSection.DataSource = null;
             cmbSection.Items.Clear();
-            cmbSection.Items.Add("");
-            cmbSection.Items.Add("أ");
-            cmbSection.Items.Add("ب");
-            cmbSection.Items.Add("ج");
-            cmbSection.Items.Add("د");
-
-            if (cmbSection.Items.Count > 0)
-                cmbSection.SelectedIndex = 0;
+            cmbSection.Enabled = false;
 
             cmbStatus.Items.Clear();
             cmbStatus.Items.Add("الكل");
@@ -153,6 +154,74 @@ namespace SchoolSystem.UI
 
             lblSummary.Text = "ملخص التقرير: لا توجد بيانات محملة.";
             lblRecordCount.Text = "عدد السجلات: 0";
+        }
+
+        private async void cmbClass_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            await LoadSectionsAsync();
+        }
+
+        private async void txtAcademicYear_Leave(object sender, EventArgs e)
+        {
+            await LoadSectionsAsync();
+        }
+
+        private async Task LoadSectionsAsync()
+        {
+            cmbSection.DataSource = null;
+            cmbSection.Items.Clear();
+            cmbSection.Enabled = false;
+
+            int classId = 0;
+            if (cmbClass.SelectedValue != null && !(cmbClass.SelectedValue is DataRowView))
+                int.TryParse(cmbClass.SelectedValue.ToString(), out classId);
+
+            if (classId <= 0 || !IsValidAcademicYear(txtAcademicYear.Text))
+            {
+                cmbSection.Items.Add("اختر صفًا وعامًا دراسيًا صحيحًا");
+                cmbSection.SelectedIndex = 0;
+                return;
+            }
+
+            try
+            {
+                DataTable sections = await Task.Run(() => reportService.GetSections(classId, txtAcademicYear.Text.Trim()));
+                if (sections == null || sections.Rows.Count == 0)
+                {
+                    cmbSection.Items.Add("لا توجد شعب مسجلة");
+                    cmbSection.SelectedIndex = 0;
+                    return;
+                }
+
+                DataTable choices = sections.Copy();
+                DataRow allRow = choices.NewRow();
+                allRow["Section"] = "";
+                choices.Rows.InsertAt(allRow, 0);
+                cmbSection.DataSource = choices;
+                cmbSection.DisplayMember = "Section";
+                cmbSection.ValueMember = "Section";
+                cmbSection.Enabled = true;
+                cmbSection.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                cmbSection.Items.Add("تعذر تحميل الشعب");
+                cmbSection.SelectedIndex = 0;
+                UIHelper.ShowException("تحميل شعب مركز التقارير", ex);
+            }
+        }
+
+        private bool IsValidAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+            return parts.Length == 2 && parts[0].Length == 4 && parts[1].Length == 4 &&
+                   int.TryParse(parts[0], out firstYear) && int.TryParse(parts[1], out secondYear) &&
+                   secondYear == firstYear + 1;
         }
 
         private async Task LoadClassesAsync()

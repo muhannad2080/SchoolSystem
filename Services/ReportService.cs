@@ -10,6 +10,16 @@ namespace SchoolSystem.Services
     {
         private readonly ReportRepository repository = new ReportRepository();
 
+        public DataTable GetSections(int classId, string academicYear)
+        {
+            CurrentUser.DemandPermission(PermissionKeys.ReportsView, "ليس لديك صلاحية عرض التقارير.");
+            if (classId <= 0)
+                return new DataTable();
+
+            ValidateAcademicYear(academicYear);
+            return repository.GetSections(classId, academicYear.Trim());
+        }
+
         public DataTable GetReportData(ReportRequest request)
         {
             CurrentUser.DemandPermission(PermissionKeys.ReportsView, "ليس لديك صلاحية عرض التقارير.");
@@ -25,6 +35,20 @@ namespace SchoolSystem.Services
                 return new DataTable();
 
             return repository.GetReport(key);
+        }
+
+        private void ValidateAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                throw new ArgumentException("العام الدراسي مطلوب.");
+
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4 ||
+                !int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear) ||
+                secondYear != firstYear + 1)
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
         }
 
         private void ValidateRequest(ReportRequest request)
