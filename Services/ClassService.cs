@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -11,16 +12,19 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllClasses()
         {
+            DemandClassLookupAccess();
             return repository.GetAllClasses();
         }
 
         public DataTable GetClassDetails()
         {
+            DemandClassLookupAccess();
             return repository.GetClassDetails();
         }
 
         public bool UpdateClass(SchoolClass item)
         {
+            CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة الفصول.");
             if (item == null)
                 throw new ArgumentException("بيانات الفصل غير صحيحة.");
 
@@ -37,6 +41,20 @@ namespace SchoolSystem.Services
                 throw new ArgumentException("ترتيب الفصل غير صحيح.");
 
             return repository.UpdateClass(item);
+        }
+        private void DemandClassLookupAccess()
+        {
+            CurrentUser.DemandAny(
+                "ليس لديك صلاحية عرض بيانات الفصول.",
+                PermissionKeys.ClassesManage,
+                PermissionKeys.ClassAssignmentManage,
+                PermissionKeys.EnrollmentManage,
+                PermissionKeys.AttendanceManage,
+                PermissionKeys.SubjectsManage,
+                PermissionKeys.TimetableManage,
+                PermissionKeys.ReportsView,
+                PermissionKeys.FeesManage,
+                PermissionKeys.GradesManage);
         }
     }
 }
