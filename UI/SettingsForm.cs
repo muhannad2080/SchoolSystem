@@ -20,6 +20,12 @@ namespace SchoolSystem.UI
             if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
                 return;
 
+            browseButton.Click += BrowseButton_Click;
+            testConnectionButton.Click += TestConnectionButton_Click;
+            saveButton.Click += SaveButton_Click;
+            backupButton.Click += BackupButton_Click;
+            restoreButton.Click += RestoreButton_Click;
+
             UIHelper.ApplyStyle(this);
             settings = ApplicationSettingsService.Load();
             serverTextBox.Text = settings.ServerInstance;

@@ -128,7 +128,6 @@ namespace SchoolSystem.UI
             backupDirectoryTextBox.Margin = new Padding(8, 7, 8, 7);
             browseButton.Dock = DockStyle.Fill;
             browseButton.Text = "اختيار مجلد";
-            browseButton.Click += BrowseButton_Click;
             // actionsPanel
             actionsPanel.BackColor = Color.FromArgb(248, 250, 252);
             actionsPanel.ColumnCount = 4;
@@ -152,19 +151,15 @@ namespace SchoolSystem.UI
             testConnectionButton.Dock = DockStyle.Fill;
             testConnectionButton.Margin = new Padding(4);
             testConnectionButton.Text = "اختبار الاتصال";
-            testConnectionButton.Click += TestConnectionButton_Click;
             saveButton.Dock = DockStyle.Fill;
             saveButton.Margin = new Padding(4);
             saveButton.Text = "حفظ الإعدادات";
-            saveButton.Click += SaveButton_Click;
             backupButton.Dock = DockStyle.Fill;
             backupButton.Margin = new Padding(4);
             backupButton.Text = "إنشاء نسخة الآن";
-            backupButton.Click += BackupButton_Click;
             restoreButton.Dock = DockStyle.Fill;
             restoreButton.Margin = new Padding(4);
             restoreButton.Text = "استعادة نسخة";
-            restoreButton.Click += RestoreButton_Click;
             replaceExistingCheckBox.AutoSize = true;
             replaceExistingCheckBox.Anchor = AnchorStyles.Right;
             replaceExistingCheckBox.Text = "السماح باستبدال قاعدة البيانات الحالية (للمدير فقط)";
