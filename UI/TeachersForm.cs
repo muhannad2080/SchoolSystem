@@ -126,8 +126,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                LogException("LoadTeachers", ex);
-                ShowSafeError("تعذر تحميل بيانات المعلمين. تحقق من الاتصال وحاول مرة أخرى.");
+                UIHelper.ShowException("تحميل بيانات المعلمين", ex);
             }
             finally
             {
@@ -281,8 +280,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                LogException("ValidateTeacherUniqueness", ex);
-                ShowSafeError("تعذر التحقق من تفرد الرقم الوطني أو البريد الإلكتروني. لم يتم الحفظ؛ تحقق من اتصال قاعدة البيانات ثم حاول مرة أخرى.");
+                UIHelper.ShowException("التحقق من بيانات المعلم", ex);
                 return false;
             }
 
@@ -325,8 +323,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                LogException("AddTeacher", ex);
-                ShowSafeError(GetOperationError("الإضافة", ex));
+                UIHelper.ShowException("إضافة المعلم", ex);
             }
         }
 
@@ -348,8 +345,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                LogException("UpdateTeacher", ex);
-                ShowSafeError(GetOperationError("التعديل", ex));
+                UIHelper.ShowException("تعديل المعلم", ex);
             }
         }
 
@@ -371,8 +367,7 @@ namespace SchoolSystem.UI
                 }
                 catch (Exception ex)
                 {
-                    LogException("DeleteTeacher", ex);
-                    ShowSafeError(GetOperationError("الحذف", ex));
+                    UIHelper.ShowException("حذف المعلم", ex);
                 }
             }
         }
@@ -438,37 +433,6 @@ namespace SchoolSystem.UI
         {
             decimal value;
             return decimal.TryParse(ReadCellText(row, columnName), out value) ? value : fallback;
-        }
-
-        private string GetOperationError(string operation, Exception ex)
-        {
-            if (ex is UnauthorizedAccessException)
-                return ex.Message;
-
-            return "تعذر تنفيذ " + operation + " المعلم. تحقق من البيانات والاتصال ثم حاول مرة أخرى.";
-        }
-
-        private void ShowSafeError(string message)
-        {
-            MessageBox.Show(message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error,
-                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
-        }
-
-        private void LogException(string operation, Exception ex)
-        {
-            try
-            {
-                string directory = System.IO.Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "SchoolSystem", "Logs");
-                System.IO.Directory.CreateDirectory(directory);
-                System.IO.File.AppendAllText(System.IO.Path.Combine(directory, "errors.log"),
-                    DateTime.Now.ToString("s") + " [" + operation + "] " + ex + Environment.NewLine);
-            }
-            catch
-            {
-                // لا نسمح لفشل التسجيل بأن يعطل الواجهة.
-            }
         }
 
         private void ClearInputs()
