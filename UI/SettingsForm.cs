@@ -104,6 +104,14 @@ namespace SchoolSystem.UI
                 SetBusy(true, "جارٍ إنشاء النسخة الاحتياطية...");
                 string file = await Task.Run(() => backupService.Backup(
                     settings.ServerInstance, settings.DatabaseName, settings.BackupDirectory));
+                string actualDirectory = Path.GetDirectoryName(file);
+                if (!string.IsNullOrWhiteSpace(actualDirectory) &&
+                    !string.Equals(settings.BackupDirectory, actualDirectory, StringComparison.OrdinalIgnoreCase))
+                {
+                    settings.BackupDirectory = actualDirectory;
+                    backupDirectoryTextBox.Text = actualDirectory;
+                    ApplicationSettingsService.Save(settings);
+                }
                 SetBusy(false, "تم إنشاء النسخة الاحتياطية بنجاح.");
                 new AuditLogService().Record("إنشاء نسخة احتياطية", "Database", settings.DatabaseName, "الملف: " + file);
                 UIHelper.ShowInformation("تم إنشاء النسخة الاحتياطية بنجاح:\n" + file);

@@ -66,7 +66,7 @@ namespace SchoolSystem.Services
                 value.DatabaseName = "SchoolDB";
             if (string.IsNullOrWhiteSpace(value.BackupDirectory))
                 value.BackupDirectory = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SchoolSystemBackups");
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SchoolSystem", "Backups");
             return value;
         }
 

@@ -21,8 +21,7 @@ namespace SchoolSystem.Services
         public string Backup(string serverInstance, string databaseName, string backupDirectory)
         {
             ValidateInputs(serverInstance, databaseName);
-            string directory = ValidateBackupDirectory(backupDirectory);
-            Directory.CreateDirectory(directory);
+            string directory = EnsureBackupDirectory(backupDirectory);
 
             string backupFile = Path.Combine(
                 directory,
@@ -98,16 +97,51 @@ RESTORE DATABASE [" + targetDatabase + @"] FROM DISK = @backupFile WITH RECOVERY
                 throw new ArgumentException("اسم قاعدة البيانات غير صالح.");
         }
 
-        private static string ValidateBackupDirectory(string backupDirectory)
+        private static string EnsureBackupDirectory(string backupDirectory)
         {
             if (string.IsNullOrWhiteSpace(backupDirectory))
                 throw new ArgumentException("يجب تحديد مجلد النسخ الاحتياطي.");
 
-            string directory = Path.GetFullPath(backupDirectory.Trim());
+            string directory;
+            try
+            {
+                directory = Path.GetFullPath(backupDirectory.Trim());
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException("مسار مجلد النسخ الاحتياطي غير صالح.", ex);
+            }
+
             string applicationDirectory = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
             if (directory.StartsWith(applicationDirectory, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("يجب حفظ النسخ الاحتياطية خارج مجلد البرنامج.");
-            return directory;
+            if (File.Exists(directory))
+                throw new IOException("المسار المحدد لنسخ قاعدة البيانات هو ملف وليس مجلداً.");
+
+            try
+            {
+                Directory.CreateDirectory(directory);
+                if (Directory.Exists(directory))
+                    return directory;
+            }
+            catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException || ex is NotSupportedException)
+            {
+                string fallback = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "SchoolSystem", "Backups");
+                try
+                {
+                    Directory.CreateDirectory(fallback);
+                    if (Directory.Exists(fallback))
+                        return fallback;
+                }
+                catch (Exception fallbackException) when (fallbackException is IOException || fallbackException is UnauthorizedAccessException || fallbackException is NotSupportedException)
+                {
+                    throw new IOException("تعذر إنشاء مجلد النسخ الاحتياطي. اختر مجلداً محلياً صالحاً مثل D:\\SchoolSystemBackups ثم أعد المحاولة.", ex);
+                }
+            }
+
+            throw new IOException("تعذر إنشاء مجلد النسخ الاحتياطي. اختر مجلداً محلياً صالحاً ثم أعد المحاولة.");
         }
     }
 }
