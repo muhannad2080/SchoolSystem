@@ -33,6 +33,7 @@ namespace SchoolSystem.Security
 
         public const string ReportsView = "Reports.View";
         public const string UsersManage = "Users.Manage";
+        public const string AuditLogsView = "AuditLogs.View";
 
         public const string SystemAdministratorRole = "مدير النظام";
 
@@ -61,7 +62,8 @@ namespace SchoolSystem.Security
                     LibraryManage,
                     TransportManage,
                     ReportsView,
-                    UsersManage
+                    UsersManage,
+                    AuditLogsView
                 };
             }
         }

@@ -52,7 +52,8 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(
                 @"INSERT INTO Marks (StudentID, SubjectID, TeacherID, Mark, ExamType)
-                  VALUES (@SID, @SubID, @TID, @Mark, @Exam)", conn))
+                  VALUES (@SID, @SubID, @TID, @Mark, @Exam);
+                  SELECT CAST(SCOPE_IDENTITY() AS INT);", conn))
             {
                 cmd.Parameters.Add("@SID", SqlDbType.Int).Value = mark.StudentID;
                 cmd.Parameters.Add("@SubID", SqlDbType.Int).Value = mark.SubjectID;
@@ -60,7 +61,9 @@ namespace SchoolSystem.DataAccess
                 cmd.Parameters.Add("@Mark", SqlDbType.Decimal).Value = mark.MarkValue;
                 cmd.Parameters.Add("@Exam", SqlDbType.NVarChar, 50).Value = string.IsNullOrWhiteSpace(mark.ExamType) ? (object)DBNull.Value : mark.ExamType;
                 conn.Open();
-                cmd.ExecuteNonQuery();
+                object result = cmd.ExecuteScalar();
+                if (result != null && result != DBNull.Value)
+                    mark.MarkID = Convert.ToInt32(result);
             }
         }
 

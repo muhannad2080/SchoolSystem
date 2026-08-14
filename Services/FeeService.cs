@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class FeeService
     {
         private readonly FeeRepository feeRepository;
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public FeeService()
         {
@@ -26,7 +27,11 @@ namespace SchoolSystem.Services
             EnsureCanManageFees();
             ValidateFee(fee);
             PrepareFee(fee);
-            return feeRepository.AddFee(fee);
+            int feeId = feeRepository.AddFee(fee);
+            if (feeId > 0)
+                auditLogService.Record("إنشاء", "Fee", feeId.ToString(),
+                    string.Format("الطالب: {0}، النوع: {1}، الصافي: {2}، المدفوع: {3}", fee.StudentID, fee.FeeType, fee.NetAmount, fee.PaidAmount));
+            return feeId;
         }
 
         public bool UpdateFee(Fee fee)
@@ -37,7 +42,11 @@ namespace SchoolSystem.Services
 
             ValidateFee(fee);
             PrepareFee(fee);
-            return feeRepository.UpdateFee(fee);
+            bool updated = feeRepository.UpdateFee(fee);
+            if (updated)
+                auditLogService.Record("تعديل", "Fee", fee.FeeID.ToString(),
+                    string.Format("الطالب: {0}، النوع: {1}، الصافي: {2}، المدفوع: {3}", fee.StudentID, fee.FeeType, fee.NetAmount, fee.PaidAmount));
+            return updated;
         }
 
         public bool DeleteFee(int feeId)
@@ -46,7 +55,10 @@ namespace SchoolSystem.Services
             if (feeId <= 0)
                 throw new Exception("رقم سجل الرسوم غير صحيح.");
 
-            return feeRepository.DeleteFee(feeId);
+            bool deleted = feeRepository.DeleteFee(feeId);
+            if (deleted)
+                auditLogService.Record("حذف", "Fee", feeId.ToString(), "حذف سجل الرسوم.");
+            return deleted;
         }
 
         public int GenerateStudentFeesFromPlans(int studentId, string academicYear)
@@ -58,7 +70,11 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(academicYear))
                 throw new Exception("يجب اختيار العام الدراسي.");
 
-            return feeRepository.GenerateStudentFeesFromPlans(studentId, academicYear);
+            int generated = feeRepository.GenerateStudentFeesFromPlans(studentId, academicYear);
+            if (generated > 0)
+                auditLogService.Record("توليد", "Fee", studentId.ToString(),
+                    string.Format("توليد {0} سجل رسوم من خطط العام الدراسي {1}.", generated, academicYear));
+            return generated;
         }
 
         private static void EnsureCanManageFees()

@@ -147,14 +147,19 @@ namespace SchoolSystem.DataAccess
                         @Phone,
                         @IsActive,
                         @MustChangePassword
-                    )";
+                    );
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     AddParameters(cmd, user, true);
 
                     con.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result == null || result == DBNull.Value)
+                        return false;
+                    user.UserID = Convert.ToInt32(result);
+                    return user.UserID > 0;
                 }
             }
         }

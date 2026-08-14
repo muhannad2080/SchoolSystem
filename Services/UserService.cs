@@ -10,6 +10,7 @@ namespace SchoolSystem.Services
     public class UserService
     {
         private readonly UserRepository userRepository;
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public UserService()
         {
@@ -51,7 +52,11 @@ namespace SchoolSystem.Services
             user.PasswordHash = hash;
             user.PasswordSalt = salt;
 
-            return userRepository.AddUser(user);
+            bool added = userRepository.AddUser(user);
+            if (added)
+                auditLogService.Record("إنشاء", "User", user.UserID.ToString(),
+                    string.Format("الحساب: {0}، الدور: {1}، الصلاحيات: {2}", user.UserName, user.RoleName, user.Permissions));
+            return added;
         }
 
         public bool UpdateUser(User user, string password, bool updatePassword)
@@ -109,6 +114,10 @@ namespace SchoolSystem.Services
                     CurrentUser.Set(refreshedUser);
             }
 
+            if (updated)
+                auditLogService.Record("تعديل", "User", user.UserID.ToString(),
+                    string.Format("الحساب: {0}، الدور: {1}، نشط: {2}، تغيير كلمة المرور: {3}، الصلاحيات: {4}", user.UserName, user.RoleName, user.IsActive, updatePassword, user.Permissions));
+
             return updated;
         }
 
@@ -129,7 +138,11 @@ namespace SchoolSystem.Services
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName) && userRepository.CountAdmins() <= 1)
                 throw new Exception("لا يمكن حذف آخر مدير نظام.");
 
-            return userRepository.DeleteUser(userId);
+            bool deleted = userRepository.DeleteUser(userId);
+            if (deleted)
+                auditLogService.Record("حذف", "User", userId.ToString(),
+                    string.Format("حذف الحساب: {0}، الدور: {1}", user.UserName, user.RoleName));
+            return deleted;
         }
 
         public User Authenticate(string userName, string password)

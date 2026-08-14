@@ -135,6 +135,7 @@
     <Compile Include="DataAccess\StudentClassRepository.cs" />
     <Compile Include="DataAccess\StudentRepository.cs" />
     <Compile Include="DataAccess\StudentProfileRepository.cs" />
+    <Compile Include="DataAccess\AuditLogRepository.cs" />
     <Compile Include="DataAccess\SubjectRepository.cs" />
     <Compile Include="DataAccess\TeacherAttendanceRepository.cs" />
     <Compile Include="DataAccess\TeacherContractRepository.cs" />
@@ -169,6 +170,7 @@
     <Compile Include="Models\StudentGrade.cs" />
     <Compile Include="Models\Students.cs" />
     <Compile Include="Models\StudentProfile.cs" />
+    <Compile Include="Models\AuditLog.cs" />
     <Compile Include="Models\Subjects.cs" />
     <Compile Include="Models\TeacherAttendance.cs" />
     <Compile Include="Models\TeacherContract.cs" />
@@ -201,6 +203,7 @@
     <Compile Include="Services\StudentClassService.cs" />
     <Compile Include="Services\StudentService.cs" />
     <Compile Include="Services\StudentProfileService.cs" />
+    <Compile Include="Services\AuditLogService.cs" />
     <Compile Include="Services\SubjectService.cs" />
     <Compile Include="Services\TeacherAttendanceService.cs" />
     <Compile Include="Services\TeacherContractService.cs" />
@@ -299,6 +302,9 @@
       <DependentUpon>StudentsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\StudentProfileForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\AuditLogForm.cs">
       <SubType>UserControl</SubType>
     </Compile>
 

@@ -12,10 +12,12 @@ namespace SchoolSystem
     {
         public static MainForm Instance { get; private set; }
         private bool handoffToAuthenticatedSession;
+        private ToolStripMenuItem tsmiAuditLogs;
 
         public MainForm()
         {
             InitializeComponent();
+            ConfigureAuditMenu();
             FormClosed += MainForm_FormClosed;
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
 
@@ -30,6 +32,14 @@ namespace SchoolSystem
             LoadWelcomeScreen();
 
             ApplyCurrentUserPermissions();
+        }
+
+        private void ConfigureAuditMenu()
+        {
+            tsmiAuditLogs = new ToolStripMenuItem("سجل التدقيق");
+            tsmiAuditLogs.Name = "tsmiAuditLogs";
+            tsmiAuditLogs.Click += tsmiAuditLogs_Click;
+            tsmiReports.DropDownItems.Add(tsmiAuditLogs);
         }
 
         private void ApplyModernMenuStyle()
@@ -270,7 +280,7 @@ namespace SchoolSystem
                 tsmiTeachersPayroll, tsmiAcademic, tsmiSubjects, tsmiClasses, tsmiTimetable,
                 tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
                 tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiTransport, tsmiLibrary,
-                tsmiUsers, tsmiReports
+                tsmiUsers, tsmiReports, tsmiAuditLogs
             };
 
             foreach (ToolStripMenuItem item in permissionItems)
@@ -304,6 +314,7 @@ namespace SchoolSystem
                 tsmiLibrary.Visible = true;
                 tsmiUsers.Visible = true;
                 tsmiReports.Visible = true;
+                tsmiAuditLogs.Visible = true;
                 return;
             }
 
@@ -332,7 +343,8 @@ namespace SchoolSystem
             tsmiLibrary.Visible = Has(PermissionKeys.LibraryManage);
 
             tsmiUsers.Visible = Has(PermissionKeys.UsersManage);
-            tsmiReports.Visible = Has(PermissionKeys.ReportsView);
+            tsmiReports.Visible = Has(PermissionKeys.ReportsView) || Has(PermissionKeys.AuditLogsView);
+            tsmiAuditLogs.Visible = Has(PermissionKeys.AuditLogsView);
             تعريفرسومالصفوفToolStripMenuItem.Visible = Has(PermissionKeys.FeesManage);
 
             // إخفاء مجموعات القوائم التي لا تحتوي على أي خيار مسموح للمستخدم.
@@ -510,6 +522,14 @@ namespace SchoolSystem
                 return;
 
             LoadUserControl(new ReportCenterForm());
+        }
+
+        private void tsmiAuditLogs_Click(object sender, EventArgs e)
+        {
+            if (!EnsurePermission(PermissionKeys.AuditLogsView))
+                return;
+
+            LoadUserControl(new AuditLogForm());
         }
 
         private void تعريفرسومالصفوفToolStripMenuItem_Click(object sender, EventArgs e)
