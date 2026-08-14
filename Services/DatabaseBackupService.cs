@@ -51,10 +51,24 @@ namespace SchoolSystem.Services
             if (replaceExisting)
             {
                 restoreSql = @"
-IF DB_ID(@targetDatabase) IS NOT NULL
-    ALTER DATABASE [" + targetDatabase + @"] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-RESTORE DATABASE [" + targetDatabase + @"] FROM DISK = @backupFile WITH REPLACE, RECOVERY, CHECKSUM, STATS = 10;
-ALTER DATABASE [" + targetDatabase + @"] SET MULTI_USER;";
+BEGIN TRY
+    IF DB_ID(@targetDatabase) IS NOT NULL
+        ALTER DATABASE [" + targetDatabase + @"] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    RESTORE DATABASE [" + targetDatabase + @"] FROM DISK = @backupFile WITH REPLACE, RECOVERY, CHECKSUM, STATS = 10;
+    ALTER DATABASE [" + targetDatabase + @"] SET MULTI_USER;
+END TRY
+BEGIN CATCH
+    IF DB_ID(@targetDatabase) IS NOT NULL
+    BEGIN
+        BEGIN TRY
+            ALTER DATABASE [" + targetDatabase + @"] SET MULTI_USER;
+        END TRY
+        BEGIN CATCH
+            -- Preserve the original RESTORE error while attempting recovery.
+        END CATCH
+    END
+    THROW;
+END CATCH;";
             }
             else
             {
