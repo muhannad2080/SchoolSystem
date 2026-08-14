@@ -98,7 +98,18 @@ namespace SchoolSystem.Services
                 user.PasswordSalt = salt;
             }
 
-            return userRepository.UpdateUser(user, updatePassword);
+            bool updated = userRepository.UpdateUser(user, updatePassword);
+
+            // إذا عدّل المدير الحساب المستخدم حاليًا، أعد تحميل النسخة المحفوظة
+            // حتى لا تبقى صلاحيات قديمة داخل الذاكرة.
+            if (updated && CurrentUser.IsLoggedIn && CurrentUser.User.UserID == user.UserID)
+            {
+                User refreshedUser = userRepository.GetUserById(user.UserID);
+                if (refreshedUser != null)
+                    CurrentUser.Set(refreshedUser);
+            }
+
+            return updated;
         }
 
         public bool DeleteUser(int userId)
@@ -131,6 +142,9 @@ namespace SchoolSystem.Services
 
             if (string.IsNullOrWhiteSpace(password))
                 throw new Exception("أدخل كلمة المرور.");
+
+            // لا تسمح ببقاء جلسة سابقة إذا فشلت محاولة الدخول أو بدأت جلسة جديدة.
+            CurrentUser.Clear();
 
             User user = userRepository.GetUserByUserName(userName);
 

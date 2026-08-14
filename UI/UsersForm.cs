@@ -241,7 +241,9 @@ namespace SchoolSystem.UI
 
         private void cmbRole_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!isLoading)
+            // الدور يطبّق صلاحيات افتراضية للمستخدم الجديد فقط.
+            // عند تحرير مستخدم موجود نحافظ على الصلاحيات المخصصة التي حمّلناها من قاعدة البيانات.
+            if (!isLoading && selectedUserId == 0)
                 ApplyRolePreset();
         }
 
