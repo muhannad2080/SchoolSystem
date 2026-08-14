@@ -305,25 +305,21 @@ namespace SchoolSystem.UI
 
         private void FillFields(DataRow row)
         {
-            selectedSubjectId = row["SubjectID"] != DBNull.Value
-                ? Convert.ToInt32(row["SubjectID"])
-                : 0;
+            if (row == null)
+                return;
+
+            selectedSubjectId = ReadRowInt(row, "SubjectID");
 
             txtSubjectID.Text = selectedSubjectId > 0 ? selectedSubjectId.ToString() : "";
 
-            txtSubjectCode.Text = row["SubjectCode"] == DBNull.Value
-                ? ""
-                : row["SubjectCode"].ToString();
+            txtSubjectCode.Text = ReadRowText(row, "SubjectCode");
+            txtSubjectName.Text = ReadRowText(row, "SubjectName");
 
-            txtSubjectName.Text = row["SubjectName"] == DBNull.Value
-                ? ""
-                : row["SubjectName"].ToString();
-
-            if (row.Table.Columns.Contains("ClassID") &&
-                row["ClassID"] != DBNull.Value)
+            int classId = ReadRowInt(row, "ClassID");
+            if (classId > 0 && cmbClass.DataSource != null)
             {
                 cmbClass.Enabled = true;
-                cmbClass.SelectedValue = Convert.ToInt32(row["ClassID"]);
+                cmbClass.SelectedValue = classId;
                 cmbClass.Enabled = false;
             }
             else
@@ -332,22 +328,48 @@ namespace SchoolSystem.UI
                     cmbClass.SelectedIndex = 0;
             }
 
-            nudMaxDegree.Value = row["MaxDegree"] == DBNull.Value
-                ? 100
-                : Convert.ToDecimal(row["MaxDegree"]);
-
-            nudPassDegree.Value = row["PassDegree"] == DBNull.Value
-                ? 50
-                : Convert.ToDecimal(row["PassDegree"]);
-
-            chkIsActive.Checked = row["IsActive"] != DBNull.Value &&
-                                  Convert.ToBoolean(row["IsActive"]);
-
-            txtNotes.Text = row["Notes"] == DBNull.Value
-                ? ""
-                : row["Notes"].ToString();
+            nudMaxDegree.Value = ClampNumeric(ReadRowDecimal(row, "MaxDegree", 100), nudMaxDegree.Minimum, nudMaxDegree.Maximum);
+            nudPassDegree.Value = ClampNumeric(ReadRowDecimal(row, "PassDegree", 50), nudPassDegree.Minimum, nudPassDegree.Maximum);
+            chkIsActive.Checked = ReadRowBool(row, "IsActive", true);
+            txtNotes.Text = ReadRowText(row, "Notes");
 
             ConfigureFixedSubjectsMode();
+        }
+
+        private string ReadRowText(DataRow row, string columnName)
+        {
+            if (row == null || row.Table == null || !row.Table.Columns.Contains(columnName))
+                return string.Empty;
+
+            object value = row[columnName];
+            return value == null || value == DBNull.Value ? string.Empty : value.ToString();
+        }
+
+        private int ReadRowInt(DataRow row, string columnName)
+        {
+            int value;
+            return int.TryParse(ReadRowText(row, columnName), out value) ? value : 0;
+        }
+
+        private decimal ReadRowDecimal(DataRow row, string columnName, decimal fallback)
+        {
+            decimal value;
+            return decimal.TryParse(ReadRowText(row, columnName), out value) ? value : fallback;
+        }
+
+        private bool ReadRowBool(DataRow row, string columnName, bool fallback)
+        {
+            string value = ReadRowText(row, columnName);
+            if (string.IsNullOrWhiteSpace(value))
+                return fallback;
+
+            bool parsed;
+            return bool.TryParse(value, out parsed) ? parsed : fallback;
+        }
+
+        private decimal ClampNumeric(decimal value, decimal minimum, decimal maximum)
+        {
+            return Math.Min(Math.Max(value, minimum), maximum);
         }
 
         private void ClearFields()
