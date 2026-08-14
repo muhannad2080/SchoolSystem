@@ -94,7 +94,12 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = "DELETE FROM Buses WHERE BusID = @BusID";
+                const string query = @"
+                    IF EXISTS (SELECT 1 FROM BusRoutes WHERE BusID = @BusID)
+                        THROW 51001, N'لا يمكن حذف الحافلة لأنها مرتبطة بمسار نقل. احذف ارتباطات المسارات أولاً.', 1;
+
+                    DELETE FROM Buses
+                    WHERE BusID = @BusID;";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {

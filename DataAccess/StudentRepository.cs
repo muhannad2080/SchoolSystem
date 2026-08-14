@@ -256,9 +256,12 @@ WHERE StudentId = @StudentId;";
 
         public void Delete(int studentId)
         {
-            string query = @"
-DELETE FROM Students
-WHERE StudentId = @StudentId;";
+            const string query = @"
+UPDATE Students
+SET Status = N'محذوف',
+    UpdatedAt = GETDATE()
+WHERE StudentId = @StudentId
+  AND ISNULL(Status, N'') <> N'محذوف';";
 
             using (SqlConnection conn = GetConnection())
             using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -266,7 +269,8 @@ WHERE StudentId = @StudentId;";
                 cmd.Parameters.Add("@StudentId", SqlDbType.Int).Value = studentId;
 
                 conn.Open();
-                cmd.ExecuteNonQuery();
+                if (cmd.ExecuteNonQuery() == 0)
+                    throw new System.InvalidOperationException("الطالب غير موجود أو تم تعطيله مسبقاً.");
             }
         }
 
