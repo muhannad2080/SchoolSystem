@@ -324,3 +324,173 @@ END;
 
 PRINT N'تمت ترقية جدول Classes بما يتوافق مع شاشات التسجيل وإدارة الفصول.';
 GO
+
+/*
+   Final runtime compatibility hardening.
+   This section is intentionally additive and safe to run repeatedly.
+   It aligns existing installations with the repositories currently shipped.
+*/
+
+/* Students compatibility used by class assignment and fees screens. */
+IF OBJECT_ID(N'dbo.Students', N'U') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.Students', N'ClassID') IS NULL
+        ALTER TABLE dbo.Students ADD ClassID INT NULL;
+    IF COL_LENGTH(N'dbo.Students', N'Section') IS NULL
+        ALTER TABLE dbo.Students ADD Section NVARCHAR(50) NULL;
+    IF COL_LENGTH(N'dbo.Students', N'AcademicYear') IS NULL
+        ALTER TABLE dbo.Students ADD AcademicYear NVARCHAR(20) NULL;
+    IF COL_LENGTH(N'dbo.Students', N'Phone') IS NULL
+        ALTER TABLE dbo.Students ADD Phone NVARCHAR(30) NULL;
+
+    UPDATE dbo.Students
+       SET Phone = StudentPhone
+     WHERE Phone IS NULL AND StudentPhone IS NOT NULL;
+END;
+
+/* Subjects compatibility used by SubjectsForm and timetable selectors. */
+IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.Subjects', N'SubjectCode') IS NULL
+        ALTER TABLE dbo.Subjects ADD SubjectCode NVARCHAR(30) NULL;
+    IF COL_LENGTH(N'dbo.Subjects', N'ClassID') IS NULL
+        ALTER TABLE dbo.Subjects ADD ClassID INT NULL;
+    IF COL_LENGTH(N'dbo.Subjects', N'MaxDegree') IS NULL
+        ALTER TABLE dbo.Subjects ADD MaxDegree DECIMAL(10,2) NOT NULL CONSTRAINT DF_Subjects_MaxDegree DEFAULT 100 WITH VALUES;
+    IF COL_LENGTH(N'dbo.Subjects', N'PassDegree') IS NULL
+        ALTER TABLE dbo.Subjects ADD PassDegree DECIMAL(10,2) NOT NULL CONSTRAINT DF_Subjects_PassDegree DEFAULT 50 WITH VALUES;
+    IF COL_LENGTH(N'dbo.Subjects', N'IsActive') IS NULL
+        ALTER TABLE dbo.Subjects ADD IsActive BIT NOT NULL CONSTRAINT DF_Subjects_IsActive DEFAULT 1 WITH VALUES;
+    IF COL_LENGTH(N'dbo.Subjects', N'Notes') IS NULL
+        ALTER TABLE dbo.Subjects ADD Notes NVARCHAR(MAX) NULL;
+    IF COL_LENGTH(N'dbo.Subjects', N'CreatedAt') IS NULL
+        ALTER TABLE dbo.Subjects ADD CreatedAt DATETIME NOT NULL CONSTRAINT DF_Subjects_CreatedAt DEFAULT GETDATE() WITH VALUES;
+    IF COL_LENGTH(N'dbo.Subjects', N'UpdatedAt') IS NULL
+        ALTER TABLE dbo.Subjects ADD UpdatedAt DATETIME NULL;
+END;
+
+/* Registration table for installations created from the minimal schema. */
+IF OBJECT_ID(N'dbo.Enrollments', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Enrollments
+    (
+        EnrollmentID INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Enrollments PRIMARY KEY,
+        StudentID INT NOT NULL,
+        ApplicationDate DATE NOT NULL CONSTRAINT DF_Enrollments_ApplicationDate DEFAULT CONVERT(date, GETDATE()),
+        ApplicationType NVARCHAR(50) NULL,
+        AcademicYear NVARCHAR(20) NOT NULL,
+        ClassID INT NOT NULL,
+        Section NVARCHAR(50) NULL,
+        SeatNumber NVARCHAR(20) NULL,
+        Status NVARCHAR(50) NOT NULL CONSTRAINT DF_Enrollments_Status DEFAULT N'جديد',
+        PreviousSchool NVARCHAR(200) NULL,
+        PreviousClass NVARCHAR(50) NULL,
+        TransferReason NVARCHAR(MAX) NULL,
+        RegistrationFee DECIMAL(18,2) NOT NULL CONSTRAINT DF_Enrollments_RegistrationFee DEFAULT 0,
+        PaidAmount DECIMAL(18,2) NOT NULL CONSTRAINT DF_Enrollments_PaidAmount DEFAULT 0,
+        PaymentMethod NVARCHAR(50) NULL,
+        ReceiptNo NVARCHAR(50) NULL,
+        HasBirthCertificate BIT NOT NULL CONSTRAINT DF_Enrollments_HasBirthCertificate DEFAULT 0,
+        HasGuardianId BIT NOT NULL CONSTRAINT DF_Enrollments_HasGuardianId DEFAULT 0,
+        HasPhoto BIT NOT NULL CONSTRAINT DF_Enrollments_HasPhoto DEFAULT 0,
+        HasLastCertificate BIT NOT NULL CONSTRAINT DF_Enrollments_HasLastCertificate DEFAULT 0,
+        HasMedicalReport BIT NOT NULL CONSTRAINT DF_Enrollments_HasMedicalReport DEFAULT 0,
+        GeneralNotes NVARCHAR(MAX) NULL,
+        CreatedAt DATETIME NOT NULL CONSTRAINT DF_Enrollments_CreatedAt DEFAULT GETDATE(),
+        UpdatedAt DATETIME NULL
+    );
+END;
+
+/* Keep an existing Enrollments table compatible without dropping data. */
+IF OBJECT_ID(N'dbo.Enrollments', N'U') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.Enrollments', N'ApplicationDate') IS NULL
+        ALTER TABLE dbo.Enrollments ADD ApplicationDate DATE NOT NULL CONSTRAINT DF_Enrollments_ApplicationDate_Compat DEFAULT CONVERT(date, GETDATE()) WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'ApplicationType') IS NULL
+        ALTER TABLE dbo.Enrollments ADD ApplicationType NVARCHAR(50) NULL;
+    IF COL_LENGTH(N'dbo.Enrollments', N'AcademicYear') IS NULL
+        ALTER TABLE dbo.Enrollments ADD AcademicYear NVARCHAR(20) NOT NULL CONSTRAINT DF_Enrollments_AcademicYear_Compat DEFAULT N'' WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'ClassID') IS NULL
+        ALTER TABLE dbo.Enrollments ADD ClassID INT NULL;
+    IF COL_LENGTH(N'dbo.Enrollments', N'Section') IS NULL
+        ALTER TABLE dbo.Enrollments ADD Section NVARCHAR(50) NULL;
+    IF COL_LENGTH(N'dbo.Enrollments', N'SeatNumber') IS NULL
+        ALTER TABLE dbo.Enrollments ADD SeatNumber NVARCHAR(20) NULL;
+    IF COL_LENGTH(N'dbo.Enrollments', N'Status') IS NULL
+        ALTER TABLE dbo.Enrollments ADD Status NVARCHAR(50) NOT NULL CONSTRAINT DF_Enrollments_Status_Compat DEFAULT N'جديد' WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'PreviousSchool') IS NULL
+        ALTER TABLE dbo.Enrollments ADD PreviousSchool NVARCHAR(200) NULL;
+    IF COL_LENGTH(N'dbo.Enrollments', N'PreviousClass') IS NULL
+        ALTER TABLE dbo.Enrollments ADD PreviousClass NVARCHAR(50) NULL;
+    IF COL_LENGTH(N'dbo.Enrollments', N'TransferReason') IS NULL
+        ALTER TABLE dbo.Enrollments ADD TransferReason NVARCHAR(MAX) NULL;
+    IF COL_LENGTH(N'dbo.Enrollments', N'RegistrationFee') IS NULL
+        ALTER TABLE dbo.Enrollments ADD RegistrationFee DECIMAL(18,2) NOT NULL CONSTRAINT DF_Enrollments_RegistrationFee_Compat DEFAULT 0 WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'PaidAmount') IS NULL
+        ALTER TABLE dbo.Enrollments ADD PaidAmount DECIMAL(18,2) NOT NULL CONSTRAINT DF_Enrollments_PaidAmount_Compat DEFAULT 0 WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'PaymentMethod') IS NULL
+        ALTER TABLE dbo.Enrollments ADD PaymentMethod NVARCHAR(50) NULL;
+    IF COL_LENGTH(N'dbo.Enrollments', N'ReceiptNo') IS NULL
+        ALTER TABLE dbo.Enrollments ADD ReceiptNo NVARCHAR(50) NULL;
+    IF COL_LENGTH(N'dbo.Enrollments', N'HasBirthCertificate') IS NULL
+        ALTER TABLE dbo.Enrollments ADD HasBirthCertificate BIT NOT NULL CONSTRAINT DF_Enrollments_HasBirthCertificate_Compat DEFAULT 0 WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'HasGuardianId') IS NULL
+        ALTER TABLE dbo.Enrollments ADD HasGuardianId BIT NOT NULL CONSTRAINT DF_Enrollments_HasGuardianId_Compat DEFAULT 0 WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'HasPhoto') IS NULL
+        ALTER TABLE dbo.Enrollments ADD HasPhoto BIT NOT NULL CONSTRAINT DF_Enrollments_HasPhoto_Compat DEFAULT 0 WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'HasLastCertificate') IS NULL
+        ALTER TABLE dbo.Enrollments ADD HasLastCertificate BIT NOT NULL CONSTRAINT DF_Enrollments_HasLastCertificate_Compat DEFAULT 0 WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'HasMedicalReport') IS NULL
+        ALTER TABLE dbo.Enrollments ADD HasMedicalReport BIT NOT NULL CONSTRAINT DF_Enrollments_HasMedicalReport_Compat DEFAULT 0 WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'GeneralNotes') IS NULL
+        ALTER TABLE dbo.Enrollments ADD GeneralNotes NVARCHAR(MAX) NULL;
+    IF COL_LENGTH(N'dbo.Enrollments', N'CreatedAt') IS NULL
+        ALTER TABLE dbo.Enrollments ADD CreatedAt DATETIME NOT NULL CONSTRAINT DF_Enrollments_CreatedAt_Compat DEFAULT GETDATE() WITH VALUES;
+    IF COL_LENGTH(N'dbo.Enrollments', N'UpdatedAt') IS NULL
+        ALTER TABLE dbo.Enrollments ADD UpdatedAt DATETIME NULL;
+END;
+
+/* StudentClasses columns used by assignment screens. */
+IF OBJECT_ID(N'dbo.StudentClasses', N'U') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.StudentClasses', N'Section') IS NULL
+        ALTER TABLE dbo.StudentClasses ADD Section NVARCHAR(50) NULL;
+    IF COL_LENGTH(N'dbo.StudentClasses', N'AssignedDate') IS NULL
+        ALTER TABLE dbo.StudentClasses ADD AssignedDate DATETIME NOT NULL CONSTRAINT DF_StudentClasses_AssignedDate_Compat DEFAULT GETDATE() WITH VALUES;
+    IF COL_LENGTH(N'dbo.StudentClasses', N'AssignedBy') IS NULL
+        ALTER TABLE dbo.StudentClasses ADD AssignedBy INT NULL;
+END;
+
+/* Library borrowing timestamps used by BorrowingRepository. */
+IF OBJECT_ID(N'dbo.BookBorrowings', N'U') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.BookBorrowings', N'CreatedAt') IS NULL
+        ALTER TABLE dbo.BookBorrowings ADD CreatedAt DATETIME NOT NULL CONSTRAINT DF_BookBorrowings_CreatedAt DEFAULT GETDATE() WITH VALUES;
+    IF COL_LENGTH(N'dbo.BookBorrowings', N'UpdatedAt') IS NULL
+        ALTER TABLE dbo.BookBorrowings ADD UpdatedAt DATETIME NULL;
+END;
+
+/* Staff attendance time fields used by StaffAttendanceForm. */
+IF OBJECT_ID(N'dbo.TeacherAttendance', N'U') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.TeacherAttendance', N'CheckInTime') IS NULL
+        ALTER TABLE dbo.TeacherAttendance ADD CheckInTime TIME NULL;
+    IF COL_LENGTH(N'dbo.TeacherAttendance', N'CheckOutTime') IS NULL
+        ALTER TABLE dbo.TeacherAttendance ADD CheckOutTime TIME NULL;
+END;
+
+/* Timetable time and audit fields used by TimetableRepository. */
+IF OBJECT_ID(N'dbo.SchoolTimetable', N'U') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.SchoolTimetable', N'StartTime') IS NULL
+        ALTER TABLE dbo.SchoolTimetable ADD StartTime TIME NULL;
+    IF COL_LENGTH(N'dbo.SchoolTimetable', N'EndTime') IS NULL
+        ALTER TABLE dbo.SchoolTimetable ADD EndTime TIME NULL;
+    IF COL_LENGTH(N'dbo.SchoolTimetable', N'CreatedAt') IS NULL
+        ALTER TABLE dbo.SchoolTimetable ADD CreatedAt DATETIME NOT NULL CONSTRAINT DF_SchoolTimetable_CreatedAt_Compat DEFAULT GETDATE() WITH VALUES;
+    IF COL_LENGTH(N'dbo.SchoolTimetable', N'UpdatedAt') IS NULL
+        ALTER TABLE dbo.SchoolTimetable ADD UpdatedAt DATETIME NULL;
+END;
+
+PRINT N'تم تطبيق توافق مخطط التشغيل النهائي بنجاح.';
+GO

@@ -330,6 +330,14 @@ namespace SchoolSystem.UI
                 await LoadTimetableAsync();
                 ClearFields();
             }
+            catch (ArgumentException ex)
+            {
+                ShowWarning(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ShowWarning(ex.Message);
+            }
             catch (Exception ex)
             {
                 UIHelper.ShowException("إضافة الحصة", ex);
@@ -361,6 +369,14 @@ namespace SchoolSystem.UI
                 {
                     ShowWarning("لم يتم العثور على الحصة.");
                 }
+            }
+            catch (ArgumentException ex)
+            {
+                ShowWarning(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ShowWarning(ex.Message);
             }
             catch (Exception ex)
             {
