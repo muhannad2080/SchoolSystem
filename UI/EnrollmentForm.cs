@@ -244,11 +244,11 @@ namespace SchoolSystem.UI
             {
                 Enrollment enrollment = new Enrollment
                 {
-                    StudentID = Convert.ToInt32(cmbStudentID.SelectedValue),
+                    StudentID = GetSelectedId(cmbStudentID, "يجب تحديد طالب صالح."),
                     ApplicationDate = dtpApplicationDate.Value,
                     ApplicationType = cmbApplicationType.SelectedItem?.ToString(),
                     AcademicYear = txtAcademicYear.Text,
-                    ClassID = Convert.ToInt32(cmbClassID.SelectedValue),
+                    ClassID = GetSelectedId(cmbClassID, "يجب تحديد فصل صالح."),
                     Section = txtSection.Text,
                     SeatNumber = txtSeatNumber.Text,
                     Status = cmbStatus.SelectedItem?.ToString(),
@@ -274,7 +274,13 @@ namespace SchoolSystem.UI
                 bool success;
                 if (isEditMode)
                 {
-                    enrollment.EnrollmentID = Convert.ToInt32(txtEnrollmentID.Text);
+                    if (!int.TryParse(txtEnrollmentID.Text.Trim(), out int enrollmentId) || enrollmentId <= 0)
+                    {
+                        errorProvider1.SetError(txtEnrollmentID, "رقم طلب التسجيل غير صالح.");
+                        return;
+                    }
+
+                    enrollment.EnrollmentID = enrollmentId;
                     success = enrollmentService.UpdateEnrollment(enrollment);
                 }
                 else
@@ -318,7 +324,12 @@ namespace SchoolSystem.UI
             {
                 try
                 {
-                    int id = Convert.ToInt32(txtEnrollmentID.Text);
+                    if (!int.TryParse(txtEnrollmentID.Text.Trim(), out int id) || id <= 0)
+                    {
+                        errorProvider1.SetError(txtEnrollmentID, "رقم طلب التسجيل غير صالح.");
+                        return;
+                    }
+
                     if (enrollmentService.DeleteEnrollment(id))
                     {
                         UIHelper.ShowInfo("تم الحذف بنجاح.");
@@ -547,19 +558,34 @@ namespace SchoolSystem.UI
                 : amount;
         }
 
+        private int GetSelectedId(ComboBox comboBox, string errorMessage)
+        {
+            if (comboBox == null || comboBox.SelectedIndex < 0 || comboBox.SelectedValue == null ||
+                comboBox.SelectedValue == DBNull.Value ||
+                !int.TryParse(comboBox.SelectedValue.ToString(), out int id) || id <= 0)
+            {
+                if (comboBox != null) errorProvider1.SetError(comboBox, errorMessage);
+                throw new InvalidOperationException(errorMessage);
+            }
+
+            return id;
+        }
+
         private bool ValidateInputs()
         {
             bool isValid = true;
 
-            if (cmbStudentID.SelectedIndex == -1)
+            if (cmbStudentID.SelectedIndex == -1 || cmbStudentID.SelectedValue == null ||
+                !int.TryParse(cmbStudentID.SelectedValue.ToString(), out int studentId) || studentId <= 0)
             {
-                errorProvider1.SetError(cmbStudentID, "يجب تحديد الطالب.");
+                errorProvider1.SetError(cmbStudentID, "يجب تحديد طالب صالح.");
                 isValid = false;
             }
 
-            if (cmbClassID.SelectedIndex == -1)
+            if (cmbClassID.SelectedIndex == -1 || cmbClassID.SelectedValue == null ||
+                !int.TryParse(cmbClassID.SelectedValue.ToString(), out int classId) || classId <= 0)
             {
-                errorProvider1.SetError(cmbClassID, "يجب تحديد الصف.");
+                errorProvider1.SetError(cmbClassID, "يجب تحديد فصل صالح.");
                 isValid = false;
             }
 

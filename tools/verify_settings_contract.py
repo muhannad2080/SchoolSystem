@@ -28,6 +28,7 @@ user_service = (ROOT / "Services" / "UserService.cs").read_text(encoding="utf-8"
 payroll_ui = (ROOT / "UI" / "PayrollForm.cs").read_text(encoding="utf-8")
 staff_attendance_ui = (ROOT / "UI" / "StaffAttendanceForm.cs").read_text(encoding="utf-8")
 library_ui = (ROOT / "UI" / "LibraryForm.cs").read_text(encoding="utf-8")
+enrollment_ui = (ROOT / "UI" / "EnrollmentForm.cs").read_text(encoding="utf-8")
 financial_services = "\\n".join(
     (ROOT / "Services" / name).read_text(encoding="utf-8")
     for name in ("FeeService.cs", "ExpenseService.cs", "PayrollService.cs", "VoucherService.cs")
@@ -131,6 +132,11 @@ checks = {
     and "لا يمكن تعيين طالب غير نشط" in student_class_repository,
     "student_assignment_requires_active_class": "ISNULL(IsActive, 1) = 1" in student_class_repository
     and "لا يمكن التعيين إلى فصل غير نشط" in student_class_repository,
+    "enrollment_form_validates_selected_ids": "GetSelectedId(cmbStudentID" in enrollment_ui
+    and "GetSelectedId(cmbClassID" in enrollment_ui
+    and "int.TryParse(cmbStudentID.SelectedValue.ToString()" in enrollment_ui,
+    "enrollment_form_validates_record_id": "int.TryParse(txtEnrollmentID.Text.Trim(), out int enrollmentId)" in enrollment_ui
+    and "int.TryParse(txtEnrollmentID.Text.Trim(), out int id)" in enrollment_ui,
 }
 
 failed = [name for name, passed in checks.items() if not passed]
