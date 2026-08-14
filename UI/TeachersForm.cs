@@ -20,11 +20,40 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
-            SchoolSystem.Helpers.UIHelper.ApplyTheme(this);
+            ApplyCustomStyles();
             InitializeEvents();
             PopulateComboBoxes();
             ConfigureDataGridViewStyling();
             GenerateNewEmployeeNumber();
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewTeachers);
+            UIHelper.StylePrimaryButton(btnAdd);
+            UIHelper.StylePrimaryButton(btnUpdate);
+            UIHelper.StyleDangerButton(btnDelete);
+            UIHelper.StyleButton(btnClear, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleTextBox(txtSearch);
+
+            TextBox[] textBoxes = {
+                txtEmployeeNumber, txtFullName, txtBirthPlace, txtNationalID,
+                txtPhone, txtEmail, txtAddress, txtSpecialization, txtNotes
+            };
+            foreach (TextBox textBox in textBoxes)
+                UIHelper.StyleTextBox(textBox);
+
+            ComboBox[] comboBoxes = {
+                cmbGender, cmbNationality, cmbQualification, cmbStatus
+            };
+            foreach (ComboBox comboBox in comboBoxes)
+                UIHelper.StyleComboBox(comboBox);
+
+            dataGridViewTeachers.AlternatingRowsDefaultCellStyle.BackColor = UIHelper.AlternateRowColor;
+            dataGridViewTeachers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewTeachers.MultiSelect = false;
+            dataGridViewTeachers.ReadOnly = true;
         }
 
         private void InitializeEvents()
@@ -59,7 +88,7 @@ namespace SchoolSystem.UI
 
         private void ConfigureDataGridViewStyling()
         {
-            dataGridViewTeachers.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 247, 250);
+            dataGridViewTeachers.AlternatingRowsDefaultCellStyle.BackColor = UIHelper.AlternateRowColor;
             dataGridViewTeachers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewTeachers.MultiSelect = false;
             dataGridViewTeachers.ReadOnly = true;

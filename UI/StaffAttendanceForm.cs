@@ -21,8 +21,28 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
             this.Dock = DockStyle.Fill;
             this.Load += StaffAttendanceForm_Load;
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewAttendance);
+            UIHelper.StylePrimaryButton(btnAdd);
+            UIHelper.StylePrimaryButton(btnUpdate);
+            UIHelper.StyleDangerButton(btnDelete);
+            UIHelper.StyleButton(btnClear, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleTextBox(txtSearch);
+            UIHelper.StyleTextBox(txtAbsenceReason);
+            UIHelper.StyleTextBox(txtLateMinutes);
+            UIHelper.StyleTextBox(txtEarlyLeaveMinutes);
+            UIHelper.StyleTextBox(txtWorkHours);
+            UIHelper.StyleTextBox(txtNotes);
+            UIHelper.StyleComboBox(cmbTeacher);
+            UIHelper.StyleComboBox(cmbStatus);
+            lblRecordCount.ForeColor = UIHelper.MutedTextColor;
         }
 
         private async void StaffAttendanceForm_Load(object sender, EventArgs e)
@@ -267,24 +287,21 @@ namespace SchoolSystem.UI
         {
             if (cmbTeacher.SelectedValue == null || cmbTeacher.SelectedIndex < 0)
             {
-                MessageBox.Show("اختر المعلم أولاً.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                UIHelper.ShowWarning("اختر المعلم أولاً.");
                 cmbTeacher.Focus();
                 return false;
             }
 
             if (cmbStatus.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbStatus.Text))
             {
-                MessageBox.Show("اختر حالة الحضور.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                UIHelper.ShowWarning("اختر حالة الحضور.");
                 cmbStatus.Focus();
                 return false;
             }
 
             if (dtpDate.Value.Date > DateTime.Today)
             {
-                MessageBox.Show("لا يمكن تسجيل حضور بتاريخ مستقبلي.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                UIHelper.ShowWarning("لا يمكن تسجيل حضور بتاريخ مستقبلي.");
                 dtpDate.Focus();
                 return false;
             }
@@ -293,8 +310,7 @@ namespace SchoolSystem.UI
             bool noTimeRequired = status == "غائب" || status == "إجازة" || status == "مريض";
             if (!noTimeRequired && dtpCheckOut.Value.TimeOfDay < dtpCheckIn.Value.TimeOfDay)
             {
-                MessageBox.Show("وقت الانصراف يجب أن يكون بعد وقت الحضور.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                UIHelper.ShowWarning("وقت الانصراف يجب أن يكون بعد وقت الحضور.");
                 dtpCheckOut.Focus();
                 return false;
             }
@@ -302,16 +318,14 @@ namespace SchoolSystem.UI
             if ((status == "غائب" || status == "إجازة" || status == "مريض") &&
                 string.IsNullOrWhiteSpace(txtAbsenceReason.Text))
             {
-                MessageBox.Show("أدخل سبب الغياب أو الإجازة.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                UIHelper.ShowWarning("أدخل سبب الغياب أو الإجازة.");
                 txtAbsenceReason.Focus();
                 return false;
             }
 
             if (txtAbsenceReason.Text.Trim().Length > 500 || txtNotes.Text.Trim().Length > 1000)
             {
-                MessageBox.Show("تجاوز أحد النصوص الحد المسموح به.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                UIHelper.ShowWarning("تجاوز أحد النصوص الحد المسموح به.");
                 return false;
             }
 
