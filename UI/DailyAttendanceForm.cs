@@ -40,7 +40,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                ShowError("حدث خطأ أثناء تحميل واجهة التحضير:\n" + ex.Message);
+                UIHelper.ShowException("حدث خطأ أثناء تحميل واجهة التحضير:\n", ex);
             }
         }
 
@@ -170,7 +170,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                ShowError("خطأ أثناء تحميل التحضير:\n" + ex.Message);
+                UIHelper.ShowException("خطأ أثناء تحميل التحضير:\n", ex);
             }
         }
 
@@ -334,7 +334,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                ShowError("خطأ أثناء حفظ الحضور:\n" + ex.Message);
+                UIHelper.ShowException("خطأ أثناء حفظ الحضور:\n", ex);
             }
         }
 

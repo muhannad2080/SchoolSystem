@@ -32,10 +32,9 @@ namespace SchoolSystem
 
         private void ApplyModernMenuStyle()
         {
-            Color mainColor = Color.FromArgb(30, 41, 59);
-            Color accentColor = Color.FromArgb(15, 118, 110);
-            Color contentBack = Color.FromArgb(248, 250, 252);
-            Color textDark = Color.FromArgb(30, 41, 59);
+            Color mainColor = UIHelper.PrimaryColor;
+            Color accentColor = UIHelper.AccentColor;
+            Color contentBack = UIHelper.BackgroundColor;
 
             menuStripMain.BackColor = mainColor;
             menuStripMain.ForeColor = Color.White;
@@ -155,16 +154,16 @@ namespace SchoolSystem
         {
             try
             {
-                UIHelper.ApplyTheme(uc);
+                UIHelper.ApplyStyle(uc);
                 ClearPanelContent();
 
                 uc.Dock = DockStyle.Fill;
 
                 panelContent.Controls.Add(uc);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ShowLoadError("⚠️ فشل تحميل الواجهة:\n" + ex.Message);
+                ShowLoadError("تعذر تحميل الواجهة. حاول تحديث الصفحة أو اتصل بمسؤول النظام.");
             }
         }
 
@@ -172,7 +171,7 @@ namespace SchoolSystem
         {
             try
             {
-                UIHelper.ApplyTheme(form);
+                UIHelper.ApplyStyle(form);
                 ClearPanelContent();
 
                 form.TopLevel = false;
@@ -182,9 +181,9 @@ namespace SchoolSystem
                 panelContent.Controls.Add(form);
                 form.Show();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ShowLoadError("⚠️ فشل تحميل الواجهة:\n" + ex.Message);
+                ShowLoadError("تعذر تحميل الواجهة. حاول تحديث الصفحة أو اتصل بمسؤول النظام.");
             }
         }
 
@@ -305,9 +304,9 @@ namespace SchoolSystem
 
                 panelContent.Controls.Add(dashboard);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ShowLoadError("⚠️ فشل تحميل لوحة التحكم:\n" + ex.Message);
+                ShowLoadError("تعذر تحميل لوحة التحكم. حاول تحديث الصفحة أو اتصل بمسؤول النظام.");
             }
         }
 

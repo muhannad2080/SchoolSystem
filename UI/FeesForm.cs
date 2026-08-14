@@ -44,7 +44,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("حدث خطأ أثناء تحميل شاشة الرسوم:\n" + ex.Message);
+                UIHelper.ShowException("حدث خطأ أثناء تحميل شاشة الرسوم:\n", ex);
             }
             finally
             {
@@ -567,7 +567,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل توليد رسوم الطالب:\n" + ex.Message);
+                UIHelper.ShowException("فشل توليد رسوم الطالب:\n", ex);
             }
         }
 
@@ -601,7 +601,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل إضافة الرسوم:\n" + ex.Message);
+                UIHelper.ShowException("فشل إضافة الرسوم:\n", ex);
             }
         }
 
@@ -642,7 +642,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل تعديل الرسوم:\n" + ex.Message);
+                UIHelper.ShowException("فشل تعديل الرسوم:\n", ex);
             }
         }
 
@@ -674,7 +674,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("فشل حذف الرسوم:\n" + ex.Message);
+                UIHelper.ShowException("فشل حذف الرسوم:\n", ex);
             }
         }
 

@@ -75,7 +75,7 @@ namespace SchoolSystem.UI
                 }
                 catch (Exception ex)
                 {
-                    UIHelper.ShowError("تعذر تحميل الصورة: " + ex.Message);
+                    UIHelper.ShowException("تعذر تحميل الصورة: ", ex);
                 }
             }
         }
@@ -158,7 +158,7 @@ namespace SchoolSystem.UI
                 }
                 catch (Exception ex)
                 {
-                    UIHelper.ShowError("تعذر تنفيذ طباعة بطاقة الطالب: " + ex.Message);
+                    UIHelper.ShowException("تعذر تنفيذ طباعة بطاقة الطالب: ", ex);
                 }
             }
         }
@@ -288,7 +288,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                UIHelper.ShowError("فشل التصدير: " + ex.Message);
+                UIHelper.ShowException("فشل التصدير: ", ex);
             }
         }
 
@@ -356,7 +356,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                UIHelper.ShowError("خطأ في تحميل البيانات: " + ex.Message);
+                UIHelper.ShowException("خطأ في تحميل البيانات: ", ex);
             }
         }
 
@@ -421,7 +421,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                UIHelper.ShowError(ex.Message);
+                UIHelper.ShowException("العملية المطلوبة", ex);
             }
         }
 
@@ -542,7 +542,7 @@ namespace SchoolSystem.UI
                     _studentService.Delete(_selectedStudentId);
                     LoadStudents();
                     ClearForm();
-                } catch (Exception ex) { UIHelper.ShowError(ex.Message); }
+                } catch (Exception ex) { UIHelper.ShowException("العملية المطلوبة", ex); }
             }
         }
     }

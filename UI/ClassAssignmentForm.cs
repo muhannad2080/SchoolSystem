@@ -42,7 +42,7 @@ namespace SchoolSystem.UI.Students
             catch (Exception ex)
             {
                 isLoading = false;
-                ShowError("حدث خطأ أثناء تحميل واجهة توزيع الفصول:\n" + ex.Message);
+                UIHelper.ShowException("حدث خطأ أثناء تحميل واجهة توزيع الفصول:\n", ex);
             }
             finally
             {
@@ -142,7 +142,7 @@ namespace SchoolSystem.UI.Students
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء تحميل بيانات التوزيع:\n" + ex.Message);
+                UIHelper.ShowException("خطأ أثناء تحميل بيانات التوزيع:\n", ex);
                 lblStatus.Text = "حدث خطأ أثناء تحميل البيانات.";
             }
             finally
@@ -433,7 +433,7 @@ namespace SchoolSystem.UI.Students
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                ShowError("خطأ أثناء توزيع الطلاب:\n" + ex.Message);
+                UIHelper.ShowException("خطأ أثناء توزيع الطلاب:\n", ex);
             }
         }
 
@@ -496,7 +496,7 @@ namespace SchoolSystem.UI.Students
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                ShowError("خطأ أثناء الإزالة:\n" + ex.Message);
+                UIHelper.ShowException("خطأ أثناء الإزالة:\n", ex);
             }
         }
 

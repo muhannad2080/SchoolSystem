@@ -72,7 +72,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("خطأ في تحميل القوائم: " + ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("تحميل القوائم", ex);
             }
         }
 
@@ -91,7 +91,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("خطأ في تحميل البيانات: " + ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("تحميل بيانات التسجيل", ex);
             }
         }
 
@@ -255,7 +255,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("خطأ أثناء الحفظ: " + ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("حفظ التسجيل", ex);
             }
         }
 
@@ -293,7 +293,7 @@ namespace SchoolSystem.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("خطأ أثناء الحذف: " + ex.Message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    UIHelper.ShowException("حذف التسجيل", ex);
                 }
             }
         }
@@ -340,10 +340,7 @@ namespace SchoolSystem.UI
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("تعذر تنفيذ الطباعة: " + ex.Message, "خطأ في الطباعة",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error,
-                            MessageBoxDefaultButton.Button1,
-                            MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                        UIHelper.ShowException("طباعة تقرير التسجيل", ex);
                     }
                 }
             }

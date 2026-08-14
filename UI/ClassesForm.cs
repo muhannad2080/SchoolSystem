@@ -44,7 +44,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                ShowError("حدث خطأ أثناء تحميل واجهة الفصول والقاعات:\n" + ex.Message);
+                UIHelper.ShowException("حدث خطأ أثناء تحميل واجهة الفصول والقاعات:\n", ex);
             }
         }
 
@@ -112,7 +112,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء تحميل الفصول:\n" + ex.Message);
+                UIHelper.ShowException("خطأ أثناء تحميل الفصول:\n", ex);
             }
         }
 
@@ -258,7 +258,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء تعديل الفصل:\n" + ex.Message);
+                UIHelper.ShowException("خطأ أثناء تعديل الفصل:\n", ex);
             }
         }
 
@@ -399,7 +399,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء تحميل القاعات:\n" + ex.Message);
+                UIHelper.ShowException("خطأ أثناء تحميل القاعات:\n", ex);
             }
         }
 
@@ -456,7 +456,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء إضافة القاعة:\n" + ex.Message);
+                UIHelper.ShowException("خطأ أثناء إضافة القاعة:\n", ex);
             }
         }
 
@@ -491,7 +491,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("خطأ أثناء تعديل القاعة:\n" + ex.Message);
+                UIHelper.ShowException("خطأ أثناء تعديل القاعة:\n", ex);
             }
         }
 
@@ -531,7 +531,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("تعذر حذف القاعة، ربما مستخدمة في الجدول الدراسي:\n" + ex.Message);
+                UIHelper.ShowException("تعذر حذف القاعة، ربما مستخدمة في الجدول الدراسي:\n", ex);
             }
         }
 

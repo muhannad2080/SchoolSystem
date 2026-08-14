@@ -40,8 +40,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("خطأ في تحميل البيانات:\n" + ex.Message,
-                    "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("تحميل بيانات الرواتب", ex);
             }
         }
 
@@ -124,8 +123,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("خطأ في تحميل العقود:\n" + ex.Message,
-                    "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("تحميل عقود الرواتب", ex);
             }
         }
 
@@ -479,8 +477,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("خطأ في الإضافة:\n" + ex.Message,
-                    "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("إضافة سجل الرواتب", ex);
             }
         }
 
@@ -511,8 +508,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("خطأ في التعديل:\n" + ex.Message,
-                    "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("تعديل سجل الرواتب", ex);
             }
         }
 
@@ -550,8 +546,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("خطأ في الحذف:\n" + ex.Message,
-                    "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("حذف سجل الرواتب", ex);
             }
         }
 

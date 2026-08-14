@@ -38,8 +38,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("حدث خطأ أثناء تحميل النموذج:\n" + ex.Message,
-                    "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("تحميل شاشة حضور الموظفين", ex);
             }
         }
 
@@ -82,8 +81,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("حدث خطأ أثناء تحميل بيانات الحضور:\n" + ex.Message,
-                    "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("تحميل حضور الموظفين", ex);
             }
         }
 
@@ -388,8 +386,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("حدث خطأ أثناء الإضافة:\n" + ex.Message,
-                    "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("إضافة حضور الموظف", ex);
             }
         }
 
@@ -435,8 +432,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("حدث خطأ أثناء التعديل:\n" + ex.Message,
-                    "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("تعديل حضور الموظف", ex);
             }
         }
 
@@ -479,8 +475,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("حدث خطأ أثناء الحذف:\n" + ex.Message,
-                    "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UIHelper.ShowException("حذف حضور الموظف", ex);
             }
         }
 

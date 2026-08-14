@@ -41,7 +41,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show("حدث خطأ أثناء تحميل المصروفات:\n" + ex.Message);
+                UIHelper.ShowException("حدث خطأ أثناء تحميل المصروفات:\n", ex);
             }
             finally
             {

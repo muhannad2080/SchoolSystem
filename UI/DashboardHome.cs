@@ -53,7 +53,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                MessageBox.Show("خطأ في تحميل الإحصائيات: " + ex.Message);
+                UIHelper.ShowException("خطأ في تحميل الإحصائيات: ", ex);
             }
         }
 
