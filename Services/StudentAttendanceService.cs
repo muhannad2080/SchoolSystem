@@ -3,6 +3,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -12,6 +13,7 @@ namespace SchoolSystem.Services
 
         public DataTable GetAttendanceSheet(int classId, string section, string academicYear, DateTime date)
         {
+            CurrentUser.DemandPermission(PermissionKeys.AttendanceManage, "ليس لديك صلاحية إدارة حضور الطلاب.");
             if (classId <= 0)
                 throw new ArgumentException("يجب اختيار الصف.");
 
@@ -33,6 +35,7 @@ namespace SchoolSystem.Services
 
         public bool SaveAttendance(StudentAttendance item)
         {
+            CurrentUser.DemandPermission(PermissionKeys.AttendanceManage, "ليس لديك صلاحية إدارة حضور الطلاب.");
             Validate(item);
             return repository.SaveAttendance(item);
         }

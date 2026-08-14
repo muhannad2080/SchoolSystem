@@ -3,6 +3,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -12,11 +13,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllEnrollments()
         {
+            CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
             return repository.GetAllEnrollments();
         }
 
         public bool AddEnrollment(Enrollment enrollment)
         {
+            CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
             ValidateEnrollment(enrollment, false);
 
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear))
@@ -27,12 +30,14 @@ namespace SchoolSystem.Services
 
         public bool UpdateEnrollment(Enrollment enrollment)
         {
+            CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
             ValidateEnrollment(enrollment, true);
             return repository.UpdateEnrollment(enrollment);
         }
 
         public bool DeleteEnrollment(int enrollmentId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
             if (enrollmentId <= 0)
                 throw new ArgumentException("رقم طلب التسجيل غير صحيح.");
 

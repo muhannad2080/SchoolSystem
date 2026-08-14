@@ -3,6 +3,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -12,12 +13,14 @@ namespace SchoolSystem.Services
 
         public DataTable GetUnassignedStudents(string academicYear)
         {
+            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
             ValidateAcademicYear(academicYear);
             return repository.GetUnassignedStudents(academicYear);
         }
 
         public DataTable GetAssignedStudents(int classId, string section, string academicYear)
         {
+            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
             if (classId <= 0)
                 throw new ArgumentException("يجب اختيار الصف.");
 
@@ -31,6 +34,7 @@ namespace SchoolSystem.Services
 
         public bool AssignStudent(StudentClass assignment)
         {
+            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
             ValidateAssignment(assignment);
 
             if (repository.IsStudentAssignedInYear(assignment.StudentID, assignment.AcademicYear))
@@ -41,6 +45,7 @@ namespace SchoolSystem.Services
 
         public bool RemoveAssignment(int studentClassId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
             if (studentClassId <= 0)
                 throw new ArgumentException("اختر طالباً موزعاً من الجدول أولاً.");
 
