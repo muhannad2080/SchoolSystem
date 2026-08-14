@@ -10,6 +10,8 @@ required = [
     "Services/DatabaseBackupService.cs",
     "UI/SettingsForm.cs",
     "UI/SettingsForm.Designer.cs",
+    "UI/StudentProfileForm.cs",
+    "UI/StudentProfileForm.Designer.cs",
     "Databass/Migration_SettingsBackup.sql",
 ]
 for item in required:
@@ -32,6 +34,7 @@ main = text("MainForm.cs")
 designer = text("MainForm.Designer.cs")
 assert "PermissionKeys.SettingsManage" in main
 assert "tsmiSettings.Click" in designer
+assert "private ToolStripMenuItem tsmiSettings;" not in main
 assert main.count("ConfigureSettingsMenu") == 0
 
 users = text("UI/UsersForm.cs")
@@ -48,6 +51,14 @@ assert "SafeIdentifier" in backup
 
 settings = text("UI/SettingsForm.cs")
 assert "ApplicationSettingsService.Save" in settings
+settings_designer = text("UI/SettingsForm.Designer.cs")
+assert "foreach" not in settings_designer
+student = text("UI/StudentProfileForm.cs")
+student_designer = text("UI/StudentProfileForm.Designer.cs")
+assert "partial class StudentProfileForm" in student
+assert "InitializeComponent();" in student
+assert "InitializeComponent()" in student_designer
+assert "StudentProfileForm.Designer.cs" in project
 assert "backupService.Backup" in settings
 assert "backupService.Restore" in settings
 

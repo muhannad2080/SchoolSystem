@@ -1,6 +1,5 @@
 using System;
 using System.Data;
-using System.Drawing;
 using System.Windows.Forms;
 using SchoolSystem.Helpers;
 using SchoolSystem.Models;
@@ -8,20 +7,11 @@ using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
 {
-    public class StudentProfileForm : UserControl
+    public partial class StudentProfileForm : UserControl
     {
         private readonly int studentId;
         private readonly StudentProfileService profileService = new StudentProfileService();
         private StudentProfile profile;
-        private readonly Label lblTitle = new Label();
-        private readonly Label lblIdentity = new Label();
-        private readonly Label lblContact = new Label();
-        private readonly Label lblClassStatus = new Label();
-        private readonly Label lblFinancialSummary = new Label();
-        private readonly TabControl tabs = new TabControl();
-        private readonly DataGridView dgvAttendance = CreateGrid();
-        private readonly DataGridView dgvMarks = CreateGrid();
-        private readonly DataGridView dgvFees = CreateGrid();
 
         public StudentProfileForm(int studentId)
         {
@@ -29,125 +19,23 @@ namespace SchoolSystem.UI
                 throw new ArgumentException("رقم الطالب غير صحيح.");
 
             this.studentId = studentId;
-            RightToLeft = RightToLeft.Yes;
-            RightToLeftLayout = true;
-            Dock = DockStyle.Fill;
-            BackColor = UIHelper.BackgroundColor;
-            BuildLayout();
+            InitializeComponent();
             Load += StudentProfileForm_Load;
-        }
-
-        private void BuildLayout()
-        {
-            Panel header = new Panel { Dock = DockStyle.Top, Height = 58, BackColor = UIHelper.PrimaryColor, Padding = new Padding(16, 8, 16, 8) };
-            lblTitle.Text = "ملف الطالب الموحد";
-            lblTitle.Dock = DockStyle.Fill;
-            lblTitle.ForeColor = Color.White;
-            lblTitle.Font = new Font(UIHelper.FontFamily, 16F, FontStyle.Bold);
-            lblTitle.TextAlign = ContentAlignment.MiddleRight;
-            Button btnRefresh = CreateButton("تحديث", UIHelper.AccentColor);
-            btnRefresh.Dock = DockStyle.Left;
-            btnRefresh.Width = 100;
-            btnRefresh.Click += async (s, e) => await LoadProfileAsync();
-            Button btnBack = CreateButton("رجوع", Color.FromArgb(127, 140, 141));
-            btnBack.Dock = DockStyle.Left;
-            btnBack.Width = 100;
-            btnBack.Margin = new Padding(0, 0, 8, 0);
-            btnBack.Click += (s, e) => CloseProfile();
-            header.Controls.Add(lblTitle);
-            header.Controls.Add(btnBack);
-            header.Controls.Add(btnRefresh);
-
-            TableLayoutPanel summary = new TableLayoutPanel
-            {
-                Dock = DockStyle.Top,
-                Height = 128,
-                ColumnCount = 3,
-                RowCount = 2,
-                Padding = new Padding(12, 10, 12, 8),
-                BackColor = UIHelper.SurfaceElevatedColor
-            };
-            for (int i = 0; i < 3; i++)
-                summary.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33.333F));
-            summary.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            summary.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            ConfigureSummaryLabel(lblIdentity);
-            ConfigureSummaryLabel(lblContact);
-            ConfigureSummaryLabel(lblClassStatus);
-            ConfigureSummaryLabel(lblFinancialSummary);
-            summary.Controls.Add(lblIdentity, 0, 0);
-            summary.Controls.Add(lblContact, 1, 0);
-            summary.Controls.Add(lblClassStatus, 2, 0);
-            summary.Controls.Add(lblFinancialSummary, 0, 1);
-
-            tabs.Dock = DockStyle.Fill;
-            tabs.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
-            tabs.RightToLeft = RightToLeft.Yes;
-            tabs.RightToLeftLayout = true;
-            tabs.TabPages.Add(CreateTab("الحضور", dgvAttendance));
-            tabs.TabPages.Add(CreateTab("الدرجات", dgvMarks));
-            tabs.TabPages.Add(CreateTab("الرسوم والمدفوعات", dgvFees));
-
-            Controls.Add(tabs);
-            Controls.Add(summary);
-            Controls.Add(header);
-        }
-
-        private static void ConfigureSummaryLabel(Label label)
-        {
-            label.Dock = DockStyle.Fill;
-            label.TextAlign = ContentAlignment.MiddleRight;
-            label.Padding = new Padding(12, 0, 12, 0);
-            label.BackColor = UIHelper.SurfaceSecondaryColor;
-            label.ForeColor = UIHelper.TextColor;
-            label.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
-            label.BorderStyle = BorderStyle.FixedSingle;
-        }
-
-        private static Button CreateButton(string text, Color color)
-        {
-            Button button = new Button
-            {
-                Text = text,
-                BackColor = color,
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font(UIHelper.FontFamily, 9.5F, FontStyle.Bold),
-                UseVisualStyleBackColor = false
-            };
-            button.FlatAppearance.BorderSize = 0;
-            return button;
-        }
-
-        private static TabPage CreateTab(string title, DataGridView grid)
-        {
-            TabPage page = new TabPage(title) { Padding = new Padding(8), BackColor = Color.White };
-            page.Controls.Add(grid);
-            return page;
-        }
-
-        private static DataGridView CreateGrid()
-        {
-            DataGridView grid = new DataGridView
-            {
-                Dock = DockStyle.Fill,
-                ReadOnly = true,
-                AllowUserToAddRows = false,
-                AllowUserToDeleteRows = false,
-                MultiSelect = false,
-                RowHeadersVisible = false,
-                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-                BackgroundColor = Color.White,
-                BorderStyle = BorderStyle.None
-            };
-            UIHelper.StyleDataGridView(grid);
-            return grid;
         }
 
         private async void StudentProfileForm_Load(object sender, EventArgs e)
         {
             await LoadProfileAsync();
+        }
+
+        private async void btnRefresh_Click(object sender, EventArgs e)
+        {
+            await LoadProfileAsync();
+        }
+
+        private void btnBack_Click(object sender, EventArgs e)
+        {
+            CloseProfile();
         }
 
         private async System.Threading.Tasks.Task LoadProfileAsync()
@@ -195,7 +83,7 @@ namespace SchoolSystem.UI
                 decimal total = Sum(profile.Fees, "TotalAmount");
                 decimal paid = Sum(profile.Fees, "PaidAmount");
                 decimal remaining = Sum(profile.Fees, "RemainingAmount");
-                lblFinancialSummary.Text = "الرسوم: " + total.ToString("N2") + " ريال | المدفوع: " + paid.ToString("N2") + " ريال | المتبقي: " + remaining.ToString("N2") + " ريال";
+                lblFinancialSummary.Text = "الرسوم: " + total.ToString("N2") + " ريال | المدفوع: " + paid.ToString("N2") + " ريال | المتبقي: " + remaining.ToString("N2");
             }
             else
             {

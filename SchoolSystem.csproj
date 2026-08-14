@@ -312,6 +312,9 @@
     <Compile Include="UI\StudentProfileForm.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="UI\StudentProfileForm.Designer.cs">
+      <DependentUpon>StudentProfileForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\AuditLogForm.cs">
       <SubType>UserControl</SubType>
     </Compile>

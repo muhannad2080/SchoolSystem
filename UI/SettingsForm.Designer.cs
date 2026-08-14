@@ -105,19 +105,27 @@ namespace SchoolSystem.UI
             serverLabel.Text = "خادم SQL Server";
             databaseLabel.Text = "قاعدة البيانات";
             backupDirectoryLabel.Text = "مجلد النسخ الاحتياطي";
-            foreach (Label label in new[] { serverLabel, databaseLabel, backupDirectoryLabel })
-            {
-                label.Dock = DockStyle.Fill;
-                label.Font = new Font("Tahoma", 9.5F, FontStyle.Bold);
-                label.ForeColor = Color.FromArgb(55, 65, 81);
-                label.TextAlign = ContentAlignment.MiddleRight;
-            }
-            foreach (TextBox textBox in new[] { serverTextBox, databaseTextBox, backupDirectoryTextBox })
-            {
-                textBox.Dock = DockStyle.Fill;
-                textBox.Font = new Font("Tahoma", 10F);
-                textBox.Margin = new Padding(8, 7, 8, 7);
-            }
+            serverLabel.Dock = DockStyle.Fill;
+            serverLabel.Font = new Font("Tahoma", 9.5F, FontStyle.Bold);
+            serverLabel.ForeColor = Color.FromArgb(55, 65, 81);
+            serverLabel.TextAlign = ContentAlignment.MiddleRight;
+            databaseLabel.Dock = DockStyle.Fill;
+            databaseLabel.Font = new Font("Tahoma", 9.5F, FontStyle.Bold);
+            databaseLabel.ForeColor = Color.FromArgb(55, 65, 81);
+            databaseLabel.TextAlign = ContentAlignment.MiddleRight;
+            backupDirectoryLabel.Dock = DockStyle.Fill;
+            backupDirectoryLabel.Font = new Font("Tahoma", 9.5F, FontStyle.Bold);
+            backupDirectoryLabel.ForeColor = Color.FromArgb(55, 65, 81);
+            backupDirectoryLabel.TextAlign = ContentAlignment.MiddleRight;
+            serverTextBox.Dock = DockStyle.Fill;
+            serverTextBox.Font = new Font("Tahoma", 10F);
+            serverTextBox.Margin = new Padding(8, 7, 8, 7);
+            databaseTextBox.Dock = DockStyle.Fill;
+            databaseTextBox.Font = new Font("Tahoma", 10F);
+            databaseTextBox.Margin = new Padding(8, 7, 8, 7);
+            backupDirectoryTextBox.Dock = DockStyle.Fill;
+            backupDirectoryTextBox.Font = new Font("Tahoma", 10F);
+            backupDirectoryTextBox.Margin = new Padding(8, 7, 8, 7);
             browseButton.Dock = DockStyle.Fill;
             browseButton.Text = "اختيار مجلد";
             browseButton.Click += BrowseButton_Click;

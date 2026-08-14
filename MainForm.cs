@@ -13,7 +13,6 @@ namespace SchoolSystem
         public static MainForm Instance { get; private set; }
         private bool handoffToAuthenticatedSession;
         private ToolStripMenuItem tsmiAuditLogs;
-        private ToolStripMenuItem tsmiSettings;
 
         public MainForm()
         {
