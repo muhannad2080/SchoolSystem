@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
 using SchoolSystem.Security;
@@ -20,7 +19,7 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(academicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
-            if (!Regex.IsMatch(academicYear.Trim(), @"^[0-9]{4}/[0-9]{4}$"))
+            if (!IsValidAcademicYear(academicYear))
                 throw new ArgumentException("صيغة العام الدراسي يجب أن تكون مثل 2026/2027.");
 
             return repository.GetSections(classId, academicYear.Trim());
@@ -38,8 +37,11 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(academicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
-            if (!Regex.IsMatch(academicYear.Trim(), @"^[0-9]{4}/[0-9]{4}$"))
+            if (!IsValidAcademicYear(academicYear))
                 throw new ArgumentException("صيغة العام الدراسي يجب أن تكون مثل 2026/2027.");
+
+            if (date.Date > DateTime.Today)
+                throw new ArgumentException("لا يمكن تحميل حضور بتاريخ مستقبلي.");
 
             return repository.GetAttendanceSheet(
                 classId,
@@ -75,6 +77,9 @@ namespace SchoolSystem.Services
             if (item.AttendanceDate == DateTime.MinValue)
                 throw new ArgumentException("تاريخ الحضور مطلوب وصحيح.");
 
+            if (item.AttendanceDate.Date > DateTime.Today)
+                throw new ArgumentException("لا يمكن تسجيل حضور بتاريخ مستقبلي.");
+
             if (string.IsNullOrWhiteSpace(item.Status))
                 throw new ArgumentException("حالة الحضور مطلوبة.");
 
@@ -85,6 +90,22 @@ namespace SchoolSystem.Services
             {
                 throw new ArgumentException("حالة الحضور غير صحيحة.");
             }
+        }
+
+        private bool IsValidAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
+                return false;
+            if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
+                return false;
+
+            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
         }
     }
 }
