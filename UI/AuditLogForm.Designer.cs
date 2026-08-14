@@ -24,6 +24,7 @@ namespace SchoolSystem.UI
         private Panel footer;
         private Label countLabel;
         private Label rangeLabel;
+        private Label statusLabel;
 
         protected override void Dispose(bool disposing)
         {
@@ -54,6 +55,7 @@ namespace SchoolSystem.UI
             footer = new Panel();
             countLabel = new Label();
             rangeLabel = new Label();
+            statusLabel = new Label();
             header.SuspendLayout();
             filters.SuspendLayout();
             ((ISupportInitialize)(grid)).BeginInit();
@@ -245,6 +247,7 @@ namespace SchoolSystem.UI
             // 
             footer.BackColor = Color.White;
             footer.Controls.Add(countLabel);
+            footer.Controls.Add(statusLabel);
             footer.Controls.Add(rangeLabel);
             footer.Dock = DockStyle.Bottom;
             footer.Location = new Point(0, 612);
@@ -261,9 +264,20 @@ namespace SchoolSystem.UI
             countLabel.Size = new Size(180, 38);
             countLabel.Text = "عدد العمليات: 0";
             countLabel.TextAlign = ContentAlignment.MiddleRight;
-            // 
+            //
+            // statusLabel
+            //
+            statusLabel.Dock = DockStyle.Fill;
+            statusLabel.Font = new Font(new FontFamily("Tahoma"), 9F);
+            statusLabel.ForeColor = Color.FromArgb(71, 85, 105);
+            statusLabel.Location = new Point(274, 0);
+            statusLabel.Name = "statusLabel";
+            statusLabel.Size = new Size(652, 38);
+            statusLabel.Text = "جاهز";
+            statusLabel.TextAlign = ContentAlignment.MiddleCenter;
+            //
             // rangeLabel
-            // 
+            //
             rangeLabel.Dock = DockStyle.Left;
             rangeLabel.Font = new Font(new FontFamily("Tahoma"), 9F);
             rangeLabel.ForeColor = Color.FromArgb(71, 85, 105);
