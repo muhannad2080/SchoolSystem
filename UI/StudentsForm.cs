@@ -25,6 +25,8 @@ namespace SchoolSystem.UI
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             _studentService = new StudentService();
             _currentStudents = new List<Student>();
+            cmbFilterClass.SelectedIndexChanged += cmbFilterClass_SelectedIndexChanged;
+            cmbFilterStatus.SelectedIndexChanged += cmbFilterStatus_SelectedIndexChanged;
             _studentCardPrintDocument.PrintPage += StudentCardPrintDocument_PrintPage;
         }
 
@@ -350,12 +352,32 @@ namespace SchoolSystem.UI
             try
             {
                 _currentStudents = _studentService.GetAll();
+                PopulateClassFilter();
                 ApplyFilters();
             }
             catch (Exception ex)
             {
                 UIHelper.ShowException("خطأ في تحميل البيانات: ", ex);
             }
+        }
+
+        private void PopulateClassFilter()
+        {
+            string selectedClass = cmbFilterClass.Text;
+            var classNames = _currentStudents
+                .Select(s => s.CurrentClassName)
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(name => name)
+                .ToList();
+
+            cmbFilterClass.Items.Clear();
+            cmbFilterClass.Items.Add("كل الصفوف");
+            foreach (string className in classNames)
+                cmbFilterClass.Items.Add(className);
+
+            int selectedIndex = cmbFilterClass.Items.IndexOf(selectedClass);
+            cmbFilterClass.SelectedIndex = selectedIndex >= 0 ? selectedIndex : 0;
         }
 
         private void ApplyFilters()
@@ -375,6 +397,9 @@ namespace SchoolSystem.UI
 
             if (cmbFilterStatus.SelectedIndex > 0)
                 filtered = filtered.Where(s => s.Status == cmbFilterStatus.Text);
+
+            if (cmbFilterClass.SelectedIndex > 0 && !string.IsNullOrWhiteSpace(cmbFilterClass.Text))
+                filtered = filtered.Where(s => string.Equals(s.CurrentClassName, cmbFilterClass.Text, StringComparison.OrdinalIgnoreCase));
 
             BindGrid(filtered.ToList());
         }
@@ -500,6 +525,8 @@ namespace SchoolSystem.UI
 
         private void btnRefresh_Click(object sender, EventArgs e) => LoadStudents();
         private void btnSearch_Click(object sender, EventArgs e) => ApplyFilters();
+        private void cmbFilterClass_SelectedIndexChanged(object sender, EventArgs e) => ApplyFilters();
+        private void cmbFilterStatus_SelectedIndexChanged(object sender, EventArgs e) => ApplyFilters();
         private void btnAdd_Click(object sender, EventArgs e) => ClearForm();
 
         private void dgvStudents_CellClick(object sender, DataGridViewCellEventArgs e)
