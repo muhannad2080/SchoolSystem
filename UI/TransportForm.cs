@@ -189,7 +189,7 @@ namespace SchoolSystem.UI
             }
 
             int capacity;
-            if (!int.TryParse(txtCapacity.Text.Trim(), out capacity) || capacity <= 0)
+            if (!TryParsePositiveInt(txtCapacity.Text, out capacity))
             {
                 UIHelper.ShowWarning("أدخل سعة صحيحة للحافلة.");
                 txtCapacity.Focus();
@@ -219,7 +219,7 @@ namespace SchoolSystem.UI
         {
             int capacity;
 
-            if (!int.TryParse(txtCapacity.Text.Trim(), out capacity))
+            if (!TryParsePositiveInt(txtCapacity.Text, out capacity))
                 capacity = 30;
 
             return new Bus
@@ -231,6 +231,16 @@ namespace SchoolSystem.UI
                 Capacity = capacity,
                 Notes = txtNotes.Text.Trim()
             };
+        }
+
+        private bool TryParsePositiveInt(string value, out int number)
+        {
+            number = 0;
+            if (!UIHelper.TryParseDecimal(value, out decimal parsed) || parsed <= 0 || parsed != decimal.Truncate(parsed) || parsed > int.MaxValue)
+                return false;
+
+            number = (int)parsed;
+            return true;
         }
 
         private void ClearBusInputs()
@@ -256,7 +266,9 @@ namespace SchoolSystem.UI
 
             DataRow row = rowView.Row;
 
-            selectedBusId = Convert.ToInt32(row["BusID"]);
+            selectedBusId = row["BusID"] != DBNull.Value && int.TryParse(row["BusID"].ToString(), out int busId)
+                ? busId
+                : 0;
             txtBusNumber.Text = row["BusNumber"].ToString();
             txtDriverName.Text = row["DriverName"] == DBNull.Value ? "" : row["DriverName"].ToString();
             txtDriverPhone.Text = row["DriverPhone"] == DBNull.Value ? "" : row["DriverPhone"].ToString();
@@ -457,8 +469,7 @@ namespace SchoolSystem.UI
 
             decimal fee = 0;
             if (!string.IsNullOrWhiteSpace(txtFee.Text) &&
-                (!decimal.TryParse(txtFee.Text.Trim(), NumberStyles.Any, CultureInfo.CurrentCulture, out fee) &&
-                 !decimal.TryParse(txtFee.Text.Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out fee) || fee < 0))
+                (!UIHelper.TryParseDecimal(txtFee.Text, out fee) || fee < 0))
             {
                 MessageBox.Show("أدخل رسوم نقل رقمية غير سالبة.");
                 txtFee.Focus();
@@ -477,18 +488,8 @@ namespace SchoolSystem.UI
 
         private decimal? ReadNullableDecimal(string text)
         {
-            if (string.IsNullOrWhiteSpace(text))
-                return null;
-
-            decimal value;
-
-            if (decimal.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out value))
-                return value;
-
-            if (decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
-                return value;
-
-            return null;
+            return string.IsNullOrWhiteSpace(text) ? (decimal?)null :
+                (UIHelper.TryParseDecimal(text, out decimal value) ? value : (decimal?)null);
         }
 
         private BusRoute GetRouteFromInputs()
@@ -497,7 +498,7 @@ namespace SchoolSystem.UI
             {
                 RouteID = selectedRouteId,
                 RouteName = txtRouteName.Text.Trim(),
-                BusID = cmbBus.SelectedValue == null ? 0 : Convert.ToInt32(cmbBus.SelectedValue),
+                BusID = cmbBus.SelectedValue != null && int.TryParse(cmbBus.SelectedValue.ToString(), out int busId) ? busId : 0,
                 StartPoint = txtStartPoint.Text.Trim(),
                 EndPoint = txtEndPoint.Text.Trim(),
                 DepartureTime = dtpDeparture.Value.TimeOfDay,
@@ -538,29 +539,43 @@ namespace SchoolSystem.UI
 
             DataRow row = rowView.Row;
 
-            selectedRouteId = Convert.ToInt32(row["RouteID"]);
+            selectedRouteId = row["RouteID"] != DBNull.Value && int.TryParse(row["RouteID"].ToString(), out int routeId)
+                ? routeId
+                : 0;
 
             txtRouteName.Text = row["RouteName"].ToString();
 
-            if (row["BusID"] != DBNull.Value && cmbBus.Items.Count > 0)
-                cmbBus.SelectedValue = Convert.ToInt32(row["BusID"]);
+            if (row["BusID"] != DBNull.Value && cmbBus.Items.Count > 0 && int.TryParse(row["BusID"].ToString(), out int busId))
+                cmbBus.SelectedValue = busId;
 
             txtStartPoint.Text = row["StartPoint"] == DBNull.Value ? "" : row["StartPoint"].ToString();
             txtEndPoint.Text = row["EndPoint"] == DBNull.Value ? "" : row["EndPoint"].ToString();
 
-            if (row["DepartureTime"] != DBNull.Value)
-                dtpDeparture.Value = DateTime.Today.Add((TimeSpan)row["DepartureTime"]);
+            if (row["DepartureTime"] != DBNull.Value && TryReadTime(row["DepartureTime"], out TimeSpan departure))
+                dtpDeparture.Value = DateTime.Today.Add(departure);
             else
                 dtpDeparture.Value = DateTime.Today.AddHours(7);
 
-            if (row["ArrivalTime"] != DBNull.Value)
-                dtpArrival.Value = DateTime.Today.Add((TimeSpan)row["ArrivalTime"]);
+            if (row["ArrivalTime"] != DBNull.Value && TryReadTime(row["ArrivalTime"], out TimeSpan arrival))
+                dtpArrival.Value = DateTime.Today.Add(arrival);
             else
                 dtpArrival.Value = DateTime.Today.AddHours(8);
 
-            txtFee.Text = row["Fee"] == DBNull.Value ? "0" : Convert.ToDecimal(row["Fee"]).ToString("N2");
+            txtFee.Text = row["Fee"] == DBNull.Value ? "0" :
+                (UIHelper.TryParseDecimal(row["Fee"].ToString(), out decimal fee) ? fee.ToString("N2") : "0");
 
             txtRouteNotes.Text = row["Notes"] == DBNull.Value ? "" : row["Notes"].ToString();
+        }
+
+        private bool TryReadTime(object value, out TimeSpan time)
+        {
+            if (value is TimeSpan span)
+            {
+                time = span;
+                return true;
+            }
+
+            return TimeSpan.TryParse(value == null ? string.Empty : value.ToString(), out time);
         }
 
         private async void btnAddRoute_Click(object sender, EventArgs e)
