@@ -111,7 +111,20 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = "DELETE FROM Expenses WHERE ExpenseID = @ExpenseID";
+                const string query = @"
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM Vouchers
+                        WHERE ReferenceType = N'مصروفات'
+                          AND ReferenceID = @ExpenseID
+                    )
+                    BEGIN
+                        THROW 51004, N'لا يمكن حذف المصروف لأنه مرتبط بسند مالي أو تسوية. استخدم التعديل أو الإلغاء وفق السياسة المالية.', 1;
+                    END;
+
+                    DELETE FROM Expenses
+                    WHERE ExpenseID = @ExpenseID;";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
