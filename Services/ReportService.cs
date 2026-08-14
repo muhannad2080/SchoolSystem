@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -11,6 +12,7 @@ namespace SchoolSystem.Services
 
         public DataTable GetReportData(ReportRequest request)
         {
+            CurrentUser.DemandPermission(PermissionKeys.ReportsView, "ليس لديك صلاحية عرض التقارير.");
             ValidateRequest(request);
             return repository.GetReportData(request);
         }
@@ -18,6 +20,7 @@ namespace SchoolSystem.Services
         // توافق مع الكود القديم لديك الذي يستدعي GetReport("Students")
         public DataTable GetReport(string key)
         {
+            CurrentUser.DemandPermission(PermissionKeys.ReportsView, "ليس لديك صلاحية عرض التقارير.");
             if (string.IsNullOrWhiteSpace(key))
                 return new DataTable();
 

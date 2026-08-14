@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using SchoolSystem.DataAccess;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -9,6 +10,7 @@ namespace SchoolSystem.Services
     {
         public int GetStudentCount()
         {
+            CurrentUser.DemandPermission(PermissionKeys.DashboardView, "ليس لديك صلاحية عرض لوحة التحكم.");
             using (var conn = DbConnection.GetConnection())
             using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Students", conn))
             {
@@ -19,6 +21,7 @@ namespace SchoolSystem.Services
 
         public int GetTeacherCount()
         {
+            CurrentUser.DemandPermission(PermissionKeys.DashboardView, "ليس لديك صلاحية عرض لوحة التحكم.");
             using (var conn = DbConnection.GetConnection())
             using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Teachers", conn))
             {
@@ -29,6 +32,7 @@ namespace SchoolSystem.Services
 
         public int GetSubjectCount()
         {
+            CurrentUser.DemandPermission(PermissionKeys.DashboardView, "ليس لديك صلاحية عرض لوحة التحكم.");
             using (var conn = DbConnection.GetConnection())
             using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Subjects", conn))
             {
@@ -39,6 +43,7 @@ namespace SchoolSystem.Services
 
         public int GetClassCount()
         {
+            CurrentUser.DemandPermission(PermissionKeys.DashboardView, "ليس لديك صلاحية عرض لوحة التحكم.");
             using (var conn = DbConnection.GetConnection())
             using (var cmd = new SqlCommand("SELECT COUNT(*) FROM Classes", conn))
             {
@@ -49,6 +54,7 @@ namespace SchoolSystem.Services
 
         public DataTable GetStudentsPerClass()
         {
+            CurrentUser.DemandPermission(PermissionKeys.DashboardView, "ليس لديك صلاحية عرض لوحة التحكم.");
             using (var conn = DbConnection.GetConnection())
             using (var cmd = new SqlCommand(
                 @"SELECT c.ClassName, COUNT(sc.StudentID) AS StudentCount
@@ -65,6 +71,7 @@ namespace SchoolSystem.Services
 
         public decimal GetPendingFeesTotal()
         {
+            CurrentUser.DemandPermission(PermissionKeys.DashboardView, "ليس لديك صلاحية عرض لوحة التحكم.");
             using (var conn = DbConnection.GetConnection())
             using (var cmd = new SqlCommand(
                 @"SELECT COALESCE(SUM(CASE WHEN RemainingAmount > 0 THEN RemainingAmount ELSE 0 END), 0)
@@ -78,6 +85,7 @@ namespace SchoolSystem.Services
 
         public int GetPendingFeesCount()
         {
+            CurrentUser.DemandPermission(PermissionKeys.DashboardView, "ليس لديك صلاحية عرض لوحة التحكم.");
             using (var conn = DbConnection.GetConnection())
             using (var cmd = new SqlCommand(
                 "SELECT COUNT(*) FROM Fees WHERE Status = N'غير مدفوع'", conn))
@@ -89,6 +97,7 @@ namespace SchoolSystem.Services
 
         public int GetTodayAbsenceCount()
         {
+            CurrentUser.DemandPermission(PermissionKeys.DashboardView, "ليس لديك صلاحية عرض لوحة التحكم.");
             using (var conn = DbConnection.GetConnection())
             using (var cmd = new SqlCommand(
                 "SELECT COUNT(*) FROM StudentAttendance WHERE AttendanceDate = @Date AND Status = N'غائب'", conn))

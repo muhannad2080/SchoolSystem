@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -16,23 +17,27 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllFeePlans()
         {
+            CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
             return feePlanRepository.GetAllFeePlans();
         }
 
         public DataTable GetClasses()
         {
+            CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
             return feePlanRepository.GetClasses();
         }
 
         public bool AddFeePlan(FeePlan plan)
         {
+            CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
             Validate(plan);
             return feePlanRepository.AddFeePlan(plan);
         }
 
         public bool UpdateFeePlan(FeePlan plan)
         {
-            if (plan.FeePlanID <= 0)
+            CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
+            if (plan == null || plan.FeePlanID <= 0)
                 throw new Exception("رقم خطة الرسوم غير صحيح.");
 
             Validate(plan);
@@ -41,6 +46,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteFeePlan(int feePlanId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
             if (feePlanId <= 0)
                 throw new Exception("رقم خطة الرسوم غير صحيح.");
 
