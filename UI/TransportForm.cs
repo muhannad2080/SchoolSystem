@@ -183,7 +183,7 @@ namespace SchoolSystem.UI
         {
             if (string.IsNullOrWhiteSpace(txtBusNumber.Text))
             {
-                MessageBox.Show("أدخل رقم الحافلة.");
+                UIHelper.ShowWarning("أدخل رقم الحافلة.");
                 txtBusNumber.Focus();
                 return false;
             }
@@ -191,7 +191,7 @@ namespace SchoolSystem.UI
             int capacity;
             if (!int.TryParse(txtCapacity.Text.Trim(), out capacity) || capacity <= 0)
             {
-                MessageBox.Show("أدخل سعة صحيحة للحافلة.");
+                UIHelper.ShowWarning("أدخل سعة صحيحة للحافلة.");
                 txtCapacity.Focus();
                 return false;
             }
@@ -199,7 +199,7 @@ namespace SchoolSystem.UI
             if (txtBusNumber.Text.Trim().Length > 30 || txtDriverName.Text.Trim().Length > 150 ||
                 txtDriverPhone.Text.Trim().Length > 30 || txtNotes.Text.Trim().Length > 1000)
             {
-                MessageBox.Show("تجاوز أحد حقول الحافلة الحد المسموح به.");
+                UIHelper.ShowWarning("تجاوز أحد حقول الحافلة الحد المسموح به.");
                 return false;
             }
 
@@ -207,7 +207,7 @@ namespace SchoolSystem.UI
             if (!string.IsNullOrWhiteSpace(phone) && (phone.Length < 7 || phone.Length > 15 ||
                 !phone.All(char.IsDigit)))
             {
-                MessageBox.Show("رقم هاتف السائق يجب أن يحتوي على أرقام من 7 إلى 15 خانة.");
+                UIHelper.ShowWarning("رقم هاتف السائق يجب أن يحتوي على أرقام من 7 إلى 15 خانة.");
                 txtDriverPhone.Focus();
                 return false;
             }
@@ -275,7 +275,7 @@ namespace SchoolSystem.UI
 
                 await Task.Run(() => busService.AddBus(bus));
 
-                MessageBox.Show("تمت إضافة الحافلة بنجاح.");
+                UIHelper.ShowInfo("تمت إضافة الحافلة بنجاح.");
 
                 await LoadBusesAsync();
                 ClearBusInputs();
@@ -294,7 +294,7 @@ namespace SchoolSystem.UI
             {
                 if (selectedBusId == 0)
                 {
-                    MessageBox.Show("اختر الحافلة من الجدول أولاً.");
+                    UIHelper.ShowWarning("اختر الحافلة من الجدول أولاً.");
                     return;
                 }
 
@@ -305,7 +305,10 @@ namespace SchoolSystem.UI
 
                 bool result = await Task.Run(() => busService.UpdateBus(bus));
 
-                MessageBox.Show(result ? "تم تعديل الحافلة بنجاح." : "لم يتم تعديل الحافلة.");
+                if (result)
+                    UIHelper.ShowInfo("تم تعديل الحافلة بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم العثور على الحافلة أو لم يتم تعديلها.");
 
                 await LoadBusesAsync();
                 await LoadRoutesAsync();
@@ -323,7 +326,7 @@ namespace SchoolSystem.UI
             {
                 if (selectedBusId == 0)
                 {
-                    MessageBox.Show("اختر الحافلة من الجدول أولاً.");
+                    UIHelper.ShowWarning("اختر الحافلة من الجدول أولاً.");
                     return;
                 }
 
@@ -338,7 +341,10 @@ namespace SchoolSystem.UI
 
                 bool result = await Task.Run(() => busService.DeleteBus(selectedBusId));
 
-                MessageBox.Show(result ? "تم حذف الحافلة." : "لم يتم حذف الحافلة.");
+                if (result)
+                    UIHelper.ShowInfo("تم حذف الحافلة بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم العثور على الحافلة أو لم يتم حذفها.");
 
                 await LoadBusesAsync();
                 await LoadRoutesAsync();
