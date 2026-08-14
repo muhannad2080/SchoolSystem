@@ -199,7 +199,7 @@ namespace SchoolSystem.UI
             }
 
             int copies;
-            if (!int.TryParse(txtCopies.Text.Trim(), out copies) || copies <= 0)
+            if (!TryParsePositiveInt(txtCopies.Text, out copies))
             {
                 UIHelper.ShowWarning("أدخل عدد نسخ صحيح أكبر من صفر.");
                 txtCopies.Focus();
@@ -209,7 +209,7 @@ namespace SchoolSystem.UI
             if (!string.IsNullOrWhiteSpace(txtPublicationYear.Text))
             {
                 int year;
-                if (!int.TryParse(txtPublicationYear.Text.Trim(), out year) || year < 1000 || year > DateTime.Today.Year)
+                if (!TryParseNonNegativeInt(txtPublicationYear.Text, out year) || year < 1000 || year > DateTime.Today.Year)
                 {
                     UIHelper.ShowWarning("سنة النشر يجب أن تكون بين 1000 والسنة الحالية.");
                     txtPublicationYear.Focus();
@@ -233,8 +233,9 @@ namespace SchoolSystem.UI
             int year = 0;
             int copies = 1;
 
-            int.TryParse(txtPublicationYear.Text.Trim(), out year);
-            int.TryParse(txtCopies.Text.Trim(), out copies);
+            TryParseNonNegativeInt(txtPublicationYear.Text, out year);
+            if (!TryParsePositiveInt(txtCopies.Text, out copies))
+                copies = 1;
 
             return new Book
             {
@@ -249,6 +250,21 @@ namespace SchoolSystem.UI
                 ShelfLocation = txtShelf.Text.Trim(),
                 Notes = txtBookNotes.Text.Trim()
             };
+        }
+
+        private bool TryParseNonNegativeInt(string value, out int number)
+        {
+            number = 0;
+            if (!UIHelper.TryParseDecimal(value, out decimal parsed) || parsed < 0 || parsed != decimal.Truncate(parsed) || parsed > int.MaxValue)
+                return false;
+
+            number = (int)parsed;
+            return true;
+        }
+
+        private bool TryParsePositiveInt(string value, out int number)
+        {
+            return TryParseNonNegativeInt(value, out number) && number > 0;
         }
 
         private void ClearBookInputs()
@@ -281,7 +297,9 @@ namespace SchoolSystem.UI
 
             DataRow row = rowView.Row;
 
-            selectedBookId = Convert.ToInt32(row["BookID"]);
+            selectedBookId = row["BookID"] != DBNull.Value && int.TryParse(row["BookID"].ToString(), out int bookId)
+                ? bookId
+                : 0;
 
             txtTitle.Text = row["Title"].ToString();
             txtAuthor.Text = row["Author"] == DBNull.Value ? "" : row["Author"].ToString();
@@ -570,11 +588,18 @@ namespace SchoolSystem.UI
                 if (!ValidateBorrowInputs())
                     return;
 
+                if (!int.TryParse(cmbBook.SelectedValue.ToString(), out int bookId) || bookId <= 0 ||
+                    !int.TryParse(cmbBorrower.SelectedValue.ToString(), out int borrowerId) || borrowerId <= 0)
+                {
+                    UIHelper.ShowWarning("بيانات الكتاب أو المستعير غير صالحة، أعد تحميل القائمة ثم حاول مرة أخرى.");
+                    return;
+                }
+
                 Borrowing borrowing = new Borrowing
                 {
-                    BookID = Convert.ToInt32(cmbBook.SelectedValue),
+                    BookID = bookId,
                     BorrowerType = cmbBorrowerType.Text.Trim(),
-                    BorrowerID = Convert.ToInt32(cmbBorrower.SelectedValue),
+                    BorrowerID = borrowerId,
                     BorrowDate = dtpBorrowDate.Value.Date,
                     DueDate = dtpDueDate.Value.Date,
                     Status = "معار",
@@ -638,21 +663,23 @@ namespace SchoolSystem.UI
 
             DataRow row = rowView.Row;
 
-            selectedBorrowingId = Convert.ToInt32(row["BorrowingID"]);
+            selectedBorrowingId = row["BorrowingID"] != DBNull.Value && int.TryParse(row["BorrowingID"].ToString(), out int borrowingId)
+                ? borrowingId
+                : 0;
 
-            if (row["BookID"] != DBNull.Value && cmbBook.Items.Count > 0)
-                cmbBook.SelectedValue = Convert.ToInt32(row["BookID"]);
+            if (row["BookID"] != DBNull.Value && cmbBook.Items.Count > 0 && int.TryParse(row["BookID"].ToString(), out int bookId))
+                cmbBook.SelectedValue = bookId;
 
             cmbBorrowerType.Text = row["BorrowerType"].ToString();
 
-            if (row["BorrowerID"] != DBNull.Value && cmbBorrower.Items.Count > 0)
-                cmbBorrower.SelectedValue = Convert.ToInt32(row["BorrowerID"]);
+            if (row["BorrowerID"] != DBNull.Value && cmbBorrower.Items.Count > 0 && int.TryParse(row["BorrowerID"].ToString(), out int borrowerId))
+                cmbBorrower.SelectedValue = borrowerId;
 
-            if (row["BorrowDate"] != DBNull.Value)
-                dtpBorrowDate.Value = Convert.ToDateTime(row["BorrowDate"]);
+            if (row["BorrowDate"] != DBNull.Value && DateTime.TryParse(row["BorrowDate"].ToString(), out DateTime borrowDate))
+                dtpBorrowDate.Value = borrowDate <= DateTime.Today ? borrowDate : DateTime.Today;
 
-            if (row["DueDate"] != DBNull.Value)
-                dtpDueDate.Value = Convert.ToDateTime(row["DueDate"]);
+            if (row["DueDate"] != DBNull.Value && DateTime.TryParse(row["DueDate"].ToString(), out DateTime dueDate))
+                dtpDueDate.Value = dueDate;
 
             txtBorrowNotes.Text = row["Notes"] == DBNull.Value ? "" : row["Notes"].ToString();
         }
