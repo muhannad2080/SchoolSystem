@@ -21,6 +21,11 @@ namespace SchoolSystem.DataAccess
             return settings.ConnectionString.Trim();
         }
 
+        public static string GetConnectionString()
+        {
+            return connectionString;
+        }
+
         public static SqlConnection GetConnection()
         {
             return new SqlConnection(connectionString);
