@@ -72,6 +72,9 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(item.AcademicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
+            if (item.AttendanceDate == DateTime.MinValue)
+                throw new ArgumentException("تاريخ الحضور مطلوب وصحيح.");
+
             if (string.IsNullOrWhiteSpace(item.Status))
                 throw new ArgumentException("حالة الحضور مطلوبة.");
 
