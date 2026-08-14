@@ -117,6 +117,7 @@ namespace SchoolSystem.UI
             cmbReportType.Items.Add("تقرير المستخدمين والصلاحيات");
             cmbReportType.Items.Add("تقرير الرسوم");
             cmbReportType.Items.Add("تقرير الدرجات");
+            cmbReportType.Items.Add("تقرير الحركة المالية");
 
             if (cmbReportType.Items.Count > 0)
                 cmbReportType.SelectedIndex = 0;
@@ -142,6 +143,8 @@ namespace SchoolSystem.UI
             cmbStatus.Items.Add("منتهي");
             cmbStatus.Items.Add("نشط");
             cmbStatus.Items.Add("غير نشط");
+            cmbStatus.Items.Add("قبض");
+            cmbStatus.Items.Add("صرف");
 
             if (cmbStatus.Items.Count > 0)
                 cmbStatus.SelectedIndex = 0;
@@ -273,7 +276,7 @@ namespace SchoolSystem.UI
                 cmbReportType.Focus();
                 return false;
             }
-            if (!IsValidAcademicYear(txtAcademicYear.Text))
+            if (cmbReportType.Text != "تقرير الحركة المالية" && !IsValidAcademicYear(txtAcademicYear.Text))
             {
                 ShowWarning("أدخل العام الدراسي بالصيغة الصحيحة: 2025/2026.");
                 txtAcademicYear.Focus();
@@ -384,6 +387,8 @@ namespace SchoolSystem.UI
             decimal net = SumColumnIfExists(dt, "الصافي");
             decimal paid = SumColumnIfExists(dt, "المدفوع");
             decimal remaining = SumColumnIfExists(dt, "المتبقي");
+            decimal receipts = SumColumnIfExists(dt, "القبض");
+            decimal payments = SumColumnIfExists(dt, "الصرف");
 
             string summary = "ملخص التقرير: عدد السجلات " + dt.Rows.Count;
 
@@ -401,6 +406,15 @@ namespace SchoolSystem.UI
 
             if (remaining > 0)
                 summary += " | المتبقي: " + remaining.ToString("N2");
+
+            if (receipts != 0)
+                summary += " | إجمالي القبض: " + receipts.ToString("N2");
+
+            if (payments != 0)
+                summary += " | إجمالي الصرف: " + payments.ToString("N2");
+
+            if (dt.Columns.Contains("القبض") || dt.Columns.Contains("الصرف"))
+                summary += " | صافي الحركة: " + net.ToString("N2");
 
             lblSummary.Text = summary;
         }
