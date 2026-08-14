@@ -1,6 +1,14 @@
 -- =========================
 -- 1. إنشاء قاعدة البيانات
 -- =========================
+-- هذا الملف مخصص للإنشاء من الصفر فقط. لقاعدة موجودة استخدم ملفات Migration_*.sql.
+IF DB_ID(N'SchoolDB') IS NOT NULL
+BEGIN
+    PRINT N'قاعدة SchoolDB موجودة مسبقًا. لم يتم تنفيذ سكربت الإنشاء؛ استخدم ملفات Migration_*.sql.';
+    RETURN;
+END;
+GO
+
 CREATE DATABASE SchoolDB;
 GO
 

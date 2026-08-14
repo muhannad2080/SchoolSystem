@@ -7,6 +7,15 @@
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
 
+IF DB_ID(N'SchoolDB') IS NULL
+BEGIN
+    THROW 50001, N'قاعدة SchoolDB غير موجودة. شغّل SchoolDB.SQL للإنشاء من الصفر أولاً.', 1;
+END;
+GO
+
+USE SchoolDB;
+GO
+
 BEGIN TRANSACTION;
 
 /* =========================
