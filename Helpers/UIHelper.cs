@@ -9,21 +9,49 @@ namespace SchoolSystem.Helpers
     {
         private static readonly KryptonManager KryptonThemeManager = new KryptonManager();
 
+        // Global palette: every form must use these tokens instead of local colors.
         public static readonly Color PrimaryColor = Color.FromArgb(30, 41, 59);
         public static readonly Color PrimaryDarkColor = Color.FromArgb(15, 23, 42);
+        public static readonly Color PrimaryLightColor = Color.FromArgb(226, 232, 240);
+        public static readonly Color SecondaryColor = Color.FromArgb(71, 85, 105);
         public static readonly Color AccentColor = Color.FromArgb(15, 118, 110);
         public static readonly Color SuccessColor = Color.FromArgb(22, 163, 74);
+        public static readonly Color WarningColor = Color.FromArgb(217, 119, 6);
         public static readonly Color DangerColor = Color.FromArgb(198, 40, 40);
+        public static readonly Color InfoColor = Color.FromArgb(37, 99, 235);
         public static readonly Color NeutralColor = Color.FromArgb(71, 85, 105);
         public static readonly Color ExportColor = Color.FromArgb(13, 148, 136);
-        public static readonly Color SearchColor = Color.FromArgb(37, 99, 235);
+        public static readonly Color SearchColor = InfoColor;
         public static readonly Color BackgroundColor = Color.FromArgb(248, 250, 252);
         public static readonly Color SurfaceColor = Color.White;
+        public static readonly Color SurfaceSecondaryColor = Color.FromArgb(241, 245, 249);
         public static readonly Color DisabledSurfaceColor = Color.FromArgb(243, 244, 246);
-        public static readonly Color AlternateRowColor = Color.FromArgb(248, 250, 252);
+        public static readonly Color AlternateRowColor = BackgroundColor;
         public static readonly Color BorderColor = Color.FromArgb(203, 213, 225);
+        public static readonly Color DividerColor = BorderColor;
         public static readonly Color MutedTextColor = Color.FromArgb(71, 85, 105);
         public static readonly Color TextColor = Color.FromArgb(15, 23, 42);
+        public static readonly Color TextPrimaryColor = TextColor;
+        public static readonly Color TextSecondaryColor = SecondaryColor;
+        public static readonly Color HoverColor = Color.FromArgb(226, 232, 240);
+        public static readonly Color PressedColor = Color.FromArgb(203, 213, 225);
+        public static readonly Color DisabledColor = Color.FromArgb(148, 163, 184);
+        public static readonly Color FocusColor = InfoColor;
+
+        // Typography and spacing tokens for consistent Arabic desktop UX.
+        public const string FontFamily = "Tahoma";
+        public const float TitleFontSize = 16F;
+        public const float HeadingFontSize = 14F;
+        public const float SectionFontSize = 11F;
+        public const float BodyFontSize = 10F;
+        public const float CaptionFontSize = 9F;
+        public const int Space4 = 4;
+        public const int Space8 = 8;
+        public const int Space12 = 12;
+        public const int Space16 = 16;
+        public const int Space20 = 20;
+        public const int Space24 = 24;
+        public const int Space32 = 32;
 
         public static void ApplyStyle(Form form)
         {
@@ -100,7 +128,7 @@ namespace SchoolSystem.Helpers
         public static void ApplyKryptonTheme()
         {
             KryptonThemeManager.GlobalPaletteMode = PaletteMode.Office2010Blue;
-            KryptonThemeManager.BaseFont = new Font("Tahoma", 10F);
+            KryptonThemeManager.BaseFont = new Font(FontFamily, BodyFontSize);
         }
 
         public static void ApplyKryptonTheme(Control root)
@@ -157,14 +185,14 @@ namespace SchoolSystem.Helpers
             if (root is Form form)
             {
                 form.BackColor = BackgroundColor;
-                form.Font = new Font("Tahoma", 10F);
+                form.Font = new Font(FontFamily, BodyFontSize);
                 form.RightToLeft = RightToLeft.Yes;
                 form.RightToLeftLayout = true;
             }
             else if (root is UserControl userControl)
             {
                 userControl.BackColor = BackgroundColor;
-                userControl.Font = new Font("Tahoma", 10F);
+                userControl.Font = new Font(FontFamily, BodyFontSize);
                 userControl.RightToLeft = RightToLeft.Yes;
             }
 
