@@ -66,7 +66,7 @@ namespace SchoolSystem.UI
 
         private Button CreateActionButton(string text, Color color)
         {
-            return new Button
+            Button button = new Button
             {
                 Text = text,
                 BackColor = color,
@@ -74,9 +74,10 @@ namespace SchoolSystem.UI
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font("Tahoma", 9.5F, FontStyle.Bold),
                 Size = new Size(115, 35),
-                FlatAppearance = { BorderSize = 0 },
                 UseVisualStyleBackColor = false
             };
+            button.FlatAppearance.BorderSize = 0;
+            return button;
         }
 
         private void PrepareNewVoucher(string voucherType)
@@ -110,12 +111,19 @@ namespace SchoolSystem.UI
             if (!TryGetSelectedVoucherForOutput(out voucherToPrint))
                 return;
 
-            using (PrintPreviewDialog preview = new PrintPreviewDialog())
+            try
             {
-                preview.Document = voucherPrintDocument;
-                preview.RightToLeft = RightToLeft.Yes;
-                preview.WindowState = FormWindowState.Maximized;
-                preview.ShowDialog(FindForm());
+                using (PrintPreviewDialog preview = new PrintPreviewDialog())
+                {
+                    preview.Document = voucherPrintDocument;
+                    preview.RightToLeft = RightToLeft.Yes;
+                    preview.WindowState = FormWindowState.Maximized;
+                    preview.ShowDialog(FindForm());
+                }
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("معاينة السند", ex);
             }
         }
 
@@ -124,11 +132,18 @@ namespace SchoolSystem.UI
             if (!TryGetSelectedVoucherForOutput(out voucherToPrint))
                 return;
 
-            using (PrintDialog dialog = new PrintDialog())
+            try
             {
-                dialog.Document = voucherPrintDocument;
-                if (dialog.ShowDialog(FindForm()) == DialogResult.OK)
-                    voucherPrintDocument.Print();
+                using (PrintDialog dialog = new PrintDialog())
+                {
+                    dialog.Document = voucherPrintDocument;
+                    if (dialog.ShowDialog(FindForm()) == DialogResult.OK)
+                        voucherPrintDocument.Print();
+                }
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("طباعة السند", ex);
             }
         }
 
