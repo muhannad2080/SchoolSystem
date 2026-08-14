@@ -247,6 +247,30 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        public bool StudentExists(int studentId)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(
+                "SELECT COUNT(1) FROM Students WHERE StudentID = @StudentID AND ISNULL(Status, N'منتظم') <> N'محذوف'", conn))
+            {
+                cmd.Parameters.AddWithValue("@StudentID", studentId);
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
+        public bool ClassExists(int classId)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(
+                "SELECT COUNT(1) FROM Classes WHERE ClassID = @ClassID AND ISNULL(IsActive, 1) = 1", conn))
+            {
+                cmd.Parameters.AddWithValue("@ClassID", classId);
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
         private void AddParameters(SqlCommand cmd, StudentClass assignment)
         {
             cmd.Parameters.AddWithValue("@StudentID", assignment.StudentID);

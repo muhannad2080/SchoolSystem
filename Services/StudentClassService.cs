@@ -75,7 +75,15 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(assignment.Section))
                 throw new ArgumentException("يجب اختيار الشعبة.");
 
+            assignment.Section = assignment.Section.Trim();
+            assignment.AcademicYear = assignment.AcademicYear.Trim();
             ValidateAcademicYear(assignment.AcademicYear);
+
+            if (!repository.StudentExists(assignment.StudentID))
+                throw new ArgumentException("الطالب المحدد غير موجود أو غير نشط.");
+
+            if (!repository.ClassExists(assignment.ClassID))
+                throw new ArgumentException("الصف المحدد غير موجود أو غير نشط.");
         }
 
         private void ValidateAcademicYear(string academicYear)
