@@ -82,7 +82,6 @@ namespace SchoolSystem.DataAccess
                     WHERE s.ClassID = @ClassID
                       AND ISNULL(s.Section, N'') = @Section
                       AND ISNULL(s.AcademicYear, N'') = @AcademicYear
-                      AND ISNULL(s.Status, N'منتظم') = N'منتظم'
                                         ORDER BY s.FullName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
