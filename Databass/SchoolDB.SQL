@@ -160,3 +160,70 @@ CREATE INDEX IX_Students_Name ON Students(FullName);
 CREATE INDEX IX_Marks_StudentID ON Marks(StudentID);
 CREATE INDEX IX_Marks_SubjectID ON Marks(SubjectID);
 GO
+
+-- =========================
+-- 10. جداول النقل المدرسي والتحضير اليومي
+-- =========================
+CREATE TABLE Buses (
+    BusID INT IDENTITY(1,1) PRIMARY KEY,
+    BusNumber NVARCHAR(50) NOT NULL,
+    DriverName NVARCHAR(150) NULL,
+    DriverPhone NVARCHAR(50) NULL,
+    Capacity INT NOT NULL DEFAULT 0,
+    Notes NVARCHAR(500) NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME NULL
+);
+GO
+
+CREATE UNIQUE INDEX UX_Buses_BusNumber ON Buses(BusNumber);
+GO
+
+CREATE TABLE BusRoutes (
+    RouteID INT IDENTITY(1,1) PRIMARY KEY,
+    RouteName NVARCHAR(150) NOT NULL,
+    BusID INT NOT NULL,
+    StartPoint NVARCHAR(200) NULL,
+    EndPoint NVARCHAR(200) NULL,
+    DepartureTime TIME NULL,
+    ArrivalTime TIME NULL,
+    Fee DECIMAL(18,2) NULL,
+    Notes NVARCHAR(500) NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME NULL,
+    CONSTRAINT FK_BusRoutes_Buses FOREIGN KEY (BusID) REFERENCES Buses(BusID)
+);
+GO
+
+CREATE INDEX IX_BusRoutes_BusID ON BusRoutes(BusID);
+GO
+
+CREATE TABLE StudentAttendance (
+    AttendanceID INT IDENTITY(1,1) PRIMARY KEY,
+    StudentID INT NOT NULL,
+    ClassID INT NOT NULL,
+    Section NVARCHAR(50) NOT NULL,
+    AcademicYear NVARCHAR(20) NOT NULL,
+    AttendanceDate DATE NOT NULL,
+    Status NVARCHAR(30) NOT NULL DEFAULT N'حاضر',
+    ArrivalTime TIME NULL,
+    ExcuseStatus NVARCHAR(50) NULL,
+    Notes NVARCHAR(500) NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME NULL,
+    CONSTRAINT FK_StudentAttendance_Students FOREIGN KEY (StudentID) REFERENCES Students(StudentID),
+    CONSTRAINT FK_StudentAttendance_Classes FOREIGN KEY (ClassID) REFERENCES Classes(ClassID)
+);
+GO
+
+CREATE UNIQUE INDEX UX_StudentAttendance_StudentDate
+    ON StudentAttendance(StudentID, AttendanceDate);
+GO
+
+CREATE INDEX IX_StudentAttendance_ClassDate
+    ON StudentAttendance(ClassID, AttendanceDate);
+GO
+
+CREATE INDEX IX_StudentAttendance_Date
+    ON StudentAttendance(AttendanceDate);
+GO
