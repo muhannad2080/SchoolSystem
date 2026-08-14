@@ -11,6 +11,7 @@ namespace SchoolSystem.UI
     public partial class DashboardHome : UserControl
     {
         private readonly DashboardService dashboardService = new DashboardService();
+        private readonly Button btnRefreshDashboard = new Button();
 
         public DashboardHome()
         {
@@ -18,22 +19,58 @@ namespace SchoolSystem.UI
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             UIHelper.ApplyTheme(this);
             this.Dock = DockStyle.Fill;
+            ConfigureDashboardActions();
             this.Load += DashboardHome_Load;
+        }
+
+        private void ConfigureDashboardActions()
+        {
+            btnRefreshDashboard.Text = "تحديث البيانات";
+            btnRefreshDashboard.Name = "btnRefreshDashboard";
+            btnRefreshDashboard.Size = new Size(125, 34);
+            btnRefreshDashboard.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnRefreshDashboard.Location = new Point(Math.Max(12, Width - btnRefreshDashboard.Width - 18), 16);
+            btnRefreshDashboard.BackColor = UIHelper.InfoColor;
+            btnRefreshDashboard.ForeColor = Color.White;
+            btnRefreshDashboard.FlatStyle = FlatStyle.Flat;
+            btnRefreshDashboard.FlatAppearance.BorderSize = 0;
+            btnRefreshDashboard.Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize, FontStyle.Bold);
+            btnRefreshDashboard.Click += async (sender, e) => await ReloadDashboardAsync();
+            Controls.Add(btnRefreshDashboard);
+            btnRefreshDashboard.BringToFront();
+            Resize += (sender, e) => btnRefreshDashboard.Location = new Point(Math.Max(12, Width - btnRefreshDashboard.Width - 18), 16);
         }
 
         private async void DashboardHome_Load(object sender, EventArgs e)
         {
-            await LoadStatisticsAsync();
-            LoadChart();
-            LoadAlerts();
+            await ReloadDashboardAsync();
+        }
+
+        private async Task ReloadDashboardAsync()
+        {
+            try
+            {
+                btnRefreshDashboard.Enabled = false;
+                Cursor = Cursors.WaitCursor;
+                await LoadStatisticsAsync();
+                LoadChart();
+                await LoadAlertsAsync();
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("تعذر تحديث لوحة التحكم: ", ex);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+                btnRefreshDashboard.Enabled = true;
+            }
         }
 
         private async Task LoadStatisticsAsync()
         {
             try
             {
-                Cursor = Cursors.WaitCursor;
-
                 panelCards.Controls.Clear();
 
                 int studentCount = await Task.Run(() => dashboardService.GetStudentCount());
@@ -42,13 +79,11 @@ namespace SchoolSystem.UI
                 int classCount = await Task.Run(() => dashboardService.GetClassCount());
                 decimal pendingFeesTotal = await Task.Run(() => dashboardService.GetPendingFeesTotal());
 
-                CreateCard("👨‍🎓  الطلاب", studentCount.ToString(), UIHelper.InfoColor, 0);
-                CreateCard("👨‍🏫  المعلمين", teacherCount.ToString(), UIHelper.SuccessColor, 1);
-                CreateCard("📚  المواد", subjectCount.ToString(), UIHelper.AccentColor, 2);
-                CreateCard("🏫  الفصول", classCount.ToString(), UIHelper.WarningColor, 3);
-                CreateCard("💰  الرسوم المتبقية", pendingFeesTotal.ToString("N2"), UIHelper.DangerColor, 4);
-
-                Cursor = Cursors.Default;
+                CreateCard("الطلاب", studentCount.ToString(), UIHelper.InfoColor, 0);
+                CreateCard("المعلمون", teacherCount.ToString(), UIHelper.SuccessColor, 1);
+                CreateCard("المواد", subjectCount.ToString(), UIHelper.AccentColor, 2);
+                CreateCard("الفصول", classCount.ToString(), UIHelper.WarningColor, 3);
+                CreateCard("الرسوم المتبقية", pendingFeesTotal.ToString("N2"), UIHelper.DangerColor, 4);
             }
             catch (Exception ex)
             {
@@ -170,7 +205,7 @@ namespace SchoolSystem.UI
             }
         }
 
-        private async void LoadAlerts()
+        private async Task LoadAlertsAsync()
         {
             try
             {
@@ -188,13 +223,13 @@ namespace SchoolSystem.UI
                 int pendingFees = await Task.Run(() => dashboardService.GetPendingFeesCount());
                 int todayAbsence = await Task.Run(() => dashboardService.GetTodayAbsenceCount());
 
-                lblPendingFees.Text = $"⚠️  رسوم غير مدفوعة: {pendingFees}";
-                lblTodayAbsence.Text = $"📅  غياب اليوم: {todayAbsence}";
+                lblPendingFees.Text = $"رسوم غير مدفوعة: {pendingFees}";
+                lblTodayAbsence.Text = $"غياب اليوم: {todayAbsence}";
             }
             catch
             {
-                lblPendingFees.Text = "⚠️  رسوم غير مدفوعة: --";
-                lblTodayAbsence.Text = "📅  غياب اليوم: --";
+                lblPendingFees.Text = "رسوم غير مدفوعة: --";
+                lblTodayAbsence.Text = "غياب اليوم: --";
             }
         }
     }

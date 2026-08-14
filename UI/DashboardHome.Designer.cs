@@ -73,7 +73,7 @@
             this.panelChart.Dock = System.Windows.Forms.DockStyle.Fill;
                         this.panelChart.Padding = new System.Windows.Forms.Padding(10);
 
-            this.lblChartTitle.Text = "📊  توزيع الطلاب في الفصول";
+            this.lblChartTitle.Text = "توزيع الطلاب في الفصول";
             this.lblChartTitle.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
             this.lblChartTitle.ForeColor = System.Drawing.Color.FromArgb(33, 42, 57);
             this.lblChartTitle.Dock = System.Windows.Forms.DockStyle.Top;
@@ -92,7 +92,7 @@
             this.panelAlerts.Dock = System.Windows.Forms.DockStyle.Fill;
                         this.panelAlerts.Padding = new System.Windows.Forms.Padding(10);
 
-            this.lblAlertsTitle.Text = "🔔  تنبيهات";
+            this.lblAlertsTitle.Text = "التنبيهات";
             this.lblAlertsTitle.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
             this.lblAlertsTitle.ForeColor = System.Drawing.Color.FromArgb(33, 42, 57);
             this.lblAlertsTitle.Dock = System.Windows.Forms.DockStyle.Top;
