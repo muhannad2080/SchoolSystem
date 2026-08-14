@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
@@ -206,27 +207,26 @@ namespace SchoolSystem.UI
             if (row == null)
                 return;
 
-            selectedAttendanceId =
-                row["AttendanceID"] != DBNull.Value
-                ? Convert.ToInt32(row["AttendanceID"])
+            selectedAttendanceId = row["AttendanceID"] != DBNull.Value && int.TryParse(row["AttendanceID"].ToString(), out int attendanceId)
+                ? attendanceId
                 : 0;
 
-            if (row["TeacherID"] != DBNull.Value)
-                cmbTeacher.SelectedValue = Convert.ToInt32(row["TeacherID"]);
+            if (row["TeacherID"] != DBNull.Value && int.TryParse(row["TeacherID"].ToString(), out int teacherId))
+                cmbTeacher.SelectedValue = teacherId;
 
-            if (row["AttendanceDate"] != DBNull.Value)
-                dtpDate.Value = Convert.ToDateTime(row["AttendanceDate"]);
+            if (row["AttendanceDate"] != DBNull.Value && DateTime.TryParse(row["AttendanceDate"].ToString(), out DateTime attendanceDate))
+                dtpDate.Value = attendanceDate <= DateTime.Today ? attendanceDate : DateTime.Today;
 
             if (row["Status"] != DBNull.Value)
                 cmbStatus.Text = row["Status"].ToString();
 
-            if (row["CheckInTime"] != DBNull.Value)
-                dtpCheckIn.Value = DateTime.Today.Add((TimeSpan)row["CheckInTime"]);
+            if (row["CheckInTime"] != DBNull.Value && TryReadTime(row["CheckInTime"], out TimeSpan checkIn))
+                dtpCheckIn.Value = DateTime.Today.Add(checkIn);
             else
                 dtpCheckIn.Value = DateTime.Today.AddHours(8);
 
-            if (row["CheckOutTime"] != DBNull.Value)
-                dtpCheckOut.Value = DateTime.Today.Add((TimeSpan)row["CheckOutTime"]);
+            if (row["CheckOutTime"] != DBNull.Value && TryReadTime(row["CheckOutTime"], out TimeSpan checkOut))
+                dtpCheckOut.Value = DateTime.Today.Add(checkOut);
             else
                 dtpCheckOut.Value = DateTime.Today.AddHours(14);
 
@@ -285,9 +285,10 @@ namespace SchoolSystem.UI
 
         private bool ValidateAttendanceInputs()
         {
-            if (cmbTeacher.SelectedValue == null || cmbTeacher.SelectedIndex < 0)
+            if (cmbTeacher.SelectedValue == null || cmbTeacher.SelectedValue is DataRowView || cmbTeacher.SelectedIndex < 0 ||
+                !int.TryParse(cmbTeacher.SelectedValue.ToString(), out int teacherId) || teacherId <= 0)
             {
-                UIHelper.ShowWarning("اختر المعلم أولاً.");
+                UIHelper.ShowWarning("اختر معلماً صالحاً أولاً.");
                 cmbTeacher.Focus();
                 return false;
             }
@@ -323,6 +324,14 @@ namespace SchoolSystem.UI
                 return false;
             }
 
+            string[] allowedStatuses = { "حاضر", "غائب", "متأخر", "إجازة", "مريض", "مأذون", "انصراف مبكر" };
+            if (!allowedStatuses.Contains(status))
+            {
+                UIHelper.ShowWarning("اختر حالة حضور صحيحة.");
+                cmbStatus.Focus();
+                return false;
+            }
+
             if (txtAbsenceReason.Text.Trim().Length > 500 || txtNotes.Text.Trim().Length > 1000)
             {
                 UIHelper.ShowWarning("تجاوز أحد النصوص الحد المسموح به.");
@@ -337,9 +346,11 @@ namespace SchoolSystem.UI
             TeacherAttendance attendance = new TeacherAttendance();
 
             attendance.AttendanceID = selectedAttendanceId;
-            attendance.TeacherID = Convert.ToInt32(cmbTeacher.SelectedValue);
+            attendance.TeacherID = int.TryParse(cmbTeacher.SelectedValue == null ? string.Empty : cmbTeacher.SelectedValue.ToString(), out int teacherId)
+                ? teacherId
+                : 0;
             attendance.AttendanceDate = dtpDate.Value.Date;
-            attendance.Status = cmbStatus.SelectedItem.ToString();
+            attendance.Status = cmbStatus.SelectedItem == null ? string.Empty : cmbStatus.SelectedItem.ToString();
 
             bool noTimeRequired =
                 attendance.Status == "غائب" ||
@@ -367,6 +378,17 @@ namespace SchoolSystem.UI
             txtWorkHours.Text = attendance.WorkHours.ToString();
 
             return attendance;
+        }
+
+        private bool TryReadTime(object value, out TimeSpan time)
+        {
+            if (value is TimeSpan span)
+            {
+                time = span;
+                return true;
+            }
+
+            return TimeSpan.TryParse(value == null ? string.Empty : value.ToString(), out time);
         }
 
         private async void btnAdd_Click(object sender, EventArgs e)
