@@ -305,7 +305,7 @@ namespace SchoolSystem.UI
             if (dataGridViewReport.Columns.Count == 0)
                 return;
 
-            dataGridViewReport.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            UIHelper.StyleDataGridView(dataGridViewReport);
             dataGridViewReport.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewReport.MultiSelect = false;
             dataGridViewReport.ReadOnly = true;

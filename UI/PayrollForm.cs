@@ -229,18 +229,18 @@ namespace SchoolSystem.UI
             {
                 dataGridViewContracts.Columns["TotalSalary"].HeaderText = "الإجمالي";
                 dataGridViewContracts.Columns["TotalSalary"].DefaultCellStyle.Font =
-                    new Font("Tahoma", 9.5F, FontStyle.Bold);
+                    new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
                 dataGridViewContracts.Columns["TotalSalary"].DefaultCellStyle.ForeColor =
-                    Color.FromArgb(22, 163, 74);
+                    UIHelper.SuccessColor;
             }
 
             if (dataGridViewContracts.Columns.Contains("NetSalary"))
             {
                 dataGridViewContracts.Columns["NetSalary"].HeaderText = "الصافي";
                 dataGridViewContracts.Columns["NetSalary"].DefaultCellStyle.Font =
-                    new Font("Tahoma", 9.5F, FontStyle.Bold);
+                    new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
                 dataGridViewContracts.Columns["NetSalary"].DefaultCellStyle.ForeColor =
-                    Color.FromArgb(37, 99, 235);
+                    UIHelper.AccentColor;
             }
 
             if (dataGridViewContracts.Columns.Contains("StartDate"))

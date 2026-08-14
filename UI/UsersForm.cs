@@ -195,21 +195,11 @@ namespace SchoolSystem.UI
             if (dataGridViewUsers.Columns.Count == 0)
                 return;
 
+            UIHelper.StyleDataGridView(dataGridViewUsers);
             dataGridViewUsers.ReadOnly = true;
-            dataGridViewUsers.AllowUserToAddRows = false;
             dataGridViewUsers.AllowUserToDeleteRows = false;
-            dataGridViewUsers.MultiSelect = false;
-            dataGridViewUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewUsers.RowHeadersVisible = false;
-            dataGridViewUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewUsers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dataGridViewUsers.EnableHeadersVisualStyles = false;
-            dataGridViewUsers.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryDarkColor;
-            dataGridViewUsers.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
-            dataGridViewUsers.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            dataGridViewUsers.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
-            dataGridViewUsers.DefaultCellStyle.ForeColor = UIHelper.TextColor;
-            dataGridViewUsers.AlternatingRowsDefaultCellStyle.BackColor = UIHelper.AlternateRowColor;
+            dataGridViewUsers.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font(
+                UIHelper.FontFamily, UIHelper.BodyFontSize, System.Drawing.FontStyle.Bold);
 
             SetHeader("UserID", "الرقم");
             SetHeader("FullName", "الاسم الكامل");
