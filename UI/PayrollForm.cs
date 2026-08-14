@@ -484,7 +484,7 @@ namespace SchoolSystem.UI
         {
             if (cmbTeacher.SelectedValue == null)
             {
-                MessageBox.Show("اختر معلماً.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("اختر معلماً.");
                 return;
             }
 
@@ -496,8 +496,7 @@ namespace SchoolSystem.UI
                 await Task.Run(() => contractService.AddContract(contract));
                 Cursor = Cursors.Default;
 
-                MessageBox.Show("تمت إضافة العقد بنجاح.",
-                    "تم", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UIHelper.ShowInfo("تمت إضافة العقد بنجاح.");
 
                 await LoadContractsAsync();
                 ClearInputs();
@@ -513,8 +512,7 @@ namespace SchoolSystem.UI
         {
             if (selectedContractId == 0)
             {
-                MessageBox.Show("اختر عقداً من الجدول.",
-                    "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("اختر عقداً من الجدول.");
                 return;
             }
 
@@ -526,9 +524,10 @@ namespace SchoolSystem.UI
                 bool updated = await Task.Run(() => contractService.UpdateContract(contract));
                 Cursor = Cursors.Default;
 
-                MessageBox.Show(updated ? "تم تعديل العقد بنجاح." : "لم يتم العثور على العقد.",
-                    "نتيجة العملية", MessageBoxButtons.OK,
-                    updated ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+                if (updated)
+                    UIHelper.ShowInfo("تم تعديل العقد بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم العثور على العقد أو لم يتم تعديله.");
 
                 await LoadContractsAsync();
                 ClearInputs();
@@ -544,8 +543,7 @@ namespace SchoolSystem.UI
         {
             if (selectedContractId == 0)
             {
-                MessageBox.Show("اختر عقداً من الجدول.",
-                    "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("اختر عقداً من الجدول.");
                 return;
             }
 
@@ -564,9 +562,10 @@ namespace SchoolSystem.UI
                 bool deleted = await Task.Run(() => contractService.DeleteContract(selectedContractId));
                 Cursor = Cursors.Default;
 
-                MessageBox.Show(deleted ? "تم حذف العقد بنجاح." : "لم يتم العثور على العقد.",
-                    "نتيجة العملية", MessageBoxButtons.OK,
-                    deleted ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+                if (deleted)
+                    UIHelper.ShowInfo("تم حذف العقد بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم العثور على العقد أو لم يتم حذفه.");
 
                 await LoadContractsAsync();
                 ClearInputs();
