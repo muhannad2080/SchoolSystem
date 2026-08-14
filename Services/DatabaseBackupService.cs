@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace SchoolSystem.Services
@@ -107,7 +108,14 @@ RESTORE DATABASE [" + targetDatabase + @"] FROM DISK = @backupFile WITH RECOVERY
         {
             if (string.IsNullOrWhiteSpace(serverInstance))
                 throw new ArgumentException("يجب تحديد اسم خادم SQL Server.");
-            if (string.IsNullOrWhiteSpace(databaseName) || !SafeIdentifier.IsMatch(databaseName))
+
+            string normalizedServer = serverInstance.Trim();
+            if (normalizedServer.Length > 128 || normalizedServer.Any(char.IsControl) || normalizedServer.IndexOf(';') >= 0)
+                throw new ArgumentException("اسم خادم SQL Server غير صالح.");
+
+            string normalizedDatabase = databaseName == null ? string.Empty : databaseName.Trim();
+            if (normalizedDatabase.Length > 128 || string.IsNullOrWhiteSpace(normalizedDatabase) ||
+                !SafeIdentifier.IsMatch(normalizedDatabase))
                 throw new ArgumentException("اسم قاعدة البيانات غير صالح.");
         }
 
@@ -126,7 +134,8 @@ RESTORE DATABASE [" + targetDatabase + @"] FROM DISK = @backupFile WITH RECOVERY
                 throw new ArgumentException("مسار مجلد النسخ الاحتياطي غير صالح.", ex);
             }
 
-            string applicationDirectory = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory);
+            string applicationDirectory = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
             if (directory.StartsWith(applicationDirectory, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("يجب حفظ النسخ الاحتياطية خارج مجلد البرنامج.");
             if (File.Exists(directory))
