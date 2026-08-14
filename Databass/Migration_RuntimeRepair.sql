@@ -34,8 +34,9 @@ BEGIN
     IF COL_LENGTH(N'dbo.Students', N'Section') IS NULL ALTER TABLE dbo.Students ADD Section NVARCHAR(50) NULL;
     IF COL_LENGTH(N'dbo.Students', N'AcademicYear') IS NULL ALTER TABLE dbo.Students ADD AcademicYear NVARCHAR(20) NULL;
     IF COL_LENGTH(N'dbo.Students', N'Phone') IS NULL ALTER TABLE dbo.Students ADD Phone NVARCHAR(30) NULL;
+    /* Dynamic SQL is required because SQL Server compiles a batch before ALTER TABLE runs. */
     IF COL_LENGTH(N'dbo.Students', N'StudentPhone') IS NOT NULL
-        UPDATE dbo.Students SET Phone = StudentPhone WHERE Phone IS NULL AND StudentPhone IS NOT NULL;
+        EXEC(N'UPDATE dbo.Students SET Phone = StudentPhone WHERE Phone IS NULL AND StudentPhone IS NOT NULL;');
 END;
 
 IF OBJECT_ID(N'dbo.StudentClasses', N'U') IS NOT NULL
