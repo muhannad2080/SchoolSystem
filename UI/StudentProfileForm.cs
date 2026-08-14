@@ -13,6 +13,11 @@ namespace SchoolSystem.UI
         private readonly StudentProfileService profileService = new StudentProfileService();
         private StudentProfile profile;
 
+        public StudentProfileForm()
+        {
+            InitializeComponent();
+        }
+
         public StudentProfileForm(int studentId)
         {
             if (studentId <= 0)
@@ -25,7 +30,8 @@ namespace SchoolSystem.UI
 
         private async void StudentProfileForm_Load(object sender, EventArgs e)
         {
-            await LoadProfileAsync();
+            if (studentId > 0)
+                await LoadProfileAsync();
         }
 
         private async void btnRefresh_Click(object sender, EventArgs e)
