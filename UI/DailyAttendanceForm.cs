@@ -26,6 +26,8 @@ namespace SchoolSystem.UI
 
             Load += DailyAttendanceForm_Load;
             txtSearch.TextChanged += txtSearch_TextChanged;
+            cmbClass.SelectedIndexChanged += cmbClass_SelectedIndexChanged;
+            txtAcademicYear.Leave += txtAcademicYear_Leave;
         }
 
         private void ConfigureResponsiveLayout()
@@ -108,14 +110,9 @@ namespace SchoolSystem.UI
             int year = DateTime.Now.Year;
             txtAcademicYear.Text = year + "/" + (year + 1);
 
+            cmbSection.DataSource = null;
             cmbSection.Items.Clear();
-            cmbSection.Items.Add("أ");
-            cmbSection.Items.Add("ب");
-            cmbSection.Items.Add("ج");
-            cmbSection.Items.Add("د");
-
-            if (cmbSection.Items.Count > 0)
-                cmbSection.SelectedIndex = 0;
+            cmbSection.Enabled = false;
 
             lblSummary.Text = "ملخص الحضور: لا توجد بيانات محملة.";
             lblRecordCount.Text = "عدد الطلاب: 0";
@@ -130,7 +127,52 @@ namespace SchoolSystem.UI
             cmbClass.ValueMember = "ClassID";
 
             if (cmbClass.Items.Count > 0)
+            {
                 cmbClass.SelectedIndex = 0;
+                await LoadSectionsAsync();
+            }
+        }
+
+        private async void cmbClass_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!IsHandleCreated || cmbClass.SelectedValue is DataRowView)
+                return;
+
+            await LoadSectionsAsync();
+        }
+
+        private async void txtAcademicYear_Leave(object sender, EventArgs e)
+        {
+            await LoadSectionsAsync();
+        }
+
+        private async Task LoadSectionsAsync()
+        {
+            int classId = GetClassId();
+            string academicYear = txtAcademicYear.Text == null ? string.Empty : txtAcademicYear.Text.Trim();
+
+            cmbSection.DataSource = null;
+            cmbSection.Items.Clear();
+            cmbSection.Enabled = false;
+
+            if (classId <= 0 || string.IsNullOrWhiteSpace(academicYear))
+                return;
+
+            try
+            {
+                DataTable sections = await Task.Run(() => attendanceService.GetSections(classId, academicYear));
+                cmbSection.DataSource = sections;
+                cmbSection.DisplayMember = "Section";
+                cmbSection.ValueMember = "Section";
+                cmbSection.Enabled = sections.Rows.Count > 0;
+
+                if (sections.Rows.Count > 0)
+                    cmbSection.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("تعذر تحميل الشعب الفعلية للصف والعام الدراسي المحددين:\n", ex);
+            }
         }
 
         private int GetClassId()

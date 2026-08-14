@@ -7,6 +7,31 @@ namespace SchoolSystem.DataAccess
 {
     public class StudentAttendanceRepository
     {
+        public DataTable GetSections(int classId, string academicYear)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                const string query = @"
+                    SELECT DISTINCT LTRIM(RTRIM(ISNULL(Section, N''))) AS Section
+                    FROM Students
+                    WHERE ClassID = @ClassID
+                      AND AcademicYear = @AcademicYear
+                      AND ISNULL(Status, N'منتظم') = N'منتظم'
+                      AND NULLIF(LTRIM(RTRIM(ISNULL(Section, N''))), N'') IS NOT NULL
+                    ORDER BY Section";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    cmd.Parameters.AddWithValue("@ClassID", classId);
+                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear.Trim());
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    return dt;
+                }
+            }
+        }
+
         public DataTable GetAttendanceSheet(int classId, string section, string academicYear, DateTime date)
         {
             using (SqlConnection conn = DbConnection.GetConnection())

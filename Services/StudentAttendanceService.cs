@@ -11,6 +11,21 @@ namespace SchoolSystem.Services
     {
         private readonly StudentAttendanceRepository repository = new StudentAttendanceRepository();
 
+        public DataTable GetSections(int classId, string academicYear)
+        {
+            CurrentUser.DemandPermission(PermissionKeys.AttendanceManage, "ليس لديك صلاحية إدارة حضور الطلاب.");
+            if (classId <= 0)
+                throw new ArgumentException("يجب اختيار الصف.");
+
+            if (string.IsNullOrWhiteSpace(academicYear))
+                throw new ArgumentException("العام الدراسي مطلوب.");
+
+            if (!Regex.IsMatch(academicYear.Trim(), @"^[0-9]{4}/[0-9]{4}$"))
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون مثل 2026/2027.");
+
+            return repository.GetSections(classId, academicYear.Trim());
+        }
+
         public DataTable GetAttendanceSheet(int classId, string section, string academicYear, DateTime date)
         {
             CurrentUser.DemandPermission(PermissionKeys.AttendanceManage, "ليس لديك صلاحية إدارة حضور الطلاب.");
