@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static, read-only contract checks for SchoolSystem settings wiring."""
+"""Static, read-only contract checks for settings, backup/restore, RBAC, and safe deletion."""
 from pathlib import Path
 import sys
 
@@ -8,6 +8,19 @@ settings = (ROOT / "Services" / "ApplicationSettingsService.cs").read_text(encod
 db_connection = (ROOT / "DataAccess" / "DbConnection.cs").read_text(encoding="utf-8")
 settings_form = (ROOT / "UI" / "SettingsForm.cs").read_text(encoding="utf-8")
 backup_service = (ROOT / "Services" / "DatabaseBackupService.cs").read_text(encoding="utf-8")
+current_user = (ROOT / "Security" / "CurrentUser.cs").read_text(encoding="utf-8")
+permission_keys = (ROOT / "Security" / "PermissionKeys.cs").read_text(encoding="utf-8")
+settings_ui = (ROOT / "UI" / "SettingsForm.cs").read_text(encoding="utf-8")
+student_service = (ROOT / "Services" / "StudentService.cs").read_text(encoding="utf-8")
+teacher_service = (ROOT / "Services" / "TeacherService.cs").read_text(encoding="utf-8")
+financial_services = "\\n".join(
+    (ROOT / "Services" / name).read_text(encoding="utf-8")
+    for name in ("FeeService.cs", "ExpenseService.cs", "PayrollService.cs", "VoucherService.cs")
+)
+academic_services = "\\n".join(
+    (ROOT / "Services" / name).read_text(encoding="utf-8")
+    for name in ("EnrollmentService.cs", "GradeService.cs", "TimetableService.cs")
+)
 
 checks = {
     "settings_validation_is_called_before_write": "Validate(value);" in settings and "File.Create(temporaryFile)" in settings,
@@ -26,6 +39,32 @@ checks = {
     "restore_attempts_multi_user_after_failure": "BEGIN CATCH" in backup_service
     and "Preserve the original RESTORE error" in backup_service,
     "restore_reports_existing_database": "قاعدة البيانات الهدف موجودة. اختر اسماً جديداً أو فعّل الاستبدال." in backup_service,
+    "permission_demand_throws_on_missing_permission": "throw new UnauthorizedAccessException" in current_user
+    and "public static void DemandPermission" in current_user,
+    "permission_keys_include_settings_management": "SettingsManage" in permission_keys,
+    "settings_backup_requires_settings_permission": "PermissionKeys.SettingsManage" in settings_ui
+    and "BackupButton_Click" in settings_ui
+    and "RestoreButton_Click" in settings_ui,
+    "student_mutations_require_students_manage": student_service.count("EnsureCanManageStudents();") >= 4,
+    "teacher_mutations_require_teachers_manage": teacher_service.count("PermissionKeys.TeachersManage") >= 3,
+    "financial_mutations_require_financial_permissions": all(
+        token in financial_services
+        for token in (
+            "PermissionKeys.FeesManage",
+            "PermissionKeys.ExpensesManage",
+            "PermissionKeys.PayrollManage",
+            "PermissionKeys.VouchersManage",
+        )
+    ),
+    "academic_mutations_require_academic_permissions": all(
+        token in academic_services
+        for token in (
+            "PermissionKeys.EnrollmentManage",
+            "PermissionKeys.GradesManage",
+            "PermissionKeys.TimetableManage",
+        )
+    ),
+    "student_delete_is_soft_delete": "SET Status = N'محذوف'" in (ROOT / "DataAccess" / "StudentRepository.cs").read_text(encoding="utf-8"),
 }
 
 failed = [name for name, passed in checks.items() if not passed]
