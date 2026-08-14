@@ -665,13 +665,7 @@ namespace SchoolSystem.UI
 
         private decimal ReadDecimal(string text)
         {
-            if (decimal.TryParse(text, NumberStyles.Any, CultureInfo.CurrentCulture, out decimal value))
-                return value;
-
-            if (decimal.TryParse(text, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
-                return value;
-
-            return 0;
+            return UIHelper.TryParseDecimal(text, out decimal value) ? value : 0m;
         }
 
         private int? ReadNullableInt(string text)
@@ -679,7 +673,11 @@ namespace SchoolSystem.UI
             if (string.IsNullOrWhiteSpace(text))
                 return null;
 
-            if (int.TryParse(text.Trim(), out int value) && value > 0)
+            string normalized = text.Trim();
+            if (int.TryParse(normalized, NumberStyles.Integer, CultureInfo.CurrentCulture, out int value) && value > 0)
+                return value;
+
+            if (int.TryParse(normalized, NumberStyles.Integer, CultureInfo.InvariantCulture, out value) && value > 0)
                 return value;
 
             return null;
@@ -723,14 +721,21 @@ namespace SchoolSystem.UI
 
         private void FillFieldsFromRow(DataRow row)
         {
-            selectedVoucherId = Convert.ToInt32(row["VoucherID"]);
+            if (row == null)
+                return;
+
+            selectedVoucherId = row["VoucherID"] == DBNull.Value || !int.TryParse(row["VoucherID"].ToString(), out int voucherId)
+                ? 0
+                : voucherId;
 
             txtVoucherNumber.Text = row["VoucherNumber"] == DBNull.Value ? "" : row["VoucherNumber"].ToString();
-            cmbVoucherType.Text = row["VoucherType"].ToString();
+            cmbVoucherType.Text = row["VoucherType"] == DBNull.Value ? "" : row["VoucherType"].ToString();
 
-            txtAmount.Text = Convert.ToDecimal(row["Amount"]).ToString("N2");
+            decimal amount = row["Amount"] == DBNull.Value ? 0m : ReadDecimal(row["Amount"].ToString());
+            txtAmount.Text = amount.ToString("N2");
 
-            dtpVoucherDate.Value = Convert.ToDateTime(row["VoucherDate"]);
+            if (row["VoucherDate"] != DBNull.Value && DateTime.TryParse(row["VoucherDate"].ToString(), out DateTime voucherDate))
+                dtpVoucherDate.Value = voucherDate <= DateTime.Today ? voucherDate : DateTime.Today;
 
             txtPartyName.Text = row["PartyName"] == DBNull.Value ? "" : row["PartyName"].ToString();
             txtDescription.Text = row["Description"] == DBNull.Value ? "" : row["Description"].ToString();
