@@ -10,6 +10,7 @@ namespace SchoolSystem.Services
     {
         private readonly ExpenseRepository expenseRepository;
         private readonly VoucherService voucherService;
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public ExpenseService()
         {
@@ -34,7 +35,7 @@ namespace SchoolSystem.Services
             int expenseId = expenseRepository.AddExpense(expense);
 
             // إنشاء سند صرف تلقائي عند إضافة المصروف
-            voucherService.CreatePaymentVoucherForExpense(
+            bool voucherCreated = voucherService.CreatePaymentVoucherForExpense(
                 expense.Amount,
                 expense.ExpenseDate,
                 string.IsNullOrWhiteSpace(expense.PayeeName) ? "مصروفات مدرسية" : expense.PayeeName,
@@ -44,6 +45,11 @@ namespace SchoolSystem.Services
                 "تم إنشاء سند الصرف تلقائياً من شاشة المصروفات. رقم المصروف: " + expense.ExpenseNumber
             );
 
+            if (!voucherCreated)
+                throw new InvalidOperationException("تم حفظ المصروف، لكن تعذر إنشاء سند الصرف التلقائي. راجع سجل الأنشطة قبل المتابعة.");
+
+            auditLogService.Record("إنشاء", "Expense", expenseId.ToString(),
+                string.Format("المبلغ: {0}، الفئة: {1}، البيان: {2}", expense.Amount, expense.Category, expense.Description));
             return expenseId;
         }
 
@@ -59,6 +65,12 @@ namespace SchoolSystem.Services
             decimal difference = expense.Amount - oldAmount;
 
             bool updated = expenseRepository.UpdateExpense(expense);
+
+            if (updated)
+            {
+                auditLogService.Record("تعديل", "Expense", expense.ExpenseID.ToString(),
+                    string.Format("المبلغ الجديد: {0}، الفئة: {1}، الفرق: {2}", expense.Amount, expense.Category, difference));
+            }
 
             if (updated && difference != 0)
             {
@@ -105,7 +117,10 @@ namespace SchoolSystem.Services
             if (expenseId <= 0)
                 throw new Exception("رقم المصروف غير صحيح.");
 
-            return expenseRepository.DeleteExpense(expenseId);
+            bool deleted = expenseRepository.DeleteExpense(expenseId);
+            if (deleted)
+                auditLogService.Record("حذف", "Expense", expenseId.ToString(), "حذف سجل مصروفات.");
+            return deleted;
         }
 
         private static void EnsureCanManageExpenses()
@@ -122,11 +137,22 @@ namespace SchoolSystem.Services
             if (expense.Amount <= 0)
                 throw new Exception("مبلغ المصروف يجب أن يكون أكبر من صفر.");
 
+            if (expense.ExpenseDate == DateTime.MinValue || expense.ExpenseDate.Date > DateTime.Today)
+                throw new Exception("تاريخ المصروف مطلوب ولا يمكن أن يكون في المستقبل.");
+
+            if (string.IsNullOrWhiteSpace(expense.PaymentMethod))
+                throw new Exception("يجب تحديد طريقة الدفع.");
+
             if (string.IsNullOrWhiteSpace(expense.Category))
                 throw new Exception("يجب اختيار فئة المصروف.");
 
             if (string.IsNullOrWhiteSpace(expense.Description))
                 throw new Exception("يجب إدخال بيان المصروف.");
+
+            expense.Category = expense.Category.Trim();
+            expense.Description = expense.Description.Trim();
+            expense.PayeeName = string.IsNullOrWhiteSpace(expense.PayeeName) ? null : expense.PayeeName.Trim();
+            expense.PaymentMethod = expense.PaymentMethod.Trim();
         }
     }
 }
