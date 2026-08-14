@@ -276,19 +276,7 @@ namespace SchoolSystem.UI
 
         private decimal ParseMoney(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return 0;
-
-            value = value.Replace(",", "");
-
-            decimal result;
-            if (decimal.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out result))
-                return result;
-
-            if (decimal.TryParse(value, out result))
-                return result;
-
-            return 0;
+            return UIHelper.TryParseDecimal(value, out decimal result) ? result : 0m;
         }
 
         private void CalculateTotal()
@@ -348,7 +336,7 @@ namespace SchoolSystem.UI
 
         private TeacherContract GetContractFromInputs()
         {
-            if (cmbTeacher.SelectedValue == null || Convert.ToInt32(cmbTeacher.SelectedValue) <= 0)
+            if (cmbTeacher.SelectedValue == null || !int.TryParse(cmbTeacher.SelectedValue.ToString(), out int teacherId) || teacherId <= 0)
                 throw new InvalidOperationException("يرجى اختيار المعلم.");
             if (string.IsNullOrWhiteSpace(txtContractNumber.Text))
                 throw new InvalidOperationException("رقم العقد مطلوب.");
@@ -384,7 +372,7 @@ namespace SchoolSystem.UI
             TeacherContract contract = new TeacherContract();
 
             contract.ContractID = selectedContractId;
-            contract.TeacherID = Convert.ToInt32(cmbTeacher.SelectedValue);
+            contract.TeacherID = teacherId;
             contract.ContractNumber = txtContractNumber.Text.Trim();
             contract.ContractType = cmbContractType.Text;
             contract.ContractStatus = cmbContractStatus.Text;
@@ -423,10 +411,12 @@ namespace SchoolSystem.UI
             if (row == null)
                 return;
 
-            selectedContractId = Convert.ToInt32(row["ContractID"]);
+            selectedContractId = row["ContractID"] != DBNull.Value && int.TryParse(row["ContractID"].ToString(), out int contractId)
+                ? contractId
+                : 0;
 
-            if (row["TeacherID"] != DBNull.Value)
-                cmbTeacher.SelectedValue = Convert.ToInt32(row["TeacherID"]);
+            if (row["TeacherID"] != DBNull.Value && int.TryParse(row["TeacherID"].ToString(), out int teacherId))
+                cmbTeacher.SelectedValue = teacherId;
 
             txtContractNumber.Text =
                 row["ContractNumber"] == DBNull.Value ? "" : row["ContractNumber"].ToString();
@@ -458,13 +448,13 @@ namespace SchoolSystem.UI
             txtNetSalary.Text =
                 row["NetSalary"] == DBNull.Value ? "0" : row["NetSalary"].ToString();
 
-            if (row["StartDate"] != DBNull.Value)
-                dtpStartDate.Value = Convert.ToDateTime(row["StartDate"]);
+            if (row["StartDate"] != DBNull.Value && DateTime.TryParse(row["StartDate"].ToString(), out DateTime startDate))
+                dtpStartDate.Value = startDate <= DateTime.Today ? startDate : DateTime.Today;
 
-            if (row["EndDate"] != DBNull.Value)
+            if (row["EndDate"] != DBNull.Value && DateTime.TryParse(row["EndDate"].ToString(), out DateTime endDate))
             {
                 dtpEndDate.Checked = true;
-                dtpEndDate.Value = Convert.ToDateTime(row["EndDate"]);
+                dtpEndDate.Value = endDate;
             }
             else
             {
