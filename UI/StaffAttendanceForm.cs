@@ -380,8 +380,7 @@ namespace SchoolSystem.UI
 
                 if (attendanceService.AttendanceExists(attendance.TeacherID, attendance.AttendanceDate))
                 {
-                    MessageBox.Show("تم تسجيل حضور هذا المعلم مسبقاً في نفس اليوم.",
-                        "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    UIHelper.ShowWarning("تم تسجيل حضور هذا المعلم مسبقاً في نفس اليوم.");
                     return;
                 }
 
@@ -391,8 +390,7 @@ namespace SchoolSystem.UI
 
                 Cursor = Cursors.Default;
 
-                MessageBox.Show("تم تسجيل الحضور بنجاح.",
-                    "تم", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UIHelper.ShowInfo("تم تسجيل الحضور بنجاح.");
 
                 await LoadAttendanceAsync();
                 ClearInputs();
@@ -408,8 +406,7 @@ namespace SchoolSystem.UI
         {
             if (selectedAttendanceId == 0)
             {
-                MessageBox.Show("اختر سجل حضور من الجدول أولاً.",
-                    "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("اختر سجل حضور من الجدول أولاً.");
                 return;
             }
 
@@ -422,8 +419,7 @@ namespace SchoolSystem.UI
 
                 if (attendanceService.AttendanceExists(attendance.TeacherID, attendance.AttendanceDate, selectedAttendanceId))
                 {
-                    MessageBox.Show("يوجد سجل حضور آخر لنفس المعلم في نفس اليوم.",
-                        "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    UIHelper.ShowWarning("يوجد سجل حضور آخر لنفس المعلم في نفس اليوم.");
                     return;
                 }
 
@@ -434,11 +430,9 @@ namespace SchoolSystem.UI
                 Cursor = Cursors.Default;
 
                 if (updated)
-                    MessageBox.Show("تم تعديل سجل الحضور بنجاح.",
-                        "تم", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    UIHelper.ShowInfo("تم تعديل سجل الحضور بنجاح.");
                 else
-                    MessageBox.Show("لم يتم العثور على السجل.",
-                        "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    UIHelper.ShowWarning("لم يتم العثور على السجل أو لم يتم تعديله.");
 
                 await LoadAttendanceAsync();
                 ClearInputs();
@@ -454,8 +448,7 @@ namespace SchoolSystem.UI
         {
             if (selectedAttendanceId == 0)
             {
-                MessageBox.Show("اختر سجل حضور من الجدول أولاً.",
-                    "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("اختر سجل حضور من الجدول أولاً.");
                 return;
             }
 
@@ -477,11 +470,9 @@ namespace SchoolSystem.UI
                 Cursor = Cursors.Default;
 
                 if (deleted)
-                    MessageBox.Show("تم حذف السجل بنجاح.",
-                        "تم", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    UIHelper.ShowInfo("تم حذف السجل بنجاح.");
                 else
-                    MessageBox.Show("لم يتم العثور على السجل.",
-                        "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    UIHelper.ShowWarning("لم يتم العثور على السجل أو لم يتم حذفه.");
 
                 await LoadAttendanceAsync();
                 ClearInputs();
