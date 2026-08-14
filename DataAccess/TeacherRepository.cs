@@ -16,17 +16,34 @@ namespace SchoolSystem.DataAccess
 
         public DataTable GetAllTeachers()
         {
+            return GetTeachers(null);
+        }
+
+        public DataTable GetActiveTeachers()
+        {
+            return GetTeachers("نشط");
+        }
+
+        private DataTable GetTeachers(string requiredStatus)
+        {
             DataTable dt = new DataTable();
-            const string query = @"SELECT TeacherID, EmployeeNumber, FullName, Gender, BirthDate, BirthPlace, 
-                                  Nationality, NationalID, Phone, Email, Address, Qualification, 
-                                  Specialization, HireDate, BasicSalary, TransportAllowance, 
-                                  HousingAllowance, Status, Notes, CreatedAt 
-                                  FROM Teachers ORDER BY TeacherID DESC";
+            string query = @"SELECT TeacherID, EmployeeNumber, FullName, Gender, BirthDate, BirthPlace,
+                                  Nationality, NationalID, Phone, Email, Address, Qualification,
+                                  Specialization, HireDate, BasicSalary, TransportAllowance,
+                                  HousingAllowance, Status, Notes, CreatedAt
+                                  FROM Teachers";
+
+            if (!string.IsNullOrWhiteSpace(requiredStatus))
+                query += " WHERE ISNULL(Status, N'نشط') = @Status";
+
+            query += " ORDER BY TeacherID DESC";
 
             using (var conn = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand(query, conn))
             using (var adapter = new SqlDataAdapter(cmd))
             {
+                if (!string.IsNullOrWhiteSpace(requiredStatus))
+                    cmd.Parameters.AddWithValue("@Status", requiredStatus);
                 adapter.Fill(dt);
             }
             return dt;
@@ -34,8 +51,8 @@ namespace SchoolSystem.DataAccess
 
         public void AddTeacher(Teacher teacher)
         {
-            const string query = @"INSERT INTO Teachers (EmployeeNumber, FullName, Gender, BirthDate, BirthPlace, Nationality, 
-                                    NationalID, Phone, Email, Address, Qualification, Specialization, HireDate, 
+            const string query = @"INSERT INTO Teachers (EmployeeNumber, FullName, Gender, BirthDate, BirthPlace, Nationality,
+                                    NationalID, Phone, Email, Address, Qualification, Specialization, HireDate,
                                     BasicSalary, TransportAllowance, HousingAllowance, Status, Notes, CreatedAt)
                                   VALUES (@EmployeeNumber, @FullName, @Gender, @BirthDate, @BirthPlace, @Nationality,
                                     @NationalID, @Phone, @Email, @Address, @Qualification, @Specialization, @HireDate,
@@ -52,7 +69,7 @@ namespace SchoolSystem.DataAccess
 
         public void UpdateTeacher(Teacher teacher)
         {
-            const string query = @"UPDATE Teachers SET 
+            const string query = @"UPDATE Teachers SET
                                     EmployeeNumber = @EmployeeNumber, FullName = @FullName, Gender = @Gender,
                                     BirthDate = @BirthDate, BirthPlace = @BirthPlace, Nationality = @Nationality,
                                     NationalID = @NationalID, Phone = @Phone, Email = @Email, Address = @Address,
@@ -110,7 +127,7 @@ SELECT
 
         public int GetMaxEmployeeNumberSuffix(int year)
         {
-            const string query = @"SELECT ISNULL(MAX(CAST(SUBSTRING(EmployeeNumber, LEN('TCH-') + 6, 4) AS INT)), 0) 
+            const string query = @"SELECT ISNULL(MAX(CAST(SUBSTRING(EmployeeNumber, LEN('TCH-') + 6, 4) AS INT)), 0)
                                   FROM Teachers WHERE EmployeeNumber LIKE @Prefix + '%'";
             using (var conn = new SqlConnection(_connectionString))
             using (var cmd = new SqlCommand(query, conn))

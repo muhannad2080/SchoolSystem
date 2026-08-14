@@ -120,7 +120,7 @@ namespace SchoolSystem.UI
 
         private async Task LoadTeachersAsync()
         {
-            DataTable teachers = await Task.Run(() => teacherService.GetAllTeachers());
+            DataTable teachers = await Task.Run(() => teacherService.GetActiveTeachers());
 
             cmbTeacher.DataSource = teachers;
 

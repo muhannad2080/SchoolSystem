@@ -19,6 +19,9 @@ class_repository = (ROOT / "DataAccess" / "ClassRepository.cs").read_text(encodi
 class_service = (ROOT / "Services" / "ClassService.cs").read_text(encoding="utf-8")
 user_repository = (ROOT / "DataAccess" / "UserRepository.cs").read_text(encoding="utf-8")
 user_service = (ROOT / "Services" / "UserService.cs").read_text(encoding="utf-8")
+payroll_ui = (ROOT / "UI" / "PayrollForm.cs").read_text(encoding="utf-8")
+staff_attendance_ui = (ROOT / "UI" / "StaffAttendanceForm.cs").read_text(encoding="utf-8")
+library_ui = (ROOT / "UI" / "LibraryForm.cs").read_text(encoding="utf-8")
 financial_services = "\\n".join(
     (ROOT / "Services" / name).read_text(encoding="utf-8")
     for name in ("FeeService.cs", "ExpenseService.cs", "PayrollService.cs", "VoucherService.cs")
@@ -92,6 +95,13 @@ checks = {
     "user_delete_protects_current_user": "protectedUserId" in user_repository
     and "لا يمكن حذف المستخدم المسجل دخوله حالياً" in user_repository
     and "DeleteUser(userId, protectedUserId)" in user_service,
+    "active_teacher_lookup_is_available": "public DataTable GetActiveTeachers()" in teacher_repository
+    and "return GetTeachers(\"نشط\")" in teacher_repository
+    and "_repository.GetActiveTeachers()" in teacher_service,
+    "operational_teacher_lists_exclude_inactive": all(
+        "GetActiveTeachers()" in content
+        for content in (payroll_ui, staff_attendance_ui, library_ui)
+    ),
 }
 
 failed = [name for name, passed in checks.items() if not passed]

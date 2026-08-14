@@ -20,14 +20,14 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllTeachers()
         {
-            CurrentUser.DemandAny(
-                "ليس لديك صلاحية عرض بيانات المعلمين.",
-                PermissionKeys.TeachersManage,
-                PermissionKeys.PayrollManage,
-                PermissionKeys.StaffAttendanceManage,
-                PermissionKeys.LibraryManage,
-                PermissionKeys.TimetableManage);
+            DemandTeacherLookupAccess();
             return _repository.GetAllTeachers();
+        }
+
+        public DataTable GetActiveTeachers()
+        {
+            DemandTeacherLookupAccess();
+            return _repository.GetActiveTeachers();
         }
 
         public bool IsNationalIDUnique(string nationalID, int? excludeTeacherId = null)
