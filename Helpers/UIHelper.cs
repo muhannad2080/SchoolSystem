@@ -107,40 +107,15 @@ namespace SchoolSystem.Helpers
         {
             foreach (Control child in control.Controls)
             {
+                // Keep the designer-defined geometry intact. The previous implementation
+                // overwrote margins, padding, anchors, and minimum sizes at runtime, which
+                // caused controls to overlap in fixed TableLayoutPanel designs.
                 child.RightToLeft = RightToLeft.Yes;
-                child.Margin = new Padding(Space4);
 
                 if (child is DataGridView grid)
                 {
                     grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
                     grid.ScrollBars = ScrollBars.Both;
-                    grid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-                    grid.MinimumSize = new Size(320, 180);
-                }
-                else if (child is TableLayoutPanel layout)
-                {
-                    layout.AutoSize = false;
-                    layout.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-                    layout.Padding = new Padding(Space8);
-                }
-                else if (child is FlowLayoutPanel flow)
-                {
-                    flow.WrapContents = true;
-                    flow.AutoScroll = true;
-                    flow.Padding = new Padding(Space8);
-                }
-                else if (child is Button button)
-                {
-                    button.AutoSize = false;
-                    button.MinimumSize = new Size(96, 38);
-                }
-                else if (child is TextBox textBox)
-                {
-                    textBox.MinimumSize = new Size(120, 34);
-                }
-                else if (child is ComboBox comboBox)
-                {
-                    comboBox.MinimumSize = new Size(120, 34);
                 }
 
                 ApplyResponsiveLayoutRecursive(child);
