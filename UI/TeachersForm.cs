@@ -401,22 +401,43 @@ namespace SchoolSystem.UI
                 txtEmployeeNumber.Text = row.Cells["EmployeeNumber"].Value?.ToString();
                 txtFullName.Text = row.Cells["FullName"].Value?.ToString();
                 cmbGender.Text = row.Cells["Gender"].Value?.ToString();
-                dtpBirthDate.Value = Convert.ToDateTime(row.Cells["BirthDate"].Value);
-                txtBirthPlace.Text = row.Cells["BirthPlace"].Value?.ToString();
-                cmbNationality.Text = row.Cells["Nationality"].Value?.ToString();
-                txtNationalID.Text = row.Cells["NationalID"].Value?.ToString();
-                txtPhone.Text = row.Cells["Phone"].Value?.ToString();
-                txtEmail.Text = row.Cells["Email"].Value?.ToString();
-                txtAddress.Text = row.Cells["Address"].Value?.ToString();
-                cmbQualification.Text = row.Cells["Qualification"].Value?.ToString();
-                txtSpecialization.Text = row.Cells["Specialization"].Value?.ToString();
-                dtpHireDate.Value = Convert.ToDateTime(row.Cells["HireDate"].Value);
-                nudBasicSalary.Value = Convert.ToDecimal(row.Cells["BasicSalary"].Value);
-                nudTransportAllowance.Value = Convert.ToDecimal(row.Cells["TransportAllowance"].Value);
-                nudHousingAllowance.Value = Convert.ToDecimal(row.Cells["HousingAllowance"].Value);
-                cmbStatus.Text = row.Cells["Status"].Value?.ToString();
-                txtNotes.Text = row.Cells["Notes"].Value?.ToString();
+                dtpBirthDate.Value = ReadDateCell(row, "BirthDate", DateTime.Today.AddYears(-30));
+                txtBirthPlace.Text = ReadCellText(row, "BirthPlace");
+                cmbNationality.Text = ReadCellText(row, "Nationality");
+                txtNationalID.Text = ReadCellText(row, "NationalID");
+                txtPhone.Text = ReadCellText(row, "Phone");
+                txtEmail.Text = ReadCellText(row, "Email");
+                txtAddress.Text = ReadCellText(row, "Address");
+                cmbQualification.Text = ReadCellText(row, "Qualification");
+                txtSpecialization.Text = ReadCellText(row, "Specialization");
+                dtpHireDate.Value = ReadDateCell(row, "HireDate", DateTime.Today);
+                nudBasicSalary.Value = ReadDecimalCell(row, "BasicSalary", 0);
+                nudTransportAllowance.Value = ReadDecimalCell(row, "TransportAllowance", 0);
+                nudHousingAllowance.Value = ReadDecimalCell(row, "HousingAllowance", 0);
+                cmbStatus.Text = ReadCellText(row, "Status");
+                txtNotes.Text = ReadCellText(row, "Notes");
             }
+        }
+
+        private string ReadCellText(DataGridViewRow row, string columnName)
+        {
+            if (row == null || !row.DataGridView.Columns.Contains(columnName))
+                return string.Empty;
+
+            object value = row.Cells[columnName].Value;
+            return value == null || value == DBNull.Value ? string.Empty : value.ToString();
+        }
+
+        private DateTime ReadDateCell(DataGridViewRow row, string columnName, DateTime fallback)
+        {
+            DateTime value;
+            return DateTime.TryParse(ReadCellText(row, columnName), out value) ? value : fallback;
+        }
+
+        private decimal ReadDecimalCell(DataGridViewRow row, string columnName, decimal fallback)
+        {
+            decimal value;
+            return decimal.TryParse(ReadCellText(row, columnName), out value) ? value : fallback;
         }
 
         private string GetOperationError(string operation, Exception ex)
