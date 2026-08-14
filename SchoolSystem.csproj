@@ -307,6 +307,9 @@
     <Compile Include="UI\AuditLogForm.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="UI\AuditLogForm.Designer.cs">
+      <DependentUpon>AuditLogForm.cs</DependentUpon>
+    </Compile>
 
     <Compile Include="UI\SubjectsForm.cs">
       <SubType>UserControl</SubType>

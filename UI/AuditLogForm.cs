@@ -1,6 +1,5 @@
 using System;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,177 +10,31 @@ using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
 {
-    public class AuditLogForm : UserControl
+    public partial class AuditLogForm : UserControl
     {
         private readonly AuditLogService service = new AuditLogService();
-        private readonly DateTimePicker fromDate = new DateTimePicker();
-        private readonly DateTimePicker toDate = new DateTimePicker();
-        private readonly TextBox searchBox = new TextBox();
-        private readonly Button refreshButton = new Button();
-        private readonly Button exportButton = new Button();
-        private readonly DataGridView grid = new DataGridView();
-        private readonly Label countLabel = new Label();
-        private readonly Label rangeLabel = new Label();
         private DataTable currentData;
 
         public AuditLogForm()
         {
-            RightToLeft = RightToLeft.Yes;
-            Dock = DockStyle.Fill;
+            InitializeComponent();
             UIHelper.ApplyStyle(this);
             BackColor = UIHelper.BackgroundColor;
-            BuildLayout();
-            Load += AuditLogForm_Load;
-        }
-
-        private void BuildLayout()
-        {
-            Panel header = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = 76,
-                Padding = new Padding(14, 8, 14, 6),
-                BackColor = UIHelper.SurfaceColor
-            };
-
-            Label title = new Label
-            {
-                Text = "سجل الأنشطة والعمليات الحساسة",
-                Dock = DockStyle.Top,
-                Height = 34,
-                TextAlign = ContentAlignment.MiddleRight,
-                Font = new Font(new FontFamily(UIHelper.FontFamily), UIHelper.TitleFontSize, FontStyle.Bold),
-                ForeColor = UIHelper.TextColor
-            };
-
-            Label subtitle = new Label
-            {
-                Text = "مراجعة موثقة لتغييرات السندات والدرجات والرسوم والمستخدمين",
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleRight,
-                ForeColor = UIHelper.MutedTextColor,
-                Font = new Font(new FontFamily(UIHelper.FontFamily), UIHelper.CaptionFontSize, FontStyle.Regular)
-            };
-
-            header.Controls.Add(subtitle);
-            header.Controls.Add(title);
-
-            Panel filters = new Panel
-            {
-                Dock = DockStyle.Top,
-                Height = 74,
-                Padding = new Padding(14, 8, 14, 8),
-                BackColor = UIHelper.BackgroundColor
-            };
-
-            Label searchLabel = CreateFilterLabel("بحث:");
-            Label toLabel = CreateFilterLabel("إلى:");
-            Label fromLabel = CreateFilterLabel("من:");
-
-            searchBox.Width = 220;
-            fromDate.Width = 125;
-            toDate.Width = 125;
-            fromDate.Format = DateTimePickerFormat.Short;
-            toDate.Format = DateTimePickerFormat.Short;
             fromDate.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             toDate.Value = DateTime.Today;
             searchBox.AccessibleName = "بحث في سجل الأنشطة";
-
-            refreshButton.Text = "تحديث";
-            refreshButton.Width = 96;
-            refreshButton.Height = 34;
-            refreshButton.Click += async (sender, e) => await LoadLogsAsync();
-
-            exportButton.Text = "تصدير CSV";
-            exportButton.Width = 110;
-            exportButton.Height = 34;
-            exportButton.Click += ExportButton_Click;
-
             UIHelper.StyleTextBox(searchBox);
             UIHelper.StylePrimaryButton(refreshButton);
             UIHelper.StyleButton(exportButton, UIHelper.SuccessColor);
-
-            filters.Controls.Add(exportButton);
-            filters.Controls.Add(refreshButton);
-            filters.Controls.Add(searchBox);
-            filters.Controls.Add(searchLabel);
-            filters.Controls.Add(toDate);
-            filters.Controls.Add(toLabel);
-            filters.Controls.Add(fromDate);
-            filters.Controls.Add(fromLabel);
-
-            exportButton.Dock = DockStyle.Left;
-            refreshButton.Dock = DockStyle.Left;
-            searchBox.Dock = DockStyle.Right;
-            searchLabel.Dock = DockStyle.Right;
-            toDate.Dock = DockStyle.Right;
-            toLabel.Dock = DockStyle.Right;
-            fromDate.Dock = DockStyle.Right;
-            fromLabel.Dock = DockStyle.Right;
-
-            exportButton.Margin = new Padding(4);
-            refreshButton.Margin = new Padding(4);
-            searchBox.Margin = new Padding(4);
-            fromDate.Margin = new Padding(4);
-            toDate.Margin = new Padding(4);
-
             UIHelper.StyleDataGridView(grid);
-            grid.Dock = DockStyle.Fill;
-            grid.ReadOnly = true;
-            grid.AutoGenerateColumns = true;
-            grid.AllowUserToAddRows = false;
-            grid.AllowUserToDeleteRows = false;
-            grid.MultiSelect = false;
-            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grid.RowHeadersVisible = false;
-            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            grid.CellFormatting += Grid_CellFormatting;
-            grid.DataBindingComplete += Grid_DataBindingComplete;
-
-            Panel footer = new Panel
-            {
-                Dock = DockStyle.Bottom,
-                Height = 38,
-                BackColor = UIHelper.SurfaceColor,
-                Padding = new Padding(14, 0, 14, 0)
-            };
-
-            countLabel.Text = "عدد العمليات: 0";
-            countLabel.Dock = DockStyle.Right;
-            countLabel.Width = 180;
-            countLabel.TextAlign = ContentAlignment.MiddleRight;
-            countLabel.ForeColor = UIHelper.TextColor;
-
-            rangeLabel.Text = "الفترة: —";
-            rangeLabel.Dock = DockStyle.Left;
-            rangeLabel.Width = 260;
-            rangeLabel.TextAlign = ContentAlignment.MiddleLeft;
-            rangeLabel.ForeColor = UIHelper.MutedTextColor;
-
-            footer.Controls.Add(countLabel);
-            footer.Controls.Add(rangeLabel);
-
-            Controls.Add(grid);
-            Controls.Add(footer);
-            Controls.Add(filters);
-            Controls.Add(header);
-        }
-
-        private Label CreateFilterLabel(string text)
-        {
-            return new Label
-            {
-                Text = text,
-                Width = 42,
-                Height = 34,
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = UIHelper.TextColor,
-                Font = new Font(new FontFamily(UIHelper.FontFamily), UIHelper.CaptionFontSize, FontStyle.Bold),
-                Margin = new Padding(4)
-            };
         }
 
         private async void AuditLogForm_Load(object sender, EventArgs e)
+        {
+            await LoadLogsAsync();
+        }
+
+        private async void RefreshButton_Click(object sender, EventArgs e)
         {
             await LoadLogsAsync();
         }
