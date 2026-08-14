@@ -81,7 +81,20 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(
-                "DELETE FROM Payroll WHERE PayrollID = @PID", conn))
+                @"IF EXISTS
+                  (
+                      SELECT 1
+                      FROM Payroll
+                      WHERE PayrollID = @PID
+                        AND PaymentDate IS NOT NULL
+                  )
+                  BEGIN
+                      THROW 51005, N'لا يمكن حذف راتب تم صرفه. استخدم التصحيح أو التسوية للحفاظ على السجل المالي.', 1;
+                  END;
+
+                  DELETE FROM Payroll
+                  WHERE PayrollID = @PID
+                    AND PaymentDate IS NULL;", conn))
             {
                 cmd.Parameters.Add("@PID", SqlDbType.Int).Value = payrollId;
                 conn.Open();

@@ -17,6 +17,7 @@ teacher_repository = (ROOT / "DataAccess" / "TeacherRepository.cs").read_text(en
 student_repository = (ROOT / "DataAccess" / "StudentRepository.cs").read_text(encoding="utf-8")
 fee_repository = (ROOT / "DataAccess" / "FeeRepository.cs").read_text(encoding="utf-8")
 expense_repository = (ROOT / "DataAccess" / "ExpenseRepository.cs").read_text(encoding="utf-8")
+payroll_repository = (ROOT / "DataAccess" / "PayrollRepository.cs").read_text(encoding="utf-8")
 student_attendance_repository = (ROOT / "DataAccess" / "StudentAttendanceRepository.cs").read_text(encoding="utf-8")
 grade_repository = (ROOT / "DataAccess" / "GradeRepository.cs").read_text(encoding="utf-8")
 enrollment_repository = (ROOT / "DataAccess" / "EnrollmentRepository.cs").read_text(encoding="utf-8")
@@ -87,6 +88,9 @@ checks = {
     "expense_deletion_is_blocked_when_vouchered": "FROM Vouchers" in expense_repository
     and "ReferenceType = N'مصروفات'" in expense_repository
     and "لا يمكن حذف المصروف لأنه مرتبط بسند مالي أو تسوية" in expense_repository,
+    "paid_payroll_deletion_is_blocked": "PaymentDate IS NOT NULL" in payroll_repository
+    and "PaymentDate IS NULL" in payroll_repository
+    and "لا يمكن حذف راتب تم صرفه" in payroll_repository,
     "academic_mutations_require_academic_permissions": all(
         token in academic_services
         for token in (
