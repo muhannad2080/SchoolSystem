@@ -20,11 +20,29 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
 
             Dock = DockStyle.Fill;
 
             Load += SubjectsForm_Load;
             txtSearch.TextChanged += txtSearch_TextChanged;
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewSubjects);
+            UIHelper.StylePrimaryButton(btnAdd);
+            UIHelper.StylePrimaryButton(btnUpdate);
+            UIHelper.StyleDangerButton(btnDelete);
+            UIHelper.StyleButton(btnClear, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleTextBox(txtSubjectID);
+            UIHelper.StyleTextBox(txtSubjectCode);
+            UIHelper.StyleTextBox(txtSubjectName);
+            UIHelper.StyleTextBox(txtNotes);
+            UIHelper.StyleTextBox(txtSearch);
+            UIHelper.StyleComboBox(cmbClass);
+            lblRecordCount.ForeColor = UIHelper.MutedTextColor;
         }
 
         private async void SubjectsForm_Load(object sender, EventArgs e)

@@ -21,6 +21,7 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
 
             Dock = DockStyle.Fill;
 
@@ -28,6 +29,24 @@ namespace SchoolSystem.UI
             txtSearch.TextChanged += txtSearch_TextChanged;
 
             cmbClass.SelectedIndexChanged += cmbClass_SelectedIndexChanged;
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewGrades);
+            UIHelper.StylePrimaryButton(btnLoad);
+            UIHelper.StylePrimaryButton(btnSaveAll);
+            UIHelper.StyleDangerButton(btnDeleteGrade);
+            UIHelper.StyleButton(btnClear, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleTextBox(txtAcademicYear);
+            UIHelper.StyleTextBox(txtSearch);
+            UIHelper.StyleComboBox(cmbClass);
+            UIHelper.StyleComboBox(cmbSection);
+            UIHelper.StyleComboBox(cmbSubject);
+            UIHelper.StyleComboBox(cmbTerm);
+            lblRecordCount.ForeColor = UIHelper.MutedTextColor;
+            lblHint.ForeColor = UIHelper.MutedTextColor;
         }
 
         private async void GradeEntryForm_Load(object sender, EventArgs e)

@@ -21,10 +21,33 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
             Dock = DockStyle.Fill;
 
             Load += TimetableForm_Load;
             cmbClass.SelectedIndexChanged += cmbClass_SelectedIndexChanged;
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewTimetable);
+            UIHelper.StylePrimaryButton(btnAdd);
+            UIHelper.StylePrimaryButton(btnUpdate);
+            UIHelper.StyleDangerButton(btnDelete);
+            UIHelper.StyleButton(btnClear, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleTextBox(txtTimetableID);
+            UIHelper.StyleTextBox(txtYear);
+            UIHelper.StyleTextBox(txtRoom);
+            UIHelper.StyleTextBox(txtNotes);
+            UIHelper.StyleTextBox(txtSearch);
+            UIHelper.StyleComboBox(cmbTerm);
+            UIHelper.StyleComboBox(cmbClass);
+            UIHelper.StyleComboBox(cmbSection);
+            UIHelper.StyleComboBox(cmbSubject);
+            UIHelper.StyleComboBox(cmbTeacher);
+            UIHelper.StyleComboBox(cmbDay);
+            lblRecordCount.ForeColor = UIHelper.MutedTextColor;
         }
 
         private async void TimetableForm_Load(object sender, EventArgs e)

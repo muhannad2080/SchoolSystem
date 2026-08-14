@@ -23,8 +23,36 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
             Dock = DockStyle.Fill;
             Load += ClassesForm_Load;
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewClasses);
+            UIHelper.StyleDataGridView(dataGridViewRooms);
+            UIHelper.StylePrimaryButton(btnClassUpdate);
+            UIHelper.StyleButton(btnClassClear, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnClassRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleDangerButton(btnRoomDelete);
+            UIHelper.StylePrimaryButton(btnRoomAdd);
+            UIHelper.StylePrimaryButton(btnRoomUpdate);
+            UIHelper.StyleButton(btnRoomClear, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnRoomRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleTextBox(txtClassCode);
+            UIHelper.StyleTextBox(txtClassName);
+            UIHelper.StyleTextBox(txtStageName);
+            UIHelper.StyleTextBox(txtClassNotes);
+            UIHelper.StyleTextBox(txtClassSearch);
+            UIHelper.StyleTextBox(txtRoomCode);
+            UIHelper.StyleTextBox(txtRoomName);
+            UIHelper.StyleTextBox(txtLocation);
+            UIHelper.StyleTextBox(txtRoomNotes);
+            UIHelper.StyleTextBox(txtRoomSearch);
+            UIHelper.StyleComboBox(cmbRoomType);
+            lblClassCount.ForeColor = UIHelper.MutedTextColor;
+            lblRoomCount.ForeColor = UIHelper.MutedTextColor;
         }
 
         private async void ClassesForm_Load(object sender, EventArgs e)
