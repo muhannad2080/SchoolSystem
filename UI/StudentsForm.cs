@@ -512,12 +512,27 @@ namespace SchoolSystem.UI
         {
             _selectedStudentId = 0;
             _selectedPhoto = null;
+
             txtFullName.Clear();
+            txtBirthPlace.Clear();
+            txtNationality.Clear();
             txtNationalId.Clear();
             txtPhone.Clear();
             txtGuardianName.Clear();
+            txtGuardianRelation.Clear();
             txtGuardianPhone.Clear();
-            picStudent.Image = null;
+            txtGuardianEmail.Clear();
+            txtGuardianJob.Clear();
+            txtGovernorate.Clear();
+            txtDistrict.Clear();
+            txtAddress.Clear();
+
+            if (picStudent.Image != null)
+            {
+                picStudent.Image.Dispose();
+                picStudent.Image = null;
+            }
+
             cmbGender.SelectedIndex = -1;
             cmbStatus.SelectedIndex = 0;
             dtpBirthDate.Value = DateTime.Today.AddYears(-6);
@@ -540,28 +555,52 @@ namespace SchoolSystem.UI
         private void FillForm(Student s)
         {
             _selectedStudentId = s.StudentId;
-            txtFullName.Text = s.FullName;
-            txtNationalId.Text = s.NationalId;
-            txtPhone.Text = s.StudentPhone;
-            cmbGender.Text = s.Gender;
-            cmbStatus.Text = s.Status;
-            dtpBirthDate.Value = s.BirthDate ?? DateTime.Today;
-            
-            txtGuardianName.Text = s.GuardianName;
-            txtGuardianPhone.Text = s.GuardianPhone;
-            
-            if (s.Photo != null)
+            _selectedPhoto = s.Photo == null ? null : (byte[])s.Photo.Clone();
+
+            txtFullName.Text = s.FullName ?? "";
+            txtBirthPlace.Text = s.BirthPlace ?? "";
+            txtNationality.Text = s.Nationality ?? "";
+            txtNationalId.Text = s.NationalId ?? "";
+            txtPhone.Text = s.StudentPhone ?? "";
+            cmbGender.Text = s.Gender ?? "";
+            cmbStatus.Text = s.Status ?? "";
+            dtpBirthDate.Value = s.BirthDate.HasValue && s.BirthDate.Value <= DateTime.Today
+                ? s.BirthDate.Value
+                : DateTime.Today.AddYears(-6);
+
+            txtGuardianName.Text = s.GuardianName ?? "";
+            txtGuardianRelation.Text = s.GuardianRelation ?? "";
+            txtGuardianPhone.Text = s.GuardianPhone ?? "";
+            txtGuardianEmail.Text = s.GuardianEmail ?? "";
+            txtGuardianJob.Text = s.GuardianJob ?? "";
+            txtGovernorate.Text = s.Governorate ?? "";
+            txtDistrict.Text = s.District ?? "";
+            txtAddress.Text = s.Address ?? "";
+
+            if (picStudent.Image != null)
             {
-                using (var ms = new MemoryStream(s.Photo))
-                    picStudent.Image = Image.FromStream(ms);
+                picStudent.Image.Dispose();
+                picStudent.Image = null;
             }
-            else picStudent.Image = null;
+
+            if (_selectedPhoto != null && _selectedPhoto.Length > 0)
+            {
+                using (var ms = new MemoryStream(_selectedPhoto))
+                using (var source = Image.FromStream(ms))
+                    picStudent.Image = new Bitmap(source);
+            }
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
             if (_selectedStudentId == 0) return;
-            if (MessageBox.Show("هل أنت متأكد من حذف هذا الطالب؟", "تأكيد", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show(
+                "هل أنت متأكد من حذف هذا الطالب؟",
+                "تأكيد الحذف",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2,
+                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading) == DialogResult.Yes)
             {
                 try {
                     _studentService.Delete(_selectedStudentId);
