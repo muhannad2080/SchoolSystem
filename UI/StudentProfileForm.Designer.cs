@@ -12,6 +12,8 @@ namespace SchoolSystem.UI
         private System.Windows.Forms.Label lblContact;
         private System.Windows.Forms.Label lblClassStatus;
         private System.Windows.Forms.Label lblFinancialSummary;
+        private System.Windows.Forms.Label lblAttendanceSummary;
+        private System.Windows.Forms.Label lblAcademicSummary;
         private System.Windows.Forms.TabControl tabs;
         private System.Windows.Forms.TabPage attendanceTab;
         private System.Windows.Forms.TabPage marksTab;
@@ -39,6 +41,8 @@ namespace SchoolSystem.UI
             this.lblContact = new System.Windows.Forms.Label();
             this.lblClassStatus = new System.Windows.Forms.Label();
             this.lblFinancialSummary = new System.Windows.Forms.Label();
+            this.lblAttendanceSummary = new System.Windows.Forms.Label();
+            this.lblAcademicSummary = new System.Windows.Forms.Label();
             this.tabs = new System.Windows.Forms.TabControl();
             this.attendanceTab = new System.Windows.Forms.TabPage();
             this.marksTab = new System.Windows.Forms.TabPage();
@@ -101,20 +105,25 @@ namespace SchoolSystem.UI
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
 
             this.summaryTable.BackColor = System.Drawing.Color.White;
-            this.summaryTable.ColumnCount = 3;
-            this.summaryTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.333F));
-            this.summaryTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.333F));
-            this.summaryTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.334F));
+            this.summaryTable.ColumnCount = 4;
+            this.summaryTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.summaryTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.summaryTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.summaryTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.summaryTable.Controls.Add(this.lblIdentity, 0, 0);
             this.summaryTable.Controls.Add(this.lblContact, 1, 0);
             this.summaryTable.Controls.Add(this.lblClassStatus, 2, 0);
-            this.summaryTable.Controls.Add(this.lblFinancialSummary, 0, 1);
+            this.summaryTable.Controls.Add(this.lblAttendanceSummary, 3, 0);
+            this.summaryTable.Controls.Add(this.lblAcademicSummary, 0, 1);
+            this.summaryTable.SetColumnSpan(this.lblAcademicSummary, 2);
+            this.summaryTable.Controls.Add(this.lblFinancialSummary, 2, 1);
+            this.summaryTable.SetColumnSpan(this.lblFinancialSummary, 2);
             this.summaryTable.Dock = System.Windows.Forms.DockStyle.Top;
             this.summaryTable.Padding = new System.Windows.Forms.Padding(12, 10, 12, 8);
             this.summaryTable.RowCount = 2;
             this.summaryTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.summaryTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.summaryTable.Size = new System.Drawing.Size(980, 128);
+            this.summaryTable.Size = new System.Drawing.Size(980, 164);
 
             this.lblIdentity.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblIdentity.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
@@ -143,6 +152,20 @@ namespace SchoolSystem.UI
             this.lblFinancialSummary.Text = "الوضع المالي";
             this.lblFinancialSummary.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblFinancialSummary.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+
+            this.lblAttendanceSummary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblAttendanceSummary.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblAttendanceSummary.Padding = new System.Windows.Forms.Padding(10, 4, 10, 4);
+            this.lblAttendanceSummary.Text = "الحضور والانتظام";
+            this.lblAttendanceSummary.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblAttendanceSummary.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+
+            this.lblAcademicSummary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblAcademicSummary.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblAcademicSummary.Padding = new System.Windows.Forms.Padding(10, 4, 10, 4);
+            this.lblAcademicSummary.Text = "الأداء الأكاديمي";
+            this.lblAcademicSummary.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblAcademicSummary.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
             this.tabs.Controls.Add(this.attendanceTab);
             this.tabs.Controls.Add(this.marksTab);

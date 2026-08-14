@@ -79,13 +79,24 @@ namespace SchoolSystem.UI
         {
             Student student = profile.Student;
             lblTitle.Text = "ملف الطالب: " + Safe(student.FullName);
-            lblIdentity.Text = "الرقم: " + Safe(student.StudentNumber) + "\r\nالاسم: " + Safe(student.FullName);
-            lblContact.Text = "هاتف الطالب: " + Safe(student.StudentPhone) + "\r\nولي الأمر: " + Safe(student.GuardianName) + " - " + Safe(student.GuardianPhone);
-            lblClassStatus.Text = "الصف: " + Safe(student.CurrentClassName) + "\r\nالحالة: " + Safe(student.Status);
+            lblIdentity.Text = "الرقم: " + Safe(student.StudentNumber) + "\r\nالاسم: " + Safe(student.FullName) + "\r\nالجنس: " + Safe(student.Gender) + " | الجنسية: " + Safe(student.Nationality) + "\r\nالميلاد: " + FormatBirthDate(student.BirthDate) + " - " + Safe(student.BirthPlace);
+            lblContact.Text = "هاتف الطالب: " + Safe(student.StudentPhone) + "\r\nولي الأمر: " + Safe(student.GuardianName) + " - " + Safe(student.GuardianPhone) + "\r\nصلة القرابة: " + Safe(student.GuardianRelation);
+            lblClassStatus.Text = "الصف: " + Safe(student.CurrentClassName) + "\r\nالحالة: " + Safe(student.Status) + "\r\nالرقم الوطني: " + Safe(student.NationalId) + "\r\nالعنوان: " + Safe(student.Governorate) + " - " + Safe(student.District);
 
             dgvAttendance.DataSource = profile.Attendance;
             dgvMarks.DataSource = profile.Marks;
             dgvFees.DataSource = profile.Fees;
+            if (profile.CanViewFinancials)
+            {
+                if (!tabs.TabPages.Contains(feesTab))
+                    tabs.TabPages.Add(feesTab);
+            }
+            else if (tabs.TabPages.Contains(feesTab))
+            {
+                tabs.TabPages.Remove(feesTab);
+            }
+            BindAttendanceSummary();
+            BindAcademicSummary();
             FormatAttendanceGrid();
             FormatMarksGrid();
             FormatFeesGrid();
@@ -101,6 +112,55 @@ namespace SchoolSystem.UI
             {
                 lblFinancialSummary.Text = "الوضع المالي: غير متاح حسب صلاحية المستخدم";
             }
+        }
+
+        private void BindAttendanceSummary()
+        {
+            int total = profile.Attendance == null ? 0 : profile.Attendance.Rows.Count;
+            int present = CountStatus(profile.Attendance, "حاضر", "Present");
+            int absent = CountStatus(profile.Attendance, "غائب", "Absent");
+            decimal rate = total == 0 ? 0 : (present * 100m) / total;
+            lblAttendanceSummary.Text = "الحضور والانتظام\r\nالسجلات: " + total + " | حاضر: " + present + " | غائب: " + absent + "\r\nنسبة الحضور: " + rate.ToString("N1") + "%";
+        }
+
+        private void BindAcademicSummary()
+        {
+            int count = profile.Marks == null ? 0 : profile.Marks.Rows.Count;
+            decimal average = Average(profile.Marks, "MarkValue");
+            lblAcademicSummary.Text = "الأداء الأكاديمي\r\nعدد الدرجات: " + count + "\r\nالمتوسط العام: " + average.ToString("N2");
+        }
+
+        private static int CountStatus(DataTable table, params string[] statuses)
+        {
+            if (table == null || !table.Columns.Contains("Status"))
+                return 0;
+            int count = 0;
+            foreach (DataRow row in table.Rows)
+            {
+                string value = Convert.ToString(row["Status"]);
+                foreach (string status in statuses)
+                    if (string.Equals(value, status, StringComparison.OrdinalIgnoreCase))
+                    {
+                        count++;
+                        break;
+                    }
+            }
+            return count;
+        }
+
+        private static decimal Average(DataTable table, string column)
+        {
+            if (table == null || !table.Columns.Contains(column) || table.Rows.Count == 0)
+                return 0m;
+            decimal total = 0m;
+            int count = 0;
+            foreach (DataRow row in table.Rows)
+                if (row[column] != DBNull.Value)
+                {
+                    total += Convert.ToDecimal(row[column]);
+                    count++;
+                }
+            return count == 0 ? 0m : total / count;
         }
 
         private void FormatAttendanceGrid()
@@ -168,6 +228,11 @@ namespace SchoolSystem.UI
                 if (row[column] != DBNull.Value)
                     total += Convert.ToDecimal(row[column]);
             return total;
+        }
+
+        private static string FormatBirthDate(DateTime? date)
+        {
+            return date.HasValue ? date.Value.ToString("dd/MM/yyyy") : "-";
         }
 
         private static string Safe(string value)
