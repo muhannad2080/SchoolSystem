@@ -36,7 +36,7 @@ namespace SchoolSystem
 
         private void ConfigureAuditMenu()
         {
-            tsmiAuditLogs = new ToolStripMenuItem("سجل التدقيق");
+            tsmiAuditLogs = new ToolStripMenuItem("سجل الأنشطة");
             tsmiAuditLogs.Name = "tsmiAuditLogs";
             tsmiAuditLogs.Click += tsmiAuditLogs_Click;
             tsmiReports.DropDownItems.Add(tsmiAuditLogs);
