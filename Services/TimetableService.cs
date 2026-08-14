@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
 using SchoolSystem.Security;
@@ -15,6 +14,16 @@ namespace SchoolSystem.Services
         {
             EnsureCanManageTimetable();
             return repository.GetTeachers();
+        }
+
+        public DataTable GetSections(int classId, string academicYear)
+        {
+            EnsureCanManageTimetable();
+            if (classId <= 0)
+                return new DataTable();
+
+            ValidateAcademicYear(academicYear);
+            return repository.GetSections(classId, academicYear.Trim());
         }
 
         public DataTable GetSubjectsByClass(int classId)
@@ -84,6 +93,25 @@ namespace SchoolSystem.Services
                 throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة الجدول الدراسي.");
         }
 
+        private void ValidateAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                throw new ArgumentException("العام الدراسي مطلوب.");
+
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 ||
+                parts[0].Length != 4 ||
+                parts[1].Length != 4 ||
+                !int.TryParse(parts[0], out firstYear) ||
+                !int.TryParse(parts[1], out secondYear) ||
+                secondYear != firstYear + 1)
+            {
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
+            }
+        }
+
         private void Validate(TimetableEntry item)
         {
             if (item == null)
@@ -104,8 +132,7 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(item.AcademicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
-            if (!Regex.IsMatch(item.AcademicYear.Trim(), @"^[0-9]{4}/[0-9]{4}$"))
-                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون مثل 2026/2027.");
+            ValidateAcademicYear(item.AcademicYear);
 
             if (string.IsNullOrWhiteSpace(item.TermName))
                 throw new ArgumentException("يجب اختيار الفصل الدراسي.");

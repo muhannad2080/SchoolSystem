@@ -58,6 +58,7 @@ namespace SchoolSystem.UI
 
                 LoadStaticData();
                 await LoadClassesAsync();
+                await LoadSectionsAsync();
                 await LoadTeachersAsync();
 
                 isLoading = false;
@@ -85,12 +86,9 @@ namespace SchoolSystem.UI
             cmbDay.Items.Add("الخميس");
             cmbDay.SelectedIndex = 0;
 
+            cmbSection.DataSource = null;
             cmbSection.Items.Clear();
-            cmbSection.Items.Add("أ");
-            cmbSection.Items.Add("ب");
-            cmbSection.Items.Add("ج");
-            cmbSection.Items.Add("د");
-            cmbSection.SelectedIndex = 0;
+            cmbSection.Enabled = false;
 
             cmbTerm.Items.Clear();
             cmbTerm.Items.Add("الفصل الأول");
@@ -174,7 +172,44 @@ namespace SchoolSystem.UI
             if (isLoading)
                 return;
 
+            await LoadSectionsAsync();
             await LoadSubjectsForClassAsync();
+        }
+
+        private async Task LoadSectionsAsync()
+        {
+            int classId = GetClassId();
+            string academicYear = txtYear.Text.Trim();
+
+            cmbSection.DataSource = null;
+            cmbSection.Items.Clear();
+            cmbSection.Enabled = false;
+
+            if (classId <= 0 || !IsValidAcademicYear(academicYear))
+                return;
+
+            try
+            {
+                DataTable sections = await Task.Run(() => timetableService.GetSections(classId, academicYear));
+                if (sections == null || sections.Rows.Count == 0)
+                {
+                    cmbSection.Items.Add("لا توجد شعب مسجلة لهذا الصف والعام الدراسي");
+                    cmbSection.SelectedIndex = 0;
+                    return;
+                }
+
+                cmbSection.DataSource = sections;
+                cmbSection.DisplayMember = "Section";
+                cmbSection.ValueMember = "Section";
+                cmbSection.Enabled = true;
+                cmbSection.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                cmbSection.Items.Add("تعذر تحميل الشعب");
+                cmbSection.SelectedIndex = 0;
+                UIHelper.ShowException("تحميل شعب الجدول الدراسي", ex);
+            }
         }
 
         private async Task LoadSubjectsForClassAsync()
@@ -309,6 +344,9 @@ namespace SchoolSystem.UI
                 throw new InvalidOperationException("يرجى اختيار المادة.");
             if (teacherId <= 0 || cmbTeacher.SelectedIndex < 0)
                 throw new InvalidOperationException("يرجى اختيار المعلم.");
+            if (!cmbSection.Enabled || cmbSection.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbSection.Text) ||
+                cmbSection.Text.StartsWith("لا توجد") || cmbSection.Text.StartsWith("تعذر"))
+                throw new InvalidOperationException("لا توجد شعبة فعلية متاحة لهذا الصف والعام الدراسي.");
             if (!IsValidAcademicYear(academicYear))
                 throw new InvalidOperationException("أدخل العام الدراسي بالصيغة الصحيحة، مثل 2025/2026.");
             if (cmbDay.SelectedIndex < 0 || cmbTerm.SelectedIndex < 0)
