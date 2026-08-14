@@ -101,7 +101,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                UIHelper.ShowException("حدث خطأ أثناء تحميل مركز التقارير:\n", ex);
+                UIHelper.ShowException("تحميل مركز التقارير", ex);
             }
         }
 
@@ -350,7 +350,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                UIHelper.ShowException("خطأ أثناء تحميل التقرير:\n", ex);
+                UIHelper.ShowException("تحميل التقرير", ex);
             }
         }
 
@@ -492,7 +492,7 @@ namespace SchoolSystem.UI
                 catch (Exception ex)
                 {
                     Cursor = Cursors.Default;
-                    UIHelper.ShowException("فشل تصدير Excel:\n", ex);
+                    UIHelper.ShowException("تصدير تقرير Excel", ex);
                 }
             }
         }
@@ -588,7 +588,7 @@ namespace SchoolSystem.UI
                 }
                 catch (Exception ex)
                 {
-                    UIHelper.ShowException("فشل تصدير CSV:\n", ex);
+                    UIHelper.ShowException("تصدير تقرير CSV", ex);
                 }
             }
         }
@@ -659,7 +659,7 @@ namespace SchoolSystem.UI
                 catch (Exception ex)
                 {
                     Cursor = Cursors.Default;
-                    UIHelper.ShowException("فشل تصدير PDF:\n", ex);
+                    UIHelper.ShowException("تصدير تقرير PDF", ex);
                 }
             }
         }
