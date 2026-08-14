@@ -252,7 +252,8 @@ namespace SchoolSystem.UI
 
             ClearPermissionChecks();
 
-            string permissions = PermissionKeys.GetRoleDefaults(cmbRole.SelectedItem.ToString());
+            string roleName = PermissionKeys.NormalizeRoleName(cmbRole.SelectedItem.ToString());
+            string permissions = PermissionKeys.GetRoleDefaults(roleName);
             foreach (string permission in permissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 CheckPermission(permission.Trim());
         }
@@ -275,7 +276,8 @@ namespace SchoolSystem.UI
             {
                 string item = checkedListPermissions.Items[i].ToString();
 
-                if (item.StartsWith(permissionKey))
+                string itemKey = item.Split('-')[0].Trim();
+                if (string.Equals(itemKey, PermissionKeys.NormalizePermissionKey(permissionKey), StringComparison.OrdinalIgnoreCase))
                     checkedListPermissions.SetItemChecked(i, true);
             }
         }
@@ -295,7 +297,7 @@ namespace SchoolSystem.UI
                 sb.Append(key);
             }
 
-            return sb.ToString();
+            return PermissionKeys.NormalizePermissions(sb.ToString());
         }
 
         private void SetPermissionsFromString(string permissions)
@@ -305,7 +307,8 @@ namespace SchoolSystem.UI
             if (string.IsNullOrWhiteSpace(permissions))
                 return;
 
-            string[] parts = permissions.Split(',');
+            string normalizedPermissions = PermissionKeys.NormalizePermissions(permissions);
+            string[] parts = normalizedPermissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             for (int i = 0; i < checkedListPermissions.Items.Count; i++)
             {
@@ -315,7 +318,10 @@ namespace SchoolSystem.UI
                 {
                     string key = part.Trim();
 
-                    if (!string.IsNullOrWhiteSpace(key) && item.StartsWith(key))
+                    string itemKey = item.Split('-')[0].Trim();
+                    string normalizedKey = PermissionKeys.NormalizePermissionKey(key);
+                    if (!string.IsNullOrWhiteSpace(normalizedKey) &&
+                        string.Equals(itemKey, normalizedKey, StringComparison.OrdinalIgnoreCase))
                         checkedListPermissions.SetItemChecked(i, true);
                 }
             }
@@ -328,8 +334,8 @@ namespace SchoolSystem.UI
                 UserID = selectedUserId,
                 FullName = txtFullName.Text.Trim(),
                 UserName = txtUserName.Text.Trim(),
-                RoleName = cmbRole.Text.Trim(),
-                Permissions = GetSelectedPermissions(),
+                RoleName = PermissionKeys.NormalizeRoleName(cmbRole.Text),
+                Permissions = PermissionKeys.NormalizePermissions(GetSelectedPermissions()),
                 Email = txtEmail.Text.Trim(),
                 Phone = NormalizeDigits(txtPhone.Text).Trim(),
                 IsActive = chkIsActive.Checked,
