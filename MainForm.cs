@@ -166,9 +166,10 @@ namespace SchoolSystem
 
                 panelContent.Controls.Add(uc);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ShowLoadError("تعذر تحميل الواجهة. حاول تحديث الصفحة أو اتصل بمسؤول النظام.");
+                UIHelper.ShowException("تحميل الواجهة", ex);
+                ShowLoadError("تعذر تحميل الواجهة. تم تسجيل التفاصيل ويمكنك المحاولة مرة أخرى.");
             }
         }
 
@@ -186,9 +187,10 @@ namespace SchoolSystem
                 panelContent.Controls.Add(form);
                 form.Show();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ShowLoadError("تعذر تحميل الواجهة. حاول تحديث الصفحة أو اتصل بمسؤول النظام.");
+                UIHelper.ShowException("تحميل الواجهة", ex);
+                ShowLoadError("تعذر تحميل الواجهة. تم تسجيل التفاصيل ويمكنك المحاولة مرة أخرى.");
             }
         }
 
@@ -359,9 +361,10 @@ namespace SchoolSystem
 
                 panelContent.Controls.Add(dashboard);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                ShowLoadError("تعذر تحميل لوحة التحكم. حاول تحديث الصفحة أو اتصل بمسؤول النظام.");
+                UIHelper.ShowException("تحميل لوحة التحكم", ex);
+                ShowLoadError("تعذر تحميل لوحة التحكم. تم تسجيل التفاصيل ويمكنك المحاولة مرة أخرى.");
             }
         }
 
