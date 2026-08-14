@@ -18,8 +18,9 @@ namespace SchoolSystem.UI
         public AuditLogForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            UIHelper.ApplyTheme(this);
             BackColor = UIHelper.BackgroundColor;
+            RightToLeft = RightToLeft.Yes;
             fromDate.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             toDate.Value = DateTime.Today;
             searchBox.AccessibleName = "بحث في سجل الأنشطة";
@@ -52,8 +53,8 @@ namespace SchoolSystem.UI
 
                 SetBusyState(true);
                 DataTable data = await Task.Run(() => service.GetRecent(fromDate.Value.Date, toDate.Value.Date, searchBox.Text));
-                currentData = data;
-                grid.DataSource = data;
+                currentData = data ?? new DataTable();
+                grid.DataSource = currentData;
                 SetHeader("AuditLogID", "الرقم");
                 SetHeader("CreatedAt", "التاريخ والوقت");
                 SetHeader("UserName", "المستخدم");
@@ -62,9 +63,9 @@ namespace SchoolSystem.UI
                 SetHeader("EntityID", "رقم السجل");
                 SetHeader("Details", "التفاصيل");
                 SetColumnWidths();
-                    countLabel.Text = "عدد العمليات: " + data.Rows.Count;
+                    countLabel.Text = "عدد العمليات: " + currentData.Rows.Count;
                     rangeLabel.Text = "الفترة: " + fromDate.Value.ToString("yyyy-MM-dd") + " إلى " + toDate.Value.ToString("yyyy-MM-dd");
-                    statusLabel.Text = data.Rows.Count == 0 ? "لا توجد عمليات ضمن الفترة المحددة" : "تم تحميل السجل بنجاح";
+                    statusLabel.Text = currentData.Rows.Count == 0 ? "لا توجد عمليات ضمن الفترة المحددة" : "تم تحميل السجل بنجاح";
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -108,6 +109,15 @@ namespace SchoolSystem.UI
                 grid.Columns["AuditLogID"].FillWeight = 45;
         }
 
+        private async void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+                return;
+
+            e.SuppressKeyPress = true;
+            await LoadLogsAsync();
+        }
+
         private void Grid_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
             SetColumnWidths();
@@ -143,7 +153,7 @@ namespace SchoolSystem.UI
                     for (int columnIndex = 0; columnIndex < currentData.Columns.Count; columnIndex++)
                     {
                         if (columnIndex > 0) csv.Append(",");
-                        csv.Append(EscapeCsv(currentData.Columns[columnIndex].ColumnName));
+                            csv.Append(EscapeCsv(GetExportHeader(currentData.Columns[columnIndex].ColumnName)));
                     }
                     csv.AppendLine();
 
@@ -162,12 +172,28 @@ namespace SchoolSystem.UI
                     }
 
                     File.WriteAllText(dialog.FileName, csv.ToString(), new UTF8Encoding(true));
+                    statusLabel.Text = "تم تصدير السجل بنجاح";
                     UIHelper.ShowInfo("تم تصدير سجل الأنشطة بنجاح.");
                 }
                 catch (Exception ex)
                 {
                     UIHelper.ShowException("تعذر تصدير سجل الأنشطة:\n", ex);
                 }
+            }
+        }
+
+        private string GetExportHeader(string columnName)
+        {
+            switch (columnName)
+            {
+                case "AuditLogID": return "الرقم";
+                case "CreatedAt": return "التاريخ والوقت";
+                case "UserName": return "المستخدم";
+                case "ActionName": return "العملية";
+                case "EntityName": return "الكيان";
+                case "EntityID": return "رقم السجل";
+                case "Details": return "التفاصيل";
+                default: return columnName;
             }
         }
 

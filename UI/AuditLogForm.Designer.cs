@@ -65,6 +65,7 @@ namespace SchoolSystem.UI
             // header
             // 
             header.BackColor = Color.White;
+            header.RightToLeft = RightToLeft.Yes;
             header.Controls.Add(subtitle);
             header.Controls.Add(title);
             header.Dock = DockStyle.Top;
@@ -81,6 +82,7 @@ namespace SchoolSystem.UI
             title.Location = new Point(14, 8);
             title.Name = "title";
             title.Size = new Size(1092, 34);
+            title.RightToLeft = RightToLeft.Yes;
             title.Text = "سجل الأنشطة والعمليات الحساسة";
             title.TextAlign = ContentAlignment.MiddleRight;
             // 
@@ -92,12 +94,14 @@ namespace SchoolSystem.UI
             subtitle.Location = new Point(14, 42);
             subtitle.Name = "subtitle";
             subtitle.Size = new Size(1092, 28);
+            subtitle.RightToLeft = RightToLeft.Yes;
             subtitle.Text = "مراجعة موثقة لتغييرات السندات والدرجات والرسوم والمستخدمين";
             subtitle.TextAlign = ContentAlignment.MiddleRight;
             // 
             // filters
             // 
             filters.BackColor = Color.FromArgb(248, 250, 252);
+            filters.RightToLeft = RightToLeft.Yes;
             filters.Controls.Add(exportButton);
             filters.Controls.Add(refreshButton);
             filters.Controls.Add(searchBox);
@@ -110,7 +114,7 @@ namespace SchoolSystem.UI
             filters.Location = new Point(0, 76);
             filters.Name = "filters";
             filters.Padding = new Padding(14, 8, 14, 8);
-            filters.Size = new Size(1120, 74);
+            filters.Size = new Size(1120, 82);
             // 
             // searchLabel
             // 
@@ -121,6 +125,7 @@ namespace SchoolSystem.UI
             searchLabel.Margin = new Padding(4);
             searchLabel.Name = "searchLabel";
             searchLabel.Size = new Size(46, 58);
+            searchLabel.RightToLeft = RightToLeft.Yes;
             searchLabel.Text = "بحث:";
             searchLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -133,6 +138,7 @@ namespace SchoolSystem.UI
             toLabel.Margin = new Padding(4);
             toLabel.Name = "toLabel";
             toLabel.Size = new Size(27, 58);
+            toLabel.RightToLeft = RightToLeft.Yes;
             toLabel.Text = "إلى:";
             toLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -145,6 +151,7 @@ namespace SchoolSystem.UI
             fromLabel.Margin = new Padding(4);
             fromLabel.Name = "fromLabel";
             fromLabel.Size = new Size(27, 58);
+            fromLabel.RightToLeft = RightToLeft.Yes;
             fromLabel.Text = "من:";
             fromLabel.TextAlign = ContentAlignment.MiddleCenter;
             // 
@@ -155,6 +162,7 @@ namespace SchoolSystem.UI
             fromDate.Location = new Point(705, 8);
             fromDate.Margin = new Padding(4);
             fromDate.Name = "fromDate";
+            fromDate.RightToLeft = RightToLeft.Yes;
             fromDate.Size = new Size(125, 27);
             // 
             // toDate
@@ -164,6 +172,7 @@ namespace SchoolSystem.UI
             toDate.Location = new Point(880, 8);
             toDate.Margin = new Padding(4);
             toDate.Name = "toDate";
+            toDate.RightToLeft = RightToLeft.Yes;
             toDate.Size = new Size(125, 27);
             // 
             // searchBox
@@ -172,7 +181,9 @@ namespace SchoolSystem.UI
             searchBox.Location = new Point(370, 8);
             searchBox.Margin = new Padding(4);
             searchBox.Name = "searchBox";
+            searchBox.RightToLeft = RightToLeft.Yes;
             searchBox.Size = new Size(220, 27);
+            searchBox.KeyDown += new KeyEventHandler(SearchBox_KeyDown);
             // 
             // refreshButton
             // 
@@ -180,6 +191,8 @@ namespace SchoolSystem.UI
             refreshButton.FlatAppearance.BorderSize = 0;
             refreshButton.FlatStyle = FlatStyle.Flat;
             refreshButton.ForeColor = Color.White;
+            refreshButton.Font = new Font(new FontFamily("Tahoma"), 9.5F, FontStyle.Bold);
+            refreshButton.RightToLeft = RightToLeft.Yes;
             refreshButton.Location = new Point(14, 8);
             refreshButton.Margin = new Padding(4);
             refreshButton.Name = "refreshButton";
@@ -194,6 +207,8 @@ namespace SchoolSystem.UI
             exportButton.FlatAppearance.BorderSize = 0;
             exportButton.FlatStyle = FlatStyle.Flat;
             exportButton.ForeColor = Color.White;
+            exportButton.Font = new Font(new FontFamily("Tahoma"), 9.5F, FontStyle.Bold);
+            exportButton.RightToLeft = RightToLeft.Yes;
             exportButton.Location = new Point(114, 8);
             exportButton.Margin = new Padding(4);
             exportButton.Name = "exportButton";
@@ -207,6 +222,7 @@ namespace SchoolSystem.UI
             grid.AllowUserToAddRows = false;
             grid.AllowUserToDeleteRows = false;
             grid.AllowUserToResizeRows = false;
+            grid.RightToLeft = RightToLeft.Yes;
             grid.AutoGenerateColumns = true;
             grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             grid.BackgroundColor = Color.FromArgb(241, 245, 249);
@@ -222,7 +238,7 @@ namespace SchoolSystem.UI
             grid.ColumnHeadersHeight = 42;
             grid.EnableHeadersVisualStyles = false;
             grid.GridColor = Color.FromArgb(226, 232, 240);
-            grid.Location = new Point(0, 150);
+            grid.Location = new Point(0, 158);
             grid.MultiSelect = false;
             grid.Name = "grid";
             grid.ReadOnly = true;
@@ -246,6 +262,7 @@ namespace SchoolSystem.UI
             // footer
             // 
             footer.BackColor = Color.White;
+            footer.RightToLeft = RightToLeft.Yes;
             footer.Controls.Add(countLabel);
             footer.Controls.Add(statusLabel);
             footer.Controls.Add(rangeLabel);
@@ -262,6 +279,7 @@ namespace SchoolSystem.UI
             countLabel.Location = new Point(926, 0);
             countLabel.Name = "countLabel";
             countLabel.Size = new Size(180, 38);
+            countLabel.RightToLeft = RightToLeft.Yes;
             countLabel.Text = "عدد العمليات: 0";
             countLabel.TextAlign = ContentAlignment.MiddleRight;
             //
@@ -273,6 +291,7 @@ namespace SchoolSystem.UI
             statusLabel.Location = new Point(274, 0);
             statusLabel.Name = "statusLabel";
             statusLabel.Size = new Size(652, 38);
+            statusLabel.RightToLeft = RightToLeft.Yes;
             statusLabel.Text = "جاهز";
             statusLabel.TextAlign = ContentAlignment.MiddleCenter;
             //
@@ -284,6 +303,7 @@ namespace SchoolSystem.UI
             rangeLabel.Location = new Point(14, 0);
             rangeLabel.Name = "rangeLabel";
             rangeLabel.Size = new Size(260, 38);
+            rangeLabel.RightToLeft = RightToLeft.Yes;
             rangeLabel.Text = "الفترة: —";
             rangeLabel.TextAlign = ContentAlignment.MiddleLeft;
             // 
