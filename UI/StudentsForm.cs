@@ -132,19 +132,25 @@ namespace SchoolSystem.UI
 
         private void dgvStudents_SelectionChanged(object sender, EventArgs e)
         {
-            if (dgvStudents.CurrentRow == null || dgvStudents.CurrentRow.DataBoundItem == null)
-                return;
-
-            DataGridViewRow row = dgvStudents.CurrentRow;
-
-            if (row.Cells["StudentId"].Value == null || row.Cells["StudentId"].Value == DBNull.Value)
-                return;
-
-            int id = Convert.ToInt32(row.Cells["StudentId"].Value);
-            Student student = _currentStudents.FirstOrDefault(s => s.StudentId == id);
-
+            Student student = GetSelectedStudentFromGrid();
             if (student != null && student.StudentId != _selectedStudentId)
                 FillForm(student);
+        }
+
+        private Student GetSelectedStudentFromGrid()
+        {
+            if (dgvStudents.CurrentRow == null || dgvStudents.CurrentRow.DataBoundItem == null)
+                return null;
+
+            DataGridViewCell cell = dgvStudents.CurrentRow.Cells["StudentId"];
+            if (cell == null || cell.Value == null || cell.Value == DBNull.Value)
+                return null;
+
+            int id;
+            if (!int.TryParse(cell.Value.ToString(), out id) || id <= 0)
+                return null;
+
+            return _currentStudents.FirstOrDefault(s => s.StudentId == id);
         }
 
         private void txtSearch_KeyDown(object sender, KeyEventArgs e)
@@ -585,10 +591,20 @@ namespace SchoolSystem.UI
 
         private void dgvStudents_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0) return;
-            int id = (int)dgvStudents.Rows[e.RowIndex].Cells["StudentId"].Value;
-            var student = _currentStudents.FirstOrDefault(s => s.StudentId == id);
-            if (student != null) FillForm(student);
+            if (e.RowIndex < 0 || e.RowIndex >= dgvStudents.Rows.Count)
+                return;
+
+            DataGridViewCell cell = dgvStudents.Rows[e.RowIndex].Cells["StudentId"];
+            if (cell == null || cell.Value == null || cell.Value == DBNull.Value)
+                return;
+
+            int id;
+            if (!int.TryParse(cell.Value.ToString(), out id) || id <= 0)
+                return;
+
+            Student student = _currentStudents.FirstOrDefault(s => s.StudentId == id);
+            if (student != null)
+                FillForm(student);
         }
 
         private void FillForm(Student s)
