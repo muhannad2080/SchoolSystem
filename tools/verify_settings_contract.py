@@ -17,6 +17,8 @@ teacher_repository = (ROOT / "DataAccess" / "TeacherRepository.cs").read_text(en
 room_repository = (ROOT / "DataAccess" / "RoomRepository.cs").read_text(encoding="utf-8")
 class_repository = (ROOT / "DataAccess" / "ClassRepository.cs").read_text(encoding="utf-8")
 class_service = (ROOT / "Services" / "ClassService.cs").read_text(encoding="utf-8")
+user_repository = (ROOT / "DataAccess" / "UserRepository.cs").read_text(encoding="utf-8")
+user_service = (ROOT / "Services" / "UserService.cs").read_text(encoding="utf-8")
 financial_services = "\\n".join(
     (ROOT / "Services" / name).read_text(encoding="utf-8")
     for name in ("FeeService.cs", "ExpenseService.cs", "PayrollService.cs", "VoucherService.cs")
@@ -83,6 +85,13 @@ checks = {
     and "لا يمكن تعطيل آخر فصل نشط" in class_repository,
     "class_updates_are_audited": "AuditLogService" in class_service
     and "auditLogService.Record" in class_service,
+    "user_delete_is_atomic": "BeginTransaction(IsolationLevel.Serializable)" in user_repository
+    and "transaction.Commit();" in user_repository,
+    "user_delete_protects_last_admin": "لا يمكن حذف آخر مدير نظام نشط" in user_repository
+    and "activeAdminCount <= 1" in user_repository,
+    "user_delete_protects_current_user": "protectedUserId" in user_repository
+    and "لا يمكن حذف المستخدم المسجل دخوله حالياً" in user_repository
+    and "DeleteUser(userId, protectedUserId)" in user_service,
 }
 
 failed = [name for name, passed in checks.items() if not passed]

@@ -216,18 +216,82 @@ namespace SchoolSystem.DataAccess
 
         public bool DeleteUser(int userId)
         {
+            return DeleteUser(userId, 0);
+        }
+
+        public bool DeleteUser(int userId, int protectedUserId)
+        {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = "DELETE FROM Users WHERE UserID = @UserID";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                con.Open();
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    cmd.Parameters.AddWithValue("@UserID", userId);
+                    const string targetQuery = @"
+                        SELECT RoleName, IsActive
+                        FROM Users
+                        WHERE UserID = @UserID";
 
-                    con.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    string targetRole;
+                    bool targetIsActive;
+                    using (SqlCommand targetCommand = new SqlCommand(targetQuery, con, transaction))
+                    {
+                        targetCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                        using (SqlDataReader reader = targetCommand.ExecuteReader())
+                        {
+                            if (!reader.Read())
+                            {
+                                transaction.Rollback();
+                                return false;
+                            }
+
+                            targetRole = reader.IsDBNull(0) ? string.Empty : reader.GetString(0);
+                            targetIsActive = !reader.IsDBNull(1) && reader.GetBoolean(1);
+                        }
+                    }
+
+                    if (protectedUserId > 0 && userId == protectedUserId)
+                    {
+                        transaction.Rollback();
+                        throw new InvalidOperationException("لا يمكن حذف المستخدم المسجل دخوله حالياً.");
+                    }
+
+                    if (targetIsActive && IsAdministratorRole(targetRole))
+                    {
+                        const string adminCountQuery = @"
+                            SELECT COUNT(1)
+                            FROM Users
+                            WHERE IsActive = 1
+                              AND LTRIM(RTRIM(RoleName)) IN (N'مدير النظام', N'Admin', N'Administrator')";
+
+                        using (SqlCommand adminCountCommand = new SqlCommand(adminCountQuery, con, transaction))
+                        {
+                            int activeAdminCount = Convert.ToInt32(adminCountCommand.ExecuteScalar());
+                            if (activeAdminCount <= 1)
+                            {
+                                transaction.Rollback();
+                                throw new InvalidOperationException("لا يمكن حذف آخر مدير نظام نشط.");
+                            }
+                        }
+                    }
+
+                    using (SqlCommand deleteCommand = new SqlCommand(
+                        "DELETE FROM Users WHERE UserID = @UserID", con, transaction))
+                    {
+                        deleteCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                        bool deleted = deleteCommand.ExecuteNonQuery() > 0;
+                        transaction.Commit();
+                        return deleted;
+                    }
                 }
             }
+        }
+
+        private bool IsAdministratorRole(string roleName)
+        {
+            string normalized = (roleName ?? string.Empty).Trim();
+            return normalized.Equals("مدير النظام", StringComparison.OrdinalIgnoreCase)
+                || normalized.Equals("Admin", StringComparison.OrdinalIgnoreCase)
+                || normalized.Equals("Administrator", StringComparison.OrdinalIgnoreCase);
         }
 
         public bool UserNameExists(string userName)

@@ -138,7 +138,8 @@ namespace SchoolSystem.Services
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName) && userRepository.CountAdmins() <= 1)
                 throw new Exception("لا يمكن حذف آخر مدير نظام.");
 
-            bool deleted = userRepository.DeleteUser(userId);
+            int protectedUserId = CurrentUser.IsLoggedIn ? CurrentUser.User.UserID : 0;
+            bool deleted = userRepository.DeleteUser(userId, protectedUserId);
             if (deleted)
                 auditLogService.Record("حذف", "User", userId.ToString(),
                     string.Format("حذف الحساب: {0}، الدور: {1}", user.UserName, user.RoleName));
