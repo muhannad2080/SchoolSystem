@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SchoolSystem.DataAccess;
 using SchoolSystem.Helpers;
 using SchoolSystem.Security;
 using SchoolSystem.Services;
@@ -87,7 +88,8 @@ namespace SchoolSystem.UI
                     BackupDirectory = backupDirectoryTextBox.Text.Trim()
                 };
                 ApplicationSettingsService.Save(settings);
-                statusLabel.Text = "تم حفظ الإعدادات محلياً.";
+                DbConnection.Reload();
+                statusLabel.Text = "تم حفظ الإعدادات وتطبيق اتصال قاعدة البيانات.";
                 UIHelper.ShowInformation("تم حفظ إعدادات SQL Server والنسخ الاحتياطي.");
             }
             catch (Exception ex)
@@ -195,6 +197,7 @@ namespace SchoolSystem.UI
                 BackupDirectory = backupDirectoryTextBox.Text.Trim()
             };
             ApplicationSettingsService.Save(settings);
+            DbConnection.Reload();
         }
 
         private void SetBusy(bool busy, string message)

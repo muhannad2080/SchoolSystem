@@ -1,11 +1,13 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Data.SqlClient;
+using SchoolSystem.Services;
 
 namespace SchoolSystem.DataAccess
 {
     public static class DbConnection
     {
-        private static readonly string connectionString = LoadConnectionString();
+        private static string connectionString = LoadConnectionString();
 
         private static string LoadConnectionString()
         {
@@ -18,7 +20,28 @@ namespace SchoolSystem.DataAccess
                     "لم يتم العثور على إعداد SchoolDBConnection في ملف إعدادات التطبيق.");
             }
 
-            return settings.ConnectionString.Trim();
+            SqlConnectionStringBuilder builder =
+                new SqlConnectionStringBuilder(settings.ConnectionString.Trim());
+
+            try
+            {
+                ApplicationSettingsData saved = ApplicationSettingsService.Load();
+                if (saved != null && !string.IsNullOrWhiteSpace(saved.ServerInstance))
+                    builder.DataSource = saved.ServerInstance.Trim();
+                if (saved != null && !string.IsNullOrWhiteSpace(saved.DatabaseName))
+                    builder.InitialCatalog = saved.DatabaseName.Trim();
+            }
+            catch
+            {
+                // إذا تعذر تحميل الإعدادات المحلية، نستخدم إعداد App.config دون تعطيل التشغيل.
+            }
+
+            return builder.ConnectionString;
+        }
+
+        public static void Reload()
+        {
+            connectionString = LoadConnectionString();
         }
 
         public static string GetConnectionString()
