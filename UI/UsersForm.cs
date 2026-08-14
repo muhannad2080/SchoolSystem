@@ -23,8 +23,28 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
             Dock = DockStyle.Fill;
             Load += UsersForm_Load;
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewUsers);
+            UIHelper.StylePrimaryButton(btnAdd);
+            UIHelper.StylePrimaryButton(btnUpdate);
+            UIHelper.StyleDangerButton(btnDelete);
+            UIHelper.StyleButton(btnClear, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleTextBox(txtFullName);
+            UIHelper.StyleTextBox(txtUserName);
+            UIHelper.StyleTextBox(txtPassword);
+            UIHelper.StyleTextBox(txtConfirmPassword);
+            UIHelper.StyleTextBox(txtEmail);
+            UIHelper.StyleTextBox(txtPhone);
+            UIHelper.StyleTextBox(txtSearch);
+            UIHelper.StyleComboBox(cmbRole);
+            lblRecordCount.ForeColor = UIHelper.MutedTextColor;
         }
 
         private async void UsersForm_Load(object sender, EventArgs e)
