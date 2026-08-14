@@ -187,19 +187,19 @@ namespace SchoolSystem.UI
         {
             if (string.IsNullOrWhiteSpace(cmbAcademicYear.Text))
             {
-                MessageBox.Show("اختر العام الدراسي.");
+                UIHelper.ShowWarning("اختر العام الدراسي.");
                 return false;
             }
 
             if (cmbClass.SelectedValue == null)
             {
-                MessageBox.Show("اختر الصف.");
+                UIHelper.ShowWarning("اختر الصف.");
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(cmbFeeType.Text))
             {
-                MessageBox.Show("أدخل نوع الرسوم.");
+                UIHelper.ShowWarning("أدخل نوع الرسوم.");
                 return false;
             }
 
@@ -207,7 +207,7 @@ namespace SchoolSystem.UI
 
             if (amount <= 0)
             {
-                MessageBox.Show("أدخل مبلغ رسوم صحيح أكبر من صفر.");
+                UIHelper.ShowWarning("أدخل مبلغ رسوم صحيح أكبر من صفر.");
                 return false;
             }
 
@@ -286,7 +286,7 @@ namespace SchoolSystem.UI
 
                 await Task.Run(() => feePlanService.AddFeePlan(plan));
 
-                MessageBox.Show("تمت إضافة رسوم الصف بنجاح.");
+                UIHelper.ShowInfo("تمت إضافة رسوم الصف بنجاح.");
 
                 await LoadFeePlansAsync();
                 ClearInputs();
@@ -303,7 +303,7 @@ namespace SchoolSystem.UI
             {
                 if (selectedFeePlanId == 0)
                 {
-                    MessageBox.Show("اختر سجل الرسوم من الجدول.");
+                    UIHelper.ShowWarning("اختر سجل الرسوم من الجدول.");
                     return;
                 }
 
@@ -314,7 +314,10 @@ namespace SchoolSystem.UI
 
                 bool result = await Task.Run(() => feePlanService.UpdateFeePlan(plan));
 
-                MessageBox.Show(result ? "تم تعديل رسوم الصف بنجاح." : "لم يتم التعديل.");
+                if (result)
+                    UIHelper.ShowInfo("تم تعديل رسوم الصف بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم العثور على سجل الرسوم أو لم يتم تعديله.");
 
                 await LoadFeePlansAsync();
                 ClearInputs();
@@ -331,7 +334,7 @@ namespace SchoolSystem.UI
             {
                 if (selectedFeePlanId == 0)
                 {
-                    MessageBox.Show("اختر سجل الرسوم من الجدول.");
+                    UIHelper.ShowWarning("اختر سجل الرسوم من الجدول.");
                     return;
                 }
 
@@ -346,7 +349,10 @@ namespace SchoolSystem.UI
 
                 bool result = await Task.Run(() => feePlanService.DeleteFeePlan(selectedFeePlanId));
 
-                MessageBox.Show(result ? "تم حذف رسوم الصف." : "لم يتم الحذف.");
+                if (result)
+                    UIHelper.ShowInfo("تم حذف رسوم الصف بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم العثور على سجل الرسوم أو لم يتم حذفه.");
 
                 await LoadFeePlansAsync();
                 ClearInputs();
