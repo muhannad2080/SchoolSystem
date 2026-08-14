@@ -278,9 +278,11 @@ namespace SchoolSystem.UI
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // إذا كانت دوال التحقق غير موجودة، نتجاهل الخطأ ونستمر
+                LogException("ValidateTeacherUniqueness", ex);
+                ShowSafeError("تعذر التحقق من تفرد الرقم الوطني أو البريد الإلكتروني. لم يتم الحفظ؛ تحقق من اتصال قاعدة البيانات ثم حاول مرة أخرى.");
+                return false;
             }
 
             return true;
