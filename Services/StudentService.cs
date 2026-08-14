@@ -11,6 +11,7 @@ namespace SchoolSystem.Services
     public class StudentService
     {
         private readonly StudentRepository _studentRepository;
+        private readonly AuditLogService _auditLogService = new AuditLogService();
 
         public StudentService()
         {
@@ -58,7 +59,10 @@ namespace SchoolSystem.Services
             if (_studentRepository.IsPhoneExists(student.StudentPhone))
                 throw new Exception("رقم هاتف الطالب مستخدم مسبقاً.");
 
-            return _studentRepository.Add(student);
+            int studentId = _studentRepository.Add(student);
+            _auditLogService.Record("إنشاء", "Student", studentId.ToString(),
+                "إضافة طالب: " + (student.FullName ?? string.Empty));
+            return studentId;
         }
 
         public void Update(Student student)
@@ -79,6 +83,8 @@ namespace SchoolSystem.Services
                 throw new Exception("رقم هاتف الطالب مستخدم مسبقاً.");
 
             _studentRepository.Update(student);
+            _auditLogService.Record("تعديل", "Student", student.StudentId.ToString(),
+                "تعديل بيانات الطالب: " + (student.FullName ?? string.Empty));
         }
 
         public void Delete(int studentId)
@@ -88,6 +94,8 @@ namespace SchoolSystem.Services
                 throw new Exception("يرجى اختيار طالب من الجدول قبل الحذف.");
 
             _studentRepository.Delete(studentId);
+            _auditLogService.Record("حذف", "Student", studentId.ToString(),
+                "حذف سجل الطالب.");
         }
 
         public string GenerateNextStudentNumber()
