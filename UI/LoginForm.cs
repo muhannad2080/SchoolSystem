@@ -16,13 +16,12 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
-            UIHelper.ApplyTheme(this);
             panelBackground.BackColor = UIHelper.PrimaryColor;
-            panelCard.BackColor = Color.White;
+            panelCard.BackColor = UIHelper.SurfaceElevatedColor;
             panelCard.Padding = new Padding(18);
             lblIcon.ForeColor = UIHelper.AccentColor;
             lblTitle.ForeColor = UIHelper.PrimaryColor;
-            lblSubtitle.ForeColor = Color.FromArgb(100, 116, 139);
+            lblSubtitle.ForeColor = UIHelper.MutedTextColor;
             UIHelper.StyleTextBox(txtUserName);
             UIHelper.StyleTextBox(txtPassword);
             UIHelper.StylePrimaryButton(btnLogin);
@@ -59,7 +58,7 @@ namespace SchoolSystem.UI
             if (txtUserName.Text == "اسم المستخدم")
             {
                 txtUserName.Text = "";
-                txtUserName.ForeColor = Color.Black;
+                txtUserName.ForeColor = UIHelper.TextColor;
             }
         }
 
@@ -68,7 +67,7 @@ namespace SchoolSystem.UI
             if (string.IsNullOrWhiteSpace(txtUserName.Text))
             {
                 txtUserName.Text = "اسم المستخدم";
-                txtUserName.ForeColor = Color.Gray;
+                txtUserName.ForeColor = UIHelper.TextDisabledColor;
             }
         }
 
@@ -77,7 +76,7 @@ namespace SchoolSystem.UI
             if (txtPassword.Text == "كلمة المرور")
             {
                 txtPassword.Text = "";
-                txtPassword.ForeColor = Color.Black;
+                txtPassword.ForeColor = UIHelper.TextColor;
                 txtPassword.PasswordChar = '●';
             }
         }
@@ -87,7 +86,7 @@ namespace SchoolSystem.UI
             if (string.IsNullOrWhiteSpace(txtPassword.Text))
             {
                 txtPassword.Text = "كلمة المرور";
-                txtPassword.ForeColor = Color.Gray;
+                txtPassword.ForeColor = UIHelper.TextDisabledColor;
                 txtPassword.PasswordChar = '\0';
             }
         }
@@ -149,13 +148,7 @@ namespace SchoolSystem.UI
 
         private void ShowWarning(string message)
         {
-            MessageBox.Show(
-                message,
-                "تنبيه",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowWarning(message);
         }
 
         private string GetSafeLoginError(Exception exception)
@@ -171,9 +164,10 @@ namespace SchoolSystem.UI
                 return "تعذر الاتصال بالنظام حاليًا. تحقق من إعدادات قاعدة البيانات أو اتصل بمسؤول النظام.";
             }
 
-            return string.IsNullOrWhiteSpace(message)
-                ? "اسم المستخدم أو كلمة المرور غير صحيحة."
-                : message;
+            if (message.Contains("غير صحيحة") || message.Contains("غير فعال"))
+                return message;
+
+            return "تعذر تسجيل الدخول. تحقق من البيانات ثم حاول مرة أخرى.";
         }
 
         private void ShowError(string message, string title = "فشل الدخول")
