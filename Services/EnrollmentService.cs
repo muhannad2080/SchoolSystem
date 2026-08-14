@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
 using SchoolSystem.Security;
@@ -65,8 +64,10 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(enrollment.AcademicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
-            if (!Regex.IsMatch(enrollment.AcademicYear.Trim(), @"^[0-9]{4}/[0-9]{4}$"))
-                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون مثل 2026/2027.");
+            ValidateAcademicYear(enrollment.AcademicYear);
+
+            if (enrollment.ApplicationDate.Date > DateTime.Today)
+                throw new ArgumentException("لا يمكن أن يكون تاريخ طلب التسجيل في المستقبل.");
 
             if (string.IsNullOrWhiteSpace(enrollment.ApplicationType))
                 throw new ArgumentException("يجب اختيار نوع التسجيل.");
@@ -79,6 +80,24 @@ namespace SchoolSystem.Services
 
             if (enrollment.PaidAmount > enrollment.RegistrationFee)
                 throw new ArgumentException("المبلغ المدفوع لا يمكن أن يكون أكبر من رسوم التسجيل.");
+        }
+
+        private void ValidateAcademicYear(string academicYear)
+        {
+            string value = academicYear == null ? "" : academicYear.Trim();
+            string[] parts = value.Split('/');
+            int firstYear;
+            int secondYear;
+
+            if (parts.Length != 2 ||
+                parts[0].Length != 4 ||
+                parts[1].Length != 4 ||
+                !int.TryParse(parts[0], out firstYear) ||
+                !int.TryParse(parts[1], out secondYear) ||
+                secondYear != firstYear + 1)
+            {
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
+            }
         }
     }
 }

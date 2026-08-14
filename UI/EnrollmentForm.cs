@@ -3,6 +3,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Services;
@@ -559,6 +560,17 @@ namespace SchoolSystem.UI
                 errorProvider1.SetError(txtAcademicYear, "العام الدراسي مطلوب.");
                 isValid = false;
             }
+            else if (!IsSequentialAcademicYear(txtAcademicYear.Text))
+            {
+                errorProvider1.SetError(txtAcademicYear, "اكتب العام الدراسي بصيغة متسلسلة مثل 2026/2027.");
+                isValid = false;
+            }
+
+            if (dtpApplicationDate.Value.Date > DateTime.Today)
+            {
+                errorProvider1.SetError(dtpApplicationDate, "لا يمكن أن يكون تاريخ التسجيل في المستقبل.");
+                isValid = false;
+            }
 
             if (cmbApplicationType.SelectedIndex == -1)
             {
@@ -588,13 +600,24 @@ namespace SchoolSystem.UI
                 isValid = false;
             }
 
-            if (isValid && paid > fee && fee > 0)
+            if (isValid && paid > fee)
             {
                 errorProvider1.SetError(txtPaidAmount, "لا يجوز أن يتجاوز المدفوع قيمة رسوم التسجيل.");
                 isValid = false;
             }
 
             return isValid;
+        }
+
+        private bool IsSequentialAcademicYear(string value)
+        {
+            Match match = Regex.Match(value == null ? "" : value.Trim(), @"^(\d{4})/(\d{4})$");
+            int firstYear;
+            int secondYear;
+            return match.Success &&
+                   int.TryParse(match.Groups[1].Value, out firstYear) &&
+                   int.TryParse(match.Groups[2].Value, out secondYear) &&
+                   secondYear == firstYear + 1;
         }
 
         private void DisableInputs()
