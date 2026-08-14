@@ -21,6 +21,11 @@ checks = {
     and "normalizedServer.IndexOf(';')" in backup_service,
     "backup_validates_database_identifier": "SafeIdentifier.IsMatch(normalizedDatabase)" in backup_service,
     "backup_rejects_program_directory": "TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)" in backup_service,
+    "restore_uses_single_user_for_replace": "SET SINGLE_USER WITH ROLLBACK IMMEDIATE" in backup_service,
+    "restore_returns_to_multi_user_on_success": "SET MULTI_USER;" in backup_service,
+    "restore_attempts_multi_user_after_failure": "BEGIN CATCH" in backup_service
+    and "Preserve the original RESTORE error" in backup_service,
+    "restore_reports_existing_database": "قاعدة البيانات الهدف موجودة. اختر اسماً جديداً أو فعّل الاستبدال." in backup_service,
 }
 
 failed = [name for name, passed in checks.items() if not passed]
