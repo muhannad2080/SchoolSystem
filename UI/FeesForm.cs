@@ -479,6 +479,20 @@ namespace SchoolSystem.UI
                 return false;
             }
 
+            if (paid > 0 && string.IsNullOrWhiteSpace(txtReceiptNumber.Text))
+            {
+                UIHelper.ShowWarning("أدخل رقم السند عند تسجيل دفعة مالية.");
+                txtReceiptNumber.Focus();
+                return false;
+            }
+
+            if (dtpPaymentDate.Checked && dtpPaymentDate.Value.Date > DateTime.Today)
+            {
+                UIHelper.ShowWarning("لا يمكن تسجيل دفعة بتاريخ مستقبلي.");
+                dtpPaymentDate.Focus();
+                return false;
+            }
+
             return true;
         }
 
@@ -544,13 +558,13 @@ namespace SchoolSystem.UI
             {
                 if (cmbStudent.SelectedValue == null)
                 {
-                    MessageBox.Show("اختر الطالب أولاً.");
+                    UIHelper.ShowWarning("اختر الطالب أولاً.");
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(cmbAcademicYear.Text))
                 {
-                    MessageBox.Show("اختر العام الدراسي.");
+                    UIHelper.ShowWarning("اختر العام الدراسي.");
                     return;
                 }
 
@@ -561,7 +575,7 @@ namespace SchoolSystem.UI
                     feeService.GenerateStudentFeesFromPlans(studentId, academicYear)
                 );
 
-                MessageBox.Show("تم توليد عدد " + count + " رسوم للطالب.");
+                UIHelper.ShowInfo("تم توليد عدد " + count + " رسوم للطالب.");
 
                 await LoadFeesAsync();
             }
@@ -594,7 +608,7 @@ namespace SchoolSystem.UI
                     );
                 }
 
-                MessageBox.Show("تمت إضافة الرسوم بنجاح.");
+                UIHelper.ShowInfo("تمت إضافة الرسوم بنجاح.");
 
                 await LoadFeesAsync();
                 ClearInputs();
@@ -611,7 +625,7 @@ namespace SchoolSystem.UI
             {
                 if (selectedFeeId == 0)
                 {
-                    MessageBox.Show("اختر سجل الرسوم من الجدول أولاً.");
+                    UIHelper.ShowWarning("اختر سجل الرسوم من الجدول أولاً.");
                     return;
                 }
 
@@ -635,7 +649,10 @@ namespace SchoolSystem.UI
                     );
                 }
 
-                MessageBox.Show(result ? "تم تعديل الرسوم بنجاح." : "لم يتم تعديل الرسوم.");
+                if (result)
+                    UIHelper.ShowInfo("تم تعديل الرسوم بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم تعديل الرسوم؛ ربما تغير السجل أو لم يعد موجودًا.");
 
                 await LoadFeesAsync();
                 ClearInputs();
@@ -652,7 +669,7 @@ namespace SchoolSystem.UI
             {
                 if (selectedFeeId == 0)
                 {
-                    MessageBox.Show("اختر سجل الرسوم من الجدول أولاً.");
+                    UIHelper.ShowWarning("اختر سجل الرسوم من الجدول أولاً.");
                     return;
                 }
 
@@ -660,14 +677,19 @@ namespace SchoolSystem.UI
                     "هل أنت متأكد من حذف سجل الرسوم المحدد؟",
                     "تأكيد الحذف",
                     MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2,
+                    MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
 
                 if (confirm != DialogResult.Yes)
                     return;
 
                 bool result = await Task.Run(() => feeService.DeleteFee(selectedFeeId));
 
-                MessageBox.Show(result ? "تم حذف الرسوم بنجاح." : "لم يتم حذف الرسوم.");
+                if (result)
+                    UIHelper.ShowInfo("تم حذف الرسوم بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم حذف الرسوم؛ ربما تغير السجل أو لم يعد موجودًا.");
 
                 await LoadFeesAsync();
                 ClearInputs();
