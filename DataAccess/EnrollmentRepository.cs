@@ -136,7 +136,7 @@ namespace SchoolSystem.DataAccess
             }
         }
 
-        public bool IsStudentEnrolled(int studentId, string academicYear)
+        public bool IsStudentEnrolled(int studentId, string academicYear, int excludeEnrollmentId = 0)
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
@@ -145,12 +145,14 @@ namespace SchoolSystem.DataAccess
                     FROM Enrollments
                     WHERE StudentID = @StudentID
                       AND AcademicYear = @AcademicYear
-                      AND Status <> N'مرفوض'";
+                      AND Status <> N'مرفوض'
+                      AND (@ExcludeEnrollmentID = 0 OR EnrollmentID <> @ExcludeEnrollmentID)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@StudentID", studentId);
                     cmd.Parameters.AddWithValue("@AcademicYear", academicYear.Trim());
+                    cmd.Parameters.AddWithValue("@ExcludeEnrollmentID", excludeEnrollmentId);
 
                     conn.Open();
                     return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
