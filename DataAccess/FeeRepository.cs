@@ -145,7 +145,25 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = "DELETE FROM Fees WHERE FeeID = @FeeID";
+                const string query = @"
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM Fees
+                        WHERE FeeID = @FeeID
+                          AND (ISNULL(PaidAmount, 0) > 0
+                               OR PaymentDate IS NOT NULL
+                               OR Status IN (N'مدفوع', N'مدفوع جزئياً'))
+                    )
+                    BEGIN
+                        THROW 51003, N'لا يمكن حذف رسم تم تسجيل دفعة عليه. استخدم التعديل أو التسوية بدلاً من الحذف.', 1;
+                    END;
+
+                    DELETE FROM Fees
+                    WHERE FeeID = @FeeID
+                      AND ISNULL(PaidAmount, 0) = 0
+                      AND PaymentDate IS NULL
+                      AND ISNULL(Status, N'غير مدفوع') NOT IN (N'مدفوع', N'مدفوع جزئياً');";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
