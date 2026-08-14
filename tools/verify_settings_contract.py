@@ -14,6 +14,11 @@ settings_ui = (ROOT / "UI" / "SettingsForm.cs").read_text(encoding="utf-8")
 student_service = (ROOT / "Services" / "StudentService.cs").read_text(encoding="utf-8")
 teacher_service = (ROOT / "Services" / "TeacherService.cs").read_text(encoding="utf-8")
 teacher_repository = (ROOT / "DataAccess" / "TeacherRepository.cs").read_text(encoding="utf-8")
+student_repository = (ROOT / "DataAccess" / "StudentRepository.cs").read_text(encoding="utf-8")
+student_attendance_repository = (ROOT / "DataAccess" / "StudentAttendanceRepository.cs").read_text(encoding="utf-8")
+grade_repository = (ROOT / "DataAccess" / "GradeRepository.cs").read_text(encoding="utf-8")
+enrollment_repository = (ROOT / "DataAccess" / "EnrollmentRepository.cs").read_text(encoding="utf-8")
+borrowing_repository = (ROOT / "DataAccess" / "BorrowingRepository.cs").read_text(encoding="utf-8")
 room_repository = (ROOT / "DataAccess" / "RoomRepository.cs").read_text(encoding="utf-8")
 class_repository = (ROOT / "DataAccess" / "ClassRepository.cs").read_text(encoding="utf-8")
 class_service = (ROOT / "Services" / "ClassService.cs").read_text(encoding="utf-8")
@@ -102,6 +107,25 @@ checks = {
         "GetActiveTeachers()" in content
         for content in (payroll_ui, staff_attendance_ui, library_ui)
     ),
+    "active_student_lookup_is_available": "public List<Student> GetActive()" in student_repository
+    and "Status, \"نشط\"" in student_repository
+    and "public DataTable GetActiveStudents()" in student_service,
+    "operational_student_lists_exclude_inactive": all(
+        "GetActiveStudents()" in content
+        for content in (
+            (ROOT / "UI" / "EnrollmentForm.cs").read_text(encoding="utf-8"),
+            (ROOT / "UI" / "FeesForm.cs").read_text(encoding="utf-8"),
+            (ROOT / "UI" / "LibraryForm.cs").read_text(encoding="utf-8"),
+        )
+    ),
+    "attendance_uses_active_student_status": "ISNULL(Status, N'نشط') = N'نشط'" in student_attendance_repository
+    and "لا يمكن تسجيل حضور لطالب غير نشط" in student_attendance_repository,
+    "grades_use_active_student_status": "ISNULL(s.Status, N'نشط') = N'نشط'" in grade_repository
+    and "لا يمكن حفظ درجة لطالب غير نشط" in grade_repository,
+    "enrollment_requires_active_student": "لا يمكن تسجيل طالب غير نشط" in enrollment_repository
+    and "لا يمكن ربط تسجيل بطالب غير نشط" in enrollment_repository,
+    "borrowing_requires_active_borrower": "لا يمكن إنشاء إعارة لطالب غير نشط" in borrowing_repository
+    and "لا يمكن إنشاء إعارة لمعلم غير نشط" in borrowing_repository,
 }
 
 failed = [name for name, passed in checks.items() if not passed]

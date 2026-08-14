@@ -81,7 +81,7 @@ namespace SchoolSystem.UI
             try
             {
                 // Load Students
-                var dtStudents = studentService.GetAllStudents();
+                var dtStudents = studentService.GetActiveStudents();
                 cmbStudentID.DataSource = dtStudents;
                 cmbStudentID.DisplayMember = "FullName";
                 cmbStudentID.ValueMember = "StudentID";

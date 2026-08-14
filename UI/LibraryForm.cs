@@ -428,7 +428,7 @@ namespace SchoolSystem.UI
             {
                 if (cmbBorrowerType.Text == "طالب")
                 {
-                    DataTable students = await Task.Run(() => studentService.GetAllStudents());
+                    DataTable students = await Task.Run(() => studentService.GetActiveStudents());
 
                     cmbBorrower.DataSource = students;
                     cmbBorrower.DisplayMember = "StudentName";

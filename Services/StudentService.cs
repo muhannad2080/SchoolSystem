@@ -114,6 +114,12 @@ namespace SchoolSystem.Services
             return ConvertStudentsToDataTable(GetAll());
         }
 
+        public DataTable GetActiveStudents()
+        {
+            EnsureCanLookupStudents();
+            return ConvertStudentsToDataTable(_studentRepository.GetActive());
+        }
+
         public Student GetStudentById(int studentId)
         {
             return GetById(studentId);

@@ -16,6 +16,7 @@ namespace SchoolSystem.DataAccess
                     FROM Students
                     WHERE ClassID = @ClassID
                       AND AcademicYear = @AcademicYear
+                      AND ISNULL(Status, N'نشط') = N'نشط'
                       AND NULLIF(LTRIM(RTRIM(ISNULL(Section, N''))), N'') IS NOT NULL
                     ORDER BY Section";
 
@@ -53,7 +54,7 @@ namespace SchoolSystem.DataAccess
                     WHERE s.ClassID = @ClassID
                       AND ISNULL(s.Section, N'') = @Section
                       AND ISNULL(s.AcademicYear, N'') = @AcademicYear
-                      AND ISNULL(s.Status, N'منتظم') = N'منتظم'
+                      AND ISNULL(s.Status, N'نشط') = N'نشط'
                     ORDER BY s.FullName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -78,6 +79,15 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Students
+                        WHERE StudentID = @StudentID
+                          AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 50001, N'لا يمكن تسجيل حضور لطالب غير نشط.', 1;
+
                     IF EXISTS
                     (
                         SELECT 1

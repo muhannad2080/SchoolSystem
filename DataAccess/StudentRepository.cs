@@ -56,6 +56,12 @@ ORDER BY s.StudentId DESC;";
             return students;
         }
 
+        public List<Student> GetActive()
+        {
+            return GetAll().FindAll(student =>
+                string.Equals(student.Status, "نشط", System.StringComparison.OrdinalIgnoreCase));
+        }
+
         public Student GetById(int studentId)
         {
             string query = @"

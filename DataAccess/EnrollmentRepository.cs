@@ -59,6 +59,15 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Students
+                        WHERE StudentID = @StudentID
+                          AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 50003, N'لا يمكن تسجيل طالب غير نشط.', 1;
+
                     INSERT INTO Enrollments
                     (
                         StudentID, ApplicationDate, ApplicationType, AcademicYear, ClassID, Section, SeatNumber, Status,
@@ -86,6 +95,15 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Students
+                        WHERE StudentID = @StudentID
+                          AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 50003, N'لا يمكن ربط تسجيل بطالب غير نشط.', 1;
+
                     UPDATE Enrollments
                     SET
                         StudentID = @StudentID,

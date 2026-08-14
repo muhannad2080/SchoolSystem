@@ -116,7 +116,7 @@ namespace SchoolSystem.UI
 
         private async Task LoadStudentsAsync()
         {
-            DataTable students = await Task.Run(() => studentService.GetAllStudents());
+            DataTable students = await Task.Run(() => studentService.GetActiveStudents());
 
             cmbStudent.DataSource = students;
             cmbStudent.DisplayMember = "StudentName";

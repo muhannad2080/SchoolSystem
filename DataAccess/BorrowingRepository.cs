@@ -55,6 +55,14 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 string query = @"
+                    IF (@BorrowerType = N'طالب' AND NOT EXISTS
+                        (SELECT 1 FROM Students WHERE StudentID = @BorrowerID AND ISNULL(Status, N'نشط') = N'نشط'))
+                        THROW 50004, N'لا يمكن إنشاء إعارة لطالب غير نشط.', 1;
+
+                    IF (@BorrowerType = N'معلم' AND NOT EXISTS
+                        (SELECT 1 FROM Teachers WHERE TeacherID = @BorrowerID AND ISNULL(Status, N'نشط') = N'نشط'))
+                        THROW 50005, N'لا يمكن إنشاء إعارة لمعلم غير نشط.', 1;
+
                     INSERT INTO BookBorrowings
                     (
                         BookID,
