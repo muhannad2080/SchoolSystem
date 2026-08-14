@@ -30,6 +30,41 @@ namespace SchoolSystem.UI
             studentService = new StudentService();
             classService = new ClassService();
             enrollmentPrintDocument.PrintPage += enrollmentPrintDocument_PrintPage;
+            ApplyCustomStyles();
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dgvEnrollments);
+            UIHelper.StylePrimaryButton(btnAdd);
+            UIHelper.StylePrimaryButton(btnSave);
+            UIHelper.StylePrimaryButton(btnUpdate);
+            UIHelper.StyleDangerButton(btnDelete);
+            UIHelper.StyleButton(btnCancel, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnReload, UIHelper.NeutralColor);
+            UIHelper.StylePrimaryButton(btnSearch);
+            UIHelper.StyleButton(btnPrintForm, UIHelper.InfoColor);
+            UIHelper.StyleButton(btnPrintReceipt, UIHelper.SuccessColor);
+            UIHelper.StyleButton(btnClose, UIHelper.NeutralColor);
+
+            TextBox[] textBoxes = {
+                txtEnrollmentID, txtStudentName, txtAcademicYear, txtSection,
+                txtSeatNumber, txtPreviousSchool, txtPreviousClass, txtTransferReason,
+                txtRegistrationFee, txtPaidAmount, txtRemainingAmount, txtReceiptNo, txtSearch
+            };
+            foreach (TextBox textBox in textBoxes)
+                UIHelper.StyleTextBox(textBox);
+
+            ComboBox[] comboBoxes = {
+                cmbStudentID, cmbApplicationType, cmbClassID, cmbStatus, cmbPaymentMethod
+            };
+            foreach (ComboBox comboBox in comboBoxes)
+                UIHelper.StyleComboBox(comboBox);
+
+            rtbNotes.BackColor = UIHelper.SurfaceColor;
+            rtbNotes.ForeColor = UIHelper.TextColor;
+            rtbNotes.BorderStyle = BorderStyle.FixedSingle;
         }
 
         private void EnrollmentForm_Load(object sender, EventArgs e)
@@ -248,7 +283,7 @@ namespace SchoolSystem.UI
 
                 if (success)
                 {
-                    MessageBox.Show("تم الحفظ بنجاح.", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    UIHelper.ShowInfo("تم الحفظ بنجاح.");
                     LoadData();
                     DisableInputs();
                 }
@@ -263,7 +298,7 @@ namespace SchoolSystem.UI
         {
             if (string.IsNullOrEmpty(txtEnrollmentID.Text) || txtEnrollmentID.Text == "جديد")
             {
-                MessageBox.Show("الرجاء تحديد طلب من الجدول أولاً.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("الرجاء تحديد طلب من الجدول أولاً.");
                 return;
             }
             isEditMode = true;
@@ -274,7 +309,7 @@ namespace SchoolSystem.UI
         {
             if (string.IsNullOrEmpty(txtEnrollmentID.Text) || txtEnrollmentID.Text == "جديد")
             {
-                MessageBox.Show("الرجاء تحديد طلب من الجدول أولاً.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("الرجاء تحديد طلب من الجدول أولاً.");
                 return;
             }
 
@@ -285,7 +320,7 @@ namespace SchoolSystem.UI
                     int id = Convert.ToInt32(txtEnrollmentID.Text);
                     if (enrollmentService.DeleteEnrollment(id))
                     {
-                        MessageBox.Show("تم الحذف بنجاح.", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        UIHelper.ShowInfo("تم الحذف بنجاح.");
                         LoadData();
                         ClearInputs();
                         DisableInputs();

@@ -21,8 +21,27 @@ namespace SchoolSystem.UI.Students
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
             this.Dock = DockStyle.Fill;
             this.Load += ClassAssignmentForm_Load;
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewAssigned);
+            UIHelper.StylePrimaryButton(btnLoad);
+            UIHelper.StylePrimaryButton(btnAssign);
+            UIHelper.StyleButton(btnSelectAll, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnRemove, UIHelper.DangerColor);
+            UIHelper.StyleTextBox(txtAcademicYear);
+            UIHelper.StyleTextBox(txtSearch);
+            UIHelper.StyleComboBox(cmbClass);
+            UIHelper.StyleComboBox(cmbSection);
+
+            listBoxUnassigned.BackColor = UIHelper.SurfaceColor;
+            listBoxUnassigned.ForeColor = UIHelper.TextColor;
+            listBoxUnassigned.BorderStyle = BorderStyle.FixedSingle;
+            lblStatus.ForeColor = UIHelper.MutedTextColor;
         }
 
         private async void ClassAssignmentForm_Load(object sender, EventArgs e)

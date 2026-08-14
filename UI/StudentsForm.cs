@@ -26,8 +26,6 @@ namespace SchoolSystem.UI
             _studentService = new StudentService();
             _currentStudents = new List<Student>();
             _studentCardPrintDocument.PrintPage += StudentCardPrintDocument_PrintPage;
-            
-            UIHelper.ApplyStyle(this);
         }
 
         private void StudentsForm_Load(object sender, EventArgs e)
