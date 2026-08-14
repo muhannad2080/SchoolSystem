@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using SchoolSystem.Helpers;
 
 namespace SchoolSystem
 {
@@ -11,11 +12,13 @@ namespace SchoolSystem
         {
             if (e.Item.Selected)
             {
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(52, 73, 94)), e.Item.ContentRectangle);
+                using (SolidBrush brush = new SolidBrush(UIHelper.HoverColor))
+                    e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
             }
             else if (e.Item.Pressed)
             {
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(41, 128, 185)), e.Item.ContentRectangle);
+                using (SolidBrush brush = new SolidBrush(UIHelper.PressedColor))
+                    e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
             }
             else
             {
@@ -26,16 +29,16 @@ namespace SchoolSystem
 
     public class CustomProfessionalColors : ProfessionalColorTable
     {
-        public override Color MenuItemSelected => Color.FromArgb(52, 73, 94);
-        public override Color MenuItemBorder => Color.FromArgb(33, 42, 57);
-        public override Color MenuItemPressedGradientBegin => Color.FromArgb(41, 128, 185);
-        public override Color MenuItemPressedGradientEnd => Color.FromArgb(41, 128, 185);
-        public override Color MenuStripGradientBegin => Color.FromArgb(33, 42, 57);
-        public override Color MenuStripGradientEnd => Color.FromArgb(33, 42, 57);
-        public override Color ToolStripDropDownBackground => Color.FromArgb(33, 42, 57);
-        public override Color ToolStripBorder => Color.FromArgb(52, 73, 94);
-        public override Color ImageMarginGradientBegin => Color.FromArgb(33, 42, 57);
-        public override Color ImageMarginGradientMiddle => Color.FromArgb(33, 42, 57);
-        public override Color ImageMarginGradientEnd => Color.FromArgb(33, 42, 57);
+        public override Color MenuItemSelected => UIHelper.HoverColor;
+        public override Color MenuItemBorder => UIHelper.BorderColor;
+        public override Color MenuItemPressedGradientBegin => UIHelper.PressedColor;
+        public override Color MenuItemPressedGradientEnd => UIHelper.PressedColor;
+        public override Color MenuStripGradientBegin => UIHelper.PrimaryColor;
+        public override Color MenuStripGradientEnd => UIHelper.PrimaryColor;
+        public override Color ToolStripDropDownBackground => UIHelper.SurfaceElevatedColor;
+        public override Color ToolStripBorder => UIHelper.BorderColor;
+        public override Color ImageMarginGradientBegin => UIHelper.SurfaceSecondaryColor;
+        public override Color ImageMarginGradientMiddle => UIHelper.SurfaceSecondaryColor;
+        public override Color ImageMarginGradientEnd => UIHelper.SurfaceSecondaryColor;
     }
 }
