@@ -32,6 +32,13 @@ BEGIN
         UpdatedAt DATETIME NULL
     );
 END;
+
+/* تشغيل دورة حياة الكتب: يبقى السجل محفوظاً ويُمنع استخدام الكتاب عند تعطيله. */
+IF OBJECT_ID(N'dbo.Books', N'U') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.Books', N'IsActive') IS NULL
+        ALTER TABLE dbo.Books ADD IsActive BIT NOT NULL CONSTRAINT DF_Books_IsActive DEFAULT 1 WITH VALUES;
+END;
 IF OBJECT_ID(N'dbo.BookBorrowings', N'U') IS NULL
 BEGIN
     CREATE TABLE dbo.BookBorrowings

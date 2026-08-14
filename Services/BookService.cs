@@ -9,10 +9,12 @@ namespace SchoolSystem.Services
     public class BookService
     {
         private readonly BookRepository bookRepository;
+        private readonly AuditLogService auditLogService;
 
         public BookService()
         {
             bookRepository = new BookRepository();
+            auditLogService = new AuditLogService();
         }
 
         public DataTable GetAllBooks()
@@ -25,7 +27,13 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
             ValidateBook(book);
-            return bookRepository.AddBook(book);
+            bool added = bookRepository.AddBook(book);
+            if (added)
+            {
+                auditLogService.Record("إنشاء", "Book", book.BookID.ToString(),
+                    "إضافة كتاب: " + book.Title);
+            }
+            return added;
         }
 
         public bool UpdateBook(Book book)
@@ -35,7 +43,13 @@ namespace SchoolSystem.Services
                 throw new Exception("رقم الكتاب غير صحيح.");
 
             ValidateBook(book);
-            return bookRepository.UpdateBook(book);
+            bool updated = bookRepository.UpdateBook(book);
+            if (updated)
+            {
+                auditLogService.Record("تعديل", "Book", book.BookID.ToString(),
+                    "تعديل بيانات الكتاب: " + book.Title);
+            }
+            return updated;
         }
 
         public bool DeleteBook(int bookId)
@@ -44,7 +58,13 @@ namespace SchoolSystem.Services
             if (bookId <= 0)
                 throw new Exception("رقم الكتاب غير صحيح.");
 
-            return bookRepository.DeleteBook(bookId);
+            bool deleted = bookRepository.DeleteBook(bookId);
+            if (deleted)
+            {
+                auditLogService.Record("حذف", "Book", bookId.ToString(),
+                    "حذف كتاب من المكتبة.");
+            }
+            return deleted;
         }
 
         public int GetAvailableCopies(int bookId)

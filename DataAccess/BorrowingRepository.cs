@@ -54,8 +54,21 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = @"
-                    IF (@BorrowerType = N'طالب' AND NOT EXISTS
+                                    string query = @"
+                        IF NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM Books
+                            WHERE BookID = @BookID
+                              AND ISNULL(IsActive, 1) = 1
+                              AND Copies >
+                                  (SELECT COUNT(*) FROM BookBorrowings
+                                   WHERE BookID = @BookID AND Status = N'معار')
+                        )
+                            THROW 50003, N'لا يمكن إنشاء الإعارة: الكتاب غير نشط أو لا توجد نسخ متاحة.', 1;
+
+                        IF (@BorrowerType = N'طالب' AND NOT EXISTS
+
                         (SELECT 1 FROM Students WHERE StudentID = @BorrowerID AND ISNULL(Status, N'نشط') = N'نشط'))
                         THROW 50004, N'لا يمكن إنشاء إعارة لطالب غير نشط.', 1;
 

@@ -16,6 +16,7 @@ namespace SchoolSystem.Models
 
         public int Copies { get; set; }
         public int AvailableCopies { get; set; }
+        public bool IsActive { get; set; }
 
         public string ShelfLocation { get; set; }
         public string Notes { get; set; }

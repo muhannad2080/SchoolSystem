@@ -27,6 +27,7 @@ namespace SchoolSystem.DataAccess
                             WHERE br.BookID = b.BookID
                               AND br.Status = N'معار'
                         ), 0) AS AvailableCopies,
+                        ISNULL(b.IsActive, 1) AS IsActive,
                         b.ShelfLocation,
                         b.Notes,
                         b.CreatedAt,
@@ -57,6 +58,7 @@ namespace SchoolSystem.DataAccess
                         Publisher,
                         PublicationYear,
                         Copies,
+                        IsActive,
                         ShelfLocation,
                         Notes
                     )
@@ -69,6 +71,7 @@ namespace SchoolSystem.DataAccess
                         @Publisher,
                         @PublicationYear,
                         @Copies,
+                        1,
                         @ShelfLocation,
                         @Notes
                     )";
