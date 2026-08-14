@@ -27,7 +27,6 @@ namespace SchoolSystem.UI
         public AuditLogForm()
         {
             RightToLeft = RightToLeft.Yes;
-            RightToLeftLayout = true;
             Dock = DockStyle.Fill;
             UIHelper.ApplyStyle(this);
             BackColor = UIHelper.BackgroundColor;
@@ -51,7 +50,7 @@ namespace SchoolSystem.UI
                 Dock = DockStyle.Top,
                 Height = 34,
                 TextAlign = ContentAlignment.MiddleRight,
-                Font = new Font(UIHelper.FontFamily, UIHelper.TitleFontSize, FontStyle.Bold),
+                Font = new Font(new FontFamily(UIHelper.FontFamily), UIHelper.TitleFontSize, FontStyle.Bold),
                 ForeColor = UIHelper.TextColor
             };
 
@@ -61,7 +60,7 @@ namespace SchoolSystem.UI
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleRight,
                 ForeColor = UIHelper.MutedTextColor,
-                Font = new Font(UIHelper.FontFamily, UIHelper.SmallFontSize, FontStyle.Regular)
+                Font = new Font(new FontFamily(UIHelper.FontFamily), UIHelper.CaptionFontSize, FontStyle.Regular)
             };
 
             header.Controls.Add(subtitle);
@@ -96,7 +95,7 @@ namespace SchoolSystem.UI
             exportButton.Text = "تصدير CSV";
             exportButton.Width = 110;
             exportButton.Height = 34;
-            exportButton.Click += exportButton_Click;
+            exportButton.Click += ExportButton_Click;
 
             UIHelper.StyleTextBox(searchBox);
             UIHelper.StylePrimaryButton(refreshButton);
@@ -177,7 +176,7 @@ namespace SchoolSystem.UI
                 Height = 34,
                 TextAlign = ContentAlignment.MiddleCenter,
                 ForeColor = UIHelper.TextColor,
-                Font = new Font(UIHelper.FontFamily, UIHelper.SmallFontSize, FontStyle.Bold),
+                Font = new Font(new FontFamily(UIHelper.FontFamily), UIHelper.CaptionFontSize, FontStyle.Bold),
                 Margin = new Padding(4)
             };
         }
@@ -257,7 +256,7 @@ namespace SchoolSystem.UI
                 e.Value = Convert.ToDateTime(e.Value).ToString("yyyy-MM-dd HH:mm");
         }
 
-        private void exportButton_Click(object sender, EventArgs e)
+        private void ExportButton_Click(object sender, EventArgs e)
         {
             if (currentData == null || currentData.Rows.Count == 0)
             {
