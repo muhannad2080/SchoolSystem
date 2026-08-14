@@ -384,21 +384,59 @@ namespace SchoolSystem.DataAccess
         {
             if (TableExists("Fees"))
             {
-                string query = "SELECT * FROM Fees WHERE 1 = 1";
+                string query = @"
+                    SELECT
+                        f.FeeID AS [المعرف],
+                        f.StudentID AS [رقم الطالب],
+                        s.FullName AS [اسم الطالب],
+                        s.ClassID AS [رقم الصف],
+                        c.ClassName AS [الصف],
+                        f.FeePlanID AS [خطة الرسوم],
+                        f.AcademicYear AS [العام الدراسي],
+                        f.FeeType AS [نوع الرسوم],
+                        f.TotalAmount AS [الإجمالي],
+                        f.DiscountAmount AS [الخصم],
+                        f.NetAmount AS [الصافي],
+                        f.PaidAmount AS [المدفوع],
+                        f.RemainingAmount AS [المتبقي],
+                        f.DueDate AS [تاريخ الاستحقاق],
+                        f.PaymentDate AS [تاريخ السداد],
+                        f.PaymentMethod AS [طريقة الدفع],
+                        f.ReceiptNumber AS [رقم الإيصال],
+                        f.Status AS [الحالة],
+                        f.Notes AS [ملاحظات],
+                        f.CreatedAt AS [تاريخ الإنشاء],
+                        f.UpdatedAt AS [تاريخ التعديل]
+                    FROM Fees f
+                    INNER JOIN Students s ON f.StudentID = s.StudentID
+                    LEFT JOIN Classes c ON s.ClassID = c.ClassID
+                    WHERE f.DueDate >= @FromDate
+                      AND f.DueDate <= @ToDate";
+
+                if (!string.IsNullOrWhiteSpace(request.AcademicYear))
+                    query += " AND f.AcademicYear = @AcademicYear";
+
+                if (request.ClassID.HasValue)
+                    query += " AND s.ClassID = @ClassID";
+
+                if (!string.IsNullOrWhiteSpace(request.Section))
+                    query += " AND (s.Section = @Section OR EXISTS (SELECT 1 FROM StudentClasses sc WHERE sc.StudentID = s.StudentID AND sc.Section = @Section))";
+
+                if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
+                    query += " AND f.Status = @Status";
+
+                if (!string.IsNullOrWhiteSpace(request.SearchText))
+                    query += " AND (s.FullName LIKE @Search OR f.FeeType LIKE @Search OR f.ReceiptNumber LIKE @Search)";
+
+                query += " ORDER BY f.DueDate DESC, f.FeeID DESC";
                 return ExecuteQuery(query, request);
             }
 
             if (TableExists("StudentFees"))
-            {
-                string query = "SELECT * FROM StudentFees WHERE 1 = 1";
-                return ExecuteQuery(query, request);
-            }
+                return ExecuteQuery("SELECT * FROM StudentFees", request);
 
             if (TableExists("Receipts"))
-            {
-                string query = "SELECT * FROM Receipts WHERE 1 = 1";
-                return ExecuteQuery(query, request);
-            }
+                return ExecuteQuery("SELECT * FROM Receipts", request);
 
             return CreateMessageTable("لم يتم العثور على جدول رسوم معروف مثل Fees أو StudentFees أو Receipts.");
         }
@@ -463,16 +501,94 @@ namespace SchoolSystem.DataAccess
 
         private DataTable GetMarksReport(ReportRequest request)
         {
+            if (TableExists("StudentGrades"))
+            {
+                string query = @"
+                    SELECT
+                        sg.StudentGradeID AS [المعرف],
+                        sg.StudentID AS [رقم الطالب],
+                        s.FullName AS [اسم الطالب],
+                        sg.ClassID AS [رقم الصف],
+                        c.ClassName AS [الصف],
+                        sg.Section AS [الشعبة],
+                        sg.AcademicYear AS [العام الدراسي],
+                        sg.SubjectID AS [رقم المادة],
+                        sub.SubjectName AS [المادة],
+                        sg.TermName AS [الفصل الدراسي],
+                        sg.Quiz1 AS [اختبار 1],
+                        sg.Quiz2 AS [اختبار 2],
+                        sg.CourseWork AS [أعمال السنة],
+                        sg.FinalExam AS [الاختبار النهائي],
+                        sg.Total AS [المجموع],
+                        sg.GradeLetter AS [التقدير],
+                        sg.ResultStatus AS [النتيجة],
+                        sg.Notes AS [ملاحظات],
+                        sg.CreatedAt AS [تاريخ الإنشاء],
+                        sg.UpdatedAt AS [تاريخ التعديل]
+                    FROM StudentGrades sg
+                    INNER JOIN Students s ON sg.StudentID = s.StudentID
+                    LEFT JOIN Classes c ON sg.ClassID = c.ClassID
+                    LEFT JOIN Subjects sub ON sg.SubjectID = sub.SubjectID
+                    WHERE sg.CreatedAt >= @FromDate
+                      AND sg.CreatedAt <= @ToDate";
+
+                if (!string.IsNullOrWhiteSpace(request.AcademicYear))
+                    query += " AND sg.AcademicYear = @AcademicYear";
+
+                if (request.ClassID.HasValue)
+                    query += " AND sg.ClassID = @ClassID";
+
+                if (!string.IsNullOrWhiteSpace(request.Section))
+                    query += " AND sg.Section = @Section";
+
+                if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
+                    query += " AND sg.ResultStatus = @Status";
+
+                if (!string.IsNullOrWhiteSpace(request.SearchText))
+                    query += " AND (s.FullName LIKE @Search OR sub.SubjectName LIKE @Search OR sg.TermName LIKE @Search)";
+
+                query += " ORDER BY sg.CreatedAt DESC, sg.StudentGradeID DESC";
+                return ExecuteQuery(query, request);
+            }
+
             if (TableExists("Marks"))
-                return ExecuteQuery("SELECT * FROM Marks", request);
+            {
+                string query = @"
+                    SELECT
+                        m.MarkID AS [المعرف],
+                        m.StudentID AS [رقم الطالب],
+                        s.FullName AS [اسم الطالب],
+                        s.ClassID AS [رقم الصف],
+                        c.ClassName AS [الصف],
+                        m.SubjectID AS [رقم المادة],
+                        sub.SubjectName AS [المادة],
+                        m.TeacherID AS [رقم المعلم],
+                        t.FullName AS [المعلم],
+                        m.Mark AS [الدرجة],
+                        m.ExamType AS [نوع الاختبار],
+                        m.CreatedAt AS [تاريخ الإنشاء]
+                    FROM Marks m
+                    INNER JOIN Students s ON m.StudentID = s.StudentID
+                    LEFT JOIN Classes c ON s.ClassID = c.ClassID
+                    INNER JOIN Subjects sub ON m.SubjectID = sub.SubjectID
+                    LEFT JOIN Teachers t ON m.TeacherID = t.TeacherID
+                    WHERE m.CreatedAt >= @FromDate
+                      AND m.CreatedAt <= @ToDate";
+
+                if (request.ClassID.HasValue)
+                    query += " AND s.ClassID = @ClassID";
+
+                if (!string.IsNullOrWhiteSpace(request.SearchText))
+                    query += " AND (s.FullName LIKE @Search OR sub.SubjectName LIKE @Search OR m.ExamType LIKE @Search)";
+
+                query += " ORDER BY m.CreatedAt DESC, m.MarkID DESC";
+                return ExecuteQuery(query, request);
+            }
 
             if (TableExists("Grades"))
                 return ExecuteQuery("SELECT * FROM Grades", request);
 
-            if (TableExists("StudentGrades"))
-                return ExecuteQuery("SELECT * FROM StudentGrades", request);
-
-            return CreateMessageTable("لم يتم العثور على جدول درجات معروف مثل Marks أو Grades أو StudentGrades.");
+            return CreateMessageTable("لم يتم العثور على جدول درجات معروف مثل StudentGrades أو Marks أو Grades.");
         }
 
         private DataTable ExecuteQuery(string query, ReportRequest request)
