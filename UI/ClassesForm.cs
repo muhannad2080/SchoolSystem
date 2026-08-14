@@ -281,7 +281,7 @@ namespace SchoolSystem.UI
                 }
                 else
                 {
-                    ShowWarning("لم يتم العثور على الفصل.");
+                    ShowWarning("لم يتم العثور على الفصل أو لم يتم تعديله.");
                 }
             }
             catch (Exception ex)
@@ -514,7 +514,7 @@ namespace SchoolSystem.UI
                 }
                 else
                 {
-                    ShowWarning("لم يتم العثور على القاعة.");
+                    ShowWarning("لم يتم العثور على القاعة أو لم يتم تعديلها.");
                 }
             }
             catch (Exception ex)
@@ -554,7 +554,7 @@ namespace SchoolSystem.UI
                 }
                 else
                 {
-                    ShowWarning("لم يتم العثور على القاعة.");
+                    ShowWarning("لم يتم العثور على القاعة أو لم يتم حذفها.");
                 }
             }
             catch (Exception ex)
@@ -713,35 +713,17 @@ namespace SchoolSystem.UI
 
         private void ShowInfo(string message)
         {
-            MessageBox.Show(
-                message,
-                "معلومة",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowInfo(message);
         }
 
         private void ShowWarning(string message)
         {
-            MessageBox.Show(
-                message,
-                "تنبيه",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowWarning(message);
         }
 
         private void ShowError(string message)
         {
-            MessageBox.Show(
-                message,
-                "خطأ",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowError(message);
         }
     }
 }
