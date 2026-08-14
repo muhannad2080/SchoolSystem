@@ -91,6 +91,13 @@ namespace SchoolSystem.Helpers
                 form.RightToLeft = RightToLeft.Yes;
                 form.RightToLeftLayout = true;
                 form.AutoScroll = true;
+                form.Padding = new Padding(Space16);
+            }
+            else if (root is UserControl userControl)
+            {
+                userControl.AutoScroll = true;
+                userControl.Padding = new Padding(Space16);
+                userControl.RightToLeft = RightToLeft.Yes;
             }
 
             ApplyResponsiveLayoutRecursive(root);
@@ -100,16 +107,40 @@ namespace SchoolSystem.Helpers
         {
             foreach (Control child in control.Controls)
             {
+                child.RightToLeft = RightToLeft.Yes;
+                child.Margin = new Padding(Space4);
+
                 if (child is DataGridView grid)
                 {
                     grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
                     grid.ScrollBars = ScrollBars.Both;
                     grid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+                    grid.MinimumSize = new Size(320, 180);
                 }
                 else if (child is TableLayoutPanel layout)
                 {
                     layout.AutoSize = false;
                     layout.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+                    layout.Padding = new Padding(Space8);
+                }
+                else if (child is FlowLayoutPanel flow)
+                {
+                    flow.WrapContents = true;
+                    flow.AutoScroll = true;
+                    flow.Padding = new Padding(Space8);
+                }
+                else if (child is Button button)
+                {
+                    button.AutoSize = false;
+                    button.MinimumSize = new Size(96, 38);
+                }
+                else if (child is TextBox textBox)
+                {
+                    textBox.MinimumSize = new Size(120, 34);
+                }
+                else if (child is ComboBox comboBox)
+                {
+                    comboBox.MinimumSize = new Size(120, 34);
                 }
 
                 ApplyResponsiveLayoutRecursive(child);
@@ -221,7 +252,8 @@ namespace SchoolSystem.Helpers
                 {
                     groupBox.BackColor = SurfaceColor;
                     groupBox.ForeColor = TextColor;
-                    groupBox.Font = new Font("Tahoma", 10F, FontStyle.Bold);
+                    groupBox.Font = SectionFont;
+                    groupBox.Padding = new Padding(Space12, Space16, Space12, Space12);
                 }
                 else if (child is Label label)
                 {
@@ -372,7 +404,7 @@ namespace SchoolSystem.Helpers
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgv.ColumnHeadersHeight = 40;
+            dgv.ColumnHeadersHeight = 42;
 
             dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
@@ -385,7 +417,7 @@ namespace SchoolSystem.Helpers
             dgv.AlternatingRowsDefaultCellStyle.BackColor = AlternateRowColor;
             dgv.RowsDefaultCellStyle.BackColor = SurfaceColor;
             dgv.RowsDefaultCellStyle.ForeColor = TextColor;
-            dgv.RowTemplate.Height = 35;
+            dgv.RowTemplate.Height = 36;
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgv.AllowUserToAddRows = false;
             dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
@@ -404,6 +436,8 @@ namespace SchoolSystem.Helpers
             btn.Cursor = Cursors.Hand;
             btn.Font = HeadingFont;
             btn.Height = 38;
+            btn.MinimumSize = new Size(96, 38);
+            btn.AutoSize = false;
             btn.Padding = new Padding(10, 0, 10, 0);
         }
 
