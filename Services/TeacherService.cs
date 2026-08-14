@@ -12,6 +12,7 @@ namespace SchoolSystem.Services
     public class TeacherService
     {
         private readonly TeacherRepository _repository;
+        private readonly AuditLogService _auditLogService = new AuditLogService();
 
         public TeacherService()
         {
@@ -56,6 +57,8 @@ namespace SchoolSystem.Services
                 throw new Exception("البريد الإلكتروني مستخدم مسبقاً.");
 
             _repository.AddTeacher(teacher);
+            _auditLogService.Record("إنشاء", "Teacher", teacher.TeacherID.ToString(),
+                "إضافة معلم: " + (teacher.FullName ?? string.Empty));
         }
 
         public void UpdateTeacher(Teacher teacher)
@@ -73,6 +76,8 @@ namespace SchoolSystem.Services
                 throw new Exception("البريد الإلكتروني مستخدم مسبقاً.");
 
             _repository.UpdateTeacher(teacher);
+            _auditLogService.Record("تعديل", "Teacher", teacher.TeacherID.ToString(),
+                "تعديل بيانات المعلم: " + (teacher.FullName ?? string.Empty));
         }
 
         public void DeleteTeacher(int teacherId)
@@ -81,6 +86,8 @@ namespace SchoolSystem.Services
             if (teacherId <= 0)
                 throw new Exception("يرجى اختيار معلم للحذف.");
             _repository.DeleteTeacher(teacherId);
+            _auditLogService.Record("حذف", "Teacher", teacherId.ToString(),
+                "حذف سجل المعلم.");
         }
 
         public int GetMaxEmployeeNumberSuffix(int year)
