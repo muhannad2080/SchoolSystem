@@ -68,8 +68,11 @@ namespace SchoolSystem
             lblUsername.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
             lblUsername.Padding = new Padding(12, 0, 12, 0);
 
-            if (!lblUsername.Text.Contains("👤"))
-                lblUsername.Text = "👤 " + lblUsername.Text;
+            string currentUserText = lblUsername.Text ?? string.Empty;
+            if (currentUserText.StartsWith("المستخدم:", StringComparison.Ordinal))
+                currentUserText = currentUserText.Substring("المستخدم:".Length).Trim();
+
+            lblUsername.Text = "المستخدم: " + currentUserText;
 
             lblDateTime.ForeColor = UIHelper.MutedTextColor;
             lblDateTime.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
@@ -104,7 +107,7 @@ namespace SchoolSystem
             if (string.IsNullOrWhiteSpace(displayName))
                 displayName = "مستخدم";
 
-            lblUsername.Text = "👤 " + displayName;
+            lblUsername.Text = "المستخدم: " + displayName;
         }
 
         private void StyleDropDownItems(ToolStripMenuItem parent)
