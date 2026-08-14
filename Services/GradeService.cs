@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
 using SchoolSystem.Security;
@@ -21,7 +20,7 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandPermission(PermissionKeys.GradesManage, "ليس لديك صلاحية إدارة الدرجات.");
             if (classId <= 0)
-                return repository.GetAllSubjects();
+                throw new ArgumentException("يجب اختيار الصف قبل تحميل المواد.");
 
             return repository.GetSubjectsByClass(classId);
         }
@@ -38,7 +37,7 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(academicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
-            if (!Regex.IsMatch(academicYear.Trim(), @"^[0-9]{4}/[0-9]{4}$"))
+            if (!IsValidAcademicYear(academicYear))
                 throw new ArgumentException("صيغة العام الدراسي يجب أن تكون مثل 2026/2027.");
 
             if (subjectId <= 0)
@@ -127,6 +126,22 @@ namespace SchoolSystem.Services
 
             if (total > 100)
                 throw new ArgumentException("مجموع الدرجات لا يمكن أن يتجاوز 100.");
+        }
+
+        private bool IsValidAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
+                return false;
+            if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
+                return false;
+
+            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
         }
 
         private void ValidateMark(decimal value, string fieldName)
