@@ -562,29 +562,57 @@ namespace SchoolSystem.UI
 
         private void FillFieldsFromRow(DataRow row)
         {
-            selectedUserId = Convert.ToInt32(row["UserID"]);
+            if (row == null)
+                return;
 
-            txtFullName.Text = row["FullName"] == DBNull.Value ? "" : row["FullName"].ToString();
-            txtUserName.Text = row["UserName"] == DBNull.Value ? "" : row["UserName"].ToString();
+            selectedUserId = ReadRowInt(row, "UserID");
 
-            string roleName = row["RoleName"] == DBNull.Value ? "" : row["RoleName"].ToString();
+            txtFullName.Text = ReadRowText(row, "FullName");
+            txtUserName.Text = ReadRowText(row, "UserName");
+
+            string roleName = ReadRowText(row, "RoleName");
 
             if (cmbRole.Items.Contains(roleName))
                 cmbRole.SelectedItem = roleName;
             else
                 cmbRole.Text = roleName;
 
-            txtEmail.Text = row["Email"] == DBNull.Value ? "" : row["Email"].ToString();
-            txtPhone.Text = row["Phone"] == DBNull.Value ? "" : row["Phone"].ToString();
+            txtEmail.Text = ReadRowText(row, "Email");
+            txtPhone.Text = ReadRowText(row, "Phone");
 
-            chkIsActive.Checked = row["IsActive"] != DBNull.Value && Convert.ToBoolean(row["IsActive"]);
-            chkMustChangePassword.Checked = row["MustChangePassword"] != DBNull.Value && Convert.ToBoolean(row["MustChangePassword"]);
+            chkIsActive.Checked = ReadRowBool(row, "IsActive", true);
+            chkMustChangePassword.Checked = ReadRowBool(row, "MustChangePassword", true);
 
             txtPassword.Clear();
             txtConfirmPassword.Clear();
 
-            string permissions = row["Permissions"] == DBNull.Value ? "" : row["Permissions"].ToString();
+            string permissions = ReadRowText(row, "Permissions");
             SetPermissionsFromString(permissions);
+        }
+
+        private string ReadRowText(DataRow row, string columnName)
+        {
+            if (row == null || row.Table == null || !row.Table.Columns.Contains(columnName))
+                return string.Empty;
+
+            object value = row[columnName];
+            return value == null || value == DBNull.Value ? string.Empty : value.ToString();
+        }
+
+        private int ReadRowInt(DataRow row, string columnName)
+        {
+            int value;
+            return int.TryParse(ReadRowText(row, columnName), out value) ? value : 0;
+        }
+
+        private bool ReadRowBool(DataRow row, string columnName, bool fallback)
+        {
+            string value = ReadRowText(row, columnName);
+            if (string.IsNullOrWhiteSpace(value))
+                return fallback;
+
+            bool parsed;
+            return bool.TryParse(value, out parsed) ? parsed : fallback;
         }
 
         private bool ContainsDigits(string value)
