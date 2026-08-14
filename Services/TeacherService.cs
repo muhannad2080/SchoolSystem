@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -19,20 +20,33 @@ namespace SchoolSystem.Services
             _repository = new TeacherRepository(connectionString);
         }
 
-        public DataTable GetAllTeachers() => _repository.GetAllTeachers();
+        public DataTable GetAllTeachers()
+        {
+            CurrentUser.DemandAny(
+                "ليس لديك صلاحية عرض بيانات المعلمين.",
+                PermissionKeys.TeachersManage,
+                PermissionKeys.PayrollManage,
+                PermissionKeys.StaffAttendanceManage,
+                PermissionKeys.LibraryManage,
+                PermissionKeys.TimetableManage);
+            return _repository.GetAllTeachers();
+        }
 
         public bool IsNationalIDUnique(string nationalID, int? excludeTeacherId = null)
         {
+            DemandTeacherLookupAccess();
             return _repository.IsNationalIDUnique(nationalID, excludeTeacherId);
         }
 
         public bool IsEmailUnique(string email, int? excludeTeacherId = null)
         {
+            DemandTeacherLookupAccess();
             return _repository.IsEmailUnique(email, excludeTeacherId);
         }
 
         public void AddTeacher(Teacher teacher)
         {
+            CurrentUser.DemandPermission(PermissionKeys.TeachersManage, "ليس لديك صلاحية إدارة المعلمين.");
             ValidateTeacher(teacher);
             
             if (!_repository.IsNationalIDUnique(teacher.NationalID))
@@ -46,6 +60,7 @@ namespace SchoolSystem.Services
 
         public void UpdateTeacher(Teacher teacher)
         {
+            CurrentUser.DemandPermission(PermissionKeys.TeachersManage, "ليس لديك صلاحية إدارة المعلمين.");
             if (teacher.TeacherID <= 0)
                 throw new Exception("يرجى اختيار معلم للتعديل.");
 
@@ -62,12 +77,17 @@ namespace SchoolSystem.Services
 
         public void DeleteTeacher(int teacherId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.TeachersManage, "ليس لديك صلاحية إدارة المعلمين.");
             if (teacherId <= 0)
                 throw new Exception("يرجى اختيار معلم للحذف.");
             _repository.DeleteTeacher(teacherId);
         }
 
-        public int GetMaxEmployeeNumberSuffix(int year) => _repository.GetMaxEmployeeNumberSuffix(year);
+        public int GetMaxEmployeeNumberSuffix(int year)
+        {
+            DemandTeacherLookupAccess();
+            return _repository.GetMaxEmployeeNumberSuffix(year);
+        }
 
         public void ValidateTeacher(Teacher teacher)
         {
@@ -117,6 +137,17 @@ namespace SchoolSystem.Services
                 if (!Regex.IsMatch(teacher.NationalID, @"^[0-9]{6,20}$"))
                     throw new Exception("رقم الهوية يجب أن يحتوي على أرقام فقط.");
             }
+        }
+
+        private void DemandTeacherLookupAccess()
+        {
+            CurrentUser.DemandAny(
+                "ليس لديك صلاحية عرض بيانات المعلمين.",
+                PermissionKeys.TeachersManage,
+                PermissionKeys.PayrollManage,
+                PermissionKeys.StaffAttendanceManage,
+                PermissionKeys.LibraryManage,
+                PermissionKeys.TimetableManage);
         }
 
         private bool ContainsDigits(string value)

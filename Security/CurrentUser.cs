@@ -79,6 +79,12 @@ namespace SchoolSystem.Security
                 throw new UnauthorizedAccessException(message);
         }
 
+        public static void DemandAny(string message, params string[] permissionKeys)
+        {
+            if (!HasAny(permissionKeys))
+                throw new UnauthorizedAccessException(message);
+        }
+
         private static HashSet<string> ParsePermissions(string permissions)
         {
             if (string.IsNullOrWhiteSpace(permissions))
