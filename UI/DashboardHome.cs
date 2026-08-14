@@ -226,10 +226,11 @@ namespace SchoolSystem.UI
                 lblPendingFees.Text = $"رسوم غير مدفوعة: {pendingFees}";
                 lblTodayAbsence.Text = $"غياب اليوم: {todayAbsence}";
             }
-            catch
+            catch (Exception ex)
             {
-                lblPendingFees.Text = "رسوم غير مدفوعة: --";
-                lblTodayAbsence.Text = "غياب اليوم: --";
+                lblPendingFees.Text = "الرسوم غير المدفوعة: تعذر التحميل";
+                lblTodayAbsence.Text = "غياب اليوم: تعذر التحميل";
+                UIHelper.ShowException("تعذر تحميل تنبيهات لوحة التحكم: ", ex);
             }
         }
     }
