@@ -64,8 +64,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                LogException("UsersForm_Load", ex);
-                ShowError("تعذر تحميل بيانات المستخدمين. تحقق من الاتصال وحاول مرة أخرى.");
+                UIHelper.ShowException("تحميل بيانات المستخدمين", ex);
             }
             finally
             {
@@ -464,8 +463,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                LogException("AddUser", ex);
-                ShowError(GetSafeOperationError("الإضافة", ex));
+                UIHelper.ShowException("إضافة المستخدم", ex);
             }
         }
 
@@ -498,8 +496,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                LogException("UpdateUser", ex);
-                ShowError(GetSafeOperationError("التعديل", ex));
+                UIHelper.ShowException("تعديل المستخدم", ex);
             }
         }
 
@@ -533,8 +530,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                LogException("DeleteUser", ex);
-                ShowError(GetSafeOperationError("الحذف", ex));
+                UIHelper.ShowException("حذف المستخدم", ex);
             }
         }
 
@@ -703,36 +699,5 @@ namespace SchoolSystem.UI
                 MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
         }
 
-        private string GetSafeOperationError(string operation, Exception ex)
-        {
-            if (ex is UnauthorizedAccessException || ex is InvalidOperationException)
-                return ex.Message;
-
-            return "تعذر تنفيذ " + operation + " المستخدم. تحقق من البيانات والاتصال ثم حاول مرة أخرى.";
-        }
-
-        private void LogException(string operation, Exception ex)
-        {
-            try
-            {
-                string directory = System.IO.Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "SchoolSystem", "Logs");
-                System.IO.Directory.CreateDirectory(directory);
-                string path = System.IO.Path.Combine(directory, "errors.log");
-                System.IO.File.AppendAllText(path,
-                    DateTime.Now.ToString("s") + " [" + operation + "] " + ex + Environment.NewLine);
-            }
-            catch
-            {
-                // لا نسمح لفشل التسجيل بأن يعطل واجهة المستخدم.
-            }
-        }
-
-        private void ShowError(string message)
-        {
-            MessageBox.Show(message, "خطأ", MessageBoxButtons.OK, MessageBoxIcon.Error,
-                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
-        }
     }
 }
