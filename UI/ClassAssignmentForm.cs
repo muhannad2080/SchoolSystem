@@ -102,22 +102,14 @@ namespace SchoolSystem.UI.Students
                 if (cmbClass.Items.Count > 0)
                     cmbClass.SelectedIndex = 0;
             }
-            catch
+            catch (Exception ex)
             {
-                DataTable fallback = new DataTable();
-                fallback.Columns.Add("ClassID", typeof(int));
-                fallback.Columns.Add("ClassName", typeof(string));
-
-                fallback.Rows.Add(1, "الصف الأول");
-                fallback.Rows.Add(2, "الصف الثاني");
-                fallback.Rows.Add(3, "الصف الثالث");
-
-                cmbClass.DataSource = fallback;
-                cmbClass.DisplayMember = "ClassName";
-                cmbClass.ValueMember = "ClassID";
-
-                if (cmbClass.Items.Count > 0)
-                    cmbClass.SelectedIndex = 0;
+                cmbClass.DataSource = null;
+                cmbClass.Items.Clear();
+                cmbClass.Items.Add("تعذر تحميل الصفوف");
+                cmbClass.SelectedIndex = 0;
+                cmbClass.Enabled = false;
+                UIHelper.ShowException("تحميل صفوف توزيع الطلاب", ex);
             }
         }
 
