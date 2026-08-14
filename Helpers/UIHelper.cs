@@ -91,12 +91,10 @@ namespace SchoolSystem.Helpers
                 form.RightToLeft = RightToLeft.Yes;
                 form.RightToLeftLayout = true;
                 form.AutoScroll = true;
-                form.Padding = new Padding(Space16);
             }
             else if (root is UserControl userControl)
             {
                 userControl.AutoScroll = true;
-                userControl.Padding = new Padding(Space16);
                 userControl.RightToLeft = RightToLeft.Yes;
             }
 
@@ -167,21 +165,18 @@ namespace SchoolSystem.Helpers
                 {
                     kryptonButton.ForeColor = Color.White;
                     kryptonButton.Font = new Font(FontFamily, BodyFontSize, FontStyle.Bold);
-                    kryptonButton.MinimumSize = new Size(90, 38);
                     kryptonButton.Cursor = Cursors.Hand;
                 }
                 else if (child is KryptonTextBox kryptonTextBox)
                 {
                     kryptonTextBox.ForeColor = TextColor;
                     kryptonTextBox.Font = new Font(FontFamily, BodyFontSize);
-                    kryptonTextBox.MinimumSize = new Size(120, 34);
                 }
                 else if (child is KryptonComboBox kryptonComboBox)
                 {
                     kryptonComboBox.ForeColor = TextColor;
                     kryptonComboBox.Font = new Font(FontFamily, BodyFontSize);
                     kryptonComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-                    kryptonComboBox.MinimumSize = new Size(120, 34);
                 }
                 else if (child is KryptonLabel kryptonLabel)
                 {
