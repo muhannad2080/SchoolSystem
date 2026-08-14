@@ -13,6 +13,7 @@ namespace SchoolSystem
         public static MainForm Instance { get; private set; }
         private bool handoffToAuthenticatedSession;
         private ToolStripMenuItem tsmiAuditLogs;
+        private ToolStripMenuItem tsmiSettings;
 
         public MainForm()
         {
@@ -41,6 +42,7 @@ namespace SchoolSystem
             tsmiAuditLogs.Click += tsmiAuditLogs_Click;
             menuStripMain.Items.Add(tsmiAuditLogs);
         }
+
 
         private void ApplyModernMenuStyle()
         {
@@ -280,7 +282,7 @@ namespace SchoolSystem
                 tsmiTeachersPayroll, tsmiAcademic, tsmiSubjects, tsmiClasses, tsmiTimetable,
                 tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
                 tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiTransport, tsmiLibrary,
-                tsmiUsers, tsmiReports, tsmiAuditLogs
+                tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings
             };
 
             foreach (ToolStripMenuItem item in permissionItems)
@@ -315,6 +317,7 @@ namespace SchoolSystem
                 tsmiUsers.Visible = true;
                 tsmiReports.Visible = true;
                 tsmiAuditLogs.Visible = true;
+                tsmiSettings.Visible = true;
                 return;
             }
 
@@ -345,6 +348,7 @@ namespace SchoolSystem
             tsmiUsers.Visible = Has(PermissionKeys.UsersManage);
             tsmiReports.Visible = Has(PermissionKeys.ReportsView);
             tsmiAuditLogs.Visible = Has(PermissionKeys.AuditLogsView);
+            tsmiSettings.Visible = Has(PermissionKeys.SettingsManage);
             تعريفرسومالصفوفToolStripMenuItem.Visible = Has(PermissionKeys.FeesManage);
 
             // إخفاء مجموعات القوائم التي لا تحتوي على أي خيار مسموح للمستخدم.
@@ -522,6 +526,14 @@ namespace SchoolSystem
                 return;
 
             LoadUserControl(new ReportCenterForm());
+        }
+
+        private void tsmiSettings_Click(object sender, EventArgs e)
+        {
+            if (!EnsurePermission(PermissionKeys.SettingsManage))
+                return;
+
+            LoadUserControl(new SettingsForm());
         }
 
         private void tsmiAuditLogs_Click(object sender, EventArgs e)

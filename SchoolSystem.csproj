@@ -204,6 +204,8 @@
     <Compile Include="Services\StudentService.cs" />
     <Compile Include="Services\StudentProfileService.cs" />
     <Compile Include="Services\AuditLogService.cs" />
+    <Compile Include="Services\ApplicationSettingsService.cs" />
+    <Compile Include="Services\DatabaseBackupService.cs" />
     <Compile Include="Services\SubjectService.cs" />
     <Compile Include="Services\TeacherAttendanceService.cs" />
     <Compile Include="Services\TeacherContractService.cs" />
@@ -294,6 +296,12 @@
     </Compile>
     <Compile Include="UI\StaffAttendanceForm.Designer.cs">
       <DependentUpon>StaffAttendanceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\SettingsForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\StudentsForm.cs">
       <SubType>Form</SubType>

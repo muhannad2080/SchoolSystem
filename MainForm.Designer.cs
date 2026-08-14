@@ -45,6 +45,7 @@
             this.tsmiUsers = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiReports = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLogout = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.panelTop = new Krypton.Toolkit.KryptonPanel();
             this.lblDateTime = new Krypton.Toolkit.KryptonLabel();
             this.lblUsername = new Krypton.Toolkit.KryptonLabel();
@@ -76,6 +77,7 @@
                 this.tsmiLibrary,
                 this.tsmiUsers,
                 this.tsmiReports,
+                this.tsmiSettings,
                 this.tsmiLogout
             });
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
@@ -85,6 +87,12 @@
             this.menuStripMain.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.menuStripMain.Size = new System.Drawing.Size(1200, 41);
             this.menuStripMain.TabIndex = 0;
+
+            // tsmiSettings
+            this.tsmiSettings.Name = "tsmiSettings";
+            this.tsmiSettings.Size = new System.Drawing.Size(180, 29);
+            this.tsmiSettings.Text = "الإعدادات";
+            this.tsmiSettings.Click += new System.EventHandler(this.tsmiSettings_Click);
 
             // tsmiDashboard
             this.tsmiDashboard.Name = "tsmiDashboard";
@@ -395,6 +403,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiUsers;
         private System.Windows.Forms.ToolStripMenuItem tsmiReports;
         private System.Windows.Forms.ToolStripMenuItem tsmiLogout;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSettings;
 
         private Krypton.Toolkit.KryptonPanel panelTop;
         private Krypton.Toolkit.KryptonLabel lblSystemTitle;

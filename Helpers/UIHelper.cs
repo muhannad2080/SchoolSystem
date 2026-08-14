@@ -562,6 +562,12 @@ namespace SchoolSystem.Helpers
                 MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
         }
 
+        public static void ShowInformation(string message)
+        {
+            MessageBox.Show(message, "تمت العملية", MessageBoxButtons.OK, MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+        }
+
         public static void ShowWarning(string message)
         {
             MessageBox.Show(message, "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning, 

@@ -1,0 +1,88 @@
+using System;
+using System.Configuration;
+using System.IO;
+using System.Xml.Serialization;
+
+namespace SchoolSystem.Services
+{
+    [Serializable]
+    public class ApplicationSettingsData
+    {
+        public string ServerInstance { get; set; }
+        public string DatabaseName { get; set; }
+        public string BackupDirectory { get; set; }
+    }
+
+    public static class ApplicationSettingsService
+    {
+        private static readonly string SettingsDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SchoolSystem");
+        private static readonly string SettingsFile = Path.Combine(SettingsDirectory, "application-settings.xml");
+
+        public static ApplicationSettingsData Load()
+        {
+            try
+            {
+                if (File.Exists(SettingsFile))
+                {
+                    using (FileStream stream = File.OpenRead(SettingsFile))
+                    {
+                        ApplicationSettingsData value = (ApplicationSettingsData)new XmlSerializer(typeof(ApplicationSettingsData)).Deserialize(stream);
+                        if (value != null)
+                            return ApplyDefaults(value);
+                    }
+                }
+            }
+            catch
+            {
+                // Fall back to safe defaults. A corrupted local settings file must not prevent login.
+            }
+
+            return ApplyDefaults(new ApplicationSettingsData());
+        }
+
+        public static void Save(ApplicationSettingsData value)
+        {
+            if (value == null)
+                throw new ArgumentNullException("value");
+
+            value = ApplyDefaults(value);
+            Directory.CreateDirectory(SettingsDirectory);
+            string temporaryFile = SettingsFile + ".tmp";
+            using (FileStream stream = File.Create(temporaryFile))
+            {
+                new XmlSerializer(typeof(ApplicationSettingsData)).Serialize(stream, value);
+            }
+            if (File.Exists(SettingsFile))
+                File.Delete(SettingsFile);
+            File.Move(temporaryFile, SettingsFile);
+        }
+
+        private static ApplicationSettingsData ApplyDefaults(ApplicationSettingsData value)
+        {
+            if (string.IsNullOrWhiteSpace(value.ServerInstance))
+                value.ServerInstance = ReadConfiguredServer() ?? ".";
+            if (string.IsNullOrWhiteSpace(value.DatabaseName))
+                value.DatabaseName = "SchoolDB";
+            if (string.IsNullOrWhiteSpace(value.BackupDirectory))
+                value.BackupDirectory = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "SchoolSystemBackups");
+            return value;
+        }
+
+        private static string ReadConfiguredServer()
+        {
+            try
+            {
+                ConnectionStringSettings setting = ConfigurationManager.ConnectionStrings["SchoolDBConnection"];
+                if (setting == null)
+                    return null;
+                return new System.Data.SqlClient.SqlConnectionStringBuilder(setting.ConnectionString).DataSource;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+    }
+}
