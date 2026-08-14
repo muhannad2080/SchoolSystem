@@ -25,6 +25,13 @@ namespace SchoolSystem.UI
         private Button btnPreview;
         private Button btnPrint;
         private Button btnExportCsv;
+        private DateTimePicker dtpFilterFrom;
+        private DateTimePicker dtpFilterTo;
+        private Label lblFilterFrom;
+        private Label lblFilterTo;
+        private Label lblTotalReceipts;
+        private Label lblTotalPayments;
+        private Label lblNetBalance;
         private readonly PrintDocument voucherPrintDocument = new PrintDocument();
         private Voucher voucherToPrint;
 
@@ -34,6 +41,7 @@ namespace SchoolSystem.UI
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
             ConfigureFinancialActions();
+            ConfigureMovementSummary();
             voucherPrintDocument.PrintPage += VoucherPrintDocument_PrintPage;
             Load += VouchersForm_Load;
         }
@@ -62,6 +70,78 @@ namespace SchoolSystem.UI
             btnPreview.Location = new Point(235, 10);
             btnNewPayment.Location = new Point(350, 10);
             btnNewReceipt.Location = new Point(465, 10);
+        }
+
+        private void ConfigureMovementSummary()
+        {
+            panelSearch.Height = 88;
+            panelSearch.Padding = new Padding(12, 6, 12, 4);
+
+            lblFilterFrom = CreateSummaryLabel("من:");
+            lblFilterTo = CreateSummaryLabel("إلى:");
+            dtpFilterFrom = CreateFilterDatePicker();
+            dtpFilterTo = CreateFilterDatePicker();
+
+            panelSearch.Controls.Add(lblFilterFrom);
+            panelSearch.Controls.Add(dtpFilterFrom);
+            panelSearch.Controls.Add(lblFilterTo);
+            panelSearch.Controls.Add(dtpFilterTo);
+
+            lblFilterFrom.SetBounds(975, 8, 42, 26);
+            dtpFilterFrom.SetBounds(815, 8, 155, 26);
+            lblFilterTo.SetBounds(770, 8, 42, 26);
+            dtpFilterTo.SetBounds(610, 8, 155, 26);
+
+            lblTotalReceipts = CreateMovementLabel(Color.FromArgb(22, 160, 133));
+            lblTotalPayments = CreateMovementLabel(Color.FromArgb(142, 68, 173));
+            lblNetBalance = CreateMovementLabel(Color.FromArgb(41, 128, 185));
+
+            panelSearch.Controls.Add(lblTotalReceipts);
+            panelSearch.Controls.Add(lblTotalPayments);
+            panelSearch.Controls.Add(lblNetBalance);
+
+            lblTotalReceipts.SetBounds(760, 51, 215, 28);
+            lblTotalPayments.SetBounds(535, 51, 215, 28);
+            lblNetBalance.SetBounds(310, 51, 215, 28);
+
+            dtpFilterFrom.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            dtpFilterTo.Value = DateTime.Today;
+            dtpFilterFrom.ValueChanged += FilterControls_Changed;
+            dtpFilterTo.ValueChanged += FilterControls_Changed;
+        }
+
+        private Label CreateSummaryLabel(string text)
+        {
+            return new Label
+            {
+                Text = text,
+                TextAlign = ContentAlignment.MiddleRight,
+                Font = new Font("Tahoma", 9.5F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(33, 42, 57)
+            };
+        }
+
+        private DateTimePicker CreateFilterDatePicker()
+        {
+            return new DateTimePicker
+            {
+                Format = DateTimePickerFormat.Custom,
+                CustomFormat = "dd/MM/yyyy",
+                Font = new Font("Tahoma", 9F)
+            };
+        }
+
+        private Label CreateMovementLabel(Color color)
+        {
+            return new Label
+            {
+                TextAlign = ContentAlignment.MiddleCenter,
+                BackColor = Color.White,
+                ForeColor = color,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font("Tahoma", 9F, FontStyle.Bold),
+                Padding = new Padding(4, 0, 4, 0)
+            };
         }
 
         private Button CreateActionButton(string text, Color color)
@@ -345,11 +425,51 @@ namespace SchoolSystem.UI
 
             dv.RowFilter = filter;
 
-            dataGridViewVouchers.DataSource = dv;
+            DateTime fromDate = dtpFilterFrom == null ? DateTime.MinValue.Date : dtpFilterFrom.Value.Date;
+            DateTime toDate = dtpFilterTo == null ? DateTime.MaxValue.Date : dtpFilterTo.Value.Date;
+            DataTable filtered = allVouchers.Clone();
+            decimal receipts = 0m;
+            decimal payments = 0m;
 
-            lblRecordCount.Text = "عدد السندات: " + dv.Count;
+            foreach (DataRowView rowView in dv)
+            {
+                DataRow row = rowView.Row;
+                DateTime voucherDate = row["VoucherDate"] == DBNull.Value
+                    ? DateTime.MinValue.Date
+                    : Convert.ToDateTime(row["VoucherDate"]).Date;
 
+                if (voucherDate < fromDate || voucherDate > toDate)
+                    continue;
+
+                filtered.ImportRow(row);
+                decimal amount = row["Amount"] == DBNull.Value ? 0m : Convert.ToDecimal(row["Amount"]);
+                string voucherType = row["VoucherType"] == DBNull.Value ? string.Empty : row["VoucherType"].ToString();
+                if (string.Equals(voucherType, "قبض", StringComparison.OrdinalIgnoreCase))
+                    receipts += amount;
+                else if (string.Equals(voucherType, "صرف", StringComparison.OrdinalIgnoreCase))
+                    payments += amount;
+            }
+
+            dataGridViewVouchers.DataSource = filtered;
+            UpdateMovementSummary(filtered.Rows.Count, receipts, payments);
             FormatGrid();
+        }
+
+        private void UpdateMovementSummary(int recordCount, decimal receipts, decimal payments)
+        {
+            decimal net = receipts - payments;
+            if (lblTotalReceipts != null)
+                lblTotalReceipts.Text = "إجمالي القبض: " + receipts.ToString("N2") + " ريال";
+            if (lblTotalPayments != null)
+                lblTotalPayments.Text = "إجمالي الصرف: " + payments.ToString("N2") + " ريال";
+            if (lblNetBalance != null)
+            {
+                lblNetBalance.Text = "الصافي: " + net.ToString("N2") + " ريال";
+                lblNetBalance.ForeColor = net >= 0
+                    ? Color.FromArgb(39, 174, 96)
+                    : Color.FromArgb(192, 57, 43);
+            }
+            lblRecordCount.Text = "عدد السندات ضمن الفترة: " + recordCount;
         }
 
         private string EscapeFilter(string value)
@@ -417,6 +537,12 @@ namespace SchoolSystem.UI
 
         private void FilterControls_Changed(object sender, EventArgs e)
         {
+            if (dtpFilterFrom != null && dtpFilterTo != null && dtpFilterFrom.Value.Date > dtpFilterTo.Value.Date)
+            {
+                UIHelper.ShowWarning("تاريخ البداية يجب ألا يتجاوز تاريخ النهاية.");
+                return;
+            }
+
             if (!isLoading)
                 ApplyFilter();
         }
