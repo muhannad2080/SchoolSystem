@@ -433,10 +433,44 @@ namespace SchoolSystem.DataAccess
             }
 
             if (TableExists("StudentFees"))
-                return ExecuteQuery("SELECT * FROM StudentFees", request);
+            {
+                const string query = @"
+                    SELECT
+                        sf.StudentFeeID AS [المعرف],
+                        sf.StudentID AS [رقم الطالب],
+                        sf.FeeType AS [نوع الرسم],
+                        sf.AcademicYear AS [العام الدراسي],
+                        sf.Amount AS [المبلغ],
+                        sf.PaidAmount AS [المدفوع],
+                        sf.Status AS [الحالة],
+                        sf.Notes AS [ملاحظات],
+                        sf.CreatedAt AS [تاريخ الإنشاء]
+                    FROM StudentFees sf
+                    WHERE sf.CreatedAt >= @FromDate
+                      AND sf.CreatedAt <= @ToDate
+                    ORDER BY sf.CreatedAt DESC, sf.StudentFeeID DESC";
+                return ExecuteQuery(query, request);
+            }
 
             if (TableExists("Receipts"))
-                return ExecuteQuery("SELECT * FROM Receipts", request);
+            {
+                const string query = @"
+                    SELECT
+                        r.ReceiptID AS [المعرف],
+                        r.ReceiptNumber AS [رقم الإيصال],
+                        r.StudentID AS [رقم الطالب],
+                        r.Amount AS [المبلغ],
+                        r.ReceiptDate AS [التاريخ],
+                        r.PaymentMethod AS [طريقة الدفع],
+                        r.Description AS [البيان],
+                        r.Notes AS [ملاحظات],
+                        r.CreatedAt AS [تاريخ الإنشاء]
+                    FROM Receipts r
+                    WHERE r.ReceiptDate >= @FromDate
+                      AND r.ReceiptDate <= @ToDate
+                    ORDER BY r.ReceiptDate DESC, r.ReceiptID DESC";
+                return ExecuteQuery(query, request);
+            }
 
             return CreateMessageTable("لم يتم العثور على جدول رسوم معروف مثل Fees أو StudentFees أو Receipts.");
         }
@@ -586,7 +620,24 @@ namespace SchoolSystem.DataAccess
             }
 
             if (TableExists("Grades"))
-                return ExecuteQuery("SELECT * FROM Grades", request);
+            {
+                const string query = @"
+                    SELECT
+                        g.GradeID AS [المعرف],
+                        g.StudentID AS [رقم الطالب],
+                        g.SubjectID AS [رقم المادة],
+                        g.ClassID AS [رقم الصف],
+                        g.AcademicYear AS [العام الدراسي],
+                        g.TermName AS [الفصل الدراسي],
+                        g.GradeValue AS [الدرجة],
+                        g.Notes AS [ملاحظات],
+                        g.CreatedAt AS [تاريخ الإنشاء]
+                    FROM Grades g
+                    WHERE g.CreatedAt >= @FromDate
+                      AND g.CreatedAt <= @ToDate
+                    ORDER BY g.CreatedAt DESC, g.GradeID DESC";
+                return ExecuteQuery(query, request);
+            }
 
             return CreateMessageTable("لم يتم العثور على جدول درجات معروف مثل StudentGrades أو Marks أو Grades.");
         }
