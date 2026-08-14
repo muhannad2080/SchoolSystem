@@ -91,9 +91,9 @@ namespace SchoolSystem.UI
 
         private async void BackupButton_Click(object sender, EventArgs e)
         {
-            if (!CurrentUser.IsAdmin())
+            if (!CurrentUser.HasPermission(PermissionKeys.SettingsManage))
             {
-                UIHelper.ShowWarning("إنشاء النسخ الاحتياطية متاح لمدير النظام فقط.");
+                UIHelper.ShowWarning("لا تملك صلاحية إدارة الإعدادات والنسخ الاحتياطي.");
                 return;
             }
 
@@ -125,9 +125,9 @@ namespace SchoolSystem.UI
 
         private async void RestoreButton_Click(object sender, EventArgs e)
         {
-            if (!CurrentUser.IsAdmin())
+            if (!CurrentUser.HasPermission(PermissionKeys.SettingsManage))
             {
-                UIHelper.ShowWarning("استعادة قواعد البيانات متاحة لمدير النظام فقط.");
+                UIHelper.ShowWarning("لا تملك صلاحية إدارة الإعدادات والاستعادة.");
                 return;
             }
 

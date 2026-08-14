@@ -187,6 +187,13 @@ namespace SchoolSystem.Services
             if (userRepository.CountUsers() > 0)
                 return;
 
+            // لا تنشئ حساباً بكلمة مرور ثابتة داخل التطبيق أو المستودع.
+            // يحدد مسؤول النشر كلمة المرور الأولية خارج الكود قبل أول تشغيل.
+            string initialPassword = Environment.GetEnvironmentVariable("SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD");
+            if (string.IsNullOrWhiteSpace(initialPassword) || initialPassword.Length < 10)
+                throw new InvalidOperationException(
+                    "لا توجد كلمة مرور تهيئة آمنة. عيّن متغير البيئة SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD بطول 10 أحرف على الأقل ثم أعد التشغيل.");
+
             User admin = new User
             {
                 FullName = "مدير النظام",
@@ -199,7 +206,7 @@ namespace SchoolSystem.Services
                 MustChangePassword = false
             };
 
-            AddUser(admin, "admin123");
+            AddUser(admin, initialPassword);
         }
 
         public bool ResetPasswordByUserName(string userName, string newPassword)
