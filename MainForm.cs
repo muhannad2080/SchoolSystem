@@ -252,6 +252,37 @@ namespace SchoolSystem
             if (!CurrentUser.IsLoggedIn)
                 return;
 
+            // مدير النظام يرى كامل كتالوج الواجهات. يبقى EnsurePermission
+            // داخل كل معالج وخدمة هو الحاجز الأمني الفعلي عند الفتح والتنفيذ.
+            if (CurrentUser.IsAdmin())
+            {
+                tsmiDashboard.Visible = true;
+                tsmiStudents.Visible = true;
+                tsmiStudentsManage.Visible = true;
+                tsmiStudentsEnroll.Visible = true;
+                tsmiStudentsClasses.Visible = true;
+                tsmiTeachers.Visible = true;
+                tsmiTeachersManage.Visible = true;
+                tsmiTeachersAttendance.Visible = true;
+                tsmiTeachersPayroll.Visible = true;
+                tsmiAcademic.Visible = true;
+                tsmiSubjects.Visible = true;
+                tsmiClasses.Visible = true;
+                tsmiTimetable.Visible = true;
+                tsmiGrades.Visible = true;
+                tsmiAttendance.Visible = true;
+                tsmiFinancial.Visible = true;
+                tsmiFees.Visible = true;
+                tsmiVouchers.Visible = true;
+                tsmiExpenses.Visible = true;
+                تعريفرسومالصفوفToolStripMenuItem.Visible = true;
+                tsmiTransport.Visible = true;
+                tsmiLibrary.Visible = true;
+                tsmiUsers.Visible = true;
+                tsmiReports.Visible = true;
+                return;
+            }
+
             tsmiDashboard.Visible = Has(PermissionKeys.DashboardView);
 
             tsmiStudentsManage.Visible = HasAny(PermissionKeys.StudentsView, PermissionKeys.StudentsManage);
