@@ -50,7 +50,7 @@ namespace SchoolSystem.UI
                     return;
                 }
 
-                Cursor = Cursors.WaitCursor;
+                SetBusyState(true);
                 DataTable data = await Task.Run(() => service.GetRecent(fromDate.Value.Date, toDate.Value.Date, searchBox.Text));
                 currentData = data;
                 grid.DataSource = data;
@@ -62,8 +62,9 @@ namespace SchoolSystem.UI
                 SetHeader("EntityID", "رقم السجل");
                 SetHeader("Details", "التفاصيل");
                 SetColumnWidths();
-                countLabel.Text = "عدد العمليات: " + data.Rows.Count;
-                rangeLabel.Text = "الفترة: " + fromDate.Value.ToString("yyyy-MM-dd") + " إلى " + toDate.Value.ToString("yyyy-MM-dd");
+                    countLabel.Text = "عدد العمليات: " + data.Rows.Count;
+                    rangeLabel.Text = "الفترة: " + fromDate.Value.ToString("yyyy-MM-dd") + " إلى " + toDate.Value.ToString("yyyy-MM-dd");
+                    statusLabel.Text = data.Rows.Count == 0 ? "لا توجد عمليات ضمن الفترة المحددة" : "تم تحميل السجل بنجاح";
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -75,8 +76,20 @@ namespace SchoolSystem.UI
             }
             finally
             {
-                Cursor = Cursors.Default;
+                SetBusyState(false);
             }
+        }
+
+        private void SetBusyState(bool busy)
+        {
+            Cursor = busy ? Cursors.WaitCursor : Cursors.Default;
+            fromDate.Enabled = !busy;
+            toDate.Enabled = !busy;
+            searchBox.Enabled = !busy;
+            refreshButton.Enabled = !busy;
+            exportButton.Enabled = !busy && currentData != null && currentData.Rows.Count > 0;
+            if (busy)
+                statusLabel.Text = "جارٍ تحميل سجل الأنشطة...";
         }
 
         private void SetHeader(string name, string header)

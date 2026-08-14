@@ -125,10 +125,16 @@ namespace SchoolSystem.UI
 
             try
             {
+                btnLogin.Enabled = false;
+                btnExit.Enabled = false;
+                UseWaitCursor = true;
+                btnLogin.Text = "جارٍ التحقق...";
+                Refresh();
+
                 userService.Authenticate(userName, password);
 
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
             catch (Exception ex)
             {
@@ -136,6 +142,16 @@ namespace SchoolSystem.UI
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
                 txtPassword.Clear();
                 txtPassword.Focus();
+            }
+            finally
+            {
+                if (!IsDisposed)
+                {
+                    UseWaitCursor = false;
+                    btnLogin.Enabled = true;
+                    btnExit.Enabled = true;
+                    btnLogin.Text = "تسجيل الدخول";
+                }
             }
         }
 
@@ -174,13 +190,7 @@ namespace SchoolSystem.UI
 
         private void ShowError(string message, string title = "فشل الدخول")
         {
-            MessageBox.Show(
-                message,
-                title,
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowError(message);
         }
     }
 }
