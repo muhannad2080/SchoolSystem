@@ -98,6 +98,8 @@ namespace SchoolSystem.UI
             {
                 tabs.TabPages.Remove(feesTab);
             }
+            tabs.RightToLeft = RightToLeft.Yes;
+            tabs.RightToLeftLayout = true;
             BindAttendanceSummary();
             BindAcademicSummary();
             FormatAttendanceGrid();
@@ -241,6 +243,7 @@ namespace SchoolSystem.UI
         {
             grid.AllowUserToAddRows = false;
             grid.AllowUserToDeleteRows = false;
+            grid.RightToLeft = RightToLeft.Yes;
             grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             grid.BackgroundColor = System.Drawing.Color.White;
             grid.BorderStyle = BorderStyle.None;
@@ -249,7 +252,12 @@ namespace SchoolSystem.UI
             grid.ReadOnly = true;
             grid.RowHeadersVisible = false;
             grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grid.ScrollBars = ScrollBars.Both;
+            grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             UIHelper.StyleDataGridView(grid);
+            grid.RightToLeft = RightToLeft.Yes;
+            grid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
 
         private static decimal Sum(DataTable table, string column)
