@@ -81,6 +81,7 @@
             // mainContainer
             // 
             this.mainContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
+            this.mainContainer.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.mainContainer.ColumnCount = 1;
             this.mainContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainContainer.Controls.Add(this.groupBoxFilters, 0, 0);
@@ -93,7 +94,7 @@
             this.mainContainer.Name = "mainContainer";
             this.mainContainer.Padding = new System.Windows.Forms.Padding(12, 10, 12, 10);
             this.mainContainer.RowCount = 5;
-            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 145F));
+            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 180F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
@@ -119,6 +120,8 @@
             // 
             // tableLayoutFilters
             // 
+            this.tableLayoutFilters.AutoSize = false;
+            this.tableLayoutFilters.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tableLayoutFilters.ColumnCount = 6;
             this.tableLayoutFilters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 125F));
             this.tableLayoutFilters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
@@ -138,15 +141,16 @@
             this.tableLayoutFilters.Controls.Add(this.cmbTerm, 3, 1);
             this.tableLayoutFilters.Controls.Add(this.lblSearch, 4, 1);
             this.tableLayoutFilters.Controls.Add(this.txtSearch, 5, 1);
-            this.tableLayoutFilters.Controls.Add(this.btnLoad, 5, 2);
+            this.tableLayoutFilters.Controls.Add(this.btnLoad, 0, 2);
+            this.tableLayoutFilters.SetColumnSpan(this.btnLoad, 6);
             this.tableLayoutFilters.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutFilters.Location = new System.Drawing.Point(12, 29);
             this.tableLayoutFilters.Name = "tableLayoutFilters";
             this.tableLayoutFilters.RowCount = 3;
-            this.tableLayoutFilters.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutFilters.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutFilters.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutFilters.Size = new System.Drawing.Size(1126, 100);
+            this.tableLayoutFilters.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 44F));
+            this.tableLayoutFilters.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 44F));
+            this.tableLayoutFilters.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
+            this.tableLayoutFilters.Size = new System.Drawing.Size(1126, 144);
             this.tableLayoutFilters.TabIndex = 0;
             // 
             // lblAcademicYear
@@ -157,7 +161,8 @@
             this.lblAcademicYear.Size = new System.Drawing.Size(119, 33);
             this.lblAcademicYear.TabIndex = 0;
             this.lblAcademicYear.Text = "العام الدراسي:";
-            this.lblAcademicYear.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblAcademicYear.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblAcademicYear.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtAcademicYear
             // 
@@ -176,7 +181,8 @@
             this.lblClass.Size = new System.Drawing.Size(119, 33);
             this.lblClass.TabIndex = 2;
             this.lblClass.Text = "الصف:";
-            this.lblClass.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblClass.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblClass.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // cmbClass
             // 
@@ -197,7 +203,8 @@
             this.lblSection.Size = new System.Drawing.Size(119, 33);
             this.lblSection.TabIndex = 4;
             this.lblSection.Text = "الشعبة:";
-            this.lblSection.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSection.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblSection.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // cmbSection
             // 
@@ -218,7 +225,8 @@
             this.lblSubject.Size = new System.Drawing.Size(119, 33);
             this.lblSubject.TabIndex = 6;
             this.lblSubject.Text = "المادة:";
-            this.lblSubject.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSubject.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblSubject.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // cmbSubject
             // 
@@ -239,7 +247,8 @@
             this.lblTerm.Size = new System.Drawing.Size(119, 33);
             this.lblTerm.TabIndex = 8;
             this.lblTerm.Text = "الفصل:";
-            this.lblTerm.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblTerm.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblTerm.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // cmbTerm
             // 
@@ -260,7 +269,8 @@
             this.lblSearch.Size = new System.Drawing.Size(119, 33);
             this.lblSearch.TabIndex = 10;
             this.lblSearch.Text = "بحث:";
-            this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtSearch
             // 
@@ -278,6 +288,7 @@
             this.btnLoad.FlatAppearance.BorderSize = 0;
             this.btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLoad.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnLoad.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.btnLoad.ForeColor = System.Drawing.Color.White;
             this.btnLoad.Location = new System.Drawing.Point(3, 69);
             this.btnLoad.Name = "btnLoad";
@@ -290,6 +301,7 @@
             // panelHint
             // 
             this.panelHint.BackColor = System.Drawing.Color.White;
+            this.panelHint.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.panelHint.Controls.Add(this.lblHint);
             this.panelHint.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelHint.Location = new System.Drawing.Point(15, 158);
