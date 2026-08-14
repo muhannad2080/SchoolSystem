@@ -17,7 +17,7 @@ namespace SchoolSystem.DataAccess
                         s.StudentNumber,
                         s.FullName AS StudentName,
                         s.Gender,
-                        s.Phone
+                        s.StudentPhone AS Phone
                     FROM Students s
                     WHERE ISNULL(s.Status, N'منتظم') = N'منتظم'
                       AND NOT EXISTS
@@ -81,7 +81,7 @@ namespace SchoolSystem.DataAccess
                         s.StudentNumber,
                         s.FullName AS StudentName,
                         s.Gender,
-                        s.Phone,
+                        s.StudentPhone AS Phone,
                         sc.ClassID,
                         c.ClassName,
                         sc.Section,

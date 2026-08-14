@@ -130,7 +130,7 @@ namespace SchoolSystem.DataAccess
                     c.ClassName AS [الصف],
                     s.Section AS [الشعبة],
                     s.AcademicYear AS [العام الدراسي],
-                    s.Phone AS [هاتف الطالب],
+                    s.StudentPhone AS [هاتف الطالب],
                     s.GuardianName AS [ولي الأمر],
                     s.GuardianPhone AS [هاتف الولي],
                     s.Status AS [الحالة],
