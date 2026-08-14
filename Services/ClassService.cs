@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class ClassService
     {
         private readonly ClassRepository repository = new ClassRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetAllClasses()
         {
@@ -40,7 +41,17 @@ namespace SchoolSystem.Services
             if (item.GradeOrder <= 0)
                 throw new ArgumentException("ترتيب الفصل غير صحيح.");
 
-            return repository.UpdateClass(item);
+            bool updated = repository.UpdateClass(item);
+            if (updated)
+            {
+                auditLogService.Record(
+                    "تعديل",
+                    "Class",
+                    item.ClassID.ToString(),
+                    string.Format("تعديل الفصل: {0}، المرحلة: {1}، نشط: {2}", item.ClassName, item.StageName, item.IsActive));
+            }
+
+            return updated;
         }
         private void DemandClassLookupAccess()
         {

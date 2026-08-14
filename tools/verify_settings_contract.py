@@ -15,6 +15,8 @@ student_service = (ROOT / "Services" / "StudentService.cs").read_text(encoding="
 teacher_service = (ROOT / "Services" / "TeacherService.cs").read_text(encoding="utf-8")
 teacher_repository = (ROOT / "DataAccess" / "TeacherRepository.cs").read_text(encoding="utf-8")
 room_repository = (ROOT / "DataAccess" / "RoomRepository.cs").read_text(encoding="utf-8")
+class_repository = (ROOT / "DataAccess" / "ClassRepository.cs").read_text(encoding="utf-8")
+class_service = (ROOT / "Services" / "ClassService.cs").read_text(encoding="utf-8")
 financial_services = "\\n".join(
     (ROOT / "Services" / name).read_text(encoding="utf-8")
     for name in ("FeeService.cs", "ExpenseService.cs", "PayrollService.cs", "VoucherService.cs")
@@ -76,6 +78,11 @@ checks = {
     "student_delete_is_soft_delete": "SET Status = N'محذوف'" in (ROOT / "DataAccess" / "StudentRepository.cs").read_text(encoding="utf-8"),
     "room_delete_is_soft_delete": "SET IsActive = 0" in room_repository
     and "DELETE FROM Rooms" not in room_repository,
+    "class_update_protects_last_active_class": "IsolationLevel.Serializable" in class_repository
+    and "WHERE ISNULL(IsActive, 1) = 1" in class_repository
+    and "لا يمكن تعطيل آخر فصل نشط" in class_repository,
+    "class_updates_are_audited": "AuditLogService" in class_service
+    and "auditLogService.Record" in class_service,
 }
 
 failed = [name for name, passed in checks.items() if not passed]
