@@ -38,7 +38,7 @@ namespace SchoolSystem
 
             menuStripMain.BackColor = mainColor;
             menuStripMain.ForeColor = Color.White;
-            menuStripMain.Font = new Font("Tahoma", 10F, FontStyle.Bold);
+            menuStripMain.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
             menuStripMain.Padding = new Padding(8, 6, 8, 6);
             menuStripMain.RenderMode = ToolStripRenderMode.Professional;
 
@@ -54,34 +54,34 @@ namespace SchoolSystem
                     StyleDropDownItems(menuItem);
             }
 
-            panelTop.BackColor = Color.White;
+            panelTop.BackColor = UIHelper.SurfaceElevatedColor;
             panelTop.Height = 76;
 
-            lblSystemTitle.Font = new Font("Tahoma", 16F, FontStyle.Bold);
-            lblSystemTitle.ForeColor = Color.FromArgb(15, 23, 42);
+            lblSystemTitle.Font = new Font(UIHelper.FontFamily, UIHelper.TitleFontSize, FontStyle.Bold);
+            lblSystemTitle.ForeColor = UIHelper.TextColor;
             lblSystemTitle.Text = "نظام إدارة المدرسة";
 
-            lblUsername.BackColor = Color.FromArgb(241, 245, 249);
+            lblUsername.BackColor = UIHelper.SurfaceSecondaryColor;
             lblUsername.ForeColor = accentColor;
-            lblUsername.Font = new Font("Tahoma", 10F, FontStyle.Bold);
+            lblUsername.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
             lblUsername.Padding = new Padding(12, 0, 12, 0);
 
             if (!lblUsername.Text.Contains("👤"))
                 lblUsername.Text = "👤 " + lblUsername.Text;
 
-            lblDateTime.ForeColor = Color.FromArgb(100, 116, 139);
-            lblDateTime.Font = new Font("Tahoma", 10F);
+            lblDateTime.ForeColor = UIHelper.MutedTextColor;
+            lblDateTime.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
 
             panelContent.BackColor = contentBack;
             panelContent.Padding = new Padding(18);
 
-            statusStripMain.BackColor = Color.White;
-            statusStripMain.ForeColor = Color.FromArgb(71, 85, 105);
-            statusStripMain.Font = new Font("Tahoma", 9F);
+            statusStripMain.BackColor = UIHelper.SurfaceElevatedColor;
+            statusStripMain.ForeColor = UIHelper.MutedTextColor;
+            statusStripMain.Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize);
             statusStripMain.Padding = new Padding(12, 0, 12, 0);
 
-            lblDBStatus.ForeColor = Color.FromArgb(22, 163, 74);
-            lblOnlineUsers.ForeColor = Color.FromArgb(71, 85, 105);
+            lblDBStatus.ForeColor = UIHelper.SuccessColor;
+            lblOnlineUsers.ForeColor = UIHelper.MutedTextColor;
 
             this.BackColor = contentBack;
             this.MinimumSize = new Size(1100, 650);
@@ -107,15 +107,15 @@ namespace SchoolSystem
 
         private void StyleDropDownItems(ToolStripMenuItem parent)
         {
-            parent.DropDown.BackColor = Color.White;
+            parent.DropDown.BackColor = UIHelper.SurfaceElevatedColor;
             parent.DropDown.RightToLeft = RightToLeft.Yes;
             parent.DropDown.Padding = new Padding(4);
 
             foreach (ToolStripItem item in parent.DropDownItems)
             {
-                item.BackColor = Color.White;
-                item.ForeColor = Color.FromArgb(30, 41, 59);
-                item.Font = new Font("Tahoma", 10F);
+                item.BackColor = UIHelper.SurfaceElevatedColor;
+                item.ForeColor = UIHelper.TextColor;
+                item.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
                 item.Padding = new Padding(8, 4, 8, 4);
 
                 ToolStripMenuItem child = item as ToolStripMenuItem;
@@ -194,8 +194,8 @@ namespace SchoolSystem
             Label errorLabel = new Label
             {
                 Text = message,
-                Font = new Font("Tahoma", 12, FontStyle.Bold),
-                ForeColor = Color.Red,
+                Font = new Font(UIHelper.FontFamily, UIHelper.HeadingFontSize, FontStyle.Bold),
+                ForeColor = UIHelper.DangerColor,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Dock = DockStyle.Fill
             };

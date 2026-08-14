@@ -42,11 +42,11 @@ namespace SchoolSystem.UI
                 int classCount = await Task.Run(() => dashboardService.GetClassCount());
                 decimal pendingFeesTotal = await Task.Run(() => dashboardService.GetPendingFeesTotal());
 
-                CreateCard("👨‍🎓  الطلاب", studentCount.ToString(), Color.FromArgb(41, 128, 185), 0);
-                CreateCard("👨‍🏫  المعلمين", teacherCount.ToString(), Color.FromArgb(39, 174, 96), 1);
-                CreateCard("📚  المواد", subjectCount.ToString(), Color.FromArgb(142, 68, 173), 2);
-                CreateCard("🏫  الفصول", classCount.ToString(), Color.FromArgb(230, 126, 34), 3);
-                CreateCard("💰  الرسوم المتبقية", pendingFeesTotal.ToString("N2"), Color.FromArgb(192, 57, 43), 4);
+                CreateCard("👨‍🎓  الطلاب", studentCount.ToString(), UIHelper.InfoColor, 0);
+                CreateCard("👨‍🏫  المعلمين", teacherCount.ToString(), UIHelper.SuccessColor, 1);
+                CreateCard("📚  المواد", subjectCount.ToString(), UIHelper.AccentColor, 2);
+                CreateCard("🏫  الفصول", classCount.ToString(), UIHelper.WarningColor, 3);
+                CreateCard("💰  الرسوم المتبقية", pendingFeesTotal.ToString("N2"), UIHelper.DangerColor, 4);
 
                 Cursor = Cursors.Default;
             }
@@ -61,7 +61,7 @@ namespace SchoolSystem.UI
         {
             Panel card = new Panel
             {
-                BackColor = Color.White,
+                BackColor = UIHelper.SurfaceElevatedColor,
                 Margin = new Padding(8),
                 Dock = DockStyle.Fill
             };
@@ -77,8 +77,8 @@ namespace SchoolSystem.UI
             Label lblTitle = new Label
             {
                 Text = title,
-                Font = new Font("Tahoma", 10, FontStyle.Bold),
-                ForeColor = Color.DimGray,
+                Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold),
+                ForeColor = UIHelper.MutedTextColor,
                 Location = new Point(10, 15),
                 AutoSize = true
             };
@@ -86,7 +86,7 @@ namespace SchoolSystem.UI
             Label lblValue = new Label
             {
                 Text = value,
-                Font = new Font("Tahoma", 22, FontStyle.Bold),
+                Font = new Font(UIHelper.FontFamily, UIHelper.TitleFontSize + 6F, FontStyle.Bold),
                 ForeColor = accentColor,
                 Location = new Point(10, 45),
                 AutoSize = true
@@ -118,8 +118,8 @@ namespace SchoolSystem.UI
                 Label lblNoData = new Label
                 {
                     Text = "لا توجد بيانات للعرض",
-                    Font = new Font("Tahoma", 10),
-                    ForeColor = Color.Gray,
+                    Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize),
+                    ForeColor = UIHelper.MutedTextColor,
                     Dock = DockStyle.Fill,
                     TextAlign = ContentAlignment.MiddleCenter
                 };
@@ -139,8 +139,8 @@ namespace SchoolSystem.UI
                 Label lblClass = new Label
                 {
                     Text = className,
-                    Font = new Font("Tahoma", 9),
-                    ForeColor = Color.DimGray,
+                    Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize),
+                    ForeColor = UIHelper.MutedTextColor,
                     Location = new Point(10, y),
                     Size = new Size(120, 20)
                 };
@@ -148,7 +148,7 @@ namespace SchoolSystem.UI
                 int barWidth = Math.Min(count * 4, maxWidth - 170);
                 Panel bar = new Panel
                 {
-                    BackColor = Color.FromArgb(52, 152, 219),
+                    BackColor = UIHelper.InfoColor,
                     Location = new Point(140, y + 2),
                     Size = new Size(barWidth, 18)
                 };
@@ -156,8 +156,8 @@ namespace SchoolSystem.UI
                 Label lblCount = new Label
                 {
                     Text = count.ToString(),
-                    Font = new Font("Tahoma", 9, FontStyle.Bold),
-                    ForeColor = Color.FromArgb(33, 42, 57),
+                    Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize, FontStyle.Bold),
+                    ForeColor = UIHelper.TextColor,
                     Location = new Point(145 + barWidth, y),
                     AutoSize = true
                 };
