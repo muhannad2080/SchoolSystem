@@ -58,7 +58,6 @@ namespace SchoolSystem.UI
             this.SuspendLayout();
 
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.RightToLeftLayout = true;
             this.Dock = System.Windows.Forms.DockStyle.Fill;
             this.BackColor = System.Drawing.Color.FromArgb(245, 247, 250);
             this.Name = "StudentProfileForm";
@@ -168,10 +167,6 @@ namespace SchoolSystem.UI
             this.feesTab.Padding = new System.Windows.Forms.Padding(8);
             this.feesTab.Text = "الرسوم والمدفوعات";
 
-            ConfigureGrid(this.dgvAttendance);
-            ConfigureGrid(this.dgvMarks);
-            ConfigureGrid(this.dgvFees);
-
             this.Controls.Add(this.tabs);
             this.Controls.Add(this.summaryTable);
             this.Controls.Add(this.headerPanel);
@@ -187,18 +182,5 @@ namespace SchoolSystem.UI
             this.ResumeLayout(false);
         }
 
-        private static void ConfigureGrid(System.Windows.Forms.DataGridView grid)
-        {
-            grid.AllowUserToAddRows = false;
-            grid.AllowUserToDeleteRows = false;
-            grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            grid.BackgroundColor = System.Drawing.Color.White;
-            grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            grid.MultiSelect = false;
-            grid.ReadOnly = true;
-            grid.RowHeadersVisible = false;
-            grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-        }
     }
 }

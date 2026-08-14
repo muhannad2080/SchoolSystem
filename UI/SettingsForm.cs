@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,6 +17,9 @@ namespace SchoolSystem.UI
         public SettingsForm()
         {
             InitializeComponent();
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+                return;
+
             UIHelper.ApplyStyle(this);
             settings = ApplicationSettingsService.Load();
             serverTextBox.Text = settings.ServerInstance;

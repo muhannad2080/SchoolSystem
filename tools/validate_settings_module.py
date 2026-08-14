@@ -58,6 +58,8 @@ student_designer = text("UI/StudentProfileForm.Designer.cs")
 assert "partial class StudentProfileForm" in student
 assert "InitializeComponent();" in student
 assert "InitializeComponent()" in student_designer
+assert "this.RightToLeftLayout" not in student_designer
+assert "ConfigureGrid(" not in student_designer
 assert "StudentProfileForm.Designer.cs" in project
 assert "backupService.Backup" in settings
 assert "backupService.Restore" in settings

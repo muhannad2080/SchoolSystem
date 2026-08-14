@@ -16,6 +16,9 @@ namespace SchoolSystem.UI
         public StudentProfileForm()
         {
             InitializeComponent();
+            ConfigureGrid(dgvAttendance);
+            ConfigureGrid(dgvMarks);
+            ConfigureGrid(dgvFees);
         }
 
         public StudentProfileForm(int studentId)
@@ -25,6 +28,9 @@ namespace SchoolSystem.UI
 
             this.studentId = studentId;
             InitializeComponent();
+            ConfigureGrid(dgvAttendance);
+            ConfigureGrid(dgvMarks);
+            ConfigureGrid(dgvFees);
             Load += StudentProfileForm_Load;
         }
 
@@ -136,6 +142,21 @@ namespace SchoolSystem.UI
             FormatNumber(dgvFees, "NetAmount");
             FormatNumber(dgvFees, "PaidAmount");
             FormatNumber(dgvFees, "RemainingAmount");
+        }
+
+        private static void ConfigureGrid(DataGridView grid)
+        {
+            grid.AllowUserToAddRows = false;
+            grid.AllowUserToDeleteRows = false;
+            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            grid.BackgroundColor = System.Drawing.Color.White;
+            grid.BorderStyle = BorderStyle.None;
+            grid.Dock = DockStyle.Fill;
+            grid.MultiSelect = false;
+            grid.ReadOnly = true;
+            grid.RowHeadersVisible = false;
+            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            UIHelper.StyleDataGridView(grid);
         }
 
         private static decimal Sum(DataTable table, string column)
