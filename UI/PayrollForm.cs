@@ -21,7 +21,7 @@ namespace SchoolSystem.UI
         public PayrollForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             this.Dock = DockStyle.Fill;
             this.Load += PayrollForm_Load;
         }
@@ -322,6 +322,39 @@ namespace SchoolSystem.UI
 
         private TeacherContract GetContractFromInputs()
         {
+            if (cmbTeacher.SelectedValue == null || Convert.ToInt32(cmbTeacher.SelectedValue) <= 0)
+                throw new InvalidOperationException("يرجى اختيار المعلم.");
+            if (string.IsNullOrWhiteSpace(txtContractNumber.Text))
+                throw new InvalidOperationException("رقم العقد مطلوب.");
+            if (cmbContractType.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbContractType.Text))
+                throw new InvalidOperationException("يرجى اختيار نوع العقد.");
+            if (cmbContractStatus.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbContractStatus.Text))
+                throw new InvalidOperationException("يرجى اختيار حالة العقد.");
+            if (cmbPaymentMethod.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbPaymentMethod.Text))
+                throw new InvalidOperationException("يرجى اختيار طريقة الصرف.");
+
+            decimal basicSalary;
+            decimal housingAllowance;
+            decimal transportAllowance;
+            decimal otherAllowances;
+            decimal deductions;
+            if (!UIHelper.TryParseDecimal(txtBasicSalary.Text, out basicSalary) || basicSalary < 0)
+                throw new InvalidOperationException("الراتب الأساسي يجب أن يكون رقمًا غير سالب.");
+            if (!UIHelper.TryParseDecimal(txtHousing.Text, out housingAllowance) || housingAllowance < 0)
+                throw new InvalidOperationException("بدل السكن يجب أن يكون رقمًا غير سالب.");
+            if (!UIHelper.TryParseDecimal(txtTransport.Text, out transportAllowance) || transportAllowance < 0)
+                throw new InvalidOperationException("بدل النقل يجب أن يكون رقمًا غير سالب.");
+            if (!UIHelper.TryParseDecimal(txtOther.Text, out otherAllowances) || otherAllowances < 0)
+                throw new InvalidOperationException("البدلات الأخرى يجب أن تكون رقمًا غير سالب.");
+            if (!UIHelper.TryParseDecimal(txtDeductions.Text, out deductions) || deductions < 0)
+                throw new InvalidOperationException("الخصومات يجب أن تكون رقمًا غير سالب.");
+
+            decimal totalSalary = basicSalary + housingAllowance + transportAllowance + otherAllowances;
+            if (deductions > totalSalary)
+                throw new InvalidOperationException("لا يمكن أن تتجاوز الخصومات إجمالي الراتب.");
+            if (dtpEndDate.Checked && dtpEndDate.Value.Date < dtpStartDate.Value.Date)
+                throw new InvalidOperationException("تاريخ نهاية العقد يجب أن يكون بعد تاريخ بدايته.");
+
             TeacherContract contract = new TeacherContract();
 
             contract.ContractID = selectedContractId;
@@ -329,11 +362,11 @@ namespace SchoolSystem.UI
             contract.ContractNumber = txtContractNumber.Text.Trim();
             contract.ContractType = cmbContractType.Text;
             contract.ContractStatus = cmbContractStatus.Text;
-            contract.BasicSalary = ParseMoney(txtBasicSalary.Text);
-            contract.HousingAllowance = ParseMoney(txtHousing.Text);
-            contract.TransportAllowance = ParseMoney(txtTransport.Text);
-            contract.OtherAllowances = ParseMoney(txtOther.Text);
-            contract.Deductions = ParseMoney(txtDeductions.Text);
+            contract.BasicSalary = basicSalary;
+            contract.HousingAllowance = housingAllowance;
+            contract.TransportAllowance = transportAllowance;
+            contract.OtherAllowances = otherAllowances;
+            contract.Deductions = deductions;
             contract.StartDate = dtpStartDate.Value.Date;
             contract.EndDate = dtpEndDate.Checked ? dtpEndDate.Value.Date : (DateTime?)null;
             contract.PaymentMethod = cmbPaymentMethod.Text;

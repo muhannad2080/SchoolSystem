@@ -19,7 +19,7 @@ namespace SchoolSystem.UI
         public FeePlansForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
             Load += FeePlansForm_Load;
         }

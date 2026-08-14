@@ -20,7 +20,7 @@ namespace SchoolSystem.UI.Students
         public ClassAssignmentForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             this.Dock = DockStyle.Fill;
             this.Load += ClassAssignmentForm_Load;
         }
@@ -336,6 +336,22 @@ namespace SchoolSystem.UI.Students
             lblStatus.Text = "تم تحديد جميع الطلاب غير الموزعين.";
         }
 
+        private bool IsValidAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            string[] parts = academicYear.Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
+                return false;
+            if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
+                return false;
+
+            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
+        }
+
         private async void btnAssign_Click(object sender, EventArgs e)
         {
             int classId = GetSelectedClassId();
@@ -346,15 +362,17 @@ namespace SchoolSystem.UI.Students
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(cmbSection.Text))
+            if (cmbSection.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbSection.Text))
             {
                 ShowWarning("اختر الشعبة أولاً.");
+                cmbSection.Focus();
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(txtAcademicYear.Text))
+            string academicYear = txtAcademicYear.Text.Trim();
+            if (!IsValidAcademicYear(academicYear))
             {
-                ShowWarning("أدخل العام الدراسي.");
+                ShowWarning("أدخل العام الدراسي بالصيغة الصحيحة: 2025/2026.");
                 txtAcademicYear.Focus();
                 return;
             }
@@ -370,7 +388,6 @@ namespace SchoolSystem.UI.Students
                 Cursor = Cursors.WaitCursor;
 
                 string section = cmbSection.Text.Trim();
-                string academicYear = txtAcademicYear.Text.Trim();
 
                 int successCount = 0;
                 int failedCount = 0;

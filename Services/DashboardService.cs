@@ -63,6 +63,19 @@ namespace SchoolSystem.Services
             }
         }
 
+        public decimal GetPendingFeesTotal()
+        {
+            using (var conn = DbConnection.GetConnection())
+            using (var cmd = new SqlCommand(
+                @"SELECT COALESCE(SUM(CASE WHEN RemainingAmount > 0 THEN RemainingAmount ELSE 0 END), 0)
+                  FROM Fees", conn))
+            {
+                conn.Open();
+                object value = cmd.ExecuteScalar();
+                return value == null || value == DBNull.Value ? 0m : Convert.ToDecimal(value);
+            }
+        }
+
         public int GetPendingFeesCount()
         {
             using (var conn = DbConnection.GetConnection())

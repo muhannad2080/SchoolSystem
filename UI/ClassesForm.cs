@@ -22,7 +22,7 @@ namespace SchoolSystem.UI
         public ClassesForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
             Load += ClassesForm_Load;
         }
@@ -149,6 +149,85 @@ namespace SchoolSystem.UI
             return item;
         }
 
+        private bool ValidateClassInputs()
+        {
+            if (string.IsNullOrWhiteSpace(txtClassName.Text))
+            {
+                ShowWarning("اسم الفصل مطلوب.");
+                txtClassName.Focus();
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(txtStageName.Text))
+            {
+                ShowWarning("اسم المرحلة مطلوب.");
+                txtStageName.Focus();
+                return false;
+            }
+            if (nudGradeOrder.Value <= 0)
+            {
+                ShowWarning("ترتيب الفصل يجب أن يكون أكبر من صفر.");
+                nudGradeOrder.Focus();
+                return false;
+            }
+            if (txtClassNotes.Text.Trim().Length > 1000)
+            {
+                ShowWarning("ملاحظات الفصل لا يمكن أن تتجاوز 1000 حرف.");
+                txtClassNotes.Focus();
+                return false;
+            }
+            return true;
+        }
+
+        private bool ValidateRoomInputs()
+        {
+            if (string.IsNullOrWhiteSpace(txtRoomCode.Text))
+            {
+                ShowWarning("كود القاعة مطلوب.");
+                txtRoomCode.Focus();
+                return false;
+            }
+            if (txtRoomCode.Text.Trim().Length < 2 || txtRoomCode.Text.Trim().Length > 30)
+            {
+                ShowWarning("كود القاعة يجب أن يكون بين حرفين و30 حرفًا.");
+                txtRoomCode.Focus();
+                return false;
+            }
+            foreach (char character in txtRoomCode.Text.Trim())
+            {
+                if (!(char.IsLetterOrDigit(character) || character == '_' || character == '-'))
+                {
+                    ShowWarning("كود القاعة يجب أن يحتوي على حروف أو أرقام أو (_) أو (-) فقط.");
+                    txtRoomCode.Focus();
+                    return false;
+                }
+            }
+            if (string.IsNullOrWhiteSpace(txtRoomName.Text))
+            {
+                ShowWarning("اسم القاعة مطلوب.");
+                txtRoomName.Focus();
+                return false;
+            }
+            if (cmbRoomType.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbRoomType.Text))
+            {
+                ShowWarning("يرجى اختيار نوع القاعة.");
+                cmbRoomType.Focus();
+                return false;
+            }
+            if (nudCapacity.Value <= 0)
+            {
+                ShowWarning("سعة القاعة يجب أن تكون أكبر من صفر.");
+                nudCapacity.Focus();
+                return false;
+            }
+            if (txtRoomNotes.Text.Trim().Length > 1000)
+            {
+                ShowWarning("ملاحظات القاعة لا يمكن أن تتجاوز 1000 حرف.");
+                txtRoomNotes.Focus();
+                return false;
+            }
+            return true;
+        }
+
         private async void btnClassUpdate_Click(object sender, EventArgs e)
         {
             if (selectedClassId <= 0)
@@ -156,6 +235,9 @@ namespace SchoolSystem.UI
                 ShowWarning("اختر فصلًا من الجدول أولًا.");
                 return;
             }
+
+            if (!ValidateClassInputs())
+                return;
 
             try
             {
@@ -358,6 +440,9 @@ namespace SchoolSystem.UI
 
         private async void btnRoomAdd_Click(object sender, EventArgs e)
         {
+            if (!ValidateRoomInputs())
+                return;
+
             try
             {
                 Room room = BuildRoomModel();
@@ -382,6 +467,9 @@ namespace SchoolSystem.UI
                 ShowWarning("اختر قاعة من الجدول أولًا.");
                 return;
             }
+
+            if (!ValidateRoomInputs())
+                return;
 
             try
             {

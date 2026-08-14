@@ -15,7 +15,8 @@ namespace SchoolSystem.UI
         public LoginForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            UIHelper.ApplyTheme(this);
             panelBackground.BackColor = UIHelper.PrimaryColor;
             panelCard.BackColor = Color.White;
             panelCard.Padding = new Padding(18);
@@ -31,23 +32,11 @@ namespace SchoolSystem.UI
             {
                 userService.EnsureDefaultAdmin();
 
-                // مؤقت: إعادة تعيين كلمة المرور للمستخدمين الموجودين
-                // بعد نجاح الدخول احذف هذين السطرين
-               // bool resetMuhannad = userService.ResetPasswordByUserName("muhannad", "123456");
-                //bool resetAlie = userService.ResetPasswordByUserName("alie", "123456");
-
-                // للتأكد فقط إذا احتجت:
-                // MessageBox.Show("muhannad reset: " + resetMuhannad + "\nalie reset: " + resetAlie);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    "حدث خطأ أثناء تهيئة أو إعادة تعيين المستخدمين:\n" + ex.Message,
-                    "خطأ",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error,
-                    MessageBoxDefaultButton.Button1,
-                    MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                ShowError("تعذر تهيئة بيانات الدخول. تحقق من اتصال قاعدة البيانات ثم حاول مرة أخرى.", "تهيئة النظام");
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
             }
 
             this.Resize += (s, e) => CenterCard();
@@ -146,7 +135,8 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError(ex.Message);
+                ShowError(GetSafeLoginError(ex));
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
                 txtPassword.Clear();
                 txtPassword.Focus();
             }
@@ -168,11 +158,29 @@ namespace SchoolSystem.UI
                 MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
         }
 
-        private void ShowError(string message)
+        private string GetSafeLoginError(Exception exception)
+        {
+            string message = exception == null ? string.Empty : exception.Message ?? string.Empty;
+            string technical = message.ToLowerInvariant();
+
+            if (technical.Contains("sql") || technical.Contains("connection") ||
+                technical.Contains("timeout") || technical.Contains("server") ||
+                technical.Contains("network") || technical.Contains("exception") ||
+                technical.Contains("login failed"))
+            {
+                return "تعذر الاتصال بالنظام حاليًا. تحقق من إعدادات قاعدة البيانات أو اتصل بمسؤول النظام.";
+            }
+
+            return string.IsNullOrWhiteSpace(message)
+                ? "اسم المستخدم أو كلمة المرور غير صحيحة."
+                : message;
+        }
+
+        private void ShowError(string message, string title = "فشل الدخول")
         {
             MessageBox.Show(
                 message,
-                "فشل الدخول",
+                title,
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error,
                 MessageBoxDefaultButton.Button1,

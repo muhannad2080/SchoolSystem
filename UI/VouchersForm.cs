@@ -20,7 +20,7 @@ namespace SchoolSystem.UI
         public VouchersForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
             Load += VouchersForm_Load;
         }
@@ -230,30 +230,36 @@ namespace SchoolSystem.UI
         {
             if (cmbVoucherType.SelectedItem == null)
             {
-                MessageBox.Show("اختر نوع السند.");
+                UIHelper.ShowWarning("اختر نوع السند.");
                 cmbVoucherType.Focus();
                 return false;
             }
 
-            decimal amount = ReadDecimal(txtAmount.Text);
+            decimal amount;
+            if (!UIHelper.TryParseDecimal(txtAmount.Text, out amount))
+            {
+                UIHelper.ShowWarning("أدخل مبلغاً رقمياً صحيحاً.");
+                txtAmount.Focus();
+                return false;
+            }
 
             if (amount <= 0)
             {
-                MessageBox.Show("أدخل مبلغاً صحيحاً أكبر من صفر.");
+                UIHelper.ShowWarning("يجب أن يكون مبلغ السند أكبر من صفر.");
                 txtAmount.Focus();
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(txtPartyName.Text))
             {
-                MessageBox.Show("أدخل اسم الطرف.");
+                UIHelper.ShowWarning("أدخل اسم الطرف.");
                 txtPartyName.Focus();
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(txtDescription.Text))
             {
-                MessageBox.Show("أدخل بيان السند.");
+                UIHelper.ShowWarning("أدخل بيان السند.");
                 txtDescription.Focus();
                 return false;
             }
@@ -263,7 +269,7 @@ namespace SchoolSystem.UI
                 int temp;
                 if (!int.TryParse(txtReferenceID.Text.Trim(), out temp))
                 {
-                    MessageBox.Show("رقم المرجع يجب أن يكون رقماً صحيحاً.");
+                    UIHelper.ShowWarning("رقم المرجع يجب أن يكون رقماً صحيحاً.");
                     txtReferenceID.Focus();
                     return false;
                 }
@@ -410,17 +416,11 @@ namespace SchoolSystem.UI
             {
                 if (selectedVoucherId == 0)
                 {
-                    MessageBox.Show("اختر سنداً من الجدول أولاً.");
+                    UIHelper.ShowWarning("اختر سنداً من الجدول أولاً.");
                     return;
                 }
 
-                DialogResult confirm = MessageBox.Show(
-                    "هل تريد حذف السند المحدد؟",
-                    "تأكيد الحذف",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (confirm != DialogResult.Yes)
+                if (!UIHelper.ShowConfirmation("هل تريد حذف السند المحدد؟", "تأكيد الحذف"))
                     return;
 
                 bool result = await Task.Run(() => voucherService.DeleteVoucher(selectedVoucherId));

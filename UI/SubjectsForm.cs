@@ -19,7 +19,7 @@ namespace SchoolSystem.UI
         public SubjectsForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
 
             Dock = DockStyle.Fill;
 
@@ -56,8 +56,10 @@ namespace SchoolSystem.UI
             txtSubjectName.ReadOnly = true;
             cmbClass.Enabled = false;
 
-            txtSubjectCode.BackColor = System.Drawing.Color.FromArgb(243, 244, 246);
-            txtSubjectName.BackColor = System.Drawing.Color.FromArgb(243, 244, 246);
+            txtSubjectCode.BackColor = UIHelper.DisabledSurfaceColor;
+            txtSubjectName.BackColor = UIHelper.DisabledSurfaceColor;
+            txtSubjectCode.ForeColor = UIHelper.MutedTextColor;
+            txtSubjectName.ForeColor = UIHelper.MutedTextColor;
 
             btnAdd.Text = "تثبيت المواد";
             btnDelete.Enabled = false;
@@ -197,6 +199,29 @@ namespace SchoolSystem.UI
             await LoadSubjectsAsync();
         }
 
+        private bool ValidateSubjectSettings()
+        {
+            if (nudMaxDegree.Value <= 0)
+            {
+                ShowWarning("الدرجة الكبرى يجب أن تكون أكبر من صفر.");
+                nudMaxDegree.Focus();
+                return false;
+            }
+            if (nudPassDegree.Value < 0 || nudPassDegree.Value > nudMaxDegree.Value)
+            {
+                ShowWarning("درجة النجاح يجب أن تكون بين صفر والدرجة الكبرى.");
+                nudPassDegree.Focus();
+                return false;
+            }
+            if (txtNotes.Text.Trim().Length > 1000)
+            {
+                ShowWarning("الملاحظات لا يمكن أن تتجاوز 1000 حرف.");
+                txtNotes.Focus();
+                return false;
+            }
+            return true;
+        }
+
         private async void btnUpdate_Click(object sender, EventArgs e)
         {
             if (selectedSubjectId <= 0)
@@ -204,6 +229,9 @@ namespace SchoolSystem.UI
                 ShowWarning("اختر مادة من الجدول أولاً.");
                 return;
             }
+
+            if (!ValidateSubjectSettings())
+                return;
 
             try
             {

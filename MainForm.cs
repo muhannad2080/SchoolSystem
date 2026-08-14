@@ -15,7 +15,7 @@ namespace SchoolSystem
         public MainForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
 
             Instance = this;
 
@@ -32,9 +32,10 @@ namespace SchoolSystem
 
         private void ApplyModernMenuStyle()
         {
-            Color mainColor = UIHelper.PrimaryColor;
-            Color accentColor = UIHelper.AccentColor;
-            Color contentBack = UIHelper.BackgroundColor;
+            Color mainColor = Color.FromArgb(30, 41, 59);
+            Color accentColor = Color.FromArgb(15, 118, 110);
+            Color contentBack = Color.FromArgb(248, 250, 252);
+            Color textDark = Color.FromArgb(30, 41, 59);
 
             menuStripMain.BackColor = mainColor;
             menuStripMain.ForeColor = Color.White;
@@ -276,8 +277,13 @@ namespace SchoolSystem
 
             tsmiUsers.Visible = Has(PermissionKeys.UsersManage);
             tsmiReports.Visible = Has(PermissionKeys.ReportsView);
-
             تعريفرسومالصفوفToolStripMenuItem.Visible = Has(PermissionKeys.FeesManage);
+
+            // إخفاء مجموعات القوائم التي لا تحتوي على أي خيار مسموح للمستخدم.
+            tsmiStudents.Visible = tsmiStudentsManage.Visible || tsmiStudentsEnroll.Visible || tsmiStudentsClasses.Visible;
+            tsmiTeachers.Visible = tsmiTeachersManage.Visible || tsmiTeachersAttendance.Visible || tsmiTeachersPayroll.Visible;
+            tsmiAcademic.Visible = tsmiSubjects.Visible || tsmiClasses.Visible || tsmiTimetable.Visible || tsmiGrades.Visible || tsmiAttendance.Visible;
+            tsmiFinancial.Visible = tsmiFees.Visible || tsmiVouchers.Visible || tsmiExpenses.Visible || تعريفرسومالصفوفToolStripMenuItem.Visible;
         }
 
         private void tsmiDashboard_Click(object sender, EventArgs e)

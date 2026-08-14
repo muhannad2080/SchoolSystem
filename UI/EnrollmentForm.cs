@@ -1,9 +1,12 @@
 using System;
 using System.Data;
+using System.Drawing;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Services;
+using SchoolSystem.Helpers;
 
 namespace SchoolSystem.UI
 {
@@ -16,14 +19,17 @@ namespace SchoolSystem.UI
         private DataView enrollmentsView;
         private bool isEditMode = false;
         private bool isLoading = true;
+        private bool printingReceipt = false;
+        private readonly PrintDocument enrollmentPrintDocument = new PrintDocument();
 
         public EnrollmentForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             enrollmentService = new EnrollmentService();
             studentService = new StudentService();
-            classService = new ClassService(); // Assuming ClassService exists to get Classes
+            classService = new ClassService();
+            enrollmentPrintDocument.PrintPage += enrollmentPrintDocument_PrintPage;
         }
 
         private void EnrollmentForm_Load(object sender, EventArgs e)
@@ -304,24 +310,99 @@ namespace SchoolSystem.UI
             this.Close();
         }
         
+        private bool CanPrintSelectedEnrollment()
+        {
+            if (string.IsNullOrWhiteSpace(txtEnrollmentID.Text) || txtEnrollmentID.Text == "جديد")
+            {
+                MessageBox.Show("رجاءً حدد طلبًا قبل الطباعة.", "تنبيه", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1,
+                    MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                return false;
+            }
+            return true;
+        }
+
+        private void PrintSelectedEnrollment(bool receipt)
+        {
+            if (!CanPrintSelectedEnrollment())
+                return;
+
+            printingReceipt = receipt;
+            using (PrintDialog dialog = new PrintDialog())
+            {
+                dialog.Document = enrollmentPrintDocument;
+                dialog.UseEXDialog = true;
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    try
+                    {
+                        enrollmentPrintDocument.Print();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("تعذر تنفيذ الطباعة: " + ex.Message, "خطأ في الطباعة",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error,
+                            MessageBoxDefaultButton.Button1,
+                            MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                    }
+                }
+            }
+        }
+
         private void btnPrintForm_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtEnrollmentID.Text) || txtEnrollmentID.Text == "جديد")
-            {
-                MessageBox.Show("رجاءً حدد طلب قبل الطباعة.", "تنبيه");
-                return;
-            }
-            MessageBox.Show("تم إرسال الأمر للطباعة (تجهيز التقرير لاحقاً).", "طباعة");
+            PrintSelectedEnrollment(false);
         }
-        
+
         private void btnPrintReceipt_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtEnrollmentID.Text) || txtEnrollmentID.Text == "جديد")
+            PrintSelectedEnrollment(true);
+        }
+
+        private void enrollmentPrintDocument_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            Rectangle bounds = e.MarginBounds;
+            using (Font titleFont = new Font("Tahoma", 16F, FontStyle.Bold))
+            using (Font labelFont = new Font("Tahoma", 10F, FontStyle.Bold))
+            using (Font valueFont = new Font("Tahoma", 10F, FontStyle.Regular))
+            using (StringFormat rtl = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center, FormatFlags = StringFormatFlags.DirectionRightToLeft })
             {
-                MessageBox.Show("رجاءً حدد طلب قبل الطباعة.", "تنبيه");
-                return;
+                int y = bounds.Top;
+                e.Graphics.DrawString(printingReceipt ? "إيصال تسجيل طالب" : "استمارة تسجيل طالب", titleFont, Brushes.Black,
+                    new RectangleF(bounds.Left, y, bounds.Width, 40), rtl);
+                y += 55;
+
+                DrawPrintLine(e.Graphics, bounds, ref y, "رقم الطلب", txtEnrollmentID.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "اسم الطالب", txtStudentName.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "العام الدراسي", txtAcademicYear.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "الصف", cmbClassID.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "الشعبة", txtSection.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "تاريخ التسجيل", dtpApplicationDate.Value.ToString("yyyy/MM/dd"), labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "الحالة", cmbStatus.Text, labelFont, valueFont, rtl);
+
+                if (printingReceipt)
+                {
+                    DrawPrintLine(e.Graphics, bounds, ref y, "رسوم التسجيل", txtRegistrationFee.Text, labelFont, valueFont, rtl);
+                    DrawPrintLine(e.Graphics, bounds, ref y, "المبلغ المدفوع", txtPaidAmount.Text, labelFont, valueFont, rtl);
+                    DrawPrintLine(e.Graphics, bounds, ref y, "المتبقي", txtRemainingAmount.Text, labelFont, valueFont, rtl);
+                    DrawPrintLine(e.Graphics, bounds, ref y, "طريقة الدفع", cmbPaymentMethod.Text, labelFont, valueFont, rtl);
+                    DrawPrintLine(e.Graphics, bounds, ref y, "رقم السند", txtReceiptNo.Text, labelFont, valueFont, rtl);
+                }
+
+                y += 20;
+                e.Graphics.DrawString("التوقيع: ____________________", valueFont, Brushes.Black,
+                    new RectangleF(bounds.Left, y, bounds.Width, 30), rtl);
             }
-            MessageBox.Show("تم إرسال الأمر لطباعة السند.", "طباعة");
+        }
+
+        private static void DrawPrintLine(Graphics graphics, Rectangle bounds, ref int y, string label,
+            string value, Font labelFont, Font valueFont, StringFormat rtl)
+        {
+            graphics.DrawString(label + ":", labelFont, Brushes.Black,
+                new RectangleF(bounds.Left, y, bounds.Width * 0.35F, 28), rtl);
+            graphics.DrawString(value ?? "", valueFont, Brushes.Black,
+                new RectangleF(bounds.Left + bounds.Width * 0.35F, y, bounds.Width * 0.65F, 28), rtl);
+            y += 32;
         }
 
         private void dgvEnrollments_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -460,16 +541,24 @@ namespace SchoolSystem.UI
             }
 
             decimal fee = 0;
-            if (!string.IsNullOrWhiteSpace(txtRegistrationFee.Text) && !decimal.TryParse(txtRegistrationFee.Text, out fee))
+            if (!string.IsNullOrWhiteSpace(txtRegistrationFee.Text) &&
+                (!UIHelper.TryParseDecimal(txtRegistrationFee.Text, out fee) || fee < 0))
             {
-                errorProvider1.SetError(txtRegistrationFee, "رقم غير صحيح.");
+                errorProvider1.SetError(txtRegistrationFee, "أدخل مبلغاً رقمياً غير سالب.");
                 isValid = false;
             }
 
             decimal paid = 0;
-            if (!string.IsNullOrWhiteSpace(txtPaidAmount.Text) && !decimal.TryParse(txtPaidAmount.Text, out paid))
+            if (!string.IsNullOrWhiteSpace(txtPaidAmount.Text) &&
+                (!UIHelper.TryParseDecimal(txtPaidAmount.Text, out paid) || paid < 0))
             {
-                errorProvider1.SetError(txtPaidAmount, "رقم غير صحيح.");
+                errorProvider1.SetError(txtPaidAmount, "أدخل مبلغاً رقمياً غير سالب.");
+                isValid = false;
+            }
+
+            if (isValid && paid > fee && fee > 0)
+            {
+                errorProvider1.SetError(txtPaidAmount, "لا يجوز أن يتجاوز المدفوع قيمة رسوم التسجيل.");
                 isValid = false;
             }
 

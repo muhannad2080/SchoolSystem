@@ -24,7 +24,7 @@ namespace SchoolSystem.UI
         public FeesForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
             Load += FeesForm_Load;
         }
@@ -429,45 +429,52 @@ namespace SchoolSystem.UI
         {
             if (cmbStudent.SelectedValue == null)
             {
-                MessageBox.Show("يرجى اختيار الطالب.");
+                UIHelper.ShowWarning("يرجى اختيار الطالب.");
                 cmbStudent.Focus();
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(cmbAcademicYear.Text))
             {
-                MessageBox.Show("يرجى اختيار العام الدراسي.");
+                UIHelper.ShowWarning("يرجى اختيار العام الدراسي.");
                 cmbAcademicYear.Focus();
                 return false;
             }
 
             if (string.IsNullOrWhiteSpace(cmbFeeType.Text))
             {
-                MessageBox.Show("يرجى اختيار نوع الرسوم.");
+                UIHelper.ShowWarning("يرجى اختيار نوع الرسوم.");
                 cmbFeeType.Focus();
                 return false;
             }
 
-            decimal total = ReadDecimal(txtTotalAmount.Text);
-            decimal discount = ReadDecimal(txtDiscountAmount.Text);
-            decimal paid = ReadDecimal(txtPaidAmount.Text);
+            decimal total;
+            decimal discount;
+            decimal paid;
+            if (!UIHelper.TryParseDecimal(txtTotalAmount.Text, out total) ||
+                !UIHelper.TryParseDecimal(txtDiscountAmount.Text, out discount) ||
+                !UIHelper.TryParseDecimal(txtPaidAmount.Text, out paid))
+            {
+                UIHelper.ShowWarning("أدخل جميع المبالغ بصيغة رقمية صحيحة.");
+                return false;
+            }
 
             if (total < 0 || discount < 0 || paid < 0)
             {
-                MessageBox.Show("المبالغ يجب أن تكون موجبة.");
+                UIHelper.ShowWarning("لا يمكن إدخال مبالغ سالبة.");
                 return false;
             }
 
             if (discount > total)
             {
-                MessageBox.Show("الخصم لا يمكن أن يكون أكبر من إجمالي الرسوم.");
+                UIHelper.ShowWarning("الخصم لا يمكن أن يكون أكبر من إجمالي الرسوم.");
                 txtDiscountAmount.Focus();
                 return false;
             }
 
             if (paid > total - discount)
             {
-                MessageBox.Show("المبلغ المدفوع لا يمكن أن يكون أكبر من صافي الرسوم.");
+                UIHelper.ShowWarning("المبلغ المدفوع لا يمكن أن يكون أكبر من صافي الرسوم.");
                 txtPaidAmount.Focus();
                 return false;
             }

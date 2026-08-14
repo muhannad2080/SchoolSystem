@@ -10,6 +10,7 @@ using ClosedXML.Excel;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using SchoolSystem.Models;
+using SchoolSystem.Helpers;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -25,7 +26,7 @@ namespace SchoolSystem.UI
         public ReportCenterForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
             WireUpEvents();
         }
@@ -177,6 +178,45 @@ namespace SchoolSystem.UI
             }
         }
 
+        private bool IsValidAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
+                return false;
+            if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
+                return false;
+
+            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
+        }
+
+        private bool ValidateReportFilters()
+        {
+            if (cmbReportType.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbReportType.Text))
+            {
+                ShowWarning("يرجى اختيار نوع التقرير.");
+                cmbReportType.Focus();
+                return false;
+            }
+            if (!IsValidAcademicYear(txtAcademicYear.Text))
+            {
+                ShowWarning("أدخل العام الدراسي بالصيغة الصحيحة: 2025/2026.");
+                txtAcademicYear.Focus();
+                return false;
+            }
+            if (dtpFromDate.Value.Date > dtpToDate.Value.Date)
+            {
+                ShowWarning("تاريخ البداية يجب أن يكون قبل تاريخ النهاية أو مساويًا له.");
+                dtpFromDate.Focus();
+                return false;
+            }
+            return true;
+        }
+
         private ReportRequest BuildRequest()
         {
             ReportRequest request = new ReportRequest();
@@ -214,6 +254,9 @@ namespace SchoolSystem.UI
         {
             try
             {
+                if (!ValidateReportFilters())
+                    return;
+
                 Cursor = Cursors.WaitCursor;
 
                 ReportRequest request = BuildRequest();
@@ -546,7 +589,7 @@ namespace SchoolSystem.UI
 
             using (FileStream fs = new FileStream(filePath, FileMode.Create))
             {
-                PdfWriter writer = PdfWriter.GetInstance(document, fs);
+                PdfWriter.GetInstance(document, fs);
                 document.Open();
 
                 BaseFont bf = CreateArabicBaseFont();
@@ -650,73 +693,75 @@ namespace SchoolSystem.UI
             DataTable dt = GetCurrentDataTable();
 
             if (dt == null)
-                return;
-
-            System.Drawing.Font titleFont = new System.Drawing.Font("Tahoma", 14, FontStyle.Bold);
-            System.Drawing.Font headerFont = new System.Drawing.Font("Tahoma", 8, FontStyle.Bold);
-            System.Drawing.Font cellFont = new System.Drawing.Font("Tahoma", 7);
-            System.Drawing.Font infoFont = new System.Drawing.Font("Tahoma", 9);
-
-            StringFormat centerFormat = new StringFormat();
-            centerFormat.Alignment = StringAlignment.Center;
-            centerFormat.LineAlignment = StringAlignment.Center;
-            centerFormat.FormatFlags = StringFormatFlags.DirectionRightToLeft;
-
-            int x = e.MarginBounds.Left;
-            int y = e.MarginBounds.Top;
-            int pageWidth = e.MarginBounds.Width;
-            int rowHeight = 24;
-
-            e.Graphics.DrawString("نظام إدارة المدرسة", titleFont, Brushes.Black,
-                new RectangleF(x, y, pageWidth, 25), centerFormat);
-
-            y += 30;
-
-            e.Graphics.DrawString("تقرير: " + cmbReportType.Text, infoFont, Brushes.Black,
-                new RectangleF(x, y, pageWidth, 22), centerFormat);
-
-            y += 24;
-
-            e.Graphics.DrawString("التاريخ: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm"), infoFont, Brushes.Black,
-                new RectangleF(x, y, pageWidth, 22), centerFormat);
-
-            y += 28;
-
-            int colCount = dt.Columns.Count;
-            int colWidth = Math.Max(70, pageWidth / Math.Max(1, colCount));
-
-            for (int i = 0; i < colCount; i++)
             {
-                System.Drawing.Rectangle rect = new System.Drawing.Rectangle(x + i * colWidth, y, colWidth, rowHeight);
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(31, 41, 55)), rect);
-                e.Graphics.DrawRectangle(Pens.Black, rect);
-                e.Graphics.DrawString(dt.Columns[i].ColumnName, headerFont, Brushes.White, rect, centerFormat);
+                e.HasMorePages = false;
+                return;
             }
 
-            y += rowHeight;
-
-            while (printRowIndex < dt.Rows.Count)
+            using (System.Drawing.Font titleFont = new System.Drawing.Font("Tahoma", 14, FontStyle.Bold))
+            using (System.Drawing.Font headerFont = new System.Drawing.Font("Tahoma", 8, FontStyle.Bold))
+            using (System.Drawing.Font cellFont = new System.Drawing.Font("Tahoma", 7))
+            using (System.Drawing.Font infoFont = new System.Drawing.Font("Tahoma", 9))
+            using (StringFormat centerFormat = new StringFormat())
+            using (SolidBrush headerBrush = new SolidBrush(Color.FromArgb(31, 41, 55)))
             {
-                if (y + rowHeight > e.MarginBounds.Bottom)
-                {
-                    e.HasMorePages = true;
-                    return;
-                }
+                centerFormat.Alignment = StringAlignment.Center;
+                centerFormat.LineAlignment = StringAlignment.Center;
+                centerFormat.FormatFlags = StringFormatFlags.DirectionRightToLeft;
 
-                DataRow row = dt.Rows[printRowIndex];
+                int x = e.MarginBounds.Left;
+                int y = e.MarginBounds.Top;
+                int pageWidth = e.MarginBounds.Width;
+                int rowHeight = 24;
+
+                e.Graphics.DrawString("نظام إدارة المدرسة", titleFont, Brushes.Black,
+                    new RectangleF(x, y, pageWidth, 25), centerFormat);
+                y += 30;
+
+                e.Graphics.DrawString("تقرير: " + cmbReportType.Text, infoFont, Brushes.Black,
+                    new RectangleF(x, y, pageWidth, 22), centerFormat);
+                y += 24;
+
+                e.Graphics.DrawString("التاريخ: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm"), infoFont, Brushes.Black,
+                    new RectangleF(x, y, pageWidth, 22), centerFormat);
+                y += 28;
+
+                int colCount = dt.Columns.Count;
+                int colWidth = Math.Max(70, pageWidth / Math.Max(1, colCount));
 
                 for (int i = 0; i < colCount; i++)
                 {
                     System.Drawing.Rectangle rect = new System.Drawing.Rectangle(x + i * colWidth, y, colWidth, rowHeight);
-                    e.Graphics.DrawRectangle(Pens.Gray, rect);
-                    e.Graphics.DrawString(row[i] == DBNull.Value ? "" : row[i].ToString(), cellFont, Brushes.Black, rect, centerFormat);
+                    e.Graphics.FillRectangle(headerBrush, rect);
+                    e.Graphics.DrawRectangle(Pens.Black, rect);
+                    e.Graphics.DrawString(dt.Columns[i].ColumnName, headerFont, Brushes.White, rect, centerFormat);
                 }
 
                 y += rowHeight;
-                printRowIndex++;
-            }
 
-            e.HasMorePages = false;
+                while (printRowIndex < dt.Rows.Count)
+                {
+                    if (y + rowHeight > e.MarginBounds.Bottom)
+                    {
+                        e.HasMorePages = true;
+                        return;
+                    }
+
+                    DataRow row = dt.Rows[printRowIndex];
+                    for (int i = 0; i < colCount; i++)
+                    {
+                        System.Drawing.Rectangle rect = new System.Drawing.Rectangle(x + i * colWidth, y, colWidth, rowHeight);
+                        e.Graphics.DrawRectangle(Pens.Gray, rect);
+                        e.Graphics.DrawString(row[i] == DBNull.Value ? "" : row[i].ToString(), cellFont,
+                            Brushes.Black, rect, centerFormat);
+                    }
+
+                    y += rowHeight;
+                    printRowIndex++;
+                }
+
+                e.HasMorePages = false;
+            }
         }
 
         private string SafeFileName(string value)

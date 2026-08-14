@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,12 +17,15 @@ namespace SchoolSystem.UI
         private int _selectedStudentId;
         private byte[] _selectedPhoto;
         private List<Student> _currentStudents;
+        private readonly PrintDocument _studentCardPrintDocument = new PrintDocument();
 
         public StudentsForm()
         {
             InitializeComponent();
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             _studentService = new StudentService();
             _currentStudents = new List<Student>();
+            _studentCardPrintDocument.PrintPage += StudentCardPrintDocument_PrintPage;
             
             UIHelper.ApplyStyle(this);
         }
@@ -134,7 +138,102 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            UIHelper.ShowInfo("ميزة طباعة بطاقة الطالب قيد التجهيز.");
+            Student student = _currentStudents.FirstOrDefault(s => s.StudentId == _selectedStudentId);
+            if (student == null)
+            {
+                UIHelper.ShowWarning("تعذر تحميل بيانات الطالب المحدد للطباعة.");
+                return;
+            }
+
+            using (PrintDialog dialog = new PrintDialog())
+            {
+                dialog.Document = _studentCardPrintDocument;
+                dialog.UseEXDialog = true;
+                if (dialog.ShowDialog(this) != DialogResult.OK)
+                    return;
+
+                try
+                {
+                    _studentCardPrintDocument.Print();
+                }
+                catch (Exception ex)
+                {
+                    UIHelper.ShowError("تعذر تنفيذ طباعة بطاقة الطالب: " + ex.Message);
+                }
+            }
+        }
+
+        private void StudentCardPrintDocument_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            Student student = _currentStudents.FirstOrDefault(s => s.StudentId == _selectedStudentId);
+            if (student == null)
+            {
+                e.HasMorePages = false;
+                return;
+            }
+
+            Rectangle bounds = e.MarginBounds;
+            Rectangle card = new Rectangle(bounds.Left, bounds.Top, Math.Min(bounds.Width, 500), 310);
+            using (Font titleFont = new Font("Tahoma", 16F, FontStyle.Bold))
+            using (Font labelFont = new Font("Tahoma", 10F, FontStyle.Bold))
+            using (Font valueFont = new Font("Tahoma", 10F, FontStyle.Regular))
+            using (StringFormat rtl = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center, FormatFlags = StringFormatFlags.DirectionRightToLeft })
+            using (Pen borderPen = new Pen(Color.FromArgb(31, 78, 121), 2))
+            {
+                e.Graphics.FillRectangle(Brushes.White, card);
+                e.Graphics.DrawRectangle(borderPen, card);
+                e.Graphics.DrawString("بطاقة الطالب", titleFont, Brushes.Black,
+                    new RectangleF(card.Left + 20, card.Top + 14, card.Width - 40, 32), rtl);
+
+                Rectangle photoBounds = new Rectangle(card.Left + 20, card.Top + 62, 105, 125);
+                Image photo = null;
+                try
+                {
+                    byte[] bytes = student.Photo ?? _selectedPhoto;
+                    if (bytes != null && bytes.Length > 0)
+                    {
+                        using (MemoryStream stream = new MemoryStream(bytes))
+                        using (Image source = Image.FromStream(stream))
+                            photo = new Bitmap(source);
+                    }
+
+                    if (photo != null)
+                        e.Graphics.DrawImage(photo, photoBounds);
+                    else
+                        e.Graphics.DrawString("لا توجد صورة", valueFont, Brushes.DimGray, photoBounds,
+                            new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
+                }
+                finally
+                {
+                    if (photo != null)
+                        photo.Dispose();
+                }
+
+                int x = card.Left + 140;
+                int width = card.Width - 160;
+                int y = card.Top + 62;
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "الاسم", student.FullName, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "رقم الطالب", student.StudentNumber, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "الصف", student.CurrentClassName, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "الجنس", student.Gender, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "الحالة", student.Status, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "هاتف ولي الأمر", student.GuardianPhone, labelFont, valueFont, rtl);
+
+                e.Graphics.DrawString("تاريخ الإصدار: " + DateTime.Now.ToString("yyyy/MM/dd"), valueFont, Brushes.DimGray,
+                    new RectangleF(card.Left + 20, card.Bottom - 38, card.Width - 40, 24), rtl);
+            }
+
+            e.HasMorePages = false;
+        }
+
+        private static void DrawStudentCardLine(Graphics graphics, int x, int width, ref int y,
+            string label, string value, Font labelFont, Font valueFont, StringFormat rtl)
+        {
+            graphics.DrawString(label + ":", labelFont, Brushes.Black,
+                new RectangleF(x, y, width * 0.35F, 25), rtl);
+            graphics.DrawString(value ?? "-", valueFont, Brushes.Black,
+                new RectangleF(x + width * 0.35F, y, width * 0.65F, 25), rtl);
+            y += 29;
         }
 
         private void btnExportExcel_Click(object sender, EventArgs e)
@@ -334,6 +433,23 @@ namespace SchoolSystem.UI
 
             if (System.Text.RegularExpressions.Regex.IsMatch(fullName, @"\d"))
                 throw new Exception("اسم الطالب لا يجب أن يحتوي على أرقام.");
+
+            if (cmbGender.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbGender.Text))
+                throw new Exception("يرجى اختيار جنس الطالب.");
+
+            if (cmbStatus.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbStatus.Text))
+                throw new Exception("يرجى اختيار حالة الطالب.");
+
+            string[] textValues = { txtBirthPlace.Text, txtNationality.Text, txtGovernorate.Text, txtDistrict.Text, txtGuardianName.Text };
+            foreach (string value in textValues)
+            {
+                if (!string.IsNullOrWhiteSpace(value) && System.Text.RegularExpressions.Regex.IsMatch(value, @"\d"))
+                    throw new Exception("الحقول النصية لا يجب أن تحتوي على أرقام.");
+            }
+
+            string nationalId = txtNationalId.Text.Trim();
+            if (!string.IsNullOrEmpty(nationalId) && !System.Text.RegularExpressions.Regex.IsMatch(nationalId, @"^[0-9]{6,20}$"))
+                throw new Exception("رقم الهوية يجب أن يتكون من أرقام فقط وبطول صحيح.");
 
             string phone = txtPhone.Text.Trim();
             if (!string.IsNullOrEmpty(phone) && !System.Text.RegularExpressions.Regex.IsMatch(phone, @"^[0-9+\-\s]{7,15}$"))

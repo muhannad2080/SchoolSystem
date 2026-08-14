@@ -15,7 +15,7 @@ namespace SchoolSystem.UI
         public WelcomeScreen()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             this.Dock = DockStyle.Fill;
         }
 

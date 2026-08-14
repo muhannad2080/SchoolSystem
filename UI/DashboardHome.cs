@@ -15,7 +15,7 @@ namespace SchoolSystem.UI
         public DashboardHome()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             UIHelper.ApplyTheme(this);
             this.Dock = DockStyle.Fill;
             this.Load += DashboardHome_Load;
@@ -40,12 +40,13 @@ namespace SchoolSystem.UI
                 int teacherCount = await Task.Run(() => dashboardService.GetTeacherCount());
                 int subjectCount = await Task.Run(() => dashboardService.GetSubjectCount());
                 int classCount = await Task.Run(() => dashboardService.GetClassCount());
+                decimal pendingFeesTotal = await Task.Run(() => dashboardService.GetPendingFeesTotal());
 
                 CreateCard("👨‍🎓  الطلاب", studentCount.ToString(), Color.FromArgb(41, 128, 185), 0);
                 CreateCard("👨‍🏫  المعلمين", teacherCount.ToString(), Color.FromArgb(39, 174, 96), 1);
                 CreateCard("📚  المواد", subjectCount.ToString(), Color.FromArgb(142, 68, 173), 2);
                 CreateCard("🏫  الفصول", classCount.ToString(), Color.FromArgb(230, 126, 34), 3);
-                CreateCard("💰  الرسوم", "0", Color.FromArgb(192, 57, 43), 4); // سنحدثه لاحقاً
+                CreateCard("💰  الرسوم المتبقية", pendingFeesTotal.ToString("N2"), Color.FromArgb(192, 57, 43), 4);
 
                 Cursor = Cursors.Default;
             }

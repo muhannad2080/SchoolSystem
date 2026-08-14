@@ -20,7 +20,7 @@ namespace SchoolSystem.UI
         public StaffAttendanceForm()
         {
             InitializeComponent();
-            UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             this.Dock = DockStyle.Fill;
             this.Load += StaffAttendanceForm_Load;
         }
@@ -265,6 +265,61 @@ namespace SchoolSystem.UI
             UpdateTimeFieldsState();
         }
 
+        private bool ValidateAttendanceInputs()
+        {
+            if (cmbTeacher.SelectedValue == null || cmbTeacher.SelectedIndex < 0)
+            {
+                MessageBox.Show("اختر المعلم أولاً.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                cmbTeacher.Focus();
+                return false;
+            }
+
+            if (cmbStatus.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbStatus.Text))
+            {
+                MessageBox.Show("اختر حالة الحضور.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                cmbStatus.Focus();
+                return false;
+            }
+
+            if (dtpDate.Value.Date > DateTime.Today)
+            {
+                MessageBox.Show("لا يمكن تسجيل حضور بتاريخ مستقبلي.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                dtpDate.Focus();
+                return false;
+            }
+
+            string status = cmbStatus.Text.Trim();
+            bool noTimeRequired = status == "غائب" || status == "إجازة" || status == "مريض";
+            if (!noTimeRequired && dtpCheckOut.Value.TimeOfDay < dtpCheckIn.Value.TimeOfDay)
+            {
+                MessageBox.Show("وقت الانصراف يجب أن يكون بعد وقت الحضور.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                dtpCheckOut.Focus();
+                return false;
+            }
+
+            if ((status == "غائب" || status == "إجازة" || status == "مريض") &&
+                string.IsNullOrWhiteSpace(txtAbsenceReason.Text))
+            {
+                MessageBox.Show("أدخل سبب الغياب أو الإجازة.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                txtAbsenceReason.Focus();
+                return false;
+            }
+
+            if (txtAbsenceReason.Text.Trim().Length > 500 || txtNotes.Text.Trim().Length > 1000)
+            {
+                MessageBox.Show("تجاوز أحد النصوص الحد المسموح به.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                return false;
+            }
+
+            return true;
+        }
+
         private TeacherAttendance GetAttendanceFromInputs()
         {
             TeacherAttendance attendance = new TeacherAttendance();
@@ -304,11 +359,8 @@ namespace SchoolSystem.UI
 
         private async void btnAdd_Click(object sender, EventArgs e)
         {
-            if (cmbTeacher.SelectedValue == null)
-            {
-                MessageBox.Show("اختر معلماً.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if (!ValidateAttendanceInputs())
                 return;
-            }
 
             try
             {
@@ -349,6 +401,9 @@ namespace SchoolSystem.UI
                     "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            if (!ValidateAttendanceInputs())
+                return;
 
             try
             {

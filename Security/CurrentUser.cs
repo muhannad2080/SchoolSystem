@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SchoolSystem.Models;
 
@@ -25,29 +26,20 @@ namespace SchoolSystem.Security
 
         public static bool IsAdmin()
         {
-            return User != null && User.RoleName == "مدير النظام";
+            return User != null
+                && string.Equals((User.RoleName ?? "").Trim(), "مدير النظام", StringComparison.OrdinalIgnoreCase);
         }
 
         public static bool HasPermission(string permissionKey)
         {
-            if (User == null)
-                return false;
-
-            if (!User.IsActive)
+            if (User == null || !User.IsActive || string.IsNullOrWhiteSpace(permissionKey))
                 return false;
 
             if (IsAdmin())
                 return true;
 
-            if (string.IsNullOrWhiteSpace(User.Permissions))
-                return false;
-
-            string[] permissions = User.Permissions
-                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(p => p.Trim())
-                .ToArray();
-
-            return permissions.Contains(permissionKey);
+            HashSet<string> permissions = ParsePermissions(User.Permissions);
+            return permissions.Contains(permissionKey.Trim());
         }
 
         public static bool HasAny(params string[] permissionKeys)
@@ -62,6 +54,19 @@ namespace SchoolSystem.Security
             }
 
             return false;
+        }
+
+        private static HashSet<string> ParsePermissions(string permissions)
+        {
+            if (string.IsNullOrWhiteSpace(permissions))
+                return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            return new HashSet<string>(
+                permissions
+                    .Split(new[] { ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(p => p.Trim())
+                    .Where(p => !string.IsNullOrWhiteSpace(p)),
+                StringComparer.OrdinalIgnoreCase);
         }
     }
 }

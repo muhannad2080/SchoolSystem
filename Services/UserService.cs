@@ -115,6 +115,7 @@ namespace SchoolSystem.Services
             if (!ok)
                 throw new Exception("اسم المستخدم أو كلمة المرور غير صحيحة.");
 
+            EnsureRolePermissions(user);
             userRepository.UpdateLastLogin(user.UserID);
 
             CurrentUser.Set(user);
@@ -163,28 +164,20 @@ namespace SchoolSystem.Services
 
         private string GetAllPermissionsString()
         {
-            return string.Join(",",
-                PermissionKeys.DashboardView,
-                PermissionKeys.StudentsView,
-                PermissionKeys.StudentsManage,
-                PermissionKeys.EnrollmentManage,
-                PermissionKeys.ClassAssignmentManage,
-                PermissionKeys.TeachersManage,
-                PermissionKeys.StaffAttendanceManage,
-                PermissionKeys.PayrollManage,
-                PermissionKeys.SubjectsManage,
-                PermissionKeys.ClassesManage,
-                PermissionKeys.TimetableManage,
-                PermissionKeys.AttendanceManage,
-                PermissionKeys.GradesManage,
-                PermissionKeys.FeesManage,
-                PermissionKeys.VouchersManage,
-                PermissionKeys.ExpensesManage,
-                PermissionKeys.LibraryManage,
-                PermissionKeys.TransportManage,
-                PermissionKeys.ReportsView,
-                PermissionKeys.UsersManage
-            );
+            return PermissionKeys.Serialize(PermissionKeys.All);
+        }
+
+        private void EnsureRolePermissions(User user)
+        {
+            if (user == null || !string.IsNullOrWhiteSpace(user.Permissions))
+                return;
+
+            string defaults = PermissionKeys.GetRoleDefaults(user.RoleName);
+            if (string.IsNullOrWhiteSpace(defaults))
+                return;
+
+            user.Permissions = defaults;
+            userRepository.UpdatePermissions(user.UserID, defaults);
         }
 
         private void ValidateUser(User user)
