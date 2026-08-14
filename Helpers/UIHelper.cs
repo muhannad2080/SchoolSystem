@@ -186,32 +186,32 @@ namespace SchoolSystem.Helpers
             foreach (Control child in control.Controls)
             {
                 child.RightToLeft = RightToLeft.Yes;
-                child.Font = new Font("Tahoma", 10F);
+                child.Font = new Font(FontFamily, BodyFontSize);
 
                 if (child is KryptonButton kryptonButton)
                 {
                     kryptonButton.ForeColor = Color.White;
-                    kryptonButton.Font = new Font("Tahoma", 10F, FontStyle.Bold);
+                    kryptonButton.Font = new Font(FontFamily, BodyFontSize, FontStyle.Bold);
                     kryptonButton.MinimumSize = new Size(90, 38);
                     kryptonButton.Cursor = Cursors.Hand;
                 }
                 else if (child is KryptonTextBox kryptonTextBox)
                 {
                     kryptonTextBox.ForeColor = TextColor;
-                    kryptonTextBox.Font = new Font("Tahoma", 10F);
+                    kryptonTextBox.Font = new Font(FontFamily, BodyFontSize);
                     kryptonTextBox.MinimumSize = new Size(120, 34);
                 }
                 else if (child is KryptonComboBox kryptonComboBox)
                 {
                     kryptonComboBox.ForeColor = TextColor;
-                    kryptonComboBox.Font = new Font("Tahoma", 10F);
+                    kryptonComboBox.Font = new Font(FontFamily, BodyFontSize);
                     kryptonComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
                     kryptonComboBox.MinimumSize = new Size(120, 34);
                 }
                 else if (child is KryptonLabel kryptonLabel)
                 {
                     kryptonLabel.ForeColor = TextColor;
-                    kryptonLabel.Font = new Font("Tahoma", 10F);
+                    kryptonLabel.Font = new Font(FontFamily, BodyFontSize);
                 }
 
                 ApplyKryptonThemeRecursive(child);
@@ -279,7 +279,7 @@ namespace SchoolSystem.Helpers
                 {
                     linkLabel.LinkColor = SearchColor;
                     linkLabel.ActiveLinkColor = AccentColor;
-                    linkLabel.Font = new Font("Tahoma", 10F, FontStyle.Underline);
+                    linkLabel.Font = new Font(FontFamily, BodyFontSize, FontStyle.Underline);
                 }
                 else if (child is TextBox textBox)
                 {
@@ -293,8 +293,8 @@ namespace SchoolSystem.Helpers
                 }
                 else if (child is DateTimePicker dateTimePicker)
                 {
-                    dateTimePicker.Font = new Font("Tahoma", 10F);
-                    dateTimePicker.CalendarFont = new Font("Tahoma", 10F);
+                    dateTimePicker.Font = new Font(FontFamily, BodyFontSize);
+                    dateTimePicker.CalendarFont = new Font(FontFamily, BodyFontSize);
                     dateTimePicker.CalendarForeColor = TextColor;
                     dateTimePicker.CalendarMonthBackground = SurfaceColor;
                     dateTimePicker.BackColor = SurfaceColor;
@@ -303,19 +303,19 @@ namespace SchoolSystem.Helpers
                 }
                 else if (child is NumericUpDown numericUpDown)
                 {
-                    numericUpDown.Font = new Font("Tahoma", 10F);
+                    numericUpDown.Font = new Font(FontFamily, BodyFontSize);
                     numericUpDown.BackColor = SurfaceColor;
                     numericUpDown.ForeColor = TextColor;
                     numericUpDown.BorderStyle = BorderStyle.FixedSingle;
                 }
                 else if (child is CheckBox checkBox)
                 {
-                    checkBox.Font = new Font("Tahoma", 10F);
+                    checkBox.Font = new Font(FontFamily, BodyFontSize);
                     checkBox.ForeColor = TextColor;
                 }
                 else if (child is RadioButton radioButton)
                 {
-                    radioButton.Font = new Font("Tahoma", 10F);
+                    radioButton.Font = new Font(FontFamily, BodyFontSize);
                     radioButton.ForeColor = TextColor;
                 }
                 else if (child is DataGridView dataGridView)
@@ -328,7 +328,7 @@ namespace SchoolSystem.Helpers
                 }
                 else if (child is TabControl tabControl)
                 {
-                    tabControl.Font = new Font("Tahoma", 10F);
+                    tabControl.Font = new Font(FontFamily, BodyFontSize);
                     tabControl.BackColor = BackgroundColor;
                 }
 
@@ -402,7 +402,7 @@ namespace SchoolSystem.Helpers
             dgv.EnableHeadersVisualStyles = false;
             dgv.ColumnHeadersDefaultCellStyle.BackColor = PrimaryColor;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font(FontFamily, BodyFontSize, FontStyle.Bold);
             dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dgv.ColumnHeadersHeight = 42;
 
