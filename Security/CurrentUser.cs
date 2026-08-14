@@ -25,7 +25,14 @@ namespace SchoolSystem.Security
                 throw new InvalidOperationException("لا يمكن إنشاء جلسة لحساب غير فعال.");
 
             user.RoleName = PermissionKeys.NormalizeRoleName(user.RoleName);
-            user.Permissions = PermissionKeys.NormalizePermissions(user.Permissions);
+
+            // صلاحيات مدير النظام تُشتق من القاموس المركزي عند إنشاء الجلسة.
+            // هذا يمنع أن تؤدي قيمة Permissions قديمة/ناقصة أو نسخة قاعدة مختلفة
+            // إلى إخفاء واجهات الإدارة بعد نجاح تسجيل الدخول.
+            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+                user.Permissions = PermissionKeys.GetRoleDefaults(user.RoleName);
+            else
+                user.Permissions = PermissionKeys.NormalizePermissions(user.Permissions);
 
             lock (SyncRoot)
             {
