@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Data.SqlClient;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 
@@ -484,7 +485,35 @@ namespace SchoolSystem.Helpers
         {
             string safeOperation = string.IsNullOrWhiteSpace(operation) ? "العملية" : operation.Trim();
             ApplicationLogger.LogException(safeOperation, exception, "errors.log");
-            ShowError("تعذر إتمام " + safeOperation + ". تحقق من البيانات أو الاتصال بقاعدة البيانات ثم حاول مرة أخرى.");
+
+            string detail = GetSafeExceptionDetail(exception);
+            string message = "تعذر إتمام " + safeOperation + ".";
+            if (!string.IsNullOrWhiteSpace(detail))
+                message += Environment.NewLine + Environment.NewLine + "السبب: " + detail;
+            message += Environment.NewLine + Environment.NewLine + "راجع ملف errors.log لمزيد من التفاصيل.";
+            ShowError(message);
+        }
+
+        private static string GetSafeExceptionDetail(Exception exception)
+        {
+            SqlException sqlException = exception as SqlException;
+            if (sqlException != null)
+            {
+                if (sqlException.Number == 208)
+                    return "الجدول المطلوب غير موجود في قاعدة البيانات. شغّل ملف Migration المناسب.";
+                if (sqlException.Number == 207)
+                    return "أحد الأعمدة المطلوبة غير موجود أو اسمه مختلف في قاعدة البيانات. شغّل آخر Migration.";
+                if (sqlException.Number == 18456 || sqlException.Number == 53 || sqlException.Number == -1)
+                    return "تعذر الاتصال بخادم SQL Server أو رفضت بيانات الاعتماد الاتصال.";
+                return "رفض SQL Server الاستعلام (رقم الخطأ " + sqlException.Number + ").";
+            }
+
+            string message = exception == null ? string.Empty : exception.Message;
+            if (string.IsNullOrWhiteSpace(message))
+                return string.Empty;
+            if (message.Length > 240)
+                message = message.Substring(0, 240) + "...";
+            return message;
         }
 
         public static void ShowError(string message)

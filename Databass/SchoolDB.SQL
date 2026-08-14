@@ -80,7 +80,14 @@ CREATE UNIQUE INDEX UX_Teachers_EmployeeNumber ON Teachers(EmployeeNumber) WHERE
 -- =========================
 CREATE TABLE Classes (
     ClassID INT IDENTITY(1,1) PRIMARY KEY,
-    ClassName NVARCHAR(50) NOT NULL
+    ClassCode NVARCHAR(30) NULL,
+    ClassName NVARCHAR(100) NOT NULL,
+    StageName NVARCHAR(100) NULL,
+    GradeOrder INT NOT NULL DEFAULT 0,
+    IsActive BIT NOT NULL DEFAULT 1,
+    Notes NVARCHAR(MAX) NULL,
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
+    UpdatedAt DATETIME NULL
 );
 GO
 
