@@ -40,8 +40,7 @@ namespace SchoolSystem.DataAccess
 
         public bool AddVoucher(Voucher voucher)
         {
-            if (string.IsNullOrWhiteSpace(voucher.VoucherNumber))
-                voucher.VoucherNumber = GenerateVoucherNumber(voucher.VoucherType);
+            bool needsGeneratedNumber = string.IsNullOrWhiteSpace(voucher.VoucherNumber);
 
             using (SqlConnection con = DbConnection.GetConnection())
             {
@@ -81,11 +80,32 @@ namespace SchoolSystem.DataAccess
                     AddParameters(cmd, voucher);
 
                     con.Open();
-                    object result = cmd.ExecuteScalar();
-                    if (result == null || result == DBNull.Value)
-                        return false;
-                    voucher.VoucherID = Convert.ToInt32(result);
-                    return voucher.VoucherID > 0;
+                    using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
+                    {
+                        cmd.Transaction = transaction;
+                        object result = cmd.ExecuteScalar();
+                        if (result == null || result == DBNull.Value)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+
+                        voucher.VoucherID = Convert.ToInt32(result);
+                        if (needsGeneratedNumber)
+                        {
+                            voucher.VoucherNumber = BuildVoucherNumber(voucher.VoucherType, voucher.VoucherDate, voucher.VoucherID);
+                            using (SqlCommand numberCommand = new SqlCommand(
+                                "UPDATE Vouchers SET VoucherNumber = @VoucherNumber WHERE VoucherID = @VoucherID", con, transaction))
+                            {
+                                numberCommand.Parameters.AddWithValue("@VoucherNumber", voucher.VoucherNumber);
+                                numberCommand.Parameters.AddWithValue("@VoucherID", voucher.VoucherID);
+                                numberCommand.ExecuteNonQuery();
+                            }
+                        }
+
+                        transaction.Commit();
+                        return voucher.VoucherID > 0;
+                    }
                 }
             }
         }
@@ -149,6 +169,12 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        private string BuildVoucherNumber(string voucherType, DateTime voucherDate, int voucherId)
+        {
+            string prefix = voucherType == "صرف" ? "PAY" : "REC";
+            return prefix + "-" + voucherDate.Year + "-" + voucherId.ToString("00000");
+        }
+
         public string GenerateVoucherNumber(string voucherType)
         {
             string prefix = voucherType == "صرف" ? "PAY" : "REC";
@@ -170,7 +196,11 @@ namespace SchoolSystem.DataAccess
 
         private void AddParameters(SqlCommand cmd, Voucher voucher)
         {
-            cmd.Parameters.AddWithValue("@VoucherNumber", voucher.VoucherNumber ?? "");
+            cmd.Parameters.AddWithValue(
+                "@VoucherNumber",
+                string.IsNullOrWhiteSpace(voucher.VoucherNumber)
+                    ? (object)DBNull.Value
+                    : voucher.VoucherNumber.Trim());
             cmd.Parameters.AddWithValue("@VoucherType", voucher.VoucherType ?? "");
             cmd.Parameters.AddWithValue("@Amount", voucher.Amount);
             cmd.Parameters.AddWithValue("@VoucherDate", voucher.VoucherDate.Date);
