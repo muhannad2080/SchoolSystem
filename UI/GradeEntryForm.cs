@@ -430,12 +430,7 @@ namespace SchoolSystem.UI
             if (value == null || value == DBNull.Value)
                 return 0;
 
-            decimal result;
-
-            if (decimal.TryParse(value.ToString(), out result))
-                return result;
-
-            return 0;
+            return UIHelper.TryParseDecimal(value.ToString(), out decimal result) ? result : 0m;
         }
 
         private string GetGradeLetter(decimal total)
@@ -504,9 +499,15 @@ namespace SchoolSystem.UI
                     if (row.IsNewRow)
                         continue;
 
+                    if (!TryGetRowInt(row, "StudentID", out int studentId) || studentId <= 0)
+                    {
+                        ShowWarning("تعذر تحديد طالب صحيح في قائمة الدرجات؛ أعد تحميل البيانات ثم حاول مرة أخرى.");
+                        return;
+                    }
+
                     StudentGrade grade = new StudentGrade();
 
-                    grade.StudentID = Convert.ToInt32(row.Cells["StudentID"].Value);
+                    grade.StudentID = studentId;
                     grade.SubjectID = subjectId;
                     grade.ClassID = classId;
                     grade.Section = cmbSection.Text;
@@ -551,10 +552,19 @@ namespace SchoolSystem.UI
 
             object value = dataGridViewGrades.Rows[e.RowIndex].Cells["GradeID"].Value;
 
-            if (value != null && value != DBNull.Value)
-                selectedGradeId = Convert.ToInt32(value);
-            else
-                selectedGradeId = 0;
+            selectedGradeId = value != null && value != DBNull.Value && int.TryParse(value.ToString(), out int gradeId)
+                ? gradeId
+                : 0;
+        }
+
+        private bool TryGetRowInt(DataGridViewRow row, string columnName, out int value)
+        {
+            value = 0;
+            if (row == null || !dataGridViewGrades.Columns.Contains(columnName))
+                return false;
+
+            object cellValue = row.Cells[columnName].Value;
+            return cellValue != null && cellValue != DBNull.Value && int.TryParse(cellValue.ToString(), out value);
         }
 
         private async void btnDeleteGrade_Click(object sender, EventArgs e)
