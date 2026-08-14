@@ -1,6 +1,10 @@
 using System;
 using System.Data;
 using System.Globalization;
+using System.Drawing;
+using System.Drawing.Printing;
+using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
@@ -16,13 +20,219 @@ namespace SchoolSystem.UI
         private int selectedVoucherId = 0;
         private DataTable allVouchers;
         private bool isLoading = false;
+        private Button btnNewReceipt;
+        private Button btnNewPayment;
+        private Button btnPreview;
+        private Button btnPrint;
+        private Button btnExportCsv;
+        private readonly PrintDocument voucherPrintDocument = new PrintDocument();
+        private Voucher voucherToPrint;
 
         public VouchersForm()
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
+            ConfigureFinancialActions();
+            voucherPrintDocument.PrintPage += VoucherPrintDocument_PrintPage;
             Load += VouchersForm_Load;
+        }
+
+        private void ConfigureFinancialActions()
+        {
+            btnNewReceipt = CreateActionButton("سند قبض جديد", Color.FromArgb(22, 160, 133));
+            btnNewPayment = CreateActionButton("سند صرف جديد", Color.FromArgb(142, 68, 173));
+            btnPreview = CreateActionButton("معاينة", Color.FromArgb(52, 152, 219));
+            btnPrint = CreateActionButton("طباعة", Color.FromArgb(41, 128, 185));
+            btnExportCsv = CreateActionButton("تصدير CSV", Color.FromArgb(39, 174, 96));
+
+            btnNewReceipt.Click += (s, e) => PrepareNewVoucher("قبض");
+            btnNewPayment.Click += (s, e) => PrepareNewVoucher("صرف");
+            btnPreview.Click += (s, e) => PreviewSelectedVoucher();
+            btnPrint.Click += (s, e) => PrintSelectedVoucher();
+            btnExportCsv.Click += (s, e) => ExportVisibleVouchersCsv();
+
+            panelButtons.Controls.Add(btnExportCsv);
+            panelButtons.Controls.Add(btnPrint);
+            panelButtons.Controls.Add(btnPreview);
+            panelButtons.Controls.Add(btnNewPayment);
+            panelButtons.Controls.Add(btnNewReceipt);
+            btnExportCsv.Location = new Point(5, 10);
+            btnPrint.Location = new Point(120, 10);
+            btnPreview.Location = new Point(235, 10);
+            btnNewPayment.Location = new Point(350, 10);
+            btnNewReceipt.Location = new Point(465, 10);
+        }
+
+        private Button CreateActionButton(string text, Color color)
+        {
+            return new Button
+            {
+                Text = text,
+                BackColor = color,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Tahoma", 9.5F, FontStyle.Bold),
+                Size = new Size(115, 35),
+                FlatAppearance = { BorderSize = 0 },
+                UseVisualStyleBackColor = false
+            };
+        }
+
+        private void PrepareNewVoucher(string voucherType)
+        {
+            ClearInputs();
+            cmbVoucherType.Text = voucherType;
+            txtAmount.Focus();
+        }
+
+        private bool TryGetSelectedVoucherForOutput(out Voucher voucher)
+        {
+            voucher = null;
+            if (selectedVoucherId <= 0)
+            {
+                UIHelper.ShowWarning("اختر سنداً من الجدول أولاً للطباعة أو المعاينة.");
+                return false;
+            }
+
+            voucher = GetVoucherFromInputs();
+            if (voucher == null || voucher.VoucherID <= 0)
+            {
+                UIHelper.ShowWarning("بيانات السند المحدد غير مكتملة.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private void PreviewSelectedVoucher()
+        {
+            if (!TryGetSelectedVoucherForOutput(out voucherToPrint))
+                return;
+
+            using (PrintPreviewDialog preview = new PrintPreviewDialog())
+            {
+                preview.Document = voucherPrintDocument;
+                preview.RightToLeft = RightToLeft.Yes;
+                preview.WindowState = FormWindowState.Maximized;
+                preview.ShowDialog(FindForm());
+            }
+        }
+
+        private void PrintSelectedVoucher()
+        {
+            if (!TryGetSelectedVoucherForOutput(out voucherToPrint))
+                return;
+
+            using (PrintDialog dialog = new PrintDialog())
+            {
+                dialog.Document = voucherPrintDocument;
+                if (dialog.ShowDialog(FindForm()) == DialogResult.OK)
+                    voucherPrintDocument.Print();
+            }
+        }
+
+        private void VoucherPrintDocument_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            if (voucherToPrint == null)
+            {
+                e.HasMorePages = false;
+                return;
+            }
+
+            Graphics graphics = e.Graphics;
+            Rectangle bounds = e.MarginBounds;
+            using (Font titleFont = new Font("Tahoma", 18, FontStyle.Bold))
+            using (Font labelFont = new Font("Tahoma", 11, FontStyle.Bold))
+            using (Font valueFont = new Font("Tahoma", 11))
+            using (Pen linePen = new Pen(Color.FromArgb(33, 42, 57), 2))
+            using (StringFormat rtl = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center })
+            {
+                int y = bounds.Top;
+                graphics.DrawString("سند " + voucherToPrint.VoucherType, titleFont, Brushes.Black,
+                    new Rectangle(bounds.Left, y, bounds.Width, 45), rtl);
+                y += 65;
+                graphics.DrawLine(linePen, bounds.Left, y, bounds.Right, y);
+                y += 20;
+
+                DrawPrintField(graphics, bounds, ref y, "رقم السند", voucherToPrint.VoucherNumber, labelFont, valueFont, rtl);
+                DrawPrintField(graphics, bounds, ref y, "التاريخ", voucherToPrint.VoucherDate.ToString("dd/MM/yyyy"), labelFont, valueFont, rtl);
+                DrawPrintField(graphics, bounds, ref y, "الطرف", voucherToPrint.PartyName, labelFont, valueFont, rtl);
+                DrawPrintField(graphics, bounds, ref y, "المبلغ", voucherToPrint.Amount.ToString("N2") + " ريال", labelFont, valueFont, rtl);
+                DrawPrintField(graphics, bounds, ref y, "طريقة الدفع", voucherToPrint.PaymentMethod, labelFont, valueFont, rtl);
+                DrawPrintField(graphics, bounds, ref y, "البيان", voucherToPrint.Description, labelFont, valueFont, rtl);
+                DrawPrintField(graphics, bounds, ref y, "المرجع", voucherToPrint.ReferenceType +
+                    (voucherToPrint.ReferenceID.HasValue ? " - " + voucherToPrint.ReferenceID.Value : ""), labelFont, valueFont, rtl);
+                DrawPrintField(graphics, bounds, ref y, "ملاحظات", voucherToPrint.Notes, labelFont, valueFont, rtl);
+
+                y += 30;
+                graphics.DrawLine(linePen, bounds.Left, y, bounds.Right, y);
+                y += 40;
+                graphics.DrawString("المستلم: ____________________", valueFont, Brushes.Black, bounds.Left + 30, y);
+                graphics.DrawString("المحاسب: ____________________", valueFont, Brushes.Black, bounds.Right - 250, y);
+            }
+
+            e.HasMorePages = false;
+        }
+
+        private void DrawPrintField(Graphics graphics, Rectangle bounds, ref int y, string label, string value, Font labelFont, Font valueFont, StringFormat rtl)
+        {
+            graphics.DrawString(label + ":", labelFont, Brushes.Black, new Rectangle(bounds.Left, y, 150, 30), rtl);
+            graphics.DrawString(value ?? string.Empty, valueFont, Brushes.Black, new Rectangle(bounds.Left + 160, y, bounds.Width - 160, 30), rtl);
+            y += 38;
+        }
+
+        private void ExportVisibleVouchersCsv()
+        {
+            if (dataGridViewVouchers.Rows.Count == 0)
+            {
+                UIHelper.ShowWarning("لا توجد سندات لتصديرها.");
+                return;
+            }
+
+            using (SaveFileDialog dialog = new SaveFileDialog())
+            {
+                dialog.Filter = "ملفات CSV (*.csv)|*.csv";
+                dialog.FileName = "السندات_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".csv";
+                dialog.Title = "تصدير السندات";
+                if (dialog.ShowDialog(FindForm()) != DialogResult.OK)
+                    return;
+
+                try
+                {
+                    StringBuilder csv = new StringBuilder();
+                    csv.AppendLine("رقم السند,النوع,المبلغ,التاريخ,الطرف,البيان,طريقة الدفع,المرجع,ملاحظات");
+                    foreach (DataGridViewRow row in dataGridViewVouchers.Rows)
+                    {
+                        if (row.IsNewRow) continue;
+                        csv.AppendLine(string.Join(",", new[]
+                        {
+                            CsvValue(row.Cells["VoucherNumber"].Value),
+                            CsvValue(row.Cells["VoucherType"].Value),
+                            CsvValue(row.Cells["Amount"].Value),
+                            CsvValue(row.Cells["VoucherDate"].Value),
+                            CsvValue(row.Cells["PartyName"].Value),
+                            CsvValue(row.Cells["Description"].Value),
+                            CsvValue(row.Cells["PaymentMethod"].Value),
+                            CsvValue(row.Cells["ReferenceType"].Value),
+                            CsvValue(row.Cells["Notes"].Value)
+                        }));
+                    }
+
+                    File.WriteAllText(dialog.FileName, csv.ToString(), new UTF8Encoding(true));
+                    UIHelper.ShowInfo("تم تصدير السندات الظاهرة بنجاح.");
+                }
+                catch (Exception ex)
+                {
+                    UIHelper.ShowException("تصدير السندات", ex);
+                }
+            }
+        }
+
+        private string CsvValue(object value)
+        {
+            string text = value == null || value == DBNull.Value ? string.Empty : value.ToString();
+            return "\"" + text.Replace("\"", "\"\"") + "\"";
         }
 
         private async void VouchersForm_Load(object sender, EventArgs e)
