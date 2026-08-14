@@ -21,6 +21,7 @@ namespace SchoolSystem.UI
         public PayrollForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             this.Dock = DockStyle.Fill;
             this.Load += PayrollForm_Load;
         }

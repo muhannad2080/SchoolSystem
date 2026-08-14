@@ -20,6 +20,7 @@ namespace SchoolSystem.UI.Students
         public ClassAssignmentForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             this.Dock = DockStyle.Fill;
             this.Load += ClassAssignmentForm_Load;
         }

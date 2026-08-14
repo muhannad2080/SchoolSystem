@@ -20,6 +20,7 @@ namespace SchoolSystem.UI
         public ExpensesForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
             Load += ExpensesForm_Load;
         }

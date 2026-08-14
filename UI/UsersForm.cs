@@ -22,6 +22,7 @@ namespace SchoolSystem.UI
         public UsersForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
             Load += UsersForm_Load;
         }

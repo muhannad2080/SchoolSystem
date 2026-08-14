@@ -20,6 +20,7 @@ namespace SchoolSystem.UI
         public VouchersForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
             Load += VouchersForm_Load;
         }

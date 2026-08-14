@@ -18,6 +18,7 @@ namespace SchoolSystem.UI
         public DailyAttendanceForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
 
             Dock = DockStyle.Fill;
 

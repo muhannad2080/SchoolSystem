@@ -20,6 +20,7 @@ namespace SchoolSystem.UI
         public EnrollmentForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             enrollmentService = new EnrollmentService();
             studentService = new StudentService();
             classService = new ClassService(); // Assuming ClassService exists to get Classes

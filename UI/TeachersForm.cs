@@ -19,7 +19,7 @@ namespace SchoolSystem.UI
         public TeachersForm()
         {
             InitializeComponent();
-            SchoolSystem.Helpers.UIHelper.ApplyTheme(this);
+            UIHelper.ApplyStyle(this);
             InitializeEvents();
             PopulateComboBoxes();
             ConfigureDataGridViewStyling();

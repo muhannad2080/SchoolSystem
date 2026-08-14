@@ -15,7 +15,7 @@ namespace SchoolSystem.UI
         public LoginForm()
         {
             InitializeComponent();
-            UIHelper.ApplyTheme(this);
+            UIHelper.ApplyStyle(this);
             panelBackground.BackColor = UIHelper.PrimaryColor;
             panelCard.BackColor = Color.White;
             panelCard.Padding = new Padding(18);

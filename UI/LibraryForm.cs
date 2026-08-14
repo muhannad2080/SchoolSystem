@@ -27,6 +27,7 @@ namespace SchoolSystem.UI
         public LibraryForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
 
             Load += LibraryForm_Load;

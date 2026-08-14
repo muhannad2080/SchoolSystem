@@ -25,6 +25,7 @@ namespace SchoolSystem.UI
         public ReportCenterForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
             WireUpEvents();
         }

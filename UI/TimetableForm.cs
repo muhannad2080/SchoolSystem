@@ -20,6 +20,7 @@ namespace SchoolSystem.UI
         public TimetableForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
 
             Load += TimetableForm_Load;

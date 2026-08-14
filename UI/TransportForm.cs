@@ -25,6 +25,7 @@ namespace SchoolSystem.UI
         public TransportForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
 
             Load += TransportForm_Load;

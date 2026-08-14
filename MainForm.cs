@@ -15,6 +15,7 @@ namespace SchoolSystem
         public MainForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
 
             Instance = this;
 
@@ -31,10 +32,9 @@ namespace SchoolSystem
 
         private void ApplyModernMenuStyle()
         {
-            Color mainColor = Color.FromArgb(30, 41, 59);
-            Color accentColor = Color.FromArgb(15, 118, 110);
-            Color contentBack = Color.FromArgb(248, 250, 252);
-            Color textDark = Color.FromArgb(30, 41, 59);
+            Color mainColor = UIHelper.PrimaryColor;
+            Color accentColor = UIHelper.AccentColor;
+            Color contentBack = UIHelper.BackgroundColor;
 
             menuStripMain.BackColor = mainColor;
             menuStripMain.ForeColor = Color.White;
