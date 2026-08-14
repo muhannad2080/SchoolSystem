@@ -12,6 +12,7 @@ namespace SchoolSystem.UI
     {
         private readonly GradeService gradeService = new GradeService();
         private readonly ClassService classService = new ClassService();
+        private readonly StudentAttendanceService sectionService = new StudentAttendanceService();
 
         private DataTable currentGradesTable;
         private int selectedGradeId = 0;
@@ -29,6 +30,7 @@ namespace SchoolSystem.UI
             txtSearch.TextChanged += txtSearch_TextChanged;
 
             cmbClass.SelectedIndexChanged += cmbClass_SelectedIndexChanged;
+            txtAcademicYear.Leave += txtAcademicYear_Leave;
         }
 
         private void ApplyCustomStyles()
@@ -61,6 +63,7 @@ namespace SchoolSystem.UI
                 isLoading = false;
 
                 await LoadSubjectsForSelectedClassAsync();
+                await LoadSectionsAsync();
             }
             catch (Exception ex)
             {
@@ -74,14 +77,9 @@ namespace SchoolSystem.UI
             int year = DateTime.Now.Year;
             txtAcademicYear.Text = year + "/" + (year + 1);
 
+            cmbSection.DataSource = null;
             cmbSection.Items.Clear();
-            cmbSection.Items.Add("أ");
-            cmbSection.Items.Add("ب");
-            cmbSection.Items.Add("ج");
-            cmbSection.Items.Add("د");
-
-            if (cmbSection.Items.Count > 0)
-                cmbSection.SelectedIndex = 0;
+            cmbSection.Enabled = false;
 
             cmbTerm.Items.Clear();
             cmbTerm.Items.Add("الفصل الأول");
@@ -148,11 +146,49 @@ namespace SchoolSystem.UI
                 return;
 
             await LoadSubjectsForSelectedClassAsync();
+            await LoadSectionsAsync();
 
             currentGradesTable = null;
             dataGridViewGrades.DataSource = null;
             lblRecordCount.Text = "عدد الطلاب: 0";
             selectedGradeId = 0;
+        }
+
+        private async void txtAcademicYear_Leave(object sender, EventArgs e)
+        {
+            await LoadSectionsAsync();
+        }
+
+        private async Task LoadSectionsAsync()
+        {
+            try
+            {
+                int classId = GetClassId();
+                string academicYear = txtAcademicYear.Text == null ? string.Empty : txtAcademicYear.Text.Trim();
+
+                cmbSection.DataSource = null;
+                cmbSection.Items.Clear();
+                cmbSection.Enabled = false;
+
+                if (classId <= 0 || !IsValidAcademicYear(academicYear))
+                    return;
+
+                DataTable sections = await Task.Run(() => sectionService.GetSections(classId, academicYear));
+                cmbSection.DataSource = sections;
+                cmbSection.DisplayMember = "Section";
+                cmbSection.ValueMember = "Section";
+                cmbSection.Enabled = sections.Rows.Count > 0;
+
+                if (sections.Rows.Count > 0)
+                    cmbSection.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                cmbSection.DataSource = null;
+                cmbSection.Items.Clear();
+                cmbSection.Enabled = false;
+                UIHelper.ShowException("تعذر تحميل الشعب الفعلية للصف والعام الدراسي المحددين:", ex);
+            }
         }
 
         private async Task LoadSubjectsForSelectedClassAsync()
