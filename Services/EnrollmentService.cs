@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class EnrollmentService
     {
         private readonly EnrollmentRepository repository = new EnrollmentRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetAllEnrollments()
         {
@@ -24,7 +25,14 @@ namespace SchoolSystem.Services
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear))
                 throw new Exception("هذا الطالب مسجل بالفعل في هذا العام الدراسي.");
 
-            return repository.AddEnrollment(enrollment);
+            bool added = repository.AddEnrollment(enrollment);
+            if (added)
+            {
+                auditLogService.Record("إنشاء", "Enrollment", enrollment.EnrollmentID.ToString(),
+                    "إضافة طلب تسجيل للطالب رقم " + enrollment.StudentID);
+            }
+
+            return added;
         }
 
         public bool UpdateEnrollment(Enrollment enrollment)
@@ -35,7 +43,14 @@ namespace SchoolSystem.Services
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear, enrollment.EnrollmentID))
                 throw new Exception("لا يمكن تعديل التسجيل: الطالب لديه تسجيل آخر فعال في هذا العام الدراسي.");
 
-            return repository.UpdateEnrollment(enrollment);
+            bool updated = repository.UpdateEnrollment(enrollment);
+            if (updated)
+            {
+                auditLogService.Record("تعديل", "Enrollment", enrollment.EnrollmentID.ToString(),
+                    "تعديل طلب تسجيل الطالب رقم " + enrollment.StudentID);
+            }
+
+            return updated;
         }
 
         public bool DeleteEnrollment(int enrollmentId)
@@ -44,7 +59,11 @@ namespace SchoolSystem.Services
             if (enrollmentId <= 0)
                 throw new ArgumentException("رقم طلب التسجيل غير صحيح.");
 
-            return repository.DeleteEnrollment(enrollmentId);
+            bool deleted = repository.DeleteEnrollment(enrollmentId);
+            if (deleted)
+                auditLogService.Record("حذف", "Enrollment", enrollmentId.ToString(), "حذف طلب تسجيل.");
+
+            return deleted;
         }
 
         private void ValidateEnrollment(Enrollment enrollment, bool isUpdate)
