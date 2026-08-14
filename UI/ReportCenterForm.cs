@@ -211,19 +211,6 @@ namespace SchoolSystem.UI
             }
         }
 
-        private bool IsValidAcademicYear(string academicYear)
-        {
-            if (string.IsNullOrWhiteSpace(academicYear))
-                return false;
-
-            string[] parts = academicYear.Trim().Split('/');
-            int firstYear;
-            int secondYear;
-            return parts.Length == 2 && parts[0].Length == 4 && parts[1].Length == 4 &&
-                   int.TryParse(parts[0], out firstYear) && int.TryParse(parts[1], out secondYear) &&
-                   secondYear == firstYear + 1;
-        }
-
         private async Task LoadClassesAsync()
         {
             try
