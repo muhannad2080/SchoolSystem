@@ -379,6 +379,20 @@ namespace SchoolSystem.UI
                             ShowWarning("توجد حالة حضور غير صالحة. يرجى اختيار حالة لكل طالب.");
                             return;
                         }
+
+                        string excuseStatus = Convert.ToString(validationRow.Cells["ExcuseStatus"].Value).Trim();
+                        if (excuseStatus != "بدون عذر" && excuseStatus != "بعذر" && excuseStatus != "غير محدد")
+                        {
+                            ShowWarning("توجد حالة عذر غير صالحة. اختر حالة العذر لكل طالب.");
+                            return;
+                        }
+
+                        string notes = Convert.ToString(validationRow.Cells["Notes"].Value);
+                        if (notes.Length > 1000)
+                        {
+                            ShowWarning("تجاوزت ملاحظات أحد الطلاب الحد المسموح به.");
+                            return;
+                        }
                     }
                 }
 
@@ -392,9 +406,15 @@ namespace SchoolSystem.UI
                     if (row.IsNewRow)
                         continue;
 
+                    if (!TryGetRowInt(row, "StudentID", out int studentId) || studentId <= 0)
+                    {
+                        ShowWarning("تعذر تحديد طالب صحيح في قائمة الحضور؛ أعد تحميل البيانات ثم حاول مرة أخرى.");
+                        return;
+                    }
+
                     StudentAttendance item = new StudentAttendance();
 
-                    item.StudentID = Convert.ToInt32(row.Cells["StudentID"].Value);
+                    item.StudentID = studentId;
                     item.ClassID = classId;
                     item.Section = cmbSection.Text;
                     item.AcademicYear = txtAcademicYear.Text.Trim();
@@ -439,6 +459,16 @@ namespace SchoolSystem.UI
                 Cursor = Cursors.Default;
                 UIHelper.ShowException("خطأ أثناء حفظ الحضور:\n", ex);
             }
+        }
+
+        private bool TryGetRowInt(DataGridViewRow row, string columnName, out int value)
+        {
+            value = 0;
+            if (row == null || !dataGridViewAttendance.Columns.Contains(columnName))
+                return false;
+
+            object cellValue = row.Cells[columnName].Value;
+            return cellValue != null && cellValue != DBNull.Value && int.TryParse(cellValue.ToString(), out value);
         }
 
         private void btnMarkAllPresent_Click(object sender, EventArgs e)
