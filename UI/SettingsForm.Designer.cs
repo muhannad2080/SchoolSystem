@@ -88,6 +88,9 @@ namespace SchoolSystem.UI
             subtitleLabel.TextAlign = ContentAlignment.MiddleRight;
             // fieldsTable
             fieldsTable.BackColor = Color.White;
+            fieldsTable.AutoSize = false;
+            fieldsTable.Margin = new Padding(0);
+            fieldsTable.MinimumSize = new Size(520, 216);
             fieldsTable.RightToLeft = RightToLeft.Yes;
             fieldsTable.ColumnCount = 3;
             fieldsTable.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150F));
@@ -101,12 +104,12 @@ namespace SchoolSystem.UI
             fieldsTable.Controls.Add(backupDirectoryTextBox, 1, 2);
             fieldsTable.Controls.Add(browseButton, 2, 2);
             fieldsTable.Dock = DockStyle.Top;
-            fieldsTable.Padding = new Padding(24, 20, 24, 16);
+            fieldsTable.Padding = new Padding(24, 18, 24, 18);
             fieldsTable.RowCount = 3;
-            fieldsTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
-            fieldsTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
-            fieldsTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
-            fieldsTable.Height = 184;
+            fieldsTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            fieldsTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            fieldsTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 68F));
+            fieldsTable.Height = 216;
             // labels and fields
             serverLabel.Text = "خادم SQL Server";
             databaseLabel.Text = "قاعدة البيانات";
@@ -115,18 +118,21 @@ namespace SchoolSystem.UI
             serverLabel.Font = new Font("Tahoma", 9.5F, FontStyle.Bold);
             serverLabel.ForeColor = Color.FromArgb(55, 65, 81);
             serverLabel.AutoSize = false;
+            serverLabel.Margin = new Padding(4);
             serverLabel.TextAlign = ContentAlignment.MiddleRight;
             serverLabel.RightToLeft = RightToLeft.Yes;
             databaseLabel.Dock = DockStyle.Fill;
             databaseLabel.Font = new Font("Tahoma", 9.5F, FontStyle.Bold);
             databaseLabel.ForeColor = Color.FromArgb(55, 65, 81);
             databaseLabel.AutoSize = false;
+            databaseLabel.Margin = new Padding(4);
             databaseLabel.TextAlign = ContentAlignment.MiddleRight;
             databaseLabel.RightToLeft = RightToLeft.Yes;
             backupDirectoryLabel.Dock = DockStyle.Fill;
             backupDirectoryLabel.Font = new Font("Tahoma", 9.5F, FontStyle.Bold);
             backupDirectoryLabel.ForeColor = Color.FromArgb(55, 65, 81);
             backupDirectoryLabel.AutoSize = false;
+            backupDirectoryLabel.Margin = new Padding(4);
             backupDirectoryLabel.TextAlign = ContentAlignment.MiddleRight;
             backupDirectoryLabel.RightToLeft = RightToLeft.Yes;
             serverTextBox.RightToLeft = RightToLeft.Yes;
@@ -150,6 +156,9 @@ namespace SchoolSystem.UI
             browseButton.RightToLeft = RightToLeft.Yes;
             // actionsPanel
             actionsPanel.BackColor = Color.FromArgb(248, 250, 252);
+            actionsPanel.AutoSize = false;
+            actionsPanel.Margin = new Padding(0);
+            actionsPanel.MinimumSize = new Size(520, 178);
             actionsPanel.RightToLeft = RightToLeft.Yes;
             actionsPanel.ColumnCount = 2;
             actionsPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
@@ -161,12 +170,12 @@ namespace SchoolSystem.UI
             actionsPanel.Controls.Add(replaceExistingCheckBox, 0, 2);
             actionsPanel.SetColumnSpan(replaceExistingCheckBox, 2);
             actionsPanel.Dock = DockStyle.Top;
-            actionsPanel.Padding = new Padding(24, 16, 24, 18);
+            actionsPanel.Padding = new Padding(24, 14, 24, 14);
             actionsPanel.RowCount = 3;
-            actionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            actionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            actionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 34F));
-            actionsPanel.Height = 148;
+            actionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
+            actionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
+            actionsPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 46F));
+            actionsPanel.Height = 178;
             // buttons
             testConnectionButton.Dock = DockStyle.Fill;
             testConnectionButton.Margin = new Padding(4);
@@ -187,6 +196,7 @@ namespace SchoolSystem.UI
             replaceExistingCheckBox.AutoSize = false;
             replaceExistingCheckBox.Dock = DockStyle.Fill;
             replaceExistingCheckBox.Anchor = AnchorStyles.Right;
+            replaceExistingCheckBox.Margin = new Padding(6, 4, 6, 4);
             replaceExistingCheckBox.Text = "السماح باستبدال قاعدة البيانات الحالية (للمدير فقط)";
             replaceExistingCheckBox.RightToLeft = RightToLeft.Yes;
             // contentPanel
@@ -194,7 +204,7 @@ namespace SchoolSystem.UI
             contentPanel.RightToLeft = RightToLeft.Yes;
             contentPanel.BackColor = Color.FromArgb(248, 250, 252);
             contentPanel.Dock = DockStyle.Fill;
-            contentPanel.Padding = new Padding(0);
+            contentPanel.Padding = new Padding(0, 0, 0, 12);
             contentPanel.Controls.Add(actionsPanel);
             contentPanel.Controls.Add(fieldsTable);
 
