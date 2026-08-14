@@ -23,13 +23,13 @@ namespace SchoolSystem.Services
 
         public List<Student> GetAll()
         {
-            EnsureCanManageStudents();
+            EnsureCanLookupStudents();
             return _studentRepository.GetAll();
         }
 
         public Student GetById(int studentId)
         {
-            EnsureCanManageStudents();
+            EnsureCanLookupStudents();
             if (studentId <= 0)
                 throw new ArgumentException("رقم الطالب غير صحيح.");
 
@@ -38,7 +38,7 @@ namespace SchoolSystem.Services
 
         public List<Student> Search(string keyword)
         {
-            EnsureCanManageStudents();
+            EnsureCanLookupStudents();
             if (string.IsNullOrWhiteSpace(keyword))
                 return GetAll();
 
@@ -200,10 +200,23 @@ namespace SchoolSystem.Services
         // Validation
         // =====================================================
 
+        private static void EnsureCanLookupStudents()
+        {
+            CurrentUser.DemandAny(
+                "ليس لديك صلاحية عرض بيانات الطلاب.",
+                PermissionKeys.StudentsManage,
+                PermissionKeys.EnrollmentManage,
+                PermissionKeys.FeesManage,
+                PermissionKeys.LibraryManage,
+                PermissionKeys.ClassAssignmentManage,
+                PermissionKeys.AttendanceManage,
+                PermissionKeys.ReportsView,
+                PermissionKeys.DashboardView);
+        }
+
         private static void EnsureCanManageStudents()
         {
-            if (!CurrentUser.HasPermission(PermissionKeys.StudentsManage))
-                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة الطلاب.");
+            CurrentUser.DemandPermission(PermissionKeys.StudentsManage, "ليس لديك صلاحية إدارة الطلاب.");
         }
 
         private void ValidateStudent(Student student)

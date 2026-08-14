@@ -3,6 +3,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -12,11 +13,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllContracts()
         {
+            CurrentUser.DemandPermission(PermissionKeys.PayrollManage, "ليس لديك صلاحية إدارة عقود الموظفين.");
             return repository.GetAllContracts();
         }
 
         public bool AddContract(TeacherContract contract)
         {
+            CurrentUser.DemandPermission(PermissionKeys.PayrollManage, "ليس لديك صلاحية إدارة عقود الموظفين.");
             CalculateSalary(contract);
             ValidateContract(contract, false);
 
@@ -31,6 +34,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateContract(TeacherContract contract)
         {
+            CurrentUser.DemandPermission(PermissionKeys.PayrollManage, "ليس لديك صلاحية إدارة عقود الموظفين.");
             CalculateSalary(contract);
             ValidateContract(contract, true);
 
@@ -45,6 +49,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteContract(int contractId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.PayrollManage, "ليس لديك صلاحية إدارة عقود الموظفين.");
             if (contractId <= 0)
                 throw new ArgumentException("رقم العقد غير صحيح.");
 
@@ -53,16 +58,19 @@ namespace SchoolSystem.Services
 
         public bool HasActiveContract(int teacherId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.PayrollManage, "ليس لديك صلاحية إدارة عقود الموظفين.");
             return repository.HasActiveContract(teacherId);
         }
 
         public bool HasActiveContract(int teacherId, int excludedContractId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.PayrollManage, "ليس لديك صلاحية إدارة عقود الموظفين.");
             return repository.HasActiveContract(teacherId, excludedContractId);
         }
 
         public void CalculateSalary(TeacherContract contract)
         {
+            CurrentUser.DemandPermission(PermissionKeys.PayrollManage, "ليس لديك صلاحية إدارة عقود الموظفين.");
             if (contract == null)
                 return;
 
