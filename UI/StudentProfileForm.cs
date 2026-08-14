@@ -1,5 +1,7 @@
 using System;
 using System.Data;
+using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using SchoolSystem.Helpers;
 using SchoolSystem.Models;
@@ -82,6 +84,7 @@ namespace SchoolSystem.UI
             lblIdentity.Text = "الرقم: " + Safe(student.StudentNumber) + "\r\nالاسم: " + Safe(student.FullName) + "\r\nالجنس: " + Safe(student.Gender) + " | الجنسية: " + Safe(student.Nationality) + "\r\nالميلاد: " + FormatBirthDate(student.BirthDate) + " - " + Safe(student.BirthPlace);
             lblContact.Text = "هاتف الطالب: " + Safe(student.StudentPhone) + "\r\nولي الأمر: " + Safe(student.GuardianName) + " - " + Safe(student.GuardianPhone) + "\r\nصلة القرابة: " + Safe(student.GuardianRelation);
             lblClassStatus.Text = "الصف: " + Safe(student.CurrentClassName) + "\r\nالحالة: " + Safe(student.Status) + "\r\nالرقم الوطني: " + Safe(student.NationalId) + "\r\nالعنوان: " + Safe(student.Governorate) + " - " + Safe(student.District);
+            BindStudentPhoto(student.Photo);
 
             dgvAttendance.DataSource = profile.Attendance;
             dgvMarks.DataSource = profile.Marks;
@@ -111,6 +114,36 @@ namespace SchoolSystem.UI
             else
             {
                 lblFinancialSummary.Text = "الوضع المالي: غير متاح حسب صلاحية المستخدم";
+            }
+        }
+
+        private void BindStudentPhoto(byte[] photoBytes)
+        {
+            Image previous = studentPictureBox.Image;
+            studentPictureBox.Image = null;
+            if (previous != null)
+                previous.Dispose();
+
+            if (photoBytes == null || photoBytes.Length == 0)
+                return;
+
+            try
+            {
+                using (MemoryStream stream = new MemoryStream(photoBytes, false))
+                using (Image source = Image.FromStream(stream))
+                {
+                    // Image.FromStream يعتمد على بقاء stream مفتوحاً؛ نسخ الصورة يمنع
+                    // تلف العرض بعد خروجنا من using.
+                    studentPictureBox.Image = new Bitmap(source);
+                }
+            }
+            catch (ArgumentException)
+            {
+                studentPictureBox.Image = null;
+            }
+            catch (OutOfMemoryException)
+            {
+                studentPictureBox.Image = null;
             }
         }
 

@@ -5,6 +5,7 @@ namespace SchoolSystem.UI
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.Panel headerPanel;
         private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.PictureBox studentPictureBox;
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.TableLayoutPanel summaryTable;
@@ -34,6 +35,7 @@ namespace SchoolSystem.UI
             this.components = new System.ComponentModel.Container();
             this.headerPanel = new System.Windows.Forms.Panel();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.studentPictureBox = new System.Windows.Forms.PictureBox();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.summaryTable = new System.Windows.Forms.TableLayoutPanel();
@@ -51,6 +53,7 @@ namespace SchoolSystem.UI
             this.dgvMarks = new System.Windows.Forms.DataGridView();
             this.dgvFees = new System.Windows.Forms.DataGridView();
             this.headerPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.studentPictureBox)).BeginInit();
             this.summaryTable.SuspendLayout();
             this.tabs.SuspendLayout();
             this.attendanceTab.SuspendLayout();
@@ -71,6 +74,7 @@ namespace SchoolSystem.UI
             this.headerPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.headerPanel.Padding = new System.Windows.Forms.Padding(16, 8, 16, 8);
             this.headerPanel.Size = new System.Drawing.Size(980, 58);
+            this.headerPanel.Controls.Add(this.studentPictureBox);
             this.headerPanel.Controls.Add(this.lblTitle);
             this.headerPanel.Controls.Add(this.btnBack);
             this.headerPanel.Controls.Add(this.btnRefresh);
@@ -80,6 +84,13 @@ namespace SchoolSystem.UI
             this.lblTitle.ForeColor = System.Drawing.Color.White;
             this.lblTitle.Text = "ملف الطالب الموحد";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+
+            this.studentPictureBox.BackColor = System.Drawing.Color.FromArgb(226, 232, 240);
+            this.studentPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.studentPictureBox.Dock = System.Windows.Forms.DockStyle.Right;
+            this.studentPictureBox.Size = new System.Drawing.Size(64, 42);
+            this.studentPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.studentPictureBox.TabStop = false;
 
             this.btnBack.BackColor = System.Drawing.Color.FromArgb(127, 140, 141);
             this.btnBack.FlatAppearance.BorderSize = 0;
@@ -202,6 +213,7 @@ namespace SchoolSystem.UI
             ((System.ComponentModel.ISupportInitialize)(this.dgvAttendance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvMarks)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvFees)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.studentPictureBox)).EndInit();
             this.ResumeLayout(false);
         }
 

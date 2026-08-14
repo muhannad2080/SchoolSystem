@@ -24,6 +24,7 @@ namespace SchoolSystem.UI
         private Button backupButton;
         private Button restoreButton;
         private CheckBox replaceExistingCheckBox;
+        private Panel contentPanel;
         private Panel footerPanel;
         private Label statusLabel;
 
@@ -54,12 +55,14 @@ namespace SchoolSystem.UI
             backupButton = new Button();
             restoreButton = new Button();
             replaceExistingCheckBox = new CheckBox();
+            contentPanel = new Panel();
             footerPanel = new Panel();
             statusLabel = new Label();
             headerPanel.SuspendLayout();
             fieldsTable.SuspendLayout();
             actionsPanel.SuspendLayout();
             footerPanel.SuspendLayout();
+            contentPanel.SuspendLayout();
             SuspendLayout();
             // headerPanel
             headerPanel.BackColor = Color.White;
@@ -164,6 +167,14 @@ namespace SchoolSystem.UI
             replaceExistingCheckBox.Anchor = AnchorStyles.Right;
             replaceExistingCheckBox.Text = "السماح باستبدال قاعدة البيانات الحالية (للمدير فقط)";
             replaceExistingCheckBox.RightToLeft = RightToLeft.Yes;
+            // contentPanel
+            contentPanel.AutoScroll = true;
+            contentPanel.BackColor = Color.FromArgb(248, 250, 252);
+            contentPanel.Dock = DockStyle.Fill;
+            contentPanel.Padding = new Padding(0);
+            contentPanel.Controls.Add(actionsPanel);
+            contentPanel.Controls.Add(fieldsTable);
+
             // footerPanel
             footerPanel.BackColor = Color.White;
             footerPanel.Controls.Add(statusLabel);
@@ -178,8 +189,7 @@ namespace SchoolSystem.UI
             AutoScaleDimensions = new SizeF(7F, 16F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(248, 250, 252);
-            Controls.Add(actionsPanel);
-            Controls.Add(fieldsTable);
+            Controls.Add(contentPanel);
             Controls.Add(footerPanel);
             Controls.Add(headerPanel);
             Dock = DockStyle.Fill;
@@ -192,6 +202,7 @@ namespace SchoolSystem.UI
             actionsPanel.ResumeLayout(false);
             actionsPanel.PerformLayout();
             footerPanel.ResumeLayout(false);
+            contentPanel.ResumeLayout(false);
             ResumeLayout(false);
         }
     }
