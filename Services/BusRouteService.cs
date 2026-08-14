@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -16,18 +17,21 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllRoutes()
         {
+            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
             return routeRepository.GetAllRoutes();
         }
 
         public bool AddRoute(BusRoute route)
         {
+            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
             ValidateRoute(route);
             return routeRepository.AddRoute(route);
         }
 
         public bool UpdateRoute(BusRoute route)
         {
-            if (route.RouteID <= 0)
+            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            if (route == null || route.RouteID <= 0)
                 throw new Exception("رقم المسار غير صحيح.");
 
             ValidateRoute(route);
@@ -36,6 +40,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteRoute(int routeId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
             if (routeId <= 0)
                 throw new Exception("رقم المسار غير صحيح.");
 

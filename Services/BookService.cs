@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -16,18 +17,21 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllBooks()
         {
+            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
             return bookRepository.GetAllBooks();
         }
 
         public bool AddBook(Book book)
         {
+            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
             ValidateBook(book);
             return bookRepository.AddBook(book);
         }
 
         public bool UpdateBook(Book book)
         {
-            if (book.BookID <= 0)
+            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
+            if (book == null || book.BookID <= 0)
                 throw new Exception("رقم الكتاب غير صحيح.");
 
             ValidateBook(book);
@@ -36,6 +40,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteBook(int bookId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
             if (bookId <= 0)
                 throw new Exception("رقم الكتاب غير صحيح.");
 
@@ -44,6 +49,7 @@ namespace SchoolSystem.Services
 
         public int GetAvailableCopies(int bookId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
             return bookRepository.GetAvailableCopies(bookId);
         }
 

@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -18,11 +19,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllBorrowings()
         {
+            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة الإعارة.");
             return borrowingRepository.GetAllBorrowings();
         }
 
         public bool AddBorrowing(Borrowing borrowing)
         {
+            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة الإعارة.");
             ValidateBorrowing(borrowing);
 
             int available = bookRepository.GetAvailableCopies(borrowing.BookID);
@@ -43,6 +46,7 @@ namespace SchoolSystem.Services
 
         public bool ReturnBook(int borrowingId, DateTime returnDate)
         {
+            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة الإعارة.");
             if (borrowingId <= 0)
                 throw new Exception("رقم الإعارة غير صحيح.");
 

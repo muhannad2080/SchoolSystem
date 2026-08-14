@@ -2,6 +2,7 @@
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -16,11 +17,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllBuses()
         {
+            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
             return busRepository.GetAllBuses();
         }
 
         public bool AddBus(Bus bus)
         {
+            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
             ValidateBus(bus);
 
             if (busRepository.BusNumberExists(bus.BusNumber))
@@ -31,7 +34,8 @@ namespace SchoolSystem.Services
 
         public bool UpdateBus(Bus bus)
         {
-            if (bus.BusID <= 0)
+            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            if (bus == null || bus.BusID <= 0)
                 throw new Exception("رقم الحافلة غير صحيح.");
 
             ValidateBus(bus);
@@ -44,6 +48,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteBus(int busId)
         {
+            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
             if (busId <= 0)
                 throw new Exception("رقم الحافلة غير صحيح.");
 
@@ -52,6 +57,7 @@ namespace SchoolSystem.Services
 
         public bool BusNumberExists(string busNumber)
         {
+            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
             return busRepository.BusNumberExists(busNumber);
         }
 
