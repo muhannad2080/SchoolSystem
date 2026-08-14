@@ -14,6 +14,7 @@ settings_ui = (ROOT / "UI" / "SettingsForm.cs").read_text(encoding="utf-8")
 student_service = (ROOT / "Services" / "StudentService.cs").read_text(encoding="utf-8")
 teacher_service = (ROOT / "Services" / "TeacherService.cs").read_text(encoding="utf-8")
 teacher_repository = (ROOT / "DataAccess" / "TeacherRepository.cs").read_text(encoding="utf-8")
+room_repository = (ROOT / "DataAccess" / "RoomRepository.cs").read_text(encoding="utf-8")
 financial_services = "\\n".join(
     (ROOT / "Services" / name).read_text(encoding="utf-8")
     for name in ("FeeService.cs", "ExpenseService.cs", "PayrollService.cs", "VoucherService.cs")
@@ -73,6 +74,8 @@ checks = {
         )
     ),
     "student_delete_is_soft_delete": "SET Status = N'محذوف'" in (ROOT / "DataAccess" / "StudentRepository.cs").read_text(encoding="utf-8"),
+    "room_delete_is_soft_delete": "SET IsActive = 0" in room_repository
+    and "DELETE FROM Rooms" not in room_repository,
 }
 
 failed = [name for name, passed in checks.items() if not passed]

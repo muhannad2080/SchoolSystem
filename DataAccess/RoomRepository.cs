@@ -123,7 +123,12 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = "DELETE FROM Rooms WHERE RoomID = @RoomID";
+                const string query = @"
+                    UPDATE Rooms
+                    SET IsActive = 0,
+                        UpdatedAt = GETDATE()
+                    WHERE RoomID = @RoomID
+                      AND IsActive = 1";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
