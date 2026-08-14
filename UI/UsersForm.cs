@@ -125,6 +125,7 @@ namespace SchoolSystem.UI
             AddPermission(PermissionKeys.ReportsView, "التقارير");
             AddPermission(PermissionKeys.UsersManage, "إدارة المستخدمين والصلاحيات");
             AddPermission(PermissionKeys.AuditLogsView, "عرض سجل التدقيق");
+            AddPermission(PermissionKeys.SettingsManage, "الإعدادات والنسخ الاحتياطي");
 
             ApplyRolePreset();
         }

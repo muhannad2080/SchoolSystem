@@ -19,7 +19,8 @@ DECLARE @AdminPermissions NVARCHAR(MAX) =
     N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,' +
     N'Teachers.Manage,StaffAttendance.Manage,Payroll.Manage,Subjects.Manage,Classes.Manage,' +
     N'Timetable.Manage,Attendance.Manage,Grades.Manage,Fees.Manage,Vouchers.Manage,' +
-    N'Expenses.Manage,Library.Manage,Transport.Manage,Reports.View,Users.Manage';
+    N'Expenses.Manage,Library.Manage,Transport.Manage,Reports.View,Users.Manage,' +
+    N'AuditLogs.View,Settings.Manage';
 
 /*
    مدير النظام هو الدور الوحيد الذي يجب أن يطابق القاموس المركزي بالكامل.

@@ -241,7 +241,7 @@ GO
 IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'Permissions')
 BEGIN
     UPDATE Users
-    SET Permissions = N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,Teachers.Manage,StaffAttendance.Manage,Payroll.Manage,Subjects.Manage,Classes.Manage,Timetable.Manage,Attendance.Manage,Grades.Manage,Fees.Manage,Vouchers.Manage,Expenses.Manage,Library.Manage,Transport.Manage,Reports.View,Users.Manage',
+    SET Permissions = N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,Teachers.Manage,StaffAttendance.Manage,Payroll.Manage,Subjects.Manage,Classes.Manage,Timetable.Manage,Attendance.Manage,Grades.Manage,Fees.Manage,Vouchers.Manage,Expenses.Manage,Library.Manage,Transport.Manage,Reports.View,Users.Manage,AuditLogs.View,Settings.Manage',
         UpdatedAt = GETDATE()
     WHERE RoleName = N'مدير النظام'
       AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
