@@ -19,7 +19,7 @@ namespace SchoolSystem.UI
         public DailyAttendanceForm()
         {
             InitializeComponent();
-            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.ApplyTheme(this);
 
             Dock = DockStyle.Fill;
             ConfigureResponsiveLayout();
@@ -36,6 +36,7 @@ namespace SchoolSystem.UI
             MinimumSize = new System.Drawing.Size(760, 560);
 
             mainContainer.Padding = new Padding(14, 12, 14, 12);
+            mainContainer.RightToLeft = RightToLeft.Yes;
             mainContainer.RowStyles.Clear();
             mainContainer.RowStyles.Add(new RowStyle(SizeType.Absolute, 154F));
             mainContainer.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
@@ -48,10 +49,11 @@ namespace SchoolSystem.UI
 
             tableLayoutFilters.AutoSize = false;
             tableLayoutFilters.Padding = new Padding(0, 2, 0, 2);
+            tableLayoutFilters.RightToLeft = RightToLeft.Yes;
+            tableLayoutFilters.RowCount = 2;
             tableLayoutFilters.RowStyles.Clear();
-            tableLayoutFilters.RowStyles.Add(new RowStyle(SizeType.Absolute, 38F));
-            tableLayoutFilters.RowStyles.Add(new RowStyle(SizeType.Absolute, 38F));
-            tableLayoutFilters.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            tableLayoutFilters.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            tableLayoutFilters.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
 
             foreach (Control control in tableLayoutFilters.Controls)
             {
@@ -59,7 +61,8 @@ namespace SchoolSystem.UI
                 if (control is Label)
                 {
                     control.Dock = DockStyle.Fill;
-                    ((Label)control).TextAlign = ContentAlignment.MiddleLeft;
+                    ((Label)control).TextAlign = ContentAlignment.MiddleRight;
+                    ((Label)control).RightToLeft = RightToLeft.Yes;
                 }
                 else if (control is TextBox || control is ComboBox || control is DateTimePicker)
                 {
@@ -68,7 +71,8 @@ namespace SchoolSystem.UI
                 }
             }
 
-            btnLoad.MinimumSize = new System.Drawing.Size(0, 34);
+            btnLoad.RightToLeft = RightToLeft.Yes;
+            btnLoad.MinimumSize = new System.Drawing.Size(0, 36);
             btnLoad.Margin = new Padding(3, 3, 3, 3);
             panelActions.Padding = new Padding(0, 10, 0, 0);
             panelActions.WrapContents = false;
