@@ -73,13 +73,38 @@ namespace SchoolSystem.DataAccess
 
         public void DeleteTeacher(int teacherId)
         {
-            const string query = "DELETE FROM Teachers WHERE TeacherID = @TeacherID";
+            const string dependencyQuery = @"
+SELECT
+    (SELECT COUNT(1) FROM TeacherContracts WHERE TeacherID = @TeacherID) +
+    (SELECT COUNT(1) FROM TeacherAttendance WHERE TeacherID = @TeacherID) +
+    (SELECT COUNT(1) FROM Payroll WHERE TeacherID = @TeacherID) +
+    (SELECT COUNT(1) FROM SchoolTimetable WHERE TeacherID = @TeacherID);";
+            const string deleteQuery = "DELETE FROM Teachers WHERE TeacherID = @TeacherID";
+
             using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
             {
-                cmd.Parameters.AddWithValue("@TeacherID", teacherId);
                 conn.Open();
-                cmd.ExecuteNonQuery();
+                using (var transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                using (var dependencyCommand = new SqlCommand(dependencyQuery, conn, transaction))
+                {
+                    dependencyCommand.Parameters.Add("@TeacherID", SqlDbType.Int).Value = teacherId;
+                    int dependencyCount = Convert.ToInt32(dependencyCommand.ExecuteScalar());
+                    if (dependencyCount > 0)
+                    {
+                        transaction.Rollback();
+                        throw new InvalidOperationException(
+                            "لا يمكن حذف المعلم لوجود سجلات مرتبطة به في العقود أو الحضور أو الرواتب أو الجدول الدراسي. عطّل المعلم بدلاً من حذفه للحفاظ على السجل التاريخي.");
+                    }
+
+                    using (var deleteCommand = new SqlCommand(deleteQuery, conn, transaction))
+                    {
+                        deleteCommand.Parameters.Add("@TeacherID", SqlDbType.Int).Value = teacherId;
+                        if (deleteCommand.ExecuteNonQuery() == 0)
+                            throw new InvalidOperationException("المعلم غير موجود أو تم حذفه مسبقاً.");
+                    }
+
+                    transaction.Commit();
+                }
             }
         }
 

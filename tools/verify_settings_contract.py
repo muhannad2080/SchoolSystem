@@ -13,6 +13,7 @@ permission_keys = (ROOT / "Security" / "PermissionKeys.cs").read_text(encoding="
 settings_ui = (ROOT / "UI" / "SettingsForm.cs").read_text(encoding="utf-8")
 student_service = (ROOT / "Services" / "StudentService.cs").read_text(encoding="utf-8")
 teacher_service = (ROOT / "Services" / "TeacherService.cs").read_text(encoding="utf-8")
+teacher_repository = (ROOT / "DataAccess" / "TeacherRepository.cs").read_text(encoding="utf-8")
 financial_services = "\\n".join(
     (ROOT / "Services" / name).read_text(encoding="utf-8")
     for name in ("FeeService.cs", "ExpenseService.cs", "PayrollService.cs", "VoucherService.cs")
@@ -47,6 +48,13 @@ checks = {
     and "RestoreButton_Click" in settings_ui,
     "student_mutations_require_students_manage": student_service.count("EnsureCanManageStudents();") >= 4,
     "teacher_mutations_require_teachers_manage": teacher_service.count("PermissionKeys.TeachersManage") >= 3,
+    "teacher_delete_checks_all_historical_dependencies": all(
+        table in teacher_repository
+        for table in ("TeacherContracts", "TeacherAttendance", "Payroll", "SchoolTimetable")
+    ),
+    "teacher_delete_is_atomic_and_serializable": "BeginTransaction(IsolationLevel.Serializable)" in teacher_repository
+    and "transaction.Commit();" in teacher_repository,
+    "teacher_delete_explains_dependency_protection": "عطّل المعلم بدلاً من حذفه" in teacher_repository,
     "financial_mutations_require_financial_permissions": all(
         token in financial_services
         for token in (
