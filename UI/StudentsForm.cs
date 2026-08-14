@@ -18,6 +18,7 @@ namespace SchoolSystem.UI
         private byte[] _selectedPhoto;
         private List<Student> _currentStudents;
         private readonly PrintDocument _studentCardPrintDocument = new PrintDocument();
+        private Button _btnStudentProfile;
 
         public StudentsForm()
         {
@@ -28,6 +29,43 @@ namespace SchoolSystem.UI
             cmbFilterClass.SelectedIndexChanged += cmbFilterClass_SelectedIndexChanged;
             cmbFilterStatus.SelectedIndexChanged += cmbFilterStatus_SelectedIndexChanged;
             _studentCardPrintDocument.PrintPage += StudentCardPrintDocument_PrintPage;
+            ConfigureStudentProfileButton();
+        }
+
+        private void ConfigureStudentProfileButton()
+        {
+            _btnStudentProfile = new Button
+            {
+                Text = "ملف الطالب",
+                Dock = DockStyle.Right,
+                Width = 110,
+                BackColor = UIHelper.AccentColor,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font(UIHelper.FontFamily, 9.5F, FontStyle.Bold),
+                UseVisualStyleBackColor = false,
+                Margin = new Padding(5)
+            };
+            _btnStudentProfile.FlatAppearance.BorderSize = 0;
+            _btnStudentProfile.Click += btnStudentProfile_Click;
+            pnlButtons.Controls.Add(_btnStudentProfile);
+        }
+
+        private void btnStudentProfile_Click(object sender, EventArgs e)
+        {
+            if (_selectedStudentId <= 0)
+            {
+                UIHelper.ShowWarning("اختر طالبًا من الجدول أولاً لفتح ملفه الموحد.");
+                return;
+            }
+
+            if (MainForm.Instance == null)
+            {
+                UIHelper.ShowWarning("تعذر فتح ملف الطالب خارج نافذة النظام الرئيسية.");
+                return;
+            }
+
+            MainForm.Instance.LoadUserControl(new StudentProfileForm(_selectedStudentId));
         }
 
         private void StudentsForm_Load(object sender, EventArgs e)
