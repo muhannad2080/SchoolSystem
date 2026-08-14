@@ -261,6 +261,19 @@ namespace SchoolSystem
             if (!CurrentUser.IsLoggedIn)
                 return;
 
+            ToolStripMenuItem[] permissionItems =
+            {
+                tsmiDashboard, tsmiStudents, tsmiStudentsManage, tsmiStudentsEnroll,
+                tsmiStudentsClasses, tsmiTeachers, tsmiTeachersManage, tsmiTeachersAttendance,
+                tsmiTeachersPayroll, tsmiAcademic, tsmiSubjects, tsmiClasses, tsmiTimetable,
+                tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
+                tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiTransport, tsmiLibrary,
+                tsmiUsers, tsmiReports
+            };
+
+            foreach (ToolStripMenuItem item in permissionItems)
+                item.Visible = false;
+
             // مدير النظام يرى كامل كتالوج الواجهات. يبقى EnsurePermission
             // داخل كل معالج وخدمة هو الحاجز الأمني الفعلي عند الفتح والتنفيذ.
             if (CurrentUser.IsAdmin())
