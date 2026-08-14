@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
@@ -21,9 +22,65 @@ namespace SchoolSystem.UI
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
 
             Dock = DockStyle.Fill;
+            ConfigureResponsiveLayout();
 
             Load += DailyAttendanceForm_Load;
             txtSearch.TextChanged += txtSearch_TextChanged;
+        }
+
+        private void ConfigureResponsiveLayout()
+        {
+            AutoScroll = true;
+            MinimumSize = new System.Drawing.Size(760, 560);
+
+            mainContainer.Padding = new Padding(14, 12, 14, 12);
+            mainContainer.RowStyles.Clear();
+            mainContainer.RowStyles.Add(new RowStyle(SizeType.Absolute, 154F));
+            mainContainer.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
+            mainContainer.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            mainContainer.RowStyles.Add(new RowStyle(SizeType.Absolute, 60F));
+            mainContainer.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
+
+            groupBoxFilters.MinimumSize = new System.Drawing.Size(0, 142);
+            groupBoxFilters.Padding = new Padding(12, 10, 12, 12);
+
+            tableLayoutFilters.AutoSize = false;
+            tableLayoutFilters.Padding = new Padding(0, 2, 0, 2);
+            tableLayoutFilters.RowStyles.Clear();
+            tableLayoutFilters.RowStyles.Add(new RowStyle(SizeType.Absolute, 38F));
+            tableLayoutFilters.RowStyles.Add(new RowStyle(SizeType.Absolute, 38F));
+            tableLayoutFilters.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+
+            foreach (Control control in tableLayoutFilters.Controls)
+            {
+                control.Margin = new Padding(3);
+                if (control is Label)
+                {
+                    control.Dock = DockStyle.Fill;
+                    ((Label)control).TextAlign = ContentAlignment.MiddleLeft;
+                }
+                else if (control is TextBox || control is ComboBox || control is DateTimePicker)
+                {
+                    control.Dock = DockStyle.Fill;
+                    control.MinimumSize = new System.Drawing.Size(0, 30);
+                }
+            }
+
+            btnLoad.MinimumSize = new System.Drawing.Size(0, 34);
+            btnLoad.Margin = new Padding(3, 3, 3, 3);
+            panelActions.Padding = new Padding(0, 10, 0, 0);
+            panelActions.WrapContents = false;
+            panelActions.AutoScroll = true;
+
+            foreach (Control control in panelActions.Controls)
+            {
+                control.Margin = new Padding(4, 0, 4, 0);
+                control.MinimumSize = new System.Drawing.Size(110, 36);
+            }
+
+            dataGridViewAttendance.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            dataGridViewAttendance.RowTemplate.Height = 38;
+            dataGridViewAttendance.ColumnHeadersHeight = 44;
         }
 
         private async void DailyAttendanceForm_Load(object sender, EventArgs e)
