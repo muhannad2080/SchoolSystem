@@ -182,19 +182,14 @@ namespace SchoolSystem.UI
                 if (cmbClass.Items.Count > 0)
                     cmbClass.SelectedIndex = 0;
             }
-            catch
+            catch (Exception ex)
             {
-                DataTable fallback = new DataTable();
-                fallback.Columns.Add("ClassID", typeof(int));
-                fallback.Columns.Add("ClassName", typeof(string));
-                fallback.Rows.Add(0, "الكل");
-
-                cmbClass.DataSource = fallback;
-                cmbClass.DisplayMember = "ClassName";
-                cmbClass.ValueMember = "ClassID";
-
-                if (cmbClass.Items.Count > 0)
-                    cmbClass.SelectedIndex = 0;
+                cmbClass.DataSource = null;
+                cmbClass.Items.Clear();
+                cmbClass.Items.Add("تعذر تحميل الصفوف");
+                cmbClass.SelectedIndex = 0;
+                cmbClass.Enabled = false;
+                UIHelper.ShowException("تحميل صفوف مركز التقارير", ex);
             }
         }
 
