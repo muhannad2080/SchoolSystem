@@ -53,6 +53,7 @@ namespace SchoolSystem.UI.Students
 
                 LoadStaticData();
                 await LoadClassesAsync();
+                await LoadSectionsAsync();
 
                 isLoading = false;
 
@@ -71,14 +72,9 @@ namespace SchoolSystem.UI.Students
 
         private void LoadStaticData()
         {
+            cmbSection.DataSource = null;
             cmbSection.Items.Clear();
-            cmbSection.Items.Add("أ");
-            cmbSection.Items.Add("ب");
-            cmbSection.Items.Add("ج");
-            cmbSection.Items.Add("د");
-
-            if (cmbSection.Items.Count > 0)
-                cmbSection.SelectedIndex = 0;
+            cmbSection.Enabled = false;
 
             int year = DateTime.Now.Year;
             txtAcademicYear.Text = year + "/" + (year + 1);
@@ -113,11 +109,54 @@ namespace SchoolSystem.UI.Students
             }
         }
 
+        private async Task LoadSectionsAsync()
+        {
+            int classId = GetSelectedClassId();
+            string academicYear = txtAcademicYear.Text.Trim();
+
+            cmbSection.DataSource = null;
+            cmbSection.Items.Clear();
+            cmbSection.Enabled = false;
+
+            if (classId <= 0 || !IsValidAcademicYear(academicYear))
+                return;
+
+            try
+            {
+                DataTable sections = await Task.Run(() => studentClassService.GetSections(classId, academicYear));
+
+                if (sections == null || sections.Rows.Count == 0)
+                {
+                    cmbSection.Items.Add("لا توجد شعب مسجلة لهذا الصف والعام الدراسي");
+                    cmbSection.SelectedIndex = 0;
+                    lblStatus.Text = "لا توجد شعب مسجلة لهذا الصف والعام الدراسي.";
+                    return;
+                }
+
+                cmbSection.DataSource = sections;
+                cmbSection.DisplayMember = "Section";
+                cmbSection.ValueMember = "Section";
+                cmbSection.Enabled = true;
+                cmbSection.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                cmbSection.DataSource = null;
+                cmbSection.Items.Clear();
+                cmbSection.Items.Add("تعذر تحميل الشعب");
+                cmbSection.SelectedIndex = 0;
+                UIHelper.ShowException("تحميل شعب توزيع الطلاب", ex);
+            }
+        }
+
         private async Task LoadDataAsync()
         {
             int classId = GetSelectedClassId();
 
             if (classId <= 0)
+                return;
+
+            if (!cmbSection.Enabled)
                 return;
 
             string section = cmbSection.Text.Trim();
@@ -275,6 +314,7 @@ namespace SchoolSystem.UI.Students
             if (GetSelectedClassId() <= 0)
                 return;
 
+            await LoadSectionsAsync();
             await LoadDataAsync();
         }
 
@@ -293,8 +333,11 @@ namespace SchoolSystem.UI.Students
 
             string academicYear = txtAcademicYear.Text.Trim();
 
-            if (academicYear.Length == 9)
+            if (academicYear.Length == 9 && IsValidAcademicYear(academicYear))
+            {
+                await LoadSectionsAsync();
                 await LoadDataAsync();
+            }
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
@@ -373,9 +416,9 @@ namespace SchoolSystem.UI.Students
                 return;
             }
 
-            if (cmbSection.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbSection.Text))
+            if (!cmbSection.Enabled || cmbSection.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbSection.Text))
             {
-                ShowWarning("اختر الشعبة أولاً.");
+                ShowWarning("لا توجد شعبة فعلية متاحة لهذا الصف والعام الدراسي.");
                 cmbSection.Focus();
                 return;
             }
@@ -513,35 +556,17 @@ namespace SchoolSystem.UI.Students
 
         private void ShowInfo(string message)
         {
-            MessageBox.Show(
-                message,
-                "معلومة",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowInfo(message);
         }
 
         private void ShowWarning(string message)
         {
-            MessageBox.Show(
-                message,
-                "تنبيه",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowWarning(message);
         }
 
         private void ShowError(string message)
         {
-            MessageBox.Show(
-                message,
-                "خطأ",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowError(message);
         }
 
         private class StudentListItem

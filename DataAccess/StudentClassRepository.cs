@@ -43,6 +43,33 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        public DataTable GetSections(int classId, string academicYear)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                const string query = @"
+                    SELECT DISTINCT Section
+                    FROM StudentClasses
+                    WHERE ClassID = @ClassID
+                      AND AcademicYear = @AcademicYear
+                      AND NULLIF(LTRIM(RTRIM(Section)), N'') IS NOT NULL
+                    ORDER BY Section";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@ClassID", classId);
+                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear);
+
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+                        return dt;
+                    }
+                }
+            }
+        }
+
         public DataTable GetAssignedStudents(int classId, string section, string academicYear)
         {
             using (SqlConnection conn = DbConnection.GetConnection())

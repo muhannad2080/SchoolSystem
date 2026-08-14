@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
 using SchoolSystem.Security;
@@ -16,6 +15,16 @@ namespace SchoolSystem.Services
             CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
             ValidateAcademicYear(academicYear);
             return repository.GetUnassignedStudents(academicYear);
+        }
+
+        public DataTable GetSections(int classId, string academicYear)
+        {
+            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
+            if (classId <= 0)
+                throw new ArgumentException("يجب اختيار الصف.");
+
+            ValidateAcademicYear(academicYear);
+            return repository.GetSections(classId, academicYear.Trim());
         }
 
         public DataTable GetAssignedStudents(int classId, string section, string academicYear)
@@ -74,8 +83,18 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(academicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
-            if (!Regex.IsMatch(academicYear.Trim(), @"^[0-9]{4}/[0-9]{4}$"))
-                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون مثل 2026/2027.");
+            string[] parts = academicYear.Trim().Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 ||
+                parts[0].Length != 4 ||
+                parts[1].Length != 4 ||
+                !int.TryParse(parts[0], out firstYear) ||
+                !int.TryParse(parts[1], out secondYear) ||
+                secondYear != firstYear + 1)
+            {
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
+            }
         }
     }
 }
