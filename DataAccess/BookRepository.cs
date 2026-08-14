@@ -116,7 +116,12 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = "DELETE FROM Books WHERE BookID = @BookID";
+                const string query = @"
+                    IF EXISTS (SELECT 1 FROM BookBorrowings WHERE BookID = @BookID)
+                        THROW 51002, N'لا يمكن حذف الكتاب لأنه مرتبط بسجلات إعارة. عطّل الكتاب بدلاً من حذفه.', 1;
+
+                    DELETE FROM Books
+                    WHERE BookID = @BookID;";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {

@@ -120,7 +120,12 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = "DELETE FROM FeePlans WHERE FeePlanID = @FeePlanID";
+                const string query = @"
+                    IF EXISTS (SELECT 1 FROM Fees WHERE FeePlanID = @FeePlanID)
+                        THROW 51003, N'لا يمكن حذف خطة الرسوم لأنها مستخدمة في رسوم طلابية. عطّلها أو عدّلها بدلاً من حذفها.', 1;
+
+                    DELETE FROM FeePlans
+                    WHERE FeePlanID = @FeePlanID;";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
