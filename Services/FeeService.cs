@@ -94,6 +94,8 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(fee.AcademicYear))
                 throw new Exception("يجب اختيار العام الدراسي.");
 
+            ValidateAcademicYear(fee.AcademicYear);
+
             if (string.IsNullOrWhiteSpace(fee.FeeType))
                 throw new Exception("يجب اختيار نوع الرسوم.");
 
@@ -111,10 +113,38 @@ namespace SchoolSystem.Services
 
             if (fee.PaidAmount > fee.TotalAmount - fee.DiscountAmount)
                 throw new Exception("المبلغ المدفوع لا يمكن أن يكون أكبر من صافي الرسوم.");
+
+            if (fee.DueDate == DateTime.MinValue)
+                throw new Exception("تاريخ الاستحقاق مطلوب وصحيح.");
+
+            if (fee.PaymentDate.HasValue && fee.PaymentDate.Value.Date > DateTime.Today)
+                throw new Exception("تاريخ الدفع لا يمكن أن يكون في المستقبل.");
+        }
+
+        private void ValidateAcademicYear(string academicYear)
+        {
+            string value = academicYear == null ? "" : academicYear.Trim();
+            string[] parts = value.Split('/');
+            int firstYear;
+            int secondYear;
+
+            if (parts.Length != 2 ||
+                parts[0].Length != 4 ||
+                parts[1].Length != 4 ||
+                !int.TryParse(parts[0], out firstYear) ||
+                !int.TryParse(parts[1], out secondYear) ||
+                firstYear < 2000 ||
+                firstYear > 2100 ||
+                secondYear != firstYear + 1)
+            {
+                throw new Exception("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
+            }
         }
 
         private void PrepareFee(Fee fee)
         {
+            fee.AcademicYear = fee.AcademicYear.Trim();
+            fee.FeeType = fee.FeeType.Trim();
             fee.NetAmount = fee.TotalAmount - fee.DiscountAmount;
             fee.RemainingAmount = fee.NetAmount - fee.PaidAmount;
 
