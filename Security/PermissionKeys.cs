@@ -34,6 +34,8 @@ namespace SchoolSystem.Security
         public const string ReportsView = "Reports.View";
         public const string UsersManage = "Users.Manage";
 
+        public const string SystemAdministratorRole = "مدير النظام";
+
         public static IReadOnlyList<string> All
         {
             get
@@ -64,22 +66,67 @@ namespace SchoolSystem.Security
             }
         }
 
+        public static string NormalizeRoleName(string roleName)
+        {
+            string value = (roleName ?? string.Empty).Trim();
+
+            if (value.Equals(SystemAdministratorRole, StringComparison.OrdinalIgnoreCase) ||
+                value.Equals("Admin", StringComparison.OrdinalIgnoreCase) ||
+                value.Equals("Administrator", StringComparison.OrdinalIgnoreCase))
+                return SystemAdministratorRole;
+
+            return value;
+        }
+
+        public static bool IsSystemAdministratorRole(string roleName)
+        {
+            return string.Equals(
+                NormalizeRoleName(roleName),
+                SystemAdministratorRole,
+                StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static string NormalizePermissionKey(string permissionKey)
+        {
+            if (string.IsNullOrWhiteSpace(permissionKey))
+                return string.Empty;
+
+            string value = permissionKey.Trim();
+            return All.FirstOrDefault(
+                       key => string.Equals(key, value, StringComparison.OrdinalIgnoreCase)) ??
+                   string.Empty;
+        }
+
+        public static string NormalizePermissions(string permissions)
+        {
+            if (string.IsNullOrWhiteSpace(permissions))
+                return string.Empty;
+
+            IEnumerable<string> normalized = permissions
+                .Split(new[] { ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(NormalizePermissionKey)
+                .Where(key => !string.IsNullOrWhiteSpace(key));
+
+            return Serialize(normalized);
+        }
+
         public static string Serialize(IEnumerable<string> permissions)
         {
             if (permissions == null)
-                return "";
+                return string.Empty;
 
             return string.Join(",", permissions
                 .Where(p => !string.IsNullOrWhiteSpace(p))
-                .Select(p => p.Trim())
+                .Select(NormalizePermissionKey)
+                .Where(p => !string.IsNullOrWhiteSpace(p))
                 .Distinct(StringComparer.OrdinalIgnoreCase));
         }
 
         public static string GetRoleDefaults(string roleName)
         {
-            switch ((roleName ?? "").Trim())
+            switch (NormalizeRoleName(roleName))
             {
-                case "مدير النظام":
+                case SystemAdministratorRole:
                     return Serialize(All);
                 case "الإدارة":
                     return Serialize(new[]
@@ -116,7 +163,7 @@ namespace SchoolSystem.Security
                 case "التقارير":
                     return Serialize(new[] { DashboardView, ReportsView });
                 default:
-                    return "";
+                    return string.Empty;
             }
         }
     }

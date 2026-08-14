@@ -7,6 +7,8 @@ namespace SchoolSystem.Security
 {
     public static class CurrentUser
     {
+        private static readonly object SyncRoot = new object();
+
         public static User User { get; private set; }
 
         public static bool IsLoggedIn
@@ -16,18 +18,32 @@ namespace SchoolSystem.Security
 
         public static void Set(User user)
         {
-            User = user;
+            if (user == null)
+                throw new ArgumentNullException("user");
+
+            if (!user.IsActive)
+                throw new InvalidOperationException("لا يمكن إنشاء جلسة لحساب غير فعال.");
+
+            user.RoleName = PermissionKeys.NormalizeRoleName(user.RoleName);
+            user.Permissions = PermissionKeys.NormalizePermissions(user.Permissions);
+
+            lock (SyncRoot)
+            {
+                User = user;
+            }
         }
 
         public static void Clear()
         {
-            User = null;
+            lock (SyncRoot)
+            {
+                User = null;
+            }
         }
 
         public static bool IsAdmin()
         {
-            return User != null
-                && string.Equals((User.RoleName ?? "").Trim(), "مدير النظام", StringComparison.OrdinalIgnoreCase);
+            return User != null && PermissionKeys.IsSystemAdministratorRole(User.RoleName);
         }
 
         public static bool HasPermission(string permissionKey)
@@ -35,11 +51,12 @@ namespace SchoolSystem.Security
             if (User == null || !User.IsActive || string.IsNullOrWhiteSpace(permissionKey))
                 return false;
 
-            if (IsAdmin())
-                return true;
+            string normalizedKey = PermissionKeys.NormalizePermissionKey(permissionKey);
+            if (string.IsNullOrWhiteSpace(normalizedKey))
+                return false;
 
             HashSet<string> permissions = ParsePermissions(User.Permissions);
-            return permissions.Contains(permissionKey.Trim());
+            return permissions.Contains(normalizedKey);
         }
 
         public static bool HasAny(params string[] permissionKeys)
@@ -64,7 +81,7 @@ namespace SchoolSystem.Security
             return new HashSet<string>(
                 permissions
                     .Split(new[] { ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(p => p.Trim())
+                    .Select(PermissionKeys.NormalizePermissionKey)
                     .Where(p => !string.IsNullOrWhiteSpace(p)),
                 StringComparer.OrdinalIgnoreCase);
         }

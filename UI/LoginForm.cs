@@ -125,9 +125,7 @@ namespace SchoolSystem.UI
 
             try
             {
-                User user = userService.Authenticate(userName, password);
-
-                CurrentUser.Set(user);
+                userService.Authenticate(userName, password);
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();

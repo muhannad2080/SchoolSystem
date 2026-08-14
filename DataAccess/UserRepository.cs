@@ -264,7 +264,7 @@ namespace SchoolSystem.DataAccess
                 string query = @"
                     SELECT COUNT(*)
                     FROM Users
-                    WHERE RoleName = N'مدير النظام'
+                    WHERE LTRIM(RTRIM(RoleName)) IN (N'مدير النظام', N'Admin', N'Administrator')
                       AND IsActive = 1";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))

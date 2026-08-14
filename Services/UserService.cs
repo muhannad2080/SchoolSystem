@@ -24,6 +24,10 @@ namespace SchoolSystem.Services
         public bool AddUser(User user, string password)
         {
             NormalizeUser(user);
+
+            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+                user.Permissions = PermissionKeys.GetRoleDefaults(user.RoleName);
+
             ValidateUser(user);
 
             password = NormalizeDigits(password);
@@ -50,11 +54,27 @@ namespace SchoolSystem.Services
             if (user.UserID <= 0)
                 throw new Exception("رقم المستخدم غير صحيح.");
 
+            User existingUser = userRepository.GetUserById(user.UserID);
+            if (existingUser == null)
+                throw new Exception("المستخدم غير موجود.");
+
             NormalizeUser(user);
             ValidateUser(user);
 
+            bool removingAdministrator = PermissionKeys.IsSystemAdministratorRole(existingUser.RoleName) &&
+                (!PermissionKeys.IsSystemAdministratorRole(user.RoleName) || !user.IsActive);
+
+            if (removingAdministrator && userRepository.CountAdmins() <= 1)
+                throw new Exception("لا يمكن تعطيل أو إزالة آخر مدير نظام.");
+
+            if (CurrentUser.IsLoggedIn && CurrentUser.User.UserID == user.UserID && !user.IsActive)
+                throw new Exception("لا يمكن تعطيل الحساب المستخدم حاليًا.");
+
             if (userRepository.UserNameExists(user.UserName, user.UserID))
                 throw new Exception("اسم المستخدم موجود مسبقاً.");
+
+            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+                user.Permissions = PermissionKeys.GetRoleDefaults(user.RoleName);
 
             if (updatePassword)
             {
@@ -85,7 +105,10 @@ namespace SchoolSystem.Services
             if (user == null)
                 throw new Exception("المستخدم غير موجود.");
 
-            if (user.RoleName == "مدير النظام" && userRepository.CountAdmins() <= 1)
+            if (CurrentUser.IsLoggedIn && CurrentUser.User.UserID == userId)
+                throw new Exception("لا يمكن حذف المستخدم المسجل دخوله حاليًا.");
+
+            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName) && userRepository.CountAdmins() <= 1)
                 throw new Exception("لا يمكن حذف آخر مدير نظام.");
 
             return userRepository.DeleteUser(userId);
@@ -115,6 +138,8 @@ namespace SchoolSystem.Services
             if (!ok)
                 throw new Exception("اسم المستخدم أو كلمة المرور غير صحيحة.");
 
+            user.RoleName = PermissionKeys.NormalizeRoleName(user.RoleName);
+            user.Permissions = PermissionKeys.NormalizePermissions(user.Permissions);
             EnsureRolePermissions(user);
             userRepository.UpdateLastLogin(user.UserID);
 
@@ -169,15 +194,22 @@ namespace SchoolSystem.Services
 
         private void EnsureRolePermissions(User user)
         {
-            if (user == null || !string.IsNullOrWhiteSpace(user.Permissions))
+            if (user == null)
                 return;
 
+            string normalized = PermissionKeys.NormalizePermissions(user.Permissions);
             string defaults = PermissionKeys.GetRoleDefaults(user.RoleName);
-            if (string.IsNullOrWhiteSpace(defaults))
-                return;
 
-            user.Permissions = defaults;
-            userRepository.UpdatePermissions(user.UserID, defaults);
+            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+                normalized = defaults;
+            else if (string.IsNullOrWhiteSpace(normalized) && !string.IsNullOrWhiteSpace(defaults))
+                normalized = defaults;
+
+            if (!string.Equals(user.Permissions ?? string.Empty, normalized, StringComparison.Ordinal))
+            {
+                user.Permissions = normalized;
+                userRepository.UpdatePermissions(user.UserID, normalized);
+            }
         }
 
         private void ValidateUser(User user)
@@ -225,8 +257,8 @@ namespace SchoolSystem.Services
 
             user.FullName = NormalizeDigits(user.FullName).Trim();
             user.UserName = NormalizeDigits(user.UserName).Trim();
-            user.RoleName = NormalizeDigits(user.RoleName).Trim();
-            user.Permissions = NormalizeDigits(user.Permissions).Trim();
+            user.RoleName = PermissionKeys.NormalizeRoleName(NormalizeDigits(user.RoleName));
+            user.Permissions = PermissionKeys.NormalizePermissions(NormalizeDigits(user.Permissions));
             user.Email = NormalizeDigits(user.Email).Trim();
             user.Phone = NormalizeDigits(user.Phone).Trim();
         }
