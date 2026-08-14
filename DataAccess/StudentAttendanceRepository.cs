@@ -16,7 +16,6 @@ namespace SchoolSystem.DataAccess
                     FROM Students
                     WHERE ClassID = @ClassID
                       AND AcademicYear = @AcademicYear
-                      AND ISNULL(Status, N'منتظم') = N'منتظم'
                       AND NULLIF(LTRIM(RTRIM(ISNULL(Section, N''))), N'') IS NOT NULL
                     ORDER BY Section";
 
