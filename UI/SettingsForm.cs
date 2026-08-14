@@ -48,9 +48,14 @@ namespace SchoolSystem.UI
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
             {
                 dialog.Description = "اختر مجلد النسخ الاحتياطية خارج مجلد البرنامج";
-                dialog.SelectedPath = backupDirectoryTextBox.Text;
+                string currentPath = backupDirectoryTextBox.Text.Trim();
+                if (!string.IsNullOrWhiteSpace(currentPath) && Directory.Exists(currentPath))
+                    dialog.SelectedPath = currentPath;
                 if (dialog.ShowDialog() == DialogResult.OK)
+                {
                     backupDirectoryTextBox.Text = dialog.SelectedPath;
+                    statusLabel.Text = "تم اختيار مجلد النسخ الاحتياطي. اضغط حفظ الإعدادات لتثبيته.";
+                }
             }
         }
 
@@ -175,6 +180,10 @@ namespace SchoolSystem.UI
                 throw new InvalidOperationException("أدخل اسم قاعدة البيانات.");
             if (string.IsNullOrWhiteSpace(backupDirectoryTextBox.Text))
                 throw new InvalidOperationException("اختر مجلد النسخ الاحتياطية.");
+
+            string backupDirectory = backupDirectoryTextBox.Text.Trim();
+            if (File.Exists(backupDirectory))
+                throw new InvalidOperationException("مسار النسخ الاحتياطي يشير إلى ملف، اختر مجلداً.");
         }
 
         private void SaveSettingsSilently()
