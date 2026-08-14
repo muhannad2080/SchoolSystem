@@ -19,7 +19,7 @@ namespace SchoolSystem.DataAccess
                         s.Gender,
                         s.StudentPhone AS Phone
                     FROM Students s
-                    WHERE ISNULL(s.Status, N'منتظم') = N'منتظم'
+                    WHERE ISNULL(s.Status, N'نشط') = N'نشط'
                       AND NOT EXISTS
                       (
                           SELECT 1
@@ -48,10 +48,12 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 const string query = @"
-                    SELECT DISTINCT Section
-                    FROM StudentClasses
-                    WHERE ClassID = @ClassID
-                      AND AcademicYear = @AcademicYear
+                    SELECT DISTINCT sc.Section
+                    FROM StudentClasses sc
+                    INNER JOIN Students s ON sc.StudentID = s.StudentID
+                    WHERE sc.ClassID = @ClassID
+                      AND sc.AcademicYear = @AcademicYear
+                      AND ISNULL(s.Status, N'نشط') = N'نشط'
                       AND NULLIF(LTRIM(RTRIM(Section)), N'') IS NOT NULL
                     ORDER BY Section";
 
@@ -116,6 +118,24 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Students
+                        WHERE StudentID = @StudentID
+                          AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 50006, N'لا يمكن تعيين طالب غير نشط.', 1;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Classes
+                        WHERE ClassID = @ClassID
+                          AND ISNULL(IsActive, 1) = 1
+                    )
+                        THROW 50007, N'لا يمكن التعيين إلى فصل غير نشط.', 1;
+
                     INSERT INTO StudentClasses
                     (
                         StudentID,

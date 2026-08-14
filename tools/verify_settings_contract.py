@@ -19,6 +19,7 @@ student_attendance_repository = (ROOT / "DataAccess" / "StudentAttendanceReposit
 grade_repository = (ROOT / "DataAccess" / "GradeRepository.cs").read_text(encoding="utf-8")
 enrollment_repository = (ROOT / "DataAccess" / "EnrollmentRepository.cs").read_text(encoding="utf-8")
 borrowing_repository = (ROOT / "DataAccess" / "BorrowingRepository.cs").read_text(encoding="utf-8")
+student_class_repository = (ROOT / "DataAccess" / "StudentClassRepository.cs").read_text(encoding="utf-8")
 room_repository = (ROOT / "DataAccess" / "RoomRepository.cs").read_text(encoding="utf-8")
 class_repository = (ROOT / "DataAccess" / "ClassRepository.cs").read_text(encoding="utf-8")
 class_service = (ROOT / "Services" / "ClassService.cs").read_text(encoding="utf-8")
@@ -126,6 +127,10 @@ checks = {
     and "لا يمكن ربط تسجيل بطالب غير نشط" in enrollment_repository,
     "borrowing_requires_active_borrower": "لا يمكن إنشاء إعارة لطالب غير نشط" in borrowing_repository
     and "لا يمكن إنشاء إعارة لمعلم غير نشط" in borrowing_repository,
+    "student_assignment_uses_active_status": "ISNULL(s.Status, N'نشط') = N'نشط'" in student_class_repository
+    and "لا يمكن تعيين طالب غير نشط" in student_class_repository,
+    "student_assignment_requires_active_class": "ISNULL(IsActive, 1) = 1" in student_class_repository
+    and "لا يمكن التعيين إلى فصل غير نشط" in student_class_repository,
 }
 
 failed = [name for name, passed in checks.items() if not passed]
