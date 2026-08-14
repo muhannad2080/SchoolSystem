@@ -22,8 +22,36 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
             this.Dock = DockStyle.Fill;
             this.Load += PayrollForm_Load;
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewContracts);
+            UIHelper.StylePrimaryButton(btnAdd);
+            UIHelper.StylePrimaryButton(btnUpdate);
+            UIHelper.StyleDangerButton(btnDelete);
+            UIHelper.StyleButton(btnClear, UIHelper.NeutralColor);
+            UIHelper.StyleTextBox(txtSearch);
+            UIHelper.StyleTextBox(txtContractNumber);
+            UIHelper.StyleTextBox(txtBasicSalary);
+            UIHelper.StyleTextBox(txtHousing);
+            UIHelper.StyleTextBox(txtTransport);
+            UIHelper.StyleTextBox(txtOther);
+            UIHelper.StyleTextBox(txtDeductions);
+            UIHelper.StyleTextBox(txtTotal);
+            UIHelper.StyleTextBox(txtNetSalary);
+            UIHelper.StyleTextBox(txtNotes);
+            UIHelper.StyleComboBox(cmbTeacher);
+            UIHelper.StyleComboBox(cmbContractType);
+            UIHelper.StyleComboBox(cmbContractStatus);
+            UIHelper.StyleComboBox(cmbPaymentMethod);
+            lblRecordCount.ForeColor = UIHelper.MutedTextColor;
+
+            txtTotal.BackColor = UIHelper.SurfaceElevatedColor;
+            txtNetSalary.BackColor = UIHelper.SurfaceElevatedColor;
         }
 
         private async void PayrollForm_Load(object sender, EventArgs e)
