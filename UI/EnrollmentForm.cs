@@ -257,8 +257,8 @@ namespace SchoolSystem.UI
                     PreviousClass = txtPreviousClass.Text,
                     TransferReason = txtTransferReason.Text,
                     
-                    RegistrationFee = string.IsNullOrEmpty(txtRegistrationFee.Text) ? 0 : Convert.ToDecimal(txtRegistrationFee.Text),
-                    PaidAmount = string.IsNullOrEmpty(txtPaidAmount.Text) ? 0 : Convert.ToDecimal(txtPaidAmount.Text),
+                    RegistrationFee = ParseAmountOrZero(txtRegistrationFee.Text),
+                    PaidAmount = ParseAmountOrZero(txtPaidAmount.Text),
                     PaymentMethod = cmbPaymentMethod.SelectedItem?.ToString(),
                     ReceiptNo = txtReceiptNo.Text,
                     
@@ -537,6 +537,14 @@ namespace SchoolSystem.UI
             {
                 isLoading = false;
             }
+        }
+
+        private decimal ParseAmountOrZero(string value)
+        {
+            decimal amount;
+            return string.IsNullOrWhiteSpace(value) || !UIHelper.TryParseDecimal(value, out amount)
+                ? 0m
+                : amount;
         }
 
         private bool ValidateInputs()
