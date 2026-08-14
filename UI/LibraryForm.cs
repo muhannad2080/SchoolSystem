@@ -28,11 +28,38 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
             Dock = DockStyle.Fill;
 
             Load += LibraryForm_Load;
             tabControl.SelectedIndexChanged += TabControl_SelectedIndexChanged;
             cmbBorrowerType.SelectedIndexChanged += async (s, e) => await LoadBorrowersAsync();
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewBooks);
+            UIHelper.StyleDataGridView(dataGridViewBorrowings);
+            UIHelper.StylePrimaryButton(btnAddBook);
+            UIHelper.StylePrimaryButton(btnUpdateBook);
+            UIHelper.StyleDangerButton(btnDeleteBook);
+            UIHelper.StyleButton(btnClearBook, UIHelper.NeutralColor);
+            UIHelper.StylePrimaryButton(btnBorrow);
+            UIHelper.StyleButton(btnReturn, UIHelper.WarningColor);
+            UIHelper.StyleTextBox(txtTitle);
+            UIHelper.StyleTextBox(txtAuthor);
+            UIHelper.StyleTextBox(txtISBN);
+            UIHelper.StyleTextBox(txtPublisher);
+            UIHelper.StyleTextBox(txtPublicationYear);
+            UIHelper.StyleTextBox(txtCopies);
+            UIHelper.StyleTextBox(txtShelf);
+            UIHelper.StyleTextBox(txtBookNotes);
+            UIHelper.StyleTextBox(txtBorrowNotes);
+            UIHelper.StyleComboBox(cmbCategory);
+            UIHelper.StyleComboBox(cmbBook);
+            UIHelper.StyleComboBox(cmbBorrowerType);
+            UIHelper.StyleComboBox(cmbBorrower);
+            lblRecordCount.ForeColor = UIHelper.MutedTextColor;
         }
 
         private async void LibraryForm_Load(object sender, EventArgs e)

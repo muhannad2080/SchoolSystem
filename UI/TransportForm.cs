@@ -27,10 +27,37 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
             Dock = DockStyle.Fill;
 
             Load += TransportForm_Load;
             tabControl.SelectedIndexChanged += TabControl_SelectedIndexChanged;
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewBuses);
+            UIHelper.StyleDataGridView(dataGridViewRoutes);
+            UIHelper.StylePrimaryButton(btnAddBus);
+            UIHelper.StylePrimaryButton(btnUpdateBus);
+            UIHelper.StyleDangerButton(btnDeleteBus);
+            UIHelper.StyleButton(btnClearBus, UIHelper.NeutralColor);
+            UIHelper.StylePrimaryButton(btnAddRoute);
+            UIHelper.StylePrimaryButton(btnUpdateRoute);
+            UIHelper.StyleDangerButton(btnDeleteRoute);
+            UIHelper.StyleButton(btnClearRoute, UIHelper.NeutralColor);
+            UIHelper.StyleTextBox(txtBusNumber);
+            UIHelper.StyleTextBox(txtDriverName);
+            UIHelper.StyleTextBox(txtDriverPhone);
+            UIHelper.StyleTextBox(txtCapacity);
+            UIHelper.StyleTextBox(txtNotes);
+            UIHelper.StyleTextBox(txtRouteName);
+            UIHelper.StyleTextBox(txtStartPoint);
+            UIHelper.StyleTextBox(txtEndPoint);
+            UIHelper.StyleTextBox(txtFee);
+            UIHelper.StyleTextBox(txtRouteNotes);
+            UIHelper.StyleComboBox(cmbBus);
+            lblRecordCount.ForeColor = UIHelper.MutedTextColor;
         }
 
         private async void TransportForm_Load(object sender, EventArgs e)

@@ -27,8 +27,28 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ApplyCustomStyles();
             Dock = DockStyle.Fill;
             WireUpEvents();
+        }
+
+        private void ApplyCustomStyles()
+        {
+            UIHelper.StyleDataGridView(dataGridViewReport);
+            UIHelper.StylePrimaryButton(btnLoad);
+            UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnExportExcel, UIHelper.SuccessColor);
+            UIHelper.StyleButton(btnExportCsv, UIHelper.SuccessColor);
+            UIHelper.StyleButton(btnExportPDF, UIHelper.DangerColor);
+            UIHelper.StyleButton(btnPrint, UIHelper.PrimaryColor);
+            UIHelper.StyleComboBox(cmbReportType);
+            UIHelper.StyleComboBox(cmbClass);
+            UIHelper.StyleComboBox(cmbSection);
+            UIHelper.StyleComboBox(cmbStatus);
+            UIHelper.StyleTextBox(txtAcademicYear);
+            UIHelper.StyleTextBox(txtSearch);
+            lblSummary.ForeColor = UIHelper.MutedTextColor;
+            lblRecordCount.ForeColor = UIHelper.MutedTextColor;
         }
 
         private void WireUpEvents()
