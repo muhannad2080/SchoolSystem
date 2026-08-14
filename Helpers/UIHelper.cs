@@ -25,11 +25,13 @@ namespace SchoolSystem.Helpers
         public static readonly Color BackgroundColor = Color.FromArgb(248, 250, 252);
         public static readonly Color SurfaceColor = Color.White;
         public static readonly Color SurfaceSecondaryColor = Color.FromArgb(241, 245, 249);
+        public static readonly Color SurfaceElevatedColor = Color.White;
         public static readonly Color DisabledSurfaceColor = Color.FromArgb(243, 244, 246);
         public static readonly Color AlternateRowColor = BackgroundColor;
         public static readonly Color BorderColor = Color.FromArgb(203, 213, 225);
         public static readonly Color DividerColor = BorderColor;
         public static readonly Color MutedTextColor = Color.FromArgb(71, 85, 105);
+        public static readonly Color TextDisabledColor = Color.FromArgb(148, 163, 184);
         public static readonly Color TextColor = Color.FromArgb(15, 23, 42);
         public static readonly Color TextPrimaryColor = TextColor;
         public static readonly Color TextSecondaryColor = SecondaryColor;
@@ -52,6 +54,13 @@ namespace SchoolSystem.Helpers
         public const int Space20 = 20;
         public const int Space24 = 24;
         public const int Space32 = 32;
+
+        // Shared fonts keep typography centralized and reduce repeated GDI allocations.
+        private static readonly Font BodyFont = new Font(FontFamily, BodyFontSize);
+        private static readonly Font SectionFont = new Font(FontFamily, SectionFontSize, FontStyle.Bold);
+        private static readonly Font HeadingFont = new Font(FontFamily, HeadingFontSize, FontStyle.Bold);
+        private static readonly Font TitleFont = new Font(FontFamily, TitleFontSize, FontStyle.Bold);
+        private static readonly Font GridFont = new Font(FontFamily, BodyFontSize);
 
         public static void ApplyStyle(Form form)
         {
@@ -128,7 +137,7 @@ namespace SchoolSystem.Helpers
         public static void ApplyKryptonTheme()
         {
             KryptonThemeManager.GlobalPaletteMode = PaletteMode.Office2010Blue;
-            KryptonThemeManager.BaseFont = new Font(FontFamily, BodyFontSize);
+            KryptonThemeManager.BaseFont = BodyFont;
         }
 
         public static void ApplyKryptonTheme(Control root)
@@ -224,13 +233,13 @@ namespace SchoolSystem.Helpers
                     if (labelKey.Contains("title") || labelKey.Contains("header") || labelKey.Contains("عنوان") || labelKey.Contains("رئيسي"))
                     {
                         label.ForeColor = PrimaryColor;
-                        label.Font = new Font("Tahoma", 14F, FontStyle.Bold);
+                        label.Font = TitleFont;
                         label.Margin = new Padding(3, 8, 3, 8);
                     }
                     else if (labelKey.Contains("section") || labelKey.Contains("قسم") || labelKey.Contains("بيانات"))
                     {
                         label.ForeColor = MutedTextColor;
-                        label.Font = new Font("Tahoma", 11F, FontStyle.Bold);
+                        label.Font = SectionFont;
                     }
                 }
                 else if (child is LinkLabel linkLabel)
@@ -348,7 +357,7 @@ namespace SchoolSystem.Helpers
 
         public static void StyleDataGridView(DataGridView dgv)
         {
-            dgv.BackgroundColor = Color.White;
+            dgv.BackgroundColor = SurfaceElevatedColor;
             dgv.BorderStyle = BorderStyle.None;
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
             dgv.RightToLeft = RightToLeft.Yes;
@@ -368,11 +377,11 @@ namespace SchoolSystem.Helpers
             dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
             dgv.DefaultCellStyle.SelectionForeColor = TextColor;
             dgv.DefaultCellStyle.ForeColor = TextColor;
-            dgv.DefaultCellStyle.Font = new Font("Tahoma", 10F);
+            dgv.DefaultCellStyle.Font = GridFont;
             dgv.DefaultCellStyle.Padding = new Padding(6, 3, 6, 3);
             dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
 
-            dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+            dgv.AlternatingRowsDefaultCellStyle.BackColor = AlternateRowColor;
             dgv.RowsDefaultCellStyle.BackColor = SurfaceColor;
             dgv.RowsDefaultCellStyle.ForeColor = TextColor;
             dgv.RowTemplate.Height = 35;
@@ -392,7 +401,7 @@ namespace SchoolSystem.Helpers
             btn.FlatAppearance.MouseOverBackColor = Lighten(backColor, 0.10f);
             btn.FlatAppearance.MouseDownBackColor = Darken(backColor, 0.10f);
             btn.Cursor = Cursors.Hand;
-            btn.Font = new Font("Tahoma", 10F, FontStyle.Bold);
+            btn.Font = HeadingFont;
             btn.Height = 38;
             btn.Padding = new Padding(10, 0, 10, 0);
         }
@@ -405,7 +414,7 @@ namespace SchoolSystem.Helpers
             btn.BackColor = backColor;
             btn.ForeColor = Color.White;
             btn.Cursor = Cursors.Hand;
-            btn.Font = new Font("Tahoma", 10F, FontStyle.Bold);
+            btn.Font = HeadingFont;
             btn.Height = 38;
             btn.MinimumSize = new Size(90, 38);
         }
@@ -448,7 +457,7 @@ namespace SchoolSystem.Helpers
             txt.BorderStyle = BorderStyle.FixedSingle;
             txt.BackColor = SurfaceColor;
             txt.ForeColor = TextColor;
-            txt.Font = new Font("Tahoma", 10F);
+            txt.Font = BodyFont;
             txt.Margin = new Padding(3, 4, 3, 4);
         }
 
@@ -457,7 +466,7 @@ namespace SchoolSystem.Helpers
             if (txt == null)
                 return;
 
-            txt.Font = new Font("Tahoma", 10F);
+            txt.Font = BodyFont;
             txt.ForeColor = TextColor;
             txt.BackColor = Color.White;
         }
@@ -467,7 +476,7 @@ namespace SchoolSystem.Helpers
             cmb.DropDownStyle = ComboBoxStyle.DropDownList;
             cmb.BackColor = SurfaceColor;
             cmb.ForeColor = TextColor;
-            cmb.Font = new Font("Tahoma", 10F);
+            cmb.Font = BodyFont;
             cmb.Margin = new Padding(3, 4, 3, 4);
         }
 
