@@ -250,6 +250,12 @@ namespace SchoolSystem
             return false;
         }
 
+        public void RefreshCurrentUserSession()
+        {
+            UpdateCurrentUserLabel();
+            ApplyCurrentUserPermissions();
+        }
+
         private void ApplyCurrentUserPermissions()
         {
             if (!CurrentUser.IsLoggedIn)

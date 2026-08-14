@@ -488,6 +488,9 @@ namespace SchoolSystem.UI
 
                 ShowInfo(updated ? "تم تعديل المستخدم بنجاح." : "لم يتم تعديل المستخدم.");
 
+                if (updated && CurrentUser.IsLoggedIn && CurrentUser.User.UserID == selectedUserId)
+                    MainForm.Instance?.RefreshCurrentUserSession();
+
                 await LoadUsersAsync();
                 ClearInputs();
             }
