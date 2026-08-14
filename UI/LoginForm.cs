@@ -154,11 +154,15 @@ namespace SchoolSystem.UI
             string message = exception == null ? string.Empty : exception.Message ?? string.Empty;
             string technical = message.ToLowerInvariant();
 
-            if (technical.Contains("sql") || technical.Contains("connection") ||
+            if (message.Contains("SchoolDBConnection") || message.Contains("إعدادات التطبيق") ||
+                technical.Contains("sql") || technical.Contains("connection") ||
                 technical.Contains("timeout") || technical.Contains("server") ||
                 technical.Contains("network") || technical.Contains("exception") ||
                 technical.Contains("login failed"))
             {
+                if (message.Contains("SchoolDBConnection") || message.Contains("إعدادات التطبيق"))
+                    return "ملف إعدادات التطبيق لا يحتوي على اتصال SchoolDBConnection الصحيح. تحقق من SchoolSystem.exe.config.";
+
                 return "تعذر الاتصال بالنظام حاليًا. تحقق من إعدادات قاعدة البيانات أو اتصل بمسؤول النظام.";
             }
 

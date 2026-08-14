@@ -5,9 +5,21 @@ namespace SchoolSystem.DataAccess
 {
     public static class DbConnection
     {
-        private static readonly string connectionString = 
-            ConfigurationManager.ConnectionStrings["SchoolDBConnection"]?.ConnectionString ?? 
-            @"Data Source=.;Initial Catalog=SchoolDB;Integrated Security=True;MultipleActiveResultSets=True;";
+        private static readonly string connectionString = LoadConnectionString();
+
+        private static string LoadConnectionString()
+        {
+            ConnectionStringSettings settings =
+                ConfigurationManager.ConnectionStrings["SchoolDBConnection"];
+
+            if (settings == null || string.IsNullOrWhiteSpace(settings.ConnectionString))
+            {
+                throw new ConfigurationErrorsException(
+                    "لم يتم العثور على إعداد SchoolDBConnection في ملف إعدادات التطبيق.");
+            }
+
+            return settings.ConnectionString.Trim();
+        }
 
         public static SqlConnection GetConnection()
         {
