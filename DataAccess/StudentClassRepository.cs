@@ -130,16 +130,70 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = @"
+                const string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
+
+                    DECLARE @StudentID INT;
+                    DECLARE @AcademicYear NVARCHAR(20);
+                    DECLARE @Deleted INT;
+
+                    SELECT
+                        @StudentID = StudentID,
+                        @AcademicYear = AcademicYear
+                    FROM StudentClasses
+                    WHERE StudentClassID = @StudentClassID;
+
                     DELETE FROM StudentClasses
-                    WHERE StudentClassID = @StudentClassID";
+                    WHERE StudentClassID = @StudentClassID;
+                    SET @Deleted = @@ROWCOUNT;
+
+                    IF @Deleted > 0 AND @StudentID IS NOT NULL
+                    BEGIN
+                        IF EXISTS (SELECT 1 FROM StudentClasses WHERE StudentID = @StudentID)
+                        BEGIN
+                            UPDATE s
+                            SET
+                                s.ClassID = latest.ClassID,
+                                s.Section = latest.Section,
+                                s.AcademicYear = latest.AcademicYear,
+                                s.UpdatedAt = GETDATE()
+                            FROM Students s
+                            CROSS APPLY
+                            (
+                                SELECT TOP (1)
+                                    sc.ClassID,
+                                    sc.Section,
+                                    sc.AcademicYear
+                                FROM StudentClasses sc
+                                WHERE sc.StudentID = @StudentID
+                                ORDER BY sc.AssignedDate DESC, sc.StudentClassID DESC
+                            ) latest
+                            WHERE s.StudentID = @StudentID;
+                        END
+                        ELSE
+                        BEGIN
+                            UPDATE Students
+                            SET
+                                ClassID = NULL,
+                                Section = NULL,
+                                AcademicYear = NULL,
+                                UpdatedAt = GETDATE()
+                            WHERE StudentID = @StudentID
+                              AND (AcademicYear = @AcademicYear OR AcademicYear IS NULL);
+                        END
+                    END;
+
+                    COMMIT TRANSACTION;
+                    SELECT @Deleted;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@StudentClassID", studentClassId);
 
                     conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
                 }
             }
         }
