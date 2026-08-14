@@ -193,7 +193,7 @@ namespace SchoolSystem.UI
         {
             if (string.IsNullOrWhiteSpace(txtTitle.Text))
             {
-                MessageBox.Show("أدخل عنوان الكتاب.");
+                UIHelper.ShowWarning("أدخل عنوان الكتاب.");
                 txtTitle.Focus();
                 return false;
             }
@@ -201,7 +201,7 @@ namespace SchoolSystem.UI
             int copies;
             if (!int.TryParse(txtCopies.Text.Trim(), out copies) || copies <= 0)
             {
-                MessageBox.Show("أدخل عدد نسخ صحيح أكبر من صفر.");
+                UIHelper.ShowWarning("أدخل عدد نسخ صحيح أكبر من صفر.");
                 txtCopies.Focus();
                 return false;
             }
@@ -211,7 +211,7 @@ namespace SchoolSystem.UI
                 int year;
                 if (!int.TryParse(txtPublicationYear.Text.Trim(), out year) || year < 1000 || year > DateTime.Today.Year)
                 {
-                    MessageBox.Show("سنة النشر يجب أن تكون بين 1000 والسنة الحالية.");
+                    UIHelper.ShowWarning("سنة النشر يجب أن تكون بين 1000 والسنة الحالية.");
                     txtPublicationYear.Focus();
                     return false;
                 }
@@ -221,7 +221,7 @@ namespace SchoolSystem.UI
                 txtISBN.Text.Trim().Length > 30 || txtPublisher.Text.Trim().Length > 150 ||
                 txtShelf.Text.Trim().Length > 80 || txtBookNotes.Text.Trim().Length > 1000)
             {
-                MessageBox.Show("تجاوز أحد حقول الكتاب الحد المسموح به.");
+                UIHelper.ShowWarning("تجاوز أحد حقول الكتاب الحد المسموح به.");
                 return false;
             }
 
@@ -305,7 +305,7 @@ namespace SchoolSystem.UI
 
                 await Task.Run(() => bookService.AddBook(book));
 
-                MessageBox.Show("تمت إضافة الكتاب بنجاح.");
+                UIHelper.ShowInfo("تمت إضافة الكتاب بنجاح.");
 
                 await LoadBooksAsync();
                 await LoadBooksIntoComboAsync();
@@ -323,7 +323,7 @@ namespace SchoolSystem.UI
             {
                 if (selectedBookId == 0)
                 {
-                    MessageBox.Show("اختر كتاباً من الجدول.");
+                    UIHelper.ShowWarning("اختر كتاباً من الجدول.");
                     return;
                 }
 
@@ -334,7 +334,10 @@ namespace SchoolSystem.UI
 
                 bool result = await Task.Run(() => bookService.UpdateBook(book));
 
-                MessageBox.Show(result ? "تم تعديل الكتاب بنجاح." : "لم يتم تعديل الكتاب.");
+                if (result)
+                    UIHelper.ShowInfo("تم تعديل الكتاب بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم العثور على الكتاب أو لم يتم تعديله.");
 
                 await LoadBooksAsync();
                 await LoadBooksIntoComboAsync();
@@ -352,7 +355,7 @@ namespace SchoolSystem.UI
             {
                 if (selectedBookId == 0)
                 {
-                    MessageBox.Show("اختر كتاباً من الجدول.");
+                    UIHelper.ShowWarning("اختر كتاباً من الجدول.");
                     return;
                 }
 
@@ -367,7 +370,10 @@ namespace SchoolSystem.UI
 
                 bool result = await Task.Run(() => bookService.DeleteBook(selectedBookId));
 
-                MessageBox.Show(result ? "تم حذف الكتاب." : "لم يتم حذف الكتاب.");
+                if (result)
+                    UIHelper.ShowInfo("تم حذف الكتاب بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم العثور على الكتاب أو لم يتم حذفه.");
 
                 await LoadBooksAsync();
                 await LoadBooksIntoComboAsync();
@@ -495,14 +501,14 @@ namespace SchoolSystem.UI
         {
             if (cmbBook.SelectedValue == null)
             {
-                MessageBox.Show("اختر الكتاب.");
+                UIHelper.ShowWarning("اختر الكتاب.");
                 cmbBook.Focus();
                 return false;
             }
 
             if (cmbBorrower.SelectedValue == null)
             {
-                MessageBox.Show("اختر المستعير.");
+                UIHelper.ShowWarning("اختر المستعير.");
                 cmbBorrower.Focus();
                 return false;
             }
@@ -510,28 +516,28 @@ namespace SchoolSystem.UI
             if (cmbBorrowerType.SelectedIndex < 0 ||
                 (cmbBorrowerType.Text != "طالب" && cmbBorrowerType.Text != "معلم"))
             {
-                MessageBox.Show("اختر نوع المستعير بشكل صحيح.");
+                UIHelper.ShowWarning("اختر نوع المستعير بشكل صحيح.");
                 cmbBorrowerType.Focus();
                 return false;
             }
 
             if (dtpBorrowDate.Value.Date > DateTime.Today)
             {
-                MessageBox.Show("لا يمكن تسجيل إعارة بتاريخ مستقبلي.");
+                UIHelper.ShowWarning("لا يمكن تسجيل إعارة بتاريخ مستقبلي.");
                 dtpBorrowDate.Focus();
                 return false;
             }
 
             if (dtpDueDate.Value.Date < dtpBorrowDate.Value.Date)
             {
-                MessageBox.Show("تاريخ الإرجاع يجب أن يكون بعد تاريخ الإعارة أو مساوياً له.");
+                UIHelper.ShowWarning("تاريخ الإرجاع يجب أن يكون بعد تاريخ الإعارة أو مساوياً له.");
                 dtpDueDate.Focus();
                 return false;
             }
 
             if (txtBorrowNotes.Text.Trim().Length > 1000)
             {
-                MessageBox.Show("تجاوزت الملاحظات الحد المسموح به.");
+                UIHelper.ShowWarning("تجاوزت الملاحظات الحد المسموح به.");
                 txtBorrowNotes.Focus();
                 return false;
             }
@@ -577,7 +583,7 @@ namespace SchoolSystem.UI
 
                 await Task.Run(() => borrowingService.AddBorrowing(borrowing));
 
-                MessageBox.Show("تمت إعارة الكتاب بنجاح.");
+                UIHelper.ShowInfo("تمت إعارة الكتاب بنجاح.");
 
                 await LoadBooksAsync();
                 await LoadBooksIntoComboAsync();
@@ -596,7 +602,7 @@ namespace SchoolSystem.UI
             {
                 if (selectedBorrowingId == 0)
                 {
-                    MessageBox.Show("اختر عملية إعارة من الجدول.");
+                    UIHelper.ShowWarning("اختر عملية إعارة من الجدول.");
                     return;
                 }
 
@@ -604,7 +610,10 @@ namespace SchoolSystem.UI
                     borrowingService.ReturnBook(selectedBorrowingId, DateTime.Today)
                 );
 
-                MessageBox.Show(result ? "تم استرجاع الكتاب بنجاح." : "لم يتم استرجاع الكتاب.");
+                if (result)
+                    UIHelper.ShowInfo("تم استرجاع الكتاب بنجاح.");
+                else
+                    UIHelper.ShowWarning("لم يتم العثور على عملية الإعارة أو لم يتم استرجاع الكتاب.");
 
                 await LoadBooksAsync();
                 await LoadBooksIntoComboAsync();
