@@ -105,22 +105,14 @@ namespace SchoolSystem.UI
                 if (cmbClass.Items.Count > 0)
                     cmbClass.SelectedIndex = 0;
             }
-            catch
+            catch (Exception ex)
             {
-                DataTable fallback = new DataTable();
-                fallback.Columns.Add("ClassID", typeof(int));
-                fallback.Columns.Add("ClassName", typeof(string));
-
-                fallback.Rows.Add(1, "الصف الأول الابتدائي");
-                fallback.Rows.Add(2, "الصف الثاني الابتدائي");
-                fallback.Rows.Add(3, "الصف الثالث الابتدائي");
-
-                cmbClass.DataSource = fallback;
-                cmbClass.DisplayMember = "ClassName";
-                cmbClass.ValueMember = "ClassID";
-
-                if (cmbClass.Items.Count > 0)
-                    cmbClass.SelectedIndex = 0;
+                cmbClass.DataSource = null;
+                cmbClass.Items.Clear();
+                cmbSubject.DataSource = null;
+                cmbSubject.Items.Clear();
+                cmbSubject.Enabled = false;
+                UIHelper.ShowException("تعذر تحميل الصفوف. لا يمكن إدخال الدرجات قبل إصلاح اتصال قاعدة البيانات أو صلاحية الوصول.", ex);
             }
         }
 
