@@ -39,7 +39,7 @@ namespace SchoolSystem
             tsmiAuditLogs = new ToolStripMenuItem("سجل الأنشطة");
             tsmiAuditLogs.Name = "tsmiAuditLogs";
             tsmiAuditLogs.Click += tsmiAuditLogs_Click;
-            tsmiReports.DropDownItems.Add(tsmiAuditLogs);
+            menuStripMain.Items.Add(tsmiAuditLogs);
         }
 
         private void ApplyModernMenuStyle()
@@ -343,7 +343,7 @@ namespace SchoolSystem
             tsmiLibrary.Visible = Has(PermissionKeys.LibraryManage);
 
             tsmiUsers.Visible = Has(PermissionKeys.UsersManage);
-            tsmiReports.Visible = Has(PermissionKeys.ReportsView) || Has(PermissionKeys.AuditLogsView);
+            tsmiReports.Visible = Has(PermissionKeys.ReportsView);
             tsmiAuditLogs.Visible = Has(PermissionKeys.AuditLogsView);
             تعريفرسومالصفوفToolStripMenuItem.Visible = Has(PermissionKeys.FeesManage);
 
