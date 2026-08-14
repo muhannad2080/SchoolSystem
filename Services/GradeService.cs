@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Text.RegularExpressions;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
 using SchoolSystem.Security;
@@ -111,8 +112,8 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(grade.AcademicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
-            if (!Regex.IsMatch(grade.AcademicYear.Trim(), @"^[0-9]{4}/[0-9]{4}$"))
-                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون مثل 2026/2027.");
+            if (!IsValidAcademicYear(grade.AcademicYear))
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
 
             if (string.IsNullOrWhiteSpace(grade.TermName))
                 throw new ArgumentException("الفصل الدراسي مطلوب.");

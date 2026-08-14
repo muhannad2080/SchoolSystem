@@ -74,6 +74,9 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(item.AcademicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
+            if (!IsValidAcademicYear(item.AcademicYear))
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
+
             if (item.AttendanceDate == DateTime.MinValue)
                 throw new ArgumentException("تاريخ الحضور مطلوب وصحيح.");
 
