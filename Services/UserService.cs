@@ -225,9 +225,21 @@ namespace SchoolSystem.Services
             if (newPassword.Length < 6)
                 throw new Exception("كلمة المرور يجب ألا تقل عن 6 أحرف.");
 
-            PasswordHasher.CreatePasswordHash(newPassword, out string hash, out string salt);
+            User targetUser = userRepository.GetUserByUserName(userName);
+            if (targetUser == null)
+                throw new Exception("المستخدم غير موجود.");
 
-            return userRepository.ResetPasswordByUserName(userName, hash, salt);
+            PasswordHasher.CreatePasswordHash(newPassword, out string hash, out string salt);
+            bool reset = userRepository.ResetPasswordByUserName(userName, hash, salt);
+            if (reset)
+            {
+                auditLogService.Record(
+                    "إعادة تعيين كلمة المرور",
+                    "User",
+                    targetUser.UserID.ToString(),
+                    "تمت إعادة تعيين كلمة مرور الحساب " + targetUser.UserName + " دون تسجيل كلمة المرور");
+            }
+            return reset;
         }
 
         private string GetAllPermissionsString()
@@ -252,6 +264,11 @@ namespace SchoolSystem.Services
             {
                 user.Permissions = normalized;
                 userRepository.UpdatePermissions(user.UserID, normalized);
+                auditLogService.Record(
+                    "تحديث صلاحيات تلقائي",
+                    "User",
+                    user.UserID.ToString(),
+                    "تمت مزامنة صلاحيات الحساب " + user.UserName + " مع الدور " + user.RoleName);
             }
         }
 

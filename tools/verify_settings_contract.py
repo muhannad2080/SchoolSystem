@@ -185,6 +185,13 @@ checks = {
     and "if (added)" in contract_service
     and "if (updated)" in contract_service
     and "if (deleted)" in contract_service,
+    "user_password_reset_is_audited_without_secret": "ResetPasswordByUserName" in user_service
+    and "إعادة تعيين كلمة المرور" in user_service
+    and "دون تسجيل كلمة المرور" in user_service
+    and "auditLogService.Record(" in user_service,
+    "automatic_permission_sync_is_audited": "تحديث صلاحيات تلقائي" in user_service
+    and "userRepository.UpdatePermissions(user.UserID, normalized);" in user_service
+    and "auditLogService.Record(" in user_service,
 }
 
 failed = [name for name, passed in checks.items() if not passed]
