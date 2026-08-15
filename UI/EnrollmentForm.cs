@@ -420,7 +420,14 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                UIHelper.ShowException("حفظ التسجيل", ex);
+                if (ex.Message.IndexOf("مسجل بالفعل", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    UIHelper.ShowWarning("لا يمكن حفظ التسجيل: هذا الطالب لديه تسجيل غير مرفوض في العام الدراسي " + txtAcademicYear.Text + ". اختر تسجيلاً جديداً لعام مختلف أو عدّل التسجيل الموجود.");
+                }
+                else
+                {
+                    UIHelper.ShowException("حفظ التسجيل", ex);
+                }
             }
         }
 

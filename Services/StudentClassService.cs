@@ -20,7 +20,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetSections(int classId, string academicYear)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
+            CurrentUser.DemandAny("ليس لديك صلاحية قراءة الشعب الدراسية.",
+                PermissionKeys.EnrollmentManage,
+                PermissionKeys.ClassAssignmentManage,
+                PermissionKeys.AttendanceManage,
+                PermissionKeys.GradesManage,
+                PermissionKeys.TimetableManage,
+                PermissionKeys.ReportsView);
             if (classId <= 0)
                 throw new ArgumentException("يجب اختيار الصف.");
 
