@@ -167,7 +167,12 @@ namespace SchoolSystem.Services
                 throw new Exception("اسم المستخدم أو كلمة المرور غير صحيحة.");
 
             if (!user.IsActive)
-                throw new Exception("هذا الحساب غير فعال.");
+            {
+                if (user.LockedAt.HasValue || user.FailedLoginAttempts >= 3)
+                    throw new Exception("تم تعطيل حسابك مؤقتاً بعد ثلاث محاولات دخول فاشلة. اطلب من مدير النظام إعادة تفعيل الحساب.");
+
+                throw new Exception("هذا الحساب غير نشط حالياً. راجع مدير النظام لتفعيل الحساب.");
+            }
 
             bool ok = PasswordHasher.VerifyPassword(password, user.PasswordHash, user.PasswordSalt);
             bool legacyPassword = !ok && PasswordHasher.VerifyLegacyPassword(password, user.PasswordHash, user.PasswordSalt);

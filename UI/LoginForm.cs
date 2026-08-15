@@ -138,7 +138,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError(GetSafeLoginError(ex));
+                ShowLoginFailure(ex);
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
                 txtPassword.Clear();
                 txtPassword.Focus();
@@ -163,6 +163,19 @@ namespace SchoolSystem.UI
         private void ShowWarning(string message)
         {
             UIHelper.ShowWarning(message);
+        }
+
+        private void ShowLoginFailure(Exception exception)
+        {
+            string message = GetSafeLoginError(exception);
+
+            if (message.Contains("تبقت لك"))
+            {
+                ShowWarning(message);
+                return;
+            }
+
+            ShowError(message, message.Contains("تم تعطيل") ? "تم تعطيل الحساب" : "فشل الدخول");
         }
 
         private string GetSafeLoginError(Exception exception)

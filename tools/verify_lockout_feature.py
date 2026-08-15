@@ -10,6 +10,7 @@ project = (ROOT / "SchoolSystem.csproj").read_text(encoding="utf-8")
 model = (ROOT / "Models" / "User.cs").read_text(encoding="utf-8")
 hasher = (ROOT / "Security" / "PasswordHasher.cs").read_text(encoding="utf-8")
 recovery = (ROOT / "Databass" / "Unlock-LockedAccounts.sql").read_text(encoding="utf-8")
+login = (ROOT / "UI" / "LoginForm.cs").read_text(encoding="utf-8")
 
 checks = []
 def check(name, condition):
@@ -33,6 +34,9 @@ check("legacy password migration is supported", "VerifyLegacyPassword" in hasher
 check("legacy migration uses the existing reset path", "ResetPasswordByUserName(user.UserName, migratedHash, migratedSalt)" in service)
 check("recovery script resets lock counters", "FailedLoginAttempts = 0" in recovery and "LockedAt = NULL" in recovery)
 check("recovery script does not alter passwords", "PasswordHash" not in recovery and "PasswordSalt" not in recovery)
+check("locked account message is explicit", "تم تعطيل حسابك مؤقتاً" in service and "تم تعطيل الحساب" in login)
+check("inactive account message is explicit", "هذا الحساب غير نشط حالياً" in service)
+check("remaining attempts use warning dialog", "message.Contains(\"تبقت لك\")" in login and "ShowWarning(message)" in login)
 
 failed = [name for name, ok in checks if not ok]
 for name, ok in checks:
