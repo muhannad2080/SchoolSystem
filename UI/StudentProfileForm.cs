@@ -313,6 +313,7 @@ namespace SchoolSystem.UI
             Button printButton = CreateOutputButton("طباعة | Print", UIHelper.PrimaryColor);
             Button pdfButton = CreateOutputButton("PDF", UIHelper.DangerColor);
             Button excelButton = CreateOutputButton("Excel", UIHelper.SuccessColor);
+            headerPanel.RightToLeft = RightToLeft.Yes;
             printButton.Click += delegate { PrintProfilePreview(); };
             pdfButton.Click += delegate { ExportProfilePdf(); };
             excelButton.Click += delegate { ExportProfileExcel(); };
@@ -335,6 +336,8 @@ namespace SchoolSystem.UI
                 FlatStyle = FlatStyle.Flat,
                 Font = new Font(UIHelper.FontFamily, 8.5F, FontStyle.Bold),
                 UseVisualStyleBackColor = false,
+                RightToLeft = RightToLeft.No,
+                TextAlign = ContentAlignment.MiddleCenter,
                 Margin = new Padding(4)
             };
             button.FlatAppearance.BorderSize = 0;
@@ -428,23 +431,51 @@ namespace SchoolSystem.UI
         private void ProfilePrintDocument_PrintPage(object sender, PrintPageEventArgs e)
         {
             Student student = profile == null ? null : profile.Student;
-            if (student == null) { e.HasMorePages = false; return; }
-            bool rtl = ReportOutputHelper.ContainsArabic(student.FullName) || ReportOutputHelper.ContainsArabic(student.CurrentClassName);
+            if (student == null)
+            {
+                e.HasMorePages = false;
+                return;
+            }
+
+            bool rtl = ReportOutputHelper.ContainsArabic(student.FullName)
+                       || ReportOutputHelper.ContainsArabic(student.CurrentClassName)
+                       || ReportOutputHelper.ContainsArabic(student.Nationality);
+            Rectangle area = e.MarginBounds;
+            int photoSize = Math.Min(110, Math.Max(76, area.Width / 7));
+            int contentTop = area.Top + 58;
+            Rectangle photoBounds = rtl
+                ? new Rectangle(area.Right - photoSize, area.Top + 50, photoSize, photoSize)
+                : new Rectangle(area.Left, area.Top + 50, photoSize, photoSize);
+
             using (Font title = new Font("Tahoma", 17, FontStyle.Bold))
-            using (Font label = new Font("Tahoma", 10, FontStyle.Bold))
+            using (Font label = new Font("Tahoma", 9.5F, FontStyle.Bold))
             using (Font value = new Font("Tahoma", 10))
-            using (StringFormat format = new StringFormat
+            using (Font footer = new Font("Tahoma", 8.5F))
+            using (StringFormat titleFormat = CreateProfileFormat(rtl, false))
+            using (StringFormat rtlFormat = CreateProfileFormat(true, true))
+            using (StringFormat ltrFormat = CreateProfileFormat(false, false))
             {
-                Alignment = rtl ? StringAlignment.Far : StringAlignment.Near,
-                LineAlignment = StringAlignment.Center,
-                FormatFlags = rtl ? StringFormatFlags.DirectionRightToLeft : StringFormatFlags.FitBlackBox,
-                Trimming = StringTrimming.EllipsisCharacter
-            })
-            {
-                Rectangle area = e.MarginBounds;
+                e.Graphics.FillRectangle(Brushes.White, area);
+                using (Pen border = new Pen(Color.FromArgb(37, 99, 235), 2f))
+                    e.Graphics.DrawRectangle(border, area.Left, area.Top, area.Width - 1, area.Height - 1);
+
                 e.Graphics.DrawString("ملف الطالب | Student Profile", title, Brushes.Black,
-                    new Rectangle(area.Left, area.Top, area.Width, 42), format);
-                int y = area.Top + 60;
+                    new Rectangle(area.Left, area.Top + 8, area.Width, 36), titleFormat);
+
+                if (studentPictureBox.Image != null)
+                {
+                    e.Graphics.DrawImage(studentPictureBox.Image, photoBounds);
+                    using (Pen photoBorder = new Pen(Color.LightGray, 1f))
+                        e.Graphics.DrawRectangle(photoBorder, photoBounds);
+                }
+
+                int left = rtl ? area.Left : area.Left + photoSize + 18;
+                int right = rtl ? area.Right - photoSize - 18 : area.Right;
+                int width = Math.Max(180, right - left);
+                int labelWidth = Math.Max(125, width / 3);
+                int valueWidth = width - labelWidth - 12;
+                contentTop = Math.Max(contentTop, photoBounds.Bottom + 14);
+                int y = contentTop;
                 string[][] rows =
                 {
                     new[] { "رقم الطالب | Student No.", Safe(student.StudentNumber) },
@@ -455,17 +486,39 @@ namespace SchoolSystem.UI
                     new[] { "هاتف ولي الأمر | Guardian Phone", Safe(student.GuardianPhone) },
                     new[] { "الرقم الوطني | National ID", Safe(student.NationalId) }
                 };
+
                 foreach (string[] row in rows)
                 {
-                    e.Graphics.DrawString(row[0], label, Brushes.Black, new Rectangle(area.Left, y, area.Width / 3, 32), format);
-                    e.Graphics.DrawString(row[1], value, Brushes.Black, new Rectangle(area.Left + area.Width / 3 + 12, y, area.Width * 2 / 3 - 12, 32), format);
-                    e.Graphics.DrawLine(Pens.LightGray, area.Left, y + 34, area.Right, y + 34);
-                    y += 42;
+                    Rectangle labelBounds = rtl
+                        ? new Rectangle(right - labelWidth, y, labelWidth, 34)
+                        : new Rectangle(left, y, labelWidth, 34);
+                    Rectangle valueBounds = rtl
+                        ? new Rectangle(left, y, valueWidth, 34)
+                        : new Rectangle(left + labelWidth + 12, y, valueWidth, 34);
+                    StringFormat valueFormat = ReportOutputHelper.ContainsArabic(row[1]) ? rtlFormat : ltrFormat;
+                    e.Graphics.DrawString(row[0], label, Brushes.Black, labelBounds, rtlFormat);
+                    e.Graphics.DrawString(row[1], value, Brushes.Black, valueBounds, valueFormat);
+                    e.Graphics.DrawLine(Pens.LightGray, left, y + 36, right, y + 36);
+                    y += 43;
                 }
-                e.Graphics.DrawString("تاريخ الإصدار | Issued: " + DateTime.Now.ToString("yyyy-MM-dd"), value, Brushes.DimGray,
-                    new Rectangle(area.Left, area.Bottom - 30, area.Width, 24), format);
+
+                StringFormat footerFormat = rtl ? rtlFormat : ltrFormat;
+                e.Graphics.DrawString("تاريخ الإصدار | Issued: " + DateTime.Now.ToString("yyyy-MM-dd"), footer,
+                    Brushes.DimGray, new Rectangle(area.Left, area.Bottom - 28, area.Width, 22), footerFormat);
             }
             e.HasMorePages = false;
+        }
+
+        private static StringFormat CreateProfileFormat(bool rtl, bool wrap)
+        {
+            return new StringFormat
+            {
+                Alignment = rtl ? StringAlignment.Far : StringAlignment.Near,
+                LineAlignment = StringAlignment.Center,
+                FormatFlags = (rtl ? StringFormatFlags.DirectionRightToLeft : StringFormatFlags.FitBlackBox)
+                              | (wrap ? StringFormatFlags.NoClip : StringFormatFlags.FitBlackBox),
+                Trimming = wrap ? StringTrimming.EllipsisWord : StringTrimming.EllipsisCharacter
+            };
         }
 
         private void CloseProfile()
