@@ -39,6 +39,7 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            txtSearch.TextChanged += (sender, e) => ApplyFilter();
             Dock = DockStyle.Fill;
             ConfigureFinancialActions();
             ConfigureMovementSummary();

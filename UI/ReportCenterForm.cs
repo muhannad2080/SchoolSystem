@@ -68,6 +68,9 @@ namespace SchoolSystem.UI
             txtAcademicYear.Leave -= txtAcademicYear_Leave;
             txtAcademicYear.Leave += txtAcademicYear_Leave;
 
+            txtSearch.TextChanged -= txtSearch_TextChanged;
+            txtSearch.TextChanged += txtSearch_TextChanged;
+
             btnExportExcel.Click -= btnExportExcel_Click;
             btnExportExcel.Click += btnExportExcel_Click;
 
@@ -84,6 +87,14 @@ namespace SchoolSystem.UI
             printDocument.PrintPage += PrintDocument_PrintPage;
 
             printPreviewDialog.Document = printDocument;
+        }
+
+        private async void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            if (!IsHandleCreated || cmbReportType.SelectedIndex < 0)
+                return;
+
+            await LoadReportAsync();
         }
 
         private async void ReportCenterForm_Load(object sender, EventArgs e)

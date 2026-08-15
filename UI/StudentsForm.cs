@@ -25,6 +25,7 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            txtSearch.TextChanged += (sender, e) => ApplyFilters();
             _studentService = new StudentService();
             _currentStudents = new List<Student>();
             cmbFilterClass.SelectedIndexChanged += cmbFilterClass_SelectedIndexChanged;

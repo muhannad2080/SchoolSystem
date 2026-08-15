@@ -27,6 +27,7 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            txtSearch.TextChanged += (sender, e) => btnSearch_Click(sender, e);
             enrollmentService = new EnrollmentService();
             studentService = new StudentService();
             classService = new ClassService();
