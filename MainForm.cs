@@ -259,6 +259,12 @@ namespace SchoolSystem
 
         private void ApplyCurrentUserPermissions()
         {
+            if (IsDesignTime())
+            {
+                SetMenuItemsVisible(true);
+                return;
+            }
+
             if (!CurrentUser.IsLoggedIn)
                 return;
 
@@ -343,6 +349,29 @@ namespace SchoolSystem
             tsmiTeachers.Visible = tsmiTeachersManage.Visible || tsmiTeachersAttendance.Visible || tsmiTeachersPayroll.Visible;
             tsmiAcademic.Visible = tsmiSubjects.Visible || tsmiClasses.Visible || tsmiTimetable.Visible || tsmiGrades.Visible || tsmiAttendance.Visible;
             tsmiFinancial.Visible = tsmiFees.Visible || tsmiVouchers.Visible || tsmiExpenses.Visible || تعريفرسومالصفوفToolStripMenuItem.Visible;
+        }
+
+        private bool IsDesignTime()
+        {
+            return (Site != null && Site.DesignMode) ||
+                   System.ComponentModel.LicenseManager.UsageMode ==
+                   System.ComponentModel.LicenseUsageMode.Designtime;
+        }
+
+        private void SetMenuItemsVisible(bool visible)
+        {
+            ToolStripMenuItem[] items =
+            {
+                tsmiDashboard, tsmiStudents, tsmiStudentsManage, tsmiStudentsEnroll,
+                tsmiStudentsClasses, tsmiTeachers, tsmiTeachersManage, tsmiTeachersAttendance,
+                tsmiTeachersPayroll, tsmiAcademic, tsmiSubjects, tsmiClasses, tsmiTimetable,
+                tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
+                tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiTransport, tsmiLibrary,
+                tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings, tsmiLogout
+            };
+
+            foreach (ToolStripMenuItem item in items)
+                item.Visible = visible;
         }
 
         private void tsmiDashboard_Click(object sender, EventArgs e)
