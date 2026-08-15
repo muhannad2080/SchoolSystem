@@ -145,8 +145,10 @@ namespace SchoolSystem.Helpers
 
                 document.Add(grid);
                 document.Add(new Paragraph(" "));
-                Paragraph footer = new Paragraph("SchoolSystem | " + DateTime.Now.ToString("yyyy-MM-dd HH:mm"), summaryFont);
-                footer.Alignment = Element.ALIGN_CENTER;
+                Paragraph footer = new Paragraph("SchoolSystem | " + DateTime.Now.ToString("yyyy-MM-dd HH:mm"), summaryFont)
+                {
+                    Alignment = Element.ALIGN_CENTER
+                };
                 document.Add(footer);
                 document.Close();
             }

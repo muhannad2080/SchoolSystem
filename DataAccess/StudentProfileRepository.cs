@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using SchoolSystem.Models;
+using SchoolSystem.DataAccess.Repositories;
 
 namespace SchoolSystem.DataAccess
 {
