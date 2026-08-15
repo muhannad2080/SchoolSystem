@@ -54,8 +54,8 @@ namespace SchoolSystem.DataAccess
                     WHERE sc.ClassID = @ClassID
                       AND sc.AcademicYear = @AcademicYear
                       AND ISNULL(s.Status, N'نشط') = N'نشط'
-                      AND NULLIF(LTRIM(RTRIM(Section)), N'') IS NOT NULL
-                    ORDER BY Section";
+                      AND NULLIF(LTRIM(RTRIM(sc.Section)), N'') IS NOT NULL
+                    ORDER BY sc.Section";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
