@@ -115,7 +115,16 @@ BEGIN TRY
     IF OBJECT_ID(N'dbo.StudentAttendance', N'U') IS NOT NULL
     BEGIN
         INSERT INTO dbo.StudentAttendance (StudentID, ClassID, Section, AcademicYear, AttendanceDate, Status, ArrivalTime, ExcuseStatus, Notes)
-        SELECT s.StudentID, sc.ClassID, sc.Section, @AcademicYear, DATEADD(day, -d.DayOffset, @Today),
+        SELECT s.StudentID, sc.ClassID,
+               COALESCE(NULLIF(sc.Section, N''),
+                   CASE
+                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 5 AND 8 THEN N'أ'
+                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 9 AND 12 THEN N'ب'
+                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 13 AND 16 THEN N'ج'
+                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 17 AND 20 THEN N'د'
+                       ELSE N'أ'
+                   END),
+               @AcademicYear, DATEADD(day, -d.DayOffset, @Today),
                CASE WHEN (s.StudentID + d.DayOffset) % 10 = 0 THEN N'غائب' WHEN (s.StudentID + d.DayOffset) % 7 = 0 THEN N'متأخر' ELSE N'حاضر' END,
                CASE WHEN (s.StudentID + d.DayOffset) % 10 = 0 THEN NULL ELSE CONVERT(time, '07:1' + CONVERT(varchar(1), (s.StudentID + d.DayOffset) % 9) + ':00') END,
                CASE WHEN (s.StudentID + d.DayOffset) % 10 = 0 THEN N'بدون عذر' ELSE N'لا ينطبق' END,
