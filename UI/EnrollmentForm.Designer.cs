@@ -22,7 +22,7 @@ namespace SchoolSystem.UI {
             this.lblClassID = new System.Windows.Forms.Label();
             this.cmbClassID = new System.Windows.Forms.ComboBox();
             this.lblSection = new System.Windows.Forms.Label();
-            this.txtSection = new System.Windows.Forms.TextBox();
+            this.txtSection = new System.Windows.Forms.ComboBox();
             this.lblSeatNumber = new System.Windows.Forms.Label();
             this.txtSeatNumber = new System.Windows.Forms.TextBox();
             this.lblStatus = new System.Windows.Forms.Label();
@@ -257,6 +257,8 @@ namespace SchoolSystem.UI {
             // txtSection
             // 
             this.txtSection.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.txtSection.FormattingEnabled = true;
             this.txtSection.Location = new System.Drawing.Point(3, 289);
             this.txtSection.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtSection.Name = "txtSection";
@@ -1019,7 +1021,7 @@ namespace SchoolSystem.UI {
         private System.Windows.Forms.Label lblClassID;
         private System.Windows.Forms.ComboBox cmbClassID;
         private System.Windows.Forms.Label lblSection;
-        private System.Windows.Forms.TextBox txtSection;
+        private System.Windows.Forms.ComboBox txtSection;
         private System.Windows.Forms.Label lblSeatNumber;
         private System.Windows.Forms.TextBox txtSeatNumber;
         private System.Windows.Forms.Label lblStatus;

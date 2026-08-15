@@ -48,19 +48,19 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 const string query = @"
-                    SELECT DISTINCT sc.Section
+                    SELECT DISTINCT LTRIM(RTRIM(sc.Section)) AS Section
                     FROM StudentClasses sc
                     INNER JOIN Students s ON sc.StudentID = s.StudentID
                     WHERE sc.ClassID = @ClassID
-                      AND sc.AcademicYear = @AcademicYear
+                      AND LTRIM(RTRIM(sc.AcademicYear)) = @AcademicYear
                       AND ISNULL(s.Status, N'نشط') = N'نشط'
                       AND NULLIF(LTRIM(RTRIM(sc.Section)), N'') IS NOT NULL
-                    ORDER BY sc.Section";
+                    ORDER BY LTRIM(RTRIM(sc.Section))";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@ClassID", classId);
-                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear);
+                    cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = classId;
+                    cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (academicYear ?? string.Empty).Trim();
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
@@ -302,15 +302,11 @@ namespace SchoolSystem.DataAccess
 
         private void AddParameters(SqlCommand cmd, StudentClass assignment)
         {
-            cmd.Parameters.AddWithValue("@StudentID", assignment.StudentID);
-            cmd.Parameters.AddWithValue("@ClassID", assignment.ClassID);
-            cmd.Parameters.AddWithValue("@Section", assignment.Section);
-            cmd.Parameters.AddWithValue("@AcademicYear", assignment.AcademicYear);
-
-            if (assignment.AssignedBy.HasValue)
-                cmd.Parameters.AddWithValue("@AssignedBy", assignment.AssignedBy.Value);
-            else
-                cmd.Parameters.AddWithValue("@AssignedBy", DBNull.Value);
+            cmd.Parameters.Add("@StudentID", SqlDbType.Int).Value = assignment.StudentID;
+            cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = assignment.ClassID;
+            cmd.Parameters.Add("@Section", SqlDbType.NVarChar, 50).Value = (assignment.Section ?? string.Empty).Trim();
+            cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (assignment.AcademicYear ?? string.Empty).Trim();
+            cmd.Parameters.Add("@AssignedBy", SqlDbType.Int).Value = assignment.AssignedBy.HasValue ? (object)assignment.AssignedBy.Value : DBNull.Value;
         }
     }
 }

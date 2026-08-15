@@ -16,7 +16,7 @@ namespace SchoolSystem.DataAccess
                     FROM StudentClasses sc
                     INNER JOIN Students s ON s.StudentID = sc.StudentID
                     WHERE sc.ClassID = @ClassID
-                      AND sc.AcademicYear = @AcademicYear
+                      AND LTRIM(RTRIM(sc.AcademicYear)) = @AcademicYear
                       AND ISNULL(s.Status, N'نشط') = N'نشط'
                       AND NULLIF(LTRIM(RTRIM(sc.Section)), N'') IS NOT NULL
                     ORDER BY LTRIM(RTRIM(sc.Section))";
@@ -24,8 +24,8 @@ namespace SchoolSystem.DataAccess
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                 {
-                    cmd.Parameters.AddWithValue("@ClassID", classId);
-                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear.Trim());
+                    cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = classId;
+                    cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (academicYear ?? string.Empty).Trim();
                     DataTable dt = new DataTable();
                     adapter.Fill(dt);
                     return dt;

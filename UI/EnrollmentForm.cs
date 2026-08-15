@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Services;
@@ -16,6 +17,7 @@ namespace SchoolSystem.UI
         private readonly EnrollmentService enrollmentService;
         private readonly StudentService studentService; 
         private readonly ClassService classService;
+        private readonly StudentClassService sectionService;
         private DataTable enrollmentsTable;
         private DataView enrollmentsView;
         private bool isEditMode = false;
@@ -28,11 +30,15 @@ namespace SchoolSystem.UI
             InitializeComponent();
             txtSeatNumber.ReadOnly = true;
             txtSeatNumber.TabStop = false;
+            txtSection.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbClassID.SelectedIndexChanged += cmbClassID_SelectedIndexChanged;
+            txtAcademicYear.Leave += txtAcademicYear_Leave;
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             txtSearch.TextChanged += (sender, e) => btnSearch_Click(sender, e);
             enrollmentService = new EnrollmentService();
             studentService = new StudentService();
             classService = new ClassService();
+            sectionService = new StudentClassService();
             enrollmentPrintDocument.PrintPage += enrollmentPrintDocument_PrintPage;
             ApplyCustomStyles();
             ConfigureOutputButtons();
@@ -54,7 +60,7 @@ namespace SchoolSystem.UI
             UIHelper.StyleButton(btnClose, UIHelper.NeutralColor);
 
             TextBox[] textBoxes = {
-                txtEnrollmentID, txtStudentName, txtAcademicYear, txtSection,
+                txtEnrollmentID, txtStudentName, txtAcademicYear,
                 txtSeatNumber, txtPreviousSchool, txtPreviousClass, txtTransferReason,
                 txtRegistrationFee, txtPaidAmount, txtRemainingAmount, txtReceiptNo, txtSearch
             };
@@ -62,7 +68,7 @@ namespace SchoolSystem.UI
                 UIHelper.StyleTextBox(textBox);
 
             ComboBox[] comboBoxes = {
-                cmbStudentID, cmbApplicationType, cmbClassID, cmbStatus, cmbPaymentMethod
+                cmbStudentID, cmbApplicationType, cmbClassID, txtSection, cmbStatus, cmbPaymentMethod
             };
             foreach (ComboBox comboBox in comboBoxes)
                 UIHelper.StyleComboBox(comboBox);
@@ -190,6 +196,10 @@ namespace SchoolSystem.UI
                     cmbClassID.ValueMember = "ClassID";
                     cmbClassID.SelectedIndex = -1;
                 }
+
+                txtSection.DataSource = null;
+                txtSection.Items.Clear();
+                txtSection.Enabled = false;
 
                 cmbApplicationType.Items.Clear();
                 cmbApplicationType.Items.AddRange(new string[] { "طالب جديد", "منقول", "إعادة قيد" });
@@ -343,7 +353,7 @@ namespace SchoolSystem.UI
                     ApplicationType = cmbApplicationType.SelectedItem?.ToString(),
                     AcademicYear = txtAcademicYear.Text,
                     ClassID = GetSelectedId(cmbClassID, "يجب تحديد فصل صالح."),
-                    Section = txtSection.Text,
+                    Section = txtSection.Text.Trim(),
                     SeatNumber = isEditMode ? txtSeatNumber.Text : string.Empty,
                     Status = cmbStatus.SelectedItem?.ToString(),
                     
@@ -597,7 +607,65 @@ namespace SchoolSystem.UI
             return v != DBNull.Value && v != null && Convert.ToBoolean(v);
         }
 
-        private void LoadRecordToScreen(DataGridViewRow row)
+        private async void cmbClassID_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (isLoading)
+                return;
+
+            await LoadSectionsAsync();
+        }
+
+        private async void txtAcademicYear_Leave(object sender, EventArgs e)
+        {
+            if (isLoading)
+                return;
+
+            await LoadSectionsAsync();
+        }
+
+        private async Task LoadSectionsAsync()
+        {
+            txtSection.DataSource = null;
+            txtSection.Items.Clear();
+            txtSection.Enabled = false;
+
+            int classId = TryGetSelectedId(cmbClassID);
+            string academicYear = txtAcademicYear.Text == null ? string.Empty : txtAcademicYear.Text.Trim();
+            if (classId <= 0 || !IsSequentialAcademicYear(academicYear))
+                return;
+
+            try
+            {
+                DataTable sections = await Task.Run(() => sectionService.GetSections(classId, academicYear));
+                if (sections == null || sections.Rows.Count == 0)
+                    return;
+
+                txtSection.DataSource = sections;
+                txtSection.DisplayMember = "Section";
+                txtSection.ValueMember = "Section";
+                txtSection.Enabled = true;
+                txtSection.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                txtSection.DataSource = null;
+                txtSection.Items.Clear();
+                txtSection.Enabled = false;
+                UIHelper.ShowException("تحميل شعب التسجيل", ex);
+            }
+        }
+
+        private void SetSectionValue(string section)
+        {
+            if (string.IsNullOrWhiteSpace(section) || txtSection.Items.Count == 0)
+                return;
+
+            int index = txtSection.FindStringExact(section.Trim());
+            if (index >= 0)
+                txtSection.SelectedIndex = index;
+        }
+
+        private async void LoadRecordToScreen(DataGridViewRow row)
         {
             if (isEditMode) return;
 
@@ -619,7 +687,8 @@ namespace SchoolSystem.UI
                 if (row.DataGridView.Columns.Contains("ClassID"))
                     cmbClassID.SelectedValue = row.Cells["ClassID"].Value;
 
-                txtSection.Text      = SafeCell(row, "Section");
+                await LoadSectionsAsync();
+                SetSectionValue(SafeCell(row, "Section"));
                 txtSeatNumber.Text   = SafeCell(row, "SeatNumber");
                 cmbStatus.SelectedItem = SafeCell(row, "Status");
 
@@ -661,6 +730,15 @@ namespace SchoolSystem.UI
                 : amount;
         }
 
+        private static int TryGetSelectedId(ComboBox comboBox)
+        {
+            if (comboBox == null || comboBox.SelectedIndex < 0 || comboBox.SelectedValue == null || comboBox.SelectedValue == DBNull.Value)
+                return 0;
+
+            int id;
+            return int.TryParse(comboBox.SelectedValue.ToString(), out id) && id > 0 ? id : 0;
+        }
+
         private int GetSelectedId(ComboBox comboBox, string errorMessage)
         {
             if (comboBox == null || comboBox.SelectedIndex < 0 || comboBox.SelectedValue == null ||
@@ -689,6 +767,12 @@ namespace SchoolSystem.UI
                 !int.TryParse(cmbClassID.SelectedValue.ToString(), out int classId) || classId <= 0)
             {
                 errorProvider1.SetError(cmbClassID, "يجب تحديد فصل صالح.");
+                isValid = false;
+            }
+
+            if (txtSection.SelectedIndex < 0 || string.IsNullOrWhiteSpace(txtSection.Text))
+            {
+                errorProvider1.SetError(txtSection, "يجب اختيار شعبة مرتبطة بالصف والعام الدراسي.");
                 isValid = false;
             }
 
@@ -799,7 +883,9 @@ namespace SchoolSystem.UI
             cmbApplicationType.SelectedIndex = -1;
             txtAcademicYear.Clear();
             cmbClassID.SelectedIndex = -1;
-            txtSection.Clear();
+            txtSection.DataSource = null;
+            txtSection.Items.Clear();
+            txtSection.Enabled = false;
             txtSeatNumber.Text = "يُولّد تلقائياً عند الحفظ";
             cmbStatus.SelectedIndex = -1;
             

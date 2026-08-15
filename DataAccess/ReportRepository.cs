@@ -12,17 +12,17 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 const string query = @"
-                    SELECT DISTINCT Section
+                    SELECT DISTINCT LTRIM(RTRIM(Section)) AS Section
                     FROM StudentClasses
                     WHERE ClassID = @ClassID
-                      AND AcademicYear = @AcademicYear
+                      AND LTRIM(RTRIM(AcademicYear)) = @AcademicYear
                       AND NULLIF(LTRIM(RTRIM(Section)), N'') IS NOT NULL
-                    ORDER BY Section";
+                    ORDER BY LTRIM(RTRIM(Section))";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@ClassID", classId);
-                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear);
+                    cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = classId;
+                    cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (academicYear ?? string.Empty).Trim();
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
