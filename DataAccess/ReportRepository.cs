@@ -253,7 +253,9 @@ namespace SchoolSystem.DataAccess
                     sc.AssignedDate AS [تاريخ التوزيع]
                 FROM StudentClasses sc
                 INNER JOIN Students s ON sc.StudentID = s.StudentID
+                    AND ISNULL(s.Status, N'نشط') = N'نشط'
                 INNER JOIN Classes c ON sc.ClassID = c.ClassID
+                    AND ISNULL(c.IsActive, 1) = 1
                 WHERE 1 = 1";
 
             if (!string.IsNullOrWhiteSpace(request.AcademicYear))
@@ -293,6 +295,7 @@ namespace SchoolSystem.DataAccess
                     ta.Notes AS [ملاحظات]
                 FROM TeacherAttendance ta
                 INNER JOIN Teachers t ON ta.TeacherID = t.TeacherID
+                    AND ISNULL(t.Status, N'نشط') <> N'غير نشط'
                 WHERE ta.AttendanceDate BETWEEN @FromDate AND @ToDate";
 
             if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
@@ -330,6 +333,7 @@ namespace SchoolSystem.DataAccess
                     c.PaymentMethod AS [طريقة الصرف]
                 FROM TeacherContracts c
                 INNER JOIN Teachers t ON c.TeacherID = t.TeacherID
+                    AND ISNULL(t.Status, N'نشط') <> N'غير نشط'
                 WHERE c.StartDate <= @ToDate";
 
             if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
@@ -409,7 +413,9 @@ namespace SchoolSystem.DataAccess
                         f.UpdatedAt AS [تاريخ التعديل]
                     FROM Fees f
                     INNER JOIN Students s ON f.StudentID = s.StudentID
+                        AND ISNULL(s.Status, N'نشط') = N'نشط'
                     LEFT JOIN Classes c ON s.ClassID = c.ClassID
+                        AND ISNULL(c.IsActive, 1) = 1
                     WHERE f.DueDate >= @FromDate
                       AND f.DueDate <= @ToDate";
 
@@ -561,8 +567,11 @@ namespace SchoolSystem.DataAccess
                         sg.UpdatedAt AS [تاريخ التعديل]
                     FROM StudentGrades sg
                     INNER JOIN Students s ON sg.StudentID = s.StudentID
+                        AND ISNULL(s.Status, N'نشط') = N'نشط'
                     LEFT JOIN Classes c ON sg.ClassID = c.ClassID
-                    LEFT JOIN Subjects sub ON sg.SubjectID = sub.SubjectID
+                        AND ISNULL(c.IsActive, 1) = 1
+                    INNER JOIN Subjects sub ON sg.SubjectID = sub.SubjectID
+                        AND ISNULL(sub.IsActive, 1) = 1
                     WHERE sg.CreatedAt >= @FromDate
                       AND sg.CreatedAt <= @ToDate";
 
@@ -603,9 +612,13 @@ namespace SchoolSystem.DataAccess
                         m.CreatedAt AS [تاريخ الإنشاء]
                     FROM Marks m
                     INNER JOIN Students s ON m.StudentID = s.StudentID
+                        AND ISNULL(s.Status, N'نشط') = N'نشط'
                     LEFT JOIN Classes c ON s.ClassID = c.ClassID
+                        AND ISNULL(c.IsActive, 1) = 1
                     INNER JOIN Subjects sub ON m.SubjectID = sub.SubjectID
+                        AND ISNULL(sub.IsActive, 1) = 1
                     LEFT JOIN Teachers t ON m.TeacherID = t.TeacherID
+                        AND ISNULL(t.Status, N'نشط') <> N'غير نشط'
                     WHERE m.CreatedAt >= @FromDate
                       AND m.CreatedAt <= @ToDate";
 
