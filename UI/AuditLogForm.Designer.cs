@@ -213,7 +213,7 @@ namespace SchoolSystem.UI
             exportButton.Margin = new Padding(4);
             exportButton.Name = "exportButton";
             exportButton.Size = new Size(110, 38);
-            exportButton.Text = "تصدير CSV";
+            exportButton.Text = "تصدير Excel / PDF";
             exportButton.UseVisualStyleBackColor = false;
             exportButton.Click += new EventHandler(ExportButton_Click);
             // 

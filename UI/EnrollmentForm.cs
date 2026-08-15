@@ -22,6 +22,9 @@ namespace SchoolSystem.UI
         private bool isLoading = true;
         private bool printingReceipt = false;
         private readonly PrintDocument enrollmentPrintDocument = new PrintDocument();
+        private Button btnPreviewOutput;
+        private Button btnExportPdf;
+        private Button btnExportExcel;
 
         public EnrollmentForm()
         {
@@ -35,6 +38,7 @@ namespace SchoolSystem.UI
             classService = new ClassService();
             enrollmentPrintDocument.PrintPage += enrollmentPrintDocument_PrintPage;
             ApplyCustomStyles();
+            ConfigureOutputButtons();
         }
 
         private void ApplyCustomStyles()
@@ -69,6 +73,100 @@ namespace SchoolSystem.UI
             rtbNotes.BackColor = UIHelper.SurfaceColor;
             rtbNotes.ForeColor = UIHelper.TextColor;
             rtbNotes.BorderStyle = BorderStyle.FixedSingle;
+        }
+
+        private void ConfigureOutputButtons()
+        {
+            btnPreviewOutput = CreateOutputButton("معاينة | Preview", UIHelper.InfoColor);
+            btnExportPdf = CreateOutputButton("PDF", UIHelper.DangerColor);
+            btnExportExcel = CreateOutputButton("Excel", UIHelper.SuccessColor);
+            btnPreviewOutput.Click += delegate { PreviewSelectedEnrollment(false); };
+            btnExportPdf.Click += delegate { ExportEnrollment(false, true); };
+            btnExportExcel.Click += delegate { ExportEnrollment(false, false); };
+            pnlButtons.Controls.Add(btnExportExcel);
+            pnlButtons.Controls.Add(btnExportPdf);
+            pnlButtons.Controls.Add(btnPreviewOutput);
+        }
+
+        private Button CreateOutputButton(string text, Color color)
+        {
+            Button button = new Button
+            {
+                Text = text,
+                Width = 110,
+                Height = 50,
+                Dock = DockStyle.Right,
+                BackColor = color,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Tahoma", 9F, FontStyle.Bold),
+                UseVisualStyleBackColor = false,
+                Margin = new Padding(5)
+            };
+            button.FlatAppearance.BorderSize = 0;
+            return button;
+        }
+
+        private DataTable BuildEnrollmentOutputTable(bool receipt)
+        {
+            DataTable table = new DataTable();
+            table.Columns.Add("الحقل | Field");
+            table.Columns.Add("القيمة | Value");
+            table.Rows.Add("رقم الطلب | Application No.", txtEnrollmentID.Text);
+            table.Rows.Add("اسم الطالب | Student Name", txtStudentName.Text);
+            table.Rows.Add("العام الدراسي | Academic Year", txtAcademicYear.Text);
+            table.Rows.Add("الصف | Class", cmbClassID.Text);
+            table.Rows.Add("الشعبة | Section", txtSection.Text);
+            table.Rows.Add("تاريخ التسجيل | Registration Date", dtpApplicationDate.Value.ToString("yyyy/MM/dd"));
+            table.Rows.Add("الحالة | Status", cmbStatus.Text);
+            if (receipt)
+            {
+                table.Rows.Add("رسوم التسجيل | Registration Fee", txtRegistrationFee.Text);
+                table.Rows.Add("المبلغ المدفوع | Paid Amount", txtPaidAmount.Text);
+                table.Rows.Add("المتبقي | Remaining", txtRemainingAmount.Text);
+                table.Rows.Add("طريقة الدفع | Payment Method", cmbPaymentMethod.Text);
+                table.Rows.Add("رقم السند | Receipt No.", txtReceiptNo.Text);
+            }
+            return table;
+        }
+
+        private void PreviewSelectedEnrollment(bool receipt)
+        {
+            if (!CanPrintSelectedEnrollment()) return;
+            printingReceipt = receipt;
+            try
+            {
+                using (PrintPreviewDialog preview = new PrintPreviewDialog())
+                {
+                    preview.Document = enrollmentPrintDocument;
+                    preview.RightToLeft = RightToLeft.Yes;
+                    preview.WindowState = FormWindowState.Maximized;
+                    preview.ShowDialog(this);
+                }
+            }
+            catch (Exception ex) { UIHelper.ShowException("معاينة استمارة التسجيل", ex); }
+        }
+
+        private void ExportEnrollment(bool receipt, bool pdf)
+        {
+            if (!CanPrintSelectedEnrollment()) return;
+            using (SaveFileDialog dialog = new SaveFileDialog())
+            {
+                dialog.Filter = pdf ? "ملفات PDF (*.pdf)|*.pdf" : "ملفات Excel (*.xlsx)|*.xlsx";
+                dialog.FileName = (receipt ? "Enrollment_Receipt_" : "Enrollment_Form_") + DateTime.Now.ToString("yyyyMMdd_HHmm") + (pdf ? ".pdf" : ".xlsx");
+                if (dialog.ShowDialog(this) != DialogResult.OK) return;
+                try
+                {
+                    DataTable table = BuildEnrollmentOutputTable(receipt);
+                    string title = (receipt ? "إيصال التسجيل | Enrollment Receipt" : "استمارة التسجيل | Enrollment Form");
+                    if (pdf)
+                        ReportOutputHelper.ExportToPdf(table, dialog.FileName, title, "رقم الطلب | Application No.: " + txtEnrollmentID.Text);
+                    else
+                        ReportOutputHelper.ExportToExcel(table, dialog.FileName, title, "رقم الطلب | Application No.: " + txtEnrollmentID.Text);
+                    UIHelper.ShowInfo(pdf ? "تم تصدير استمارة التسجيل إلى PDF بنجاح." : "تم تصدير استمارة التسجيل إلى Excel بنجاح.");
+                }
+                catch (Exception ex) { UIHelper.ShowException("تصدير استمارة التسجيل", ex); }
+            }
         }
 
         private void EnrollmentForm_Load(object sender, EventArgs e)
@@ -409,31 +507,40 @@ namespace SchoolSystem.UI
         private void enrollmentPrintDocument_PrintPage(object sender, PrintPageEventArgs e)
         {
             Rectangle bounds = e.MarginBounds;
+            bool isRtl = ReportOutputHelper.ContainsArabic(txtStudentName.Text)
+                || ReportOutputHelper.ContainsArabic(cmbClassID.Text)
+                || ReportOutputHelper.ContainsArabic(cmbStatus.Text);
             using (Font titleFont = new Font("Tahoma", 16F, FontStyle.Bold))
             using (Font labelFont = new Font("Tahoma", 10F, FontStyle.Bold))
             using (Font valueFont = new Font("Tahoma", 10F, FontStyle.Regular))
-            using (StringFormat rtl = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center, FormatFlags = StringFormatFlags.DirectionRightToLeft })
+            using (StringFormat rtl = new StringFormat
+            {
+                Alignment = isRtl ? StringAlignment.Far : StringAlignment.Near,
+                LineAlignment = StringAlignment.Center,
+                FormatFlags = isRtl ? StringFormatFlags.DirectionRightToLeft : StringFormatFlags.FitBlackBox,
+                Trimming = StringTrimming.EllipsisCharacter
+            })
             {
                 int y = bounds.Top;
                 e.Graphics.DrawString(printingReceipt ? "إيصال تسجيل طالب" : "استمارة تسجيل طالب", titleFont, Brushes.Black,
                     new RectangleF(bounds.Left, y, bounds.Width, 40), rtl);
                 y += 55;
 
-                DrawPrintLine(e.Graphics, bounds, ref y, "رقم الطلب", txtEnrollmentID.Text, labelFont, valueFont, rtl);
-                DrawPrintLine(e.Graphics, bounds, ref y, "اسم الطالب", txtStudentName.Text, labelFont, valueFont, rtl);
-                DrawPrintLine(e.Graphics, bounds, ref y, "العام الدراسي", txtAcademicYear.Text, labelFont, valueFont, rtl);
-                DrawPrintLine(e.Graphics, bounds, ref y, "الصف", cmbClassID.Text, labelFont, valueFont, rtl);
-                DrawPrintLine(e.Graphics, bounds, ref y, "الشعبة", txtSection.Text, labelFont, valueFont, rtl);
-                DrawPrintLine(e.Graphics, bounds, ref y, "تاريخ التسجيل", dtpApplicationDate.Value.ToString("yyyy/MM/dd"), labelFont, valueFont, rtl);
-                DrawPrintLine(e.Graphics, bounds, ref y, "الحالة", cmbStatus.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "رقم الطلب | Application No.", txtEnrollmentID.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "اسم الطالب | Student Name", txtStudentName.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "العام الدراسي | Academic Year", txtAcademicYear.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "الصف | Class", cmbClassID.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "الشعبة | Section", txtSection.Text, labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "تاريخ التسجيل | Registration Date", dtpApplicationDate.Value.ToString("yyyy/MM/dd"), labelFont, valueFont, rtl);
+                DrawPrintLine(e.Graphics, bounds, ref y, "الحالة | Status", cmbStatus.Text, labelFont, valueFont, rtl);
 
                 if (printingReceipt)
                 {
-                    DrawPrintLine(e.Graphics, bounds, ref y, "رسوم التسجيل", txtRegistrationFee.Text, labelFont, valueFont, rtl);
-                    DrawPrintLine(e.Graphics, bounds, ref y, "المبلغ المدفوع", txtPaidAmount.Text, labelFont, valueFont, rtl);
-                    DrawPrintLine(e.Graphics, bounds, ref y, "المتبقي", txtRemainingAmount.Text, labelFont, valueFont, rtl);
-                    DrawPrintLine(e.Graphics, bounds, ref y, "طريقة الدفع", cmbPaymentMethod.Text, labelFont, valueFont, rtl);
-                    DrawPrintLine(e.Graphics, bounds, ref y, "رقم السند", txtReceiptNo.Text, labelFont, valueFont, rtl);
+                    DrawPrintLine(e.Graphics, bounds, ref y, "رسوم التسجيل | Registration Fee", txtRegistrationFee.Text, labelFont, valueFont, rtl);
+                    DrawPrintLine(e.Graphics, bounds, ref y, "المبلغ المدفوع | Paid Amount", txtPaidAmount.Text, labelFont, valueFont, rtl);
+                    DrawPrintLine(e.Graphics, bounds, ref y, "المتبقي | Remaining", txtRemainingAmount.Text, labelFont, valueFont, rtl);
+                    DrawPrintLine(e.Graphics, bounds, ref y, "طريقة الدفع | Payment Method", cmbPaymentMethod.Text, labelFont, valueFont, rtl);
+                    DrawPrintLine(e.Graphics, bounds, ref y, "رقم السند | Receipt No.", txtReceiptNo.Text, labelFont, valueFont, rtl);
                 }
 
                 y += 20;
