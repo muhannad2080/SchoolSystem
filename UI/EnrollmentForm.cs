@@ -22,9 +22,6 @@ namespace SchoolSystem.UI
         private bool isLoading = true;
         private bool printingReceipt = false;
         private readonly PrintDocument enrollmentPrintDocument = new PrintDocument();
-        private Button btnPreviewOutput;
-        private Button btnExportPdf;
-        private Button btnExportExcel;
 
         public EnrollmentForm()
         {
@@ -77,34 +74,30 @@ namespace SchoolSystem.UI
 
         private void ConfigureOutputButtons()
         {
-            btnPreviewOutput = CreateOutputButton("معاينة | Preview", UIHelper.InfoColor);
-            btnExportPdf = CreateOutputButton("PDF", UIHelper.DangerColor);
-            btnExportExcel = CreateOutputButton("Excel", UIHelper.SuccessColor);
-            btnPreviewOutput.Click += delegate { PreviewSelectedEnrollment(false); };
-            btnExportPdf.Click += delegate { ExportEnrollment(false, true); };
-            btnExportExcel.Click += delegate { ExportEnrollment(false, false); };
-            pnlButtons.Controls.Add(btnExportExcel);
-            pnlButtons.Controls.Add(btnExportPdf);
-            pnlButtons.Controls.Add(btnPreviewOutput);
+            UIHelper.StyleButton(btnPreviewOutput, UIHelper.InfoColor);
+            UIHelper.StyleButton(btnExportPdf, UIHelper.DangerColor);
+            UIHelper.StyleButton(btnExportExcel, UIHelper.SuccessColor);
+            btnPreviewOutput.Click -= btnPreviewOutput_Click;
+            btnExportPdf.Click -= btnExportPdf_Click;
+            btnExportExcel.Click -= btnExportExcel_Click;
+            btnPreviewOutput.Click += btnPreviewOutput_Click;
+            btnExportPdf.Click += btnExportPdf_Click;
+            btnExportExcel.Click += btnExportExcel_Click;
         }
 
-        private Button CreateOutputButton(string text, Color color)
+        private void btnPreviewOutput_Click(object sender, EventArgs e)
         {
-            Button button = new Button
-            {
-                Text = text,
-                Width = 110,
-                Height = 50,
-                Dock = DockStyle.Right,
-                BackColor = color,
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold),
-                UseVisualStyleBackColor = false,
-                Margin = new Padding(5)
-            };
-            button.FlatAppearance.BorderSize = 0;
-            return button;
+            PreviewSelectedEnrollment(false);
+        }
+
+        private void btnExportPdf_Click(object sender, EventArgs e)
+        {
+            ExportEnrollment(false, true);
+        }
+
+        private void btnExportExcel_Click(object sender, EventArgs e)
+        {
+            ExportEnrollment(false, false);
         }
 
         private DataTable BuildEnrollmentOutputTable(bool receipt)

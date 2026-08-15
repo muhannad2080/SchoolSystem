@@ -8,6 +8,9 @@ namespace SchoolSystem.UI
         private System.Windows.Forms.PictureBox studentPictureBox;
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnPrintProfile;
+        private System.Windows.Forms.Button btnExportProfilePdf;
+        private System.Windows.Forms.Button btnExportProfileExcel;
         private System.Windows.Forms.TableLayoutPanel summaryTable;
         private System.Windows.Forms.Label lblIdentity;
         private System.Windows.Forms.Label lblContact;
@@ -38,6 +41,9 @@ namespace SchoolSystem.UI
             this.studentPictureBox = new System.Windows.Forms.PictureBox();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnPrintProfile = new System.Windows.Forms.Button();
+            this.btnExportProfilePdf = new System.Windows.Forms.Button();
+            this.btnExportProfileExcel = new System.Windows.Forms.Button();
             this.summaryTable = new System.Windows.Forms.TableLayoutPanel();
             this.lblIdentity = new System.Windows.Forms.Label();
             this.lblContact = new System.Windows.Forms.Label();
@@ -80,6 +86,9 @@ namespace SchoolSystem.UI
             this.headerPanel.Controls.Add(this.lblTitle);
             this.headerPanel.Controls.Add(this.btnBack);
             this.headerPanel.Controls.Add(this.btnRefresh);
+            this.headerPanel.Controls.Add(this.btnPrintProfile);
+            this.headerPanel.Controls.Add(this.btnExportProfilePdf);
+            this.headerPanel.Controls.Add(this.btnExportProfileExcel);
 
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTitle.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
@@ -119,6 +128,48 @@ namespace SchoolSystem.UI
             this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Width = 100;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+
+            this.btnPrintProfile.BackColor = System.Drawing.Color.FromArgb(31, 78, 121);
+            this.btnPrintProfile.FlatAppearance.BorderSize = 0;
+            this.btnPrintProfile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPrintProfile.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnPrintProfile.ForeColor = System.Drawing.Color.White;
+            this.btnPrintProfile.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnPrintProfile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.btnPrintProfile.Name = "btnPrintProfile";
+            this.btnPrintProfile.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.btnPrintProfile.Size = new System.Drawing.Size(105, 54);
+            this.btnPrintProfile.TabIndex = 2;
+            this.btnPrintProfile.Text = "طباعة | Print";
+            this.btnPrintProfile.UseVisualStyleBackColor = false;
+
+            this.btnExportProfilePdf.BackColor = System.Drawing.Color.FromArgb(192, 57, 43);
+            this.btnExportProfilePdf.FlatAppearance.BorderSize = 0;
+            this.btnExportProfilePdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExportProfilePdf.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportProfilePdf.ForeColor = System.Drawing.Color.White;
+            this.btnExportProfilePdf.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnExportProfilePdf.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.btnExportProfilePdf.Name = "btnExportProfilePdf";
+            this.btnExportProfilePdf.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.btnExportProfilePdf.Size = new System.Drawing.Size(80, 54);
+            this.btnExportProfilePdf.TabIndex = 3;
+            this.btnExportProfilePdf.Text = "PDF";
+            this.btnExportProfilePdf.UseVisualStyleBackColor = false;
+
+            this.btnExportProfileExcel.BackColor = System.Drawing.Color.FromArgb(39, 174, 96);
+            this.btnExportProfileExcel.FlatAppearance.BorderSize = 0;
+            this.btnExportProfileExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExportProfileExcel.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportProfileExcel.ForeColor = System.Drawing.Color.White;
+            this.btnExportProfileExcel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnExportProfileExcel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.btnExportProfileExcel.Name = "btnExportProfileExcel";
+            this.btnExportProfileExcel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.btnExportProfileExcel.Size = new System.Drawing.Size(80, 54);
+            this.btnExportProfileExcel.TabIndex = 4;
+            this.btnExportProfileExcel.Text = "Excel";
+            this.btnExportProfileExcel.UseVisualStyleBackColor = false;
 
             this.summaryTable.BackColor = System.Drawing.Color.FromArgb(245, 247, 250);
             this.summaryTable.RightToLeft = System.Windows.Forms.RightToLeft.Yes;

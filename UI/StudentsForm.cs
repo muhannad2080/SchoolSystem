@@ -19,7 +19,6 @@ namespace SchoolSystem.UI
         private byte[] _selectedPhoto;
         private List<Student> _currentStudents;
         private readonly PrintDocument _studentCardPrintDocument = new PrintDocument();
-        private Button _btnStudentProfile;
 
         public StudentsForm()
         {
@@ -38,21 +37,9 @@ namespace SchoolSystem.UI
 
         private void ConfigureStudentProfileButton()
         {
-            _btnStudentProfile = new Button
-            {
-                Text = "ملف الطالب",
-                Dock = DockStyle.Right,
-                Width = 110,
-                BackColor = UIHelper.AccentColor,
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold),
-                UseVisualStyleBackColor = false,
-                Margin = new Padding(5)
-            };
-            _btnStudentProfile.FlatAppearance.BorderSize = 0;
-            _btnStudentProfile.Click += btnStudentProfile_Click;
-            pnlButtons.Controls.Add(_btnStudentProfile);
+            UIHelper.StyleButton(btnStudentProfile, UIHelper.AccentColor);
+            btnStudentProfile.Click -= btnStudentProfile_Click;
+            btnStudentProfile.Click += btnStudentProfile_Click;
         }
 
         private void btnStudentProfile_Click(object sender, EventArgs e)

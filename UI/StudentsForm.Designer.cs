@@ -64,6 +64,7 @@ namespace SchoolSystem.UI {
             this.lblCount = new System.Windows.Forms.Label();
             this.pnlButtons = new System.Windows.Forms.Panel();
             this.btnClose = new System.Windows.Forms.Button();
+            this.btnStudentProfile = new System.Windows.Forms.Button();
             this.btnPrint = new System.Windows.Forms.Button();
             this.btnExportExcel = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
@@ -741,6 +742,7 @@ namespace SchoolSystem.UI {
             // pnlButtons
             // 
             this.pnlButtons.Controls.Add(this.btnClose);
+            this.pnlButtons.Controls.Add(this.btnStudentProfile);
             this.pnlButtons.Controls.Add(this.btnPrint);
             this.pnlButtons.Controls.Add(this.btnExportExcel);
             this.pnlButtons.Controls.Add(this.btnRefresh);
@@ -767,6 +769,17 @@ namespace SchoolSystem.UI {
             this.btnClose.Text = "إغلاق";
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // btnStudentProfile
+            //
+            this.btnStudentProfile.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnStudentProfile.Location = new System.Drawing.Point(380, 10);
+            this.btnStudentProfile.Margin = new System.Windows.Forms.Padding(5);
+            this.btnStudentProfile.Name = "btnStudentProfile";
+            this.btnStudentProfile.Size = new System.Drawing.Size(110, 50);
+            this.btnStudentProfile.TabIndex = 1;
+            this.btnStudentProfile.Text = "ملف الطالب";
+            this.btnStudentProfile.Click += new System.EventHandler(this.btnStudentProfile_Click);
+            //
             // btnPrint
             // 
             this.btnPrint.Dock = System.Windows.Forms.DockStyle.Right;
@@ -958,6 +971,7 @@ namespace SchoolSystem.UI {
         private System.Windows.Forms.Button btnExportExcel;
         private System.Windows.Forms.Button btnPrint;
         private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.Button btnStudentProfile;
         private System.Windows.Forms.Panel pnlRight;
     }
 }

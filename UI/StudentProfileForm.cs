@@ -310,38 +310,32 @@ namespace SchoolSystem.UI
             if (headerPanel == null)
                 return;
 
-            Button printButton = CreateOutputButton("طباعة | Print", UIHelper.PrimaryColor);
-            Button pdfButton = CreateOutputButton("PDF", UIHelper.DangerColor);
-            Button excelButton = CreateOutputButton("Excel", UIHelper.SuccessColor);
             headerPanel.RightToLeft = RightToLeft.Yes;
-            printButton.Click += delegate { PrintProfilePreview(); };
-            pdfButton.Click += delegate { ExportProfilePdf(); };
-            excelButton.Click += delegate { ExportProfileExcel(); };
-            headerPanel.Controls.Add(excelButton);
-            headerPanel.Controls.Add(pdfButton);
-            headerPanel.Controls.Add(printButton);
+            UIHelper.StyleButton(btnPrintProfile, UIHelper.PrimaryColor);
+            UIHelper.StyleButton(btnExportProfilePdf, UIHelper.DangerColor);
+            UIHelper.StyleButton(btnExportProfileExcel, UIHelper.SuccessColor);
+            btnPrintProfile.Click -= btnPrintProfile_Click;
+            btnExportProfilePdf.Click -= btnExportProfilePdf_Click;
+            btnExportProfileExcel.Click -= btnExportProfileExcel_Click;
+            btnPrintProfile.Click += btnPrintProfile_Click;
+            btnExportProfilePdf.Click += btnExportProfilePdf_Click;
+            btnExportProfileExcel.Click += btnExportProfileExcel_Click;
             profilePrintDocument.PrintPage += ProfilePrintDocument_PrintPage;
         }
 
-        private Button CreateOutputButton(string text, Color color)
+        private void btnPrintProfile_Click(object sender, EventArgs e)
         {
-            Button button = new Button
-            {
-                Text = text,
-                Width = 105,
-                Height = 32,
-                Dock = DockStyle.Right,
-                BackColor = color,
-                ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font(UIHelper.FontFamily, 8.5F, FontStyle.Bold),
-                UseVisualStyleBackColor = false,
-                RightToLeft = RightToLeft.No,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Margin = new Padding(4)
-            };
-            button.FlatAppearance.BorderSize = 0;
-            return button;
+            PrintProfilePreview();
+        }
+
+        private void btnExportProfilePdf_Click(object sender, EventArgs e)
+        {
+            ExportProfilePdf();
+        }
+
+        private void btnExportProfileExcel_Click(object sender, EventArgs e)
+        {
+            ExportProfileExcel();
         }
 
         private DataTable BuildProfileOutputTable()
