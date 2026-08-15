@@ -133,6 +133,27 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Subjects
+                        WHERE SubjectID = @SubjectID AND ISNULL(IsActive, 1) = 1
+                    )
+                        THROW 50006, N'لا يمكن إضافة حصة لمادة غير نشطة.', 1;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Teachers
+                        WHERE TeacherID = @TeacherID AND ISNULL(Status, N'نشط') <> N'غير نشط'
+                    )
+                        THROW 50007, N'لا يمكن إضافة حصة لمعلم غير نشط.', 1;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Classes
+                        WHERE ClassID = @ClassID AND ISNULL(IsActive, 1) = 1
+                    )
+                        THROW 50008, N'لا يمكن إضافة حصة لصف غير نشط.', 1;
+
                     INSERT INTO SchoolTimetable
                     (
                         ClassID,
@@ -182,6 +203,27 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Subjects
+                        WHERE SubjectID = @SubjectID AND ISNULL(IsActive, 1) = 1
+                    )
+                        THROW 50006, N'لا يمكن تعديل الحصة إلى مادة غير نشطة.', 1;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Teachers
+                        WHERE TeacherID = @TeacherID AND ISNULL(Status, N'نشط') <> N'غير نشط'
+                    )
+                        THROW 50007, N'لا يمكن تعديل الحصة إلى معلم غير نشط.', 1;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Classes
+                        WHERE ClassID = @ClassID AND ISNULL(IsActive, 1) = 1
+                    )
+                        THROW 50008, N'لا يمكن تعديل الحصة إلى صف غير نشط.', 1;
+
                     UPDATE SchoolTimetable
                     SET
                         ClassID = @ClassID,

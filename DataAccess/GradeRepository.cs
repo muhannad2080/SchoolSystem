@@ -117,6 +117,15 @@ namespace SchoolSystem.DataAccess
                     )
                         THROW 50002, N'لا يمكن حفظ درجة لطالب غير نشط.', 1;
 
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Subjects
+                        WHERE SubjectID = @SubjectID
+                          AND ISNULL(IsActive, 1) = 1
+                    )
+                        THROW 50005, N'لا يمكن حفظ درجة لمادة غير نشطة.', 1;
+
                     IF EXISTS
                     (
                         SELECT 1
