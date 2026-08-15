@@ -151,6 +151,14 @@ namespace SchoolSystem.Helpers
                 if (dateTimePicker != null)
                     ConfigureDateInput(dateTimePicker);
 
+                ComboBox comboBox = child as ComboBox;
+                if (comboBox != null)
+                    ConfigureComboInput(comboBox);
+
+                NumericUpDown numericUpDown = child as NumericUpDown;
+                if (numericUpDown != null)
+                    ConfigureNumericInput(numericUpDown);
+
                 KryptonTextBox kryptonTextBox = child as KryptonTextBox;
                 if (kryptonTextBox != null)
                 {
@@ -176,6 +184,27 @@ namespace SchoolSystem.Helpers
                 if (picker.Value.Date > picker.MaxDate)
                     picker.Value = picker.MaxDate;
             }
+        }
+
+        private static void ConfigureComboInput(ComboBox comboBox)
+        {
+            if (comboBox == null)
+                return;
+
+            // القوائم الإدارية والمرجعية لا تقبل قيمة حرة غير موجودة في المصدر.
+            // حقول الفلترة تبقى قابلة للتحديد فقط، مع السماح بقيمة "الكل" التي يضيفها النموذج.
+            comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        }
+
+        private static void ConfigureNumericInput(NumericUpDown numericUpDown)
+        {
+            if (numericUpDown == null)
+                return;
+
+            if (numericUpDown.Value < numericUpDown.Minimum)
+                numericUpDown.Value = numericUpDown.Minimum;
+            else if (numericUpDown.Value > numericUpDown.Maximum)
+                numericUpDown.Value = numericUpDown.Maximum;
         }
 
         private static void ConfigureTextInput(Control control, string controlName, string currentText)
