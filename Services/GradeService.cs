@@ -10,6 +10,7 @@ namespace SchoolSystem.Services
     public class GradeService
     {
         private readonly GradeRepository repository = new GradeRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetAllSubjects()
         {
@@ -61,7 +62,13 @@ namespace SchoolSystem.Services
             ValidateGrade(grade);
             CalculateGrade(grade);
 
-            return repository.SaveGrade(grade);
+            bool saved = repository.SaveGrade(grade);
+            if (saved)
+            {
+                auditLogService.Record("حفظ", "Grade", grade.GradeID.ToString(),
+                    "حفظ درجة الطالب رقم " + grade.StudentID + " في المادة رقم " + grade.SubjectID);
+            }
+            return saved;
         }
 
         public bool DeleteGrade(int gradeId)
@@ -70,7 +77,10 @@ namespace SchoolSystem.Services
             if (gradeId <= 0)
                 throw new ArgumentException("اختر درجة صحيحة للحذف.");
 
-            return repository.DeleteGrade(gradeId);
+            bool deleted = repository.DeleteGrade(gradeId);
+            if (deleted)
+                auditLogService.Record("حذف", "Grade", gradeId.ToString(), "حذف درجة أكاديمية.");
+            return deleted;
         }
 
         public void CalculateGrade(StudentGrade grade)

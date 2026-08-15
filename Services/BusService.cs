@@ -9,10 +9,12 @@ namespace SchoolSystem.Services
     public class BusService
     {
         private readonly BusRepository busRepository;
+        private readonly AuditLogService auditLogService;
 
         public BusService()
         {
             busRepository = new BusRepository();
+            auditLogService = new AuditLogService();
         }
 
         public DataTable GetAllBuses()
@@ -29,7 +31,10 @@ namespace SchoolSystem.Services
             if (busRepository.BusNumberExists(bus.BusNumber))
                 throw new Exception("رقم الحافلة موجود مسبقاً.");
 
-            return busRepository.AddBus(bus);
+            bool added = busRepository.AddBus(bus);
+            if (added)
+                auditLogService.Record("إنشاء", "Bus", bus.BusID.ToString(), "إضافة حافلة رقم " + bus.BusNumber);
+            return added;
         }
 
         public bool UpdateBus(Bus bus)
@@ -43,7 +48,10 @@ namespace SchoolSystem.Services
             if (busRepository.BusNumberExists(bus.BusNumber, bus.BusID))
                 throw new Exception("رقم الحافلة موجود مسبقاً.");
 
-            return busRepository.UpdateBus(bus);
+            bool updated = busRepository.UpdateBus(bus);
+            if (updated)
+                auditLogService.Record("تعديل", "Bus", bus.BusID.ToString(), "تعديل بيانات الحافلة رقم " + bus.BusNumber);
+            return updated;
         }
 
         public bool DeleteBus(int busId)
@@ -52,7 +60,10 @@ namespace SchoolSystem.Services
             if (busId <= 0)
                 throw new Exception("رقم الحافلة غير صحيح.");
 
-            return busRepository.DeleteBus(busId);
+            bool deleted = busRepository.DeleteBus(busId);
+            if (deleted)
+                auditLogService.Record("حذف", "Bus", busId.ToString(), "حذف حافلة من إدارة النقل.");
+            return deleted;
         }
 
         public bool BusNumberExists(string busNumber)

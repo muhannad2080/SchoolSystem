@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class PayrollService
     {
         private readonly PayrollRepository repository = new PayrollRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetAllPayrolls()
         {
@@ -30,6 +31,8 @@ namespace SchoolSystem.Services
                 throw new Exception("تم صرف راتب هذا المعلم لهذا الشهر مسبقاً.");
             
             repository.AddPayroll(payroll);
+            auditLogService.Record("إنشاء", "Payroll", payroll.PayrollID.ToString(),
+                "إنشاء سجل راتب للمعلم رقم " + payroll.TeacherID + " عن " + payroll.SalaryMonth + "/" + payroll.SalaryYear);
         }
 
         public bool UpdatePayroll(Payroll payroll)
@@ -39,7 +42,13 @@ namespace SchoolSystem.Services
             if (repository.PayrollExists(payroll.TeacherID, payroll.SalaryMonth, payroll.SalaryYear, payroll.PayrollID))
                 throw new Exception("تم صرف راتب هذا المعلم لهذا الشهر مسبقاً.");
             
-            return repository.UpdatePayroll(payroll);
+            bool updated = repository.UpdatePayroll(payroll);
+            if (updated)
+            {
+                auditLogService.Record("تعديل", "Payroll", payroll.PayrollID.ToString(),
+                    "تعديل سجل راتب للمعلم رقم " + payroll.TeacherID + " عن " + payroll.SalaryMonth + "/" + payroll.SalaryYear);
+            }
+            return updated;
         }
 
         public bool DeletePayroll(int payrollId)
@@ -47,7 +56,10 @@ namespace SchoolSystem.Services
             EnsureCanManagePayroll();
             if (payrollId <= 0)
                 throw new Exception("رقم سجل الراتب غير صحيح.");
-            return repository.DeletePayroll(payrollId);
+            bool deleted = repository.DeletePayroll(payrollId);
+            if (deleted)
+                auditLogService.Record("حذف", "Payroll", payrollId.ToString(), "حذف سجل راتب.");
+            return deleted;
         }
 
         private static void EnsureCanManagePayroll()
