@@ -91,11 +91,11 @@ namespace SchoolSystem.Services
             if (assignment.ClassID <= 0)
                 throw new ArgumentException("يجب اختيار الصف.");
 
-            if (string.IsNullOrWhiteSpace(assignment.Section))
-                throw new ArgumentException("يجب اختيار الشعبة.");
+            assignment.Section = (assignment.Section ?? string.Empty).Trim();
+            if (assignment.Section.Length == 0 || assignment.Section.Length > 100)
+                throw new ArgumentException("يجب اختيار شعبة صحيحة بطول لا يتجاوز 100 حرف.");
 
-            assignment.Section = assignment.Section.Trim();
-            assignment.AcademicYear = assignment.AcademicYear.Trim();
+            assignment.AcademicYear = (assignment.AcademicYear ?? string.Empty).Trim();
             ValidateAcademicYear(assignment.AcademicYear);
 
             if (!repository.StudentExists(assignment.StudentID))

@@ -136,6 +136,15 @@ namespace SchoolSystem.DataAccess
                     )
                         THROW 50007, N'لا يمكن التعيين إلى فصل غير نشط.', 1;
 
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM StudentClasses
+                        WHERE StudentID = @StudentID
+                          AND AcademicYear = @AcademicYear
+                    )
+                        THROW 50009, N'هذا الطالب موزع مسبقاً في نفس العام الدراسي.', 1;
+
                     INSERT INTO StudentClasses
                     (
                         StudentID,
