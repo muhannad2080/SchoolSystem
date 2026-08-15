@@ -51,7 +51,7 @@ namespace SchoolSystem.DataAccess
                     SELECT SectionName AS Section
                     FROM SchoolSections
                     WHERE ClassID = @ClassID
-                      AND AcademicYear = @AcademicYear
+                      AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
                       AND IsActive = 1
                     ORDER BY SectionName";
 

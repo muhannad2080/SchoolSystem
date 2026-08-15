@@ -783,7 +783,7 @@ namespace SchoolSystem.UI
             }
             else if (!IsSequentialAcademicYear(txtAcademicYear.Text))
             {
-                errorProvider1.SetError(txtAcademicYear, "اكتب العام الدراسي بصيغة متسلسلة مثل 2026/2027.");
+                errorProvider1.SetError(txtAcademicYear, "اكتب العام الدراسي بصيغة متسلسلة مثل 2026/2027 أو 1447-1448.");
                 isValid = false;
             }
 
@@ -832,7 +832,7 @@ namespace SchoolSystem.UI
 
         private bool IsSequentialAcademicYear(string value)
         {
-            Match match = Regex.Match(value == null ? "" : value.Trim(), @"^(\d{4})/(\d{4})$");
+            Match match = Regex.Match(value == null ? "" : value.Trim(), @"^(\d{4})[/-](\d{4})$");
             int firstYear;
             int secondYear;
             return match.Success &&
