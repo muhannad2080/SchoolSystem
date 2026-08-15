@@ -13,10 +13,10 @@ for path in ROOT.rglob('*.cs'):
 
 main_form = (ROOT / 'MainForm.cs').read_text(encoding='utf-8-sig', errors='replace')
 dashboard = (ROOT / 'UI' / 'DashboardHome.cs').read_text(encoding='utf-8-sig', errors='replace')
-if 'LoadChart(' in dashboard:
-    errors.append('UI/DashboardHome.cs: stale LoadChart reference')
-if 'LoadAlerts(' in dashboard:
-    errors.append('UI/DashboardHome.cs: stale LoadAlerts reference')
+if 'LoadChart();' in dashboard and not re.search(r'\b(?:private|public|protected|internal)\s+void\s+LoadChart\s*\(', dashboard):
+    errors.append('UI/DashboardHome.cs: LoadChart call has no implementation')
+if 'LoadAlertsAsync();' in dashboard and not re.search(r'\b(?:private|public|protected|internal)\s+async\s+Task\s+LoadAlertsAsync\s*\(', dashboard):
+    errors.append('UI/DashboardHome.cs: LoadAlertsAsync call has no implementation')
 if 'MessageBox.Show("خطأ في تحميل الإحصائيات: " + ex.Message)' in dashboard:
     errors.append('UI/DashboardHome.cs: raw exception shown to user')
 if 'string.IsNullOrWhiteSpace(ex.Message)' in (ROOT / 'UI' / 'LoginForm.cs').read_text(encoding='utf-8-sig', errors='replace'):
