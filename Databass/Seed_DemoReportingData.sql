@@ -129,13 +129,13 @@ BEGIN TRY
 
     /* حضور يومين مختلفين لكل طالب، مع يوم غياب لإظهار الحالات في التقرير. */
     IF NOT EXISTS (SELECT 1 FROM dbo.StudentAttendance WHERE StudentID = @Student1 AND AttendanceDate = '2026-08-10')
-        INSERT INTO dbo.StudentAttendance (StudentID, ClassID, Section, AcademicYear, AttendanceDate, Status, ArrivalTime, Notes) VALUES (@Student1, @Class1, N'أ', N'1447-1448', '2026-08-10', N'حاضر', '07:05', N'حضور منتظم');
+        INSERT INTO dbo.StudentAttendance (StudentID, ClassID, Section, AcademicYear, AttendanceDate, Status, ArrivalTime, Notes) VALUES (@Student1, @Class1, N'ألف', N'1447-1448', '2026-08-10', N'حاضر', '07:05', N'حضور منتظم');
     IF NOT EXISTS (SELECT 1 FROM dbo.StudentAttendance WHERE StudentID = @Student2 AND AttendanceDate = '2026-08-10')
-        INSERT INTO dbo.StudentAttendance (StudentID, ClassID, Section, AcademicYear, AttendanceDate, Status, ArrivalTime, Notes) VALUES (@Student2, @Class1, N'أ', N'1447-1448', '2026-08-10', N'غائب', NULL, N'غياب تجريبي');
+        INSERT INTO dbo.StudentAttendance (StudentID, ClassID, Section, AcademicYear, AttendanceDate, Status, ArrivalTime, Notes) VALUES (@Student2, @Class1, N'ألف', N'1447-1448', '2026-08-10', N'غائب', NULL, N'غياب تجريبي');
     IF NOT EXISTS (SELECT 1 FROM dbo.StudentAttendance WHERE StudentID = @Student3 AND AttendanceDate = '2026-08-11')
-        INSERT INTO dbo.StudentAttendance (StudentID, ClassID, Section, AcademicYear, AttendanceDate, Status, ArrivalTime, Notes) VALUES (@Student3, @Class2, N'ب', N'1447-1448', '2026-08-11', N'حاضر', '07:12', N'حضور منتظم');
+        INSERT INTO dbo.StudentAttendance (StudentID, ClassID, Section, AcademicYear, AttendanceDate, Status, ArrivalTime, Notes) VALUES (@Student3, @Class2, N'باء', N'1447-1448', '2026-08-11', N'حاضر', '07:12', N'حضور منتظم');
     IF NOT EXISTS (SELECT 1 FROM dbo.StudentAttendance WHERE StudentID = @Student4 AND AttendanceDate = '2026-08-11')
-        INSERT INTO dbo.StudentAttendance (StudentID, ClassID, Section, AcademicYear, AttendanceDate, Status, ArrivalTime, Notes) VALUES (@Student4, @Class3, N'أ', N'1447-1448', '2026-08-11', N'متأخر', '07:35', N'تأخر تجريبي');
+        INSERT INTO dbo.StudentAttendance (StudentID, ClassID, Section, AcademicYear, AttendanceDate, Status, ArrivalTime, Notes) VALUES (@Student4, @Class3, N'ألف', N'1447-1448', '2026-08-11', N'متأخر', '07:35', N'تأخر تجريبي');
 
     /* بيانات النقل لاختبار تقارير الحافلات إذا كانت الجداول مثبتة. */
     IF OBJECT_ID(N'dbo.Buses', N'U') IS NOT NULL AND NOT EXISTS (SELECT 1 FROM dbo.Buses WHERE BusNumber = N'DEMO-BUS-01')

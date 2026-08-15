@@ -72,10 +72,10 @@ BEGIN TRY
     INSERT INTO dbo.StudentClasses (StudentID, ClassID, Section, AcademicYear)
     SELECT s.StudentID, x.ClassID, x.Section, @AcademicYear
     FROM (VALUES
-        (N'DEMO-STU-005', @Class1, N'أ'), (N'DEMO-STU-006', @Class1, N'أ'), (N'DEMO-STU-007', @Class1, N'أ'), (N'DEMO-STU-008', @Class1, N'أ'),
-        (N'DEMO-STU-009', @Class1, N'ب'), (N'DEMO-STU-010', @Class1, N'ب'), (N'DEMO-STU-011', @Class1, N'ب'), (N'DEMO-STU-012', @Class1, N'ب'),
-        (N'DEMO-STU-013', @Class2, N'ج'), (N'DEMO-STU-014', @Class2, N'ج'), (N'DEMO-STU-015', @Class2, N'ج'), (N'DEMO-STU-016', @Class2, N'ج'),
-        (N'DEMO-STU-017', @Class3, N'د'), (N'DEMO-STU-018', @Class3, N'د'), (N'DEMO-STU-019', @Class3, N'د'), (N'DEMO-STU-020', @Class3, N'د')
+        (N'DEMO-STU-005', @Class1, N'ألف'), (N'DEMO-STU-006', @Class1, N'ألف'), (N'DEMO-STU-007', @Class1, N'ألف'), (N'DEMO-STU-008', @Class1, N'ألف'),
+        (N'DEMO-STU-009', @Class1, N'باء'), (N'DEMO-STU-010', @Class1, N'باء'), (N'DEMO-STU-011', @Class1, N'باء'), (N'DEMO-STU-012', @Class1, N'باء'),
+        (N'DEMO-STU-013', @Class2, N'جيم'), (N'DEMO-STU-014', @Class2, N'جيم'), (N'DEMO-STU-015', @Class2, N'جيم'), (N'DEMO-STU-016', @Class2, N'جيم'),
+        (N'DEMO-STU-017', @Class3, N'دال'), (N'DEMO-STU-018', @Class3, N'دال'), (N'DEMO-STU-019', @Class3, N'دال'), (N'DEMO-STU-020', @Class3, N'دال')
     ) x(StudentNumber, ClassID, Section)
     INNER JOIN dbo.Students s ON s.StudentNumber = x.StudentNumber
     WHERE NOT EXISTS
@@ -118,11 +118,11 @@ BEGIN TRY
         SELECT s.StudentID, sc.ClassID,
                COALESCE(NULLIF(sc.Section, N''),
                    CASE
-                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 5 AND 8 THEN N'أ'
-                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 9 AND 12 THEN N'ب'
-                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 13 AND 16 THEN N'ج'
-                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 17 AND 20 THEN N'د'
-                       ELSE N'أ'
+                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 5 AND 8 THEN N'ألف'
+                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 9 AND 12 THEN N'باء'
+                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 13 AND 16 THEN N'جيم'
+                       WHEN TRY_CONVERT(INT, RIGHT(s.StudentNumber, 3)) BETWEEN 17 AND 20 THEN N'دال'
+                       ELSE N'ألف'
                    END),
                @AcademicYear, DATEADD(day, -d.DayOffset, @Today),
                CASE WHEN (s.StudentID + d.DayOffset) % 10 = 0 THEN N'غائب' WHEN (s.StudentID + d.DayOffset) % 7 = 0 THEN N'متأخر' ELSE N'حاضر' END,
@@ -176,8 +176,8 @@ BEGIN TRY
                DATEADD(MINUTE, x.PeriodNo * 45, CAST('08:00' AS TIME)),
                x.RoomName, N'حصة تجريبية مرتبطة بالشعبة', 1
         FROM (VALUES
-            (@Class1, N'أ', N'الأحد', 1, N'قاعة 101', N'DEMO-TCH-005'), (@Class1, N'ب', N'الاثنين', 2, N'قاعة 102', N'DEMO-TCH-004'),
-            (@Class2, N'ج', N'الثلاثاء', 3, N'مختبر العلوم', N'DEMO-TCH-006'), (@Class3, N'د', N'الأربعاء', 4, N'مختبر الحاسوب', N'DEMO-TCH-007')
+            (@Class1, N'ألف', N'الأحد', 1, N'قاعة 101', N'DEMO-TCH-005'), (@Class1, N'باء', N'الاثنين', 2, N'قاعة 102', N'DEMO-TCH-004'),
+            (@Class2, N'جيم', N'الثلاثاء', 3, N'مختبر العلوم', N'DEMO-TCH-006'), (@Class3, N'دال', N'الأربعاء', 4, N'مختبر الحاسوب', N'DEMO-TCH-007')
         ) x(ClassID, Section, DayName, PeriodNo, RoomName, EmployeeNumber)
         INNER JOIN dbo.Teachers t ON t.EmployeeNumber = x.EmployeeNumber
         CROSS APPLY (SELECT TOP 1 SubjectID FROM dbo.Subjects ORDER BY SubjectID) sub
