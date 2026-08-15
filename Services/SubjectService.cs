@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class SubjectService
     {
         private readonly SubjectRepository repository = new SubjectRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetAllSubjects()
         {
@@ -35,7 +36,16 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandPermission(PermissionKeys.SubjectsManage, "ليس لديك صلاحية إدارة المواد.");
             ValidateSubjectForUpdate(subject);
-            return repository.UpdateSubject(subject);
+            bool updated = repository.UpdateSubject(subject);
+            if (updated)
+            {
+                auditLogService.Record(
+                    "تعديل مادة",
+                    "Subject",
+                    subject.SubjectID.ToString(),
+                    "تم تعديل المادة رقم " + subject.SubjectID);
+            }
+            return updated;
         }
 
         public int GetSubjectCount()

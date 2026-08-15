@@ -10,6 +10,7 @@ namespace SchoolSystem.Services
     public class ContractService
     {
         private readonly TeacherContractRepository repository = new TeacherContractRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetAllContracts()
         {
@@ -29,7 +30,16 @@ namespace SchoolSystem.Services
             if (contract.ContractStatus == "ساري" && repository.HasActiveContract(contract.TeacherID))
                 throw new ArgumentException("يوجد عقد ساري لهذا المعلم.");
 
-            return repository.AddContract(contract);
+            bool added = repository.AddContract(contract);
+            if (added)
+            {
+                auditLogService.Record(
+                    "إضافة عقد موظف",
+                    "Contract",
+                    contract.ContractID.ToString(),
+                    "تمت إضافة العقد " + contract.ContractNumber + " للمعلم رقم " + contract.TeacherID);
+            }
+            return added;
         }
 
         public bool UpdateContract(TeacherContract contract)
@@ -44,7 +54,16 @@ namespace SchoolSystem.Services
             if (contract.ContractStatus == "ساري" && repository.HasActiveContract(contract.TeacherID, contract.ContractID))
                 throw new ArgumentException("يوجد عقد ساري آخر لهذا المعلم.");
 
-            return repository.UpdateContract(contract);
+            bool updated = repository.UpdateContract(contract);
+            if (updated)
+            {
+                auditLogService.Record(
+                    "تعديل عقد موظف",
+                    "Contract",
+                    contract.ContractID.ToString(),
+                    "تم تعديل العقد " + contract.ContractNumber);
+            }
+            return updated;
         }
 
         public bool DeleteContract(int contractId)
@@ -53,7 +72,16 @@ namespace SchoolSystem.Services
             if (contractId <= 0)
                 throw new ArgumentException("رقم العقد غير صحيح.");
 
-            return repository.DeleteContract(contractId);
+            bool deleted = repository.DeleteContract(contractId);
+            if (deleted)
+            {
+                auditLogService.Record(
+                    "حذف عقد موظف",
+                    "Contract",
+                    contractId.ToString(),
+                    "تم حذف عقد الموظف رقم " + contractId);
+            }
+            return deleted;
         }
 
         public bool HasActiveContract(int teacherId)

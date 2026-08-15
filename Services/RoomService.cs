@@ -10,6 +10,7 @@ namespace SchoolSystem.Services
     public class RoomService
     {
         private readonly RoomRepository repository = new RoomRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetAllRooms()
         {
@@ -31,7 +32,16 @@ namespace SchoolSystem.Services
             if (repository.RoomCodeExists(room.RoomCode, 0))
                 throw new ArgumentException("كود القاعة موجود مسبقًا.");
 
-            return repository.AddRoom(room);
+            bool added = repository.AddRoom(room);
+            if (added)
+            {
+                auditLogService.Record(
+                    "إضافة قاعة",
+                    "Room",
+                    room.RoomID.ToString(),
+                    "تمت إضافة القاعة " + room.RoomCode);
+            }
+            return added;
         }
 
         public bool UpdateRoom(Room room)
@@ -42,7 +52,16 @@ namespace SchoolSystem.Services
             if (repository.RoomCodeExists(room.RoomCode, room.RoomID))
                 throw new ArgumentException("كود القاعة مستخدم لقاعة أخرى.");
 
-            return repository.UpdateRoom(room);
+            bool updated = repository.UpdateRoom(room);
+            if (updated)
+            {
+                auditLogService.Record(
+                    "تعديل قاعة",
+                    "Room",
+                    room.RoomID.ToString(),
+                    "تم تعديل القاعة " + room.RoomCode);
+            }
+            return updated;
         }
 
         public bool DeleteRoom(int roomId)
@@ -51,7 +70,16 @@ namespace SchoolSystem.Services
             if (roomId <= 0)
                 throw new ArgumentException("رقم القاعة غير صحيح.");
 
-            return repository.DeleteRoom(roomId);
+            bool deleted = repository.DeleteRoom(roomId);
+            if (deleted)
+            {
+                auditLogService.Record(
+                    "تعطيل قاعة",
+                    "Room",
+                    roomId.ToString(),
+                    "تم تعطيل القاعة بدلاً من حذف سجلها نهائياً");
+            }
+            return deleted;
         }
 
         private void Validate(Room room, bool isUpdate)

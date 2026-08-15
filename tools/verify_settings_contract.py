@@ -27,6 +27,9 @@ borrowing_repository = (ROOT / "DataAccess" / "BorrowingRepository.cs").read_tex
 student_class_repository = (ROOT / "DataAccess" / "StudentClassRepository.cs").read_text(encoding="utf-8")
 student_attendance_service = (ROOT / "Services" / "StudentAttendanceService.cs").read_text(encoding="utf-8")
 student_class_service = (ROOT / "Services" / "StudentClassService.cs").read_text(encoding="utf-8")
+subject_service = (ROOT / "Services" / "SubjectService.cs").read_text(encoding="utf-8")
+room_service = (ROOT / "Services" / "RoomService.cs").read_text(encoding="utf-8")
+contract_service = (ROOT / "Services" / "ContractService.cs").read_text(encoding="utf-8")
 room_repository = (ROOT / "DataAccess" / "RoomRepository.cs").read_text(encoding="utf-8")
 class_repository = (ROOT / "DataAccess" / "ClassRepository.cs").read_text(encoding="utf-8")
 class_service = (ROOT / "Services" / "ClassService.cs").read_text(encoding="utf-8")
@@ -168,6 +171,20 @@ checks = {
     and student_class_service.count("auditLogService.Record(") >= 2
     and "if (assigned)" in student_class_service
     and "if (removed)" in student_class_service,
+    "subject_mutations_are_audited": "private readonly AuditLogService auditLogService" in subject_service
+    and "bool updated = repository.UpdateSubject(subject);" in subject_service
+    and "auditLogService.Record(" in subject_service
+    and "if (updated)" in subject_service,
+    "room_mutations_are_audited": "private readonly AuditLogService auditLogService" in room_service
+    and room_service.count("auditLogService.Record(") >= 3
+    and "if (added)" in room_service
+    and "if (updated)" in room_service
+    and "if (deleted)" in room_service,
+    "contract_mutations_are_audited": "private readonly AuditLogService auditLogService" in contract_service
+    and contract_service.count("auditLogService.Record(") >= 3
+    and "if (added)" in contract_service
+    and "if (updated)" in contract_service
+    and "if (deleted)" in contract_service,
 }
 
 failed = [name for name, passed in checks.items() if not passed]
