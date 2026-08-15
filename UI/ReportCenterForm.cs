@@ -187,7 +187,7 @@ namespace SchoolSystem.UI
             if (cmbClass.SelectedValue != null && !(cmbClass.SelectedValue is DataRowView))
                 int.TryParse(cmbClass.SelectedValue.ToString(), out classId);
 
-            if (classId <= 0 || !IsValidAcademicYear(txtAcademicYear.Text))
+            if (!IsValidAcademicYear(txtAcademicYear.Text))
             {
                 cmbSection.DataSource = null;
                 cmbSection.Items.Clear();
@@ -268,7 +268,8 @@ namespace SchoolSystem.UI
             if (string.IsNullOrWhiteSpace(academicYear))
                 return false;
 
-            string[] parts = academicYear.Trim().Split('/');
+            string normalized = academicYear.Trim().Replace('-', '/');
+            string[] parts = normalized.Split('/');
             int firstYear;
             int secondYear;
             if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
@@ -276,7 +277,7 @@ namespace SchoolSystem.UI
             if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
                 return false;
 
-            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
+            return secondYear == firstYear + 1;
         }
 
         private bool ValidateReportFilters()
@@ -289,7 +290,7 @@ namespace SchoolSystem.UI
             }
             if (cmbReportType.Text != "تقرير الحركة المالية" && !IsValidAcademicYear(txtAcademicYear.Text))
             {
-                ShowWarning("أدخل العام الدراسي بالصيغة الصحيحة: 2025/2026.");
+                ShowWarning("أدخل العام الدراسي بالصيغة الصحيحة: 2025/2026 أو 1447-1448.");
                 txtAcademicYear.Focus();
                 return false;
             }
