@@ -134,6 +134,16 @@ namespace SchoolSystem.UI
 
         private void ExportButton_Click(object sender, EventArgs e)
         {
+            try
+            {
+                CurrentUser.DemandPermission(PermissionKeys.AuditLogsView, "ليس لديك صلاحية تصدير سجل الأنشطة.");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                UIHelper.ShowWarning(ex.Message);
+                return;
+            }
+
             if (currentData == null || currentData.Rows.Count == 0)
             {
                 UIHelper.ShowWarning("لا توجد بيانات لتصديرها.");

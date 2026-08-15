@@ -8,6 +8,7 @@ namespace SchoolSystem.DataAccess
     public class AuditLogRepository
     {
         private bool tableEnsured;
+        private readonly object tableEnsureLock = new object();
 
         public void Write(AuditLog item)
         {
@@ -73,7 +74,13 @@ namespace SchoolSystem.DataAccess
         {
             if (tableEnsured)
                 return;
-            using (SqlConnection connection = DbConnection.GetConnection())
+
+            lock (tableEnsureLock)
+            {
+                if (tableEnsured)
+                    return;
+
+                using (SqlConnection connection = DbConnection.GetConnection())
             using (SqlCommand command = new SqlCommand(@"
                 IF OBJECT_ID(N'dbo.AuditLogs', N'U') IS NULL
                 BEGIN
@@ -92,9 +99,10 @@ namespace SchoolSystem.DataAccess
                     CREATE INDEX IX_AuditLogs_Entity ON dbo.AuditLogs(EntityName, EntityID);
                 END;", connection))
             {
-                connection.Open();
-                command.ExecuteNonQuery();
-                tableEnsured = true;
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    tableEnsured = true;
+                }
             }
         }
     }
