@@ -5,6 +5,12 @@
     السكربت آمن لإعادة التنفيذ ولا ينشئ سجلات جديدة.
 */
 SET NOCOUNT ON;
+
+IF DB_NAME() <> N'SchoolDB'
+BEGIN
+    RAISERROR(N'أوقف التنفيذ: يجب تشغيل هذا السكربت داخل قاعدة SchoolDB. قاعدة الاتصال الحالية: %s', 16, 1, DB_NAME());
+    RETURN;
+END;
 SET XACT_ABORT ON;
 
 BEGIN TRY
@@ -91,7 +97,11 @@ BEGIN CATCH
     THROW;
 END CATCH;
 
-SELECT N'StudentClasses' AS TableName, Section, COUNT(*) AS RowCount
+IF OBJECT_ID(N'dbo.StudentClasses', N'U') IS NOT NULL
+   AND OBJECT_ID(N'dbo.StudentAttendance', N'U') IS NOT NULL
+   AND OBJECT_ID(N'dbo.SchoolTimetable', N'U') IS NOT NULL
+BEGIN
+SELECT N'StudentClasses' AS TableName, Section, COUNT(*) AS RecordCount
 FROM dbo.StudentClasses
 WHERE Section IS NOT NULL
 GROUP BY Section
@@ -105,4 +115,9 @@ SELECT N'SchoolTimetable', Section, COUNT(*)
 FROM dbo.SchoolTimetable
 WHERE Section IS NOT NULL
 GROUP BY Section;
+END
+ELSE
+BEGIN
+    PRINT N'تم التطبيع، لكن تعذر عرض الملخص لأن أحد جداول المصدر غير موجود.';
+END;
 GO

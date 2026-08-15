@@ -8,7 +8,10 @@
 SET NOCOUNT ON;
 
 IF DB_NAME() <> N'SchoolDB'
-    PRINT N'تنبيه: أنت متصل بقاعدة ' + DB_NAME() + N' وليس SchoolDB.';
+BEGIN
+    RAISERROR(N'أوقف التنفيذ: يجب تشغيل هذا السكربت داخل قاعدة SchoolDB. قاعدة الاتصال الحالية: %s', 16, 1, DB_NAME());
+    RETURN;
+END;
 
 PRINT N'1) الصفوف الأكاديمية النشطة';
 SELECT ClassID, ClassCode, ClassName, StageName, GradeOrder, IsActive
