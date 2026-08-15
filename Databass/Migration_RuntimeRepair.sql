@@ -53,6 +53,16 @@ BEGIN
     IF COL_LENGTH(N'dbo.SchoolTimetable', N'EndTime') IS NULL ALTER TABLE dbo.SchoolTimetable ADD EndTime TIME NULL;
     IF COL_LENGTH(N'dbo.SchoolTimetable', N'CreatedAt') IS NULL ALTER TABLE dbo.SchoolTimetable ADD CreatedAt DATETIME NOT NULL CONSTRAINT DF_SchoolTimetable_Runtime_CreatedAt DEFAULT GETDATE() WITH VALUES;
     IF COL_LENGTH(N'dbo.SchoolTimetable', N'UpdatedAt') IS NULL ALTER TABLE dbo.SchoolTimetable ADD UpdatedAt DATETIME NULL;
+
+    /* Repair legacy timetable rows created before time columns existed. */
+    UPDATE dbo.SchoolTimetable
+       SET StartTime = DATEADD(MINUTE, (ISNULL(PeriodNo, 1) - 1) * 45, CAST('08:00' AS TIME)),
+           EndTime = DATEADD(MINUTE, ISNULL(PeriodNo, 1) * 45, CAST('08:00' AS TIME))
+     WHERE StartTime IS NULL OR EndTime IS NULL;
+
+    UPDATE dbo.SchoolTimetable
+       SET DayName = N'الاثنين'
+     WHERE DayName = N'الإثنين';
 END
 ELSE
 BEGIN
@@ -115,7 +125,7 @@ IF OBJECT_ID(N'dbo.Fees', N'U') IS NOT NULL AND COL_LENGTH(N'dbo.Fees', N'Update
 SELECT DB_NAME() AS DatabaseName, @@SERVERNAME AS ServerName;
 SELECT v.ObjectName, v.ColumnName
 FROM (VALUES
-    (N'SchoolTimetable', N'StartTime'), (N'SchoolTimetable', N'EndTime'),
+    (N'SchoolTimetable', N'StartTime'), (N'SchoolTimetable', N'EndTime'), (N'SchoolTimetable', N'CreatedAt'), (N'SchoolTimetable', N'UpdatedAt'),
     (N'Enrollments', N'EnrollmentID'), (N'TeacherAttendance', N'CheckInTime'),
     (N'TeacherAttendance', N'CheckOutTime'), (N'Subjects', N'ClassID'),
     (N'Subjects', N'SubjectCode'), (N'Subjects', N'MaxDegree'),

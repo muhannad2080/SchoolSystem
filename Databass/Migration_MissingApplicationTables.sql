@@ -86,9 +86,13 @@ BEGIN
         TermName NVARCHAR(50) NULL,
         DayName NVARCHAR(30) NOT NULL,
         PeriodNo INT NOT NULL,
+        StartTime TIME NOT NULL CONSTRAINT DF_SchoolTimetable_StartTime DEFAULT '08:00',
+        EndTime TIME NOT NULL CONSTRAINT DF_SchoolTimetable_EndTime DEFAULT '08:45',
         RoomName NVARCHAR(100) NULL,
         Notes NVARCHAR(MAX) NULL,
-        IsActive BIT NOT NULL CONSTRAINT DF_SchoolTimetable_IsActive DEFAULT 1
+        IsActive BIT NOT NULL CONSTRAINT DF_SchoolTimetable_IsActive DEFAULT 1,
+        CreatedAt DATETIME NOT NULL CONSTRAINT DF_SchoolTimetable_CreatedAt DEFAULT GETDATE(),
+        UpdatedAt DATETIME NULL
     );
 END;
 
@@ -497,6 +501,15 @@ BEGIN
         ALTER TABLE dbo.SchoolTimetable ADD CreatedAt DATETIME NOT NULL CONSTRAINT DF_SchoolTimetable_CreatedAt_Compat DEFAULT GETDATE() WITH VALUES;
     IF COL_LENGTH(N'dbo.SchoolTimetable', N'UpdatedAt') IS NULL
         ALTER TABLE dbo.SchoolTimetable ADD UpdatedAt DATETIME NULL;
+
+    UPDATE dbo.SchoolTimetable
+       SET StartTime = DATEADD(MINUTE, (ISNULL(PeriodNo, 1) - 1) * 45, CAST('08:00' AS TIME)),
+           EndTime = DATEADD(MINUTE, ISNULL(PeriodNo, 1) * 45, CAST('08:00' AS TIME))
+     WHERE StartTime IS NULL OR EndTime IS NULL;
+
+    UPDATE dbo.SchoolTimetable
+       SET DayName = N'الاثنين'
+     WHERE DayName = N'الإثنين';
 END;
 
 PRINT N'تم تطبيق توافق مخطط التشغيل النهائي بنجاح.';

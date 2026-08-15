@@ -170,11 +170,13 @@ BEGIN TRY
     IF OBJECT_ID(N'dbo.SchoolTimetable', N'U') IS NOT NULL
     BEGIN
         INSERT INTO dbo.SchoolTimetable
-            (ClassID, Section, SubjectID, TeacherID, AcademicYear, TermName, DayName, PeriodNo, RoomName, Notes, IsActive)
+            (ClassID, Section, SubjectID, TeacherID, AcademicYear, TermName, DayName, PeriodNo, StartTime, EndTime, RoomName, Notes, IsActive)
         SELECT x.ClassID, x.Section, sub.SubjectID, t.TeacherID, @AcademicYear, N'الفصل الأول', x.DayName, x.PeriodNo,
+               DATEADD(MINUTE, (x.PeriodNo - 1) * 45, CAST('08:00' AS TIME)),
+               DATEADD(MINUTE, x.PeriodNo * 45, CAST('08:00' AS TIME)),
                x.RoomName, N'حصة تجريبية مرتبطة بالشعبة', 1
         FROM (VALUES
-            (@Class1, N'أ', N'الأحد', 1, N'قاعة 101', N'DEMO-TCH-005'), (@Class1, N'ب', N'الإثنين', 2, N'قاعة 102', N'DEMO-TCH-004'),
+            (@Class1, N'أ', N'الأحد', 1, N'قاعة 101', N'DEMO-TCH-005'), (@Class1, N'ب', N'الاثنين', 2, N'قاعة 102', N'DEMO-TCH-004'),
             (@Class2, N'ج', N'الثلاثاء', 3, N'مختبر العلوم', N'DEMO-TCH-006'), (@Class3, N'د', N'الأربعاء', 4, N'مختبر الحاسوب', N'DEMO-TCH-007')
         ) x(ClassID, Section, DayName, PeriodNo, RoomName, EmployeeNumber)
         INNER JOIN dbo.Teachers t ON t.EmployeeNumber = x.EmployeeNumber
@@ -183,7 +185,7 @@ BEGIN TRY
         (
             SELECT 1 FROM dbo.SchoolTimetable st
             WHERE st.ClassID = x.ClassID AND ISNULL(st.Section, N'') = x.Section AND st.TeacherID = t.TeacherID
-              AND st.AcademicYear = @AcademicYear AND st.DayName = x.DayName AND st.PeriodNo = x.PeriodNo
+              AND st.AcademicYear = @AcademicYear AND REPLACE(st.DayName, N'الإثنين', N'الاثنين') = x.DayName AND st.PeriodNo = x.PeriodNo
         );
     END;
 

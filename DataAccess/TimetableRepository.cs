@@ -187,13 +187,19 @@ namespace SchoolSystem.DataAccess
                         @Notes,
                         @IsActive,
                         GETDATE()
-                    )";
+                    );
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     AddParameters(cmd, item, false);
                     conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result == null || result == DBNull.Value)
+                        return false;
+
+                    item.TimetableID = Convert.ToInt32(result);
+                    return item.TimetableID > 0;
                 }
             }
         }
@@ -326,16 +332,16 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                cmd.Parameters.AddWithValue("@TimetableID", item.TimetableID);
-                cmd.Parameters.AddWithValue("@ClassID", item.ClassID);
-                cmd.Parameters.AddWithValue("@Section", item.Section);
-                cmd.Parameters.AddWithValue("@TeacherID", item.TeacherID);
-                cmd.Parameters.AddWithValue("@AcademicYear", item.AcademicYear);
-                cmd.Parameters.AddWithValue("@TermName", item.TermName);
-                cmd.Parameters.AddWithValue("@DayName", item.DayName);
-                cmd.Parameters.AddWithValue("@StartTime", item.StartTime);
-                cmd.Parameters.AddWithValue("@EndTime", item.EndTime);
-                cmd.Parameters.AddWithValue("@RoomName", string.IsNullOrWhiteSpace(item.RoomName) ? "" : item.RoomName.Trim());
+                cmd.Parameters.Add("@TimetableID", SqlDbType.Int).Value = item.TimetableID;
+                cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = item.ClassID;
+                cmd.Parameters.Add("@Section", SqlDbType.NVarChar, 100).Value = item.Section.Trim();
+                cmd.Parameters.Add("@TeacherID", SqlDbType.Int).Value = item.TeacherID;
+                cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = item.AcademicYear.Trim();
+                cmd.Parameters.Add("@TermName", SqlDbType.NVarChar, 50).Value = item.TermName.Trim();
+                cmd.Parameters.Add("@DayName", SqlDbType.NVarChar, 30).Value = NormalizeDay(item.DayName);
+                cmd.Parameters.Add("@StartTime", SqlDbType.Time).Value = item.StartTime;
+                cmd.Parameters.Add("@EndTime", SqlDbType.Time).Value = item.EndTime;
+                cmd.Parameters.Add("@RoomName", SqlDbType.NVarChar, 100).Value = string.IsNullOrWhiteSpace(item.RoomName) ? (object)DBNull.Value : item.RoomName.Trim();
 
                 conn.Open();
                 return Convert.ToInt32(cmd.ExecuteScalar());
@@ -344,32 +350,28 @@ namespace SchoolSystem.DataAccess
 
         private void AddParameters(SqlCommand cmd, TimetableEntry item, bool includeId)
         {
-            if (includeId)
-                cmd.Parameters.AddWithValue("@TimetableID", item.TimetableID);
-            else
-                cmd.Parameters.AddWithValue("@TimetableID", 0);
+            cmd.Parameters.Add("@TimetableID", SqlDbType.Int).Value = includeId ? item.TimetableID : 0;
+            cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = item.ClassID;
+            cmd.Parameters.Add("@Section", SqlDbType.NVarChar, 100).Value = item.Section.Trim();
+            cmd.Parameters.Add("@SubjectID", SqlDbType.Int).Value = item.SubjectID;
+            cmd.Parameters.Add("@TeacherID", SqlDbType.Int).Value = item.TeacherID;
+            cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = item.AcademicYear.Trim();
+            cmd.Parameters.Add("@TermName", SqlDbType.NVarChar, 50).Value = item.TermName.Trim();
+            cmd.Parameters.Add("@DayName", SqlDbType.NVarChar, 30).Value = NormalizeDay(item.DayName);
+            cmd.Parameters.Add("@PeriodNo", SqlDbType.Int).Value = item.PeriodNo;
+            cmd.Parameters.Add("@StartTime", SqlDbType.Time).Value = item.StartTime;
+            cmd.Parameters.Add("@EndTime", SqlDbType.Time).Value = item.EndTime;
+            cmd.Parameters.Add("@IsActive", SqlDbType.Bit).Value = item.IsActive;
+            cmd.Parameters.Add("@RoomName", SqlDbType.NVarChar, 100).Value = string.IsNullOrWhiteSpace(item.RoomName) ? (object)DBNull.Value : item.RoomName.Trim();
+            cmd.Parameters.Add("@Notes", SqlDbType.NVarChar, 1000).Value = string.IsNullOrWhiteSpace(item.Notes) ? (object)DBNull.Value : item.Notes.Trim();
+        }
 
-            cmd.Parameters.AddWithValue("@ClassID", item.ClassID);
-            cmd.Parameters.AddWithValue("@Section", item.Section);
-            cmd.Parameters.AddWithValue("@SubjectID", item.SubjectID);
-            cmd.Parameters.AddWithValue("@TeacherID", item.TeacherID);
-            cmd.Parameters.AddWithValue("@AcademicYear", item.AcademicYear);
-            cmd.Parameters.AddWithValue("@TermName", item.TermName);
-            cmd.Parameters.AddWithValue("@DayName", item.DayName);
-            cmd.Parameters.AddWithValue("@PeriodNo", item.PeriodNo);
-            cmd.Parameters.AddWithValue("@StartTime", item.StartTime);
-            cmd.Parameters.AddWithValue("@EndTime", item.EndTime);
-            cmd.Parameters.AddWithValue("@IsActive", item.IsActive);
+        private static string NormalizeDay(string dayName)
+        {
+            if (string.IsNullOrWhiteSpace(dayName))
+                return string.Empty;
 
-            if (string.IsNullOrWhiteSpace(item.RoomName))
-                cmd.Parameters.AddWithValue("@RoomName", DBNull.Value);
-            else
-                cmd.Parameters.AddWithValue("@RoomName", item.RoomName.Trim());
-
-            if (string.IsNullOrWhiteSpace(item.Notes))
-                cmd.Parameters.AddWithValue("@Notes", DBNull.Value);
-            else
-                cmd.Parameters.AddWithValue("@Notes", item.Notes.Trim());
+            return dayName.Trim().Replace("الإثنين", "الاثنين");
         }
     }
 }

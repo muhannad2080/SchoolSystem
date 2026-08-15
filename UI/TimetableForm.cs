@@ -381,7 +381,12 @@ namespace SchoolSystem.UI
             {
                 TimetableEntry item = BuildModel();
 
-                await Task.Run(() => timetableService.AddTimetable(item));
+                bool added = await Task.Run(() => timetableService.AddTimetable(item));
+                if (!added)
+                {
+                    ShowWarning("تعذر حفظ الحصة. لم تُنشأ سجلات جديدة.");
+                    return;
+                }
 
                 ShowInfo("تمت إضافة الحصة بنجاح.");
 
@@ -533,8 +538,10 @@ namespace SchoolSystem.UI
 
             nudPeriodNo.Value = Convert.ToDecimal(row["PeriodNo"]);
 
-            TimeSpan start = TimeSpan.Parse(row["StartTime"].ToString());
-            TimeSpan end = TimeSpan.Parse(row["EndTime"].ToString());
+            TimeSpan start = ReadTime(row["StartTime"], new TimeSpan(8, 0, 0));
+            TimeSpan end = ReadTime(row["EndTime"], start.Add(TimeSpan.FromMinutes(45)));
+            if (end <= start)
+                end = start.Add(TimeSpan.FromMinutes(45));
 
             dtpStart.Value = DateTime.Today.Add(start);
             dtpEnd.Value = DateTime.Today.Add(end);
@@ -542,6 +549,15 @@ namespace SchoolSystem.UI
             txtRoom.Text = row["RoomName"] == DBNull.Value ? "" : row["RoomName"].ToString();
             txtNotes.Text = row["Notes"] == DBNull.Value ? "" : row["Notes"].ToString();
             chkIsActive.Checked = row["IsActive"] != DBNull.Value && Convert.ToBoolean(row["IsActive"]);
+        }
+
+        private static TimeSpan ReadTime(object value, TimeSpan fallback)
+        {
+            if (value == null || value == DBNull.Value)
+                return fallback;
+
+            TimeSpan parsed;
+            return TimeSpan.TryParse(value.ToString(), out parsed) ? parsed : fallback;
         }
 
         private void ClearFields()
