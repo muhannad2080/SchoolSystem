@@ -39,9 +39,9 @@ BEGIN TRY
 
     /* طلاب تجريبيون: أربعة طلاب لكل شعبة من الشعب الجديدة. */
     INSERT INTO dbo.Students
-        (StudentNumber, FullName, Gender, BirthDate, BirthPlace, Nationality, NationalID, Phone, Email, Address, GuardianName, GuardianPhone, Status, Notes)
-    SELECT v.StudentNumber, v.FullName, v.Gender, v.BirthDate, N'صنعاء', N'يمني', v.NationalID, v.Phone, v.Email,
-           N'حي المدارس', v.GuardianName, v.GuardianPhone, N'نشط', N'بيانات تجريبية شاملة'
+        (StudentNumber, FullName, Gender, BirthDate, BirthPlace, Nationality, NationalId, StudentPhone, Address, GuardianName, GuardianPhone, GuardianEmail, Status)
+    SELECT v.StudentNumber, v.FullName, v.Gender, v.BirthDate, N'صنعاء', N'يمني', v.NationalID, v.Phone,
+           N'حي المدارس', v.GuardianName, v.GuardianPhone, v.Email, N'نشط'
     FROM (VALUES
         (N'DEMO-STU-005', N'ياسر عبدالله حسن', N'ذكر', CONVERT(date,'2010-02-14'), N'1000000005', N'777200005', N'stu005@schoolsystem.local', N'عبدالله حسن', N'777300005'),
         (N'DEMO-STU-006', N'محمد فؤاد علي', N'ذكر', CONVERT(date,'2010-04-20'), N'1000000006', N'777200006', N'stu006@schoolsystem.local', N'فؤاد علي', N'777300006'),
