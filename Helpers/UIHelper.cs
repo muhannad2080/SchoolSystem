@@ -294,7 +294,7 @@ namespace SchoolSystem.Helpers
             if (string.IsNullOrWhiteSpace(value))
                 return string.Empty;
 
-            string[] parts = value.Trim().Split(new[] { ' ', '\\t', '\\r', '\\n' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = value.Trim().Split(new[] { ' ', '\t', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
             return string.Join(" ", parts);
         }
 
