@@ -20,6 +20,7 @@ namespace SchoolSystem.Services
         public bool AddEnrollment(Enrollment enrollment)
         {
             CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
+            NormalizeEnrollment(enrollment);
             ValidateEnrollment(enrollment, false);
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear))
                 throw new Exception("هذا الطالب مسجل بالفعل في هذا العام الدراسي.");
@@ -37,6 +38,7 @@ namespace SchoolSystem.Services
         public bool UpdateEnrollment(Enrollment enrollment)
         {
             CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
+            NormalizeEnrollment(enrollment);
             ValidateEnrollment(enrollment, true);
 
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear, enrollment.EnrollmentID))
@@ -79,6 +81,9 @@ namespace SchoolSystem.Services
             if (enrollment.ClassID <= 0)
                 throw new ArgumentException("يجب اختيار الصف المطلوب.");
 
+            if (string.IsNullOrWhiteSpace(enrollment.Section))
+                throw new ArgumentException("يجب اختيار الشعبة.");
+
             if (string.IsNullOrWhiteSpace(enrollment.AcademicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
@@ -98,6 +103,13 @@ namespace SchoolSystem.Services
 
             if (enrollment.PaidAmount > enrollment.RegistrationFee)
                 throw new ArgumentException("المبلغ المدفوع لا يمكن أن يكون أكبر من رسوم التسجيل.");
+        }
+
+        private void NormalizeEnrollment(Enrollment enrollment)
+        {
+            if (enrollment == null) return;
+            enrollment.AcademicYear = (enrollment.AcademicYear ?? string.Empty).Trim().Replace('-', '/');
+            enrollment.Section = (enrollment.Section ?? string.Empty).Trim();
         }
 
         private void ValidateAcademicYear(string academicYear)

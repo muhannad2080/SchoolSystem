@@ -59,7 +59,7 @@ namespace SchoolSystem.DataAccess
             const string nextSeatNumberQuery = @"
 SELECT ISNULL(MAX(TRY_CONVERT(INT, NULLIF(LTRIM(RTRIM(SeatNumber)), N''))), 0) + 1
 FROM Enrollments WITH (UPDLOCK, HOLDLOCK)
-WHERE AcademicYear = @AcademicYear
+WHERE REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
   AND ClassID = @ClassID
   AND ISNULL(Section, N'') = ISNULL(@Section, N'')
   AND (Status IS NULL OR Status <> N'مرفوض');";
@@ -191,7 +191,7 @@ VALUES
             const string query = @"
 SELECT ISNULL(MAX(TRY_CONVERT(INT, NULLIF(LTRIM(RTRIM(SeatNumber)), N''))), 0) + 1
 FROM Enrollments
-WHERE AcademicYear = @AcademicYear
+WHERE REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
   AND ClassID = @ClassID
   AND ISNULL(Section, N'') = ISNULL(@Section, N'')
   AND (Status IS NULL OR Status <> N'مرفوض');";
@@ -216,8 +216,8 @@ WHERE AcademicYear = @AcademicYear
                     SELECT COUNT(*)
                     FROM Enrollments
                     WHERE StudentID = @StudentID
-                      AND AcademicYear = @AcademicYear
-                      AND Status <> N'مرفوض'
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND (Status IS NULL OR Status <> N'مرفوض')
                       AND (@ExcludeEnrollmentID = 0 OR EnrollmentID <> @ExcludeEnrollmentID)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))

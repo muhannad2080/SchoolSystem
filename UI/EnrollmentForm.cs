@@ -415,6 +415,7 @@ namespace SchoolSystem.UI
                 {
                     UIHelper.ShowInfo("تم الحفظ بنجاح.");
                     LoadData();
+                    isEditMode = false;
                     DisableInputs();
                 }
             }
@@ -465,6 +466,7 @@ namespace SchoolSystem.UI
                         UIHelper.ShowInfo("تم الحذف بنجاح.");
                         LoadData();
                         ClearInputs();
+                        isEditMode = false;
                         DisableInputs();
                     }
                 }
