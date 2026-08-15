@@ -67,9 +67,10 @@
             this.menuStripMain.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
             this.menuStripMain.ForeColor = System.Drawing.Color.White;
             this.menuStripMain.ImageScalingSize = new System.Drawing.Size(16, 16);
-            this.menuStripMain.CanOverflow = true;
+            this.menuStripMain.CanOverflow = false;
             this.menuStripMain.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.menuStripMain.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.menuStripMain.AutoSize = false;
             this.menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 this.tsmiDashboard,
                 this.tsmiStudents,
@@ -96,6 +97,7 @@
             // tsmiAuditLogs
             this.tsmiAuditLogs.Name = "tsmiAuditLogs";
             this.tsmiAuditLogs.Visible = true;
+            this.tsmiAuditLogs.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.tsmiAuditLogs.AutoSize = true;
             this.tsmiAuditLogs.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiAuditLogs.Size = new System.Drawing.Size(110, 29);
@@ -105,6 +107,7 @@
             // tsmiSettings
             this.tsmiSettings.Name = "tsmiSettings";
             this.tsmiSettings.Visible = true;
+            this.tsmiSettings.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.tsmiSettings.AutoSize = true;
             this.tsmiSettings.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiSettings.Size = new System.Drawing.Size(90, 29);
@@ -276,6 +279,7 @@
             // tsmiLogout
             this.tsmiLogout.Name = "tsmiLogout";
             this.tsmiLogout.Visible = true;
+            this.tsmiLogout.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.tsmiLogout.AutoSize = true;
             this.tsmiLogout.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiLogout.Size = new System.Drawing.Size(75, 29);

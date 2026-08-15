@@ -40,15 +40,20 @@ namespace SchoolSystem
             menuStripMain.BackColor = mainColor;
             menuStripMain.ForeColor = Color.White;
             menuStripMain.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
-            menuStripMain.Padding = new Padding(8, 6, 8, 6);
+            menuStripMain.Padding = new Padding(4, 6, 4, 6);
+            menuStripMain.CanOverflow = false;
+            menuStripMain.AutoSize = false;
             menuStripMain.RenderMode = ToolStripRenderMode.Professional;
+            tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
+            tsmiSettings.Overflow = ToolStripItemOverflow.Never;
+            tsmiLogout.Overflow = ToolStripItemOverflow.Never;
 
             foreach (ToolStripItem item in menuStripMain.Items)
             {
                 item.BackColor = mainColor;
                 item.ForeColor = Color.White;
                 item.Margin = new Padding(2, 0, 2, 0);
-                item.Padding = new Padding(8, 0, 8, 0);
+                item.Padding = new Padding(4, 0, 4, 0);
 
                 ToolStripMenuItem menuItem = item as ToolStripMenuItem;
                 if (menuItem != null)
