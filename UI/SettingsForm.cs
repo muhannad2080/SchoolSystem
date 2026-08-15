@@ -191,6 +191,7 @@ namespace SchoolSystem.UI
 
         private void SaveSettingsSilently()
         {
+            ValidateFields();
             settings = new ApplicationSettingsData
             {
                 ServerInstance = serverTextBox.Text.Trim(),
