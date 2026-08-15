@@ -159,6 +159,8 @@ CREATE TABLE Users (
     Phone NVARCHAR(30) NULL,
     IsActive BIT NOT NULL DEFAULT 1,
     MustChangePassword BIT NOT NULL DEFAULT 0,
+    FailedLoginAttempts INT NOT NULL DEFAULT 0,
+    LockedAt DATETIME NULL,
     LastLoginAt DATETIME NULL,
     CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
     UpdatedAt DATETIME NULL

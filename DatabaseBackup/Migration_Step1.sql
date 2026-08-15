@@ -164,6 +164,12 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Us
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'MustChangePassword')
     ALTER TABLE Users ADD MustChangePassword BIT DEFAULT 0;
 
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'FailedLoginAttempts')
+    ALTER TABLE Users ADD FailedLoginAttempts INT NOT NULL CONSTRAINT DF_Users_FailedLoginAttempts_Backup DEFAULT 0 WITH VALUES;
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'LockedAt')
+    ALTER TABLE Users ADD LockedAt DATETIME NULL;
+
 IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'LastLoginAt')
     ALTER TABLE Users ADD LastLoginAt DATETIME NULL;
 

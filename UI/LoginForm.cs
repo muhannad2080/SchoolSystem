@@ -182,7 +182,8 @@ namespace SchoolSystem.UI
                 return "تعذر الاتصال بالنظام حاليًا. تحقق من إعدادات قاعدة البيانات أو اتصل بمسؤول النظام.";
             }
 
-            if (message.Contains("غير صحيحة") || message.Contains("غير فعال"))
+            if (message.Contains("غير صحيحة") || message.Contains("غير فعال") ||
+                message.Contains("تم تعطيل الحساب") || message.Contains("اطلب من مدير النظام"))
                 return message;
 
             return "تعذر تسجيل الدخول. تحقق من البيانات ثم حاول مرة أخرى.";

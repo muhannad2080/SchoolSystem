@@ -22,6 +22,8 @@ namespace SchoolSystem.Models
 
         public bool IsActive { get; set; }
         public bool MustChangePassword { get; set; }
+        public int FailedLoginAttempts { get; set; }
+        public DateTime? LockedAt { get; set; }
 
         public DateTime? LastLoginAt { get; set; }
 

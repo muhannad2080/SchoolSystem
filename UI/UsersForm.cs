@@ -211,6 +211,8 @@ namespace SchoolSystem.UI
             SetHeader("Phone", "الهاتف");
             SetHeader("IsActive", "نشط");
             SetHeader("MustChangePassword", "تغيير كلمة المرور");
+            SetHeader("FailedLoginAttempts", "المحاولات الفاشلة");
+            SetHeader("LockedAt", "وقت القفل");
             SetHeader("LastLoginAt", "آخر دخول");
             SetHeader("CreatedAt", "تاريخ الإنشاء");
             SetHeader("UpdatedAt", "آخر تعديل");

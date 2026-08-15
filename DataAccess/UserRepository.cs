@@ -22,6 +22,8 @@ namespace SchoolSystem.DataAccess
                         Phone,
                         IsActive,
                         MustChangePassword,
+                        FailedLoginAttempts,
+                        LockedAt,
                         LastLoginAt,
                         CreatedAt,
                         UpdatedAt
@@ -54,6 +56,8 @@ namespace SchoolSystem.DataAccess
                         Phone,
                         IsActive,
                         MustChangePassword,
+                        FailedLoginAttempts,
+                        LockedAt,
                         LastLoginAt,
                         CreatedAt,
                         UpdatedAt
@@ -94,6 +98,8 @@ namespace SchoolSystem.DataAccess
                         Phone,
                         IsActive,
                         MustChangePassword,
+                        FailedLoginAttempts,
+                        LockedAt,
                         LastLoginAt,
                         CreatedAt,
                         UpdatedAt
@@ -133,7 +139,9 @@ namespace SchoolSystem.DataAccess
                         Email,
                         Phone,
                         IsActive,
-                        MustChangePassword
+                        MustChangePassword,
+                        FailedLoginAttempts,
+                        LockedAt
                     )
                     VALUES
                     (
@@ -146,7 +154,9 @@ namespace SchoolSystem.DataAccess
                         @Email,
                         @Phone,
                         @IsActive,
-                        @MustChangePassword
+                        @MustChangePassword,
+                        0,
+                        NULL
                     );
                     SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
@@ -184,6 +194,8 @@ namespace SchoolSystem.DataAccess
                             Phone = @Phone,
                             IsActive = @IsActive,
                             MustChangePassword = @MustChangePassword,
+                            FailedLoginAttempts = CASE WHEN @IsActive = 1 THEN 0 ELSE FailedLoginAttempts END,
+                            LockedAt = CASE WHEN @IsActive = 1 THEN NULL ELSE LockedAt END,
                             UpdatedAt = GETDATE()
                         WHERE UserID = @UserID";
                 }
@@ -199,6 +211,8 @@ namespace SchoolSystem.DataAccess
                             Phone = @Phone,
                             IsActive = @IsActive,
                             MustChangePassword = @MustChangePassword,
+                            FailedLoginAttempts = CASE WHEN @IsActive = 1 THEN 0 ELSE FailedLoginAttempts END,
+                            LockedAt = CASE WHEN @IsActive = 1 THEN NULL ELSE LockedAt END,
                             UpdatedAt = GETDATE()
                         WHERE UserID = @UserID";
                 }
@@ -379,22 +393,51 @@ namespace SchoolSystem.DataAccess
             }
         }
 
-        public void UpdateLastLogin(int userId)
+        public int RegisterFailedLoginAttempt(int userId)
         {
             using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                UPDATE Users
+                SET FailedLoginAttempts = CASE
+                        WHEN ISNULL(FailedLoginAttempts, 0) + 1 >= 3 THEN 3
+                        ELSE ISNULL(FailedLoginAttempts, 0) + 1
+                    END,
+                    IsActive = CASE
+                        WHEN ISNULL(FailedLoginAttempts, 0) + 1 >= 3
+                             AND LTRIM(RTRIM(RoleName)) NOT IN (N'مدير النظام', N'Admin', N'Administrator')
+                        THEN 0
+                        ELSE IsActive
+                    END,
+                    LockedAt = CASE
+                        WHEN ISNULL(FailedLoginAttempts, 0) + 1 >= 3
+                             AND LTRIM(RTRIM(RoleName)) NOT IN (N'مدير النظام', N'Admin', N'Administrator')
+                        THEN ISNULL(LockedAt, GETDATE())
+                        ELSE LockedAt
+                    END,
+                    UpdatedAt = GETDATE()
+                WHERE UserID = @UserID;
+                SELECT ISNULL(FailedLoginAttempts, 0) FROM Users WHERE UserID = @UserID;", con))
             {
-                string query = @"
-                    UPDATE Users SET
-                        LastLoginAt = GETDATE()
-                    WHERE UserID = @UserID";
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                con.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
+        }
 
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@UserID", userId);
-
-                    con.Open();
-                    cmd.ExecuteNonQuery();
-                }
+        public void RecordSuccessfulLogin(int userId)
+        {
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                UPDATE Users SET
+                    FailedLoginAttempts = 0,
+                    LockedAt = NULL,
+                    LastLoginAt = GETDATE(),
+                    UpdatedAt = GETDATE()
+                WHERE UserID = @UserID", con))
+            {
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                con.Open();
+                cmd.ExecuteNonQuery();
             }
         }
 
@@ -408,6 +451,8 @@ namespace SchoolSystem.DataAccess
                         PasswordSalt = @PasswordSalt,
                         IsActive = 1,
                         MustChangePassword = 0,
+                        FailedLoginAttempts = 0,
+                        LockedAt = NULL,
                         UpdatedAt = GETDATE()
                     WHERE LTRIM(RTRIM(UserName)) = LTRIM(RTRIM(@UserName))";
 
@@ -473,6 +518,11 @@ namespace SchoolSystem.DataAccess
 
             user.IsActive = reader["IsActive"] != DBNull.Value && Convert.ToBoolean(reader["IsActive"]);
             user.MustChangePassword = reader["MustChangePassword"] != DBNull.Value && Convert.ToBoolean(reader["MustChangePassword"]);
+
+            user.FailedLoginAttempts = reader["FailedLoginAttempts"] == DBNull.Value ? 0 : Convert.ToInt32(reader["FailedLoginAttempts"]);
+
+            if (reader["LockedAt"] != DBNull.Value)
+                user.LockedAt = Convert.ToDateTime(reader["LockedAt"]);
 
             if (reader["LastLoginAt"] != DBNull.Value)
                 user.LastLoginAt = Convert.ToDateTime(reader["LastLoginAt"]);
