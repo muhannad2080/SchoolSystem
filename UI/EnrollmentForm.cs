@@ -640,11 +640,28 @@ namespace SchoolSystem.UI
                 if (sections == null || sections.Rows.Count == 0)
                     return;
 
-                txtSection.DataSource = sections;
+                // لا تعرض أي سجل فارغ حتى لو كانت قاعدة البيانات تحتوي على بيانات قديمة غير صحيحة.
+                DataTable validSections = sections.Clone();
+                foreach (DataRow row in sections.Rows)
+                {
+                    string sectionName = row["Section"] == DBNull.Value ? string.Empty : Convert.ToString(row["Section"]);
+                    if (!string.IsNullOrWhiteSpace(sectionName))
+                    {
+                        DataRow cleanRow = validSections.NewRow();
+                        cleanRow["Section"] = sectionName.Trim();
+                        validSections.Rows.Add(cleanRow);
+                    }
+                }
+
+                if (validSections.Rows.Count == 0)
+                    return;
+
+                txtSection.DataSource = validSections;
                 txtSection.DisplayMember = "Section";
                 txtSection.ValueMember = "Section";
                 txtSection.Enabled = true;
-                txtSection.SelectedIndex = 0;
+                if (txtSection.Items.Count > 0)
+                    txtSection.SelectedIndex = 0;
             }
             catch (Exception ex)
             {

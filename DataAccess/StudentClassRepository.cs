@@ -53,7 +53,9 @@ namespace SchoolSystem.DataAccess
                     WHERE ClassID = @ClassID
                       AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
                       AND IsActive = 1
-                    ORDER BY SectionName";
+                      AND NULLIF(LTRIM(RTRIM(SectionName)), N'') IS NOT NULL
+                    GROUP BY LTRIM(RTRIM(SectionName))
+                    ORDER BY LTRIM(RTRIM(SectionName))";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
