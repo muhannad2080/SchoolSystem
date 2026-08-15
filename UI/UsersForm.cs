@@ -344,17 +344,9 @@ namespace SchoolSystem.UI
             string email = txtEmail.Text.Trim();
             string phone = NormalizeDigits(txtPhone.Text).Trim();
 
-            if (string.IsNullOrWhiteSpace(fullName))
+            if (!UIHelper.IsValidArabicOrLatinName(fullName))
             {
-                ShowWarning("أدخل الاسم الكامل.");
-                txtFullName.Focus();
-                return false;
-            }
-
-            if (ContainsDigits(fullName))
-            {
-                ShowWarning("الاسم الكامل لا يجب أن يحتوي على أرقام.");
-                txtFullName.Focus();
+                UIHelper.FocusAndWarn(txtFullName, "الاسم الكامل مطلوب ويجب أن يحتوي على أحرف فقط وبطول مناسب.");
                 return false;
             }
 
@@ -418,28 +410,16 @@ namespace SchoolSystem.UI
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(email) && !IsValidEmail(email))
+            if (!string.IsNullOrWhiteSpace(email) && !UIHelper.IsValidEmail(email))
             {
-                ShowWarning("البريد الإلكتروني غير صحيح.");
-                txtEmail.Focus();
+                UIHelper.FocusAndWarn(txtEmail, "البريد الإلكتروني غير صحيح.");
                 return false;
             }
 
-            if (!string.IsNullOrWhiteSpace(phone))
+            if (!string.IsNullOrWhiteSpace(phone) && !UIHelper.IsValidPhone(phone))
             {
-                if (!phone.All(char.IsDigit))
-                {
-                    ShowWarning("رقم الهاتف يجب أن يحتوي على أرقام فقط.");
-                    txtPhone.Focus();
-                    return false;
-                }
-
-                if (phone.Length < 7 || phone.Length > 15)
-                {
-                    ShowWarning("رقم الهاتف غير صحيح.");
-                    txtPhone.Focus();
-                    return false;
-                }
+                UIHelper.FocusAndWarn(txtPhone, "رقم الهاتف غير صحيح.");
+                return false;
             }
 
             return true;

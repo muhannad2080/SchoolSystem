@@ -185,29 +185,42 @@ namespace SchoolSystem.UI
 
         private bool ValidateInputs()
         {
-            if (string.IsNullOrWhiteSpace(cmbAcademicYear.Text))
+            string academicYear = cmbAcademicYear.Text.Trim();
+            if (!UIHelper.IsValidAcademicYear(academicYear))
             {
-                UIHelper.ShowWarning("اختر العام الدراسي.");
+                UIHelper.FocusAndWarn(cmbAcademicYear, "اختر عاماً دراسياً بصيغة صحيحة مثل 2026/2027.");
                 return false;
             }
 
-            if (cmbClass.SelectedValue == null)
+            int classId;
+            if (cmbClass.SelectedValue == null || !int.TryParse(cmbClass.SelectedValue.ToString(), out classId) || classId <= 0)
             {
-                UIHelper.ShowWarning("اختر الصف.");
+                UIHelper.FocusAndWarn(cmbClass, "اختر صفاً صالحاً.");
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(cmbFeeType.Text))
+            if (string.IsNullOrWhiteSpace(cmbFeeType.Text) || cmbFeeType.Text.Trim().Length > 100)
             {
-                UIHelper.ShowWarning("أدخل نوع الرسوم.");
+                UIHelper.FocusAndWarn(cmbFeeType, "أدخل نوع رسوم صحيحاً وبطول مناسب.");
                 return false;
             }
 
-            decimal amount = ReadDecimal(txtAmount.Text);
-
-            if (amount <= 0)
+            decimal amount;
+            if (!UIHelper.TryParseDecimal(txtAmount.Text, out amount) || amount <= 0)
             {
-                UIHelper.ShowWarning("أدخل مبلغ رسوم صحيح أكبر من صفر.");
+                UIHelper.FocusAndWarn(txtAmount, "أدخل مبلغ رسوم رقمي صحيح أكبر من صفر.");
+                return false;
+            }
+
+            if (dtpDueDate.Value.Date < DateTime.Today && selectedFeePlanId == 0)
+            {
+                UIHelper.FocusAndWarn(dtpDueDate, "لا يمكن أن يكون تاريخ الاستحقاق في الماضي عند إنشاء خطة جديدة.");
+                return false;
+            }
+
+            if (txtNotes.Text.Trim().Length > 500)
+            {
+                UIHelper.FocusAndWarn(txtNotes, "الملاحظات يجب ألا تتجاوز 500 حرف.");
                 return false;
             }
 
