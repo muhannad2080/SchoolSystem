@@ -2,6 +2,7 @@
 using System.Data;
 using System.Linq;
 using SchoolSystem.DataAccess;
+using SchoolSystem.Helpers;
 using SchoolSystem.Models;
 using SchoolSystem.Security;
 
@@ -175,8 +176,28 @@ namespace SchoolSystem.Services
                 if (!PermissionKeys.IsSystemAdministratorRole(user.RoleName))
                 {
                     int attempts = userRepository.RegisterFailedLoginAttempt(user.UserID);
+                    user.FailedLoginAttempts = attempts;
+                    user.RemainingLoginAttempts = Math.Max(0, 3 - attempts);
                     if (attempts >= 3)
+                    {
+                        try
+                        {
+                            EmailNotificationService.QueueAccountLockedAlert(
+                                user,
+                                attempts,
+                                userRepository.GetSystemAdministratorEmails());
+                        }
+                        catch (Exception emailException)
+                        {
+                            ApplicationLogger.LogException("تهيئة تنبيه قفل الحساب", emailException);
+                        }
+
                         throw new Exception("تم تعطيل الحساب بعد تجاوز ثلاث محاولات دخول فاشلة. اطلب من مدير النظام إعادة تفعيله.");
+                    }
+
+                    throw new Exception(string.Format(
+                        "اسم المستخدم أو كلمة المرور غير صحيحة. تبقت لك {0} محاولة قبل تعطيل الحساب.",
+                        user.RemainingLoginAttempts));
                 }
 
                 throw new Exception("اسم المستخدم أو كلمة المرور غير صحيحة.");

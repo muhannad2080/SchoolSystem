@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using SchoolSystem.Models;
 
@@ -391,6 +392,31 @@ namespace SchoolSystem.DataAccess
                     return cmd.ExecuteNonQuery() > 0;
                 }
             }
+        }
+
+        public List<string> GetSystemAdministratorEmails()
+        {
+            List<string> emails = new List<string>();
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT Email
+                FROM Users
+                WHERE IsActive = 1
+                  AND LTRIM(RTRIM(RoleName)) IN (N'مدير النظام', N'Admin', N'Administrator')
+                  AND Email IS NOT NULL
+                  AND LTRIM(RTRIM(Email)) <> N''", con))
+            {
+                con.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["Email"] != DBNull.Value)
+                            emails.Add(reader["Email"].ToString().Trim());
+                    }
+                }
+            }
+            return emails;
         }
 
         public int RegisterFailedLoginAttempt(int userId)

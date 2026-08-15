@@ -207,6 +207,7 @@
     <Compile Include="Services\AuditLogService.cs" />
     <Compile Include="Services\ApplicationSettingsService.cs" />
     <Compile Include="Services\DatabaseBackupService.cs" />
+    <Compile Include="Services\EmailNotificationService.cs" />
     <Compile Include="Services\SubjectService.cs" />
     <Compile Include="Services\TeacherAttendanceService.cs" />
     <Compile Include="Services\TeacherContractService.cs" />
