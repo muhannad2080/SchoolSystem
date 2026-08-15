@@ -162,13 +162,44 @@ namespace SchoolSystem.UI
 
             using (SaveFileDialog dialog = new SaveFileDialog())
             {
-                dialog.Filter = "CSV UTF-8 (*.csv)|*.csv";
-                dialog.FileName = "سجل-الأنشطة-" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".csv";
+                dialog.Filter = "Excel أو PDF (*.xlsx;*.pdf)|*.xlsx;*.pdf|Excel (*.xlsx)|*.xlsx|PDF (*.pdf)|*.pdf";
+                dialog.FileName = "Audit_Log_" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".xlsx";
                 if (dialog.ShowDialog() != DialogResult.OK)
                     return;
 
                 try
                 {
+                    DataTable exportTable = new DataTable();
+                    foreach (DataColumn sourceColumn in currentData.Columns)
+                        exportTable.Columns.Add(GetExportHeader(sourceColumn.ColumnName));
+                    foreach (DataRow sourceRow in currentData.Rows)
+                    {
+                        DataRow targetRow = exportTable.NewRow();
+                        for (int columnIndex = 0; columnIndex < currentData.Columns.Count; columnIndex++)
+                        {
+                            object value = sourceRow[columnIndex];
+                            targetRow[columnIndex] = value == DBNull.Value ? string.Empty :
+                                (currentData.Columns[columnIndex].ColumnName == "CreatedAt"
+                                    ? Convert.ToDateTime(value).ToString("yyyy-MM-dd HH:mm")
+                                    : value.ToString());
+                        }
+                        exportTable.Rows.Add(targetRow);
+                    }
+                    string extension = Path.GetExtension(dialog.FileName).ToLowerInvariant();
+                    if (extension == ".pdf")
+                    {
+                        ReportOutputHelper.ExportToPdf(exportTable, dialog.FileName,
+                            "سجل الأنشطة | Audit Log", "عدد السجلات | Records: " + exportTable.Rows.Count);
+                    }
+                    else
+                    {
+                        ReportOutputHelper.ExportToExcel(exportTable, dialog.FileName,
+                            "سجل الأنشطة | Audit Log", "عدد السجلات | Records: " + exportTable.Rows.Count);
+                    }
+                    statusLabel.Text = "تم تصدير السجل بنجاح";
+                    UIHelper.ShowInfo("تم تصدير سجل الأنشطة بنجاح.");
+                    return;
+
                     StringBuilder csv = new StringBuilder();
                     for (int columnIndex = 0; columnIndex < currentData.Columns.Count; columnIndex++)
                     {
