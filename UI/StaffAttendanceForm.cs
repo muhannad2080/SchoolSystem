@@ -316,12 +316,24 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            if ((status == "غائب" || status == "إجازة" || status == "مريض") &&
-                string.IsNullOrWhiteSpace(txtAbsenceReason.Text))
+            bool reasonRequired = status == "غائب" || status == "إجازة" || status == "مريض" ||
+                status == "مأذون" || status == "انصراف مبكر";
+            if (reasonRequired && string.IsNullOrWhiteSpace(txtAbsenceReason.Text))
             {
-                UIHelper.ShowWarning("أدخل سبب الغياب أو الإجازة.");
+                UIHelper.ShowWarning("أدخل سبب الغياب أو الإجازة أو الإذن أو الانصراف المبكر.");
                 txtAbsenceReason.Focus();
                 return false;
+            }
+
+            if (!noTimeRequired)
+            {
+                TimeSpan duration = dtpCheckOut.Value.TimeOfDay - dtpCheckIn.Value.TimeOfDay;
+                if (duration.TotalMinutes < 0 || duration.TotalMinutes > 24 * 60)
+                {
+                    UIHelper.ShowWarning("فترة العمل يجب أن تكون بين صفر و24 ساعة.");
+                    dtpCheckOut.Focus();
+                    return false;
+                }
             }
 
             string[] allowedStatuses = { "حاضر", "غائب", "متأخر", "إجازة", "مريض", "مأذون", "انصراف مبكر" };
@@ -372,6 +384,11 @@ namespace SchoolSystem.UI
             attendance.Notes = txtNotes.Text.Trim();
 
             attendanceService.ApplyAttendanceCalculations(attendance);
+
+            if (attendance.LateMinutes < 0 || attendance.LateMinutes > 1440 ||
+                attendance.EarlyLeaveMinutes < 0 || attendance.EarlyLeaveMinutes > 1440 ||
+                attendance.WorkHours < 0 || attendance.WorkHours > 24)
+                throw new InvalidOperationException("القيم المحسوبة للحضور خارج النطاق المسموح.");
 
             txtLateMinutes.Text = attendance.LateMinutes.ToString();
             txtEarlyLeaveMinutes.Text = attendance.EarlyLeaveMinutes.ToString();

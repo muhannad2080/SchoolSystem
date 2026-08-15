@@ -123,7 +123,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = "SELECT COUNT(*) FROM Subjects";
+                string query = "SELECT COUNT(*) FROM Subjects WHERE ISNULL(IsActive, 1) = 1";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

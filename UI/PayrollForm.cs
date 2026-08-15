@@ -338,8 +338,13 @@ namespace SchoolSystem.UI
         {
             if (cmbTeacher.SelectedValue == null || !int.TryParse(cmbTeacher.SelectedValue.ToString(), out int teacherId) || teacherId <= 0)
                 throw new InvalidOperationException("يرجى اختيار المعلم.");
-            if (string.IsNullOrWhiteSpace(txtContractNumber.Text))
+            string contractNumber = txtContractNumber.Text.Trim();
+            if (string.IsNullOrWhiteSpace(contractNumber))
                 throw new InvalidOperationException("رقم العقد مطلوب.");
+            if (contractNumber.Length > 50)
+                throw new InvalidOperationException("رقم العقد يجب ألا يتجاوز 50 حرفاً.");
+            if (contractNumber.IndexOfAny(new[] { '\r', '\n', '\t' }) >= 0)
+                throw new InvalidOperationException("رقم العقد يحتوي على محارف غير صالحة.");
             if (cmbContractType.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbContractType.Text))
                 throw new InvalidOperationException("يرجى اختيار نوع العقد.");
             if (cmbContractStatus.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbContractStatus.Text))
@@ -364,8 +369,16 @@ namespace SchoolSystem.UI
                 throw new InvalidOperationException("الخصومات يجب أن تكون رقمًا غير سالب.");
 
             decimal totalSalary = basicSalary + housingAllowance + transportAllowance + otherAllowances;
+            if (basicSalary > 100000000m || housingAllowance > 100000000m ||
+                transportAllowance > 100000000m || otherAllowances > 100000000m ||
+                deductions > 100000000m)
+                throw new InvalidOperationException("القيمة المالية تتجاوز الحد المسموح به.");
+            if (totalSalary > 100000000m)
+                throw new InvalidOperationException("إجمالي الراتب يتجاوز الحد المسموح به.");
             if (deductions > totalSalary)
                 throw new InvalidOperationException("لا يمكن أن تتجاوز الخصومات إجمالي الراتب.");
+            if (txtNotes.Text.Trim().Length > 1000)
+                throw new InvalidOperationException("الملاحظات يجب ألا تتجاوز 1000 حرف.");
             if (dtpEndDate.Checked && dtpEndDate.Value.Date < dtpStartDate.Value.Date)
                 throw new InvalidOperationException("تاريخ نهاية العقد يجب أن يكون بعد تاريخ بدايته.");
 
@@ -373,7 +386,7 @@ namespace SchoolSystem.UI
 
             contract.ContractID = selectedContractId;
             contract.TeacherID = teacherId;
-            contract.ContractNumber = txtContractNumber.Text.Trim();
+            contract.ContractNumber = contractNumber;
             contract.ContractType = cmbContractType.Text;
             contract.ContractStatus = cmbContractStatus.Text;
             contract.BasicSalary = basicSalary;
