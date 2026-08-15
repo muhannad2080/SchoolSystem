@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.IO;
 using System.Windows.Forms;
 using SchoolSystem.Helpers;
@@ -14,6 +15,7 @@ namespace SchoolSystem.UI
         private readonly int studentId;
         private readonly StudentProfileService profileService = new StudentProfileService();
         private StudentProfile profile;
+        private readonly PrintDocument profilePrintDocument = new PrintDocument();
 
         public StudentProfileForm()
         {
@@ -22,6 +24,7 @@ namespace SchoolSystem.UI
             ConfigureGrid(dgvAttendance);
             ConfigureGrid(dgvMarks);
             ConfigureGrid(dgvFees);
+            ConfigureOutputButtons();
         }
 
         public StudentProfileForm(int studentId)
@@ -35,6 +38,7 @@ namespace SchoolSystem.UI
             ConfigureGrid(dgvAttendance);
             ConfigureGrid(dgvMarks);
             ConfigureGrid(dgvFees);
+            ConfigureOutputButtons();
             Load += StudentProfileForm_Load;
         }
 
@@ -299,6 +303,169 @@ namespace SchoolSystem.UI
         {
             if (grid.Columns.Contains(name))
                 grid.Columns[name].DefaultCellStyle.Format = "N2";
+        }
+
+        private void ConfigureOutputButtons()
+        {
+            if (headerPanel == null)
+                return;
+
+            Button printButton = CreateOutputButton("طباعة | Print", UIHelper.PrimaryColor);
+            Button pdfButton = CreateOutputButton("PDF", UIHelper.DangerColor);
+            Button excelButton = CreateOutputButton("Excel", UIHelper.SuccessColor);
+            printButton.Click += delegate { PrintProfilePreview(); };
+            pdfButton.Click += delegate { ExportProfilePdf(); };
+            excelButton.Click += delegate { ExportProfileExcel(); };
+            headerPanel.Controls.Add(excelButton);
+            headerPanel.Controls.Add(pdfButton);
+            headerPanel.Controls.Add(printButton);
+            profilePrintDocument.PrintPage += ProfilePrintDocument_PrintPage;
+        }
+
+        private Button CreateOutputButton(string text, Color color)
+        {
+            Button button = new Button
+            {
+                Text = text,
+                Width = 105,
+                Height = 32,
+                Dock = DockStyle.Right,
+                BackColor = color,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font(UIHelper.FontFamily, 8.5F, FontStyle.Bold),
+                UseVisualStyleBackColor = false,
+                Margin = new Padding(4)
+            };
+            button.FlatAppearance.BorderSize = 0;
+            return button;
+        }
+
+        private DataTable BuildProfileOutputTable()
+        {
+            DataTable table = new DataTable();
+            table.Columns.Add("الحقل | Field");
+            table.Columns.Add("القيمة | Value");
+            if (profile == null || profile.Student == null)
+                return table;
+            Student student = profile.Student;
+            table.Rows.Add("رقم الطالب | Student No.", Safe(student.StudentNumber));
+            table.Rows.Add("الاسم | Name", Safe(student.FullName));
+            table.Rows.Add("الجنس | Gender", Safe(student.Gender));
+            table.Rows.Add("الصف | Class", Safe(student.CurrentClassName));
+            table.Rows.Add("الحالة | Status", Safe(student.Status));
+            table.Rows.Add("هاتف ولي الأمر | Guardian Phone", Safe(student.GuardianPhone));
+            table.Rows.Add("الرقم الوطني | National ID", Safe(student.NationalId));
+            return table;
+        }
+
+        private bool EnsureProfileOutput()
+        {
+            if (profile == null || profile.Student == null)
+            {
+                UIHelper.ShowWarning("انتظر تحميل ملف الطالب أولاً.");
+                return false;
+            }
+            return true;
+        }
+
+        private void ExportProfileExcel()
+        {
+            if (!EnsureProfileOutput()) return;
+            using (SaveFileDialog dialog = new SaveFileDialog())
+            {
+                dialog.Filter = "ملفات Excel (*.xlsx)|*.xlsx";
+                dialog.FileName = "Student_Profile_" + Safe(profile.Student.StudentNumber) + ".xlsx";
+                if (dialog.ShowDialog(FindForm()) != DialogResult.OK) return;
+                try
+                {
+                    DataTable table = BuildProfileOutputTable();
+                    ReportOutputHelper.ExportToExcel(table, dialog.FileName,
+                        "ملف الطالب | Student Profile - " + Safe(profile.Student.FullName),
+                        "بيانات الهوية | Identity details");
+                    UIHelper.ShowInfo("تم تصدير ملف الطالب إلى Excel بنجاح.");
+                }
+                catch (Exception ex) { UIHelper.ShowException("تصدير ملف الطالب إلى Excel", ex); }
+            }
+        }
+
+        private void ExportProfilePdf()
+        {
+            if (!EnsureProfileOutput()) return;
+            using (SaveFileDialog dialog = new SaveFileDialog())
+            {
+                dialog.Filter = "ملفات PDF (*.pdf)|*.pdf";
+                dialog.FileName = "Student_Profile_" + Safe(profile.Student.StudentNumber) + ".pdf";
+                if (dialog.ShowDialog(FindForm()) != DialogResult.OK) return;
+                try
+                {
+                    DataTable table = BuildProfileOutputTable();
+                    ReportOutputHelper.ExportToPdf(table, dialog.FileName,
+                        "ملف الطالب | Student Profile - " + Safe(profile.Student.FullName),
+                        "بيانات الهوية | Identity details");
+                    UIHelper.ShowInfo("تم تصدير ملف الطالب إلى PDF بنجاح.");
+                }
+                catch (Exception ex) { UIHelper.ShowException("تصدير ملف الطالب إلى PDF", ex); }
+            }
+        }
+
+        private void PrintProfilePreview()
+        {
+            if (!EnsureProfileOutput()) return;
+            try
+            {
+                using (PrintPreviewDialog preview = new PrintPreviewDialog())
+                {
+                    preview.Document = profilePrintDocument;
+                    preview.RightToLeft = RightToLeft.Yes;
+                    preview.WindowState = FormWindowState.Maximized;
+                    preview.ShowDialog(FindForm());
+                }
+            }
+            catch (Exception ex) { UIHelper.ShowException("معاينة ملف الطالب", ex); }
+        }
+
+        private void ProfilePrintDocument_PrintPage(object sender, PrintPageEventArgs e)
+        {
+            Student student = profile == null ? null : profile.Student;
+            if (student == null) { e.HasMorePages = false; return; }
+            bool rtl = ReportOutputHelper.ContainsArabic(student.FullName) || ReportOutputHelper.ContainsArabic(student.CurrentClassName);
+            using (Font title = new Font("Tahoma", 17, FontStyle.Bold))
+            using (Font label = new Font("Tahoma", 10, FontStyle.Bold))
+            using (Font value = new Font("Tahoma", 10))
+            using (StringFormat format = new StringFormat
+            {
+                Alignment = rtl ? StringAlignment.Far : StringAlignment.Near,
+                LineAlignment = StringAlignment.Center,
+                FormatFlags = rtl ? StringFormatFlags.DirectionRightToLeft : StringFormatFlags.FitBlackBox,
+                Trimming = StringTrimming.EllipsisCharacter
+            })
+            {
+                Rectangle area = e.MarginBounds;
+                e.Graphics.DrawString("ملف الطالب | Student Profile", title, Brushes.Black,
+                    new Rectangle(area.Left, area.Top, area.Width, 42), format);
+                int y = area.Top + 60;
+                string[][] rows =
+                {
+                    new[] { "رقم الطالب | Student No.", Safe(student.StudentNumber) },
+                    new[] { "الاسم | Name", Safe(student.FullName) },
+                    new[] { "الجنس | Gender", Safe(student.Gender) },
+                    new[] { "الصف | Class", Safe(student.CurrentClassName) },
+                    new[] { "الحالة | Status", Safe(student.Status) },
+                    new[] { "هاتف ولي الأمر | Guardian Phone", Safe(student.GuardianPhone) },
+                    new[] { "الرقم الوطني | National ID", Safe(student.NationalId) }
+                };
+                foreach (string[] row in rows)
+                {
+                    e.Graphics.DrawString(row[0], label, Brushes.Black, new Rectangle(area.Left, y, area.Width / 3, 32), format);
+                    e.Graphics.DrawString(row[1], value, Brushes.Black, new Rectangle(area.Left + area.Width / 3 + 12, y, area.Width * 2 / 3 - 12, 32), format);
+                    e.Graphics.DrawLine(Pens.LightGray, area.Left, y + 34, area.Right, y + 34);
+                    y += 42;
+                }
+                e.Graphics.DrawString("تاريخ الإصدار | Issued: " + DateTime.Now.ToString("yyyy-MM-dd"), value, Brushes.DimGray,
+                    new Rectangle(area.Left, area.Bottom - 30, area.Width, 24), format);
+            }
+            e.HasMorePages = false;
         }
 
         private void CloseProfile()

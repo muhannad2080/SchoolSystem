@@ -53,7 +53,7 @@ namespace SchoolSystem.UI
             btnNewPayment = CreateActionButton("سند صرف جديد", Color.FromArgb(142, 68, 173));
             btnPreview = CreateActionButton("معاينة", Color.FromArgb(52, 152, 219));
             btnPrint = CreateActionButton("طباعة", Color.FromArgb(41, 128, 185));
-            btnExportCsv = CreateActionButton("تصدير CSV", Color.FromArgb(39, 174, 96));
+            btnExportCsv = CreateActionButton("تصدير Excel", Color.FromArgb(39, 174, 96));
 
             btnNewReceipt.Click += (s, e) => PrepareNewVoucher("قبض");
             btnNewPayment.Click += (s, e) => PrepareNewVoucher("صرف");
@@ -288,14 +288,34 @@ namespace SchoolSystem.UI
 
             using (SaveFileDialog dialog = new SaveFileDialog())
             {
-                dialog.Filter = "ملفات CSV (*.csv)|*.csv";
-                dialog.FileName = "السندات_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".csv";
+                dialog.Filter = "ملفات Excel (*.xlsx)|*.xlsx";
+                dialog.FileName = "Vouchers_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".xlsx";
                 dialog.Title = "تصدير السندات";
                 if (dialog.ShowDialog(FindForm()) != DialogResult.OK)
                     return;
 
                 try
                 {
+                    DataTable exportTable = new DataTable();
+                    foreach (DataGridViewColumn column in dataGridViewVouchers.Columns)
+                        exportTable.Columns.Add(column.HeaderText ?? column.Name);
+                    foreach (DataGridViewRow row in dataGridViewVouchers.Rows)
+                    {
+                        if (row.IsNewRow) continue;
+                        DataRow exportRow = exportTable.NewRow();
+                        for (int index = 0; index < dataGridViewVouchers.Columns.Count; index++)
+                            exportRow[index] = row.Cells[index].Value == null || row.Cells[index].Value == DBNull.Value
+                                ? string.Empty : row.Cells[index].Value.ToString();
+                        exportTable.Rows.Add(exportRow);
+                    }
+                    ReportOutputHelper.ExportToExcel(
+                        exportTable,
+                        dialog.FileName,
+                        "الحركة المالية | Financial Vouchers",
+                        "عدد السجلات | Records: " + exportTable.Rows.Count);
+                    UIHelper.ShowInfo("تم تصدير السندات إلى Excel بنجاح.");
+                    return;
+
                     StringBuilder csv = new StringBuilder();
                     csv.AppendLine("رقم السند,النوع,المبلغ,التاريخ,الطرف,البيان,طريقة الدفع,المرجع,ملاحظات");
                     foreach (DataGridViewRow row in dataGridViewVouchers.Rows)

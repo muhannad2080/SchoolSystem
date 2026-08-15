@@ -145,6 +145,7 @@
     <Compile Include="DataAccess\UserRepository.cs" />
     <Compile Include="DataAccess\VoucherRepository.cs" />
     <Compile Include="Helpers\ApplicationLogger.cs" />
+    <Compile Include="Helpers\ReportOutputHelper.cs" />
     <Compile Include="Helpers\MenuRenderer.cs" />
     <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="MainForm.cs">

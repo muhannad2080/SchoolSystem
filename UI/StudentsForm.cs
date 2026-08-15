@@ -222,15 +222,25 @@ namespace SchoolSystem.UI
 
             Rectangle bounds = e.MarginBounds;
             Rectangle card = new Rectangle(bounds.Left, bounds.Top, Math.Min(bounds.Width, 500), 310);
+            bool isRtl = ReportOutputHelper.ContainsArabic(student.FullName)
+                || ReportOutputHelper.ContainsArabic(student.CurrentClassName)
+                || ReportOutputHelper.ContainsArabic(student.Status)
+                || ReportOutputHelper.ContainsArabic(student.Gender);
             using (Font titleFont = new Font("Tahoma", 16F, FontStyle.Bold))
             using (Font labelFont = new Font("Tahoma", 10F, FontStyle.Bold))
             using (Font valueFont = new Font("Tahoma", 10F, FontStyle.Regular))
-            using (StringFormat rtl = new StringFormat { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Center, FormatFlags = StringFormatFlags.DirectionRightToLeft })
+            using (StringFormat rtl = new StringFormat
+            {
+                Alignment = isRtl ? StringAlignment.Far : StringAlignment.Near,
+                LineAlignment = StringAlignment.Center,
+                FormatFlags = isRtl ? StringFormatFlags.DirectionRightToLeft : StringFormatFlags.FitBlackBox,
+                Trimming = StringTrimming.EllipsisCharacter
+            })
             using (Pen borderPen = new Pen(Color.FromArgb(31, 78, 121), 2))
             {
                 e.Graphics.FillRectangle(Brushes.White, card);
                 e.Graphics.DrawRectangle(borderPen, card);
-                e.Graphics.DrawString("بطاقة الطالب", titleFont, Brushes.Black,
+                e.Graphics.DrawString("بطاقة الطالب | Student Card", titleFont, Brushes.Black,
                     new RectangleF(card.Left + 20, card.Top + 14, card.Width - 40, 32), rtl);
 
                 Rectangle photoBounds = new Rectangle(card.Left + 20, card.Top + 62, 105, 125);
@@ -248,7 +258,7 @@ namespace SchoolSystem.UI
                     if (photo != null)
                         e.Graphics.DrawImage(photo, photoBounds);
                     else
-                        e.Graphics.DrawString("لا توجد صورة", valueFont, Brushes.DimGray, photoBounds,
+                        e.Graphics.DrawString("لا توجد صورة | No photo", valueFont, Brushes.DimGray, photoBounds,
                             new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center });
                 }
                 finally
@@ -260,14 +270,14 @@ namespace SchoolSystem.UI
                 int x = card.Left + 140;
                 int width = card.Width - 160;
                 int y = card.Top + 62;
-                DrawStudentCardLine(e.Graphics, x, width, ref y, "الاسم", student.FullName, labelFont, valueFont, rtl);
-                DrawStudentCardLine(e.Graphics, x, width, ref y, "رقم الطالب", student.StudentNumber, labelFont, valueFont, rtl);
-                DrawStudentCardLine(e.Graphics, x, width, ref y, "الصف", student.CurrentClassName, labelFont, valueFont, rtl);
-                DrawStudentCardLine(e.Graphics, x, width, ref y, "الجنس", student.Gender, labelFont, valueFont, rtl);
-                DrawStudentCardLine(e.Graphics, x, width, ref y, "الحالة", student.Status, labelFont, valueFont, rtl);
-                DrawStudentCardLine(e.Graphics, x, width, ref y, "هاتف ولي الأمر", student.GuardianPhone, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "الاسم | Name", student.FullName, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "رقم الطالب | Student No.", student.StudentNumber, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "الصف | Class", student.CurrentClassName, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "الجنس | Gender", student.Gender, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "الحالة | Status", student.Status, labelFont, valueFont, rtl);
+                DrawStudentCardLine(e.Graphics, x, width, ref y, "هاتف ولي الأمر | Guardian Phone", student.GuardianPhone, labelFont, valueFont, rtl);
 
-                e.Graphics.DrawString("تاريخ الإصدار: " + DateTime.Now.ToString("yyyy/MM/dd"), valueFont, Brushes.DimGray,
+                e.Graphics.DrawString("تاريخ الإصدار | Issued: " + DateTime.Now.ToString("yyyy/MM/dd"), valueFont, Brushes.DimGray,
                     new RectangleF(card.Left + 20, card.Bottom - 38, card.Width - 40, 24), rtl);
             }
 
@@ -301,6 +311,31 @@ namespace SchoolSystem.UI
 
                     if (sfd.ShowDialog() != DialogResult.OK)
                         return;
+
+                    System.Data.DataTable exportTable = new System.Data.DataTable();
+                    exportTable.Columns.Add("رقم الطالب | Student No.");
+                    exportTable.Columns.Add("الاسم | Name");
+                    exportTable.Columns.Add("الجنس | Gender");
+                    exportTable.Columns.Add("الصف | Class");
+                    exportTable.Columns.Add("الهاتف | Phone");
+                    exportTable.Columns.Add("الحالة | Status");
+                    foreach (Student s in _currentStudents)
+                    {
+                        exportTable.Rows.Add(
+                            s.StudentNumber ?? string.Empty,
+                            s.FullName ?? string.Empty,
+                            s.Gender ?? string.Empty,
+                            s.CurrentClassName ?? string.Empty,
+                            s.StudentPhone ?? string.Empty,
+                            s.Status ?? string.Empty);
+                    }
+                    ReportOutputHelper.ExportToExcel(
+                        exportTable,
+                        sfd.FileName,
+                        "نظام إدارة المدرسة | School Management System - Students",
+                        "إجمالي الطلاب | Total students: " + exportTable.Rows.Count);
+                    UIHelper.ShowInfo("تم تصدير بيانات الطلاب إلى Excel بنجاح.");
+                    return;
 
                     using (var workbook = new ClosedXML.Excel.XLWorkbook())
                     {

@@ -494,7 +494,11 @@ namespace SchoolSystem.UI
                 {
                     Cursor = Cursors.WaitCursor;
 
-                    ExportToExcel(dt, sfd.FileName);
+                    ReportOutputHelper.ExportToExcel(
+                        dt,
+                        sfd.FileName,
+                        "نظام إدارة المدرسة | School Management System - " + cmbReportType.Text,
+                        lblSummary.Text);
 
                     Cursor = Cursors.Default;
 
@@ -661,7 +665,11 @@ namespace SchoolSystem.UI
                 {
                     Cursor = Cursors.WaitCursor;
 
-                    ExportToPDF(dt, sfd.FileName);
+                    ReportOutputHelper.ExportToPdf(
+                        dt,
+                        sfd.FileName,
+                        "نظام إدارة المدرسة | School Management System - " + cmbReportType.Text,
+                        lblSummary.Text);
 
                     Cursor = Cursors.Default;
 
