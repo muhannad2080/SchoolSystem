@@ -128,7 +128,8 @@ namespace SchoolSystem.UI
         private void btnLogin_Click(object sender, EventArgs e)
         {
             string userName = NormalizeDigits(txtUserName.Text).Trim();
-            string password = NormalizeDigits(txtPassword.Text).Trim();
+            // لا نستخدم Trim لكلمة المرور؛ المسافات قد تكون جزءاً صحيحاً من كلمة المرور.
+            string password = NormalizeDigits(txtPassword.Text);
 
             if (string.IsNullOrWhiteSpace(userName) ||
                 userName == "اسم المستخدم" ||
