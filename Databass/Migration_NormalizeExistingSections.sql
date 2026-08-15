@@ -6,9 +6,11 @@
 */
 SET NOCOUNT ON;
 
-IF DB_NAME() <> N'SchoolDB'
+DECLARE @CurrentDatabase sysname = DB_NAME();
+
+IF @CurrentDatabase <> N'SchoolDB'
 BEGIN
-    RAISERROR(N'أوقف التنفيذ: يجب تشغيل هذا السكربت داخل قاعدة SchoolDB. قاعدة الاتصال الحالية: %s', 16, 1, DB_NAME());
+    RAISERROR(N'أوقف التنفيذ: يجب تشغيل هذا السكربت داخل قاعدة SchoolDB. قاعدة الاتصال الحالية: %s', 16, 1, @CurrentDatabase);
     RETURN;
 END;
 SET XACT_ABORT ON;
