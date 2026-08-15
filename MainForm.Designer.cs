@@ -108,6 +108,7 @@
             this.tsmiSettings.Name = "tsmiSettings";
             this.tsmiSettings.Visible = true;
             this.tsmiSettings.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            this.tsmiSettings.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.tsmiSettings.AutoSize = true;
             this.tsmiSettings.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiSettings.Size = new System.Drawing.Size(90, 29);
@@ -280,6 +281,7 @@
             this.tsmiLogout.Name = "tsmiLogout";
             this.tsmiLogout.Visible = true;
             this.tsmiLogout.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            this.tsmiLogout.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.tsmiLogout.AutoSize = true;
             this.tsmiLogout.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiLogout.Size = new System.Drawing.Size(75, 29);

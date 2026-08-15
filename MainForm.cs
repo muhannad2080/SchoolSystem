@@ -46,7 +46,9 @@ namespace SchoolSystem
             menuStripMain.RenderMode = ToolStripRenderMode.Professional;
             tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
             tsmiSettings.Overflow = ToolStripItemOverflow.Never;
+            tsmiSettings.Alignment = ToolStripItemAlignment.Right;
             tsmiLogout.Overflow = ToolStripItemOverflow.Never;
+            tsmiLogout.Alignment = ToolStripItemAlignment.Right;
 
             foreach (ToolStripItem item in menuStripMain.Items)
             {
