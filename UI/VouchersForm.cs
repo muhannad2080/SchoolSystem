@@ -24,7 +24,7 @@ namespace SchoolSystem.UI
         private Button btnNewPayment;
         private Button btnPreview;
         private Button btnPrint;
-        private Button btnExportCsv;
+        private Button btnExportExcel;
         private DateTimePicker dtpFilterFrom;
         private DateTimePicker dtpFilterTo;
         private Label lblFilterFrom;
@@ -53,20 +53,20 @@ namespace SchoolSystem.UI
             btnNewPayment = CreateActionButton("سند صرف جديد", Color.FromArgb(142, 68, 173));
             btnPreview = CreateActionButton("معاينة", Color.FromArgb(52, 152, 219));
             btnPrint = CreateActionButton("طباعة", Color.FromArgb(41, 128, 185));
-            btnExportCsv = CreateActionButton("تصدير Excel", Color.FromArgb(39, 174, 96));
+            btnExportExcel = CreateActionButton("تصدير Excel", Color.FromArgb(39, 174, 96));
 
             btnNewReceipt.Click += (s, e) => PrepareNewVoucher("قبض");
             btnNewPayment.Click += (s, e) => PrepareNewVoucher("صرف");
             btnPreview.Click += (s, e) => PreviewSelectedVoucher();
             btnPrint.Click += (s, e) => PrintSelectedVoucher();
-            btnExportCsv.Click += (s, e) => ExportVisibleVouchersCsv();
+            btnExportExcel.Click += (s, e) => ExportVisibleVouchersExcel();
 
-            panelButtons.Controls.Add(btnExportCsv);
+            panelButtons.Controls.Add(btnExportExcel);
             panelButtons.Controls.Add(btnPrint);
             panelButtons.Controls.Add(btnPreview);
             panelButtons.Controls.Add(btnNewPayment);
             panelButtons.Controls.Add(btnNewReceipt);
-            btnExportCsv.Location = new Point(5, 10);
+            btnExportExcel.Location = new Point(5, 10);
             btnPrint.Location = new Point(120, 10);
             btnPreview.Location = new Point(235, 10);
             btnNewPayment.Location = new Point(350, 10);
@@ -278,7 +278,7 @@ namespace SchoolSystem.UI
             y += 38;
         }
 
-        private void ExportVisibleVouchersCsv()
+        private void ExportVisibleVouchersExcel()
         {
             if (dataGridViewVouchers.Rows.Count == 0)
             {
