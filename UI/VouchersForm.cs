@@ -603,17 +603,21 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtPartyName.Text))
+            if (string.IsNullOrWhiteSpace(txtPartyName.Text) || txtPartyName.Text.Trim().Length > 200)
             {
-                UIHelper.ShowWarning("أدخل اسم الطرف.");
-                txtPartyName.Focus();
+                UIHelper.FocusAndWarn(txtPartyName, "أدخل اسم الطرف بطول لا يتجاوز 200 حرف.");
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtDescription.Text))
+            if (string.IsNullOrWhiteSpace(txtDescription.Text) || txtDescription.Text.Trim().Length > 500)
             {
-                UIHelper.ShowWarning("أدخل بيان السند.");
-                txtDescription.Focus();
+                UIHelper.FocusAndWarn(txtDescription, "أدخل بيان السند بطول لا يتجاوز 500 حرف.");
+                return false;
+            }
+
+            if (txtNotes.Text.Trim().Length > 1000)
+            {
+                UIHelper.FocusAndWarn(txtNotes, "الملاحظات يجب ألا تتجاوز 1000 حرف.");
                 return false;
             }
 

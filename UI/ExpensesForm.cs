@@ -224,10 +224,10 @@ namespace SchoolSystem.UI
 
         private bool ValidateInputs()
         {
-            if (!UIHelper.TryParseDecimal(txtAmount.Text, out decimal amount) || amount <= 0)
+            decimal amount;
+            if (!UIHelper.TryParseDecimal(txtAmount.Text, out amount) || amount <= 0)
             {
-                UIHelper.ShowWarning("أدخل مبلغاً رقمياً صحيحاً أكبر من صفر.");
-                txtAmount.Focus();
+                UIHelper.FocusAndWarn(txtAmount, "أدخل مبلغاً رقمياً صحيحاً أكبر من صفر.");
                 return false;
             }
 
@@ -252,10 +252,21 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtDescription.Text))
+            if (string.IsNullOrWhiteSpace(txtPayeeName.Text) || txtPayeeName.Text.Trim().Length > 200)
             {
-                UIHelper.ShowWarning("أدخل بيان المصروف.");
-                txtDescription.Focus();
+                UIHelper.FocusAndWarn(txtPayeeName, "أدخل اسم المستفيد بطول لا يتجاوز 200 حرف.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtDescription.Text) || txtDescription.Text.Trim().Length > 500)
+            {
+                UIHelper.FocusAndWarn(txtDescription, "أدخل بيان المصروف بطول لا يتجاوز 500 حرف.");
+                return false;
+            }
+
+            if (txtNotes.Text.Trim().Length > 1000)
+            {
+                UIHelper.FocusAndWarn(txtNotes, "الملاحظات يجب ألا تتجاوز 1000 حرف.");
                 return false;
             }
 
