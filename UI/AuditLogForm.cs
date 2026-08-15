@@ -29,6 +29,7 @@ namespace SchoolSystem.UI
             UIHelper.StylePrimaryButton(refreshButton);
             UIHelper.StyleButton(exportButton, UIHelper.SuccessColor);
             UIHelper.StyleDataGridView(grid);
+            searchBox.TextChanged += SearchBox_TextChanged;
         }
 
         private async void AuditLogForm_Load(object sender, EventArgs e)
@@ -108,6 +109,14 @@ namespace SchoolSystem.UI
                 grid.Columns["CreatedAt"].FillWeight = 95;
             if (grid.Columns.Contains("AuditLogID"))
                 grid.Columns["AuditLogID"].FillWeight = 45;
+        }
+
+        private async void SearchBox_TextChanged(object sender, EventArgs e)
+        {
+            if (!IsHandleCreated || !searchBox.Enabled)
+                return;
+
+            await LoadLogsAsync();
         }
 
         private async void SearchBox_KeyDown(object sender, KeyEventArgs e)

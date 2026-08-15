@@ -235,6 +235,7 @@ readiness_script = ROOT / "tools" / "verify_operational_readiness.py"
 validation_script = ROOT / "tools" / "verify_validation_contract.py"
 ui_save_script = ROOT / "tools" / "inventory_ui_save_validation.py"
 search_script = ROOT / "tools" / "verify_search_contract.py"
+autocomplete_search_script = ROOT / "tools" / "verify_search_autocomplete_contract.py"
 coverage_result = subprocess.run(
     [sys.executable, str(coverage_script)],
     cwd=str(ROOT),
@@ -317,4 +318,18 @@ if search_result.returncode != 0:
     print("FAIL: DataView search safety contract", file=sys.stderr)
     sys.exit(1)
 print("PASS: DataView search safety contract")
+autocomplete_search_result = subprocess.run(
+    [sys.executable, str(autocomplete_search_script)],
+    cwd=str(ROOT),
+    text=True,
+    capture_output=True,
+)
+if autocomplete_search_result.stdout:
+    print(autocomplete_search_result.stdout.rstrip())
+if autocomplete_search_result.returncode != 0:
+    if autocomplete_search_result.stderr:
+        print(autocomplete_search_result.stderr.rstrip(), file=sys.stderr)
+    print("FAIL: search autocomplete contract", file=sys.stderr)
+    sys.exit(1)
+print("PASS: search autocomplete contract")
 print(f"PASS: {len(checks)} settings contract checks")
