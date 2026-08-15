@@ -47,14 +47,17 @@ namespace SchoolSystem.Services
             EnsureCanManageTimetable();
             Validate(item);
 
-            if (repository.HasClassConflict(item))
-                throw new ArgumentException("يوجد تعارض: هذا الصف والشعبة لديهم حصة في نفس الوقت.");
+            if (item.IsActive)
+            {
+                if (repository.HasClassConflict(item))
+                    throw new ArgumentException("يوجد تعارض: هذا الصف والشعبة لديهم حصة في نفس الوقت.");
 
-            if (repository.HasTeacherConflict(item))
-                throw new ArgumentException("يوجد تعارض: المعلم لديه حصة أخرى في نفس الوقت.");
+                if (repository.HasTeacherConflict(item))
+                    throw new ArgumentException("يوجد تعارض: المعلم لديه حصة أخرى في نفس الوقت.");
 
-            if (repository.HasRoomConflict(item))
-                throw new ArgumentException("يوجد تعارض: القاعة مستخدمة في نفس الوقت.");
+                if (repository.HasRoomConflict(item))
+                    throw new ArgumentException("يوجد تعارض: القاعة مستخدمة في نفس الوقت.");
+            }
 
             bool added = repository.AddTimetable(item);
             if (added)
@@ -71,14 +74,17 @@ namespace SchoolSystem.Services
             if (item.TimetableID <= 0)
                 throw new ArgumentException("اختر حصة صحيحة للتعديل.");
 
-            if (repository.HasClassConflict(item))
-                throw new ArgumentException("يوجد تعارض: هذا الصف والشعبة لديهم حصة في نفس الوقت.");
+            if (item.IsActive)
+            {
+                if (repository.HasClassConflict(item))
+                    throw new ArgumentException("يوجد تعارض: هذا الصف والشعبة لديهم حصة في نفس الوقت.");
 
-            if (repository.HasTeacherConflict(item))
-                throw new ArgumentException("يوجد تعارض: المعلم لديه حصة أخرى في نفس الوقت.");
+                if (repository.HasTeacherConflict(item))
+                    throw new ArgumentException("يوجد تعارض: المعلم لديه حصة أخرى في نفس الوقت.");
 
-            if (repository.HasRoomConflict(item))
-                throw new ArgumentException("يوجد تعارض: القاعة مستخدمة في نفس الوقت.");
+                if (repository.HasRoomConflict(item))
+                    throw new ArgumentException("يوجد تعارض: القاعة مستخدمة في نفس الوقت.");
+            }
 
             bool updated = repository.UpdateTimetable(item);
             if (updated)
@@ -132,8 +138,8 @@ namespace SchoolSystem.Services
             if (item.ClassID <= 0)
                 throw new ArgumentException("يجب اختيار الصف.");
 
-            if (string.IsNullOrWhiteSpace(item.Section))
-                throw new ArgumentException("يجب اختيار الشعبة.");
+            if (string.IsNullOrWhiteSpace(item.Section) || item.Section.Trim().Length > 100)
+                throw new ArgumentException("يجب اختيار شعبة صحيحة بطول لا يتجاوز 100 حرف.");
 
             if (item.SubjectID <= 0)
                 throw new ArgumentException("يجب اختيار المادة.");
@@ -152,11 +158,17 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(item.DayName))
                 throw new ArgumentException("يجب اختيار اليوم.");
 
-            if (item.PeriodNo <= 0)
-                throw new ArgumentException("رقم الحصة غير صحيح.");
+            if (item.PeriodNo <= 0 || item.PeriodNo > 20)
+                throw new ArgumentException("رقم الحصة يجب أن يكون بين 1 و20.");
 
             if (item.StartTime >= item.EndTime)
                 throw new ArgumentException("وقت البداية يجب أن يكون قبل وقت النهاية.");
+
+            if (item.RoomName != null && item.RoomName.Trim().Length > 100)
+                throw new ArgumentException("اسم القاعة لا يمكن أن يتجاوز 100 حرف.");
+
+            if (item.Notes != null && item.Notes.Trim().Length > 1000)
+                throw new ArgumentException("ملاحظات الحصة لا يمكن أن تتجاوز 1000 حرف.");
         }
     }
 }
