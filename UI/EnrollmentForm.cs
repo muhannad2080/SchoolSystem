@@ -30,9 +30,11 @@ namespace SchoolSystem.UI
             InitializeComponent();
             txtSeatNumber.ReadOnly = true;
             txtSeatNumber.TabStop = false;
+            txtAcademicYear.ReadOnly = true;
             txtSection.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbClassID.SelectedIndexChanged += cmbClassID_SelectedIndexChanged;
             txtAcademicYear.Leave += txtAcademicYear_Leave;
+            dtpApplicationDate.ValueChanged += dtpApplicationDate_ValueChanged;
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             txtSearch.TextChanged += (sender, e) => btnSearch_Click(sender, e);
             enrollmentService = new EnrollmentService();
@@ -177,15 +179,26 @@ namespace SchoolSystem.UI
             await LoadSectionsAsync();
         }
 
+        private void SetAutomaticAcademicYear()
+        {
+            if (isEditMode) return;
+            DateTime date = dtpApplicationDate.Value.Date;
+            int startYear = date.Month >= 9 ? date.Year : date.Year - 1;
+            txtAcademicYear.Text = startYear + "/" + (startYear + 1);
+        }
+
+        private async void dtpApplicationDate_ValueChanged(object sender, EventArgs e)
+        {
+            if (isLoading || isEditMode) return;
+            SetAutomaticAcademicYear();
+            await LoadSectionsAsync();
+        }
+
         private void LoadComboBoxes()
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(txtAcademicYear.Text))
-                {
-                    int currentYear = DateTime.Now.Year;
-                    txtAcademicYear.Text = currentYear + "/" + (currentYear + 1);
-                }
+                SetAutomaticAcademicYear();
                 // Load Students
                 var dtStudents = studentService.GetActiveStudents();
                 cmbStudentID.DataSource = dtStudents;
@@ -904,7 +917,7 @@ namespace SchoolSystem.UI
             txtStudentName.Clear();
             dtpApplicationDate.Value = DateTime.Today;
             cmbApplicationType.SelectedIndex = -1;
-            txtAcademicYear.Clear();
+            SetAutomaticAcademicYear();
             cmbClassID.SelectedIndex = -1;
             txtSection.DataSource = null;
             txtSection.Items.Clear();
