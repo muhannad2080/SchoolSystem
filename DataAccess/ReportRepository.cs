@@ -13,10 +13,10 @@ namespace SchoolSystem.DataAccess
             {
                 const string query = @"
                     SELECT LTRIM(RTRIM(SectionName)) AS Section
-                    FROM SchoolSections
+                    FROM dbo.SchoolSections
                     WHERE (@ClassID = 0 OR ClassID = @ClassID)
                       AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
-                      AND IsActive = 1
+                      AND ISNULL(IsActive, 1) = 1
                       AND NULLIF(LTRIM(RTRIM(SectionName)), N'') IS NOT NULL
                     GROUP BY LTRIM(RTRIM(SectionName))
                     ORDER BY Section";
@@ -373,7 +373,7 @@ namespace SchoolSystem.DataAccess
             if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
             {
                 if (request.Status == "نشط")
-                    query += " AND IsActive = 1";
+                    query += " AND ISNULL(IsActive, 1) = 1";
                 else if (request.Status == "غير نشط")
                     query += " AND IsActive = 0";
             }

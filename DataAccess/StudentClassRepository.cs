@@ -49,10 +49,10 @@ namespace SchoolSystem.DataAccess
             {
                 const string query = @"
                     SELECT LTRIM(RTRIM(SectionName)) AS Section
-                    FROM SchoolSections
+                    FROM dbo.SchoolSections
                     WHERE ClassID = @ClassID
                       AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
-                      AND IsActive = 1
+                      AND ISNULL(IsActive, 1) = 1
                       AND NULLIF(LTRIM(RTRIM(SectionName)), N'') IS NOT NULL
                     GROUP BY LTRIM(RTRIM(SectionName))
                     ORDER BY LTRIM(RTRIM(SectionName))";

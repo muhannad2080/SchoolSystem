@@ -168,18 +168,24 @@ namespace SchoolSystem.UI
             }
         }
 
-        private void EnrollmentForm_Load(object sender, EventArgs e)
+        private async void EnrollmentForm_Load(object sender, EventArgs e)
         {
             LoadComboBoxes();
             LoadData();
             DisableInputs();
             isLoading = false;
+            await LoadSectionsAsync();
         }
 
         private void LoadComboBoxes()
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(txtAcademicYear.Text))
+                {
+                    int currentYear = DateTime.Now.Year;
+                    txtAcademicYear.Text = currentYear + "/" + (currentYear + 1);
+                }
                 // Load Students
                 var dtStudents = studentService.GetActiveStudents();
                 cmbStudentID.DataSource = dtStudents;
