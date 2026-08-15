@@ -74,7 +74,7 @@ BEGIN
     )
         CREATE UNIQUE INDEX UX_Enrollments_SeatNumberScope
             ON dbo.Enrollments(AcademicYear, ClassID, Section, SeatNumber)
-            WHERE SeatNumber IS NOT NULL AND LTRIM(RTRIM(SeatNumber)) <> N'' AND Status <> N'مرفوض';
+            WHERE SeatNumber IS NOT NULL AND LTRIM(RTRIM(SeatNumber)) <> N'' AND (Status IS NULL OR Status <> N'مرفوض');
 END;
 GO
 

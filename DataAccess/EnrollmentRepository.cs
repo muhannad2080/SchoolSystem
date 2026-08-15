@@ -62,7 +62,7 @@ FROM Enrollments WITH (UPDLOCK, HOLDLOCK)
 WHERE AcademicYear = @AcademicYear
   AND ClassID = @ClassID
   AND ISNULL(Section, N'') = ISNULL(@Section, N'')
-  AND Status <> N'مرفوض';";
+  AND (Status IS NULL OR Status <> N'مرفوض');";
 
             const string insertQuery = @"
 IF NOT EXISTS
@@ -194,7 +194,7 @@ FROM Enrollments
 WHERE AcademicYear = @AcademicYear
   AND ClassID = @ClassID
   AND ISNULL(Section, N'') = ISNULL(@Section, N'')
-  AND Status <> N'مرفوض';";
+  AND (Status IS NULL OR Status <> N'مرفوض');";
 
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(query, conn))
