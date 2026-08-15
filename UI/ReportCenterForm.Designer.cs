@@ -514,6 +514,7 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "ReportCenterForm";
+            this.Text = "مركز التقارير";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1200, 750);
             this.panelTitle.ResumeLayout(false);

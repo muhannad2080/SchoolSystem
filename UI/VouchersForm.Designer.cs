@@ -552,6 +552,7 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "VouchersForm";
+            this.Text = "إدارة السندات المالية";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1100, 700);
             this.panelTitle.ResumeLayout(false);

@@ -95,6 +95,7 @@
 
             // tsmiAuditLogs
             this.tsmiAuditLogs.Name = "tsmiAuditLogs";
+            this.tsmiAuditLogs.Visible = true;
             this.tsmiAuditLogs.AutoSize = true;
             this.tsmiAuditLogs.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiAuditLogs.Size = new System.Drawing.Size(110, 29);
@@ -103,6 +104,7 @@
 
             // tsmiSettings
             this.tsmiSettings.Name = "tsmiSettings";
+            this.tsmiSettings.Visible = true;
             this.tsmiSettings.AutoSize = true;
             this.tsmiSettings.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiSettings.Size = new System.Drawing.Size(90, 29);
@@ -273,6 +275,7 @@
 
             // tsmiLogout
             this.tsmiLogout.Name = "tsmiLogout";
+            this.tsmiLogout.Visible = true;
             this.tsmiLogout.AutoSize = true;
             this.tsmiLogout.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiLogout.Size = new System.Drawing.Size(75, 29);

@@ -463,6 +463,7 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "GradeEntryForm";
+            this.Text = "إدخال الدرجات";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1180, 760);
             this.panelTitle.ResumeLayout(false);

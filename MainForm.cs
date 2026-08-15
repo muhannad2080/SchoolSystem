@@ -266,7 +266,11 @@ namespace SchoolSystem
             }
 
             if (!CurrentUser.IsLoggedIn)
+            {
+                // لا نترك القائمة مخفية أثناء انتقال الجلسة أو داخل المصمم.
+                SetMenuItemsVisible(true);
                 return;
+            }
 
             ToolStripMenuItem[] permissionItems =
             {
@@ -353,9 +357,14 @@ namespace SchoolSystem
 
         private bool IsDesignTime()
         {
-            return (Site != null && Site.DesignMode) ||
-                   System.ComponentModel.LicenseManager.UsageMode ==
-                   System.ComponentModel.LicenseUsageMode.Designtime;
+            if (System.ComponentModel.LicenseManager.UsageMode ==
+                System.ComponentModel.LicenseUsageMode.Designtime)
+                return true;
+
+            if (Site != null && Site.DesignMode)
+                return true;
+
+            return GetService(typeof(System.ComponentModel.Design.IDesignerHost)) != null;
         }
 
         private void SetMenuItemsVisible(bool visible)
@@ -588,7 +597,8 @@ namespace SchoolSystem
                 return;
 
             CurrentUser.Clear();
-
+            RefreshCurrentUserSession();
+            LoadWelcomeScreen();
             Hide();
 
             using (LoginForm loginForm = new LoginForm())
@@ -606,7 +616,12 @@ namespace SchoolSystem
                 }
                 else
                 {
-                    Application.Exit();
+                    // لا نغلق MainForm لأن Application.Run يعتمد عليه.
+                    // يمكن للمستخدم إعادة محاولة تسجيل الدخول من نفس الجلسة.
+                    Show();
+                    WindowState = FormWindowState.Normal;
+                    SetMenuItemsVisible(true);
+                    UpdateCurrentUserLabel();
                 }
             }
         }

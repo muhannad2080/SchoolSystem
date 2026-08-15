@@ -318,6 +318,7 @@ namespace SchoolSystem.UI
             Controls.Add(header);
             Dock = DockStyle.Fill;
             Name = "AuditLogForm";
+            Text = "سجل الأنشطة والتدقيق";
             RightToLeft = RightToLeft.Yes;
             Size = new Size(1120, 650);
             Load += new EventHandler(AuditLogForm_Load);

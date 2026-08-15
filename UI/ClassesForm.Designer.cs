@@ -943,6 +943,7 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "ClassesForm";
+            this.Text = "إدارة الفصول والقاعات";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1100, 720);
             this.panelTitle.ResumeLayout(false);

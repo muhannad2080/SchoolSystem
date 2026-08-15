@@ -229,6 +229,7 @@ namespace SchoolSystem.UI
             Controls.Add(headerPanel);
             Dock = DockStyle.Fill;
             Name = "SettingsForm";
+            Text = "إعدادات النظام والنسخ الاحتياطي";
             RightToLeft = RightToLeft.Yes;
             Size = new Size(1120, 650);
             headerPanel.ResumeLayout(false);

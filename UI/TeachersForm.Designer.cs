@@ -891,6 +891,7 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.Name = "TeachersForm";
+            this.Text = "إدارة المعلمين";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1428, 640);
             this.panelTitle.ResumeLayout(false);

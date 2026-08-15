@@ -68,6 +68,7 @@ namespace SchoolSystem.UI
             this.Dock = System.Windows.Forms.DockStyle.Fill;
             this.BackColor = System.Drawing.Color.FromArgb(245, 247, 250);
             this.Name = "StudentProfileForm";
+            this.Text = "ملف الطالب الموحد";
             this.Size = new System.Drawing.Size(980, 620);
 
             this.headerPanel.BackColor = System.Drawing.Color.FromArgb(31, 78, 121);

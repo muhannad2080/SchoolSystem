@@ -427,6 +427,7 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "DailyAttendanceForm";
+            this.Text = "التحضير اليومي";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1150, 720);
             this.panelTitle.ResumeLayout(false);
