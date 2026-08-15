@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 using Krypton.Toolkit;
@@ -68,6 +69,7 @@ namespace SchoolSystem.Helpers
             ApplyKryptonTheme();
             ApplyTheme(form);
             ApplyKryptonTheme((Control)form);
+            ApplyInputValidation(form);
             ApplyResponsiveLayout(form);
         }
 
@@ -76,6 +78,7 @@ namespace SchoolSystem.Helpers
             ApplyKryptonTheme();
             ApplyTheme(uc);
             ApplyKryptonTheme((Control)uc);
+            ApplyInputValidation(uc);
             ApplyResponsiveLayout(uc);
         }
 
@@ -118,6 +121,226 @@ namespace SchoolSystem.Helpers
 
                 ApplyResponsiveLayoutRecursive(child);
             }
+        }
+
+        /// <summary>
+        /// يربط التحقق الأساسي بالحقول النصية في جميع النماذج. التحقق الدلالي
+        /// لا يحل محل ValidateInputs داخل النموذج أو Validate داخل الخدمة، بل يمنع
+        /// الإدخال الواضح الخطأ قبل وصوله إلى مراحل الحفظ.
+        /// </summary>
+        public static void ApplyInputValidation(Control root)
+        {
+            if (root == null || IsDesignMode(root))
+                return;
+
+            foreach (Control child in root.Controls)
+            {
+                TextBox textBox = child as TextBox;
+                if (textBox != null)
+                {
+                    ConfigureTextInput(textBox, textBox.Name, textBox.Text);
+                    textBox.KeyPress -= TextInput_KeyPress;
+                    textBox.KeyPress += TextInput_KeyPress;
+                    textBox.Leave -= TextInput_Leave;
+                    textBox.Leave += TextInput_Leave;
+                    textBox.Validating -= TextInput_Validating;
+                    textBox.Validating += TextInput_Validating;
+                }
+
+                DateTimePicker dateTimePicker = child as DateTimePicker;
+                if (dateTimePicker != null)
+                    ConfigureDateInput(dateTimePicker);
+
+                KryptonTextBox kryptonTextBox = child as KryptonTextBox;
+                if (kryptonTextBox != null)
+                {
+                    ConfigureTextInput(kryptonTextBox, kryptonTextBox.Name, kryptonTextBox.Text);
+                    kryptonTextBox.KeyPress -= TextInput_KeyPress;
+                    kryptonTextBox.KeyPress += TextInput_KeyPress;
+                    kryptonTextBox.Leave -= TextInput_Leave;
+                    kryptonTextBox.Leave += TextInput_Leave;
+                    kryptonTextBox.Validating -= TextInput_Validating;
+                    kryptonTextBox.Validating += TextInput_Validating;
+                }
+
+                ApplyInputValidation(child);
+            }
+        }
+
+        private static void ConfigureDateInput(DateTimePicker picker)
+        {
+            string key = (picker.Name ?? string.Empty).ToLowerInvariant();
+            if (ContainsAny(key, "birth", "ميلاد"))
+            {
+                picker.MaxDate = DateTime.Today;
+                if (picker.Value.Date > picker.MaxDate)
+                    picker.Value = picker.MaxDate;
+            }
+        }
+
+        private static void ConfigureTextInput(Control control, string controlName, string currentText)
+        {
+            string key = (controlName ?? string.Empty).ToLowerInvariant();
+            if (IsEmailField(key))
+            {
+                SetMaxLength(control, 254);
+                return;
+            }
+
+            if (IsPhoneField(key))
+            {
+                SetMaxLength(control, 20);
+                return;
+            }
+
+            if (IsIdentityOrNumericField(key))
+            {
+                SetMaxLength(control, 30);
+                return;
+            }
+
+            if (IsPersonNameField(key))
+            {
+                SetMaxLength(control, 150);
+                return;
+            }
+
+            if (IsLongTextField(key))
+                SetMaxLength(control, 1000);
+        }
+
+        private static void SetMaxLength(Control control, int maxLength)
+        {
+            TextBox textBox = control as TextBox;
+            if (textBox != null && textBox.MaxLength == 32767)
+                textBox.MaxLength = maxLength;
+
+            KryptonTextBox kryptonTextBox = control as KryptonTextBox;
+            if (kryptonTextBox != null && kryptonTextBox.MaxLength == 32767)
+                kryptonTextBox.MaxLength = maxLength;
+        }
+
+        private static void TextInput_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            Control control = sender as Control;
+            string key = ((control == null ? string.Empty : control.Name) ?? string.Empty).ToLowerInvariant();
+            if (char.IsControl(e.KeyChar))
+                return;
+
+            if (IsEmailField(key))
+            {
+                if (!(char.IsLetterOrDigit(e.KeyChar) || ".-_+@".IndexOf(e.KeyChar) >= 0))
+                    e.Handled = true;
+                return;
+            }
+
+            if (IsPhoneField(key) || IsIdentityOrNumericField(key))
+            {
+                if (!char.IsDigit(e.KeyChar))
+                    e.Handled = true;
+                return;
+            }
+
+            if (IsMoneyField(key))
+            {
+                Control textBox = sender as Control;
+                if (char.IsDigit(e.KeyChar))
+                    return;
+                if ((e.KeyChar == '.' || e.KeyChar == ',') && textBox != null &&
+                    textBox.Text.IndexOfAny(new[] { '.', ',' }) < 0)
+                    return;
+                e.Handled = true;
+                return;
+            }
+
+            if (IsPersonNameField(key) && !(char.IsLetter(e.KeyChar) || char.IsWhiteSpace(e.KeyChar) || e.KeyChar == '-'))
+                e.Handled = true;
+        }
+
+        private static void TextInput_Leave(object sender, EventArgs e)
+        {
+            Control control = sender as Control;
+            TextBox textBox = control as TextBox;
+            if (textBox != null)
+                textBox.Text = NormalizeText(textBox.Text);
+
+            KryptonTextBox kryptonTextBox = control as KryptonTextBox;
+            if (kryptonTextBox != null)
+                kryptonTextBox.Text = NormalizeText(kryptonTextBox.Text);
+        }
+
+        private static void TextInput_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Control control = sender as Control;
+            string key = ((control == null ? string.Empty : control.Name) ?? string.Empty).ToLowerInvariant();
+            string value = control == null ? string.Empty : control.Text.Trim();
+            if (value.Length == 0)
+                return;
+
+            if (IsEmailField(key) && !IsValidEmail(value))
+            {
+                e.Cancel = true;
+                FocusAndWarn(control, "يرجى إدخال بريد إلكتروني صحيح.");
+            }
+            else if (IsPhoneField(key) && !IsValidPhoneDigitsOnly(value))
+            {
+                e.Cancel = true;
+                FocusAndWarn(control, "يرجى إدخال رقم هاتف مكوّن من أرقام فقط.");
+            }
+        }
+
+        private static string NormalizeText(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            string[] parts = value.Trim().Split(new[] { ' ', '\\t', '\\r', '\\n' }, StringSplitOptions.RemoveEmptyEntries);
+            return string.Join(" ", parts);
+        }
+
+        private static bool IsPersonNameField(string key)
+        {
+            return ContainsAny(key, "fullname", "firstname", "lastname", "middlename", "studentname", "teachername", "guardianname", "fathername", "mothername", "drivername", "partyname", "payeename", "routename", "stagename", "classname", "roomname", "subjectname", "اسم", "الاسم", "ولي", "اب", "أب", "ام", "أم");
+        }
+
+        private static bool IsPhoneField(string key)
+        {
+            return ContainsAny(key, "phone", "mobile", "tel", "telephone", "هاتف", "جوال", "موبايل");
+        }
+
+        private static bool IsEmailField(string key)
+        {
+            return ContainsAny(key, "email", "mail", "بريد");
+        }
+
+        private static bool IsMoneyField(string key)
+        {
+            return key == "txtfee" || ContainsAny(key, "amount", "price", "salary", "wage", "voucheramount", "expenseamount", "planamount", "discount", "deduction", "paidamount", "remainingamount", "registrationfee", "netamount", "totalamount", "txttotal", "المبلغ", "السعر", "الراتب", "رسوم", "تكلفة");
+        }
+
+        private static bool IsIdentityOrNumericField(string key)
+        {
+            return ContainsAny(key, "studentnumber", "employeenumber", "teachernumber", "nationalid", "identitynumber", "quantity", "count", "hours", "minutes", "days", "number", "studentid", "teacherid", "employeeid", "classid", "subjectid", "roomid", "userid", "routeid", "bookid", "voucherid", "expenseid", "contractid", "enrollmentid", "attendanceid", "copies", "publicationyear", "seatnumber", "workhours", "capacity", "late", "earlyleave", "periodno", "gradeorder", "رقم", "هوية", "كمية", "عدد", "ساعات", "دقائق", "ايام", "أيام");
+        }
+
+        private static bool IsLongTextField(string key)
+        {
+            return ContainsAny(key, "notes", "remark", "description", "address", "ملاحظات", "وصف", "عنوان");
+        }
+
+        private static bool ContainsAny(string value, params string[] tokens)
+        {
+            foreach (string token in tokens)
+            {
+                if (value.Contains(token))
+                    return true;
+            }
+            return false;
+        }
+
+        private static bool IsValidPhoneDigitsOnly(string value)
+        {
+            return value.Length >= 7 && value.Length <= 20 && value.All(char.IsDigit);
         }
 
         public static bool TryParseDecimal(string value, out decimal number)

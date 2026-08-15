@@ -22,6 +22,7 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyTheme(this);
+            SchoolSystem.Helpers.UIHelper.ApplyInputValidation(this);
             ApplyCustomStyles();
 
             Dock = DockStyle.Fill;

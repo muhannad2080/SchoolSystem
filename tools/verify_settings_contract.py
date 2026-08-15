@@ -232,6 +232,7 @@ if failed:
 coverage_script = ROOT / "tools" / "verify_service_audit_coverage.py"
 ui_script = ROOT / "tools" / "verify_rtl_ui_contract.py"
 readiness_script = ROOT / "tools" / "verify_operational_readiness.py"
+validation_script = ROOT / "tools" / "verify_validation_contract.py"
 coverage_result = subprocess.run(
     [sys.executable, str(coverage_script)],
     cwd=str(ROOT),
@@ -273,5 +274,17 @@ if readiness_result.returncode != 0:
         print(readiness_result.stderr.rstrip(), file=sys.stderr)
     print("FAIL: operational readiness check", file=sys.stderr)
     sys.exit(1)
-
+validation_result = subprocess.run(
+    [sys.executable, str(validation_script)],
+    cwd=str(ROOT),
+    text=True,
+    capture_output=True,
+)
+if validation_result.stdout:
+    print(validation_result.stdout.rstrip())
+if validation_result.returncode != 0:
+    if validation_result.stderr:
+        print(validation_result.stderr.rstrip(), file=sys.stderr)
+    print("FAIL: UI validation coverage check", file=sys.stderr)
+    sys.exit(1)
 print(f"PASS: {len(checks)} settings contract checks")

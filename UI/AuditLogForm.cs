@@ -19,6 +19,7 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             UIHelper.ApplyTheme(this);
+            UIHelper.ApplyInputValidation(this);
             BackColor = UIHelper.BackgroundColor;
             RightToLeft = RightToLeft.Yes;
             fromDate.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);

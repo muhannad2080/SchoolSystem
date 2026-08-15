@@ -20,6 +20,7 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyTheme(this);
+            SchoolSystem.Helpers.UIHelper.ApplyInputValidation(this);
 
             Dock = DockStyle.Fill;
             ConfigureResponsiveLayout();
