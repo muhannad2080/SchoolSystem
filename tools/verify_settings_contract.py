@@ -234,6 +234,7 @@ ui_script = ROOT / "tools" / "verify_rtl_ui_contract.py"
 readiness_script = ROOT / "tools" / "verify_operational_readiness.py"
 validation_script = ROOT / "tools" / "verify_validation_contract.py"
 ui_save_script = ROOT / "tools" / "inventory_ui_save_validation.py"
+search_script = ROOT / "tools" / "verify_search_contract.py"
 coverage_result = subprocess.run(
     [sys.executable, str(coverage_script)],
     cwd=str(ROOT),
@@ -302,4 +303,18 @@ if ui_save_result.returncode != 0 or "REVIEW:" in ui_save_result.stdout:
     print("FAIL: UI save-handler validation check", file=sys.stderr)
     sys.exit(1)
 print("PASS: UI save-handler validation check")
+search_result = subprocess.run(
+    [sys.executable, str(search_script)],
+    cwd=str(ROOT),
+    text=True,
+    capture_output=True,
+)
+if search_result.stdout:
+    print(search_result.stdout.rstrip())
+if search_result.returncode != 0:
+    if search_result.stderr:
+        print(search_result.stderr.rstrip(), file=sys.stderr)
+    print("FAIL: DataView search safety contract", file=sys.stderr)
+    sys.exit(1)
+print("PASS: DataView search safety contract")
 print(f"PASS: {len(checks)} settings contract checks")

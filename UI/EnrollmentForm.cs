@@ -193,7 +193,7 @@ namespace SchoolSystem.UI
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            string keyword = txtSearch.Text.Trim().Replace("'", "''");
+            string keyword = UIHelper.EscapeDataViewFilterValue(txtSearch.Text);
             if (string.IsNullOrEmpty(keyword))
             {
                 enrollmentsView.RowFilter = "";
