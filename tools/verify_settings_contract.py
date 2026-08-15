@@ -25,6 +25,8 @@ grade_repository = (ROOT / "DataAccess" / "GradeRepository.cs").read_text(encodi
 enrollment_repository = (ROOT / "DataAccess" / "EnrollmentRepository.cs").read_text(encoding="utf-8")
 borrowing_repository = (ROOT / "DataAccess" / "BorrowingRepository.cs").read_text(encoding="utf-8")
 student_class_repository = (ROOT / "DataAccess" / "StudentClassRepository.cs").read_text(encoding="utf-8")
+student_attendance_service = (ROOT / "Services" / "StudentAttendanceService.cs").read_text(encoding="utf-8")
+student_class_service = (ROOT / "Services" / "StudentClassService.cs").read_text(encoding="utf-8")
 room_repository = (ROOT / "DataAccess" / "RoomRepository.cs").read_text(encoding="utf-8")
 class_repository = (ROOT / "DataAccess" / "ClassRepository.cs").read_text(encoding="utf-8")
 class_service = (ROOT / "Services" / "ClassService.cs").read_text(encoding="utf-8")
@@ -159,6 +161,13 @@ checks = {
     and "int.TryParse(cmbStudentID.SelectedValue.ToString()" in enrollment_ui,
     "enrollment_form_validates_record_id": "int.TryParse(txtEnrollmentID.Text.Trim(), out int enrollmentId)" in enrollment_ui
     and "int.TryParse(txtEnrollmentID.Text.Trim(), out int id)" in enrollment_ui,
+    "student_attendance_mutations_are_audited": "private readonly AuditLogService auditLogService" in student_attendance_service
+    and "auditLogService.Record(" in student_attendance_service
+    and "if (saved)" in student_attendance_service,
+    "student_class_assignment_mutations_are_audited": "private readonly AuditLogService auditLogService" in student_class_service
+    and student_class_service.count("auditLogService.Record(") >= 2
+    and "if (assigned)" in student_class_service
+    and "if (removed)" in student_class_service,
 }
 
 failed = [name for name, passed in checks.items() if not passed]

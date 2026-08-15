@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class StudentAttendanceService
     {
         private readonly StudentAttendanceRepository repository = new StudentAttendanceRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetSections(int classId, string academicYear)
         {
@@ -54,7 +55,16 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandPermission(PermissionKeys.AttendanceManage, "ليس لديك صلاحية إدارة حضور الطلاب.");
             Validate(item);
-            return repository.SaveAttendance(item);
+            bool saved = repository.SaveAttendance(item);
+            if (saved)
+            {
+                auditLogService.Record(
+                    "حفظ حضور طالب",
+                    "StudentAttendance",
+                    item.AttendanceID.ToString(),
+                    "تم حفظ سجل حضور الطالب رقم " + item.StudentID + " بتاريخ " + item.AttendanceDate.ToString("yyyy-MM-dd"));
+            }
+            return saved;
         }
 
         private void Validate(StudentAttendance item)

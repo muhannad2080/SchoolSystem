@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class StudentClassService
     {
         private readonly StudentClassRepository repository = new StudentClassRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetUnassignedStudents(string academicYear)
         {
@@ -49,7 +50,16 @@ namespace SchoolSystem.Services
             if (repository.IsStudentAssignedInYear(assignment.StudentID, assignment.AcademicYear))
                 throw new ArgumentException("هذا الطالب موزع مسبقاً في نفس العام الدراسي.");
 
-            return repository.AssignStudent(assignment);
+            bool assigned = repository.AssignStudent(assignment);
+            if (assigned)
+            {
+                auditLogService.Record(
+                    "توزيع طالب على فصل",
+                    "StudentClass",
+                    assignment.StudentClassID.ToString(),
+                    "تم توزيع الطالب رقم " + assignment.StudentID + " على الصف رقم " + assignment.ClassID + " للعام " + assignment.AcademicYear);
+            }
+            return assigned;
         }
 
         public bool RemoveAssignment(int studentClassId)
@@ -58,7 +68,16 @@ namespace SchoolSystem.Services
             if (studentClassId <= 0)
                 throw new ArgumentException("اختر طالباً موزعاً من الجدول أولاً.");
 
-            return repository.RemoveAssignment(studentClassId);
+            bool removed = repository.RemoveAssignment(studentClassId);
+            if (removed)
+            {
+                auditLogService.Record(
+                    "إلغاء توزيع طالب",
+                    "StudentClass",
+                    studentClassId.ToString(),
+                    "تم إلغاء توزيع الطالب من السجل رقم " + studentClassId);
+            }
+            return removed;
         }
 
         private void ValidateAssignment(StudentClass assignment)
