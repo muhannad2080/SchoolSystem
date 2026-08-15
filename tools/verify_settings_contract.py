@@ -210,6 +210,7 @@ if failed:
     sys.exit(1)
 
 coverage_script = ROOT / "tools" / "verify_service_audit_coverage.py"
+ui_script = ROOT / "tools" / "verify_rtl_ui_contract.py"
 coverage_result = subprocess.run(
     [sys.executable, str(coverage_script)],
     cwd=str(ROOT),
@@ -222,6 +223,20 @@ if coverage_result.returncode != 0:
     if coverage_result.stderr:
         print(coverage_result.stderr.rstrip(), file=sys.stderr)
     print("FAIL: service audit coverage check", file=sys.stderr)
+    sys.exit(1)
+
+ui_result = subprocess.run(
+    [sys.executable, str(ui_script)],
+    cwd=str(ROOT),
+    text=True,
+    capture_output=True,
+)
+if ui_result.stdout:
+    print(ui_result.stdout.rstrip())
+if ui_result.returncode != 0:
+    if ui_result.stderr:
+        print(ui_result.stderr.rstrip(), file=sys.stderr)
+    print("FAIL: RTL/designer contract check", file=sys.stderr)
     sys.exit(1)
 
 print(f"PASS: {len(checks)} settings contract checks")
