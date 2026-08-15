@@ -150,7 +150,8 @@ namespace SchoolSystem.Services
         public User Authenticate(string userName, string password)
         {
             userName = NormalizeDigits(userName).Trim();
-            password = NormalizeDigits(password).Trim();
+            // لا تستخدم Trim لكلمة المرور؛ المسافات قد تكون جزءاً صحيحاً من كلمة المرور.
+            password = NormalizeDigits(password);
 
             if (string.IsNullOrWhiteSpace(userName))
                 throw new Exception("أدخل اسم المستخدم.");

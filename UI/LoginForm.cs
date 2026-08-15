@@ -183,6 +183,14 @@ namespace SchoolSystem.UI
             string message = exception == null ? string.Empty : exception.Message ?? string.Empty;
             string technical = message.ToLowerInvariant();
 
+            if (message.Contains("Invalid column name") ||
+                message.Contains("اسم العمود غير صحيح") ||
+                message.Contains("The SELECT permission was denied") ||
+                message.Contains("There is already an object named"))
+            {
+                return "قاعدة البيانات غير محدثة مع نسخة النظام الحالية. نفّذ ملف Databass\\Migration_Step1.sql على قاعدة SchoolDB ثم أعد تشغيل البرنامج.";
+            }
+
             if (message.Contains("SchoolDBConnection") || message.Contains("إعدادات التطبيق") ||
                 technical.Contains("sql") || technical.Contains("connection") ||
                 technical.Contains("timeout") || technical.Contains("server") ||

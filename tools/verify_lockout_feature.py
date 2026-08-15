@@ -37,6 +37,8 @@ check("recovery script does not alter passwords", "PasswordHash" not in recovery
 check("locked account message is explicit", "تم تعطيل حسابك مؤقتاً" in service and "تم تعطيل الحساب" in login)
 check("inactive account message is explicit", "هذا الحساب غير نشط حالياً" in service)
 check("remaining attempts use warning dialog", "message.Contains(\"تبقت لك\")" in login and "ShowWarning(message)" in login)
+check("password whitespace is preserved", "password = NormalizeDigits(password);" in service and "password = NormalizeDigits(password).Trim();" not in service)
+check("schema errors have actionable message", "Databass\\\\Migration_Step1.sql" in login and "قاعدة البيانات غير محدثة" in login)
 
 failed = [name for name, ok in checks if not ok]
 for name, ok in checks:
