@@ -46,7 +46,7 @@ namespace SchoolSystem.UI
                 BackColor = UIHelper.AccentColor,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font(UIHelper.FontFamily, 9.5F, FontStyle.Bold),
+                Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold),
                 UseVisualStyleBackColor = false,
                 Margin = new Padding(5)
             };

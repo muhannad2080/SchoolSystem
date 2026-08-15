@@ -99,7 +99,7 @@ namespace SchoolSystem.UI
                 BackColor = color,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Tahoma", 9F, FontStyle.Bold),
+                Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold),
                 UseVisualStyleBackColor = false,
                 Margin = new Padding(5)
             };

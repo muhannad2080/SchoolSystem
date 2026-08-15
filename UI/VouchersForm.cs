@@ -117,7 +117,7 @@ namespace SchoolSystem.UI
             {
                 Text = text,
                 TextAlign = ContentAlignment.MiddleRight,
-                Font = new Font("Tahoma", 9.5F, FontStyle.Bold),
+                Font = new Font(UIHelper.FontFamily, UIHelper.SectionFontSize, FontStyle.Bold),
                 ForeColor = Color.FromArgb(33, 42, 57)
             };
         }
@@ -128,7 +128,7 @@ namespace SchoolSystem.UI
             {
                 Format = DateTimePickerFormat.Custom,
                 CustomFormat = "dd/MM/yyyy",
-                Font = new Font("Tahoma", 9F)
+                Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize)
             };
         }
 
@@ -140,7 +140,7 @@ namespace SchoolSystem.UI
                 BackColor = Color.White,
                 ForeColor = color,
                 BorderStyle = BorderStyle.FixedSingle,
-                Font = new Font("Tahoma", 9F, FontStyle.Bold),
+                Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold),
                 Padding = new Padding(4, 0, 4, 0)
             };
         }
@@ -153,7 +153,7 @@ namespace SchoolSystem.UI
                 BackColor = color,
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Tahoma", 9.5F, FontStyle.Bold),
+                Font = new Font(UIHelper.FontFamily, UIHelper.SectionFontSize, FontStyle.Bold),
                 Size = new Size(115, 35),
                 UseVisualStyleBackColor = false
             };
