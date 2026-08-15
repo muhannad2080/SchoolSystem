@@ -30,6 +30,21 @@ namespace SchoolSystem.Security
             }
         }
 
+        public static bool VerifyLegacyPassword(string password, string storedHash, string storedSalt)
+        {
+            if (string.IsNullOrEmpty(password) || !string.IsNullOrEmpty(storedSalt) || string.IsNullOrEmpty(storedHash))
+                return false;
+
+            if (password.Length != storedHash.Length)
+                return false;
+
+            int difference = 0;
+            for (int i = 0; i < password.Length; i++)
+                difference |= password[i] ^ storedHash[i];
+
+            return difference == 0;
+        }
+
         public static bool VerifyPassword(string password, string storedHash, string storedSalt)
         {
             try

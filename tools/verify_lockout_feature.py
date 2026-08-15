@@ -8,6 +8,8 @@ email = (ROOT / "Services" / "EmailNotificationService.cs").read_text(encoding="
 config = (ROOT / "App.config").read_text(encoding="utf-8")
 project = (ROOT / "SchoolSystem.csproj").read_text(encoding="utf-8")
 model = (ROOT / "Models" / "User.cs").read_text(encoding="utf-8")
+hasher = (ROOT / "Security" / "PasswordHasher.cs").read_text(encoding="utf-8")
+recovery = (ROOT / "Databass" / "Unlock-LockedAccounts.sql").read_text(encoding="utf-8")
 
 checks = []
 def check(name, condition):
@@ -27,6 +29,10 @@ for key in ("SecurityAlertSmtpHost", "SecurityAlertSmtpPort", "SecurityAlertEnab
     check(f"config contains {key}", key in config)
 check("transient remaining-attempts field exists", "RemainingLoginAttempts" in model)
 check("email service is included in project", 'Services\\EmailNotificationService.cs' in project)
+check("legacy password migration is supported", "VerifyLegacyPassword" in hasher and "migratedHash" in service)
+check("legacy migration uses the existing reset path", "ResetPasswordByUserName(user.UserName, migratedHash, migratedSalt)" in service)
+check("recovery script resets lock counters", "FailedLoginAttempts = 0" in recovery and "LockedAt = NULL" in recovery)
+check("recovery script does not alter passwords", "PasswordHash" not in recovery and "PasswordSalt" not in recovery)
 
 failed = [name for name, ok in checks if not ok]
 for name, ok in checks:

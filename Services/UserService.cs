@@ -170,6 +170,16 @@ namespace SchoolSystem.Services
                 throw new Exception("هذا الحساب غير فعال.");
 
             bool ok = PasswordHasher.VerifyPassword(password, user.PasswordHash, user.PasswordSalt);
+            bool legacyPassword = !ok && PasswordHasher.VerifyLegacyPassword(password, user.PasswordHash, user.PasswordSalt);
+
+            if (legacyPassword)
+            {
+                PasswordHasher.CreatePasswordHash(password, out string migratedHash, out string migratedSalt);
+                userRepository.ResetPasswordByUserName(user.UserName, migratedHash, migratedSalt);
+                user.PasswordHash = migratedHash;
+                user.PasswordSalt = migratedSalt;
+                ok = true;
+            }
 
             if (!ok)
             {
