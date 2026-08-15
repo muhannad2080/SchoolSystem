@@ -135,8 +135,11 @@ RESTORE DATABASE [" + targetDatabase + @"] FROM DISK = @backupFile WITH RECOVERY
             }
 
             string applicationDirectory = Path.GetFullPath(AppDomain.CurrentDomain.BaseDirectory)
-                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
-            if (directory.StartsWith(applicationDirectory, StringComparison.OrdinalIgnoreCase))
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string normalizedDirectory = directory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            if (string.Equals(normalizedDirectory, applicationDirectory, StringComparison.OrdinalIgnoreCase) ||
+                normalizedDirectory.StartsWith(applicationDirectory + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) ||
+                normalizedDirectory.StartsWith(applicationDirectory + Path.AltDirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("يجب حفظ النسخ الاحتياطية خارج مجلد البرنامج.");
             if (File.Exists(directory))
                 throw new IOException("المسار المحدد لنسخ قاعدة البيانات هو ملف وليس مجلداً.");
