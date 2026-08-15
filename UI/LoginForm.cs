@@ -34,7 +34,7 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ShowError("تعذر تهيئة بيانات الدخول. تحقق من اتصال قاعدة البيانات ثم حاول مرة أخرى.", "تهيئة النظام");
+                ShowInitializationError(ex);
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
             }
 
@@ -44,6 +44,22 @@ namespace SchoolSystem.UI
 
             this.AcceptButton = btnLogin;
             this.CancelButton = btnExit;
+        }
+
+        private void ShowInitializationError(Exception exception)
+        {
+            string message = exception == null ? string.Empty : exception.Message ?? string.Empty;
+            if (message.Contains("SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD"))
+            {
+                ShowError(
+                    "لم يتم إنشاء مدير النظام الأول. عيّن متغير البيئة SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD بطول 10 أحرف على الأقل، ثم أعد تشغيل البرنامج.",
+                    "تهيئة مدير النظام");
+                return;
+            }
+
+            ShowError(
+                "تعذر تهيئة بيانات الدخول. تحقق من اتصال قاعدة البيانات وتأكد من تنفيذ Databass\\Migration_Step1.sql ثم حاول مرة أخرى.",
+                "تهيئة النظام");
         }
 
         private void CenterCard()
