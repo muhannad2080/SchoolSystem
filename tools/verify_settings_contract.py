@@ -39,6 +39,8 @@ user_repository = (ROOT / "DataAccess" / "UserRepository.cs").read_text(encoding
 user_service = (ROOT / "Services" / "UserService.cs").read_text(encoding="utf-8")
 payroll_ui = (ROOT / "UI" / "PayrollForm.cs").read_text(encoding="utf-8")
 staff_attendance_ui = (ROOT / "UI" / "StaffAttendanceForm.cs").read_text(encoding="utf-8")
+main_form = (ROOT / "MainForm.cs").read_text(encoding="utf-8")
+main_designer = (ROOT / "MainForm.Designer.cs").read_text(encoding="utf-8")
 library_ui = (ROOT / "UI" / "LibraryForm.cs").read_text(encoding="utf-8")
 enrollment_ui = (ROOT / "UI" / "EnrollmentForm.cs").read_text(encoding="utf-8")
 financial_services = "\\n".join(
@@ -199,6 +201,24 @@ checks = {
     and "if (added)" in fee_plan_service
     and "if (updated)" in fee_plan_service
     and "if (deleted)" in fee_plan_service,
+    "main_logout_preserves_application_owner": "Hide();" in main_form
+    and "using (LoginForm loginForm = new LoginForm())" in main_form
+    and "Show();" in main_form
+    and "Application.Exit();" in main_form
+    and "MainForm_FormClosed" in main_form,
+    "main_session_refresh_reapplies_permissions": "RefreshCurrentUserSession();" in main_form
+    and "ApplyCurrentUserPermissions();" in main_form
+    and "CurrentUser.Clear();" in main_form,
+    "main_admin_sees_complete_menu_catalog": all(
+        token + ".Visible = true;" in main_form
+        for token in (
+            "tsmiDashboard", "tsmiStudents", "tsmiTeachers", "tsmiAcademic",
+            "tsmiAttendance", "tsmiFinancial", "tsmiTransport", "tsmiLibrary",
+            "tsmiUsers", "tsmiReports", "tsmiAuditLogs", "tsmiSettings"
+        )
+    ),
+    "main_logout_is_last_design_menu_item": "this.tsmiSettings,\n                this.tsmiLogout" in main_designer
+    and main_designer.rfind("this.tsmiLogout") > main_designer.rfind("this.tsmiSettings"),
 }
 
 failed = [name for name, passed in checks.items() if not passed]
