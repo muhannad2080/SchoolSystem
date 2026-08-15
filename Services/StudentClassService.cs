@@ -110,7 +110,8 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(academicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
-            string[] parts = academicYear.Trim().Split('/');
+            string normalized = academicYear.Trim().Replace('-', '/');
+            string[] parts = normalized.Split('/');
             int firstYear;
             int secondYear;
             if (parts.Length != 2 ||
@@ -120,7 +121,7 @@ namespace SchoolSystem.Services
                 !int.TryParse(parts[1], out secondYear) ||
                 secondYear != firstYear + 1)
             {
-                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027 أو 1447-1448.");
             }
         }
     }

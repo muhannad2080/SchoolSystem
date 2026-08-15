@@ -395,7 +395,7 @@ namespace SchoolSystem.UI.Students
             if (string.IsNullOrWhiteSpace(academicYear))
                 return false;
 
-            string[] parts = academicYear.Split('/');
+            string[] parts = academicYear.Replace('-', '/').Split('/');
             int firstYear;
             int secondYear;
             if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
@@ -403,7 +403,7 @@ namespace SchoolSystem.UI.Students
             if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
                 return false;
 
-            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
+            return secondYear == firstYear + 1;
         }
 
         private async void btnAssign_Click(object sender, EventArgs e)

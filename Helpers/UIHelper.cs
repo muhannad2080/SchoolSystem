@@ -456,7 +456,7 @@ namespace SchoolSystem.Helpers
 
         public static bool IsValidAcademicYear(string value)
         {
-            string text = (value ?? string.Empty).Trim();
+            string text = (value ?? string.Empty).Trim().Replace('/', '-');
             string[] parts = text.Split('-');
             int first;
             int second;

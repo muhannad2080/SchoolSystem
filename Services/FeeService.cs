@@ -124,7 +124,7 @@ namespace SchoolSystem.Services
         private void ValidateAcademicYear(string academicYear)
         {
             string value = academicYear == null ? "" : academicYear.Trim();
-            string[] parts = value.Split('/');
+            string[] parts = value.Replace('-', '/').Split('/');
             int firstYear;
             int secondYear;
 
@@ -133,11 +133,9 @@ namespace SchoolSystem.Services
                 parts[1].Length != 4 ||
                 !int.TryParse(parts[0], out firstYear) ||
                 !int.TryParse(parts[1], out secondYear) ||
-                firstYear < 2000 ||
-                firstYear > 2100 ||
                 secondYear != firstYear + 1)
             {
-                throw new Exception("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
+                throw new Exception("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027 أو 1447-1448.");
             }
         }
 

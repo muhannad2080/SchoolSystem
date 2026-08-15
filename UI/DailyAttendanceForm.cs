@@ -204,7 +204,7 @@ namespace SchoolSystem.UI
             if (string.IsNullOrWhiteSpace(academicYear))
                 return false;
 
-            string[] parts = academicYear.Trim().Split('/');
+            string[] parts = academicYear.Trim().Replace('-', '/').Split('/');
             int firstYear;
             int secondYear;
             if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
@@ -212,7 +212,7 @@ namespace SchoolSystem.UI
             if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
                 return false;
 
-            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
+            return secondYear == firstYear + 1;
         }
 
         private bool ValidateAttendanceFilters()

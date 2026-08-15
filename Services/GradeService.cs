@@ -123,7 +123,7 @@ namespace SchoolSystem.Services
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
             if (!IsValidAcademicYear(grade.AcademicYear))
-                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027 أو 1447-1448.");
 
             if (string.IsNullOrWhiteSpace(grade.TermName))
                 throw new ArgumentException("الفصل الدراسي مطلوب.");
@@ -144,7 +144,7 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(academicYear))
                 return false;
 
-            string[] parts = academicYear.Trim().Split('/');
+            string[] parts = academicYear.Trim().Replace('-', '/').Split('/');
             int firstYear;
             int secondYear;
             if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
@@ -152,7 +152,7 @@ namespace SchoolSystem.Services
             if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
                 return false;
 
-            return firstYear >= 2000 && firstYear <= 2100 && secondYear == firstYear + 1;
+            return secondYear == firstYear + 1;
         }
 
         private void ValidateMark(decimal value, string fieldName)
