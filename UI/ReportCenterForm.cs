@@ -6,9 +6,6 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ClosedXML.Excel;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
@@ -512,74 +509,6 @@ namespace SchoolSystem.UI
             }
         }
 
-        private void ExportToExcel(DataTable dt, string filePath)
-        {
-            using (XLWorkbook workbook = new XLWorkbook())
-            {
-                IXLWorksheet ws = workbook.Worksheets.Add("تقرير");
-
-                ws.RightToLeft = true;
-
-                int colCount = dt.Columns.Count;
-                int startRow = 6;
-
-                ws.Cell(1, 1).Value = "نظام إدارة المدرسة";
-                ws.Cell(1, 1).Style.Font.Bold = true;
-                ws.Cell(1, 1).Style.Font.FontSize = 16;
-                ws.Cell(1, 1).Style.Font.FontName = "Tahoma";
-                ws.Cell(1, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                ws.Range(1, 1, 1, colCount).Merge();
-
-                ws.Cell(2, 1).Value = "تقرير: " + cmbReportType.Text;
-                ws.Cell(2, 1).Style.Font.Bold = true;
-                ws.Cell(2, 1).Style.Font.FontSize = 14;
-                ws.Cell(2, 1).Style.Font.FontName = "Tahoma";
-                ws.Cell(2, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                ws.Range(2, 1, 2, colCount).Merge();
-
-                ws.Cell(3, 1).Value = "تاريخ التقرير: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm");
-                ws.Cell(3, 1).Style.Font.FontName = "Tahoma";
-                ws.Cell(3, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                ws.Range(3, 1, 3, colCount).Merge();
-
-                ws.Cell(4, 1).Value = lblSummary.Text;
-                ws.Cell(4, 1).Style.Font.FontName = "Tahoma";
-                ws.Cell(4, 1).Style.Font.Bold = true;
-                ws.Cell(4, 1).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                ws.Range(4, 1, 4, colCount).Merge();
-
-                for (int i = 0; i < colCount; i++)
-                {
-                    IXLCell headerCell = ws.Cell(startRow, i + 1);
-                    headerCell.Value = dt.Columns[i].ColumnName;
-                    headerCell.Style.Font.Bold = true;
-                    headerCell.Style.Font.FontColor = XLColor.White;
-                    headerCell.Style.Fill.BackgroundColor = XLColor.FromArgb(31, 41, 55);
-                    headerCell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                    headerCell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                    headerCell.Style.Font.FontName = "Tahoma";
-                    headerCell.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                }
-
-                for (int r = 0; r < dt.Rows.Count; r++)
-                {
-                    for (int c = 0; c < colCount; c++)
-                    {
-                        IXLCell cell = ws.Cell(startRow + 1 + r, c + 1);
-                        cell.Value = dt.Rows[r][c] == DBNull.Value ? "" : dt.Rows[r][c].ToString();
-                        cell.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                        cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                        cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                        cell.Style.Font.FontName = "Tahoma";
-                    }
-                }
-
-                ws.SheetView.FreezeRows(startRow);
-                ws.Columns().AdjustToContents();
-
-                workbook.SaveAs(filePath);
-            }
-        }
 
         private void btnExportCsv_Click(object sender, EventArgs e)
         {
@@ -683,103 +612,6 @@ namespace SchoolSystem.UI
             }
         }
 
-        private void ExportToPDF(DataTable dt, string filePath)
-        {
-            iTextSharp.text.Rectangle pageSize = dt.Columns.Count > 10
-                ? PageSize.A3.Rotate()
-                : PageSize.A4.Rotate();
-
-            Document document = new Document(pageSize, 25, 25, 35, 30);
-
-            using (FileStream fs = new FileStream(filePath, FileMode.Create))
-            {
-                PdfWriter.GetInstance(document, fs);
-                document.Open();
-
-                BaseFont bf = CreateArabicBaseFont();
-
-                iTextSharp.text.Font titleFont = new iTextSharp.text.Font(bf, 16, iTextSharp.text.Font.BOLD);
-                iTextSharp.text.Font subtitleFont = new iTextSharp.text.Font(bf, 12, iTextSharp.text.Font.BOLD);
-                iTextSharp.text.Font headerFont = new iTextSharp.text.Font(bf, 8, iTextSharp.text.Font.BOLD);
-                iTextSharp.text.Font cellFont = new iTextSharp.text.Font(bf, 7);
-                iTextSharp.text.Font infoFont = new iTextSharp.text.Font(bf, 9);
-
-                PdfPTable headerTable = new PdfPTable(1);
-                headerTable.WidthPercentage = 100;
-                headerTable.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-
-                AddHeaderCell(headerTable, "نظام إدارة المدرسة", titleFont);
-                AddHeaderCell(headerTable, "تقرير: " + cmbReportType.Text, subtitleFont);
-                AddHeaderCell(headerTable, "تاريخ التقرير: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm"), infoFont);
-                AddHeaderCell(headerTable, lblSummary.Text, infoFont);
-
-                document.Add(headerTable);
-                document.Add(new Paragraph(" "));
-
-                PdfPTable pdfTable = new PdfPTable(dt.Columns.Count);
-                pdfTable.WidthPercentage = 100;
-                pdfTable.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-
-                float[] widths = new float[dt.Columns.Count];
-
-                for (int i = 0; i < dt.Columns.Count; i++)
-                    widths[i] = 1f;
-
-                pdfTable.SetWidths(widths);
-
-                foreach (DataColumn col in dt.Columns)
-                {
-                    PdfPCell cell = new PdfPCell(new Phrase(col.ColumnName, headerFont));
-                    cell.BackgroundColor = new BaseColor(31, 41, 55);
-                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                    cell.Padding = 5;
-                    cell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-                    cell.BorderColor = new BaseColor(128, 128, 128);
-                    pdfTable.AddCell(cell);
-                }
-
-                foreach (DataRow row in dt.Rows)
-                {
-                    foreach (object item in row.ItemArray)
-                    {
-                        PdfPCell cell = new PdfPCell(new Phrase(item == DBNull.Value ? "" : item.ToString(), cellFont));
-                        cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                        cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                        cell.Padding = 4;
-                        cell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-                        cell.BorderColor = new BaseColor(211, 211, 211);
-                        pdfTable.AddCell(cell);
-                    }
-                }
-
-                document.Add(pdfTable);
-                document.Close();
-            }
-        }
-
-        private void AddHeaderCell(PdfPTable table, string text, iTextSharp.text.Font font)
-        {
-            PdfPCell cell = new PdfPCell(new Phrase(text, font));
-            cell.Border = PdfPCell.NO_BORDER;
-            cell.HorizontalAlignment = Element.ALIGN_CENTER;
-            cell.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-            cell.PaddingBottom = 4;
-            table.AddCell(cell);
-        }
-
-        private BaseFont CreateArabicBaseFont()
-        {
-            string fontPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "tahoma.ttf");
-
-            if (!File.Exists(fontPath))
-                fontPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.ttf");
-
-            if (!File.Exists(fontPath))
-                return BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-
-            return BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        }
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
