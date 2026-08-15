@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class FeePlanService
     {
         private readonly FeePlanRepository feePlanRepository;
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public FeePlanService()
         {
@@ -31,7 +32,16 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
             Validate(plan);
-            return feePlanRepository.AddFeePlan(plan);
+            bool added = feePlanRepository.AddFeePlan(plan);
+            if (added)
+            {
+                auditLogService.Record(
+                    "إضافة خطة رسوم",
+                    "FeePlan",
+                    plan.FeePlanID.ToString(),
+                    "تمت إضافة خطة رسوم للصف رقم " + plan.ClassID + " للعام " + plan.AcademicYear);
+            }
+            return added;
         }
 
         public bool UpdateFeePlan(FeePlan plan)
@@ -41,7 +51,16 @@ namespace SchoolSystem.Services
                 throw new Exception("رقم خطة الرسوم غير صحيح.");
 
             Validate(plan);
-            return feePlanRepository.UpdateFeePlan(plan);
+            bool updated = feePlanRepository.UpdateFeePlan(plan);
+            if (updated)
+            {
+                auditLogService.Record(
+                    "تعديل خطة رسوم",
+                    "FeePlan",
+                    plan.FeePlanID.ToString(),
+                    "تم تعديل خطة الرسوم رقم " + plan.FeePlanID);
+            }
+            return updated;
         }
 
         public bool DeleteFeePlan(int feePlanId)
@@ -50,7 +69,16 @@ namespace SchoolSystem.Services
             if (feePlanId <= 0)
                 throw new Exception("رقم خطة الرسوم غير صحيح.");
 
-            return feePlanRepository.DeleteFeePlan(feePlanId);
+            bool deleted = feePlanRepository.DeleteFeePlan(feePlanId);
+            if (deleted)
+            {
+                auditLogService.Record(
+                    "حذف خطة رسوم",
+                    "FeePlan",
+                    feePlanId.ToString(),
+                    "تم حذف خطة الرسوم رقم " + feePlanId);
+            }
+            return deleted;
         }
 
         private void Validate(FeePlan plan)
