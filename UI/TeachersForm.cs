@@ -180,10 +180,9 @@ namespace SchoolSystem.UI
 
         private bool ValidateInputs()
         {
-            if (string.IsNullOrWhiteSpace(txtFullName.Text))
+            if (!UIHelper.IsValidArabicOrLatinName(txtFullName.Text))
             {
-                MessageBox.Show("الاسم الكامل مطلوب", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtFullName.Focus();
+                UIHelper.FocusAndWarn(txtFullName, "الاسم الكامل مطلوب ويجب أن يحتوي على أحرف فقط وبطول مناسب.");
                 return false;
             }
             if (cmbGender.SelectedIndex < 0)
@@ -192,10 +191,10 @@ namespace SchoolSystem.UI
                 cmbGender.Focus();
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(txtNationalID.Text))
+            int nationalIdNumber;
+            if (!UIHelper.IsValidPositiveInteger(txtNationalID.Text, out nationalIdNumber) || txtNationalID.Text.Trim().Length < 6 || txtNationalID.Text.Trim().Length > 20)
             {
-                MessageBox.Show("الرقم الوطني مطلوب", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtNationalID.Focus();
+                UIHelper.FocusAndWarn(txtNationalID, "الرقم الوطني مطلوب ويجب أن يتكون من 6 إلى 20 رقماً.");
                 return false;
             }
             if (cmbStatus.SelectedIndex < 0)
@@ -206,8 +205,7 @@ namespace SchoolSystem.UI
             }
             if (nudBasicSalary.Value < 1000)
             {
-                MessageBox.Show("الراتب الأساسي يجب أن لا يقل عن 1000", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                nudBasicSalary.Focus();
+                UIHelper.FocusAndWarn(nudBasicSalary, "الراتب الأساسي يجب ألا يقل عن 1000.");
                 return false;
             }
 
@@ -228,26 +226,16 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            if (!string.IsNullOrWhiteSpace(txtEmail.Text))
+            if (!string.IsNullOrWhiteSpace(txtEmail.Text) && !UIHelper.IsValidEmail(txtEmail.Text))
             {
-                var emailRegex = new System.Text.RegularExpressions.Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-                if (!emailRegex.IsMatch(txtEmail.Text.Trim()))
-                {
-                    MessageBox.Show("صيغة البريد الإلكتروني غير صحيحة.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    txtEmail.Focus();
-                    return false;
-                }
+                UIHelper.FocusAndWarn(txtEmail, "صيغة البريد الإلكتروني غير صحيحة.");
+                return false;
             }
 
-            if (!string.IsNullOrWhiteSpace(txtPhone.Text))
+            if (!string.IsNullOrWhiteSpace(txtPhone.Text) && !UIHelper.IsValidPhone(txtPhone.Text))
             {
-                var phoneDigits = new string(txtPhone.Text.Where(char.IsDigit).ToArray());
-                if (phoneDigits.Length < 7 || phoneDigits.Length > 15)
-                {
-                    MessageBox.Show("رقم الهاتف يجب أن يحتوي على 7 إلى 15 رقمًا.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    txtPhone.Focus();
-                    return false;
-                }
+                UIHelper.FocusAndWarn(txtPhone, "رقم الهاتف غير صحيح.");
+                return false;
             }
 
             try

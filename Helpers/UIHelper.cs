@@ -139,6 +139,100 @@ namespace SchoolSystem.Helpers
             return TryParseDecimal(value, out ignored);
         }
 
+        public static bool IsValidPositiveInteger(string value, out int number)
+        {
+            return int.TryParse((value ?? string.Empty).Trim(), out number) && number > 0;
+        }
+
+        public static bool IsValidNonNegativeDecimal(string value, out decimal amount)
+        {
+            return TryParseDecimal(value, out amount) && amount >= 0m;
+        }
+
+        public static bool IsValidArabicOrLatinName(string value, int minimumLength = 2)
+        {
+            string text = (value ?? string.Empty).Trim();
+            if (text.Length < minimumLength)
+                return false;
+
+            foreach (char character in text)
+            {
+                if (char.IsLetter(character) || char.IsWhiteSpace(character) || character == '-' || character == '_')
+                    continue;
+                return false;
+            }
+            return true;
+        }
+
+        public static bool IsValidPhone(string value)
+        {
+            string text = (value ?? string.Empty).Trim();
+            if (text.Length < 7 || text.Length > 20)
+                return false;
+
+            int digits = 0;
+            foreach (char character in text)
+            {
+                if (char.IsDigit(character))
+                {
+                    digits++;
+                    continue;
+                }
+                if (character == '+' || character == '-' || character == ' ' || character == '(' || character == ')')
+                    continue;
+                return false;
+            }
+            return digits >= 7;
+        }
+
+        public static bool IsValidEmail(string value)
+        {
+            string text = (value ?? string.Empty).Trim();
+            if (text.Length == 0 || text.Length > 254)
+                return false;
+            try
+            {
+                var address = new System.Net.Mail.MailAddress(text);
+                return string.Equals(address.Address, text, StringComparison.OrdinalIgnoreCase)
+                    && text.Contains("@") && text.IndexOf('.', text.IndexOf('@') + 1) > 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static bool IsValidAcademicYear(string value)
+        {
+            string text = (value ?? string.Empty).Trim();
+            string[] parts = text.Split('-');
+            int first;
+            int second;
+            return parts.Length == 2
+                && int.TryParse(parts[0].Trim(), out first)
+                && int.TryParse(parts[1].Trim(), out second)
+                && second == first + 1;
+        }
+
+        public static void FocusAndWarn(Control control, string message)
+        {
+            if (control != null)
+            {
+                control.Focus();
+                if (control is TextBox textBox)
+                    textBox.SelectAll();
+                else if (control is ComboBox comboBox)
+                    comboBox.DroppedDown = false;
+            }
+            ShowWarning(message);
+        }
+
+        public static bool IsDesignMode(Control control)
+        {
+            return control != null && (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime ||
+                control.Site != null && control.Site.DesignMode);
+        }
+
         public static void ApplyKryptonTheme()
         {
             KryptonThemeManager.GlobalPaletteMode = PaletteMode.Office2010Blue;

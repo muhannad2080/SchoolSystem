@@ -496,11 +496,8 @@ namespace SchoolSystem.UI
                 private Student GetStudentFromForm()
         {
             string fullName = txtFullName.Text.Trim();
-            if (string.IsNullOrEmpty(fullName))
-                throw new Exception("اسم الطالب مطلوب.");
-
-            if (System.Text.RegularExpressions.Regex.IsMatch(fullName, @"\d"))
-                throw new Exception("اسم الطالب لا يجب أن يحتوي على أرقام.");
+            if (!UIHelper.IsValidArabicOrLatinName(fullName))
+                throw new Exception("اسم الطالب مطلوب ويجب أن يحتوي على أحرف فقط وبطول مناسب.");
 
             if (cmbGender.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbGender.Text))
                 throw new Exception("يرجى اختيار جنس الطالب.");
@@ -511,21 +508,26 @@ namespace SchoolSystem.UI
             string[] textValues = { txtBirthPlace.Text, txtNationality.Text, txtGovernorate.Text, txtDistrict.Text, txtGuardianName.Text };
             foreach (string value in textValues)
             {
-                if (!string.IsNullOrWhiteSpace(value) && System.Text.RegularExpressions.Regex.IsMatch(value, @"\d"))
-                    throw new Exception("الحقول النصية لا يجب أن تحتوي على أرقام.");
+                if (!string.IsNullOrWhiteSpace(value) && !UIHelper.IsValidArabicOrLatinName(value, 2))
+                    throw new Exception("الحقول النصية لا يجب أن تحتوي على أرقام أو رموز غير صالحة.");
             }
 
             string nationalId = txtNationalId.Text.Trim();
-            if (!string.IsNullOrEmpty(nationalId) && !System.Text.RegularExpressions.Regex.IsMatch(nationalId, @"^[0-9]{6,20}$"))
-                throw new Exception("رقم الهوية يجب أن يتكون من أرقام فقط وبطول صحيح.");
+            int ignoredId;
+            if (!string.IsNullOrEmpty(nationalId) && (!UIHelper.IsValidPositiveInteger(nationalId, out ignoredId) || nationalId.Length < 6 || nationalId.Length > 20))
+                throw new Exception("رقم الهوية يجب أن يتكون من أرقام فقط وبطول من 6 إلى 20 رقماً.");
 
             string phone = txtPhone.Text.Trim();
-            if (!string.IsNullOrEmpty(phone) && !System.Text.RegularExpressions.Regex.IsMatch(phone, @"^[0-9+\-\s]{7,15}$"))
+            if (!string.IsNullOrEmpty(phone) && !UIHelper.IsValidPhone(phone))
                 throw new Exception("رقم هاتف الطالب غير صحيح.");
 
             string guardianPhone = txtGuardianPhone.Text.Trim();
-            if (!string.IsNullOrEmpty(guardianPhone) && !System.Text.RegularExpressions.Regex.IsMatch(guardianPhone, @"^[0-9+\-\s]{7,15}$"))
+            if (!string.IsNullOrEmpty(guardianPhone) && !UIHelper.IsValidPhone(guardianPhone))
                 throw new Exception("رقم هاتف ولي الأمر غير صحيح.");
+
+            string guardianEmail = txtGuardianEmail.Text.Trim();
+            if (!string.IsNullOrEmpty(guardianEmail) && !UIHelper.IsValidEmail(guardianEmail))
+                throw new Exception("البريد الإلكتروني لولي الأمر غير صحيح.");
 
             if (dtpBirthDate.Value > DateTime.Today)
                 throw new Exception("تاريخ الميلاد لا يمكن أن يكون في المستقبل.");
