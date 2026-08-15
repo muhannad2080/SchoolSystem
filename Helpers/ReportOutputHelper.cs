@@ -25,7 +25,8 @@ namespace SchoolSystem.Helpers
             using (XLWorkbook workbook = new XLWorkbook())
             {
                 IXLWorksheet sheet = workbook.Worksheets.Add("Report");
-                sheet.RightToLeft = ContainsArabic(title) || ContainsArabic(summary) || ContainsArabicColumns(table);
+                sheet.RightToLeft = ContainsArabic(title) || ContainsArabic(summary)
+                    || ContainsArabicColumns(table) || ContainsArabicValues(table);
                 sheet.SheetView.ShowGridLines = false;
 
                 int columnCount = Math.Max(1, table.Columns.Count);
@@ -109,7 +110,8 @@ namespace SchoolSystem.Helpers
 
                 PdfPTable heading = new PdfPTable(1);
                 heading.WidthPercentage = 100;
-                heading.RunDirection = ContainsArabic(title) ? PdfWriter.RUN_DIRECTION_RTL : PdfWriter.RUN_DIRECTION_LTR;
+                heading.RunDirection = ContainsArabic(title) || ContainsArabic(summary)
+                    ? PdfWriter.RUN_DIRECTION_RTL : PdfWriter.RUN_DIRECTION_LTR;
                 AddTextCell(heading, title ?? "School System Report", titleFont, Navy, Element.ALIGN_CENTER);
                 AddTextCell(heading, summary ?? string.Empty, summaryFont, BaseColor.WHITE, Element.ALIGN_CENTER);
                 AddTextCell(heading, "Generated: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm"), summaryFont, BaseColor.WHITE, Element.ALIGN_CENTER);
@@ -154,6 +156,23 @@ namespace SchoolSystem.Helpers
         private static bool ContainsArabicColumns(DataTable table)
         {
             return table != null && table.Columns.Cast<DataColumn>().Any(c => ContainsArabic(c.ColumnName));
+        }
+
+        private static bool ContainsArabicValues(DataTable table)
+        {
+            if (table == null)
+                return false;
+
+            foreach (DataRow row in table.Rows)
+            {
+                foreach (object value in row.ItemArray)
+                {
+                    if (value != null && value != DBNull.Value && ContainsArabic(Convert.ToString(value)))
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool IsNumeric(object value)
