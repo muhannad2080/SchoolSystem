@@ -314,29 +314,6 @@ namespace SchoolSystem.UI
                         "الحركة المالية | Financial Vouchers",
                         "عدد السجلات | Records: " + exportTable.Rows.Count);
                     UIHelper.ShowInfo("تم تصدير السندات إلى Excel بنجاح.");
-                    return;
-
-                    StringBuilder csv = new StringBuilder();
-                    csv.AppendLine("رقم السند,النوع,المبلغ,التاريخ,الطرف,البيان,طريقة الدفع,المرجع,ملاحظات");
-                    foreach (DataGridViewRow row in dataGridViewVouchers.Rows)
-                    {
-                        if (row.IsNewRow) continue;
-                        csv.AppendLine(string.Join(",", new[]
-                        {
-                            CsvValue(row.Cells["VoucherNumber"].Value),
-                            CsvValue(row.Cells["VoucherType"].Value),
-                            CsvValue(row.Cells["Amount"].Value),
-                            CsvValue(row.Cells["VoucherDate"].Value),
-                            CsvValue(row.Cells["PartyName"].Value),
-                            CsvValue(row.Cells["Description"].Value),
-                            CsvValue(row.Cells["PaymentMethod"].Value),
-                            CsvValue(row.Cells["ReferenceType"].Value),
-                            CsvValue(row.Cells["Notes"].Value)
-                        }));
-                    }
-
-                    File.WriteAllText(dialog.FileName, csv.ToString(), new UTF8Encoding(true));
-                    UIHelper.ShowInfo("تم تصدير السندات الظاهرة بنجاح.");
                 }
                 catch (Exception ex)
                 {
@@ -345,11 +322,6 @@ namespace SchoolSystem.UI
             }
         }
 
-        private string CsvValue(object value)
-        {
-            string text = value == null || value == DBNull.Value ? string.Empty : value.ToString();
-            return "\"" + text.Replace("\"", "\"\"") + "\"";
-        }
 
         private async void VouchersForm_Load(object sender, EventArgs e)
         {

@@ -335,39 +335,8 @@ namespace SchoolSystem.UI
                         "نظام إدارة المدرسة | School Management System - Students",
                         "إجمالي الطلاب | Total students: " + exportTable.Rows.Count);
                     UIHelper.ShowInfo("تم تصدير بيانات الطلاب إلى Excel بنجاح.");
-                    return;
-
-                    using (var workbook = new ClosedXML.Excel.XLWorkbook())
-                    {
-                        var ws = workbook.Worksheets.Add("الطلاب");
-                        ws.RightToLeft = true;
-
-                        ws.Cell(1, 1).Value = "رقم الطالب";
-                        ws.Cell(1, 2).Value = "الاسم";
-                        ws.Cell(1, 3).Value = "الجنس";
-                        ws.Cell(1, 4).Value = "الصف";
-                        ws.Cell(1, 5).Value = "الهاتف";
-                        ws.Cell(1, 6).Value = "الحالة";
-
-                        for (int i = 0; i < _currentStudents.Count; i++)
-                        {
-                            Student s = _currentStudents[i];
-                            int row = i + 2;
-
-                            ws.Cell(row, 1).Value = s.StudentNumber;
-                            ws.Cell(row, 2).Value = s.FullName;
-                            ws.Cell(row, 3).Value = s.Gender;
-                            ws.Cell(row, 4).Value = s.CurrentClassName;
-                            ws.Cell(row, 5).Value = s.StudentPhone;
-                            ws.Cell(row, 6).Value = s.Status;
-                        }
-
-                        ws.Columns().AdjustToContents();
-                        workbook.SaveAs(sfd.FileName);
-                    }
                 }
 
-                UIHelper.ShowInfo("تم تصدير البيانات بنجاح.");
             }
             catch (Exception ex)
             {
