@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Static, read-only contract checks for settings, backup/restore, RBAC, and safe deletion."""
 from pathlib import Path
+import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -206,6 +207,21 @@ for name, passed in checks.items():
 
 if failed:
     print(f"FAIL: {len(failed)} settings contract check(s) failed", file=sys.stderr)
+    sys.exit(1)
+
+coverage_script = ROOT / "tools" / "verify_service_audit_coverage.py"
+coverage_result = subprocess.run(
+    [sys.executable, str(coverage_script)],
+    cwd=str(ROOT),
+    text=True,
+    capture_output=True,
+)
+if coverage_result.stdout:
+    print(coverage_result.stdout.rstrip())
+if coverage_result.returncode != 0:
+    if coverage_result.stderr:
+        print(coverage_result.stderr.rstrip(), file=sys.stderr)
+    print("FAIL: service audit coverage check", file=sys.stderr)
     sys.exit(1)
 
 print(f"PASS: {len(checks)} settings contract checks")
