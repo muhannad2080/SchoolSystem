@@ -64,9 +64,12 @@
 
             // menuStripMain
             this.menuStripMain.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
-            this.menuStripMain.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.menuStripMain.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
             this.menuStripMain.ForeColor = System.Drawing.Color.White;
-            this.menuStripMain.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.menuStripMain.ImageScalingSize = new System.Drawing.Size(16, 16);
+            this.menuStripMain.CanOverflow = true;
+            this.menuStripMain.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.menuStripMain.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 this.tsmiDashboard,
                 this.tsmiStudents,
@@ -84,7 +87,7 @@
             });
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
-            this.menuStripMain.Padding = new System.Windows.Forms.Padding(8, 6, 8, 6);
+            this.menuStripMain.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.menuStripMain.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.menuStripMain.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.menuStripMain.Size = new System.Drawing.Size(1200, 41);
@@ -92,13 +95,17 @@
 
             // tsmiAuditLogs
             this.tsmiAuditLogs.Name = "tsmiAuditLogs";
-            this.tsmiAuditLogs.Size = new System.Drawing.Size(180, 29);
+            this.tsmiAuditLogs.AutoSize = true;
+            this.tsmiAuditLogs.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.tsmiAuditLogs.Size = new System.Drawing.Size(110, 29);
             this.tsmiAuditLogs.Text = "سجل الأنشطة";
             this.tsmiAuditLogs.Click += new System.EventHandler(this.tsmiAuditLogs_Click);
 
             // tsmiSettings
             this.tsmiSettings.Name = "tsmiSettings";
-            this.tsmiSettings.Size = new System.Drawing.Size(180, 29);
+            this.tsmiSettings.AutoSize = true;
+            this.tsmiSettings.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.tsmiSettings.Size = new System.Drawing.Size(90, 29);
             this.tsmiSettings.Text = "الإعدادات";
             this.tsmiSettings.Click += new System.EventHandler(this.tsmiSettings_Click);
 
@@ -266,7 +273,9 @@
 
             // tsmiLogout
             this.tsmiLogout.Name = "tsmiLogout";
-            this.tsmiLogout.Size = new System.Drawing.Size(77, 29);
+            this.tsmiLogout.AutoSize = true;
+            this.tsmiLogout.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.tsmiLogout.Size = new System.Drawing.Size(75, 29);
             this.tsmiLogout.Text = "🚪 خروج";
             this.tsmiLogout.Click += new System.EventHandler(this.tsmiLogout_Click);
 
