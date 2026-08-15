@@ -44,6 +44,7 @@
             this.tsmiLibrary = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiUsers = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiReports = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiAuditLogs = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiLogout = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.panelTop = new Krypton.Toolkit.KryptonPanel();
@@ -77,6 +78,7 @@
                 this.tsmiLibrary,
                 this.tsmiUsers,
                 this.tsmiReports,
+                this.tsmiAuditLogs,
                 this.tsmiSettings,
                 this.tsmiLogout
             });
@@ -87,6 +89,12 @@
             this.menuStripMain.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.menuStripMain.Size = new System.Drawing.Size(1200, 41);
             this.menuStripMain.TabIndex = 0;
+
+            // tsmiAuditLogs
+            this.tsmiAuditLogs.Name = "tsmiAuditLogs";
+            this.tsmiAuditLogs.Size = new System.Drawing.Size(180, 29);
+            this.tsmiAuditLogs.Text = "سجل الأنشطة";
+            this.tsmiAuditLogs.Click += new System.EventHandler(this.tsmiAuditLogs_Click);
 
             // tsmiSettings
             this.tsmiSettings.Name = "tsmiSettings";
@@ -402,6 +410,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiLibrary;
         private System.Windows.Forms.ToolStripMenuItem tsmiUsers;
         private System.Windows.Forms.ToolStripMenuItem tsmiReports;
+        private System.Windows.Forms.ToolStripMenuItem tsmiAuditLogs;
         private System.Windows.Forms.ToolStripMenuItem tsmiLogout;
         private System.Windows.Forms.ToolStripMenuItem tsmiSettings;
 

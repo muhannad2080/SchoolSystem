@@ -11,13 +11,10 @@ namespace SchoolSystem
     public partial class MainForm : Form
     {
         public static MainForm Instance { get; private set; }
-        private bool handoffToAuthenticatedSession;
-        private ToolStripMenuItem tsmiAuditLogs;
 
         public MainForm()
         {
             InitializeComponent();
-            ConfigureAuditMenu();
             FormClosed += MainForm_FormClosed;
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
 
@@ -33,15 +30,6 @@ namespace SchoolSystem
 
             ApplyCurrentUserPermissions();
         }
-
-        private void ConfigureAuditMenu()
-        {
-            tsmiAuditLogs = new ToolStripMenuItem("سجل الأنشطة");
-            tsmiAuditLogs.Name = "tsmiAuditLogs";
-            tsmiAuditLogs.Click += tsmiAuditLogs_Click;
-            menuStripMain.Items.Add(tsmiAuditLogs);
-        }
-
 
         private void ApplyModernMenuStyle()
         {
@@ -554,9 +542,7 @@ namespace SchoolSystem
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             // لا تترك جلسة صالحة عند إغلاق النافذة مباشرة.
-            // أثناء الانتقال إلى MainForm جديد تبقى الجلسة الجديدة فعالة.
-            if (!handoffToAuthenticatedSession)
-                CurrentUser.Clear();
+            CurrentUser.Clear();
         }
 
         private void tsmiLogout_Click(object sender, EventArgs e)
@@ -582,11 +568,12 @@ namespace SchoolSystem
 
                 if (loginResult == DialogResult.OK)
                 {
-                    MainForm newMain = new MainForm();
-                    newMain.Show();
-
-                    handoffToAuthenticatedSession = true;
-                    Close();
+                    // حافظ على MainForm الأصلي لأنه مالك Application.Run.
+                    // إغلاقه أثناء إنشاء نافذة جديدة ينهي حلقة الرسائل ويوقف التطبيق.
+                    Show();
+                    WindowState = FormWindowState.Normal;
+                    RefreshCurrentUserSession();
+                    LoadWelcomeScreen();
                 }
                 else
                 {
