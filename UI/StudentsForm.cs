@@ -24,6 +24,8 @@ namespace SchoolSystem.UI
         public StudentsForm()
         {
             InitializeComponent();
+            txtStudentNumber.ReadOnly = true;
+            txtStudentNumber.TabStop = false;
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             txtSearch.TextChanged += (sender, e) => ApplyFilters();
             _studentService = new StudentService();
@@ -484,7 +486,9 @@ namespace SchoolSystem.UI
                 else
                     _studentService.Update(student);
 
-                UIHelper.ShowInfo("تم حفظ البيانات بنجاح.");
+                UIHelper.ShowInfo(string.IsNullOrWhiteSpace(student.StudentNumber)
+                    ? "تم حفظ بيانات الطالب بنجاح."
+                    : "تم حفظ بيانات الطالب بنجاح. رقم الطالب المولد: " + student.StudentNumber);
                 LoadStudents();
                 ClearForm();
             }
@@ -561,6 +565,7 @@ namespace SchoolSystem.UI
             _selectedStudentId = 0;
             _selectedPhoto = null;
 
+            txtStudentNumber.Text = "يُولّد تلقائياً عند الحفظ";
             txtFullName.Clear();
             txtBirthPlace.Clear();
             txtNationality.Clear();
@@ -615,6 +620,7 @@ namespace SchoolSystem.UI
             _selectedStudentId = s.StudentId;
             _selectedPhoto = s.Photo == null ? null : (byte[])s.Photo.Clone();
 
+            txtStudentNumber.Text = s.StudentNumber ?? "";
             txtFullName.Text = s.FullName ?? "";
             txtBirthPlace.Text = s.BirthPlace ?? "";
             txtNationality.Text = s.Nationality ?? "";

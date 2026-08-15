@@ -166,62 +166,55 @@ ORDER BY s.StudentId DESC;";
 
         public int Add(Student student)
         {
-            string query = @"
+            const string nextNumberQuery = @"
+SELECT ISNULL(MAX(TRY_CONVERT(INT, StudentNumber)), 0) + 1
+FROM Students WITH (UPDLOCK, HOLDLOCK)
+WHERE ISNUMERIC(StudentNumber) = 1;";
+
+            const string insertQuery = @"
 INSERT INTO Students
 (
-    StudentNumber,
-    FullName,
-    Gender,
-    BirthDate,
-    BirthPlace,
-    Nationality,
-    NationalId,
-    StudentPhone,
-    Status,
-    GuardianName,
-    GuardianRelation,
-    GuardianPhone,
-    GuardianEmail,
-    GuardianJob,
-    Governorate,
-    District,
-    Address,
-    Photo,
-    CreatedAt
+    StudentNumber, FullName, Gender, BirthDate, BirthPlace, Nationality,
+    NationalId, StudentPhone, Status, GuardianName, GuardianRelation,
+    GuardianPhone, GuardianEmail, GuardianJob, Governorate, District,
+    Address, Photo, CreatedAt
 )
 OUTPUT INSERTED.StudentId
 VALUES
 (
-    @StudentNumber,
-    @FullName,
-    @Gender,
-    @BirthDate,
-    @BirthPlace,
-    @Nationality,
-    @NationalId,
-    @StudentPhone,
-    @Status,
-    @GuardianName,
-    @GuardianRelation,
-    @GuardianPhone,
-    @GuardianEmail,
-    @GuardianJob,
-    @Governorate,
-    @District,
-    @Address,
-    @Photo,
-    GETDATE()
+    @StudentNumber, @FullName, @Gender, @BirthDate, @BirthPlace, @Nationality,
+    @NationalId, @StudentPhone, @Status, @GuardianName, @GuardianRelation,
+    @GuardianPhone, @GuardianEmail, @GuardianJob, @Governorate, @District,
+    @Address, @Photo, GETDATE()
 );";
 
             using (SqlConnection conn = GetConnection())
-            using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                AddParameters(cmd, student);
-
                 conn.Open();
+                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    try
+                    {
+                        using (SqlCommand nextNumberCommand = new SqlCommand(nextNumberQuery, conn, transaction))
+                        {
+                            int nextNumber = Convert.ToInt32(nextNumberCommand.ExecuteScalar());
+                            student.StudentNumber = nextNumber.ToString("000000");
+                        }
 
-                object result = cmd.ExecuteScalar();
-                return Convert.ToInt32(result);
+                        using (SqlCommand insertCommand = new SqlCommand(insertQuery, conn, transaction))
+                        {
+                            AddParameters(insertCommand, student);
+                            int studentId = Convert.ToInt32(insertCommand.ExecuteScalar());
+                            transaction.Commit();
+                            return studentId;
+                        }
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             }
         }
 

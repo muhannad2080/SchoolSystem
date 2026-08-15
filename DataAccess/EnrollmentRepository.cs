@@ -56,36 +56,68 @@ namespace SchoolSystem.DataAccess
 
         public bool AddEnrollment(Enrollment enrollment)
         {
+            const string nextSeatNumberQuery = @"
+SELECT ISNULL(MAX(TRY_CONVERT(INT, NULLIF(LTRIM(RTRIM(SeatNumber)), N''))), 0) + 1
+FROM Enrollments WITH (UPDLOCK, HOLDLOCK)
+WHERE AcademicYear = @AcademicYear
+  AND ClassID = @ClassID
+  AND ISNULL(Section, N'') = ISNULL(@Section, N'')
+  AND Status <> N'مرفوض';";
+
+            const string insertQuery = @"
+IF NOT EXISTS
+(
+    SELECT 1
+    FROM Students
+    WHERE StudentID = @StudentID
+      AND ISNULL(Status, N'نشط') = N'نشط'
+)
+    THROW 50003, N'لا يمكن تسجيل طالب غير نشط.', 1;
+
+INSERT INTO Enrollments
+(
+    StudentID, ApplicationDate, ApplicationType, AcademicYear, ClassID, Section, SeatNumber, Status,
+    PreviousSchool, PreviousClass, TransferReason, RegistrationFee, PaidAmount, PaymentMethod, ReceiptNo,
+    HasBirthCertificate, HasGuardianId, HasPhoto, HasLastCertificate, HasMedicalReport, GeneralNotes, CreatedAt
+)
+VALUES
+(
+    @StudentID, @ApplicationDate, @ApplicationType, @AcademicYear, @ClassID, @Section, @SeatNumber, @Status,
+    @PreviousSchool, @PreviousClass, @TransferReason, @RegistrationFee, @PaidAmount, @PaymentMethod, @ReceiptNo,
+    @HasBirthCertificate, @HasGuardianId, @HasPhoto, @HasLastCertificate, @HasMedicalReport, @Notes, GETDATE()
+);";
+
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = @"
-                    IF NOT EXISTS
-                    (
-                        SELECT 1
-                        FROM Students
-                        WHERE StudentID = @StudentID
-                          AND ISNULL(Status, N'نشط') = N'نشط'
-                    )
-                        THROW 50003, N'لا يمكن تسجيل طالب غير نشط.', 1;
-
-                    INSERT INTO Enrollments
-                    (
-                        StudentID, ApplicationDate, ApplicationType, AcademicYear, ClassID, Section, SeatNumber, Status,
-                        PreviousSchool, PreviousClass, TransferReason, RegistrationFee, PaidAmount, PaymentMethod, ReceiptNo,
-                        HasBirthCertificate, HasGuardianId, HasPhoto, HasLastCertificate, HasMedicalReport, GeneralNotes, CreatedAt
-                    )
-                    VALUES
-                    (
-                        @StudentID, @ApplicationDate, @ApplicationType, @AcademicYear, @ClassID, @Section, @SeatNumber, @Status,
-                        @PreviousSchool, @PreviousClass, @TransferReason, @RegistrationFee, @PaidAmount, @PaymentMethod, @ReceiptNo,
-                        @HasBirthCertificate, @HasGuardianId, @HasPhoto, @HasLastCertificate, @HasMedicalReport, @Notes, GETDATE()
-                    )";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                conn.Open();
+                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    AddParameters(cmd, enrollment, false);
-                    conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    try
+                    {
+                        if (string.IsNullOrWhiteSpace(enrollment.SeatNumber))
+                        {
+                            using (SqlCommand nextSeatCommand = new SqlCommand(nextSeatNumberQuery, conn, transaction))
+                            {
+                                nextSeatCommand.Parameters.AddWithValue("@AcademicYear", SafeText(enrollment.AcademicYear));
+                                nextSeatCommand.Parameters.AddWithValue("@ClassID", enrollment.ClassID);
+                                nextSeatCommand.Parameters.AddWithValue("@Section", NullableText(enrollment.Section));
+                                enrollment.SeatNumber = Convert.ToInt32(nextSeatCommand.ExecuteScalar()).ToString("0000");
+                            }
+                        }
+
+                        using (SqlCommand insertCommand = new SqlCommand(insertQuery, conn, transaction))
+                        {
+                            AddParameters(insertCommand, enrollment, false);
+                            bool inserted = insertCommand.ExecuteNonQuery() > 0;
+                            transaction.Commit();
+                            return inserted;
+                        }
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
                 }
             }
         }
@@ -151,6 +183,28 @@ namespace SchoolSystem.DataAccess
                     conn.Open();
                     return cmd.ExecuteNonQuery() > 0;
                 }
+            }
+        }
+
+        public string GenerateNextSeatNumber(string academicYear, int classId, string section)
+        {
+            const string query = @"
+SELECT ISNULL(MAX(TRY_CONVERT(INT, NULLIF(LTRIM(RTRIM(SeatNumber)), N''))), 0) + 1
+FROM Enrollments
+WHERE AcademicYear = @AcademicYear
+  AND ClassID = @ClassID
+  AND ISNULL(Section, N'') = ISNULL(@Section, N'')
+  AND Status <> N'مرفوض';";
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@AcademicYear", SafeText(academicYear));
+                cmd.Parameters.AddWithValue("@ClassID", classId);
+                cmd.Parameters.AddWithValue("@Section", NullableText(section));
+                conn.Open();
+                int nextNumber = Convert.ToInt32(cmd.ExecuteScalar());
+                return nextNumber.ToString("0000");
             }
         }
 

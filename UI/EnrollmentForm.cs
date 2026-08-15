@@ -26,6 +26,8 @@ namespace SchoolSystem.UI
         public EnrollmentForm()
         {
             InitializeComponent();
+            txtSeatNumber.ReadOnly = true;
+            txtSeatNumber.TabStop = false;
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             txtSearch.TextChanged += (sender, e) => btnSearch_Click(sender, e);
             enrollmentService = new EnrollmentService();
@@ -251,7 +253,7 @@ namespace SchoolSystem.UI
                     AcademicYear = txtAcademicYear.Text,
                     ClassID = GetSelectedId(cmbClassID, "يجب تحديد فصل صالح."),
                     Section = txtSection.Text,
-                    SeatNumber = txtSeatNumber.Text,
+                    SeatNumber = isEditMode ? txtSeatNumber.Text : string.Empty,
                     Status = cmbStatus.SelectedItem?.ToString(),
                     
                     PreviousSchool = txtPreviousSchool.Text,
@@ -698,7 +700,7 @@ namespace SchoolSystem.UI
             txtAcademicYear.Clear();
             cmbClassID.SelectedIndex = -1;
             txtSection.Clear();
-            txtSeatNumber.Clear();
+            txtSeatNumber.Text = "يُولّد تلقائياً عند الحفظ";
             cmbStatus.SelectedIndex = -1;
             
             txtPreviousSchool.Clear();

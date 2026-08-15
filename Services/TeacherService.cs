@@ -46,7 +46,6 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandPermission(PermissionKeys.TeachersManage, "ليس لديك صلاحية إدارة المعلمين.");
             ValidateTeacher(teacher);
-            
             if (!_repository.IsNationalIDUnique(teacher.NationalID))
                 throw new Exception("رقم الهوية مستخدم مسبقاً لمعلم آخر.");
             

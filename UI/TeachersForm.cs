@@ -97,18 +97,8 @@ namespace SchoolSystem.UI
 
         private void GenerateNewEmployeeNumber()
         {
-            int year = DateTime.Now.Year;
-            string prefix = $"TCH-{year}-";
-            try
-            {
-                int lastNum = _teacherService.GetMaxEmployeeNumberSuffix(year);
-                int nextNum = lastNum + 1;
-                txtEmployeeNumber.Text = $"{prefix}{nextNum:D4}";
-            }
-            catch
-            {
-                txtEmployeeNumber.Text = $"{prefix}{new Random().Next(1, 9999):D4}";
-            }
+            // رقم الموظف يولده TeacherService داخل عملية الحفظ لتجنب التكرار عند تعدد المستخدمين.
+            txtEmployeeNumber.Clear();
         }
 
         private async void TeachersForm_Load(object sender, EventArgs e)

@@ -21,7 +21,6 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
             ValidateEnrollment(enrollment, false);
-
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear))
                 throw new Exception("هذا الطالب مسجل بالفعل في هذا العام الدراسي.");
 

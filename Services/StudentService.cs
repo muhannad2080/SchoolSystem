@@ -51,8 +51,6 @@ namespace SchoolSystem.Services
             EnsureCanManageStudents();
             ValidateStudent(student);
 
-            student.StudentNumber = _studentRepository.GenerateNextStudentNumber();
-
             if (_studentRepository.IsNationalIdExists(student.NationalId))
                 throw new Exception("رقم الهوية مستخدم مسبقاً لطالب آخر.");
 

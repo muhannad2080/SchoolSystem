@@ -51,7 +51,12 @@ namespace SchoolSystem.DataAccess
 
         public void AddTeacher(Teacher teacher)
         {
-            const string query = @"INSERT INTO Teachers (EmployeeNumber, FullName, Gender, BirthDate, BirthPlace, Nationality,
+            const string nextNumberQuery = @"
+SELECT ISNULL(MAX(TRY_CONVERT(INT, RIGHT(EmployeeNumber, 4))), 0) + 1
+FROM Teachers WITH (UPDLOCK, HOLDLOCK)
+WHERE EmployeeNumber LIKE @Prefix + N'%';";
+
+            const string insertQuery = @"INSERT INTO Teachers (EmployeeNumber, FullName, Gender, BirthDate, BirthPlace, Nationality,
                                     NationalID, Phone, Email, Address, Qualification, Specialization, HireDate,
                                     BasicSalary, TransportAllowance, HousingAllowance, Status, Notes, CreatedAt)
                                   VALUES (@EmployeeNumber, @FullName, @Gender, @BirthDate, @BirthPlace, @Nationality,
@@ -59,11 +64,38 @@ namespace SchoolSystem.DataAccess
                                     @BasicSalary, @TransportAllowance, @HousingAllowance, @Status, @Notes, GETDATE())";
 
             using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
             {
-                AddTeacherParameters(cmd, teacher);
                 conn.Open();
-                cmd.ExecuteNonQuery();
+                using (var transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    try
+                    {
+                        if (string.IsNullOrWhiteSpace(teacher.EmployeeNumber))
+                        {
+                            int year = teacher.HireDate.HasValue ? teacher.HireDate.Value.Year : DateTime.Now.Year;
+                            string prefix = string.Format("TCH-{0}-", year);
+                            using (var numberCommand = new SqlCommand(nextNumberQuery, conn, transaction))
+                            {
+                                numberCommand.Parameters.AddWithValue("@Prefix", prefix);
+                                int nextSuffix = Convert.ToInt32(numberCommand.ExecuteScalar());
+                                teacher.EmployeeNumber = string.Format("{0}{1:0000}", prefix, nextSuffix);
+                            }
+                        }
+
+                        using (var insertCommand = new SqlCommand(insertQuery, conn, transaction))
+                        {
+                            AddTeacherParameters(insertCommand, teacher);
+                            insertCommand.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             }
         }
 
