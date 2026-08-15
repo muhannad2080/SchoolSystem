@@ -109,19 +109,24 @@ namespace SchoolSystem.Helpers
                 ITextFont headerFont = new ITextFont(baseFont, table.Columns.Count > 10 ? 7f : 8f, ITextFont.BOLD);
                 ITextFont cellFont = new ITextFont(baseFont, table.Columns.Count > 10 ? 6f : 8f, ITextFont.NORMAL);
 
-                PdfPTable heading = new PdfPTable(1);
-                heading.WidthPercentage = 100;
-                heading.RunDirection = ContainsArabic(title) || ContainsArabic(summary)
-                    ? PdfWriter.RUN_DIRECTION_RTL : PdfWriter.RUN_DIRECTION_LTR;
+                PdfPTable heading = new PdfPTable(1)
+                {
+                    WidthPercentage = 100,
+                    RunDirection = ContainsArabic(title) || ContainsArabic(summary)
+                        ? PdfWriter.RUN_DIRECTION_RTL : PdfWriter.RUN_DIRECTION_LTR
+                };
                 AddTextCell(heading, title ?? "School System Report", titleFont, Navy, Element.ALIGN_CENTER);
                 AddTextCell(heading, summary ?? string.Empty, summaryFont, White, Element.ALIGN_CENTER);
                 AddTextCell(heading, "Generated: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm"), summaryFont, White, Element.ALIGN_CENTER);
                 document.Add(heading);
                 document.Add(new Paragraph(" "));
 
-                PdfPTable grid = new PdfPTable(table.Columns.Count);
-                grid.WidthPercentage = 100;
-                grid.RunDirection = ContainsArabicColumns(table) ? PdfWriter.RUN_DIRECTION_RTL : PdfWriter.RUN_DIRECTION_LTR;
+                PdfPTable grid = new PdfPTable(table.Columns.Count)
+                {
+                    WidthPercentage = 100,
+                    RunDirection = ContainsArabicColumns(table)
+                        ? PdfWriter.RUN_DIRECTION_RTL : PdfWriter.RUN_DIRECTION_LTR
+                };
                 float[] widths = Enumerable.Repeat(1f, table.Columns.Count).ToArray();
                 grid.SetWidths(widths);
 
@@ -205,13 +210,15 @@ namespace SchoolSystem.Helpers
 
         private static void AddTextCell(PdfPTable table, string text, ITextFont font, BaseColor background, int alignment, int direction = PdfWriter.RUN_DIRECTION_DEFAULT)
         {
-            PdfPCell cell = new PdfPCell(new Phrase(text ?? string.Empty, font));
-            cell.BackgroundColor = background;
-            cell.HorizontalAlignment = alignment;
-            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-            cell.RunDirection = direction;
-            cell.Padding = 5;
-            cell.BorderColor = Border;
+            PdfPCell cell = new PdfPCell(new Phrase(text ?? string.Empty, font))
+            {
+                BackgroundColor = background,
+                HorizontalAlignment = alignment,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                RunDirection = direction,
+                Padding = 5,
+                BorderColor = Border
+            };
             table.AddCell(cell);
         }
 
