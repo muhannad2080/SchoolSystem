@@ -806,28 +806,25 @@ namespace SchoolSystem.UI
             using (System.Drawing.Font headerFont = new System.Drawing.Font("Tahoma", 8, FontStyle.Bold))
             using (System.Drawing.Font cellFont = new System.Drawing.Font("Tahoma", 7))
             using (System.Drawing.Font infoFont = new System.Drawing.Font("Tahoma", 9))
-            using (StringFormat centerFormat = new StringFormat())
+            using (StringFormat rtlFormat = CreatePrintFormat(true))
+            using (StringFormat ltrFormat = CreatePrintFormat(false))
             using (SolidBrush headerBrush = new SolidBrush(Color.FromArgb(31, 41, 55)))
             {
-                centerFormat.Alignment = StringAlignment.Center;
-                centerFormat.LineAlignment = StringAlignment.Center;
-                centerFormat.FormatFlags = StringFormatFlags.DirectionRightToLeft;
-
                 int x = e.MarginBounds.Left;
                 int y = e.MarginBounds.Top;
                 int pageWidth = e.MarginBounds.Width;
                 int rowHeight = 24;
 
                 e.Graphics.DrawString("نظام إدارة المدرسة", titleFont, Brushes.Black,
-                    new RectangleF(x, y, pageWidth, 25), centerFormat);
+                    new RectangleF(x, y, pageWidth, 25), rtlFormat);
                 y += 30;
 
                 e.Graphics.DrawString("تقرير: " + cmbReportType.Text, infoFont, Brushes.Black,
-                    new RectangleF(x, y, pageWidth, 22), centerFormat);
+                    new RectangleF(x, y, pageWidth, 22), SelectPrintFormat(cmbReportType.Text, rtlFormat, ltrFormat));
                 y += 24;
 
                 e.Graphics.DrawString("التاريخ: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm"), infoFont, Brushes.Black,
-                    new RectangleF(x, y, pageWidth, 22), centerFormat);
+                    new RectangleF(x, y, pageWidth, 22), ltrFormat);
                 y += 28;
 
                 int colCount = dt.Columns.Count;
@@ -838,7 +835,8 @@ namespace SchoolSystem.UI
                     System.Drawing.Rectangle rect = new System.Drawing.Rectangle(x + i * colWidth, y, colWidth, rowHeight);
                     e.Graphics.FillRectangle(headerBrush, rect);
                     e.Graphics.DrawRectangle(Pens.Black, rect);
-                    e.Graphics.DrawString(dt.Columns[i].ColumnName, headerFont, Brushes.White, rect, centerFormat);
+                    e.Graphics.DrawString(dt.Columns[i].ColumnName, headerFont, Brushes.White, rect,
+                        SelectPrintFormat(dt.Columns[i].ColumnName, rtlFormat, ltrFormat));
                 }
 
                 y += rowHeight;
@@ -856,8 +854,9 @@ namespace SchoolSystem.UI
                     {
                         System.Drawing.Rectangle rect = new System.Drawing.Rectangle(x + i * colWidth, y, colWidth, rowHeight);
                         e.Graphics.DrawRectangle(Pens.Gray, rect);
-                        e.Graphics.DrawString(row[i] == DBNull.Value ? "" : row[i].ToString(), cellFont,
-                            Brushes.Black, rect, centerFormat);
+                        string cellText = row[i] == DBNull.Value ? "" : row[i].ToString();
+                        e.Graphics.DrawString(cellText, cellFont, Brushes.Black, rect,
+                            SelectPrintFormat(cellText, rtlFormat, ltrFormat));
                     }
 
                     y += rowHeight;
@@ -866,6 +865,22 @@ namespace SchoolSystem.UI
 
                 e.HasMorePages = false;
             }
+        }
+
+        private static StringFormat CreatePrintFormat(bool rtl)
+        {
+            return new StringFormat
+            {
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center,
+                FormatFlags = rtl ? StringFormatFlags.DirectionRightToLeft : StringFormatFlags.FitBlackBox,
+                Trimming = StringTrimming.EllipsisCharacter
+            };
+        }
+
+        private static StringFormat SelectPrintFormat(string text, StringFormat rtlFormat, StringFormat ltrFormat)
+        {
+            return ReportOutputHelper.ContainsArabic(text) ? rtlFormat : ltrFormat;
         }
 
         private string SafeFileName(string value)
