@@ -233,6 +233,7 @@ coverage_script = ROOT / "tools" / "verify_service_audit_coverage.py"
 ui_script = ROOT / "tools" / "verify_rtl_ui_contract.py"
 readiness_script = ROOT / "tools" / "verify_operational_readiness.py"
 validation_script = ROOT / "tools" / "verify_validation_contract.py"
+ui_save_script = ROOT / "tools" / "inventory_ui_save_validation.py"
 coverage_result = subprocess.run(
     [sys.executable, str(coverage_script)],
     cwd=str(ROOT),
@@ -287,4 +288,18 @@ if validation_result.returncode != 0:
         print(validation_result.stderr.rstrip(), file=sys.stderr)
     print("FAIL: UI validation coverage check", file=sys.stderr)
     sys.exit(1)
+ui_save_result = subprocess.run(
+    [sys.executable, str(ui_save_script)],
+    cwd=str(ROOT),
+    text=True,
+    capture_output=True,
+)
+if ui_save_result.stdout:
+    print(ui_save_result.stdout.rstrip())
+if ui_save_result.returncode != 0 or "REVIEW:" in ui_save_result.stdout:
+    if ui_save_result.stderr:
+        print(ui_save_result.stderr.rstrip(), file=sys.stderr)
+    print("FAIL: UI save-handler validation check", file=sys.stderr)
+    sys.exit(1)
+print("PASS: UI save-handler validation check")
 print(f"PASS: {len(checks)} settings contract checks")
