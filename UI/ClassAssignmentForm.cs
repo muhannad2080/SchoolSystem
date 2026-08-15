@@ -127,8 +127,9 @@ namespace SchoolSystem.UI.Students
 
                 if (sections == null || sections.Rows.Count == 0)
                 {
-                    cmbSection.Items.Add("لا توجد شعب مسجلة لهذا الصف والعام الدراسي");
-                    cmbSection.SelectedIndex = 0;
+                    cmbSection.DataSource = null;
+                    cmbSection.Items.Clear();
+                    cmbSection.Enabled = false;
                     lblStatus.Text = "لا توجد شعب مسجلة لهذا الصف والعام الدراسي.";
                     return;
                 }
@@ -143,8 +144,7 @@ namespace SchoolSystem.UI.Students
             {
                 cmbSection.DataSource = null;
                 cmbSection.Items.Clear();
-                cmbSection.Items.Add("تعذر تحميل الشعب");
-                cmbSection.SelectedIndex = 0;
+                cmbSection.Enabled = false;
                 UIHelper.ShowException("تحميل شعب توزيع الطلاب", ex);
             }
         }

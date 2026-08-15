@@ -12,13 +12,14 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 const string query = @"
-                    SELECT DISTINCT LTRIM(RTRIM(ISNULL(Section, N''))) AS Section
-                    FROM Students
-                    WHERE ClassID = @ClassID
-                      AND AcademicYear = @AcademicYear
-                      AND ISNULL(Status, N'نشط') = N'نشط'
-                      AND NULLIF(LTRIM(RTRIM(ISNULL(Section, N''))), N'') IS NOT NULL
-                    ORDER BY Section";
+                    SELECT DISTINCT LTRIM(RTRIM(sc.Section)) AS Section
+                    FROM StudentClasses sc
+                    INNER JOIN Students s ON s.StudentID = sc.StudentID
+                    WHERE sc.ClassID = @ClassID
+                      AND sc.AcademicYear = @AcademicYear
+                      AND ISNULL(s.Status, N'نشط') = N'نشط'
+                      AND NULLIF(LTRIM(RTRIM(sc.Section)), N'') IS NOT NULL
+                    ORDER BY LTRIM(RTRIM(sc.Section))";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))

@@ -193,8 +193,9 @@ namespace SchoolSystem.UI
                 DataTable sections = await Task.Run(() => timetableService.GetSections(classId, academicYear));
                 if (sections == null || sections.Rows.Count == 0)
                 {
-                    cmbSection.Items.Add("لا توجد شعب مسجلة لهذا الصف والعام الدراسي");
-                    cmbSection.SelectedIndex = 0;
+                    cmbSection.DataSource = null;
+                    cmbSection.Items.Clear();
+                    cmbSection.Enabled = false;
                     return;
                 }
 
@@ -206,8 +207,9 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                cmbSection.Items.Add("تعذر تحميل الشعب");
-                cmbSection.SelectedIndex = 0;
+                cmbSection.DataSource = null;
+                cmbSection.Items.Clear();
+                cmbSection.Enabled = false;
                 UIHelper.ShowException("تحميل شعب الجدول الدراسي", ex);
             }
         }

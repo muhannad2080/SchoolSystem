@@ -189,8 +189,9 @@ namespace SchoolSystem.UI
 
             if (classId <= 0 || !IsValidAcademicYear(txtAcademicYear.Text))
             {
-                cmbSection.Items.Add("اختر صفًا وعامًا دراسيًا صحيحًا");
-                cmbSection.SelectedIndex = 0;
+                cmbSection.DataSource = null;
+                cmbSection.Items.Clear();
+                cmbSection.Enabled = false;
                 return;
             }
 
@@ -199,8 +200,9 @@ namespace SchoolSystem.UI
                 DataTable sections = await Task.Run(() => reportService.GetSections(classId, txtAcademicYear.Text.Trim()));
                 if (sections == null || sections.Rows.Count == 0)
                 {
-                    cmbSection.Items.Add("لا توجد شعب مسجلة");
-                    cmbSection.SelectedIndex = 0;
+                    cmbSection.DataSource = null;
+                    cmbSection.Items.Clear();
+                    cmbSection.Enabled = false;
                     return;
                 }
 
@@ -216,8 +218,9 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                cmbSection.Items.Add("تعذر تحميل الشعب");
-                cmbSection.SelectedIndex = 0;
+                cmbSection.DataSource = null;
+                cmbSection.Items.Clear();
+                cmbSection.Enabled = false;
                 UIHelper.ShowException("تحميل شعب مركز التقارير", ex);
             }
         }
