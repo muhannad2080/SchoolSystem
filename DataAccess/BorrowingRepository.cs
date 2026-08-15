@@ -11,6 +11,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
+                LibrarySchemaInitializer.EnsureBooksSchema(con);
                 string teacherNameColumn = GetTeacherNameColumn();
 
                 string query = @"
@@ -54,7 +55,8 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                                    string query = @"
+                LibrarySchemaInitializer.EnsureBooksSchema(con);
+                string query = @"
                         IF NOT EXISTS
                         (
                             SELECT 1

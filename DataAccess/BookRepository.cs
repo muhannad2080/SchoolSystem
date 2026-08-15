@@ -11,6 +11,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
+                LibrarySchemaInitializer.EnsureBooksSchema(con);
                 string query = @"
                     SELECT
                         b.BookID,
@@ -48,6 +49,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
+                LibrarySchemaInitializer.EnsureBooksSchema(con);
                 string query = @"
                     INSERT INTO Books
                     (
@@ -90,6 +92,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
+                LibrarySchemaInitializer.EnsureBooksSchema(con);
                 string query = @"
                     UPDATE Books SET
                         Title = @Title,
@@ -119,6 +122,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
+                LibrarySchemaInitializer.EnsureBooksSchema(con);
                 const string query = @"
                     IF EXISTS (SELECT 1 FROM BookBorrowings WHERE BookID = @BookID)
                         THROW 51002, N'لا يمكن حذف الكتاب لأنه مرتبط بسجلات إعارة. عطّل الكتاب بدلاً من حذفه.', 1;
@@ -140,6 +144,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
+                LibrarySchemaInitializer.EnsureBooksSchema(con);
                 string query = @"
                     SELECT 
                         b.Copies - ISNULL((

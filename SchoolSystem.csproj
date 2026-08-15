@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataAccess\BookRepository.cs" />
+    <Compile Include="DataAccess\LibrarySchemaInitializer.cs" />
     <Compile Include="DataAccess\BorrowingRepository.cs" />
     <Compile Include="DataAccess\BusRepository.cs" />
     <Compile Include="DataAccess\BusRouteRepository.cs" />
