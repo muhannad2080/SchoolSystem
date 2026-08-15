@@ -10,6 +10,7 @@ namespace SchoolSystem.Services
     public class TeacherAttendanceService
     {
         private readonly TeacherAttendanceRepository repository = new TeacherAttendanceRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         private readonly TimeSpan schoolStartTime = new TimeSpan(8, 0, 0);
         private readonly TimeSpan schoolEndTime = new TimeSpan(14, 0, 0);
@@ -25,7 +26,11 @@ namespace SchoolSystem.Services
             CurrentUser.DemandPermission(PermissionKeys.StaffAttendanceManage, "ليس لديك صلاحية إدارة حضور الموظفين.");
             ValidateAttendance(attendance, false);
             ApplyAttendanceCalculations(attendance);
-            return repository.AddAttendance(attendance);
+            bool added = repository.AddAttendance(attendance);
+            if (added)
+                auditLogService.Record("إنشاء", "TeacherAttendance", attendance.AttendanceID.ToString(),
+                    "تسجيل حضور المعلم رقم " + attendance.TeacherID + " بتاريخ " + attendance.AttendanceDate.ToString("yyyy-MM-dd"));
+            return added;
         }
 
         public bool UpdateAttendance(TeacherAttendance attendance)
@@ -33,7 +38,11 @@ namespace SchoolSystem.Services
             CurrentUser.DemandPermission(PermissionKeys.StaffAttendanceManage, "ليس لديك صلاحية إدارة حضور الموظفين.");
             ValidateAttendance(attendance, true);
             ApplyAttendanceCalculations(attendance);
-            return repository.UpdateAttendance(attendance);
+            bool updated = repository.UpdateAttendance(attendance);
+            if (updated)
+                auditLogService.Record("تعديل", "TeacherAttendance", attendance.AttendanceID.ToString(),
+                    "تعديل حضور المعلم رقم " + attendance.TeacherID + " بتاريخ " + attendance.AttendanceDate.ToString("yyyy-MM-dd"));
+            return updated;
         }
 
         public bool DeleteAttendance(int attendanceId)
@@ -42,7 +51,10 @@ namespace SchoolSystem.Services
             if (attendanceId <= 0)
                 throw new ArgumentException("رقم سجل الحضور غير صحيح.");
 
-            return repository.DeleteAttendance(attendanceId);
+            bool deleted = repository.DeleteAttendance(attendanceId);
+            if (deleted)
+                auditLogService.Record("حذف", "TeacherAttendance", attendanceId.ToString(), "حذف سجل حضور معلم.");
+            return deleted;
         }
 
         public bool AttendanceExists(int teacherId, DateTime attendanceDate)

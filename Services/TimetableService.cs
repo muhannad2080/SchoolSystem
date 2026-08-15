@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class TimetableService
     {
         private readonly TimetableRepository repository = new TimetableRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetTeachers()
         {
@@ -55,7 +56,11 @@ namespace SchoolSystem.Services
             if (repository.HasRoomConflict(item))
                 throw new ArgumentException("يوجد تعارض: القاعة مستخدمة في نفس الوقت.");
 
-            return repository.AddTimetable(item);
+            bool added = repository.AddTimetable(item);
+            if (added)
+                auditLogService.Record("إنشاء", "Timetable", item.TimetableID.ToString(),
+                    "إضافة حصة للصف رقم " + item.ClassID + " والمادة رقم " + item.SubjectID);
+            return added;
         }
 
         public bool UpdateTimetable(TimetableEntry item)
@@ -75,7 +80,11 @@ namespace SchoolSystem.Services
             if (repository.HasRoomConflict(item))
                 throw new ArgumentException("يوجد تعارض: القاعة مستخدمة في نفس الوقت.");
 
-            return repository.UpdateTimetable(item);
+            bool updated = repository.UpdateTimetable(item);
+            if (updated)
+                auditLogService.Record("تعديل", "Timetable", item.TimetableID.ToString(),
+                    "تعديل حصة للصف رقم " + item.ClassID + " والمادة رقم " + item.SubjectID);
+            return updated;
         }
 
         public bool DeleteTimetable(int timetableId)
@@ -84,7 +93,10 @@ namespace SchoolSystem.Services
             if (timetableId <= 0)
                 throw new ArgumentException("رقم الحصة غير صحيح.");
 
-            return repository.DeleteTimetable(timetableId);
+            bool deleted = repository.DeleteTimetable(timetableId);
+            if (deleted)
+                auditLogService.Record("حذف", "Timetable", timetableId.ToString(), "حذف حصة من الجدول الدراسي.");
+            return deleted;
         }
 
         private static void EnsureCanManageTimetable()

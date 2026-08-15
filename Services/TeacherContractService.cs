@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class TeacherContractService
     {
         private readonly TeacherContractRepository repository = new TeacherContractRepository();
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetAllContracts()
         {
@@ -22,6 +23,8 @@ namespace SchoolSystem.Services
             if (contract == null)
                 throw new ArgumentException("بيانات العقد غير صحيحة.");
             repository.AddContract(contract);
+            auditLogService.Record("إنشاء", "TeacherContract", contract.ContractID.ToString(),
+                "إنشاء عقد للمعلم رقم " + contract.TeacherID);
         }
 
         public bool UpdateContract(TeacherContract contract)
@@ -29,7 +32,11 @@ namespace SchoolSystem.Services
             EnsureCanManageTeacherContracts();
             if (contract == null)
                 throw new ArgumentException("بيانات العقد غير صحيحة.");
-            return repository.UpdateContract(contract);
+            bool updated = repository.UpdateContract(contract);
+            if (updated)
+                auditLogService.Record("تعديل", "TeacherContract", contract.ContractID.ToString(),
+                    "تعديل عقد المعلم رقم " + contract.TeacherID);
+            return updated;
         }
 
         public bool DeleteContract(int contractId)
@@ -37,7 +44,10 @@ namespace SchoolSystem.Services
             EnsureCanManageTeacherContracts();
             if (contractId <= 0)
                 throw new ArgumentException("رقم العقد غير صحيح.");
-            return repository.DeleteContract(contractId);
+            bool deleted = repository.DeleteContract(contractId);
+            if (deleted)
+                auditLogService.Record("حذف", "TeacherContract", contractId.ToString(), "حذف عقد معلم.");
+            return deleted;
         }
 
         private static void EnsureCanManageTeacherContracts()

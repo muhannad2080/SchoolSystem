@@ -10,11 +10,13 @@ namespace SchoolSystem.Services
     {
         private readonly BorrowingRepository borrowingRepository;
         private readonly BookRepository bookRepository;
+        private readonly AuditLogService auditLogService;
 
         public BorrowingService()
         {
             borrowingRepository = new BorrowingRepository();
             bookRepository = new BookRepository();
+            auditLogService = new AuditLogService();
         }
 
         public DataTable GetAllBorrowings()
@@ -41,7 +43,13 @@ namespace SchoolSystem.Services
                 throw new Exception("هذا المستعير لديه نفس الكتاب معار حالياً.");
             }
 
-            return borrowingRepository.AddBorrowing(borrowing);
+            bool added = borrowingRepository.AddBorrowing(borrowing);
+            if (added)
+            {
+                auditLogService.Record("إنشاء", "BookBorrowing", borrowing.BorrowingID.ToString(),
+                    "إنشاء إعارة للكتاب رقم " + borrowing.BookID + " إلى " + borrowing.BorrowerType + " رقم " + borrowing.BorrowerID);
+            }
+            return added;
         }
 
         public bool ReturnBook(int borrowingId, DateTime returnDate)
@@ -50,7 +58,10 @@ namespace SchoolSystem.Services
             if (borrowingId <= 0)
                 throw new Exception("رقم الإعارة غير صحيح.");
 
-            return borrowingRepository.ReturnBook(borrowingId, returnDate);
+            bool returned = borrowingRepository.ReturnBook(borrowingId, returnDate);
+            if (returned)
+                auditLogService.Record("إرجاع", "BookBorrowing", borrowingId.ToString(), "إرجاع كتاب معار.");
+            return returned;
         }
 
         private void ValidateBorrowing(Borrowing borrowing)

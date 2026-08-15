@@ -9,10 +9,12 @@ namespace SchoolSystem.Services
     public class BusRouteService
     {
         private readonly BusRouteRepository routeRepository;
+        private readonly AuditLogService auditLogService;
 
         public BusRouteService()
         {
             routeRepository = new BusRouteRepository();
+            auditLogService = new AuditLogService();
         }
 
         public DataTable GetAllRoutes()
@@ -25,7 +27,10 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
             ValidateRoute(route);
-            return routeRepository.AddRoute(route);
+            bool added = routeRepository.AddRoute(route);
+            if (added)
+                auditLogService.Record("إنشاء", "BusRoute", route.RouteID.ToString(), "إضافة مسار نقل: " + route.RouteName);
+            return added;
         }
 
         public bool UpdateRoute(BusRoute route)
@@ -35,7 +40,10 @@ namespace SchoolSystem.Services
                 throw new Exception("رقم المسار غير صحيح.");
 
             ValidateRoute(route);
-            return routeRepository.UpdateRoute(route);
+            bool updated = routeRepository.UpdateRoute(route);
+            if (updated)
+                auditLogService.Record("تعديل", "BusRoute", route.RouteID.ToString(), "تعديل مسار النقل: " + route.RouteName);
+            return updated;
         }
 
         public bool DeleteRoute(int routeId)
@@ -44,7 +52,10 @@ namespace SchoolSystem.Services
             if (routeId <= 0)
                 throw new Exception("رقم المسار غير صحيح.");
 
-            return routeRepository.DeleteRoute(routeId);
+            bool deleted = routeRepository.DeleteRoute(routeId);
+            if (deleted)
+                auditLogService.Record("حذف", "BusRoute", routeId.ToString(), "حذف مسار نقل.");
+            return deleted;
         }
 
         private void ValidateRoute(BusRoute route)
