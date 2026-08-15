@@ -4,12 +4,15 @@ import re
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-TARGETS = {
-    "UsersForm": (ROOT / "UI" / "UsersForm.cs", ROOT / "UI" / "UsersForm.Designer.cs"),
-    "StudentProfileForm": (ROOT / "UI" / "StudentProfileForm.cs", ROOT / "UI" / "StudentProfileForm.Designer.cs"),
-    "SettingsForm": (ROOT / "UI" / "SettingsForm.cs", ROOT / "UI" / "SettingsForm.Designer.cs"),
-    "AuditLogForm": (ROOT / "UI" / "AuditLogForm.cs", ROOT / "UI" / "AuditLogForm.Designer.cs"),
-}
+TARGETS = {}
+for designer_path in sorted((ROOT / "UI").glob("*.Designer.cs")):
+    match = re.search(r"partial class\s+(\w+)", designer_path.read_text(encoding="utf-8", errors="ignore"))
+    if not match:
+        continue
+    name = match.group(1)
+    code_path = designer_path.with_name(name + ".cs")
+    if code_path.exists():
+        TARGETS[name] = (code_path, designer_path)
 
 failures = []
 for name, (code_path, designer_path) in TARGETS.items():
@@ -34,4 +37,4 @@ if failures:
     print("FAIL: RTL/designer checks: " + ", ".join(failures), file=sys.stderr)
     sys.exit(1)
 
-print(f"PASS: {len(TARGETS)} core RTL WinForms screens")
+print(f"PASS: {len(TARGETS)} RTL WinForms screens")
