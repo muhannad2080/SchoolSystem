@@ -32,6 +32,7 @@ namespace SchoolSystem.UI
 
             cmbClass.SelectedIndexChanged += cmbClass_SelectedIndexChanged;
             txtAcademicYear.Leave += txtAcademicYear_Leave;
+            dataGridViewGrades.CellValidating += dataGridViewGrades_CellValidating;
         }
 
         private void ApplyCustomStyles()
@@ -367,6 +368,64 @@ namespace SchoolSystem.UI
                 dataGridViewGrades.Columns[columnName].ReadOnly = true;
         }
 
+        private void dataGridViewGrades_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0 || dataGridViewGrades.Rows[e.RowIndex].IsNewRow)
+                return;
+
+            string columnName = dataGridViewGrades.Columns[e.ColumnIndex].Name;
+            if (columnName == "Quiz1" || columnName == "Quiz2" ||
+                columnName == "CourseWork" || columnName == "FinalExam")
+            {
+                string value = e.FormattedValue == null ? string.Empty : e.FormattedValue.ToString().Trim();
+                if (string.IsNullOrWhiteSpace(value))
+                    return;
+
+                if (!UIHelper.TryParseDecimal(value, out decimal grade) || grade < 0 || grade > 100)
+                {
+                    e.Cancel = true;
+                    ShowWarning("أدخل درجة رقمية بين 0 و100.");
+                    return;
+                }
+
+                decimal total = grade;
+                string[] gradeColumns = { "Quiz1", "Quiz2", "CourseWork", "FinalExam" };
+                foreach (string gradeColumn in gradeColumns)
+                {
+                    if (gradeColumn == columnName)
+                        continue;
+
+                    object cellValue = dataGridViewGrades.Rows[e.RowIndex].Cells[gradeColumn].Value;
+                    if (cellValue == null || cellValue == DBNull.Value || string.IsNullOrWhiteSpace(cellValue.ToString()))
+                        continue;
+
+                    if (!UIHelper.TryParseDecimal(cellValue.ToString(), out decimal existingGrade) || existingGrade < 0 || existingGrade > 100)
+                    {
+                        e.Cancel = true;
+                        ShowWarning("توجد درجة أخرى غير صالحة في الصف نفسه.");
+                        return;
+                    }
+
+                    total += existingGrade;
+                }
+
+                if (total > 100)
+                {
+                    e.Cancel = true;
+                    ShowWarning("مجموع درجات الطالب لا يمكن أن يتجاوز 100.");
+                }
+            }
+            else if (columnName == "Notes")
+            {
+                string notes = e.FormattedValue == null ? string.Empty : e.FormattedValue.ToString();
+                if (notes.Length > 1000)
+                {
+                    e.Cancel = true;
+                    ShowWarning("ملاحظات الدرجة لا يمكن أن تتجاوز 1000 حرف.");
+                }
+            }
+        }
+
         private void dataGridViewGrades_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0)
@@ -522,7 +581,13 @@ namespace SchoolSystem.UI
                     if (row.Cells["Notes"].Value == null || row.Cells["Notes"].Value == DBNull.Value)
                         grade.Notes = "";
                     else
-                        grade.Notes = row.Cells["Notes"].Value.ToString();
+                        grade.Notes = row.Cells["Notes"].Value.ToString().Trim();
+
+                    if (grade.Notes.Length > 1000)
+                    {
+                        ShowWarning("ملاحظات الدرجة لا يمكن أن تتجاوز 1000 حرف.");
+                        return;
+                    }
 
                     bool saved = await Task.Run(() => gradeService.SaveGrade(grade));
 

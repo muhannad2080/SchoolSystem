@@ -582,7 +582,15 @@ namespace SchoolSystem.UI
 
         private bool ValidateInputs()
         {
-            if (cmbVoucherType.SelectedItem == null)
+            string voucherNumber = txtVoucherNumber.Text == null ? string.Empty : txtVoucherNumber.Text.Trim();
+            if (string.IsNullOrWhiteSpace(voucherNumber) || voucherNumber.Length > 50 ||
+                voucherNumber.IndexOfAny(new[] { '\r', '\n', '\t' }) >= 0)
+            {
+                UIHelper.FocusAndWarn(txtVoucherNumber, "أدخل رقم سند صحيحاً بطول لا يتجاوز 50 حرفاً.");
+                return false;
+            }
+
+            if (cmbVoucherType.SelectedItem == null || string.IsNullOrWhiteSpace(cmbVoucherType.Text))
             {
                 UIHelper.ShowWarning("اختر نوع السند.");
                 cmbVoucherType.Focus();
@@ -597,10 +605,17 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            if (amount <= 0)
+            if (amount <= 0 || amount > 100000000m)
             {
-                UIHelper.ShowWarning("يجب أن يكون مبلغ السند أكبر من صفر.");
+                UIHelper.ShowWarning("يجب أن يكون مبلغ السند أكبر من صفر ولا يتجاوز 100,000,000.");
                 txtAmount.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(cmbReferenceType.Text))
+            {
+                UIHelper.ShowWarning("اختر نوع المرجع.");
+                cmbReferenceType.Focus();
                 return false;
             }
 
