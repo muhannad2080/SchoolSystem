@@ -6,6 +6,7 @@ using System.Linq;
 using ClosedXML.Excel;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using ITextFont = iTextSharp.text.Font;
 
 namespace SchoolSystem.Helpers
 {
@@ -18,6 +19,7 @@ namespace SchoolSystem.Helpers
         private static readonly BaseColor Accent = new BaseColor(37, 99, 235);
         private static readonly BaseColor Border = new BaseColor(203, 213, 225);
         private static readonly BaseColor Alternate = new BaseColor(248, 250, 252);
+        private static readonly BaseColor White = new BaseColor(255, 255, 255);
 
         public static void ExportToExcel(DataTable table, string filePath, string title, string summary)
         {
@@ -27,7 +29,6 @@ namespace SchoolSystem.Helpers
                 IXLWorksheet sheet = workbook.Worksheets.Add("Report");
                 sheet.RightToLeft = ContainsArabic(title) || ContainsArabic(summary)
                     || ContainsArabicColumns(table) || ContainsArabicValues(table);
-                sheet.SheetView.ShowGridLines = false;
 
                 int columnCount = Math.Max(1, table.Columns.Count);
                 int headerRow = 6;
@@ -64,7 +65,7 @@ namespace SchoolSystem.Helpers
                     {
                         IXLCell cell = sheet.Cell(headerRow + row + 1, column + 1);
                         object value = table.Rows[row][column];
-                        cell.Value = value == DBNull.Value ? string.Empty : value;
+                        cell.Value = value == DBNull.Value ? string.Empty : Convert.ToString(value);
                         cell.Style.Font.FontName = "Tahoma";
                         cell.Style.Alignment.Horizontal = IsNumeric(value)
                             ? XLAlignmentHorizontalValues.Center
@@ -103,18 +104,18 @@ namespace SchoolSystem.Helpers
                 document.Open();
 
                 BaseFont baseFont = CreateBaseFont();
-                Font titleFont = new Font(baseFont, 16, Font.BOLD);
-                Font summaryFont = new Font(baseFont, 9, Font.NORMAL);
-                Font headerFont = new Font(baseFont, table.Columns.Count > 10 ? 7 : 8, Font.BOLD);
-                Font cellFont = new Font(baseFont, table.Columns.Count > 10 ? 6 : 8, Font.NORMAL);
+                ITextFont titleFont = new ITextFont(baseFont, 16f, ITextFont.BOLD);
+                ITextFont summaryFont = new ITextFont(baseFont, 9f, ITextFont.NORMAL);
+                ITextFont headerFont = new ITextFont(baseFont, table.Columns.Count > 10 ? 7f : 8f, ITextFont.BOLD);
+                ITextFont cellFont = new ITextFont(baseFont, table.Columns.Count > 10 ? 6f : 8f, ITextFont.NORMAL);
 
                 PdfPTable heading = new PdfPTable(1);
                 heading.WidthPercentage = 100;
                 heading.RunDirection = ContainsArabic(title) || ContainsArabic(summary)
                     ? PdfWriter.RUN_DIRECTION_RTL : PdfWriter.RUN_DIRECTION_LTR;
                 AddTextCell(heading, title ?? "School System Report", titleFont, Navy, Element.ALIGN_CENTER);
-                AddTextCell(heading, summary ?? string.Empty, summaryFont, BaseColor.WHITE, Element.ALIGN_CENTER);
-                AddTextCell(heading, "Generated: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm"), summaryFont, BaseColor.WHITE, Element.ALIGN_CENTER);
+                AddTextCell(heading, summary ?? string.Empty, summaryFont, White, Element.ALIGN_CENTER);
+                AddTextCell(heading, "Generated: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm"), summaryFont, White, Element.ALIGN_CENTER);
                 document.Add(heading);
                 document.Add(new Paragraph(" "));
 
@@ -133,7 +134,7 @@ namespace SchoolSystem.Helpers
                     {
                         string text = value == DBNull.Value ? string.Empty : Convert.ToString(value);
                         int direction = ContainsArabic(text) ? PdfWriter.RUN_DIRECTION_RTL : PdfWriter.RUN_DIRECTION_LTR;
-                        AddTextCell(grid, text, cellFont, BaseColor.WHITE, IsNumeric(value) ? Element.ALIGN_CENTER : direction == PdfWriter.RUN_DIRECTION_RTL ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT, direction);
+                        AddTextCell(grid, text, cellFont, White, IsNumeric(value) ? Element.ALIGN_CENTER : direction == PdfWriter.RUN_DIRECTION_RTL ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT, direction);
                     }
                 }
 
@@ -179,8 +180,7 @@ namespace SchoolSystem.Helpers
         {
             if (value == null || value == DBNull.Value)
                 return false;
-            decimal number;
-            return decimal.TryParse(Convert.ToString(value), out number);
+            return decimal.TryParse(Convert.ToString(value), out _);
         }
 
         private static void EnsureTable(DataTable table)
@@ -203,7 +203,7 @@ namespace SchoolSystem.Helpers
             cell.Style.Alignment.WrapText = true;
         }
 
-        private static void AddTextCell(PdfPTable table, string text, Font font, BaseColor background, int alignment, int direction = PdfWriter.RUN_DIRECTION_DEFAULT)
+        private static void AddTextCell(PdfPTable table, string text, ITextFont font, BaseColor background, int alignment, int direction = PdfWriter.RUN_DIRECTION_DEFAULT)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text ?? string.Empty, font));
             cell.BackgroundColor = background;
