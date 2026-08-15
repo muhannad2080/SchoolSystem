@@ -12,12 +12,14 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 const string query = @"
-                    SELECT DISTINCT LTRIM(RTRIM(SectionName)) AS Section
+                    SELECT LTRIM(RTRIM(SectionName)) AS Section
                     FROM SchoolSections
                     WHERE (@ClassID = 0 OR ClassID = @ClassID)
                       AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
                       AND IsActive = 1
-                    ORDER BY LTRIM(RTRIM(SectionName))";
+                      AND NULLIF(LTRIM(RTRIM(SectionName)), N'') IS NOT NULL
+                    GROUP BY LTRIM(RTRIM(SectionName))
+                    ORDER BY Section";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

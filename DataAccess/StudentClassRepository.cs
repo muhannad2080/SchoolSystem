@@ -48,7 +48,7 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 const string query = @"
-                    SELECT SectionName AS Section
+                    SELECT LTRIM(RTRIM(SectionName)) AS Section
                     FROM SchoolSections
                     WHERE ClassID = @ClassID
                       AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')

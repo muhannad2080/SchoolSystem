@@ -198,18 +198,26 @@ namespace SchoolSystem.UI
             try
             {
                 DataTable sections = await Task.Run(() => reportService.GetSections(classId, txtAcademicYear.Text.Trim()));
-                if (sections == null || sections.Rows.Count == 0)
-                {
-                    cmbSection.DataSource = null;
-                    cmbSection.Items.Clear();
-                    cmbSection.Enabled = false;
-                    return;
-                }
+                if (sections == null)
+                    sections = new DataTable();
 
                 DataTable choices = sections.Copy();
-                DataRow allRow = choices.NewRow();
-                allRow["Section"] = "";
-                choices.Rows.InsertAt(allRow, 0);
+                if (!choices.Columns.Contains("Section"))
+                    choices.Columns.Add("Section", typeof(string));
+
+                if (choices.Rows.Count == 0)
+                {
+                    DataRow emptyRow = choices.NewRow();
+                    emptyRow["Section"] = "لا توجد شعب متاحة";
+                    choices.Rows.Add(emptyRow);
+                }
+                else
+                {
+                    DataRow allRow = choices.NewRow();
+                    allRow["Section"] = "";
+                    choices.Rows.InsertAt(allRow, 0);
+                }
+
                 cmbSection.DataSource = choices;
                 cmbSection.DisplayMember = "Section";
                 cmbSection.ValueMember = "Section";
@@ -310,6 +318,8 @@ namespace SchoolSystem.UI
             request.ReportType = cmbReportType.Text;
             request.AcademicYear = txtAcademicYear.Text.Trim();
             request.Section = cmbSection.Text.Trim();
+            if (request.Section == "لا توجد شعب متاحة")
+                request.Section = string.Empty;
             request.Status = cmbStatus.Text.Trim();
             request.FromDate = dtpFromDate.Value.Date;
             request.ToDate = dtpToDate.Value.Date;
