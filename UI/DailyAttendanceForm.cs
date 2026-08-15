@@ -19,8 +19,7 @@ namespace SchoolSystem.UI
         public DailyAttendanceForm()
         {
             InitializeComponent();
-            SchoolSystem.Helpers.UIHelper.ApplyTheme(this);
-            SchoolSystem.Helpers.UIHelper.ApplyInputValidation(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
 
             Dock = DockStyle.Fill;
             ConfigureResponsiveLayout();

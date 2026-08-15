@@ -20,7 +20,7 @@ namespace SchoolSystem.UI
         public StudentProfileForm()
         {
             InitializeComponent();
-            UIHelper.ApplyInputValidation(this);
+            UIHelper.ApplyStyle(this);
             ConfigureGrid(dgvAttendance);
             ConfigureGrid(dgvMarks);
             ConfigureGrid(dgvFees);
@@ -34,7 +34,7 @@ namespace SchoolSystem.UI
 
             this.studentId = studentId;
             InitializeComponent();
-            UIHelper.ApplyInputValidation(this);
+            UIHelper.ApplyStyle(this);
             ConfigureGrid(dgvAttendance);
             ConfigureGrid(dgvMarks);
             ConfigureGrid(dgvFees);

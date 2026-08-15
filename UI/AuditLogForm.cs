@@ -18,8 +18,7 @@ namespace SchoolSystem.UI
         public AuditLogForm()
         {
             InitializeComponent();
-            UIHelper.ApplyTheme(this);
-            UIHelper.ApplyInputValidation(this);
+            UIHelper.ApplyStyle(this);
             BackColor = UIHelper.BackgroundColor;
             RightToLeft = RightToLeft.Yes;
             fromDate.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);

@@ -21,8 +21,7 @@ namespace SchoolSystem.UI
         public GradeEntryForm()
         {
             InitializeComponent();
-            SchoolSystem.Helpers.UIHelper.ApplyTheme(this);
-            SchoolSystem.Helpers.UIHelper.ApplyInputValidation(this);
+            SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
 
             Dock = DockStyle.Fill;
