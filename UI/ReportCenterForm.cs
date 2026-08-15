@@ -201,22 +201,37 @@ namespace SchoolSystem.UI
                 if (sections == null)
                     sections = new DataTable();
 
-                DataTable choices = sections.Copy();
-                if (!choices.Columns.Contains("Section"))
-                    choices.Columns.Add("Section", typeof(string));
+                DataTable choices = new DataTable();
+                choices.Columns.Add("Section", typeof(string));
+                var sectionNames = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                if (sections != null && sections.Columns.Contains("Section"))
+                {
+                    foreach (DataRow row in sections.Rows)
+                    {
+                        string sectionName = row["Section"] == DBNull.Value
+                            ? string.Empty
+                            : Convert.ToString(row["Section"]);
+                        sectionName = (sectionName ?? string.Empty).Trim();
+                        if (!string.IsNullOrWhiteSpace(sectionName) && sectionNames.Add(sectionName))
+                            choices.Rows.Add(sectionName);
+                    }
+                }
 
                 if (choices.Rows.Count == 0)
                 {
-                    DataRow emptyRow = choices.NewRow();
-                    emptyRow["Section"] = "لا توجد شعب متاحة";
-                    choices.Rows.Add(emptyRow);
+                    choices.Rows.Add("لا توجد شعب متاحة");
+                    cmbSection.DataSource = choices;
+                    cmbSection.DisplayMember = "Section";
+                    cmbSection.ValueMember = "Section";
+                    cmbSection.SelectedIndex = 0;
+                    cmbSection.Enabled = false;
+                    return;
                 }
-                else
-                {
-                    DataRow allRow = choices.NewRow();
-                    allRow["Section"] = "";
-                    choices.Rows.InsertAt(allRow, 0);
-                }
+
+                DataRow allRow = choices.NewRow();
+                allRow["Section"] = string.Empty;
+                choices.Rows.InsertAt(allRow, 0);
 
                 cmbSection.DataSource = choices;
                 cmbSection.DisplayMember = "Section";

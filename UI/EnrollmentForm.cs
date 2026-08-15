@@ -284,7 +284,7 @@ namespace SchoolSystem.UI
 
         private void UpdateCount()
         {
-            lblCount.Text = $"العدد: {enrollmentsView.Count}";
+            lblCount.Text = $"العدد: {(enrollmentsView == null ? 0 : enrollmentsView.Count)}";
         }
 
         private void cmbStudentID_SelectedIndexChanged(object sender, EventArgs e)
@@ -305,17 +305,21 @@ namespace SchoolSystem.UI
 
         private void CalculateRemaining()
         {
-            decimal fee = 0;
-            decimal paid = 0;
+            decimal fee = ParseAmountOrZero(txtRegistrationFee.Text);
+            decimal paid = ParseAmountOrZero(txtPaidAmount.Text);
+            decimal remaining = fee - paid;
 
-            decimal.TryParse(txtRegistrationFee.Text, out fee);
-            decimal.TryParse(txtPaidAmount.Text, out paid);
-
-            txtRemainingAmount.Text = (fee - paid).ToString();
+            txtRemainingAmount.Text = remaining.ToString("0.##");
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
+            if (enrollmentsView == null)
+            {
+                UpdateCount();
+                return;
+            }
+
             string keyword = UIHelper.EscapeDataViewFilterValue(txtSearch.Text);
             if (string.IsNullOrEmpty(keyword))
             {
@@ -344,7 +348,8 @@ namespace SchoolSystem.UI
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             txtSearch.Clear();
-            enrollmentsView.RowFilter = "";
+            if (enrollmentsView != null)
+                enrollmentsView.RowFilter = "";
             LoadData();
         }
 
@@ -600,7 +605,7 @@ namespace SchoolSystem.UI
 
         private void dgvEnrollments_SelectionChanged(object sender, EventArgs e)
         {
-            if (dgvEnrollments.CurrentRow != null)
+            if (dgvEnrollments.CurrentRow != null && !dgvEnrollments.CurrentRow.IsNewRow)
             {
                 LoadRecordToScreen(dgvEnrollments.CurrentRow);
             }
@@ -712,7 +717,7 @@ namespace SchoolSystem.UI
 
         private async void LoadRecordToScreen(DataGridViewRow row)
         {
-            if (isEditMode) return;
+            if (row == null || row.IsNewRow || isEditMode || isLoading) return;
 
             isLoading = true;
             try
@@ -896,8 +901,9 @@ namespace SchoolSystem.UI
 
             btnSave.Enabled = false;
             btnAdd.Enabled = true;
-            btnUpdate.Enabled = true;
-            btnDelete.Enabled = true;
+            bool hasSelectedRecord = int.TryParse(txtEnrollmentID.Text, out int selectedId) && selectedId > 0;
+            btnUpdate.Enabled = hasSelectedRecord;
+            btnDelete.Enabled = hasSelectedRecord;
         }
 
         private void EnableInputs()
