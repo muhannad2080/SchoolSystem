@@ -333,7 +333,7 @@
             this.lblDateTime.Size = new System.Drawing.Size(392, 60);
             this.lblDateTime.TabIndex = 0;
             this.lblDateTime.Text = "الخميس, 08/07/2026  10:30:45";
-            this.lblDateTime.StateCommon.ShortText.TextH = Krypton.Toolkit.PaletteRelativeAlign.Left;
+            this.lblDateTime.StateCommon.ShortText.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
             this.lblDateTime.StateCommon.ShortText.TextV = Krypton.Toolkit.PaletteRelativeAlign.Center;
 
             // lblUsername
@@ -358,7 +358,7 @@
             this.lblSystemTitle.Size = new System.Drawing.Size(392, 60);
             this.lblSystemTitle.TabIndex = 2;
             this.lblSystemTitle.Text = "نظام إدارة المدرسة";
-            this.lblSystemTitle.StateCommon.ShortText.TextH = Krypton.Toolkit.PaletteRelativeAlign.Right;
+            this.lblSystemTitle.StateCommon.ShortText.TextH = Krypton.Toolkit.PaletteRelativeAlign.Far;
             this.lblSystemTitle.StateCommon.ShortText.TextV = Krypton.Toolkit.PaletteRelativeAlign.Center;
 
             // panelContent
