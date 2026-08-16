@@ -41,21 +41,17 @@ namespace SchoolSystem
             menuStripMain.ForeColor = Color.White;
             menuStripMain.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
             menuStripMain.Padding = new Padding(4, 6, 4, 6);
-            menuStripMain.CanOverflow = false;
-            menuStripMain.AutoSize = false;
+            menuStripMain.CanOverflow = true;
+            menuStripMain.AutoSize = true;
             menuStripMain.RenderMode = ToolStripRenderMode.Professional;
-            tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
-            tsmiSettings.Overflow = ToolStripItemOverflow.Never;
-            tsmiSettings.Alignment = ToolStripItemAlignment.Right;
-            tsmiLogout.Overflow = ToolStripItemOverflow.Never;
-            tsmiLogout.Alignment = ToolStripItemAlignment.Right;
+            menuStripMain.Stretch = true;
 
             foreach (ToolStripItem item in menuStripMain.Items)
             {
                 item.BackColor = mainColor;
                 item.ForeColor = Color.White;
-                item.Margin = new Padding(2, 0, 2, 0);
-                item.Padding = new Padding(4, 0, 4, 0);
+                item.Margin = new Padding(1, 0, 1, 0);
+                item.Padding = new Padding(8, 0, 8, 0);
 
                 ToolStripMenuItem menuItem = item as ToolStripMenuItem;
                 if (menuItem != null)
@@ -63,7 +59,7 @@ namespace SchoolSystem
             }
 
             panelTop.BackColor = UIHelper.SurfaceElevatedColor;
-            panelTop.Height = 76;
+            panelTop.Height = 84;
 
             lblSystemTitle.Font = new Font(UIHelper.FontFamily, UIHelper.TitleFontSize, FontStyle.Bold);
             lblSystemTitle.ForeColor = UIHelper.TextColor;
@@ -72,19 +68,16 @@ namespace SchoolSystem
             lblUsername.BackColor = UIHelper.SurfaceSecondaryColor;
             lblUsername.ForeColor = accentColor;
             lblUsername.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
-            lblUsername.Padding = new Padding(12, 0, 12, 0);
+            lblUsername.Padding = new Padding(10, 4, 10, 4);
 
-            string currentUserText = lblUsername.Text ?? string.Empty;
-            if (currentUserText.StartsWith("المستخدم:", StringComparison.Ordinal))
-                currentUserText = currentUserText.Substring("المستخدم:".Length).Trim();
-
-            lblUsername.Text = "المستخدم: " + currentUserText;
+            lblUserRole.ForeColor = UIHelper.MutedTextColor;
+            lblUserRole.Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize, FontStyle.Bold);
 
             lblDateTime.ForeColor = UIHelper.MutedTextColor;
             lblDateTime.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
 
             panelContent.BackColor = contentBack;
-            panelContent.Padding = new Padding(18);
+            panelContent.Padding = new Padding(16);
 
             statusStripMain.BackColor = UIHelper.SurfaceElevatedColor;
             statusStripMain.ForeColor = UIHelper.MutedTextColor;
@@ -95,7 +88,7 @@ namespace SchoolSystem
             lblOnlineUsers.ForeColor = UIHelper.MutedTextColor;
 
             this.BackColor = contentBack;
-            this.MinimumSize = new Size(1100, 650);
+            this.MinimumSize = new Size(980, 620);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "نظام إدارة المدرسة";
         }
@@ -113,7 +106,13 @@ namespace SchoolSystem
             if (string.IsNullOrWhiteSpace(displayName))
                 displayName = "مستخدم";
 
-            lblUsername.Text = "المستخدم: " + displayName;
+            lblUsername.Text = "👤 " + displayName;
+
+            string roleName = CurrentUser.User.RoleName;
+            if (string.IsNullOrWhiteSpace(roleName))
+                roleName = "مستخدم النظام";
+
+            lblUserRole.Text = roleName;
         }
 
         private void StyleDropDownItems(ToolStripMenuItem parent)
