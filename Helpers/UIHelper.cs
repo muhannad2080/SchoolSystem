@@ -71,6 +71,7 @@ namespace SchoolSystem.Helpers
             ApplyKryptonTheme((Control)form);
             ApplyInputValidation(form);
             ApplyResponsiveLayout(form);
+            ApplyConsistentLayout(form);
         }
 
         public static void ApplyStyle(UserControl uc)
@@ -80,6 +81,63 @@ namespace SchoolSystem.Helpers
             ApplyKryptonTheme((Control)uc);
             ApplyInputValidation(uc);
             ApplyResponsiveLayout(uc);
+            ApplyConsistentLayout(uc);
+        }
+
+        /// <summary>
+        /// يطبق قواعد تخطيط عامة لا تغيّر مواقع المصمم الصريحة، لكنها تمنع
+        /// اختفاء العناصر وتوحّد اتجاه الحاويات والأزرار والجداول في جميع الشاشات.
+        /// </summary>
+        public static void ApplyConsistentLayout(Control root)
+        {
+            if (root == null || IsDesignMode(root))
+                return;
+
+            ApplyConsistentLayoutRecursive(root);
+        }
+
+        private static void ApplyConsistentLayoutRecursive(Control parent)
+        {
+            foreach (Control child in parent.Controls)
+            {
+                child.RightToLeft = RightToLeft.Yes;
+
+                TableLayoutPanel table = child as TableLayoutPanel;
+                if (table != null)
+                {
+                    table.AutoSize = false;
+                    table.AutoScroll = false;
+                    if (table.Padding == Padding.Empty)
+                        table.Padding = new Padding(Space8);
+                }
+
+                FlowLayoutPanel flow = child as FlowLayoutPanel;
+                if (flow != null)
+                {
+                    flow.AutoScroll = true;
+                    flow.WrapContents = false;
+                    flow.Padding = new Padding(Space8);
+                    flow.FlowDirection = FlowDirection.RightToLeft;
+                }
+
+                Panel panel = child as Panel;
+                if (panel != null && panel.Padding == Padding.Empty)
+                    panel.Padding = new Padding(Space8);
+
+                Button button = child as Button;
+                if (button != null)
+                    StyleActionButton(button);
+
+                KryptonButton kryptonButton = child as KryptonButton;
+                if (kryptonButton != null)
+                    StyleButton(kryptonButton, AccentColor);
+
+                DataGridView grid = child as DataGridView;
+                if (grid != null)
+                    StyleDataGridView(grid);
+
+                ApplyConsistentLayoutRecursive(child);
+            }
         }
 
         public static void ApplyResponsiveLayout(Control root)

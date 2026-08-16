@@ -27,6 +27,7 @@ namespace SchoolSystem.UI
         private Button btnPreview;
         private Button btnPrint;
         private Button btnExportExcel;
+        private FlowLayoutPanel actionLayout;
         private DateTimePicker dtpFilterFrom;
         private DateTimePicker dtpFilterTo;
         private Label lblFilterFrom;
@@ -64,16 +65,45 @@ namespace SchoolSystem.UI
             btnPrint.Click += (s, e) => PrintSelectedVoucher();
             btnExportExcel.Click += (s, e) => ExportVisibleVouchersExcel();
 
-            panelButtons.Controls.Add(btnExportExcel);
-            panelButtons.Controls.Add(btnPrint);
-            panelButtons.Controls.Add(btnPreview);
-            panelButtons.Controls.Add(btnNewPayment);
-            panelButtons.Controls.Add(btnNewReceipt);
-            btnExportExcel.Location = new Point(5, 10);
-            btnPrint.Location = new Point(120, 10);
-            btnPreview.Location = new Point(235, 10);
-            btnNewPayment.Location = new Point(350, 10);
-            btnNewReceipt.Location = new Point(465, 10);
+            // شريط مرن يدعم RTL وتغيير حجم النافذة بدل الاعتماد على إحداثيات ثابتة.
+            actionLayout = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.RightToLeft,
+                WrapContents = false,
+                AutoScroll = true,
+                Padding = new Padding(8),
+                Margin = Padding.Empty,
+                RightToLeft = RightToLeft.Yes,
+                BackColor = panelButtons.BackColor
+            };
+
+            panelButtons.Controls.Clear();
+            panelButtons.Padding = Padding.Empty;
+            panelButtons.Controls.Add(actionLayout);
+
+            // ترتيب الأزرار من اليمين إلى اليسار: إضافة، تعديل، حذف، مسح، ثم العمليات المالية.
+            actionLayout.Controls.Add(btnAdd);
+            actionLayout.Controls.Add(btnUpdate);
+            actionLayout.Controls.Add(btnDelete);
+            actionLayout.Controls.Add(btnClear);
+            actionLayout.Controls.Add(btnNewReceipt);
+            actionLayout.Controls.Add(btnNewPayment);
+            actionLayout.Controls.Add(btnPreview);
+            actionLayout.Controls.Add(btnPrint);
+            actionLayout.Controls.Add(btnExportExcel);
+
+            foreach (Control control in actionLayout.Controls)
+            {
+                Button actionButton = control as Button;
+                if (actionButton != null)
+                {
+                    actionButton.AutoSize = false;
+                    actionButton.Size = new Size(115, 35);
+                    actionButton.Margin = new Padding(4, 2, 4, 2);
+                    UIHelper.StyleActionButton(actionButton);
+                }
+            }
         }
 
         private void ConfigureMovementSummary()

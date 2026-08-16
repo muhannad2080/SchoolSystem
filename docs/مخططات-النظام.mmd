@@ -1,0 +1,49 @@
+flowchart TB
+    U[المستخدم] --> L[LoginForm]
+    L --> US[UserService]
+    US --> UR[UserRepository]
+    UR --> DB[(SQL Server / SchoolDB)]
+    US --> PH[PasswordHasher]
+    US --> CU[CurrentUser]
+    CU --> PK[PermissionKeys]
+    CU --> M[MainForm]
+
+    M --> UI[واجهات UI]
+    UI --> S[Services / منطق الأعمال]
+    S --> R[DataAccess / Repositories]
+    R --> DB
+    S --> AL[AuditLogService]
+    AL --> DB
+
+    subgraph Finance[مسار السندات]
+      VF[VouchersForm] --> VS[VoucherService]
+      VS --> PS[PartyService]
+      PS --> PR[PartyRepository]
+      PR --> DB
+      VS --> VR[VoucherRepository]
+      VR --> DB
+      VF --> ROH[ReportOutputHelper]
+      VF --> PD[PrintDocument]
+    end
+
+    subgraph Academic[المسار الأكاديمي]
+      SF[StudentsForm] --> SS[StudentService]
+      EF[EnrollmentForm] --> ES[EnrollmentService]
+      ES --> SCS[StudentClassService]
+      SS --> SR[StudentRepository]
+      ES --> ER[EnrollmentRepository]
+      SCS --> SCR[StudentClassRepository]
+      SR --> DB
+      ER --> DB
+      SCR --> DB
+    end
+
+    subgraph Security[الحماية]
+      P1[فحص الزر في الواجهة]
+      P2[DemandPermission داخل الخدمة]
+      P3[قيود SQL والمعاملات]
+    end
+
+    UI --> P1
+    S --> P2
+    R --> P3

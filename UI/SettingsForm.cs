@@ -27,10 +27,8 @@ namespace SchoolSystem.UI
             backupButton.Click += BackupButton_Click;
             restoreButton.Click += RestoreButton_Click;
 
-            // MainForm يطبق التخطيط العام عند استضافة الشاشة. تطبيق ApplyStyle هنا مرة ثانية
-            // كان يعيد ضبط Padding وMargins وMinimumSize ويسبب تداخل العناصر.
-            UIHelper.ApplyTheme(this);
-            UIHelper.ApplyInputValidation(this);
+            // تطبيق نظام التصميم الموحد RTL والتخطيط والتحقق على شاشة الإعدادات.
+            UIHelper.ApplyStyle(this);
             settings = ApplicationSettingsService.Load();
             serverTextBox.Text = settings.ServerInstance;
             databaseTextBox.Text = settings.DatabaseName;
