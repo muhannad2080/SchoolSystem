@@ -101,7 +101,7 @@ namespace SchoolSystem.Services
             if (assignment.Section.Length == 0 || assignment.Section.Length > 100)
                 throw new ArgumentException("يجب اختيار شعبة صحيحة بطول لا يتجاوز 100 حرف.");
 
-            assignment.AcademicYear = (assignment.AcademicYear ?? string.Empty).Trim();
+            assignment.AcademicYear = (assignment.AcademicYear ?? string.Empty).Trim().Replace('-', '/');
             ValidateAcademicYear(assignment.AcademicYear);
 
             if (!repository.StudentExists(assignment.StudentID))

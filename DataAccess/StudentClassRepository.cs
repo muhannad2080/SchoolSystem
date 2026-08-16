@@ -25,13 +25,13 @@ namespace SchoolSystem.DataAccess
                           SELECT 1
                           FROM StudentClasses sc
                           WHERE sc.StudentID = s.StudentID
-                            AND sc.AcademicYear = @AcademicYear
+                            AND REPLACE(sc.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
                       )
                     ORDER BY s.FullName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear);
+                    cmd.Parameters.AddWithValue("@AcademicYear", (academicYear ?? string.Empty).Trim().Replace('-', '/'));
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
@@ -93,15 +93,15 @@ namespace SchoolSystem.DataAccess
                     INNER JOIN Students s ON sc.StudentID = s.StudentID
                     INNER JOIN Classes c ON sc.ClassID = c.ClassID
                     WHERE sc.ClassID = @ClassID
-                      AND sc.Section = @Section
-                      AND sc.AcademicYear = @AcademicYear
+                      AND LTRIM(RTRIM(sc.Section)) = LTRIM(RTRIM(@Section))
+                      AND REPLACE(sc.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
                     ORDER BY s.FullName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@ClassID", classId);
                     cmd.Parameters.AddWithValue("@Section", section);
-                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear);
+                    cmd.Parameters.AddWithValue("@AcademicYear", (academicYear ?? string.Empty).Trim().Replace('-', '/'));
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
@@ -136,12 +136,23 @@ namespace SchoolSystem.DataAccess
                     )
                         THROW 50007, N'لا يمكن التعيين إلى فصل غير نشط.', 1;
 
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM dbo.SchoolSections
+                        WHERE ClassID = @ClassID
+                          AND LTRIM(RTRIM(SectionName)) = LTRIM(RTRIM(@Section))
+                          AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                          AND ISNULL(IsActive, 1) = 1
+                    )
+                        THROW 50008, N'الشعبة المحددة غير موجودة أو غير مفعلة لهذا الصف والعام الدراسي.', 1;
+
                     IF EXISTS
                     (
                         SELECT 1
                         FROM StudentClasses
                         WHERE StudentID = @StudentID
-                          AND AcademicYear = @AcademicYear
+                          AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
                     )
                         THROW 50009, N'هذا الطالب موزع مسبقاً في نفس العام الدراسي.', 1;
 
@@ -237,7 +248,7 @@ namespace SchoolSystem.DataAccess
                                 AcademicYear = NULL,
                                 UpdatedAt = GETDATE()
                             WHERE StudentID = @StudentID
-                              AND (AcademicYear = @AcademicYear OR AcademicYear IS NULL);
+                              AND (REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-') OR AcademicYear IS NULL);
                         END
                     END;
 
@@ -262,12 +273,12 @@ namespace SchoolSystem.DataAccess
                     SELECT COUNT(*)
                     FROM StudentClasses
                     WHERE StudentID = @StudentID
-                      AND AcademicYear = @AcademicYear";
+                      AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@StudentID", studentId);
-                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear);
+                    cmd.Parameters.AddWithValue("@AcademicYear", (academicYear ?? string.Empty).Trim().Replace('-', '/'));
 
                     conn.Open();
                     int count = Convert.ToInt32(cmd.ExecuteScalar());
@@ -280,7 +291,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(
-                "SELECT COUNT(1) FROM Students WHERE StudentID = @StudentID AND ISNULL(Status, N'منتظم') <> N'محذوف'", conn))
+                "SELECT COUNT(1) FROM Students WHERE StudentID = @StudentID AND ISNULL(Status, N'نشط') = N'نشط'", conn))
             {
                 cmd.Parameters.AddWithValue("@StudentID", studentId);
                 conn.Open();
@@ -305,7 +316,7 @@ namespace SchoolSystem.DataAccess
             cmd.Parameters.Add("@StudentID", SqlDbType.Int).Value = assignment.StudentID;
             cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = assignment.ClassID;
             cmd.Parameters.Add("@Section", SqlDbType.NVarChar, 50).Value = (assignment.Section ?? string.Empty).Trim();
-            cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (assignment.AcademicYear ?? string.Empty).Trim();
+            cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (assignment.AcademicYear ?? string.Empty).Trim().Replace('-', '/');
             cmd.Parameters.Add("@AssignedBy", SqlDbType.Int).Value = assignment.AssignedBy.HasValue ? (object)assignment.AssignedBy.Value : DBNull.Value;
         }
     }
