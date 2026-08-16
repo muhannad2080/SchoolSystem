@@ -19,6 +19,7 @@ namespace SchoolSystem.UI
         private byte[] _selectedPhoto;
         private List<Student> _currentStudents;
         private readonly PrintDocument _studentCardPrintDocument = new PrintDocument();
+        private bool _isSaving;
 
         public StudentsForm()
         {
@@ -469,6 +470,11 @@ namespace SchoolSystem.UI
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            if (_isSaving)
+                return;
+
+            _isSaving = true;
+            btnSave.Enabled = false;
             try
             {
                 var student = GetStudentFromForm();
@@ -486,6 +492,11 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 UIHelper.ShowException("العملية المطلوبة", ex);
+            }
+            finally
+            {
+                _isSaving = false;
+                btnSave.Enabled = true;
             }
         }
 

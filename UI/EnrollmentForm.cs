@@ -23,6 +23,7 @@ namespace SchoolSystem.UI
         private bool isEditMode = false;
         private bool isLoading = true;
         private bool printingReceipt = false;
+        private bool isSaving;
         private readonly PrintDocument enrollmentPrintDocument = new PrintDocument();
 
         public EnrollmentForm()
@@ -368,8 +369,18 @@ namespace SchoolSystem.UI
 
         private void btnSave_Click(object sender, EventArgs e)
         {
+            if (isSaving)
+                return;
+
+            isSaving = true;
+            btnSave.Enabled = false;
             errorProvider1.Clear();
-            if (!ValidateInputs()) return;
+            if (!ValidateInputs())
+            {
+                isSaving = false;
+                btnSave.Enabled = true;
+                return;
+            }
 
             try
             {
@@ -437,6 +448,11 @@ namespace SchoolSystem.UI
                 {
                     UIHelper.ShowException("حفظ التسجيل", ex);
                 }
+            }
+            finally
+            {
+                isSaving = false;
+                btnSave.Enabled = true;
             }
         }
 
