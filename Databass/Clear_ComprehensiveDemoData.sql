@@ -35,7 +35,7 @@ BEGIN TRY
         INSERT INTO #DemoStudents (StudentID)
         SELECT StudentID
         FROM dbo.Students
-        WHERE StudentNumber LIKE N'DEMO-STU-%';
+        WHERE StudentNumber LIKE N'DEMO-STU-%' OR StudentNumber LIKE N'DEMO-ALL-%';
     END;
 
     IF OBJECT_ID(N'dbo.Teachers', N'U') IS NOT NULL
@@ -131,7 +131,7 @@ GO
 IF OBJECT_ID(N'dbo.Students', N'U') IS NOT NULL
     SELECT N'DemoStudentsRemaining' AS CheckName, COUNT(*) AS RemainingCount
     FROM dbo.Students
-    WHERE StudentNumber LIKE N'DEMO-STU-%';
+    WHERE StudentNumber LIKE N'DEMO-STU-%' OR StudentNumber LIKE N'DEMO-ALL-%';
 
 IF OBJECT_ID(N'dbo.Teachers', N'U') IS NOT NULL
     SELECT N'DemoTeachersRemaining' AS CheckName, COUNT(*) AS RemainingCount

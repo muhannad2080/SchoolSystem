@@ -18,7 +18,7 @@ END;
 PRINT N'1) الصفوف الأكاديمية النشطة';
 SELECT ClassID, ClassCode, ClassName, StageName, GradeOrder, IsActive
 FROM dbo.Classes
-WHERE ClassCode IN (N'SEC-01', N'SEC-02', N'SEC-03')
+WHERE ClassCode IN (N'PREP-01', N'PREP-02', N'PREP-03', N'SEC-01', N'SEC-02', N'SEC-03')
 ORDER BY GradeOrder, ClassID;
 
 PRINT N'2) عدد الصفوف النشطة وعدد الشعب حسب العام الدراسي';
@@ -52,7 +52,9 @@ PRINT N'4) الشعب المطلوبة المفقودة: يجب أن تكون ا
 DECLARE @Years TABLE (AcademicYear NVARCHAR(20) NOT NULL PRIMARY KEY);
 INSERT INTO @Years VALUES (N'1447-1448'), (N'2026/2027');
 DECLARE @Sections TABLE (SectionName NVARCHAR(50) NOT NULL PRIMARY KEY);
-INSERT INTO @Sections VALUES (N'ألف'), (N'باء'), (N'جيم'), (N'دال');
+INSERT INTO @Sections VALUES
+    (N'ألف'), (N'باء'), (N'جيم'), (N'دال'),
+    (N'Section A'), (N'Section B'), (N'Section C'), (N'Section D');
 
 SELECT c.ClassCode, c.ClassName, y.AcademicYear, s.SectionName
 FROM dbo.Classes c
@@ -95,7 +97,7 @@ BEGIN
     WHERE st.StudentID IS NULL OR c.ClassID IS NULL OR ss.SectionID IS NULL;
 END;
 
-PRINT N'8) نتيجة مختصرة للصفوف الثانوية';
+PRINT N'8) نتيجة مختصرة للصفوف الإعدادية والثانوية';
 SELECT
     c.ClassCode,
     c.ClassName,
