@@ -102,7 +102,7 @@
             this.tsmiAuditLogs.Visible = true;
             this.tsmiAuditLogs.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.tsmiAuditLogs.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.tsmiAuditLogs.AutoSize = true;
+            this.tsmiAuditLogs.AutoSize = false;
             this.tsmiAuditLogs.Margin = new System.Windows.Forms.Padding(0);
             this.tsmiAuditLogs.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.tsmiAuditLogs.Size = new System.Drawing.Size(110, 29);
@@ -114,7 +114,7 @@
             this.tsmiSettings.Visible = true;
             this.tsmiSettings.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.tsmiSettings.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.tsmiSettings.AutoSize = true;
+            this.tsmiSettings.AutoSize = false;
             this.tsmiSettings.Margin = new System.Windows.Forms.Padding(0);
             this.tsmiSettings.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.tsmiSettings.Size = new System.Drawing.Size(90, 29);
@@ -124,7 +124,7 @@
             // tsmiDashboard
             this.tsmiDashboard.Name = "tsmiDashboard";
             this.tsmiDashboard.Size = new System.Drawing.Size(106, 29);
-            this.tsmiDashboard.Text = "📊 الرئيسية";
+            this.tsmiDashboard.Text = "الرئيسية";
             this.tsmiDashboard.Click += new System.EventHandler(this.tsmiDashboard_Click);
 
             // tsmiStudents
@@ -135,7 +135,7 @@
             });
             this.tsmiStudents.Name = "tsmiStudents";
             this.tsmiStudents.Size = new System.Drawing.Size(90, 29);
-            this.tsmiStudents.Text = "👨‍🎓 الطلاب";
+            this.tsmiStudents.Text = "الطلاب";
 
             // tsmiStudentsManage
             this.tsmiStudentsManage.Name = "tsmiStudentsManage";
@@ -163,7 +163,7 @@
             });
             this.tsmiTeachers.Name = "tsmiTeachers";
             this.tsmiTeachers.Size = new System.Drawing.Size(107, 29);
-            this.tsmiTeachers.Text = "👨‍🏫 المعلمين";
+            this.tsmiTeachers.Text = "المعلمين";
 
             // tsmiTeachersManage
             this.tsmiTeachersManage.Name = "tsmiTeachersManage";
@@ -192,7 +192,7 @@
             });
             this.tsmiAcademic.Name = "tsmiAcademic";
             this.tsmiAcademic.Size = new System.Drawing.Size(111, 29);
-            this.tsmiAcademic.Text = "📚 الأكاديمي";
+            this.tsmiAcademic.Text = "الأكاديمي";
 
             // tsmiSubjects
             this.tsmiSubjects.Name = "tsmiSubjects";
@@ -221,7 +221,7 @@
             // tsmiAttendance
             this.tsmiAttendance.Name = "tsmiAttendance";
             this.tsmiAttendance.Size = new System.Drawing.Size(93, 29);
-            this.tsmiAttendance.Text = "📝 الحضور";
+            this.tsmiAttendance.Text = "الحضور";
             this.tsmiAttendance.Click += new System.EventHandler(this.tsmiAttendance_Click);
 
             // tsmiFinancial
@@ -233,7 +233,7 @@
             });
             this.tsmiFinancial.Name = "tsmiFinancial";
             this.tsmiFinancial.Size = new System.Drawing.Size(88, 29);
-            this.tsmiFinancial.Text = "💰 المالية";
+            this.tsmiFinancial.Text = "المالية";
 
             // tsmiFees
             this.tsmiFees.Name = "tsmiFees";
@@ -262,25 +262,25 @@
             // tsmiTransport
             this.tsmiTransport.Name = "tsmiTransport";
             this.tsmiTransport.Size = new System.Drawing.Size(81, 29);
-            this.tsmiTransport.Text = "🚌 النقل";
+            this.tsmiTransport.Text = "النقل";
             this.tsmiTransport.Click += new System.EventHandler(this.tsmiTransport_Click);
 
             // tsmiLibrary
             this.tsmiLibrary.Name = "tsmiLibrary";
             this.tsmiLibrary.Size = new System.Drawing.Size(95, 29);
-            this.tsmiLibrary.Text = "📖 المكتبة";
+            this.tsmiLibrary.Text = "المكتبة";
             this.tsmiLibrary.Click += new System.EventHandler(this.tsmiLibrary_Click);
 
             // tsmiUsers
             this.tsmiUsers.Name = "tsmiUsers";
             this.tsmiUsers.Size = new System.Drawing.Size(135, 29);
-            this.tsmiUsers.Text = "👤 المستخدمين";
+            this.tsmiUsers.Text = "المستخدمين";
             this.tsmiUsers.Click += new System.EventHandler(this.tsmiUsers_Click);
 
             // tsmiReports
             this.tsmiReports.Name = "tsmiReports";
             this.tsmiReports.Size = new System.Drawing.Size(90, 29);
-            this.tsmiReports.Text = "📋 التقارير";
+            this.tsmiReports.Text = "التقارير";
             this.tsmiReports.Click += new System.EventHandler(this.tsmiReports_Click);
 
             // tsmiLogout
@@ -288,11 +288,11 @@
             this.tsmiLogout.Visible = true;
             this.tsmiLogout.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.tsmiLogout.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.tsmiLogout.AutoSize = true;
+            this.tsmiLogout.AutoSize = false;
             this.tsmiLogout.Margin = new System.Windows.Forms.Padding(0);
             this.tsmiLogout.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.tsmiLogout.Size = new System.Drawing.Size(75, 29);
-            this.tsmiLogout.Text = "🚪 خروج";
+            this.tsmiLogout.Size = new System.Drawing.Size(86, 29);
+            this.tsmiLogout.Text = "خروج";
             this.tsmiLogout.Click += new System.EventHandler(this.tsmiLogout_Click);
 
             // panelTop
@@ -346,7 +346,7 @@
             this.lblUsername.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
             this.lblUsername.Size = new System.Drawing.Size(376, 46);
             this.lblUsername.TabIndex = 1;
-            this.lblUsername.Text = "👤 مدير النظام";
+            this.lblUsername.Text = "المستخدم: مدير النظام";
             this.lblUsername.StateCommon.ShortText.TextH = Krypton.Toolkit.PaletteRelativeAlign.Center;
             this.lblUsername.StateCommon.ShortText.TextV = Krypton.Toolkit.PaletteRelativeAlign.Center;
 
@@ -390,7 +390,7 @@
             this.lblDBStatus.ForeColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.lblDBStatus.Name = "lblDBStatus";
             this.lblDBStatus.Size = new System.Drawing.Size(169, 20);
-            this.lblDBStatus.Text = "🟢 متصل بقاعدة البيانات";
+            this.lblDBStatus.Text = "متصل بقاعدة البيانات";
 
             // lblOnlineUsers
             this.lblOnlineUsers.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);

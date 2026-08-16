@@ -54,10 +54,18 @@ namespace SchoolSystem
             tsmiSettings.Visible = true;
             tsmiSettings.Overflow = ToolStripItemOverflow.Never;
             tsmiSettings.Alignment = ToolStripItemAlignment.Right;
+            tsmiSettings.AutoSize = false;
+            tsmiSettings.Width = 90;
+            tsmiSettings.Margin = new Padding(0);
+            tsmiSettings.Padding = new Padding(4, 0, 4, 0);
 
             tsmiAuditLogs.Visible = true;
             tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
             tsmiAuditLogs.Alignment = ToolStripItemAlignment.Right;
+            tsmiAuditLogs.AutoSize = false;
+            tsmiAuditLogs.Width = 110;
+            tsmiAuditLogs.Margin = new Padding(0);
+            tsmiAuditLogs.Padding = new Padding(4, 0, 4, 0);
 
             // تأكيد أن زر الخروج هو آخر عنصر مضاف في شريط القائمة.
             menuStripMain.Items.Remove(tsmiLogout);
@@ -78,16 +86,24 @@ namespace SchoolSystem
             menuStripMain.CanOverflow = true;
             menuStripMain.AutoSize = false;
             menuStripMain.RenderMode = ToolStripRenderMode.Professional;
+            menuStripMain.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            menuStripMain.Stretch = true;
+            menuStripMain.RightToLeft = RightToLeft.Yes;
+            menuStripMain.Height = 41;
             // عناصر الجلسة مجموعة واحدة متجاورة في أقصى اليمين.
             tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
             tsmiAuditLogs.Alignment = ToolStripItemAlignment.Right;
             tsmiAuditLogs.Margin = new Padding(0);
             tsmiAuditLogs.Padding = new Padding(4, 0, 4, 0);
+            tsmiAuditLogs.AutoSize = false;
+            tsmiAuditLogs.Width = 110;
 
             tsmiSettings.Overflow = ToolStripItemOverflow.Never;
             tsmiSettings.Alignment = ToolStripItemAlignment.Right;
             tsmiSettings.Margin = new Padding(0);
             tsmiSettings.Padding = new Padding(4, 0, 4, 0);
+            tsmiSettings.AutoSize = false;
+            tsmiSettings.Width = 90;
 
             tsmiLogout.Overflow = ToolStripItemOverflow.Never;
             tsmiLogout.Alignment = ToolStripItemAlignment.Right;
