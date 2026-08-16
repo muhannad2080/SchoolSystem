@@ -48,6 +48,7 @@
             this.tsmiLogout = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.panelTop = new Krypton.Toolkit.KryptonPanel();
+            this.headerLayout = new System.Windows.Forms.TableLayoutPanel();
             this.lblDateTime = new Krypton.Toolkit.KryptonLabel();
             this.lblUsername = new Krypton.Toolkit.KryptonLabel();
             this.lblSystemTitle = new Krypton.Toolkit.KryptonLabel();
@@ -59,6 +60,7 @@
 
             this.menuStripMain.SuspendLayout();
             this.panelTop.SuspendLayout();
+            this.headerLayout.SuspendLayout();
             this.statusStripMain.SuspendLayout();
             this.SuspendLayout();
 
@@ -295,48 +297,66 @@
 
             // panelTop
             this.panelTop.BackColor = System.Drawing.Color.White;
-            this.panelTop.Controls.Add(this.lblDateTime);
-            this.panelTop.Controls.Add(this.lblUsername);
-            this.panelTop.Controls.Add(this.lblSystemTitle);
+            this.panelTop.Controls.Add(this.headerLayout);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 41);
             this.panelTop.Name = "panelTop";
+            this.panelTop.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
             this.panelTop.Size = new System.Drawing.Size(1200, 76);
             this.panelTop.TabIndex = 1;
-            this.panelTop.Resize += new System.EventHandler(this.panelTop_Resize);
+
+            // headerLayout
+            this.headerLayout.ColumnCount = 3;
+            this.headerLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.headerLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.headerLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
+            this.headerLayout.Controls.Add(this.lblSystemTitle, 0, 0);
+            this.headerLayout.Controls.Add(this.lblUsername, 1, 0);
+            this.headerLayout.Controls.Add(this.lblDateTime, 2, 0);
+            this.headerLayout.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.headerLayout.Location = new System.Drawing.Point(12, 0);
+            this.headerLayout.Margin = new System.Windows.Forms.Padding(0);
+            this.headerLayout.Name = "headerLayout";
+            this.headerLayout.Padding = new System.Windows.Forms.Padding(0, 8, 0, 8);
+            this.headerLayout.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.headerLayout.RowCount = 1;
+            this.headerLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.headerLayout.Size = new System.Drawing.Size(1176, 76);
+            this.headerLayout.TabIndex = 0;
 
             // lblDateTime
-            this.lblDateTime.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Top;
+            this.lblDateTime.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblDateTime.Font = new System.Drawing.Font("Tahoma", 10F);
             this.lblDateTime.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
-            this.lblDateTime.Location = new System.Drawing.Point(20, 26);
             this.lblDateTime.Name = "lblDateTime";
             this.lblDateTime.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblDateTime.Size = new System.Drawing.Size(350, 26);
+            this.lblDateTime.Size = new System.Drawing.Size(392, 60);
             this.lblDateTime.TabIndex = 0;
             this.lblDateTime.Text = "الخميس, 08/07/2026  10:30:45";
+            this.lblDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 
             // lblUsername
-            this.lblUsername.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.lblUsername.BackColor = System.Drawing.Color.FromArgb(241, 245, 249);
+            this.lblUsername.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblUsername.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.lblUsername.ForeColor = System.Drawing.Color.FromArgb(15, 118, 110);
-            this.lblUsername.Location = new System.Drawing.Point(488, 21);
+            this.lblUsername.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
             this.lblUsername.Name = "lblUsername";
             this.lblUsername.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
-            this.lblUsername.Size = new System.Drawing.Size(225, 34);
+            this.lblUsername.Size = new System.Drawing.Size(376, 46);
             this.lblUsername.TabIndex = 1;
             this.lblUsername.Text = "👤 مدير النظام";
+            this.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // lblSystemTitle
-            this.lblSystemTitle.Anchor = System.Windows.Forms.AnchorStyles.Right | System.Windows.Forms.AnchorStyles.Top;
+            this.lblSystemTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblSystemTitle.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
             this.lblSystemTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-            this.lblSystemTitle.Location = new System.Drawing.Point(820, 18);
             this.lblSystemTitle.Name = "lblSystemTitle";
-            this.lblSystemTitle.Size = new System.Drawing.Size(350, 40);
+            this.lblSystemTitle.Size = new System.Drawing.Size(392, 60);
             this.lblSystemTitle.TabIndex = 2;
             this.lblSystemTitle.Text = "نظام إدارة المدرسة";
+            this.lblSystemTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 
             // panelContent
             this.panelContent.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
@@ -390,7 +410,7 @@
             this.Controls.Add(this.menuStripMain);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.MainMenuStrip = this.menuStripMain;
-            this.MinimumSize = new System.Drawing.Size(1100, 650);
+            this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "MainForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.RightToLeftLayout = true;
@@ -400,6 +420,7 @@
 
             this.menuStripMain.ResumeLayout(false);
             this.menuStripMain.PerformLayout();
+            this.headerLayout.ResumeLayout(false);
             this.panelTop.ResumeLayout(false);
             this.statusStripMain.ResumeLayout(false);
             this.statusStripMain.PerformLayout();
@@ -439,6 +460,7 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiSettings;
 
         private Krypton.Toolkit.KryptonPanel panelTop;
+        private System.Windows.Forms.TableLayoutPanel headerLayout;
         private Krypton.Toolkit.KryptonLabel lblSystemTitle;
         private Krypton.Toolkit.KryptonLabel lblUsername;
         private Krypton.Toolkit.KryptonLabel lblDateTime;

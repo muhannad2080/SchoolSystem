@@ -98,7 +98,6 @@ namespace SchoolSystem
 
             lblDateTime.ForeColor = UIHelper.MutedTextColor;
             lblDateTime.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
-            PositionHeaderControls();
 
             panelContent.BackColor = contentBack;
             panelContent.Padding = new Padding(18);
@@ -112,7 +111,8 @@ namespace SchoolSystem
             lblOnlineUsers.ForeColor = UIHelper.MutedTextColor;
 
             this.BackColor = contentBack;
-            this.MinimumSize = new Size(1100, 650);
+            // يسمح بالتشغيل على الشاشات الصغيرة مع بقاء المحتوى قابلاً للتمرير عبر القائمة.
+            this.MinimumSize = new Size(800, 600);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "نظام إدارة المدرسة";
         }
@@ -155,22 +155,6 @@ namespace SchoolSystem
         private void timerClock_Tick(object sender, EventArgs e)
         {
             lblDateTime.Text = DateTime.Now.ToString("dddd, dd/MM/yyyy  HH:mm:ss");
-        }
-
-        private void panelTop_Resize(object sender, EventArgs e)
-        {
-            PositionHeaderControls();
-        }
-
-        private void PositionHeaderControls()
-        {
-            if (panelTop == null || lblUsername == null)
-                return;
-
-            int availableWidth = panelTop.ClientSize.Width;
-            int centeredLeft = Math.Max(0, (availableWidth - lblUsername.Width) / 2);
-            lblUsername.Left = centeredLeft;
-            lblUsername.Top = Math.Max(0, (panelTop.ClientSize.Height - lblUsername.Height) / 2);
         }
 
         private void LoadWelcomeScreen()
