@@ -556,7 +556,8 @@ namespace SchoolSystem.UI
             _selectedStudentId = 0;
             _selectedPhoto = null;
 
-            txtStudentNumber.Text = "يُولّد تلقائياً عند الحفظ";
+            txtStudentNumber.Text = "جاري تجهيز الرقم...";
+            TryPreviewNextStudentNumber();
             txtFullName.Clear();
             txtBirthPlace.Clear();
             txtNationality.Clear();
@@ -582,11 +583,34 @@ namespace SchoolSystem.UI
             dtpBirthDate.Value = DateTime.Today.AddYears(-6);
         }
 
+        private void TryPreviewNextStudentNumber()
+        {
+            if (_studentService == null || _selectedStudentId != 0)
+                return;
+
+            try
+            {
+                string nextNumber = _studentService.GenerateNextStudentNumber();
+                txtStudentNumber.Text = string.IsNullOrWhiteSpace(nextNumber)
+                    ? "يُولّد تلقائياً عند الحفظ"
+                    : nextNumber;
+            }
+            catch
+            {
+                // المعاينة تحسين واجهة فقط؛ يبقى التوليد النهائي ذرياً داخل المستودع.
+                txtStudentNumber.Text = "يُولّد تلقائياً عند الحفظ";
+            }
+        }
+
         private void btnRefresh_Click(object sender, EventArgs e) => LoadStudents();
         private void btnSearch_Click(object sender, EventArgs e) => ApplyFilters();
         private void cmbFilterClass_SelectedIndexChanged(object sender, EventArgs e) => ApplyFilters();
         private void cmbFilterStatus_SelectedIndexChanged(object sender, EventArgs e) => ApplyFilters();
-        private void btnAdd_Click(object sender, EventArgs e) => ClearForm();
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            ClearForm();
+            txtFullName.Focus();
+        }
 
         private void dgvStudents_CellClick(object sender, DataGridViewCellEventArgs e)
         {

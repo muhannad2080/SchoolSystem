@@ -17,6 +17,19 @@ namespace SchoolSystem.Services
             return repository.GetAllEnrollments();
         }
 
+        public string GenerateNextSeatNumber(string academicYear, int classId, string section)
+        {
+            CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
+
+            string normalizedYear = (academicYear ?? string.Empty).Trim().Replace('-', '/');
+            string normalizedSection = (section ?? string.Empty).Trim();
+            if (classId <= 0 || string.IsNullOrWhiteSpace(normalizedSection))
+                return string.Empty;
+
+            ValidateAcademicYear(normalizedYear);
+            return repository.GenerateNextSeatNumber(normalizedYear, classId, normalizedSection);
+        }
+
         public bool AddEnrollment(Enrollment enrollment)
         {
             CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");

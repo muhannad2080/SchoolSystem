@@ -360,7 +360,9 @@ namespace SchoolSystem.UI
             EnableInputs();
             txtEnrollmentID.Text = "جديد";
             dtpApplicationDate.Value = DateTime.Today;
+            cmbApplicationType.SelectedItem = "طالب جديد";
             cmbStatus.SelectedItem = "جديد";
+            cmbStudentID.Focus();
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -695,6 +697,8 @@ namespace SchoolSystem.UI
                 txtSection.Enabled = true;
                 if (txtSection.Items.Count > 0)
                     txtSection.SelectedIndex = 0;
+
+                await PreviewNextSeatNumberAsync();
             }
             catch (Exception ex)
             {
@@ -702,6 +706,33 @@ namespace SchoolSystem.UI
                 txtSection.Items.Clear();
                 txtSection.Enabled = false;
                 UIHelper.ShowException("تحميل شعب التسجيل", ex);
+            }
+        }
+
+        private async Task PreviewNextSeatNumberAsync()
+        {
+            if (isLoading || isEditMode)
+                return;
+
+            int classId = TryGetSelectedId(cmbClassID);
+            string academicYear = (txtAcademicYear.Text ?? string.Empty).Trim();
+            string section = (txtSection.Text ?? string.Empty).Trim();
+            if (classId <= 0 || !IsSequentialAcademicYear(academicYear) || string.IsNullOrWhiteSpace(section))
+            {
+                txtSeatNumber.Text = "يُولّد تلقائياً عند الحفظ";
+                return;
+            }
+
+            try
+            {
+                string nextSeat = await Task.Run(() => enrollmentService.GenerateNextSeatNumber(academicYear, classId, section));
+                if (!isEditMode)
+                    txtSeatNumber.Text = string.IsNullOrWhiteSpace(nextSeat) ? "يُولّد تلقائياً عند الحفظ" : nextSeat;
+            }
+            catch
+            {
+                // المعاينة اختيارية؛ يبقى التوليد النهائي داخل المعاملة في المستودع.
+                txtSeatNumber.Text = "يُولّد تلقائياً عند الحفظ";
             }
         }
 
