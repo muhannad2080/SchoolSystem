@@ -54,7 +54,7 @@ GO
 BEGIN TRY
     BEGIN TRANSACTION;
 
-    /* الصفوف الأساسية: من الأول الإعدادي حتى الثالث الثانوي. */
+    /* الصفوف الأساسية: الأول والثاني والثالث الثانوي. */
     DECLARE @Classes TABLE
     (
         ClassCode NVARCHAR(30) NOT NULL,
@@ -65,12 +65,9 @@ BEGIN TRY
 
     INSERT INTO @Classes (ClassCode, ClassName, StageName, GradeOrder)
     VALUES
-        (N'PREP-01', N'الأول الإعدادي', N'المرحلة الإعدادية', 1),
-        (N'PREP-02', N'الثاني الإعدادي', N'المرحلة الإعدادية', 2),
-        (N'PREP-03', N'الثالث الإعدادي', N'المرحلة الإعدادية', 3),
-        (N'SEC-01', N'الأول الثانوي', N'المرحلة الثانوية', 4),
-        (N'SEC-02', N'الثاني الثانوي', N'المرحلة الثانوية', 5),
-        (N'SEC-03', N'الثالث الثانوي', N'المرحلة الثانوية', 6);
+        (N'SEC-01', N'الأول الثانوي', N'المرحلة الثانوية', 10),
+        (N'SEC-02', N'الثاني الثانوي', N'المرحلة الثانوية', 11),
+        (N'SEC-03', N'الثالث الثانوي', N'المرحلة الثانوية', 12);
 
     /* تحديث السجلات المطابقة وإضافة المفقود فقط. */
     UPDATE c
@@ -94,7 +91,7 @@ BEGIN TRY
            OR c.ClassCode = s.ClassCode
     );
 
-    /* المواد الدراسية الثابتة المشتركة لجميع الصفوف التجريبية. */
+    /* المواد المشتركة المناسبة للمرحلة الثانوية. */
     DECLARE @Subjects TABLE
     (
         SubjectCodeSuffix NVARCHAR(10) NOT NULL,
@@ -128,7 +125,7 @@ BEGIN TRY
     INNER JOIN dbo.Classes c ON c.ClassID IS NOT NULL
     INNER JOIN @Subjects s ON s.SubjectName = sub.SubjectName
     WHERE sub.ClassID = c.ClassID
-      AND c.ClassCode IN (N'PREP-01', N'PREP-02', N'PREP-03', N'SEC-01', N'SEC-02', N'SEC-03');
+      AND c.ClassCode IN (N'SEC-01', N'SEC-02', N'SEC-03');
 
     INSERT INTO dbo.Subjects
     (
@@ -146,7 +143,7 @@ BEGIN TRY
         GETDATE()
     FROM dbo.Classes c
     CROSS JOIN @Subjects s
-    WHERE c.ClassCode IN (N'PREP-01', N'PREP-02', N'PREP-03', N'SEC-01', N'SEC-02', N'SEC-03')
+    WHERE c.ClassCode IN (N'SEC-01', N'SEC-02', N'SEC-03')
       AND NOT EXISTS
       (
           SELECT 1
@@ -166,7 +163,7 @@ BEGIN TRY
         COUNT(s.SubjectID) AS SubjectCount
     FROM dbo.Classes c
     LEFT JOIN dbo.Subjects s ON s.ClassID = c.ClassID AND ISNULL(s.IsActive, 1) = 1
-    WHERE c.ClassCode IN (N'PREP-01', N'PREP-02', N'PREP-03', N'SEC-01', N'SEC-02', N'SEC-03')
+    WHERE c.ClassCode IN (N'SEC-01', N'SEC-02', N'SEC-03')
     GROUP BY c.ClassID, c.ClassCode, c.ClassName, c.StageName, c.GradeOrder
     ORDER BY c.GradeOrder;
 
@@ -185,7 +182,7 @@ SELECT
     COUNT(s.SubjectID) AS SubjectCount
 FROM dbo.Classes c
 LEFT JOIN dbo.Subjects s ON s.ClassID = c.ClassID AND ISNULL(s.IsActive, 1) = 1
-WHERE c.ClassCode IN (N'PREP-01', N'PREP-02', N'PREP-03', N'SEC-01', N'SEC-02', N'SEC-03')
+WHERE c.ClassCode IN (N'SEC-01', N'SEC-02', N'SEC-03')
 GROUP BY c.ClassName, c.GradeOrder
 ORDER BY c.GradeOrder;
 GO

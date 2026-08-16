@@ -44,9 +44,7 @@ VALUES (N'1447-1448'), (N'2026/2027');
 
 DECLARE @Sections TABLE (SectionName NVARCHAR(50) NOT NULL PRIMARY KEY);
 INSERT INTO @Sections (SectionName)
-VALUES
-    (N'ألف'), (N'باء'), (N'جيم'), (N'دال'),
-    (N'Section A'), (N'Section B'), (N'Section C'), (N'Section D');
+VALUES (N'ألف'), (N'باء'), (N'جيم'), (N'دال');
 
 INSERT INTO dbo.SchoolSections (ClassID, SectionName, AcademicYear, IsActive)
 SELECT c.ClassID, s.SectionName, y.AcademicYear, 1
@@ -75,5 +73,5 @@ INNER JOIN dbo.Classes c ON c.ClassID = ss.ClassID
 WHERE ss.IsActive = 1
 ORDER BY ss.AcademicYear, c.ClassName, ss.SectionName;
 
-PRINT N'تم إنشاء مصدر الشعب الثابت وإضافة الشعب العربية والإنجليزية لكل صف نشط دون تكرار.';
+PRINT N'تم إنشاء مصدر الشعب الثابت وإضافة ألف وباء وجيم ودال لكل صف نشط.';
 GO

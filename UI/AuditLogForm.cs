@@ -198,6 +198,32 @@ namespace SchoolSystem.UI
                     statusLabel.Text = "تم تصدير السجل بنجاح";
                     UIHelper.ShowInfo("تم تصدير سجل الأنشطة بنجاح.");
                     return;
+
+                    StringBuilder csv = new StringBuilder();
+                    for (int columnIndex = 0; columnIndex < currentData.Columns.Count; columnIndex++)
+                    {
+                        if (columnIndex > 0) csv.Append(",");
+                            csv.Append(EscapeCsv(GetExportHeader(currentData.Columns[columnIndex].ColumnName)));
+                    }
+                    csv.AppendLine();
+
+                    foreach (DataRow row in currentData.Rows)
+                    {
+                        for (int columnIndex = 0; columnIndex < currentData.Columns.Count; columnIndex++)
+                        {
+                            if (columnIndex > 0) csv.Append(",");
+                            object value = row[columnIndex];
+                            string text = value == DBNull.Value ? string.Empty : value.ToString();
+                            if (currentData.Columns[columnIndex].ColumnName == "CreatedAt" && value != DBNull.Value)
+                                text = Convert.ToDateTime(value).ToString("yyyy-MM-dd HH:mm");
+                            csv.Append(EscapeCsv(text));
+                        }
+                        csv.AppendLine();
+                    }
+
+                    File.WriteAllText(dialog.FileName, csv.ToString(), new UTF8Encoding(true));
+                    statusLabel.Text = "تم تصدير السجل بنجاح";
+                    UIHelper.ShowInfo("تم تصدير سجل الأنشطة بنجاح.");
                 }
                 catch (Exception ex)
                 {

@@ -21,56 +21,14 @@ namespace SchoolSystem
             Instance = this;
 
             ApplyModernMenuStyle();
-            EnsureSessionMenuItemsVisible();
-
-            // لا نشغل منطق الجلسة أو تحميل الشاشات أثناء تصميم النموذج؛
-            // يجب أن تبقى جميع عناصر القائمة مرئية داخل Visual Studio Designer.
-            if (IsDesignTime())
-            {
-                SetMenuItemsVisible(true);
-                return;
-            }
 
             UpdateCurrentUserLabel();
+
             timerClock.Start();
+
             LoadWelcomeScreen();
+
             ApplyCurrentUserPermissions();
-        }
-
-        private void EnsureSessionMenuItemsVisible()
-        {
-            // عناصر الجلسة لا تعتمد على صلاحيات الوحدات ولا تُرسل إلى قائمة overflow.
-            // إبقاء هذه القيم في الكود أيضاً يحمي التخطيط عند إعادة إنشاء المصمم أو تغيير الدقة.
-            tsmiLogout.Visible = true;
-            tsmiLogout.Enabled = true;
-            tsmiLogout.Overflow = ToolStripItemOverflow.Never;
-            tsmiLogout.Alignment = ToolStripItemAlignment.Right;
-            tsmiLogout.AutoSize = false;
-            tsmiLogout.Width = 86;
-            tsmiLogout.Margin = new Padding(0);
-            tsmiLogout.Padding = new Padding(4, 0, 4, 0);
-            tsmiLogout.Text = "خروج";
-
-            tsmiSettings.Visible = true;
-            tsmiSettings.Overflow = ToolStripItemOverflow.Never;
-            tsmiSettings.Alignment = ToolStripItemAlignment.Right;
-            tsmiSettings.AutoSize = false;
-            tsmiSettings.Width = 90;
-            tsmiSettings.Margin = new Padding(0);
-            tsmiSettings.Padding = new Padding(4, 0, 4, 0);
-
-            tsmiAuditLogs.Visible = true;
-            tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
-            tsmiAuditLogs.Alignment = ToolStripItemAlignment.Right;
-            tsmiAuditLogs.AutoSize = false;
-            tsmiAuditLogs.Width = 110;
-            tsmiAuditLogs.Margin = new Padding(0);
-            tsmiAuditLogs.Padding = new Padding(4, 0, 4, 0);
-
-            // تأكيد أن زر الخروج هو آخر عنصر مضاف في شريط القائمة.
-            menuStripMain.Items.Remove(tsmiLogout);
-            menuStripMain.Items.Add(tsmiLogout);
-            menuStripMain.PerformLayout();
         }
 
         private void ApplyModernMenuStyle()
@@ -82,43 +40,22 @@ namespace SchoolSystem
             menuStripMain.BackColor = mainColor;
             menuStripMain.ForeColor = Color.White;
             menuStripMain.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
-            // شريط مضغوط ومتوازن؛ المسافة الخارجية ثابتة ولا تتضخم مع RTL.
-            menuStripMain.Padding = new Padding(0, 4, 0, 4);
+            menuStripMain.Padding = new Padding(8, 5, 8, 5);
             menuStripMain.CanOverflow = true;
             menuStripMain.AutoSize = false;
-            menuStripMain.RenderMode = ToolStripRenderMode.Professional;
-            menuStripMain.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
-            menuStripMain.Stretch = true;
-            menuStripMain.RightToLeft = RightToLeft.Yes;
             menuStripMain.Height = 41;
-            // عناصر الجلسة مجموعة واحدة متجاورة في أقصى اليمين.
-            tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
-            tsmiAuditLogs.Alignment = ToolStripItemAlignment.Right;
-            tsmiAuditLogs.Margin = new Padding(0);
-            tsmiAuditLogs.Padding = new Padding(4, 0, 4, 0);
-            tsmiAuditLogs.AutoSize = false;
-            tsmiAuditLogs.Width = 110;
-
-            tsmiSettings.Overflow = ToolStripItemOverflow.Never;
-            tsmiSettings.Alignment = ToolStripItemAlignment.Right;
-            tsmiSettings.Margin = new Padding(0);
-            tsmiSettings.Padding = new Padding(4, 0, 4, 0);
-            tsmiSettings.AutoSize = false;
-            tsmiSettings.Width = 90;
-
-            tsmiLogout.Overflow = ToolStripItemOverflow.Never;
-            tsmiLogout.Alignment = ToolStripItemAlignment.Right;
-            tsmiLogout.Margin = new Padding(0);
-            tsmiLogout.Padding = new Padding(4, 0, 4, 0);
-            tsmiLogout.AutoSize = false;
-            tsmiLogout.Width = 86;
+            menuStripMain.LayoutStyle = ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            menuStripMain.GripStyle = ToolStripGripStyle.Hidden;
+            menuStripMain.RenderMode = ToolStripRenderMode.Professional;
 
             foreach (ToolStripItem item in menuStripMain.Items)
             {
                 item.BackColor = mainColor;
                 item.ForeColor = Color.White;
-                item.Margin = new Padding(0);
-                item.Padding = new Padding(5, 0, 5, 0);
+                item.Margin = new Padding(3, 0, 3, 0);
+                item.Padding = new Padding(6, 0, 6, 0);
+                if (!item.AutoSize)
+                    item.AutoSize = true;
 
                 ToolStripMenuItem menuItem = item as ToolStripMenuItem;
                 if (menuItem != null)
@@ -126,7 +63,7 @@ namespace SchoolSystem
             }
 
             panelTop.BackColor = UIHelper.SurfaceElevatedColor;
-            panelTop.Height = 60;
+            panelTop.Height = 64;
 
             lblSystemTitle.Font = new Font(UIHelper.FontFamily, UIHelper.TitleFontSize, FontStyle.Bold);
             lblSystemTitle.ForeColor = UIHelper.TextColor;
@@ -135,7 +72,7 @@ namespace SchoolSystem
             lblUsername.BackColor = UIHelper.SurfaceSecondaryColor;
             lblUsername.ForeColor = accentColor;
             lblUsername.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
-            lblUsername.Padding = new Padding(8, 0, 8, 0);
+            lblUsername.Padding = new Padding(12, 2, 12, 2);
 
             string currentUserText = lblUsername.Text ?? string.Empty;
             if (currentUserText.StartsWith("المستخدم:", StringComparison.Ordinal))
@@ -147,7 +84,7 @@ namespace SchoolSystem
             lblDateTime.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
 
             panelContent.BackColor = contentBack;
-            panelContent.Padding = new Padding(12);
+            panelContent.Padding = new Padding(18);
 
             statusStripMain.BackColor = UIHelper.SurfaceElevatedColor;
             statusStripMain.ForeColor = UIHelper.MutedTextColor;
@@ -158,8 +95,7 @@ namespace SchoolSystem
             lblOnlineUsers.ForeColor = UIHelper.MutedTextColor;
 
             this.BackColor = contentBack;
-            // يسمح بالتشغيل على الشاشات الصغيرة مع بقاء المحتوى قابلاً للتمرير عبر القائمة.
-            this.MinimumSize = new Size(800, 600);
+            this.MinimumSize = new Size(900, 600);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "نظام إدارة المدرسة";
         }
@@ -343,17 +279,14 @@ namespace SchoolSystem
                 return;
             }
 
-            // الخروج إجراء جلسة وليس صلاحية وحدة؛ يظل متاحاً دائماً للمستخدم المسجل.
-            tsmiLogout.Visible = true;
-
             ToolStripMenuItem[] permissionItems =
             {
                 tsmiDashboard, tsmiStudents, tsmiStudentsManage, tsmiStudentsEnroll,
                 tsmiStudentsClasses, tsmiTeachers, tsmiTeachersManage, tsmiTeachersAttendance,
                 tsmiTeachersPayroll, tsmiAcademic, tsmiSubjects, tsmiClasses, tsmiTimetable,
                 tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
-                tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiTransport, tsmiLibrary,
-                tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings
+                tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiServices, tsmiTransport,
+                tsmiLibrary, tsmiAdmin, tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings
             };
 
             foreach (ToolStripMenuItem item in permissionItems)
@@ -383,13 +316,14 @@ namespace SchoolSystem
                 tsmiVouchers.Visible = true;
                 tsmiExpenses.Visible = true;
                 تعريفرسومالصفوفToolStripMenuItem.Visible = true;
+                tsmiServices.Visible = true;
                 tsmiTransport.Visible = true;
                 tsmiLibrary.Visible = true;
+                tsmiAdmin.Visible = true;
                 tsmiUsers.Visible = true;
                 tsmiReports.Visible = true;
                 tsmiAuditLogs.Visible = true;
                 tsmiSettings.Visible = true;
-                tsmiLogout.Visible = true;
                 return;
             }
 
@@ -426,8 +360,10 @@ namespace SchoolSystem
             // إخفاء مجموعات القوائم التي لا تحتوي على أي خيار مسموح للمستخدم.
             tsmiStudents.Visible = tsmiStudentsManage.Visible || tsmiStudentsEnroll.Visible || tsmiStudentsClasses.Visible;
             tsmiTeachers.Visible = tsmiTeachersManage.Visible || tsmiTeachersAttendance.Visible || tsmiTeachersPayroll.Visible;
-            tsmiAcademic.Visible = tsmiSubjects.Visible || tsmiClasses.Visible || tsmiTimetable.Visible || tsmiGrades.Visible || tsmiAttendance.Visible;
+            tsmiAcademic.Visible = tsmiSubjects.Visible || tsmiClasses.Visible || tsmiTimetable.Visible || tsmiGrades.Visible;
             tsmiFinancial.Visible = tsmiFees.Visible || tsmiVouchers.Visible || tsmiExpenses.Visible || تعريفرسومالصفوفToolStripMenuItem.Visible;
+            tsmiServices.Visible = tsmiTransport.Visible || tsmiLibrary.Visible;
+            tsmiAdmin.Visible = tsmiUsers.Visible || tsmiAuditLogs.Visible || tsmiSettings.Visible;
         }
 
         private bool IsDesignTime()
@@ -450,8 +386,8 @@ namespace SchoolSystem
                 tsmiStudentsClasses, tsmiTeachers, tsmiTeachersManage, tsmiTeachersAttendance,
                 tsmiTeachersPayroll, tsmiAcademic, tsmiSubjects, tsmiClasses, tsmiTimetable,
                 tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
-                tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiTransport, tsmiLibrary,
-                tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings, tsmiLogout
+                tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiServices, tsmiTransport,
+                tsmiLibrary, tsmiAdmin, tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings, tsmiLogout
             };
 
             foreach (ToolStripMenuItem item in items)
