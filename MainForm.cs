@@ -41,10 +41,11 @@ namespace SchoolSystem
             menuStripMain.ForeColor = Color.White;
             menuStripMain.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
             menuStripMain.Padding = new Padding(4, 6, 4, 6);
-            menuStripMain.CanOverflow = false;
+            menuStripMain.CanOverflow = true;
             menuStripMain.AutoSize = false;
             menuStripMain.RenderMode = ToolStripRenderMode.Professional;
             tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
+            tsmiAuditLogs.Alignment = ToolStripItemAlignment.Right;
             tsmiSettings.Overflow = ToolStripItemOverflow.Never;
             tsmiSettings.Alignment = ToolStripItemAlignment.Right;
             tsmiLogout.Overflow = ToolStripItemOverflow.Never;

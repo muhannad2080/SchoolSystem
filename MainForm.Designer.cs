@@ -67,7 +67,7 @@
             this.menuStripMain.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
             this.menuStripMain.ForeColor = System.Drawing.Color.White;
             this.menuStripMain.ImageScalingSize = new System.Drawing.Size(16, 16);
-            this.menuStripMain.CanOverflow = false;
+            this.menuStripMain.CanOverflow = true;
             this.menuStripMain.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.menuStripMain.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.menuStripMain.AutoSize = false;
@@ -98,6 +98,7 @@
             this.tsmiAuditLogs.Name = "tsmiAuditLogs";
             this.tsmiAuditLogs.Visible = true;
             this.tsmiAuditLogs.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+            this.tsmiAuditLogs.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.tsmiAuditLogs.AutoSize = true;
             this.tsmiAuditLogs.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiAuditLogs.Size = new System.Drawing.Size(110, 29);
