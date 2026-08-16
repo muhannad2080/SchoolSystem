@@ -21,6 +21,7 @@ namespace SchoolSystem
             Instance = this;
 
             ApplyModernMenuStyle();
+            EnsureSessionMenuItemsVisible();
 
             // لا نشغل منطق الجلسة أو تحميل الشاشات أثناء تصميم النموذج؛
             // يجب أن تبقى جميع عناصر القائمة مرئية داخل Visual Studio Designer.
@@ -34,6 +35,33 @@ namespace SchoolSystem
             timerClock.Start();
             LoadWelcomeScreen();
             ApplyCurrentUserPermissions();
+        }
+
+        private void EnsureSessionMenuItemsVisible()
+        {
+            // عناصر الجلسة لا تعتمد على صلاحيات الوحدات ولا تُرسل إلى قائمة overflow.
+            // إبقاء هذه القيم في الكود أيضاً يحمي التخطيط عند إعادة إنشاء المصمم أو تغيير الدقة.
+            tsmiLogout.Visible = true;
+            tsmiLogout.Enabled = true;
+            tsmiLogout.Overflow = ToolStripItemOverflow.Never;
+            tsmiLogout.Alignment = ToolStripItemAlignment.Right;
+            tsmiLogout.AutoSize = false;
+            tsmiLogout.Width = 86;
+            tsmiLogout.Margin = new Padding(0);
+            tsmiLogout.Padding = new Padding(4, 0, 4, 0);
+            tsmiLogout.Text = "خروج";
+
+            tsmiSettings.Visible = true;
+            tsmiSettings.Overflow = ToolStripItemOverflow.Never;
+            tsmiSettings.Alignment = ToolStripItemAlignment.Right;
+
+            tsmiAuditLogs.Visible = true;
+            tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
+            tsmiAuditLogs.Alignment = ToolStripItemAlignment.Right;
+
+            // تأكيد أن زر الخروج هو آخر عنصر مضاف في شريط القائمة.
+            menuStripMain.Items.Remove(tsmiLogout);
+            menuStripMain.Items.Add(tsmiLogout);
         }
 
         private void ApplyModernMenuStyle()
@@ -65,6 +93,8 @@ namespace SchoolSystem
             tsmiLogout.Alignment = ToolStripItemAlignment.Right;
             tsmiLogout.Margin = new Padding(0);
             tsmiLogout.Padding = new Padding(4, 0, 4, 0);
+            tsmiLogout.AutoSize = false;
+            tsmiLogout.Width = 86;
 
             foreach (ToolStripItem item in menuStripMain.Items)
             {
