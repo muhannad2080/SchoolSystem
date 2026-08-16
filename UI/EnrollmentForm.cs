@@ -183,7 +183,8 @@ namespace SchoolSystem.UI
         {
             if (isEditMode) return;
             DateTime date = dtpApplicationDate.Value.Date;
-            int startYear = date.Month >= 9 ? date.Year : date.Year - 1;
+            // يبدأ العام الدراسي في أغسطس، حتى تتطابق القائمة مع الشعب المزروعة للعام القادم.
+            int startYear = date.Month >= 8 ? date.Year : date.Year - 1;
             txtAcademicYear.Text = startYear + "/" + (startYear + 1);
         }
 

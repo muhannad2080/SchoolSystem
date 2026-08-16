@@ -76,7 +76,8 @@ namespace SchoolSystem.UI.Students
             cmbSection.Items.Clear();
             cmbSection.Enabled = false;
 
-            int year = DateTime.Now.Year;
+            DateTime today = DateTime.Today;
+            int year = today.Month >= 8 ? today.Year : today.Year - 1;
             txtAcademicYear.Text = year + "/" + (year + 1);
 
             lblStatus.Text = "جاهز";
