@@ -333,7 +333,8 @@
             this.lblDateTime.Size = new System.Drawing.Size(392, 60);
             this.lblDateTime.TabIndex = 0;
             this.lblDateTime.Text = "الخميس, 08/07/2026  10:30:45";
-            this.lblDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblDateTime.StateCommon.ShortText.TextH = Krypton.Toolkit.PaletteRelativeAlign.Left;
+            this.lblDateTime.StateCommon.ShortText.TextV = Krypton.Toolkit.PaletteRelativeAlign.Center;
 
             // lblUsername
             this.lblUsername.BackColor = System.Drawing.Color.FromArgb(241, 245, 249);
@@ -346,7 +347,8 @@
             this.lblUsername.Size = new System.Drawing.Size(376, 46);
             this.lblUsername.TabIndex = 1;
             this.lblUsername.Text = "👤 مدير النظام";
-            this.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblUsername.StateCommon.ShortText.TextH = Krypton.Toolkit.PaletteRelativeAlign.Center;
+            this.lblUsername.StateCommon.ShortText.TextV = Krypton.Toolkit.PaletteRelativeAlign.Center;
 
             // lblSystemTitle
             this.lblSystemTitle.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -356,7 +358,8 @@
             this.lblSystemTitle.Size = new System.Drawing.Size(392, 60);
             this.lblSystemTitle.TabIndex = 2;
             this.lblSystemTitle.Text = "نظام إدارة المدرسة";
-            this.lblSystemTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblSystemTitle.StateCommon.ShortText.TextH = Krypton.Toolkit.PaletteRelativeAlign.Right;
+            this.lblSystemTitle.StateCommon.ShortText.TextV = Krypton.Toolkit.PaletteRelativeAlign.Center;
 
             // panelContent
             this.panelContent.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
