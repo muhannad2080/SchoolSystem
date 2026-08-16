@@ -16,6 +16,8 @@ namespace SchoolSystem.UI
     public partial class VouchersForm : UserControl
     {
         private readonly VoucherService voucherService = new VoucherService();
+        private readonly PartyService partyService = new PartyService();
+        private DataTable voucherParties;
 
         private int selectedVoucherId = 0;
         private DataTable allVouchers;
@@ -40,6 +42,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             txtSearch.TextChanged += (sender, e) => ApplyFilter();
+            cmbVoucherType.SelectedIndexChanged += cmbVoucherType_SelectedIndexChanged;
             Dock = DockStyle.Fill;
             ConfigureFinancialActions();
             ConfigureMovementSummary();
@@ -165,7 +168,38 @@ namespace SchoolSystem.UI
         {
             ClearInputs();
             cmbVoucherType.Text = voucherType;
+            SetNextVoucherNumber();
             txtAmount.Focus();
+        }
+
+        private void cmbVoucherType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!isLoading && selectedVoucherId == 0)
+                SetNextVoucherNumber();
+        }
+
+        private void SetNextVoucherNumber()
+        {
+            try
+            {
+                if (selectedVoucherId == 0 && cmbVoucherType.SelectedItem != null)
+                    txtVoucherNumber.Text = voucherService.GenerateVoucherNumber(cmbVoucherType.Text.Trim());
+            }
+            catch (Exception ex)
+            {
+                txtVoucherNumber.Clear();
+                UIHelper.ShowException("توليد رقم السند", ex);
+            }
+        }
+
+        private async Task LoadVoucherPartiesAsync()
+        {
+            voucherParties = await Task.Run(() => partyService.GetVoucherParties());
+            cmbPartyName.DataSource = voucherParties;
+            cmbPartyName.DisplayMember = "DisplayName";
+            cmbPartyName.ValueMember = "PartyKey";
+            cmbPartyName.SelectedIndex = -1;
+            cmbPartyName.Text = string.Empty;
         }
 
         private bool TryGetSelectedVoucherForOutput(out Voucher voucher)
@@ -330,6 +364,7 @@ namespace SchoolSystem.UI
                 isLoading = true;
 
                 InitializeLookups();
+                await LoadVoucherPartiesAsync();
 
                 dtpVoucherDate.Value = DateTime.Today;
 
@@ -364,6 +399,11 @@ namespace SchoolSystem.UI
             cmbFilterType.Items.Clear();
             cmbFilterType.Items.AddRange(new object[] { "كل السندات", "قبض", "صرف" });
             cmbFilterType.SelectedIndex = 0;
+
+            cmbPartyName.DropDownStyle = ComboBoxStyle.DropDown;
+            cmbPartyName.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            cmbPartyName.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbPartyName.IntegralHeight = false;
         }
 
         private async Task LoadVouchersAsync()
@@ -549,11 +589,14 @@ namespace SchoolSystem.UI
             if (cmbVoucherType.Items.Count > 0)
                 cmbVoucherType.SelectedIndex = 0;
 
+            SetNextVoucherNumber();
+
             txtAmount.Text = "0";
 
             dtpVoucherDate.Value = DateTime.Today;
 
-            txtPartyName.Clear();
+            cmbPartyName.SelectedIndex = -1;
+            cmbPartyName.Text = string.Empty;
             txtDescription.Clear();
 
             if (cmbPaymentMethod.Items.Count > 0)
@@ -611,9 +654,9 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtPartyName.Text) || txtPartyName.Text.Trim().Length > 200)
+            if (string.IsNullOrWhiteSpace(cmbPartyName.Text) || cmbPartyName.Text.Trim().Length > 200)
             {
-                UIHelper.FocusAndWarn(txtPartyName, "أدخل اسم الطرف بطول لا يتجاوز 200 حرف.");
+                UIHelper.FocusAndWarn(cmbPartyName, "اختر طرفًا من القائمة أو أدخل اسمًا بطول لا يتجاوز 200 حرف.");
                 return false;
             }
 
@@ -706,7 +749,7 @@ namespace SchoolSystem.UI
                 Amount = ReadDecimal(txtAmount.Text),
                 VoucherDate = dtpVoucherDate.Value.Date,
 
-                PartyName = txtPartyName.Text.Trim(),
+                PartyName = cmbPartyName.Text.Trim(),
                 Description = txtDescription.Text.Trim(),
 
                 PaymentMethod = cmbPaymentMethod.Text.Trim(),
@@ -749,7 +792,8 @@ namespace SchoolSystem.UI
             if (row["VoucherDate"] != DBNull.Value && DateTime.TryParse(row["VoucherDate"].ToString(), out DateTime voucherDate))
                 dtpVoucherDate.Value = voucherDate <= DateTime.Today ? voucherDate : DateTime.Today;
 
-            txtPartyName.Text = row["PartyName"] == DBNull.Value ? "" : row["PartyName"].ToString();
+            cmbPartyName.SelectedIndex = -1;
+            cmbPartyName.Text = row["PartyName"] == DBNull.Value ? "" : row["PartyName"].ToString();
             txtDescription.Text = row["Description"] == DBNull.Value ? "" : row["Description"].ToString();
 
             cmbPaymentMethod.Text = row["PaymentMethod"] == DBNull.Value ? "" : row["PaymentMethod"].ToString();

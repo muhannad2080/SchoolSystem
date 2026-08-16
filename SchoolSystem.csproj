@@ -148,6 +148,7 @@
     <Compile Include="DataAccess\TimetableRepository.cs" />
     <Compile Include="DataAccess\UserRepository.cs" />
     <Compile Include="DataAccess\VoucherRepository.cs" />
+    <Compile Include="DataAccess\PartyRepository.cs" />
     <Compile Include="Helpers\ApplicationLogger.cs" />
     <Compile Include="Helpers\ReportOutputHelper.cs" />
     <Compile Include="Helpers\MenuRenderer.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="Services\TimetableService.cs" />
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Services\VoucherService.cs" />
+    <Compile Include="Services\PartyService.cs" />
     <Compile Include="UI\ClassAssignmentForm.cs">
       <SubType>UserControl</SubType>
     </Compile>

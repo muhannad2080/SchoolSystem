@@ -22,6 +22,15 @@ namespace SchoolSystem.Services
             return voucherRepository.GetAllVouchers();
         }
 
+        public string GenerateVoucherNumber(string voucherType)
+        {
+            EnsureCanManageVouchers();
+            if (voucherType != "قبض" && voucherType != "صرف")
+                throw new ArgumentException("نوع السند غير صحيح.", "voucherType");
+
+            return voucherRepository.GenerateVoucherNumber(voucherType);
+        }
+
         public bool AddVoucher(Voucher voucher)
         {
             EnsureCanManageVouchers();

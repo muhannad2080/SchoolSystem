@@ -29,7 +29,7 @@
             this.lblVoucherDate = new System.Windows.Forms.Label();
             this.dtpVoucherDate = new System.Windows.Forms.DateTimePicker();
             this.lblPartyName = new System.Windows.Forms.Label();
-            this.txtPartyName = new System.Windows.Forms.TextBox();
+            this.cmbPartyName = new System.Windows.Forms.ComboBox();
             this.lblDescription = new System.Windows.Forms.Label();
             this.txtDescription = new System.Windows.Forms.TextBox();
             this.lblPaymentMethod = new System.Windows.Forms.Label();
@@ -112,7 +112,7 @@
             this.tableLayoutFields.Controls.Add(this.lblVoucherDate, 2, 1);
             this.tableLayoutFields.Controls.Add(this.dtpVoucherDate, 3, 1);
             this.tableLayoutFields.Controls.Add(this.lblPartyName, 0, 2);
-            this.tableLayoutFields.Controls.Add(this.txtPartyName, 1, 2);
+            this.tableLayoutFields.Controls.Add(this.cmbPartyName, 1, 2);
             this.tableLayoutFields.Controls.Add(this.lblDescription, 2, 2);
             this.tableLayoutFields.Controls.Add(this.txtDescription, 3, 2);
             this.tableLayoutFields.Controls.Add(this.lblPaymentMethod, 0, 3);
@@ -235,14 +235,17 @@
             this.lblPartyName.Text = "الطرف:";
             this.lblPartyName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // txtPartyName
+            // cmbPartyName
             // 
-            this.txtPartyName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtPartyName.Font = new System.Drawing.Font("Tahoma", 9.5F);
-            this.txtPartyName.Location = new System.Drawing.Point(538, 79);
-            this.txtPartyName.Name = "txtPartyName";
-            this.txtPartyName.Size = new System.Drawing.Size(399, 27);
-            this.txtPartyName.TabIndex = 9;
+            this.cmbPartyName.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cmbPartyName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+            this.cmbPartyName.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.cmbPartyName.FormattingEnabled = true;
+            this.cmbPartyName.Location = new System.Drawing.Point(538, 79);
+            this.cmbPartyName.Name = "cmbPartyName";
+            this.cmbPartyName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.cmbPartyName.Size = new System.Drawing.Size(399, 27);
+            this.cmbPartyName.TabIndex = 9;
             // 
             // lblDescription
             // 
@@ -587,7 +590,7 @@
         private System.Windows.Forms.DateTimePicker dtpVoucherDate;
 
         private System.Windows.Forms.Label lblPartyName;
-        private System.Windows.Forms.TextBox txtPartyName;
+        private System.Windows.Forms.ComboBox cmbPartyName;
 
         private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.TextBox txtDescription;
