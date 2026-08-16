@@ -308,14 +308,10 @@ namespace SchoolSystem.UI.Students
 
         private async void cmbClass_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (isLoading)
+            if (isLoading || GetSelectedClassId() <= 0)
                 return;
 
-            if (GetSelectedClassId() <= 0)
-                return;
-
-            await LoadSectionsAsync();
-            await LoadDataAsync();
+            await ReloadAssignmentDataAsync(true);
         }
 
         private async void cmbSection_SelectedIndexChanged(object sender, EventArgs e)
@@ -323,7 +319,7 @@ namespace SchoolSystem.UI.Students
             if (isLoading)
                 return;
 
-            await LoadDataAsync();
+            await ReloadAssignmentDataAsync(false);
         }
 
         private async void txtAcademicYear_TextChanged(object sender, EventArgs e)
@@ -332,11 +328,26 @@ namespace SchoolSystem.UI.Students
                 return;
 
             string academicYear = txtAcademicYear.Text.Trim();
-
             if (academicYear.Length == 9 && IsValidAcademicYear(academicYear))
+                await ReloadAssignmentDataAsync(true);
+        }
+
+        private async Task ReloadAssignmentDataAsync(bool reloadSections)
+        {
+            if (isLoading)
+                return;
+
+            isLoading = true;
+            try
             {
-                await LoadSectionsAsync();
+                if (reloadSections)
+                    await LoadSectionsAsync();
+
                 await LoadDataAsync();
+            }
+            finally
+            {
+                isLoading = false;
             }
         }
 
