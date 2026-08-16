@@ -70,6 +70,7 @@ namespace SchoolSystem
             // تأكيد أن زر الخروج هو آخر عنصر مضاف في شريط القائمة.
             menuStripMain.Items.Remove(tsmiLogout);
             menuStripMain.Items.Add(tsmiLogout);
+            menuStripMain.PerformLayout();
         }
 
         private void ApplyModernMenuStyle()
@@ -125,7 +126,7 @@ namespace SchoolSystem
             }
 
             panelTop.BackColor = UIHelper.SurfaceElevatedColor;
-            panelTop.Height = 76;
+            panelTop.Height = 60;
 
             lblSystemTitle.Font = new Font(UIHelper.FontFamily, UIHelper.TitleFontSize, FontStyle.Bold);
             lblSystemTitle.ForeColor = UIHelper.TextColor;
@@ -134,7 +135,7 @@ namespace SchoolSystem
             lblUsername.BackColor = UIHelper.SurfaceSecondaryColor;
             lblUsername.ForeColor = accentColor;
             lblUsername.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
-            lblUsername.Padding = new Padding(12, 0, 12, 0);
+            lblUsername.Padding = new Padding(8, 0, 8, 0);
 
             string currentUserText = lblUsername.Text ?? string.Empty;
             if (currentUserText.StartsWith("المستخدم:", StringComparison.Ordinal))

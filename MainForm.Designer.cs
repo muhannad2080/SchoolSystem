@@ -302,7 +302,7 @@
             this.panelTop.Location = new System.Drawing.Point(0, 41);
             this.panelTop.Name = "panelTop";
             this.panelTop.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
-            this.panelTop.Size = new System.Drawing.Size(1200, 76);
+            this.panelTop.Size = new System.Drawing.Size(1200, 60);
             this.panelTop.TabIndex = 1;
 
             // headerLayout
@@ -317,11 +317,11 @@
             this.headerLayout.Location = new System.Drawing.Point(12, 0);
             this.headerLayout.Margin = new System.Windows.Forms.Padding(0);
             this.headerLayout.Name = "headerLayout";
-            this.headerLayout.Padding = new System.Windows.Forms.Padding(0, 8, 0, 8);
+            this.headerLayout.Padding = new System.Windows.Forms.Padding(0, 4, 0, 4);
             this.headerLayout.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.headerLayout.RowCount = 1;
             this.headerLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.headerLayout.Size = new System.Drawing.Size(1176, 76);
+            this.headerLayout.Size = new System.Drawing.Size(1176, 60);
             this.headerLayout.TabIndex = 0;
 
             // lblDateTime
@@ -330,7 +330,7 @@
             this.lblDateTime.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
             this.lblDateTime.Name = "lblDateTime";
             this.lblDateTime.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblDateTime.Size = new System.Drawing.Size(392, 60);
+            this.lblDateTime.Size = new System.Drawing.Size(392, 52);
             this.lblDateTime.TabIndex = 0;
             this.lblDateTime.Text = "الخميس, 08/07/2026  10:30:45";
             this.lblDateTime.StateCommon.ShortText.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
@@ -341,9 +341,9 @@
             this.lblUsername.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblUsername.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.lblUsername.ForeColor = System.Drawing.Color.FromArgb(15, 118, 110);
-            this.lblUsername.Margin = new System.Windows.Forms.Padding(8, 7, 8, 7);
+            this.lblUsername.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
+            this.lblUsername.Padding = new System.Windows.Forms.Padding(8, 0, 8, 0);
             this.lblUsername.Size = new System.Drawing.Size(376, 46);
             this.lblUsername.TabIndex = 1;
             this.lblUsername.Text = "المستخدم: مدير النظام";
@@ -355,7 +355,7 @@
             this.lblSystemTitle.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
             this.lblSystemTitle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.lblSystemTitle.Name = "lblSystemTitle";
-            this.lblSystemTitle.Size = new System.Drawing.Size(392, 60);
+            this.lblSystemTitle.Size = new System.Drawing.Size(392, 52);
             this.lblSystemTitle.TabIndex = 2;
             this.lblSystemTitle.Text = "نظام إدارة المدرسة";
             this.lblSystemTitle.StateCommon.ShortText.TextH = Krypton.Toolkit.PaletteRelativeAlign.Far;
@@ -364,10 +364,10 @@
             // panelContent
             this.panelContent.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
             this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelContent.Location = new System.Drawing.Point(0, 117);
+            this.panelContent.Location = new System.Drawing.Point(0, 101);
             this.panelContent.Name = "panelContent";
             this.panelContent.Padding = new System.Windows.Forms.Padding(12);
-            this.panelContent.Size = new System.Drawing.Size(1200, 552);
+            this.panelContent.Size = new System.Drawing.Size(1200, 568);
             this.panelContent.TabIndex = 2;
 
             // statusStripMain
