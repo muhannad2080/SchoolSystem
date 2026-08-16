@@ -89,7 +89,7 @@
             });
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
-            this.menuStripMain.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.menuStripMain.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.menuStripMain.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.menuStripMain.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.menuStripMain.Size = new System.Drawing.Size(1200, 41);
@@ -101,6 +101,7 @@
             this.tsmiAuditLogs.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.tsmiAuditLogs.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.tsmiAuditLogs.AutoSize = true;
+            this.tsmiAuditLogs.Margin = new System.Windows.Forms.Padding(0);
             this.tsmiAuditLogs.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiAuditLogs.Size = new System.Drawing.Size(110, 29);
             this.tsmiAuditLogs.Text = "سجل الأنشطة";
@@ -112,6 +113,7 @@
             this.tsmiSettings.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.tsmiSettings.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.tsmiSettings.AutoSize = true;
+            this.tsmiSettings.Margin = new System.Windows.Forms.Padding(0);
             this.tsmiSettings.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiSettings.Size = new System.Drawing.Size(90, 29);
             this.tsmiSettings.Text = "الإعدادات";
@@ -285,6 +287,7 @@
             this.tsmiLogout.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
             this.tsmiLogout.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.tsmiLogout.AutoSize = true;
+            this.tsmiLogout.Margin = new System.Windows.Forms.Padding(0);
             this.tsmiLogout.Padding = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.tsmiLogout.Size = new System.Drawing.Size(75, 29);
             this.tsmiLogout.Text = "🚪 خروج";
