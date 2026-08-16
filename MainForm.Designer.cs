@@ -70,6 +70,7 @@
             this.menuStripMain.CanOverflow = true;
             this.menuStripMain.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.menuStripMain.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.menuStripMain.Stretch = true;
             this.menuStripMain.AutoSize = false;
             this.menuStripMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
                 this.tsmiDashboard,
@@ -299,6 +300,7 @@
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(1200, 76);
             this.panelTop.TabIndex = 1;
+            this.panelTop.Resize += new System.EventHandler(this.panelTop_Resize);
 
             // lblDateTime
             this.lblDateTime.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Top;

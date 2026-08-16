@@ -22,12 +22,17 @@ namespace SchoolSystem
 
             ApplyModernMenuStyle();
 
+            // لا نشغل منطق الجلسة أو تحميل الشاشات أثناء تصميم النموذج؛
+            // يجب أن تبقى جميع عناصر القائمة مرئية داخل Visual Studio Designer.
+            if (IsDesignTime())
+            {
+                SetMenuItemsVisible(true);
+                return;
+            }
+
             UpdateCurrentUserLabel();
-
             timerClock.Start();
-
             LoadWelcomeScreen();
-
             ApplyCurrentUserPermissions();
         }
 
@@ -83,6 +88,7 @@ namespace SchoolSystem
 
             lblDateTime.ForeColor = UIHelper.MutedTextColor;
             lblDateTime.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
+            PositionHeaderControls();
 
             panelContent.BackColor = contentBack;
             panelContent.Padding = new Padding(18);
@@ -139,6 +145,22 @@ namespace SchoolSystem
         private void timerClock_Tick(object sender, EventArgs e)
         {
             lblDateTime.Text = DateTime.Now.ToString("dddd, dd/MM/yyyy  HH:mm:ss");
+        }
+
+        private void panelTop_Resize(object sender, EventArgs e)
+        {
+            PositionHeaderControls();
+        }
+
+        private void PositionHeaderControls()
+        {
+            if (panelTop == null || lblUsername == null)
+                return;
+
+            int availableWidth = panelTop.ClientSize.Width;
+            int centeredLeft = Math.Max(0, (availableWidth - lblUsername.Width) / 2);
+            lblUsername.Left = centeredLeft;
+            lblUsername.Top = Math.Max(0, (panelTop.ClientSize.Height - lblUsername.Height) / 2);
         }
 
         private void LoadWelcomeScreen()
@@ -280,6 +302,9 @@ namespace SchoolSystem
                 return;
             }
 
+            // الخروج إجراء جلسة وليس صلاحية وحدة؛ يظل متاحاً دائماً للمستخدم المسجل.
+            tsmiLogout.Visible = true;
+
             ToolStripMenuItem[] permissionItems =
             {
                 tsmiDashboard, tsmiStudents, tsmiStudentsManage, tsmiStudentsEnroll,
@@ -323,6 +348,7 @@ namespace SchoolSystem
                 tsmiReports.Visible = true;
                 tsmiAuditLogs.Visible = true;
                 tsmiSettings.Visible = true;
+                tsmiLogout.Visible = true;
                 return;
             }
 
