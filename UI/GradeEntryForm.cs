@@ -175,12 +175,29 @@ namespace SchoolSystem.UI
                     return;
 
                 DataTable sections = await Task.Run(() => sectionService.GetSections(classId, academicYear));
-                cmbSection.DataSource = sections;
+                DataTable choices = new DataTable();
+                choices.Columns.Add("Section", typeof(string));
+                var sectionNames = new System.Collections.Generic.HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                if (sections != null && sections.Columns.Contains("Section"))
+                {
+                    foreach (DataRow row in sections.Rows)
+                    {
+                        string sectionName = row["Section"] == DBNull.Value
+                            ? string.Empty
+                            : Convert.ToString(row["Section"]);
+                        sectionName = (sectionName ?? string.Empty).Trim();
+                        if (!string.IsNullOrWhiteSpace(sectionName) && sectionNames.Add(sectionName))
+                            choices.Rows.Add(sectionName);
+                    }
+                }
+
+                cmbSection.DataSource = choices;
                 cmbSection.DisplayMember = "Section";
                 cmbSection.ValueMember = "Section";
-                cmbSection.Enabled = sections.Rows.Count > 0;
+                cmbSection.Enabled = choices.Rows.Count > 0;
 
-                if (sections.Rows.Count > 0)
+                if (choices.Rows.Count > 0)
                     cmbSection.SelectedIndex = 0;
             }
             catch (Exception ex)
