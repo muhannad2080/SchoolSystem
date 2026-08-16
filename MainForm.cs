@@ -46,7 +46,7 @@ namespace SchoolSystem
             menuStripMain.ForeColor = Color.White;
             menuStripMain.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
             // شريط مضغوط ومتوازن؛ المسافة الخارجية ثابتة ولا تتضخم مع RTL.
-            menuStripMain.Padding = new Padding(3, 4, 3, 4);
+            menuStripMain.Padding = new Padding(0, 4, 0, 4);
             menuStripMain.CanOverflow = true;
             menuStripMain.AutoSize = false;
             menuStripMain.RenderMode = ToolStripRenderMode.Professional;
@@ -54,17 +54,17 @@ namespace SchoolSystem
             tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
             tsmiAuditLogs.Alignment = ToolStripItemAlignment.Right;
             tsmiAuditLogs.Margin = new Padding(0);
-            tsmiAuditLogs.Padding = new Padding(5, 0, 5, 0);
+            tsmiAuditLogs.Padding = new Padding(4, 0, 4, 0);
 
             tsmiSettings.Overflow = ToolStripItemOverflow.Never;
             tsmiSettings.Alignment = ToolStripItemAlignment.Right;
             tsmiSettings.Margin = new Padding(0);
-            tsmiSettings.Padding = new Padding(5, 0, 5, 0);
+            tsmiSettings.Padding = new Padding(4, 0, 4, 0);
 
             tsmiLogout.Overflow = ToolStripItemOverflow.Never;
             tsmiLogout.Alignment = ToolStripItemAlignment.Right;
             tsmiLogout.Margin = new Padding(0);
-            tsmiLogout.Padding = new Padding(5, 0, 5, 0);
+            tsmiLogout.Padding = new Padding(4, 0, 4, 0);
 
             foreach (ToolStripItem item in menuStripMain.Items)
             {
@@ -100,7 +100,7 @@ namespace SchoolSystem
             lblDateTime.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
 
             panelContent.BackColor = contentBack;
-            panelContent.Padding = new Padding(18);
+            panelContent.Padding = new Padding(12);
 
             statusStripMain.BackColor = UIHelper.SurfaceElevatedColor;
             statusStripMain.ForeColor = UIHelper.MutedTextColor;
