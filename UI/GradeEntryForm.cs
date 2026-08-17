@@ -207,8 +207,12 @@ namespace SchoolSystem.UI
                 cmbSection.ValueMember = "Section";
                 cmbSection.Enabled = choices.Rows.Count > 0;
 
-                if (choices.Rows.Count > 0)
+                // لا نضبط SelectedIndex إلا بعد تحقق وجود عناصر فعلية في ComboBox؛
+                // فقد يحتوي DataTable على صفوف بينما لا يكتمل الربط بعد.
+                if (cmbSection.Items.Count > 0)
                     cmbSection.SelectedIndex = 0;
+                else
+                    cmbSection.SelectedIndex = -1;
             }
             catch (Exception ex)
             {

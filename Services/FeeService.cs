@@ -193,8 +193,7 @@ namespace SchoolSystem.Services
 
         private void ValidateAcademicYear(string academicYear)
         {
-            string value = academicYear == null ? "" : academicYear.Trim();
-            string[] parts = value.Replace('-', '/').Split('/');
+            string[] parts = SplitAcademicYear(academicYear);
             int firstYear;
             int secondYear;
 
@@ -209,9 +208,31 @@ namespace SchoolSystem.Services
             }
         }
 
+        private static string[] SplitAcademicYear(string academicYear)
+        {
+            string value = (academicYear ?? string.Empty).Trim()
+                .Replace('-', '/')
+                .Replace('–', '/')
+                .Replace('—', '/');
+
+            string[] parts = value.Split('/');
+            for (int i = 0; i < parts.Length; i++)
+                parts[i] = parts[i].Trim();
+
+            return parts;
+        }
+
+        private static string NormalizeAcademicYear(string academicYear)
+        {
+            string[] parts = SplitAcademicYear(academicYear);
+            return parts.Length == 2
+                ? parts[0] + "/" + parts[1]
+                : (academicYear ?? string.Empty).Trim();
+        }
+
         private void PrepareFee(Fee fee)
         {
-            fee.AcademicYear = fee.AcademicYear.Trim();
+            fee.AcademicYear = NormalizeAcademicYear(fee.AcademicYear);
             fee.FeeType = fee.FeeType.Trim();
             fee.NetAmount = fee.TotalAmount - fee.DiscountAmount;
             fee.RemainingAmount = fee.NetAmount - fee.PaidAmount;
