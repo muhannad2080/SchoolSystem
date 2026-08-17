@@ -67,7 +67,7 @@ BEGIN TRY
         INSERT INTO dbo.Teachers
             (EmployeeNumber, FullName, Gender, Nationality, Phone, Email, Qualification, Specialization, HireDate, BasicSalary, Status, Notes)
         VALUES
-            (N'DEMO-TCH-003', N'خالد عبSection Dله الصلوي', N'ذكر', N'يمني', N'777100003', N'khaled.demo@schoolsystem.local', N'ماجستير علوم', N'الفيزياء', '2020-09-01', 980, N'نشط', N'بيانات تجريبية للتقارير');
+            (N'DEMO-TCH-003', N'خالد عبدالله الصلوي', N'ذكر', N'يمني', N'777100003', N'khaled.demo@schoolsystem.local', N'ماجستير علوم', N'الفيزياء', '2020-09-01', 980, N'نشط', N'بيانات تجريبية للتقارير');
 
     DECLARE @Teacher1 INT = (SELECT TOP 1 TeacherID FROM dbo.Teachers WHERE EmployeeNumber = N'DEMO-TCH-001');
     DECLARE @Teacher2 INT = (SELECT TOP 1 TeacherID FROM dbo.Teachers WHERE EmployeeNumber = N'DEMO-TCH-002');
@@ -83,7 +83,7 @@ BEGIN TRY
         INSERT INTO dbo.Students
             (StudentNumber, FullName, Gender, BirthDate, BirthPlace, Nationality, NationalId, StudentPhone, Status, GuardianName, GuardianRelation, GuardianPhone, GuardianEmail, Governorate, District, Address)
         VALUES
-            (N'DEMO-STU-002', N'ريم عبSection Dله حسن', N'أنثى', '2009-08-22', N'تعز', N'يمنية', N'DEMO-ID-002', N'777200002', N'نشط', N'عبSection Dله حسن', N'والد', N'777300002', N'guardian2@schoolsystem.local', N'تعز', N'المظفر', N'شارع الجامعة');
+            (N'DEMO-STU-002', N'ريم عبدالله حسن', N'أنثى', '2009-08-22', N'تعز', N'يمنية', N'DEMO-ID-002', N'777200002', N'نشط', N'عبدالله حسن', N'والد', N'777300002', N'guardian2@schoolsystem.local', N'تعز', N'المظفر', N'شارع الجامعة');
     IF NOT EXISTS (SELECT 1 FROM dbo.Students WHERE StudentNumber = N'DEMO-STU-003')
         INSERT INTO dbo.Students
             (StudentNumber, FullName, Gender, BirthDate, BirthPlace, Nationality, NationalId, StudentPhone, Status, GuardianName, GuardianRelation, GuardianPhone, GuardianEmail, Governorate, District, Address)
