@@ -14,7 +14,7 @@ namespace SchoolSystem.Services
 
         public DataTable GetUnassignedStudents(string academicYear)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
+            CurrentUser.DemandAction("ClassAssignment", "View", "ليس لديك صلاحية عرض قوائم توزيع الطلاب.");
             ValidateAcademicYear(academicYear);
             return repository.GetUnassignedStudents(academicYear);
         }
@@ -22,8 +22,9 @@ namespace SchoolSystem.Services
         public DataTable GetSections(int classId, string academicYear)
         {
             CurrentUser.DemandAny("ليس لديك صلاحية قراءة الشعب الدراسية.",
-                PermissionKeys.EnrollmentManage,
+                PermissionKeys.ClassAssignmentView,
                 PermissionKeys.ClassAssignmentManage,
+                PermissionKeys.EnrollmentManage,
                 PermissionKeys.AttendanceManage,
                 PermissionKeys.GradesManage,
                 PermissionKeys.TimetableManage,
@@ -37,7 +38,7 @@ namespace SchoolSystem.Services
 
         public DataTable GetAssignedStudents(int classId, string section, string academicYear)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
+            CurrentUser.DemandAction("ClassAssignment", "View", "ليس لديك صلاحية عرض الطلاب الموزعين.");
             if (classId <= 0)
                 throw new ArgumentException("يجب اختيار الصف.");
 
@@ -51,7 +52,7 @@ namespace SchoolSystem.Services
 
         public bool AssignStudent(StudentClass assignment)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
+            CurrentUser.DemandAction("ClassAssignment", "Add", "ليس لديك صلاحية توزيع الطلاب.");
             ValidateAssignment(assignment);
 
             if (repository.IsStudentAssignedInYear(assignment.StudentID, assignment.AcademicYear))
@@ -71,7 +72,7 @@ namespace SchoolSystem.Services
 
         public bool RemoveAssignment(int studentClassId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
+            CurrentUser.DemandAction("ClassAssignment", "Delete", "ليس لديك صلاحية إلغاء توزيع الطلاب.");
             if (studentClassId <= 0)
                 throw new ArgumentException("اختر طالباً موزعاً من الجدول أولاً.");
 
@@ -89,7 +90,7 @@ namespace SchoolSystem.Services
 
         public int RemoveAssignments(IList<int> studentClassIds)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
+            CurrentUser.DemandAction("ClassAssignment", "Delete", "ليس لديك صلاحية الإلغاء الجماعي لتوزيع الطلاب.");
             if (studentClassIds == null || studentClassIds.Count == 0)
                 throw new ArgumentException("حدد طالباً موزعاً واحداً على الأقل.");
 
@@ -104,7 +105,7 @@ namespace SchoolSystem.Services
 
         public bool TransferAssignment(int studentClassId, int targetClassId, string targetSection, string academicYear)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
+            CurrentUser.DemandAction("ClassAssignment", "Edit", "ليس لديك صلاحية نقل توزيع الطالب.");
             if (studentClassId <= 0)
                 throw new ArgumentException("حدد طالباً موزعاً من الجدول.");
             if (targetClassId <= 0)
@@ -127,7 +128,7 @@ namespace SchoolSystem.Services
         public DataTable GetSectionStatistics(int classId, string academicYear)
         {
             CurrentUser.DemandAny("ليس لديك صلاحية قراءة إحصائيات التوزيع.",
-                PermissionKeys.ClassAssignmentManage, PermissionKeys.ReportsView);
+                PermissionKeys.ClassAssignmentView, PermissionKeys.ClassAssignmentManage, PermissionKeys.ReportsView);
             if (classId <= 0)
                 throw new ArgumentException("يجب اختيار الصف.");
             ValidateAcademicYear(academicYear);
