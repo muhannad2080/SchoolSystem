@@ -85,9 +85,9 @@
             // panelAlerts (التنبيهات)
             // 
             this.panelAlerts.BackColor = System.Drawing.Color.FromArgb(255, 245, 238);
-            this.panelAlerts.Controls.Add(this.lblAlertsTitle);
-            this.panelAlerts.Controls.Add(this.lblPendingFees);
             this.panelAlerts.Controls.Add(this.lblTodayAbsence);
+            this.panelAlerts.Controls.Add(this.lblPendingFees);
+            this.panelAlerts.Controls.Add(this.lblAlertsTitle);
             this.tableLayoutMain.SetRowSpan(this.panelAlerts, 2);
             this.panelAlerts.Dock = System.Windows.Forms.DockStyle.Fill;
                         this.panelAlerts.Padding = new System.Windows.Forms.Padding(10);
@@ -96,7 +96,32 @@
             this.lblAlertsTitle.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold);
             this.lblAlertsTitle.ForeColor = System.Drawing.Color.FromArgb(33, 42, 57);
             this.lblAlertsTitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblAlertsTitle.Height = 25;
+            this.lblAlertsTitle.Height = 28;
+            this.lblAlertsTitle.Padding = new System.Windows.Forms.Padding(6, 2, 6, 2);
+
+            // 
+            // lblPendingFees
+            // 
+            this.lblPendingFees.AutoSize = false;
+            this.lblPendingFees.BackColor = System.Drawing.Color.White;
+            this.lblPendingFees.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblPendingFees.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.lblPendingFees.ForeColor = System.Drawing.Color.FromArgb(194, 65, 12);
+            this.lblPendingFees.Height = 30;
+            this.lblPendingFees.Margin = new System.Windows.Forms.Padding(3);
+            this.lblPendingFees.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+
+            // 
+            // lblTodayAbsence
+            // 
+            this.lblTodayAbsence.AutoSize = false;
+            this.lblTodayAbsence.BackColor = System.Drawing.Color.White;
+            this.lblTodayAbsence.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTodayAbsence.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.lblTodayAbsence.ForeColor = System.Drawing.Color.FromArgb(180, 39, 39);
+            this.lblTodayAbsence.Height = 30;
+            this.lblTodayAbsence.Margin = new System.Windows.Forms.Padding(3, 10, 3, 3);
+            this.lblTodayAbsence.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
 
             // سيتم تحديث النصوص من الكود
 

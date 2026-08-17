@@ -69,9 +69,9 @@ namespace SchoolSystem.UI {
             this.lblCount = new System.Windows.Forms.Label();
             this.pnlButtons = new System.Windows.Forms.Panel();
             this.btnClose = new System.Windows.Forms.Button();
-            this.btnPreviewOutput = new System.Windows.Forms.Button();
-            this.btnExportPdf = new System.Windows.Forms.Button();
             this.btnExportExcel = new System.Windows.Forms.Button();
+            this.btnExportPdf = new System.Windows.Forms.Button();
+            this.btnPreviewOutput = new System.Windows.Forms.Button();
             this.btnPrintReceipt = new System.Windows.Forms.Button();
             this.btnPrintForm = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
@@ -838,7 +838,7 @@ namespace SchoolSystem.UI {
             // btnClose
             // 
             this.btnClose.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnClose.Location = new System.Drawing.Point(256, 10);
+            this.btnClose.Location = new System.Drawing.Point(-34, 10);
             this.btnClose.Margin = new System.Windows.Forms.Padding(5);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(137, 50);
@@ -846,36 +846,36 @@ namespace SchoolSystem.UI {
             this.btnClose.Text = "إغلاق";
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // btnPreviewOutput
-            //
-            this.btnPreviewOutput.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnPreviewOutput.Location = new System.Drawing.Point(256, 10);
-            this.btnPreviewOutput.Margin = new System.Windows.Forms.Padding(5);
-            this.btnPreviewOutput.Name = "btnPreviewOutput";
-            this.btnPreviewOutput.Size = new System.Drawing.Size(110, 50);
-            this.btnPreviewOutput.TabIndex = 1;
-            this.btnPreviewOutput.Text = "معاينة | Preview";
-            //
-            // btnExportPdf
-            //
-            this.btnExportPdf.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnExportPdf.Location = new System.Drawing.Point(366, 10);
-            this.btnExportPdf.Margin = new System.Windows.Forms.Padding(5);
-            this.btnExportPdf.Name = "btnExportPdf";
-            this.btnExportPdf.Size = new System.Drawing.Size(90, 50);
-            this.btnExportPdf.TabIndex = 2;
-            this.btnExportPdf.Text = "PDF";
-            //
             // btnExportExcel
-            //
+            // 
             this.btnExportExcel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnExportExcel.Location = new System.Drawing.Point(456, 10);
+            this.btnExportExcel.Location = new System.Drawing.Point(103, 10);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(5);
             this.btnExportExcel.Name = "btnExportExcel";
             this.btnExportExcel.Size = new System.Drawing.Size(90, 50);
             this.btnExportExcel.TabIndex = 3;
             this.btnExportExcel.Text = "Excel";
-            //
+            // 
+            // btnExportPdf
+            // 
+            this.btnExportPdf.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnExportPdf.Location = new System.Drawing.Point(193, 10);
+            this.btnExportPdf.Margin = new System.Windows.Forms.Padding(5);
+            this.btnExportPdf.Name = "btnExportPdf";
+            this.btnExportPdf.Size = new System.Drawing.Size(90, 50);
+            this.btnExportPdf.TabIndex = 2;
+            this.btnExportPdf.Text = "PDF";
+            // 
+            // btnPreviewOutput
+            // 
+            this.btnPreviewOutput.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnPreviewOutput.Location = new System.Drawing.Point(283, 10);
+            this.btnPreviewOutput.Margin = new System.Windows.Forms.Padding(5);
+            this.btnPreviewOutput.Name = "btnPreviewOutput";
+            this.btnPreviewOutput.Size = new System.Drawing.Size(110, 50);
+            this.btnPreviewOutput.TabIndex = 1;
+            this.btnPreviewOutput.Text = "معاينة | Preview";
+            // 
             // btnPrintReceipt
             // 
             this.btnPrintReceipt.Dock = System.Windows.Forms.DockStyle.Right;

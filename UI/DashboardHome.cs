@@ -213,12 +213,18 @@ namespace SchoolSystem.UI
                 {
                     Control control = panelAlerts.Controls[i];
 
-                    if (control != lblAlertsTitle)
+                    if (control != lblAlertsTitle &&
+                        control != lblPendingFees &&
+                        control != lblTodayAbsence)
                     {
                         panelAlerts.Controls.RemoveAt(i);
                         control.Dispose();
                     }
                 }
+
+                lblPendingFees.Text = "الرسوم غير المدفوعة: جاري التحميل...";
+                lblTodayAbsence.Text = "غياب اليوم: جاري التحميل...";
+                panelAlerts.PerformLayout();
 
                 int pendingFees = await Task.Run(() => dashboardService.GetPendingFeesCount());
                 int todayAbsence = await Task.Run(() => dashboardService.GetTodayAbsenceCount());

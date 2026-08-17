@@ -330,7 +330,6 @@
     <Compile Include="UI\AuditLogForm.Designer.cs">
       <DependentUpon>AuditLogForm.cs</DependentUpon>
     </Compile>
-
     <Compile Include="UI\SubjectsForm.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -385,6 +384,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="UI\AuditLogForm.resx">
+      <DependentUpon>AuditLogForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\ClassAssignmentForm.resx">
       <DependentUpon>ClassAssignmentForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -420,6 +422,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\StaffAttendanceForm.resx">
       <DependentUpon>StaffAttendanceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\StudentProfileForm.resx">
+      <DependentUpon>StudentProfileForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\StudentsForm.resx">
       <DependentUpon>StudentsForm.cs</DependentUpon>
@@ -462,6 +467,5 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-
   <Import Project="packages\SkiaSharp.NativeAssets.Win32.4.148.0\build\net462\SkiaSharp.NativeAssets.Win32.targets" Condition="Exists('packages\SkiaSharp.NativeAssets.Win32.4.148.0\build\net462\SkiaSharp.NativeAssets.Win32.targets')" />
 </Project>

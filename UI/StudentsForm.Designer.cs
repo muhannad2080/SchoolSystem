@@ -1,4 +1,4 @@
-namespace SchoolSystem.UI {
+﻿namespace SchoolSystem.UI {
     partial class StudentsForm {
         private System.ComponentModel.IContainer components = null;
         protected override void Dispose(bool disposing) {
@@ -51,6 +51,7 @@ namespace SchoolSystem.UI {
             this.picStudent = new System.Windows.Forms.PictureBox();
             this.btnChooseImage = new System.Windows.Forms.Button();
             this.btnRemoveImage = new System.Windows.Forms.Button();
+            this.layoutRight = new System.Windows.Forms.TableLayoutPanel();
             this.dgvStudents = new System.Windows.Forms.DataGridView();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
@@ -81,6 +82,7 @@ namespace SchoolSystem.UI {
             this.tlpAddress.SuspendLayout();
             this.gbPhoto.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picStudent)).BeginInit();
+            this.layoutRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvStudents)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
@@ -96,7 +98,7 @@ namespace SchoolSystem.UI {
             // 
             this.lblStudentNumber.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblStudentNumber.AutoSize = true;
-            this.lblStudentNumber.Location = new System.Drawing.Point(628, 30);
+            this.lblStudentNumber.Location = new System.Drawing.Point(371, 25);
             this.lblStudentNumber.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblStudentNumber.Name = "lblStudentNumber";
             this.lblStudentNumber.Size = new System.Drawing.Size(71, 17);
@@ -109,14 +111,14 @@ namespace SchoolSystem.UI {
             this.txtStudentNumber.Location = new System.Drawing.Point(3, 19);
             this.txtStudentNumber.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtStudentNumber.Name = "txtStudentNumber";
-            this.txtStudentNumber.Size = new System.Drawing.Size(619, 24);
+            this.txtStudentNumber.Size = new System.Drawing.Size(362, 24);
             this.txtStudentNumber.TabIndex = 1;
             // 
             // lblFullName
             // 
             this.lblFullName.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblFullName.AutoSize = true;
-            this.lblFullName.Location = new System.Drawing.Point(628, 70);
+            this.lblFullName.Location = new System.Drawing.Point(371, 55);
             this.lblFullName.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblFullName.Name = "lblFullName";
             this.lblFullName.Size = new System.Drawing.Size(91, 17);
@@ -126,17 +128,17 @@ namespace SchoolSystem.UI {
             // txtFullName
             // 
             this.txtFullName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtFullName.Location = new System.Drawing.Point(3, 59);
+            this.txtFullName.Location = new System.Drawing.Point(3, 49);
             this.txtFullName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFullName.Name = "txtFullName";
-            this.txtFullName.Size = new System.Drawing.Size(619, 24);
+            this.txtFullName.Size = new System.Drawing.Size(362, 24);
             this.txtFullName.TabIndex = 3;
             // 
             // lblGender
             // 
             this.lblGender.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblGender.AutoSize = true;
-            this.lblGender.Location = new System.Drawing.Point(628, 110);
+            this.lblGender.Location = new System.Drawing.Point(371, 85);
             this.lblGender.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblGender.Name = "lblGender";
             this.lblGender.Size = new System.Drawing.Size(48, 17);
@@ -146,17 +148,17 @@ namespace SchoolSystem.UI {
             // cmbGender
             // 
             this.cmbGender.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cmbGender.Location = new System.Drawing.Point(3, 99);
+            this.cmbGender.Location = new System.Drawing.Point(3, 79);
             this.cmbGender.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbGender.Name = "cmbGender";
-            this.cmbGender.Size = new System.Drawing.Size(619, 24);
+            this.cmbGender.Size = new System.Drawing.Size(362, 24);
             this.cmbGender.TabIndex = 5;
             // 
             // lblBirthDate
             // 
             this.lblBirthDate.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblBirthDate.AutoSize = true;
-            this.lblBirthDate.Location = new System.Drawing.Point(628, 150);
+            this.lblBirthDate.Location = new System.Drawing.Point(371, 115);
             this.lblBirthDate.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblBirthDate.Name = "lblBirthDate";
             this.lblBirthDate.Size = new System.Drawing.Size(77, 17);
@@ -166,17 +168,17 @@ namespace SchoolSystem.UI {
             // dtpBirthDate
             // 
             this.dtpBirthDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dtpBirthDate.Location = new System.Drawing.Point(3, 139);
+            this.dtpBirthDate.Location = new System.Drawing.Point(3, 109);
             this.dtpBirthDate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.dtpBirthDate.Name = "dtpBirthDate";
-            this.dtpBirthDate.Size = new System.Drawing.Size(619, 24);
+            this.dtpBirthDate.Size = new System.Drawing.Size(362, 24);
             this.dtpBirthDate.TabIndex = 7;
             // 
             // lblBirthPlace
             // 
             this.lblBirthPlace.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblBirthPlace.AutoSize = true;
-            this.lblBirthPlace.Location = new System.Drawing.Point(628, 190);
+            this.lblBirthPlace.Location = new System.Drawing.Point(371, 145);
             this.lblBirthPlace.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblBirthPlace.Name = "lblBirthPlace";
             this.lblBirthPlace.Size = new System.Drawing.Size(77, 17);
@@ -186,17 +188,17 @@ namespace SchoolSystem.UI {
             // txtBirthPlace
             // 
             this.txtBirthPlace.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtBirthPlace.Location = new System.Drawing.Point(3, 179);
+            this.txtBirthPlace.Location = new System.Drawing.Point(3, 139);
             this.txtBirthPlace.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtBirthPlace.Name = "txtBirthPlace";
-            this.txtBirthPlace.Size = new System.Drawing.Size(619, 24);
+            this.txtBirthPlace.Size = new System.Drawing.Size(362, 24);
             this.txtBirthPlace.TabIndex = 9;
             // 
             // lblNationality
             // 
             this.lblNationality.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblNationality.AutoSize = true;
-            this.lblNationality.Location = new System.Drawing.Point(628, 230);
+            this.lblNationality.Location = new System.Drawing.Point(371, 175);
             this.lblNationality.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblNationality.Name = "lblNationality";
             this.lblNationality.Size = new System.Drawing.Size(58, 17);
@@ -206,17 +208,17 @@ namespace SchoolSystem.UI {
             // txtNationality
             // 
             this.txtNationality.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNationality.Location = new System.Drawing.Point(3, 219);
+            this.txtNationality.Location = new System.Drawing.Point(3, 169);
             this.txtNationality.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNationality.Name = "txtNationality";
-            this.txtNationality.Size = new System.Drawing.Size(619, 24);
+            this.txtNationality.Size = new System.Drawing.Size(362, 24);
             this.txtNationality.TabIndex = 11;
             // 
             // lblNationalId
             // 
             this.lblNationalId.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblNationalId.AutoSize = true;
-            this.lblNationalId.Location = new System.Drawing.Point(628, 270);
+            this.lblNationalId.Location = new System.Drawing.Point(371, 205);
             this.lblNationalId.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblNationalId.Name = "lblNationalId";
             this.lblNationalId.Size = new System.Drawing.Size(66, 17);
@@ -226,17 +228,17 @@ namespace SchoolSystem.UI {
             // txtNationalId
             // 
             this.txtNationalId.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNationalId.Location = new System.Drawing.Point(3, 259);
+            this.txtNationalId.Location = new System.Drawing.Point(3, 199);
             this.txtNationalId.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNationalId.Name = "txtNationalId";
-            this.txtNationalId.Size = new System.Drawing.Size(619, 24);
+            this.txtNationalId.Size = new System.Drawing.Size(362, 24);
             this.txtNationalId.TabIndex = 13;
             // 
             // lblPhone
             // 
             this.lblPhone.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblPhone.AutoSize = true;
-            this.lblPhone.Location = new System.Drawing.Point(628, 310);
+            this.lblPhone.Location = new System.Drawing.Point(371, 235);
             this.lblPhone.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblPhone.Name = "lblPhone";
             this.lblPhone.Size = new System.Drawing.Size(80, 17);
@@ -246,17 +248,17 @@ namespace SchoolSystem.UI {
             // txtPhone
             // 
             this.txtPhone.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtPhone.Location = new System.Drawing.Point(3, 299);
+            this.txtPhone.Location = new System.Drawing.Point(3, 229);
             this.txtPhone.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPhone.Name = "txtPhone";
-            this.txtPhone.Size = new System.Drawing.Size(619, 24);
+            this.txtPhone.Size = new System.Drawing.Size(362, 24);
             this.txtPhone.TabIndex = 15;
             // 
             // lblStatus
             // 
             this.lblStatus.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(628, 350);
+            this.lblStatus.Location = new System.Drawing.Point(371, 265);
             this.lblStatus.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(41, 17);
@@ -266,17 +268,17 @@ namespace SchoolSystem.UI {
             // cmbStatus
             // 
             this.cmbStatus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cmbStatus.Location = new System.Drawing.Point(3, 339);
+            this.cmbStatus.Location = new System.Drawing.Point(3, 259);
             this.cmbStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbStatus.Name = "cmbStatus";
-            this.cmbStatus.Size = new System.Drawing.Size(619, 24);
+            this.cmbStatus.Size = new System.Drawing.Size(362, 24);
             this.cmbStatus.TabIndex = 17;
             // 
             // lblGuardianName
             // 
             this.lblGuardianName.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblGuardianName.AutoSize = true;
-            this.lblGuardianName.Location = new System.Drawing.Point(628, 30);
+            this.lblGuardianName.Location = new System.Drawing.Point(371, 25);
             this.lblGuardianName.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblGuardianName.Name = "lblGuardianName";
             this.lblGuardianName.Size = new System.Drawing.Size(92, 17);
@@ -289,14 +291,14 @@ namespace SchoolSystem.UI {
             this.txtGuardianName.Location = new System.Drawing.Point(3, 19);
             this.txtGuardianName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGuardianName.Name = "txtGuardianName";
-            this.txtGuardianName.Size = new System.Drawing.Size(619, 24);
+            this.txtGuardianName.Size = new System.Drawing.Size(362, 24);
             this.txtGuardianName.TabIndex = 1;
             // 
             // lblGuardianRelation
             // 
             this.lblGuardianRelation.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblGuardianRelation.AutoSize = true;
-            this.lblGuardianRelation.Location = new System.Drawing.Point(628, 70);
+            this.lblGuardianRelation.Location = new System.Drawing.Point(371, 55);
             this.lblGuardianRelation.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblGuardianRelation.Name = "lblGuardianRelation";
             this.lblGuardianRelation.Size = new System.Drawing.Size(71, 17);
@@ -306,17 +308,17 @@ namespace SchoolSystem.UI {
             // txtGuardianRelation
             // 
             this.txtGuardianRelation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtGuardianRelation.Location = new System.Drawing.Point(3, 59);
+            this.txtGuardianRelation.Location = new System.Drawing.Point(3, 49);
             this.txtGuardianRelation.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGuardianRelation.Name = "txtGuardianRelation";
-            this.txtGuardianRelation.Size = new System.Drawing.Size(619, 24);
+            this.txtGuardianRelation.Size = new System.Drawing.Size(362, 24);
             this.txtGuardianRelation.TabIndex = 3;
             // 
             // lblGuardianPhone
             // 
             this.lblGuardianPhone.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblGuardianPhone.AutoSize = true;
-            this.lblGuardianPhone.Location = new System.Drawing.Point(628, 110);
+            this.lblGuardianPhone.Location = new System.Drawing.Point(371, 85);
             this.lblGuardianPhone.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblGuardianPhone.Name = "lblGuardianPhone";
             this.lblGuardianPhone.Size = new System.Drawing.Size(69, 17);
@@ -326,17 +328,17 @@ namespace SchoolSystem.UI {
             // txtGuardianPhone
             // 
             this.txtGuardianPhone.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtGuardianPhone.Location = new System.Drawing.Point(3, 99);
+            this.txtGuardianPhone.Location = new System.Drawing.Point(3, 79);
             this.txtGuardianPhone.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGuardianPhone.Name = "txtGuardianPhone";
-            this.txtGuardianPhone.Size = new System.Drawing.Size(619, 24);
+            this.txtGuardianPhone.Size = new System.Drawing.Size(362, 24);
             this.txtGuardianPhone.TabIndex = 5;
             // 
             // lblGuardianEmail
             // 
             this.lblGuardianEmail.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblGuardianEmail.AutoSize = true;
-            this.lblGuardianEmail.Location = new System.Drawing.Point(628, 150);
+            this.lblGuardianEmail.Location = new System.Drawing.Point(371, 115);
             this.lblGuardianEmail.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblGuardianEmail.Name = "lblGuardianEmail";
             this.lblGuardianEmail.Size = new System.Drawing.Size(100, 17);
@@ -346,17 +348,17 @@ namespace SchoolSystem.UI {
             // txtGuardianEmail
             // 
             this.txtGuardianEmail.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtGuardianEmail.Location = new System.Drawing.Point(3, 139);
+            this.txtGuardianEmail.Location = new System.Drawing.Point(3, 109);
             this.txtGuardianEmail.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGuardianEmail.Name = "txtGuardianEmail";
-            this.txtGuardianEmail.Size = new System.Drawing.Size(619, 24);
+            this.txtGuardianEmail.Size = new System.Drawing.Size(362, 24);
             this.txtGuardianEmail.TabIndex = 7;
             // 
             // lblGuardianJob
             // 
             this.lblGuardianJob.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblGuardianJob.AutoSize = true;
-            this.lblGuardianJob.Location = new System.Drawing.Point(628, 190);
+            this.lblGuardianJob.Location = new System.Drawing.Point(371, 187);
             this.lblGuardianJob.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblGuardianJob.Name = "lblGuardianJob";
             this.lblGuardianJob.Size = new System.Drawing.Size(50, 17);
@@ -366,17 +368,17 @@ namespace SchoolSystem.UI {
             // txtGuardianJob
             // 
             this.txtGuardianJob.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtGuardianJob.Location = new System.Drawing.Point(3, 179);
+            this.txtGuardianJob.Location = new System.Drawing.Point(3, 139);
             this.txtGuardianJob.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGuardianJob.Name = "txtGuardianJob";
-            this.txtGuardianJob.Size = new System.Drawing.Size(619, 24);
+            this.txtGuardianJob.Size = new System.Drawing.Size(362, 24);
             this.txtGuardianJob.TabIndex = 9;
             // 
             // lblGovernorate
             // 
             this.lblGovernorate.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblGovernorate.AutoSize = true;
-            this.lblGovernorate.Location = new System.Drawing.Point(628, 30);
+            this.lblGovernorate.Location = new System.Drawing.Point(139, 25);
             this.lblGovernorate.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblGovernorate.Name = "lblGovernorate";
             this.lblGovernorate.Size = new System.Drawing.Size(62, 17);
@@ -389,14 +391,14 @@ namespace SchoolSystem.UI {
             this.txtGovernorate.Location = new System.Drawing.Point(3, 19);
             this.txtGovernorate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGovernorate.Name = "txtGovernorate";
-            this.txtGovernorate.Size = new System.Drawing.Size(619, 24);
+            this.txtGovernorate.Size = new System.Drawing.Size(130, 24);
             this.txtGovernorate.TabIndex = 1;
             // 
             // lblDistrict
             // 
             this.lblDistrict.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblDistrict.AutoSize = true;
-            this.lblDistrict.Location = new System.Drawing.Point(628, 70);
+            this.lblDistrict.Location = new System.Drawing.Point(139, 55);
             this.lblDistrict.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblDistrict.Name = "lblDistrict";
             this.lblDistrict.Size = new System.Drawing.Size(54, 17);
@@ -406,17 +408,17 @@ namespace SchoolSystem.UI {
             // txtDistrict
             // 
             this.txtDistrict.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDistrict.Location = new System.Drawing.Point(3, 59);
+            this.txtDistrict.Location = new System.Drawing.Point(3, 49);
             this.txtDistrict.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtDistrict.Name = "txtDistrict";
-            this.txtDistrict.Size = new System.Drawing.Size(619, 24);
+            this.txtDistrict.Size = new System.Drawing.Size(130, 24);
             this.txtDistrict.TabIndex = 3;
             // 
             // lblAddress
             // 
             this.lblAddress.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.lblAddress.AutoSize = true;
-            this.lblAddress.Location = new System.Drawing.Point(628, 110);
+            this.lblAddress.Location = new System.Drawing.Point(139, 157);
             this.lblAddress.Margin = new System.Windows.Forms.Padding(3, 7, 3, 0);
             this.lblAddress.Name = "lblAddress";
             this.lblAddress.Size = new System.Drawing.Size(45, 17);
@@ -426,22 +428,21 @@ namespace SchoolSystem.UI {
             // txtAddress
             // 
             this.txtAddress.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtAddress.Location = new System.Drawing.Point(3, 99);
+            this.txtAddress.Location = new System.Drawing.Point(3, 79);
             this.txtAddress.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtAddress.Name = "txtAddress";
-            this.txtAddress.Size = new System.Drawing.Size(619, 24);
+            this.txtAddress.Size = new System.Drawing.Size(130, 24);
             this.txtAddress.TabIndex = 5;
             // 
             // gbStudent
             // 
-            this.gbStudent.AutoSize = true;
             this.gbStudent.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.gbStudent.Controls.Add(this.tlpStudent);
-            this.gbStudent.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbStudent.Location = new System.Drawing.Point(10, 10);
+            this.gbStudent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbStudent.Location = new System.Drawing.Point(275, 3);
             this.gbStudent.Name = "gbStudent";
             this.gbStudent.Padding = new System.Windows.Forms.Padding(10, 20, 10, 10);
-            this.gbStudent.Size = new System.Drawing.Size(755, 422);
+            this.gbStudent.Size = new System.Drawing.Size(498, 297);
             this.gbStudent.TabIndex = 3;
             this.gbStudent.TabStop = false;
             this.gbStudent.Text = "بيانات الطالب";
@@ -471,33 +472,32 @@ namespace SchoolSystem.UI {
             this.tlpStudent.Controls.Add(this.txtPhone, 1, 7);
             this.tlpStudent.Controls.Add(this.lblStatus, 0, 8);
             this.tlpStudent.Controls.Add(this.cmbStatus, 1, 8);
-            this.tlpStudent.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tlpStudent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpStudent.Location = new System.Drawing.Point(10, 37);
             this.tlpStudent.Name = "tlpStudent";
             this.tlpStudent.Padding = new System.Windows.Forms.Padding(0, 15, 0, 0);
             this.tlpStudent.RowCount = 9;
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpStudent.Size = new System.Drawing.Size(735, 375);
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpStudent.Size = new System.Drawing.Size(478, 250);
             this.tlpStudent.TabIndex = 0;
             // 
             // gbGuardian
             // 
-            this.gbGuardian.AutoSize = true;
             this.gbGuardian.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.gbGuardian.Controls.Add(this.tlpGuardian);
-            this.gbGuardian.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbGuardian.Location = new System.Drawing.Point(10, 432);
+            this.gbGuardian.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbGuardian.Location = new System.Drawing.Point(275, 306);
             this.gbGuardian.Name = "gbGuardian";
             this.gbGuardian.Padding = new System.Windows.Forms.Padding(10, 20, 10, 10);
-            this.gbGuardian.Size = new System.Drawing.Size(755, 262);
+            this.gbGuardian.Size = new System.Drawing.Size(498, 297);
             this.gbGuardian.TabIndex = 2;
             this.gbGuardian.TabStop = false;
             this.gbGuardian.Text = "ولي الأمر";
@@ -519,29 +519,28 @@ namespace SchoolSystem.UI {
             this.tlpGuardian.Controls.Add(this.txtGuardianEmail, 1, 3);
             this.tlpGuardian.Controls.Add(this.lblGuardianJob, 0, 4);
             this.tlpGuardian.Controls.Add(this.txtGuardianJob, 1, 4);
-            this.tlpGuardian.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tlpGuardian.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpGuardian.Location = new System.Drawing.Point(10, 37);
             this.tlpGuardian.Name = "tlpGuardian";
             this.tlpGuardian.Padding = new System.Windows.Forms.Padding(0, 15, 0, 0);
             this.tlpGuardian.RowCount = 5;
-            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpGuardian.Size = new System.Drawing.Size(735, 215);
+            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpGuardian.Size = new System.Drawing.Size(478, 250);
             this.tlpGuardian.TabIndex = 0;
             // 
             // gbAddress
             // 
-            this.gbAddress.AutoSize = true;
             this.gbAddress.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.gbAddress.Controls.Add(this.tlpAddress);
-            this.gbAddress.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbAddress.Location = new System.Drawing.Point(10, 694);
+            this.gbAddress.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbAddress.Location = new System.Drawing.Point(3, 3);
             this.gbAddress.Name = "gbAddress";
             this.gbAddress.Padding = new System.Windows.Forms.Padding(10, 20, 10, 10);
-            this.gbAddress.Size = new System.Drawing.Size(755, 182);
+            this.gbAddress.Size = new System.Drawing.Size(266, 297);
             this.gbAddress.TabIndex = 1;
             this.gbAddress.TabStop = false;
             this.gbAddress.Text = "العنوان";
@@ -559,15 +558,15 @@ namespace SchoolSystem.UI {
             this.tlpAddress.Controls.Add(this.txtDistrict, 1, 1);
             this.tlpAddress.Controls.Add(this.lblAddress, 0, 2);
             this.tlpAddress.Controls.Add(this.txtAddress, 1, 2);
-            this.tlpAddress.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tlpAddress.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpAddress.Location = new System.Drawing.Point(10, 37);
             this.tlpAddress.Name = "tlpAddress";
             this.tlpAddress.Padding = new System.Windows.Forms.Padding(0, 15, 0, 0);
             this.tlpAddress.RowCount = 3;
-            this.tlpAddress.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpAddress.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpAddress.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-            this.tlpAddress.Size = new System.Drawing.Size(735, 135);
+            this.tlpAddress.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpAddress.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpAddress.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tlpAddress.Size = new System.Drawing.Size(246, 250);
             this.tlpAddress.TabIndex = 0;
             // 
             // gbPhoto
@@ -575,11 +574,11 @@ namespace SchoolSystem.UI {
             this.gbPhoto.Controls.Add(this.picStudent);
             this.gbPhoto.Controls.Add(this.btnChooseImage);
             this.gbPhoto.Controls.Add(this.btnRemoveImage);
-            this.gbPhoto.Dock = System.Windows.Forms.DockStyle.Top;
-            this.gbPhoto.Location = new System.Drawing.Point(10, 876);
+            this.gbPhoto.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gbPhoto.Location = new System.Drawing.Point(3, 306);
             this.gbPhoto.Name = "gbPhoto";
             this.gbPhoto.Padding = new System.Windows.Forms.Padding(10);
-            this.gbPhoto.Size = new System.Drawing.Size(755, 160);
+            this.gbPhoto.Size = new System.Drawing.Size(266, 297);
             this.gbPhoto.TabIndex = 0;
             this.gbPhoto.TabStop = false;
             this.gbPhoto.Text = "الصورة";
@@ -588,9 +587,9 @@ namespace SchoolSystem.UI {
             // 
             this.picStudent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picStudent.Dock = System.Windows.Forms.DockStyle.Right;
-            this.picStudent.Location = new System.Drawing.Point(635, 27);
+            this.picStudent.Location = new System.Drawing.Point(146, 27);
             this.picStudent.Name = "picStudent";
-            this.picStudent.Size = new System.Drawing.Size(110, 123);
+            this.picStudent.Size = new System.Drawing.Size(110, 260);
             this.picStudent.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picStudent.TabIndex = 0;
             this.picStudent.TabStop = false;
@@ -613,6 +612,25 @@ namespace SchoolSystem.UI {
             this.btnRemoveImage.Text = "حذف الصورة";
             this.btnRemoveImage.Click += new System.EventHandler(this.btnRemoveImage_Click);
             // 
+            // layoutRight
+            // 
+            this.layoutRight.ColumnCount = 2;
+            this.layoutRight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 65F));
+            this.layoutRight.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35F));
+            this.layoutRight.Controls.Add(this.gbPhoto, 1, 1);
+            this.layoutRight.Controls.Add(this.gbAddress, 1, 0);
+            this.layoutRight.Controls.Add(this.gbGuardian, 0, 1);
+            this.layoutRight.Controls.Add(this.gbStudent, 0, 0);
+            this.layoutRight.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutRight.Location = new System.Drawing.Point(10, 10);
+            this.layoutRight.Margin = new System.Windows.Forms.Padding(0);
+            this.layoutRight.Name = "layoutRight";
+            this.layoutRight.RowCount = 2;
+            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.layoutRight.Size = new System.Drawing.Size(776, 606);
+            this.layoutRight.TabIndex = 0;
+            // 
             // dgvStudents
             // 
             this.dgvStudents.AllowUserToAddRows = false;
@@ -625,7 +643,7 @@ namespace SchoolSystem.UI {
             this.dgvStudents.ReadOnly = true;
             this.dgvStudents.RowHeadersWidth = 51;
             this.dgvStudents.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvStudents.Size = new System.Drawing.Size(390, 600);
+            this.dgvStudents.Size = new System.Drawing.Size(390, 606);
             this.dgvStudents.TabIndex = 0;
             this.dgvStudents.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStudents_CellClick);
             this.dgvStudents.SelectionChanged += new System.EventHandler(this.dgvStudents_SelectionChanged);
@@ -651,22 +669,19 @@ namespace SchoolSystem.UI {
             this.splitContainerMain.Panel2.Controls.Add(this.pnlRight);
             this.splitContainerMain.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.splitContainerMain.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.splitContainerMain.Size = new System.Drawing.Size(1200, 620);
+            this.splitContainerMain.Size = new System.Drawing.Size(1200, 626);
             this.splitContainerMain.SplitterDistance = 400;
             this.splitContainerMain.TabIndex = 0;
             // 
             // pnlRight
             // 
             this.pnlRight.AutoScroll = true;
-            this.pnlRight.Controls.Add(this.gbPhoto);
-            this.pnlRight.Controls.Add(this.gbAddress);
-            this.pnlRight.Controls.Add(this.gbGuardian);
-            this.pnlRight.Controls.Add(this.gbStudent);
+            this.pnlRight.Controls.Add(this.layoutRight);
             this.pnlRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlRight.Location = new System.Drawing.Point(0, 0);
             this.pnlRight.Name = "pnlRight";
             this.pnlRight.Padding = new System.Windows.Forms.Padding(10);
-            this.pnlRight.Size = new System.Drawing.Size(796, 620);
+            this.pnlRight.Size = new System.Drawing.Size(796, 626);
             this.pnlRight.TabIndex = 0;
             // 
             // pnlSearch
@@ -752,41 +767,41 @@ namespace SchoolSystem.UI {
             this.pnlButtons.Controls.Add(this.btnSave);
             this.pnlButtons.Controls.Add(this.btnAdd);
             this.pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlButtons.Location = new System.Drawing.Point(0, 680);
+            this.pnlButtons.Location = new System.Drawing.Point(0, 686);
             this.pnlButtons.Name = "pnlButtons";
             this.pnlButtons.Padding = new System.Windows.Forms.Padding(10);
-            this.pnlButtons.Size = new System.Drawing.Size(1200, 70);
+            this.pnlButtons.Size = new System.Drawing.Size(1200, 64);
             this.pnlButtons.TabIndex = 2;
             // 
             // btnClose
             // 
             this.btnClose.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnClose.Location = new System.Drawing.Point(380, 10);
+            this.btnClose.Location = new System.Drawing.Point(270, 10);
             this.btnClose.Margin = new System.Windows.Forms.Padding(5);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(90, 50);
+            this.btnClose.Size = new System.Drawing.Size(90, 44);
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "إغلاق";
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // btnStudentProfile
-            //
+            // 
             this.btnStudentProfile.Dock = System.Windows.Forms.DockStyle.Right;
-            this.btnStudentProfile.Location = new System.Drawing.Point(380, 10);
+            this.btnStudentProfile.Location = new System.Drawing.Point(360, 10);
             this.btnStudentProfile.Margin = new System.Windows.Forms.Padding(5);
             this.btnStudentProfile.Name = "btnStudentProfile";
-            this.btnStudentProfile.Size = new System.Drawing.Size(110, 50);
+            this.btnStudentProfile.Size = new System.Drawing.Size(110, 44);
             this.btnStudentProfile.TabIndex = 1;
             this.btnStudentProfile.Text = "ملف الطالب";
             this.btnStudentProfile.Click += new System.EventHandler(this.btnStudentProfile_Click);
-            //
+            // 
             // btnPrint
             // 
             this.btnPrint.Dock = System.Windows.Forms.DockStyle.Right;
             this.btnPrint.Location = new System.Drawing.Point(470, 10);
             this.btnPrint.Margin = new System.Windows.Forms.Padding(5);
             this.btnPrint.Name = "btnPrint";
-            this.btnPrint.Size = new System.Drawing.Size(90, 50);
+            this.btnPrint.Size = new System.Drawing.Size(90, 44);
             this.btnPrint.TabIndex = 1;
             this.btnPrint.Text = "طباعة";
             this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
@@ -797,7 +812,7 @@ namespace SchoolSystem.UI {
             this.btnExportExcel.Location = new System.Drawing.Point(560, 10);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(5);
             this.btnExportExcel.Name = "btnExportExcel";
-            this.btnExportExcel.Size = new System.Drawing.Size(90, 50);
+            this.btnExportExcel.Size = new System.Drawing.Size(90, 44);
             this.btnExportExcel.TabIndex = 2;
             this.btnExportExcel.Text = "تصدير Excel";
             this.btnExportExcel.Click += new System.EventHandler(this.btnExportExcel_Click);
@@ -808,7 +823,7 @@ namespace SchoolSystem.UI {
             this.btnRefresh.Location = new System.Drawing.Point(650, 10);
             this.btnRefresh.Margin = new System.Windows.Forms.Padding(5);
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(90, 50);
+            this.btnRefresh.Size = new System.Drawing.Size(90, 44);
             this.btnRefresh.TabIndex = 3;
             this.btnRefresh.Text = "تحديث";
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
@@ -819,7 +834,7 @@ namespace SchoolSystem.UI {
             this.btnCancel.Location = new System.Drawing.Point(740, 10);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(5);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(90, 50);
+            this.btnCancel.Size = new System.Drawing.Size(90, 44);
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "إلغاء";
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -830,7 +845,7 @@ namespace SchoolSystem.UI {
             this.btnDelete.Location = new System.Drawing.Point(830, 10);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(5);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(90, 50);
+            this.btnDelete.Size = new System.Drawing.Size(90, 44);
             this.btnDelete.TabIndex = 5;
             this.btnDelete.Text = "حذف";
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
@@ -841,7 +856,7 @@ namespace SchoolSystem.UI {
             this.btnUpdate.Location = new System.Drawing.Point(920, 10);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(5);
             this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(90, 50);
+            this.btnUpdate.Size = new System.Drawing.Size(90, 44);
             this.btnUpdate.TabIndex = 6;
             this.btnUpdate.Text = "تعديل";
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
@@ -852,7 +867,7 @@ namespace SchoolSystem.UI {
             this.btnSave.Location = new System.Drawing.Point(1010, 10);
             this.btnSave.Margin = new System.Windows.Forms.Padding(5);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(90, 50);
+            this.btnSave.Size = new System.Drawing.Size(90, 44);
             this.btnSave.TabIndex = 7;
             this.btnSave.Text = "حفظ";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -863,13 +878,15 @@ namespace SchoolSystem.UI {
             this.btnAdd.Location = new System.Drawing.Point(1100, 10);
             this.btnAdd.Margin = new System.Windows.Forms.Padding(5);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(90, 50);
+            this.btnAdd.Size = new System.Drawing.Size(90, 44);
             this.btnAdd.TabIndex = 8;
             this.btnAdd.Text = "جديد";
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // StudentsForm
             // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1200, 750);
             this.Controls.Add(this.splitContainerMain);
             this.Controls.Add(this.pnlSearch);
@@ -893,6 +910,7 @@ namespace SchoolSystem.UI {
             this.tlpAddress.PerformLayout();
             this.gbPhoto.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picStudent)).EndInit();
+            this.layoutRight.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvStudents)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.splitContainerMain.Panel1.ResumeLayout(false);
@@ -900,7 +918,6 @@ namespace SchoolSystem.UI {
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).EndInit();
             this.splitContainerMain.ResumeLayout(false);
             this.pnlRight.ResumeLayout(false);
-            this.pnlRight.PerformLayout();
             this.pnlSearch.ResumeLayout(false);
             this.pnlSearch.PerformLayout();
             this.pnlButtons.ResumeLayout(false);
@@ -973,5 +990,15 @@ namespace SchoolSystem.UI {
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnStudentProfile;
         private System.Windows.Forms.Panel pnlRight;
+        private System.Windows.Forms.TableLayoutPanel layoutRight;
     }
 }
+
+
+
+
+
+
+
+
+

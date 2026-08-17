@@ -517,7 +517,7 @@ namespace SchoolSystem.UI
 
         private async void FillFields(DataRow row)
         {
-            selectedTimetableId = Convert.ToInt32(row["TimetableID"]);
+            selectedTimetableId = ReadInt(row["TimetableID"], 0);
 
             txtTimetableID.Text = selectedTimetableId.ToString();
             txtYear.Text = row["AcademicYear"].ToString();
@@ -525,18 +525,21 @@ namespace SchoolSystem.UI
             cmbSection.Text = row["Section"].ToString();
             cmbDay.Text = row["DayName"].ToString();
 
-            if (row["ClassID"] != DBNull.Value)
-                cmbClass.SelectedValue = Convert.ToInt32(row["ClassID"]);
+            int classId = ReadInt(row["ClassID"], 0);
+            if (classId > 0)
+                cmbClass.SelectedValue = classId;
 
             await LoadSubjectsForClassAsync();
 
-            if (row["SubjectID"] != DBNull.Value)
-                cmbSubject.SelectedValue = Convert.ToInt32(row["SubjectID"]);
+            int subjectId = ReadInt(row["SubjectID"], 0);
+            if (subjectId > 0)
+                SelectComboValue(cmbSubject, subjectId);
 
-            if (row["TeacherID"] != DBNull.Value)
-                cmbTeacher.SelectedValue = Convert.ToInt32(row["TeacherID"]);
+            int teacherId = ReadInt(row["TeacherID"], 0);
+            if (teacherId > 0)
+                SelectComboValue(cmbTeacher, teacherId);
 
-            nudPeriodNo.Value = Convert.ToDecimal(row["PeriodNo"]);
+            nudPeriodNo.Value = ClampToRange(ReadInt(row["PeriodNo"], 1), nudPeriodNo);
 
             TimeSpan start = ReadTime(row["StartTime"], new TimeSpan(8, 0, 0));
             TimeSpan end = ReadTime(row["EndTime"], start.Add(TimeSpan.FromMinutes(45)));
@@ -549,6 +552,65 @@ namespace SchoolSystem.UI
             txtRoom.Text = row["RoomName"] == DBNull.Value ? "" : row["RoomName"].ToString();
             txtNotes.Text = row["Notes"] == DBNull.Value ? "" : row["Notes"].ToString();
             chkIsActive.Checked = row["IsActive"] != DBNull.Value && Convert.ToBoolean(row["IsActive"]);
+        }
+
+        private static int ReadInt(object value, int fallback)
+        {
+            if (value == null || value == DBNull.Value)
+                return fallback;
+
+            int parsed;
+            return int.TryParse(value.ToString(), out parsed) ? parsed : fallback;
+        }
+
+        private static void SelectComboValue(ComboBox combo, int value)
+        {
+            if (combo == null)
+                return;
+
+            if (string.IsNullOrEmpty(combo.ValueMember))
+            {
+                foreach (var item in combo.Items)
+                {
+                    if (combo.GetItemText(item) == value.ToString())
+                    {
+                        combo.SelectedItem = item;
+                        return;
+                    }
+                }
+                return;
+            }
+
+            foreach (var item in combo.Items)
+            {
+                if (item == null)
+                    continue;
+
+                var prop = item.GetType().GetProperty(combo.ValueMember);
+                if (prop == null)
+                    continue;
+
+                try
+                {
+                    if (Convert.ToInt32(prop.GetValue(item, null)) == value)
+                    {
+                        combo.SelectedItem = item;
+                        return;
+                    }
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private static decimal ClampToRange(int value, NumericUpDown nud)
+        {
+            if (nud.Minimum > value)
+                return nud.Minimum;
+            if (nud.Maximum < value)
+                return nud.Maximum;
+            return value;
         }
 
         private static TimeSpan ReadTime(object value, TimeSpan fallback)

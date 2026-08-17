@@ -121,10 +121,10 @@ namespace SchoolSystem.UI
             panelSearch.Controls.Add(lblFilterTo);
             panelSearch.Controls.Add(dtpFilterTo);
 
-            lblFilterFrom.SetBounds(975, 8, 42, 26);
-            dtpFilterFrom.SetBounds(815, 8, 155, 26);
-            lblFilterTo.SetBounds(770, 8, 42, 26);
-            dtpFilterTo.SetBounds(610, 8, 155, 26);
+            lblFilterFrom.SetBounds(342, 8, 42, 26);
+            dtpFilterFrom.SetBounds(195, 8, 140, 26);
+            lblFilterTo.SetBounds(150, 8, 42, 26);
+            dtpFilterTo.SetBounds(10, 8, 135, 26);
 
             lblTotalReceipts = CreateMovementLabel(Color.FromArgb(22, 160, 133));
             lblTotalPayments = CreateMovementLabel(Color.FromArgb(142, 68, 173));
