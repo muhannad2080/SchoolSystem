@@ -80,6 +80,17 @@ namespace SchoolSystem.Security
             return false;
         }
 
+        public static bool CanAccessModule(string module)
+        {
+            if (string.IsNullOrWhiteSpace(module) || User == null || !User.IsActive)
+                return false;
+
+            string prefix = module.Trim() + ".";
+            HashSet<string> permissions = ParsePermissions(User.Permissions);
+            return permissions.Any(permission =>
+                permission.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+        }
+
         public static bool CanView(string module)
         {
             return HasActionOrManage(module, "View");

@@ -264,7 +264,11 @@ namespace SchoolSystem
 
         private bool CanOpen(string module, params string[] legacyPermissions)
         {
-            return CurrentUser.CanView(module) || HasAny(legacyPermissions);
+            // إظهار الوحدة عند امتلاك أي صلاحية صحيحة لها؛ فالصلاحيات الإجرائية
+            // مثل Add/Edit/Delete لا ينبغي أن تجعل الشاشة تختفي إذا غاب View بالخطأ.
+            return CurrentUser.CanAccessModule(module)
+                || CurrentUser.CanView(module)
+                || HasAny(legacyPermissions);
         }
 
         private bool EnsureModule(string module, string message, params string[] legacyPermissions)
