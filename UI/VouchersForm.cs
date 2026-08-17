@@ -47,6 +47,7 @@ namespace SchoolSystem.UI
             Dock = DockStyle.Fill;
             ConfigureFinancialActions();
             ConfigureMovementSummary();
+            panelSearch.Resize += panelSearch_Resize;
             voucherPrintDocument.PrintPage += VoucherPrintDocument_PrintPage;
             Load += VouchersForm_Load;
         }
@@ -110,6 +111,7 @@ namespace SchoolSystem.UI
         {
             panelSearch.Height = 88;
             panelSearch.Padding = new Padding(12, 6, 12, 4);
+            panelSearch.AutoScroll = true;
 
             lblFilterFrom = CreateSummaryLabel("من:");
             lblFilterTo = CreateSummaryLabel("إلى:");
@@ -121,10 +123,7 @@ namespace SchoolSystem.UI
             panelSearch.Controls.Add(lblFilterTo);
             panelSearch.Controls.Add(dtpFilterTo);
 
-            lblFilterFrom.SetBounds(342, 8, 42, 26);
-            dtpFilterFrom.SetBounds(195, 8, 140, 26);
-            lblFilterTo.SetBounds(150, 8, 42, 26);
-            dtpFilterTo.SetBounds(10, 8, 135, 26);
+            PositionMovementFilters();
 
             lblTotalReceipts = CreateMovementLabel(Color.FromArgb(22, 160, 133));
             lblTotalPayments = CreateMovementLabel(Color.FromArgb(142, 68, 173));
@@ -134,14 +133,58 @@ namespace SchoolSystem.UI
             panelSearch.Controls.Add(lblTotalPayments);
             panelSearch.Controls.Add(lblNetBalance);
 
-            lblTotalReceipts.SetBounds(760, 51, 215, 28);
-            lblTotalPayments.SetBounds(535, 51, 215, 28);
-            lblNetBalance.SetBounds(310, 51, 215, 28);
+            PositionMovementSummary();
 
             dtpFilterFrom.Value = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             dtpFilterTo.Value = DateTime.Today;
             dtpFilterFrom.ValueChanged += FilterControls_Changed;
             dtpFilterTo.ValueChanged += FilterControls_Changed;
+        }
+
+        private void panelSearch_Resize(object sender, EventArgs e)
+        {
+            PositionMovementFilters();
+            PositionMovementSummary();
+        }
+
+        private void PositionMovementFilters()
+        {
+            if (panelSearch == null || lblFilterFrom == null || dtpFilterFrom == null ||
+                lblFilterTo == null || dtpFilterTo == null)
+                return;
+
+            // Keep the designer-independent coordinates within the visible client area.
+            // AutoScroll remains enabled as a safe fallback for very narrow windows.
+            int right = Math.Max(12, panelSearch.ClientSize.Width - 12);
+            int dateWidth = 140;
+            int labelWidth = 42;
+            int gap = 8;
+            int rightDateX = Math.Max(10, right - dateWidth);
+            int rightLabelX = Math.Max(10, rightDateX - gap - labelWidth);
+            int leftDateX = Math.Max(10, rightLabelX - gap - dateWidth);
+            int leftLabelX = Math.Max(10, leftDateX - gap - labelWidth);
+
+            lblFilterFrom.SetBounds(rightLabelX, 8, labelWidth, 26);
+            dtpFilterFrom.SetBounds(rightDateX, 8, dateWidth, 26);
+            lblFilterTo.SetBounds(leftLabelX, 8, labelWidth, 26);
+            dtpFilterTo.SetBounds(leftDateX, 8, dateWidth, 26);
+        }
+
+        private void PositionMovementSummary()
+        {
+            if (panelSearch == null || lblTotalReceipts == null || lblTotalPayments == null || lblNetBalance == null)
+                return;
+
+            int width = 215;
+            int gap = 10;
+            int right = Math.Max(12, panelSearch.ClientSize.Width - 12);
+            int x1 = Math.Max(10, right - width);
+            int x2 = Math.Max(10, x1 - gap - width);
+            int x3 = Math.Max(10, x2 - gap - width);
+
+            lblTotalReceipts.SetBounds(x1, 51, width, 28);
+            lblTotalPayments.SetBounds(x2, 51, width, 28);
+            lblNetBalance.SetBounds(x3, 51, width, 28);
         }
 
         private Label CreateSummaryLabel(string text)
@@ -212,8 +255,9 @@ namespace SchoolSystem.UI
         {
             try
             {
-                if (selectedVoucherId == 0 && cmbVoucherType.SelectedItem != null)
-                    txtVoucherNumber.Text = voucherService.GenerateVoucherNumber(cmbVoucherType.Text.Trim());
+                string voucherType = cmbVoucherType == null ? string.Empty : cmbVoucherType.Text.Trim();
+                if (selectedVoucherId == 0 && (voucherType == "قبض" || voucherType == "صرف"))
+                    txtVoucherNumber.Text = voucherService.GenerateVoucherNumber(voucherType);
             }
             catch (Exception ex)
             {
