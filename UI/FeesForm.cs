@@ -162,6 +162,7 @@ namespace SchoolSystem.UI
                 filter =
                     "(StudentName LIKE '%" + searchText + "%' " +
                     "OR AcademicYear LIKE '%" + searchText + "%' " +
+                    "OR ClassName LIKE '%" + searchText + "%' " +
                     "OR FeeType LIKE '%" + searchText + "%' " +
                     "OR ReceiptNumber LIKE '%" + searchText + "%' " +
                     "OR Status LIKE '%" + searchText + "%')";
@@ -698,6 +699,113 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 UIHelper.ShowException("فشل حذف الرسوم:\n", ex);
+            }
+        }
+
+        private DataTable GetVisibleFeesForReport()
+        {
+            if (allFees == null)
+                return null;
+
+            DataView view = allFees.DefaultView;
+            DataTable report = view.ToTable();
+
+            if (report.Columns.Contains("FeeID"))
+                report.Columns.Remove("FeeID");
+            if (report.Columns.Contains("StudentID"))
+                report.Columns.Remove("StudentID");
+            if (report.Columns.Contains("FeePlanID"))
+                report.Columns.Remove("FeePlanID");
+            if (report.Columns.Contains("CreatedAt"))
+                report.Columns.Remove("CreatedAt");
+            if (report.Columns.Contains("UpdatedAt"))
+                report.Columns.Remove("UpdatedAt");
+
+            RenameReportColumn(report, "StudentName", "الطالب");
+            RenameReportColumn(report, "ClassName", "الصف");
+            RenameReportColumn(report, "AcademicYear", "العام الدراسي");
+            RenameReportColumn(report, "FeeType", "نوع الرسوم");
+            RenameReportColumn(report, "TotalAmount", "الإجمالي");
+            RenameReportColumn(report, "DiscountAmount", "الخصم");
+            RenameReportColumn(report, "NetAmount", "الصافي");
+            RenameReportColumn(report, "PaidAmount", "المدفوع");
+            RenameReportColumn(report, "RemainingAmount", "المتبقي");
+            RenameReportColumn(report, "DueDate", "تاريخ الاستحقاق");
+            RenameReportColumn(report, "PaymentDate", "تاريخ الدفع");
+            RenameReportColumn(report, "PaymentMethod", "طريقة الدفع");
+            RenameReportColumn(report, "ReceiptNumber", "رقم السند");
+            RenameReportColumn(report, "Status", "الحالة");
+            RenameReportColumn(report, "Notes", "ملاحظات");
+            return report;
+        }
+
+        private void RenameReportColumn(DataTable table, string source, string target)
+        {
+            if (table.Columns.Contains(source))
+                table.Columns[source].ColumnName = target;
+        }
+
+        private void btnExportExcel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataTable report = GetVisibleFeesForReport();
+                if (report == null || report.Rows.Count == 0)
+                {
+                    UIHelper.ShowWarning("لا توجد رسوم ظاهرة للتصدير.");
+                    return;
+                }
+
+                using (SaveFileDialog dialog = new SaveFileDialog())
+                {
+                    dialog.Filter = "Excel Workbook (*.xlsx)|*.xlsx";
+                    dialog.FileName = "تقرير_الرسوم_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".xlsx";
+                    if (dialog.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    ReportOutputHelper.ExportToExcel(
+                        report,
+                        dialog.FileName,
+                        "تقرير الرسوم الدراسية والتحصيل",
+                        "عدد السجلات: " + report.Rows.Count);
+                    UIHelper.ShowInfo("تم تصدير تقرير الرسوم إلى Excel بنجاح.");
+                }
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("فشل تصدير تقرير الرسوم إلى Excel:\n", ex);
+            }
+        }
+
+        private void btnExportPdf_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DataTable report = GetVisibleFeesForReport();
+                if (report == null || report.Rows.Count == 0)
+                {
+                    UIHelper.ShowWarning("لا توجد رسوم ظاهرة للتصدير.");
+                    return;
+                }
+
+                using (SaveFileDialog dialog = new SaveFileDialog())
+                {
+                    dialog.Filter = "PDF Document (*.pdf)|*.pdf";
+                    dialog.FileName = "تقرير_الرسوم_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".pdf";
+                    if (dialog.ShowDialog() != DialogResult.OK)
+                        return;
+
+                    ReportOutputHelper.ExportToPdf(
+                        report,
+                        dialog.FileName,
+                        "تقرير الرسوم الدراسية والتحصيل",
+                        "عدد السجلات: " + report.Rows.Count);
+                    UIHelper.ShowInfo("تم تصدير تقرير الرسوم إلى PDF بنجاح.");
+                }
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("فشل تصدير تقرير الرسوم إلى PDF:\n", ex);
             }
         }
 

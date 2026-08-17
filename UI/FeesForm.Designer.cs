@@ -67,6 +67,8 @@
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnGenerateFees = new System.Windows.Forms.Button();
+            this.btnExportExcel = new System.Windows.Forms.Button();
+            this.btnExportPdf = new System.Windows.Forms.Button();
 
             this.panelSearch = new System.Windows.Forms.Panel();
             this.lblSearch = new System.Windows.Forms.Label();
@@ -325,6 +327,8 @@
             this.panelButtons.Controls.Add(this.btnDelete);
             this.panelButtons.Controls.Add(this.btnClear);
             this.panelButtons.Controls.Add(this.btnGenerateFees);
+            this.panelButtons.Controls.Add(this.btnExportExcel);
+            this.panelButtons.Controls.Add(this.btnExportPdf);
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelButtons.Location = new System.Drawing.Point(0, 378);
             this.panelButtons.Name = "panelButtons";
@@ -389,6 +393,30 @@
             this.btnGenerateFees.Text = "توليد رسوم الطالب";
             this.btnGenerateFees.UseVisualStyleBackColor = false;
             this.btnGenerateFees.Click += new System.EventHandler(this.btnGenerateFees_Click);
+
+            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(22, 160, 133);
+            this.btnExportExcel.FlatAppearance.BorderSize = 0;
+            this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExportExcel.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnExportExcel.ForeColor = System.Drawing.Color.White;
+            this.btnExportExcel.Location = new System.Drawing.Point(235, 10);
+            this.btnExportExcel.Name = "btnExportExcel";
+            this.btnExportExcel.Size = new System.Drawing.Size(175, 35);
+            this.btnExportExcel.Text = "تصدير Excel";
+            this.btnExportExcel.UseVisualStyleBackColor = false;
+            this.btnExportExcel.Click += new System.EventHandler(this.btnExportExcel_Click);
+
+            this.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(142, 68, 173);
+            this.btnExportPdf.FlatAppearance.BorderSize = 0;
+            this.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExportPdf.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnExportPdf.ForeColor = System.Drawing.Color.White;
+            this.btnExportPdf.Location = new System.Drawing.Point(55, 10);
+            this.btnExportPdf.Name = "btnExportPdf";
+            this.btnExportPdf.Size = new System.Drawing.Size(165, 35);
+            this.btnExportPdf.Text = "تصدير PDF";
+            this.btnExportPdf.UseVisualStyleBackColor = false;
+            this.btnExportPdf.Click += new System.EventHandler(this.btnExportPdf_Click);
 
             // panelSearch
             this.panelSearch.BackColor = System.Drawing.Color.White;
@@ -535,6 +563,8 @@
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnGenerateFees;
+        private System.Windows.Forms.Button btnExportExcel;
+        private System.Windows.Forms.Button btnExportPdf;
 
         private System.Windows.Forms.Panel panelSearch;
         private System.Windows.Forms.Label lblSearch;
