@@ -300,14 +300,26 @@ namespace SchoolSystem.UI
 
         private void btnClearPermissions_Click(object sender, EventArgs e)
         {
+            if (!CanManagePermissions())
+                return;
             ClearPermissionChecks();
             UIHelper.ShowInformation("تم إلغاء تحديد جميع الصلاحيات. اضغط تعديل أو إضافة لحفظ التغيير.");
         }
 
         private void btnSelectAllPermissions_Click(object sender, EventArgs e)
         {
+            if (!CanManagePermissions())
+                return;
             CheckAllPermissions();
             UIHelper.ShowInformation("تم تحديد جميع الصلاحيات. اضغط تعديل أو إضافة لحفظ التغيير.");
+        }
+
+        private bool CanManagePermissions()
+        {
+            if (CurrentUser.HasAny(PermissionKeys.UsersManageRoles, PermissionKeys.UsersManage))
+                return true;
+            UIHelper.ShowError("ليس لديك صلاحية إدارة أدوار وصلاحيات المستخدمين.");
+            return false;
         }
 
         private void ClearPermissionChecks()
