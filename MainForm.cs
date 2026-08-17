@@ -262,6 +262,21 @@ namespace SchoolSystem
             return CurrentUser.HasAny(permissions);
         }
 
+        private bool CanOpen(string module, params string[] legacyPermissions)
+        {
+            return CurrentUser.CanView(module) || HasAny(legacyPermissions);
+        }
+
+        private bool EnsureModule(string module, string message, params string[] legacyPermissions)
+        {
+            if (CanOpen(module, legacyPermissions))
+                return true;
+
+            MessageBox.Show(message, "صلاحية غير كافية", MessageBoxButtons.OK, MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            return false;
+        }
+
         private bool EnsurePermission(string permission)
         {
             if (Has(permission))
@@ -366,36 +381,36 @@ namespace SchoolSystem
                 return;
             }
 
-            tsmiDashboard.Visible = Has(PermissionKeys.DashboardView);
+            tsmiDashboard.Visible = CanOpen("Dashboard", PermissionKeys.DashboardView);
 
-            tsmiStudentsManage.Visible = HasAny(PermissionKeys.StudentsView, PermissionKeys.StudentsManage);
-            tsmiStudentsEnroll.Visible = Has(PermissionKeys.EnrollmentManage);
-            tsmiStudentsClasses.Visible = Has(PermissionKeys.ClassAssignmentManage);
+            tsmiStudentsManage.Visible = CanOpen("Students", PermissionKeys.StudentsView, PermissionKeys.StudentsManage);
+            tsmiStudentsEnroll.Visible = CanOpen("Enrollment", PermissionKeys.EnrollmentManage);
+            tsmiStudentsClasses.Visible = CanOpen("ClassAssignment", PermissionKeys.ClassAssignmentManage);
 
-            tsmiTeachersManage.Visible = Has(PermissionKeys.TeachersManage);
-            tsmiTeachersAttendance.Visible = Has(PermissionKeys.StaffAttendanceManage);
-            tsmiTeachersPayroll.Visible = Has(PermissionKeys.PayrollManage);
+            tsmiTeachersManage.Visible = CanOpen("Teachers", PermissionKeys.TeachersManage);
+            tsmiTeachersAttendance.Visible = CanOpen("StaffAttendance", PermissionKeys.StaffAttendanceManage);
+            tsmiTeachersPayroll.Visible = CanOpen("Payroll", PermissionKeys.PayrollManage);
 
-            tsmiSubjects.Visible = Has(PermissionKeys.SubjectsManage);
-            tsmiClasses.Visible = Has(PermissionKeys.ClassesManage);
-            tsmiTimetable.Visible = Has(PermissionKeys.TimetableManage);
+            tsmiSubjects.Visible = CanOpen("Subjects", PermissionKeys.SubjectsManage);
+            tsmiClasses.Visible = CanOpen("Classes", PermissionKeys.ClassesManage);
+            tsmiTimetable.Visible = CanOpen("Timetable", PermissionKeys.TimetableManage);
 
-            tsmiGrades.Visible = Has(PermissionKeys.GradesManage);
-            tsmiAttendance.Visible = Has(PermissionKeys.AttendanceManage);
+            tsmiGrades.Visible = CanOpen("Grades", PermissionKeys.GradesManage);
+            tsmiAttendance.Visible = CanOpen("Attendance", PermissionKeys.AttendanceManage);
 
-            tsmiFees.Visible = Has(PermissionKeys.FeesManage);
-            tsmiVouchers.Visible = Has(PermissionKeys.VouchersManage);
-            tsmiExpenses.Visible = Has(PermissionKeys.ExpensesManage);
-            tsmiFinancialPayroll.Visible = Has(PermissionKeys.PayrollManage);
+            tsmiFees.Visible = CanOpen("Fees", PermissionKeys.FeesManage);
+            tsmiVouchers.Visible = CanOpen("Vouchers", PermissionKeys.VouchersManage);
+            tsmiExpenses.Visible = CanOpen("Expenses", PermissionKeys.ExpensesManage);
+            tsmiFinancialPayroll.Visible = CanOpen("Payroll", PermissionKeys.PayrollManage);
 
-            tsmiTransport.Visible = Has(PermissionKeys.TransportManage);
-            tsmiLibrary.Visible = Has(PermissionKeys.LibraryManage);
+            tsmiTransport.Visible = CanOpen("Transport", PermissionKeys.TransportManage);
+            tsmiLibrary.Visible = CanOpen("Library", PermissionKeys.LibraryManage);
 
-            tsmiUsers.Visible = Has(PermissionKeys.UsersManage);
-            tsmiReports.Visible = Has(PermissionKeys.ReportsView);
-            tsmiAuditLogs.Visible = Has(PermissionKeys.AuditLogsView);
-            tsmiSettings.Visible = Has(PermissionKeys.SettingsManage);
-            تعريفرسومالصفوفToolStripMenuItem.Visible = Has(PermissionKeys.FeesManage);
+            tsmiUsers.Visible = CanOpen("Users", PermissionKeys.UsersView, PermissionKeys.UsersManage);
+            tsmiReports.Visible = CanOpen("Reports", PermissionKeys.ReportsView);
+            tsmiAuditLogs.Visible = CanOpen("AuditLogs", PermissionKeys.AuditLogsView);
+            tsmiSettings.Visible = CanOpen("Settings", PermissionKeys.SettingsView, PermissionKeys.SettingsManage);
+            تعريفرسومالصفوفToolStripMenuItem.Visible = CanOpen("FeePlans", PermissionKeys.FeesManage);
 
             // إخفاء مجموعات القوائم التي لا تحتوي على أي خيار مسموح للمستخدم.
             tsmiStudents.Visible = tsmiStudentsManage.Visible || tsmiStudentsEnroll.Visible || tsmiStudentsClasses.Visible;
@@ -464,7 +479,7 @@ namespace SchoolSystem
 
         private void tsmiStudentsManage_Click(object sender, EventArgs e)
         {
-            if (!EnsureAnyPermission(PermissionKeys.StudentsView, PermissionKeys.StudentsManage))
+            if (!EnsureModule("Students", "ليس لديك صلاحية عرض الطلاب.", PermissionKeys.StudentsView, PermissionKeys.StudentsManage))
                 return;
 
             LoadFormInPanel(new StudentsForm());
@@ -472,7 +487,7 @@ namespace SchoolSystem
 
         private void tsmiStudentsEnroll_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.EnrollmentManage))
+            if (!EnsureModule("Enrollment", "ليس لديك صلاحية عرض القبول والتسجيل.", PermissionKeys.EnrollmentManage))
                 return;
 
             LoadFormInPanel(new SchoolSystem.UI.EnrollmentForm());
@@ -480,7 +495,7 @@ namespace SchoolSystem
 
         private void tsmiStudentsClasses_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.ClassAssignmentManage))
+            if (!EnsureModule("ClassAssignment", "ليس لديك صلاحية عرض توزيع الطلاب.", PermissionKeys.ClassAssignmentManage))
                 return;
 
             try
@@ -498,7 +513,7 @@ namespace SchoolSystem
 
         private void tsmiTeachersManage_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.TeachersManage))
+            if (!EnsureModule("Teachers", "ليس لديك صلاحية عرض المعلمين.", PermissionKeys.TeachersManage))
                 return;
 
             LoadUserControl(new TeachersForm());
@@ -506,7 +521,7 @@ namespace SchoolSystem
 
         private void tsmiTeachersAttendance_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.StaffAttendanceManage))
+            if (!EnsureModule("StaffAttendance", "ليس لديك صلاحية عرض حضور الموظفين.", PermissionKeys.StaffAttendanceManage))
                 return;
 
             LoadUserControl(new StaffAttendanceForm());
@@ -514,7 +529,7 @@ namespace SchoolSystem
 
         private void tsmiTeachersPayroll_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.PayrollManage))
+            if (!EnsureModule("Payroll", "ليس لديك صلاحية عرض الرواتب.", PermissionKeys.PayrollManage))
                 return;
 
             LoadUserControl(new PayrollForm());
@@ -522,7 +537,7 @@ namespace SchoolSystem
 
         private void tsmiSubjects_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.SubjectsManage))
+            if (!EnsureModule("Subjects", "ليس لديك صلاحية عرض المواد.", PermissionKeys.SubjectsManage))
                 return;
 
             LoadUserControl(new SubjectsForm());
@@ -530,7 +545,7 @@ namespace SchoolSystem
 
         private void tsmiClasses_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.ClassesManage))
+            if (!EnsureModule("Classes", "ليس لديك صلاحية عرض الفصول الدراسية.", PermissionKeys.ClassesManage))
                 return;
 
             LoadUserControl(new ClassesForm());
@@ -538,7 +553,7 @@ namespace SchoolSystem
 
         private void tsmiTimetable_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.TimetableManage))
+            if (!EnsureModule("Timetable", "ليس لديك صلاحية عرض الجدول الدراسي.", PermissionKeys.TimetableManage))
                 return;
 
             LoadUserControl(new TimetableForm());
@@ -546,7 +561,7 @@ namespace SchoolSystem
 
         private void tsmiGrades_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.GradesManage))
+            if (!EnsureModule("Grades", "ليس لديك صلاحية عرض الدرجات.", PermissionKeys.GradesManage))
                 return;
 
             LoadUserControl(new GradeEntryForm());
@@ -554,7 +569,7 @@ namespace SchoolSystem
 
         private void tsmiAttendance_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.AttendanceManage))
+            if (!EnsureModule("Attendance", "ليس لديك صلاحية عرض الحضور.", PermissionKeys.AttendanceManage))
                 return;
 
             LoadUserControl(new DailyAttendanceForm());
@@ -562,7 +577,7 @@ namespace SchoolSystem
 
         private void tsmiFees_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.FeesManage))
+            if (!EnsureModule("Fees", "ليس لديك صلاحية عرض الرسوم.", PermissionKeys.FeesManage))
                 return;
 
             LoadUserControl(new FeesForm());
@@ -570,7 +585,7 @@ namespace SchoolSystem
 
         private void tsmiVouchers_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.VouchersManage))
+            if (!EnsureModule("Vouchers", "ليس لديك صلاحية عرض السندات.", PermissionKeys.VouchersManage))
                 return;
 
             LoadUserControl(new VouchersForm());
@@ -578,7 +593,7 @@ namespace SchoolSystem
 
         private void tsmiExpenses_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.ExpensesManage))
+            if (!EnsureModule("Expenses", "ليس لديك صلاحية عرض المصروفات.", PermissionKeys.ExpensesManage))
                 return;
 
             LoadUserControl(new ExpensesForm());
@@ -586,7 +601,7 @@ namespace SchoolSystem
 
         private void tsmiTransport_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.TransportManage))
+            if (!EnsureModule("Transport", "ليس لديك صلاحية عرض النقل.", PermissionKeys.TransportManage))
                 return;
 
             LoadUserControl(new TransportForm());
@@ -594,7 +609,7 @@ namespace SchoolSystem
 
         private void tsmiLibrary_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.LibraryManage))
+            if (!EnsureModule("Library", "ليس لديك صلاحية عرض المكتبة.", PermissionKeys.LibraryManage))
                 return;
 
             LoadUserControl(new LibraryForm());
@@ -602,7 +617,7 @@ namespace SchoolSystem
 
         private void tsmiUsers_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.UsersManage))
+            if (!EnsureModule("Users", "ليس لديك صلاحية عرض المستخدمين.", PermissionKeys.UsersView, PermissionKeys.UsersManage))
                 return;
 
             LoadUserControl(new UsersForm());
@@ -610,7 +625,7 @@ namespace SchoolSystem
 
         private void tsmiReports_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.ReportsView))
+            if (!EnsureModule("Reports", "ليس لديك صلاحية عرض التقارير.", PermissionKeys.ReportsView))
                 return;
 
             LoadUserControl(new ReportCenterForm());
@@ -618,7 +633,7 @@ namespace SchoolSystem
 
         private void tsmiSettings_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.SettingsManage))
+            if (!EnsureModule("Settings", "ليس لديك صلاحية عرض الإعدادات.", PermissionKeys.SettingsView, PermissionKeys.SettingsManage))
                 return;
 
             LoadUserControl(new SettingsForm());
@@ -626,7 +641,7 @@ namespace SchoolSystem
 
         private void tsmiAuditLogs_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.AuditLogsView))
+            if (!EnsureModule("AuditLogs", "ليس لديك صلاحية عرض سجل التدقيق.", PermissionKeys.AuditLogsView))
                 return;
 
             LoadUserControl(new AuditLogForm());
@@ -634,7 +649,7 @@ namespace SchoolSystem
 
         private void تعريفرسومالصفوفToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!EnsurePermission(PermissionKeys.FeesManage))
+            if (!EnsureModule("FeePlans", "ليس لديك صلاحية عرض خطط الرسوم.", PermissionKeys.FeesManage))
                 return;
 
             LoadUserControl(new FeePlansForm());
