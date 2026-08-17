@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -306,20 +307,19 @@ namespace SchoolSystem.UI
 
         private string GetSelectedPermissions()
         {
-            StringBuilder sb = new StringBuilder();
+            // لا نستخرج المفتاح من النص الظاهر للمستخدم؛ النص قد يتغير أو يحتوي
+            // على شرطة داخل الوصف العربي. مصدر الحقيقة هو ترتيب PermissionKeys.All
+            // الذي بُنيت منه قائمة CheckedListBox نفسها.
+            List<string> selectedKeys = new List<string>();
+            IReadOnlyList<string> allKeys = PermissionKeys.All;
 
-            foreach (object item in checkedListPermissions.CheckedItems)
+            for (int i = 0; i < checkedListPermissions.Items.Count && i < allKeys.Count; i++)
             {
-                string text = item.ToString();
-                string key = text.Split('-')[0].Trim();
-
-                if (sb.Length > 0)
-                    sb.Append(",");
-
-                sb.Append(key);
+                if (checkedListPermissions.GetItemChecked(i))
+                    selectedKeys.Add(allKeys[i]);
             }
 
-            return PermissionKeys.NormalizePermissions(sb.ToString());
+            return PermissionKeys.Serialize(selectedKeys);
         }
 
         private void SetPermissionsFromString(string permissions)
@@ -332,19 +332,19 @@ namespace SchoolSystem.UI
             string normalizedPermissions = PermissionKeys.NormalizePermissions(permissions);
             string[] parts = normalizedPermissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            for (int i = 0; i < checkedListPermissions.Items.Count; i++)
+            IReadOnlyList<string> allKeys = PermissionKeys.All;
+            for (int i = 0; i < checkedListPermissions.Items.Count && i < allKeys.Count; i++)
             {
-                string item = checkedListPermissions.Items[i].ToString();
-
+                string itemKey = allKeys[i];
                 foreach (string part in parts)
                 {
-                    string key = part.Trim();
-
-                    string itemKey = item.Split('-')[0].Trim();
-                    string normalizedKey = PermissionKeys.NormalizePermissionKey(key);
+                    string normalizedKey = PermissionKeys.NormalizePermissionKey(part.Trim());
                     if (!string.IsNullOrWhiteSpace(normalizedKey) &&
                         string.Equals(itemKey, normalizedKey, StringComparison.OrdinalIgnoreCase))
+                    {
                         checkedListPermissions.SetItemChecked(i, true);
+                        break;
+                    }
                 }
             }
         }
