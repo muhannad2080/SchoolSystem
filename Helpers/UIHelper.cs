@@ -105,10 +105,8 @@ namespace SchoolSystem.Helpers
                 TableLayoutPanel table = child as TableLayoutPanel;
                 if (table != null)
                 {
-                    table.AutoSize = false;
-                    table.AutoScroll = false;
-                    if (table.Padding == Padding.Empty)
-                        table.Padding = new Padding(Space8);
+                    // لا نغيّر AutoSize أو Padding المصمّم وقت التشغيل؛
+                    // اختلاف حجم الصفوف قد يقص الحقول أو يخفي شريط الأزرار.
                 }
 
                 // لا نفرض Padding أو FlowDirection أو WrapContents على حاويات المصمم.
@@ -619,12 +617,10 @@ namespace SchoolSystem.Helpers
                     groupBox.BackColor = SurfaceColor;
                     groupBox.ForeColor = TextColor;
                     groupBox.Font = SectionFont;
-                    groupBox.Padding = new Padding(Space12, Space16, Space12, Space12);
                 }
                 else if (child is Label label)
                 {
                     label.ForeColor = TextColor;
-                    label.Margin = new Padding(3, 5, 3, 5);
                     if (!label.AutoSize)
                         label.AutoEllipsis = true;
 
@@ -633,7 +629,6 @@ namespace SchoolSystem.Helpers
                     {
                         label.ForeColor = PrimaryColor;
                         label.Font = TitleFont;
-                        label.Margin = new Padding(3, 8, 3, 8);
                     }
                     else if (labelKey.Contains("section") || labelKey.Contains("قسم") || labelKey.Contains("بيانات"))
                     {
@@ -665,7 +660,6 @@ namespace SchoolSystem.Helpers
                     dateTimePicker.CalendarMonthBackground = SurfaceColor;
                     dateTimePicker.BackColor = SurfaceColor;
                     dateTimePicker.ForeColor = TextColor;
-                    dateTimePicker.Margin = new Padding(3, 4, 3, 4);
                 }
                 else if (child is NumericUpDown numericUpDown)
                 {
@@ -801,10 +795,8 @@ namespace SchoolSystem.Helpers
             btn.FlatAppearance.MouseDownBackColor = Darken(backColor, 0.10f);
             btn.Cursor = Cursors.Hand;
             btn.Font = HeadingFont;
-            btn.Height = 38;
-            btn.MinimumSize = new Size(96, 38);
-            btn.AutoSize = false;
-            btn.Padding = new Padding(10, 0, 10, 0);
+            // الحجم والـPadding يحددهما المصمم أو شريط الأزرار الخاص بالواجهة.
+            // فرض ارتفاع موحد هنا كان يقص الأزرار داخل TableLayoutPanel وFlowLayoutPanel.
         }
 
         public static void StyleButton(KryptonButton btn, Color backColor)
@@ -816,8 +808,6 @@ namespace SchoolSystem.Helpers
             btn.ForeColor = Color.White;
             btn.Cursor = Cursors.Hand;
             btn.Font = HeadingFont;
-            btn.Height = 38;
-            btn.MinimumSize = new Size(90, 38);
         }
 
         private static Color Lighten(Color color, float amount)
