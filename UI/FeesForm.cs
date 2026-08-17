@@ -20,6 +20,7 @@ namespace SchoolSystem.UI
         private decimal originalPaidAmount = 0;
         private DataTable allFees;
         private bool isLoading = false;
+        private bool showOutstandingOnly = false;
 
         public FeesForm()
         {
@@ -176,10 +177,19 @@ namespace SchoolSystem.UI
                 filter += "Status = '" + UIHelper.EscapeDataViewFilterValue(selectedStatus) + "'";
             }
 
+            if (showOutstandingOnly)
+            {
+                if (!string.IsNullOrWhiteSpace(filter))
+                    filter += " AND ";
+
+                filter += "RemainingAmount > 0";
+            }
+
             dv.RowFilter = filter;
 
             dataGridViewFees.DataSource = dv;
-            lblRecordCount.Text = "عدد السجلات: " + dv.Count;
+            lblRecordCount.Text = (showOutstandingOnly ? "المتأخرات - " : "الرسوم - ") + "عدد السجلات: " + dv.Count;
+            btnOutstandingReport.Text = showOutstandingOnly ? "عرض كل الرسوم" : "تقرير المتأخرات فقط";
 
             FormatGrid();
         }
@@ -815,6 +825,19 @@ namespace SchoolSystem.UI
                 table.Columns[source].ColumnName = target;
         }
 
+        private void btnOutstandingReport_Click(object sender, EventArgs e)
+        {
+            showOutstandingOnly = !showOutstandingOnly;
+            ApplyFilter();
+        }
+
+        private string GetFeeReportTitle()
+        {
+            return showOutstandingOnly
+                ? "تقرير المتأخرات المالية للطلاب"
+                : "تقرير الرسوم الدراسية والتحصيل";
+        }
+
         private void btnExportExcel_Click(object sender, EventArgs e)
         {
             try
@@ -829,15 +852,15 @@ namespace SchoolSystem.UI
                 using (SaveFileDialog dialog = new SaveFileDialog())
                 {
                     dialog.Filter = "Excel Workbook (*.xlsx)|*.xlsx";
-                    dialog.FileName = "تقرير_الرسوم_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".xlsx";
+                    dialog.FileName = (showOutstandingOnly ? "تقرير_المتأخرات_" : "تقرير_الرسوم_") + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".xlsx";
                     if (dialog.ShowDialog() != DialogResult.OK)
                         return;
 
                     ReportOutputHelper.ExportToExcel(
                         report,
                         dialog.FileName,
-                        "تقرير الرسوم الدراسية والتحصيل",
-                        "عدد السجلات: " + report.Rows.Count);
+                        GetFeeReportTitle(),
+                        "عدد السجلات: " + report.Rows.Count + (showOutstandingOnly ? " | يعرض الأرصدة المتبقية فقط" : ""));
                     UIHelper.ShowInfo("تم تصدير تقرير الرسوم إلى Excel بنجاح.");
                 }
             }
@@ -861,15 +884,15 @@ namespace SchoolSystem.UI
                 using (SaveFileDialog dialog = new SaveFileDialog())
                 {
                     dialog.Filter = "PDF Document (*.pdf)|*.pdf";
-                    dialog.FileName = "تقرير_الرسوم_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".pdf";
+                    dialog.FileName = (showOutstandingOnly ? "تقرير_المتأخرات_" : "تقرير_الرسوم_") + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".pdf";
                     if (dialog.ShowDialog() != DialogResult.OK)
                         return;
 
                     ReportOutputHelper.ExportToPdf(
                         report,
                         dialog.FileName,
-                        "تقرير الرسوم الدراسية والتحصيل",
-                        "عدد السجلات: " + report.Rows.Count);
+                        GetFeeReportTitle(),
+                        "عدد السجلات: " + report.Rows.Count + (showOutstandingOnly ? " | يعرض الأرصدة المتبقية فقط" : ""));
                     UIHelper.ShowInfo("تم تصدير تقرير الرسوم إلى PDF بنجاح.");
                 }
             }

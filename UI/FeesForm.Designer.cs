@@ -70,6 +70,7 @@
             this.btnExportExcel = new System.Windows.Forms.Button();
             this.btnExportPdf = new System.Windows.Forms.Button();
             this.btnRecordPayment = new System.Windows.Forms.Button();
+            this.btnOutstandingReport = new System.Windows.Forms.Button();
 
             this.panelSearch = new System.Windows.Forms.Panel();
             this.lblSearch = new System.Windows.Forms.Label();
@@ -331,6 +332,7 @@
             this.panelButtons.Controls.Add(this.btnExportExcel);
             this.panelButtons.Controls.Add(this.btnExportPdf);
             this.panelButtons.Controls.Add(this.btnRecordPayment);
+            this.panelButtons.Controls.Add(this.btnOutstandingReport);
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelButtons.Location = new System.Drawing.Point(0, 378);
             this.panelButtons.Name = "panelButtons";
@@ -431,6 +433,18 @@
             this.btnRecordPayment.Text = "تحصيل دفعة مستقلة";
             this.btnRecordPayment.UseVisualStyleBackColor = false;
             this.btnRecordPayment.Click += new System.EventHandler(this.btnRecordPayment_Click);
+
+            this.btnOutstandingReport.BackColor = System.Drawing.Color.FromArgb(192, 57, 43);
+            this.btnOutstandingReport.FlatAppearance.BorderSize = 0;
+            this.btnOutstandingReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnOutstandingReport.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnOutstandingReport.ForeColor = System.Drawing.Color.White;
+            this.btnOutstandingReport.Location = new System.Drawing.Point(595, 50);
+            this.btnOutstandingReport.Name = "btnOutstandingReport";
+            this.btnOutstandingReport.Size = new System.Drawing.Size(240, 28);
+            this.btnOutstandingReport.Text = "تقرير المتأخرات فقط";
+            this.btnOutstandingReport.UseVisualStyleBackColor = false;
+            this.btnOutstandingReport.Click += new System.EventHandler(this.btnOutstandingReport_Click);
 
             // panelSearch
             this.panelSearch.BackColor = System.Drawing.Color.White;
@@ -580,6 +594,7 @@
         private System.Windows.Forms.Button btnExportExcel;
         private System.Windows.Forms.Button btnExportPdf;
         private System.Windows.Forms.Button btnRecordPayment;
+        private System.Windows.Forms.Button btnOutstandingReport;
 
         private System.Windows.Forms.Panel panelSearch;
         private System.Windows.Forms.Label lblSearch;
