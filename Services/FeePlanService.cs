@@ -18,19 +18,19 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllFeePlans()
         {
-            CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
+            CurrentUser.DemandAction("FeePlans", "View", "ليس لديك صلاحية عرض خطط الرسوم.");
             return feePlanRepository.GetAllFeePlans();
         }
 
         public DataTable GetClasses()
         {
-            CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
+            CurrentUser.DemandAction("FeePlans", "View", "ليس لديك صلاحية عرض صفوف خطط الرسوم.");
             return feePlanRepository.GetClasses();
         }
 
         public bool AddFeePlan(FeePlan plan)
         {
-            CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
+            CurrentUser.DemandAction("FeePlans", "Add", "ليس لديك صلاحية إضافة خطط الرسوم.");
             Validate(plan);
             bool added = feePlanRepository.AddFeePlan(plan);
             if (added)
@@ -46,7 +46,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateFeePlan(FeePlan plan)
         {
-            CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
+            CurrentUser.DemandAction("FeePlans", "Edit", "ليس لديك صلاحية تعديل خطط الرسوم.");
             if (plan == null || plan.FeePlanID <= 0)
                 throw new Exception("رقم خطة الرسوم غير صحيح.");
 
@@ -65,7 +65,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteFeePlan(int feePlanId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.FeesManage, "ليس لديك صلاحية إدارة خطط الرسوم.");
+            CurrentUser.DemandAction("FeePlans", "Delete", "ليس لديك صلاحية حذف خطط الرسوم.");
             if (feePlanId <= 0)
                 throw new Exception("رقم خطة الرسوم غير صحيح.");
 
