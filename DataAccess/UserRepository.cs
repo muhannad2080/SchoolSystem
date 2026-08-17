@@ -386,7 +386,7 @@ namespace SchoolSystem.DataAccess
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@UserID", userId);
-                    cmd.Parameters.AddWithValue("@Permissions", string.IsNullOrWhiteSpace(permissions) ? (object)DBNull.Value : permissions);
+                    AddPermissionsParameter(cmd, permissions);
 
                     con.Open();
                     return cmd.ExecuteNonQuery() > 0;
@@ -528,10 +528,7 @@ namespace SchoolSystem.DataAccess
             }
 
             cmd.Parameters.AddWithValue("@RoleName", user.RoleName ?? "");
-            cmd.Parameters.AddWithValue(
-                "@Permissions",
-                string.IsNullOrWhiteSpace(user.Permissions) ? (object)DBNull.Value : user.Permissions
-            );
+            AddPermissionsParameter(cmd, user.Permissions);
 
             cmd.Parameters.AddWithValue(
                 "@Email",
@@ -545,6 +542,14 @@ namespace SchoolSystem.DataAccess
 
             cmd.Parameters.AddWithValue("@IsActive", user.IsActive);
             cmd.Parameters.AddWithValue("@MustChangePassword", user.MustChangePassword);
+        }
+
+        private void AddPermissionsParameter(SqlCommand cmd, string permissions)
+        {
+            SqlParameter parameter = cmd.Parameters.Add("@Permissions", SqlDbType.NVarChar, -1);
+            parameter.Value = string.IsNullOrWhiteSpace(permissions)
+                ? (object)DBNull.Value
+                : permissions.Trim();
         }
 
         private User MapUser(SqlDataReader reader)
