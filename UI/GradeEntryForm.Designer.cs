@@ -44,6 +44,9 @@
             this.btnDeleteGrade = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnIncomplete = new System.Windows.Forms.Button();
+            this.btnExportExcel = new System.Windows.Forms.Button();
+            this.btnExportPdf = new System.Windows.Forms.Button();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.lblRecordCount = new System.Windows.Forms.Label();
             this.panelTitle.SuspendLayout();
@@ -55,9 +58,9 @@
             this.panelActions.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // panelTitle
-            // 
+            //
             this.panelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
@@ -65,9 +68,9 @@
             this.panelTitle.Name = "panelTitle";
             this.panelTitle.Size = new System.Drawing.Size(1180, 60);
             this.panelTitle.TabIndex = 0;
-            // 
+            //
             // lblTitle
-            // 
+            //
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.White;
@@ -77,9 +80,9 @@
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "إدارة درجات الطلاب حسب مواد الصف";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // mainContainer
-            // 
+            //
             this.mainContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
             this.mainContainer.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.mainContainer.ColumnCount = 1;
@@ -101,9 +104,9 @@
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.mainContainer.Size = new System.Drawing.Size(1180, 700);
             this.mainContainer.TabIndex = 1;
-            // 
+            //
             // groupBoxFilters
-            // 
+            //
             this.groupBoxFilters.BackColor = System.Drawing.Color.White;
             this.groupBoxFilters.Controls.Add(this.tableLayoutFilters);
             this.groupBoxFilters.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -117,9 +120,9 @@
             this.groupBoxFilters.TabIndex = 0;
             this.groupBoxFilters.TabStop = false;
             this.groupBoxFilters.Text = "خيارات إدخال الدرجات";
-            // 
+            //
             // tableLayoutFilters
-            // 
+            //
             this.tableLayoutFilters.AutoSize = false;
             this.tableLayoutFilters.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tableLayoutFilters.ColumnCount = 6;
@@ -152,9 +155,9 @@
             this.tableLayoutFilters.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
             this.tableLayoutFilters.Size = new System.Drawing.Size(1126, 144);
             this.tableLayoutFilters.TabIndex = 0;
-            // 
+            //
             // lblAcademicYear
-            // 
+            //
             this.lblAcademicYear.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblAcademicYear.Location = new System.Drawing.Point(1004, 0);
             this.lblAcademicYear.Name = "lblAcademicYear";
@@ -163,18 +166,18 @@
             this.lblAcademicYear.Text = "العام الدراسي:";
             this.lblAcademicYear.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblAcademicYear.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // txtAcademicYear
-            // 
+            //
             this.txtAcademicYear.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtAcademicYear.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtAcademicYear.Location = new System.Drawing.Point(754, 3);
             this.txtAcademicYear.Name = "txtAcademicYear";
             this.txtAcademicYear.Size = new System.Drawing.Size(244, 28);
             this.txtAcademicYear.TabIndex = 1;
-            // 
+            //
             // lblClass
-            // 
+            //
             this.lblClass.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblClass.Location = new System.Drawing.Point(629, 0);
             this.lblClass.Name = "lblClass";
@@ -183,9 +186,9 @@
             this.lblClass.Text = "الصف:";
             this.lblClass.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblClass.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // cmbClass
-            // 
+            //
             this.cmbClass.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbClass.Font = new System.Drawing.Font("Tahoma", 10F);
@@ -194,9 +197,9 @@
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(244, 29);
             this.cmbClass.TabIndex = 3;
-            // 
+            //
             // lblSection
-            // 
+            //
             this.lblSection.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblSection.Location = new System.Drawing.Point(254, 0);
             this.lblSection.Name = "lblSection";
@@ -205,9 +208,9 @@
             this.lblSection.Text = "الشعبة:";
             this.lblSection.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblSection.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // cmbSection
-            // 
+            //
             this.cmbSection.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbSection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSection.Font = new System.Drawing.Font("Tahoma", 10F);
@@ -216,9 +219,9 @@
             this.cmbSection.Name = "cmbSection";
             this.cmbSection.Size = new System.Drawing.Size(245, 29);
             this.cmbSection.TabIndex = 5;
-            // 
+            //
             // lblSubject
-            // 
+            //
             this.lblSubject.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblSubject.Location = new System.Drawing.Point(1004, 33);
             this.lblSubject.Name = "lblSubject";
@@ -227,9 +230,9 @@
             this.lblSubject.Text = "المادة:";
             this.lblSubject.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblSubject.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // cmbSubject
-            // 
+            //
             this.cmbSubject.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbSubject.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSubject.Font = new System.Drawing.Font("Tahoma", 10F);
@@ -238,9 +241,9 @@
             this.cmbSubject.Name = "cmbSubject";
             this.cmbSubject.Size = new System.Drawing.Size(244, 29);
             this.cmbSubject.TabIndex = 7;
-            // 
+            //
             // lblTerm
-            // 
+            //
             this.lblTerm.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTerm.Location = new System.Drawing.Point(629, 33);
             this.lblTerm.Name = "lblTerm";
@@ -249,9 +252,9 @@
             this.lblTerm.Text = "الفصل:";
             this.lblTerm.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblTerm.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // cmbTerm
-            // 
+            //
             this.cmbTerm.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbTerm.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTerm.Font = new System.Drawing.Font("Tahoma", 10F);
@@ -260,9 +263,9 @@
             this.cmbTerm.Name = "cmbTerm";
             this.cmbTerm.Size = new System.Drawing.Size(244, 29);
             this.cmbTerm.TabIndex = 9;
-            // 
+            //
             // lblSearch
-            // 
+            //
             this.lblSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblSearch.Location = new System.Drawing.Point(254, 33);
             this.lblSearch.Name = "lblSearch";
@@ -271,18 +274,18 @@
             this.lblSearch.Text = "بحث:";
             this.lblSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // txtSearch
-            // 
+            //
             this.txtSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtSearch.Location = new System.Drawing.Point(3, 36);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(245, 28);
             this.txtSearch.TabIndex = 11;
-            // 
+            //
             // btnLoad
-            // 
+            //
             this.btnLoad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.btnLoad.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnLoad.FlatAppearance.BorderSize = 0;
@@ -297,9 +300,9 @@
             this.btnLoad.Text = "تحميل طلاب الصف والمادة";
             this.btnLoad.UseVisualStyleBackColor = false;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
-            // 
+            //
             // panelHint
-            // 
+            //
             this.panelHint.BackColor = System.Drawing.Color.White;
             this.panelHint.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.panelHint.Controls.Add(this.lblHint);
@@ -308,9 +311,9 @@
             this.panelHint.Name = "panelHint";
             this.panelHint.Size = new System.Drawing.Size(1150, 36);
             this.panelHint.TabIndex = 1;
-            // 
+            //
             // lblHint
-            // 
+            //
             this.lblHint.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblHint.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
             this.lblHint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
@@ -321,9 +324,9 @@
             this.lblHint.Text = "اختر الصف أولًا لتظهر المواد الخاصة به فقط، ثم اختر المادة والشعبة والفصل، وبعدها" +
     " أدخل الدرجات مباشرة في الجدول.";
             this.lblHint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // dataGridViewGrades
-            // 
+            //
             this.dataGridViewGrades.AllowUserToAddRows = false;
             this.dataGridViewGrades.AllowUserToDeleteRows = false;
             this.dataGridViewGrades.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -356,14 +359,17 @@
             this.dataGridViewGrades.TabIndex = 2;
             this.dataGridViewGrades.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewGrades_CellClick);
             this.dataGridViewGrades.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewGrades_CellEndEdit);
-            // 
+            //
             // panelActions
-            // 
+            //
             this.panelActions.BackColor = System.Drawing.Color.Transparent;
             this.panelActions.Controls.Add(this.btnSaveAll);
             this.panelActions.Controls.Add(this.btnDeleteGrade);
             this.panelActions.Controls.Add(this.btnClear);
             this.panelActions.Controls.Add(this.btnRefresh);
+            this.panelActions.Controls.Add(this.btnIncomplete);
+            this.panelActions.Controls.Add(this.btnExportExcel);
+            this.panelActions.Controls.Add(this.btnExportPdf);
             this.panelActions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelActions.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.panelActions.Location = new System.Drawing.Point(15, 601);
@@ -372,9 +378,9 @@
             this.panelActions.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.panelActions.Size = new System.Drawing.Size(1150, 54);
             this.panelActions.TabIndex = 3;
-            // 
+            //
             // btnSaveAll
-            // 
+            //
             this.btnSaveAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
             this.btnSaveAll.FlatAppearance.BorderSize = 0;
             this.btnSaveAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -387,9 +393,9 @@
             this.btnSaveAll.Text = "حفظ الدرجات";
             this.btnSaveAll.UseVisualStyleBackColor = false;
             this.btnSaveAll.Click += new System.EventHandler(this.btnSaveAll_Click);
-            // 
+            //
             // btnDeleteGrade
-            // 
+            //
             this.btnDeleteGrade.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
             this.btnDeleteGrade.FlatAppearance.BorderSize = 0;
             this.btnDeleteGrade.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -402,9 +408,9 @@
             this.btnDeleteGrade.Text = "حذف درجة";
             this.btnDeleteGrade.UseVisualStyleBackColor = false;
             this.btnDeleteGrade.Click += new System.EventHandler(this.btnDeleteGrade_Click);
-            // 
+            //
             // btnClear
-            // 
+            //
             this.btnClear.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
             this.btnClear.FlatAppearance.BorderSize = 0;
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -417,9 +423,9 @@
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
+            //
             // btnRefresh
-            // 
+            //
             this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
             this.btnRefresh.FlatAppearance.BorderSize = 0;
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -432,9 +438,54 @@
             this.btnRefresh.Text = "تحديث";
             this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
+            //
+            // btnIncomplete
+            //
+            this.btnIncomplete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(119)))), ((int)(((byte)(6)))));
+            this.btnIncomplete.FlatAppearance.BorderSize = 0;
+            this.btnIncomplete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnIncomplete.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnIncomplete.ForeColor = System.Drawing.Color.White;
+            this.btnIncomplete.Location = new System.Drawing.Point(497, 13);
+            this.btnIncomplete.Name = "btnIncomplete";
+            this.btnIncomplete.Size = new System.Drawing.Size(145, 36);
+            this.btnIncomplete.TabIndex = 4;
+            this.btnIncomplete.Text = "غير المكتملة";
+            this.btnIncomplete.UseVisualStyleBackColor = false;
+            this.btnIncomplete.Click += new System.EventHandler(this.btnIncomplete_Click);
+            //
+            // btnExportExcel
+            //
+            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(150)))), ((int)(((byte)(105)))));
+            this.btnExportExcel.FlatAppearance.BorderSize = 0;
+            this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExportExcel.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnExportExcel.ForeColor = System.Drawing.Color.White;
+            this.btnExportExcel.Location = new System.Drawing.Point(648, 13);
+            this.btnExportExcel.Name = "btnExportExcel";
+            this.btnExportExcel.Size = new System.Drawing.Size(125, 36);
+            this.btnExportExcel.TabIndex = 5;
+            this.btnExportExcel.Text = "Excel";
+            this.btnExportExcel.UseVisualStyleBackColor = false;
+            this.btnExportExcel.Click += new System.EventHandler(this.btnExportExcel_Click);
+            //
+            // btnExportPdf
+            //
+            this.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(185)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.btnExportPdf.FlatAppearance.BorderSize = 0;
+            this.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExportPdf.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnExportPdf.ForeColor = System.Drawing.Color.White;
+            this.btnExportPdf.Location = new System.Drawing.Point(779, 13);
+            this.btnExportPdf.Name = "btnExportPdf";
+            this.btnExportPdf.Size = new System.Drawing.Size(115, 36);
+            this.btnExportPdf.TabIndex = 6;
+            this.btnExportPdf.Text = "PDF";
+            this.btnExportPdf.UseVisualStyleBackColor = false;
+            this.btnExportPdf.Click += new System.EventHandler(this.btnExportPdf_Click);
+            //
             // panelBottom
-            // 
+            //
             this.panelBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
             this.panelBottom.Controls.Add(this.lblRecordCount);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -442,9 +493,9 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1150, 26);
             this.panelBottom.TabIndex = 4;
-            // 
+            //
             // lblRecordCount
-            // 
+            //
             this.lblRecordCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblRecordCount.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
             this.lblRecordCount.Location = new System.Drawing.Point(0, 0);
@@ -453,9 +504,9 @@
             this.lblRecordCount.TabIndex = 0;
             this.lblRecordCount.Text = "عدد الطلاب: 0";
             this.lblRecordCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // GradeEntryForm
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
@@ -518,8 +569,10 @@
         private System.Windows.Forms.Button btnSaveAll;
         private System.Windows.Forms.Button btnDeleteGrade;
         private System.Windows.Forms.Button btnClear;
-        private System.Windows.Forms.Button btnRefresh;
-
+                private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnIncomplete;
+        private System.Windows.Forms.Button btnExportExcel;
+        private System.Windows.Forms.Button btnExportPdf;
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.Label lblRecordCount;
     }

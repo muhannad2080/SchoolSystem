@@ -1,5 +1,7 @@
 using System;
 using System.Data;
+using System.Drawing;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
@@ -17,6 +19,7 @@ namespace SchoolSystem.UI
         private DataTable currentGradesTable;
         private int selectedGradeId = 0;
         private bool isLoading = false;
+        private bool showIncompleteOnly = false;
 
         public GradeEntryForm()
         {
@@ -42,6 +45,9 @@ namespace SchoolSystem.UI
             UIHelper.StyleDangerButton(btnDeleteGrade);
             UIHelper.StyleButton(btnClear, UIHelper.NeutralColor);
             UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnIncomplete, Color.FromArgb(217, 119, 6));
+            UIHelper.StyleButton(btnExportExcel, Color.FromArgb(5, 150, 105));
+            UIHelper.StyleButton(btnExportPdf, Color.FromArgb(185, 28, 28));
             UIHelper.StyleTextBox(txtAcademicYear);
             UIHelper.StyleTextBox(txtSearch);
             UIHelper.StyleComboBox(cmbClass);
@@ -153,6 +159,8 @@ namespace SchoolSystem.UI
             dataGridViewGrades.DataSource = null;
             lblRecordCount.Text = "عدد الطلاب: 0";
             selectedGradeId = 0;
+            showIncompleteOnly = false;
+            btnIncomplete.Text = "غير المكتملة";
         }
 
         private async void txtAcademicYear_Leave(object sender, EventArgs e)
@@ -321,11 +329,12 @@ namespace SchoolSystem.UI
                         subjectId,
                         cmbTerm.Text));
 
+                showIncompleteOnly = false;
+                btnIncomplete.Text = "غير المكتملة";
                 dataGridViewGrades.DataSource = currentGradesTable;
 
                 FormatGrid();
-
-                lblRecordCount.Text = "عدد الطلاب: " + currentGradesTable.Rows.Count;
+                ApplyGridFilter();
 
                 Cursor = Cursors.Default;
             }
@@ -695,28 +704,114 @@ namespace SchoolSystem.UI
             dataGridViewGrades.DataSource = null;
             lblRecordCount.Text = "عدد الطلاب: 0";
             selectedGradeId = 0;
+            showIncompleteOnly = false;
+            btnIncomplete.Text = "غير المكتملة";
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
+            ApplyGridFilter();
+        }
+
+        private void ApplyGridFilter()
+        {
             if (currentGradesTable == null)
                 return;
 
+            string filter = string.Empty;
             string keyword = txtSearch.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(keyword))
-            {
-                currentGradesTable.DefaultView.RowFilter = "";
-            }
-            else
+            if (!string.IsNullOrWhiteSpace(keyword))
             {
                 string safe = UIHelper.EscapeDataViewFilterValue(keyword);
-
-                currentGradesTable.DefaultView.RowFilter =
-                    "StudentName LIKE '%" + safe + "%' OR StudentNumber LIKE '%" + safe + "%'";
+                filter = "(StudentName LIKE '%" + safe + "%' OR StudentNumber LIKE '%" + safe + "%')";
             }
 
-            lblRecordCount.Text = "عدد الطلاب: " + currentGradesTable.DefaultView.Count;
+            if (showIncompleteOnly)
+            {
+                if (filter.Length > 0)
+                    filter += " AND ";
+                filter += "(GradeID = 0 OR Quiz1 = 0 OR Quiz2 = 0 OR CourseWork = 0 OR FinalExam = 0)";
+            }
+
+            currentGradesTable.DefaultView.RowFilter = filter;
+            lblRecordCount.Text = showIncompleteOnly
+                ? "الطلاب غير المكتملة درجاتهم: " + currentGradesTable.DefaultView.Count
+                : "عدد الطلاب: " + currentGradesTable.DefaultView.Count;
+        }
+
+        private void btnIncomplete_Click(object sender, EventArgs e)
+        {
+            if (currentGradesTable == null)
+            {
+                ShowWarning("حمّل الطلاب أولاً قبل عرض غير المكتملة.");
+                return;
+            }
+
+            showIncompleteOnly = !showIncompleteOnly;
+            btnIncomplete.Text = showIncompleteOnly ? "عرض الكل" : "غير المكتملة";
+            ApplyGridFilter();
+        }
+
+        private void btnExportExcel_Click(object sender, EventArgs e)
+        {
+            ExportGrades(false);
+        }
+
+        private void btnExportPdf_Click(object sender, EventArgs e)
+        {
+            ExportGrades(true);
+        }
+
+        private void ExportGrades(bool pdf)
+        {
+            if (currentGradesTable == null || currentGradesTable.DefaultView.Count == 0)
+            {
+                ShowWarning("لا توجد درجات ظاهرة للتصدير.");
+                return;
+            }
+
+            using (SaveFileDialog dialog = new SaveFileDialog())
+            {
+                dialog.Filter = pdf ? "PDF files (*.pdf)|*.pdf" : "Excel files (*.xlsx)|*.xlsx";
+                dialog.FileName = (showIncompleteOnly ? "الدرجات_غير_المكتملة_" : "تقرير_الدرجات_") + DateTime.Now.ToString("yyyyMMdd_HHmm") + (pdf ? ".pdf" : ".xlsx");
+                if (dialog.ShowDialog() != DialogResult.OK)
+                    return;
+
+                try
+                {
+                    DataTable exportTable = BuildExportTable();
+                    string title = showIncompleteOnly ? "تقرير الطلاب غير المكتملة درجاتهم" : "تقرير درجات الطلاب";
+                    string summary = "العام: " + txtAcademicYear.Text.Trim() + " | الصف: " + cmbClass.Text + " | الشعبة: " + cmbSection.Text + " | المادة: " + cmbSubject.Text + " | الفصل: " + cmbTerm.Text;
+                    if (pdf)
+                        ReportOutputHelper.ExportToPdf(exportTable, dialog.FileName, title, summary);
+                    else
+                        ReportOutputHelper.ExportToExcel(exportTable, dialog.FileName, title, summary);
+                    ShowInfo("تم تصدير التقرير بنجاح.");
+                }
+                catch (Exception ex)
+                {
+                    UIHelper.ShowException("تصدير تقرير الدرجات", ex);
+                }
+            }
+        }
+
+        private DataTable BuildExportTable()
+        {
+            DataTable source = currentGradesTable.DefaultView.ToTable();
+            DataTable result = new DataTable();
+            string[] columns = { "StudentNumber", "StudentName", "Gender", "Quiz1", "Quiz2", "CourseWork", "FinalExam", "Total", "GradeLetter", "ResultStatus", "Notes" };
+            string[] headers = { "الرقم الأكاديمي", "اسم الطالب", "الجنس", "اختبار 1", "اختبار 2", "أعمال السنة", "الاختبار النهائي", "المجموع", "التقدير", "الحالة", "ملاحظات" };
+            for (int i = 0; i < columns.Length; i++)
+                result.Columns.Add(headers[i], typeof(string));
+
+            foreach (DataRow row in source.Rows)
+            {
+                DataRow output = result.NewRow();
+                for (int i = 0; i < columns.Length; i++)
+                    output[i] = source.Columns.Contains(columns[i]) && row[columns[i]] != DBNull.Value ? Convert.ToString(row[columns[i]]) : string.Empty;
+                result.Rows.Add(output);
+            }
+            return result;
         }
 
         private void ShowInfo(string message)
