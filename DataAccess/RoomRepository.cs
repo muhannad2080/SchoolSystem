@@ -56,39 +56,68 @@ namespace SchoolSystem.DataAccess
             }
         }
 
-        public bool AddRoom(Room room)
+        public int AddRoom(Room room)
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = @"
-                    INSERT INTO Rooms
-                    (
-                        RoomCode,
-                        RoomName,
-                        RoomType,
-                        Capacity,
-                        Location,
-                        IsActive,
-                        Notes,
-                        CreatedAt
-                    )
-                    VALUES
-                    (
-                        @RoomCode,
-                        @RoomName,
-                        @RoomType,
-                        @Capacity,
-                        @Location,
-                        @IsActive,
-                        @Notes,
-                        GETDATE()
-                    )";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                conn.Open();
+                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    AddParameters(cmd, room, false);
-                    conn.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    const string duplicateQuery = @"
+                        SELECT COUNT(1)
+                        FROM Rooms
+                        WHERE RoomName = @RoomName AND ISNULL(IsActive, 1) = 1";
+                    using (SqlCommand duplicateCommand = new SqlCommand(duplicateQuery, conn, transaction))
+                    {
+                        duplicateCommand.Parameters.Add("@RoomName", SqlDbType.NVarChar, 100).Value = room.RoomName.Trim();
+                        if (Convert.ToInt32(duplicateCommand.ExecuteScalar()) > 0)
+                            throw new InvalidOperationException("اسم القاعة مستخدم مسبقًا.");
+                    }
+
+                    const string query = @"
+                        INSERT INTO Rooms
+                        (
+                            RoomCode,
+                            RoomName,
+                            RoomType,
+                            Capacity,
+                            Location,
+                            IsActive,
+                            Notes,
+                            CreatedAt
+                        )
+                        OUTPUT INSERTED.RoomID
+                        VALUES
+                        (
+                            NULL,
+                            @RoomName,
+                            @RoomType,
+                            @Capacity,
+                            @Location,
+                            @IsActive,
+                            @Notes,
+                            GETDATE()
+                        )";
+
+                    int roomId;
+                    using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+                    {
+                        AddParameters(cmd, room, false, false);
+                        roomId = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    string roomCode = string.Format("ROOM-{0:000}", roomId);
+                    using (SqlCommand codeCommand = new SqlCommand(
+                        "UPDATE Rooms SET RoomCode = @RoomCode, UpdatedAt = GETDATE() WHERE RoomID = @RoomID",
+                        conn, transaction))
+                    {
+                        codeCommand.Parameters.Add("@RoomCode", SqlDbType.NVarChar, 30).Value = roomCode;
+                        codeCommand.Parameters.Add("@RoomID", SqlDbType.Int).Value = roomId;
+                        codeCommand.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                    return roomId;
                 }
             }
         }
@@ -112,7 +141,7 @@ namespace SchoolSystem.DataAccess
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    AddParameters(cmd, room, true);
+                    AddParameters(cmd, room, true, true);
                     conn.Open();
                     return cmd.ExecuteNonQuery() > 0;
                 }
@@ -164,12 +193,13 @@ namespace SchoolSystem.DataAccess
             }
         }
 
-        private void AddParameters(SqlCommand cmd, Room room, bool includeId)
+        private void AddParameters(SqlCommand cmd, Room room, bool includeId, bool includeCode)
         {
             if (includeId)
                 cmd.Parameters.AddWithValue("@RoomID", room.RoomID);
 
-            cmd.Parameters.AddWithValue("@RoomCode", room.RoomCode.Trim());
+            if (includeCode)
+                cmd.Parameters.AddWithValue("@RoomCode", room.RoomCode.Trim());
             cmd.Parameters.AddWithValue("@RoomName", room.RoomName.Trim());
             cmd.Parameters.AddWithValue("@RoomType", room.RoomType.Trim());
             cmd.Parameters.AddWithValue("@Capacity", room.Capacity);

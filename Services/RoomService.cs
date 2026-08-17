@@ -24,24 +24,18 @@ namespace SchoolSystem.Services
             return repository.GetActiveRooms();
         }
 
-        public bool AddRoom(Room room)
+        public int AddRoom(Room room)
         {
             CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة القاعات.");
             Validate(room, false);
 
-            if (repository.RoomCodeExists(room.RoomCode, 0))
-                throw new ArgumentException("كود القاعة موجود مسبقًا.");
-
-            bool added = repository.AddRoom(room);
-            if (added)
-            {
-                auditLogService.Record(
-                    "إضافة قاعة",
-                    "Room",
-                    room.RoomID.ToString(),
-                    "تمت إضافة القاعة " + room.RoomCode);
-            }
-            return added;
+            int roomId = repository.AddRoom(room);
+            auditLogService.Record(
+                "إضافة قاعة",
+                "Room",
+                roomId.ToString(),
+                "تمت إضافة القاعة برقم تلقائي " + roomId);
+            return roomId;
         }
 
         public bool UpdateRoom(Room room)
@@ -90,11 +84,13 @@ namespace SchoolSystem.Services
             if (isUpdate && room.RoomID <= 0)
                 throw new ArgumentException("اختر قاعة صحيحة للتعديل.");
 
-            if (string.IsNullOrWhiteSpace(room.RoomCode))
-                throw new ArgumentException("كود القاعة مطلوب.");
-
-            if (!Regex.IsMatch(room.RoomCode.Trim(), @"^[a-zA-Z0-9_-]{2,30}$"))
-                throw new ArgumentException("كود القاعة يجب أن يحتوي على حروف أو أرقام فقط.");
+            if (isUpdate)
+            {
+                if (string.IsNullOrWhiteSpace(room.RoomCode))
+                    throw new ArgumentException("كود القاعة مطلوب عند التعديل.");
+                if (!Regex.IsMatch(room.RoomCode.Trim(), @"^[a-zA-Z0-9_-]{2,30}$"))
+                    throw new ArgumentException("كود القاعة يجب أن يحتوي على حروف أو أرقام فقط.");
+            }
 
             if (string.IsNullOrWhiteSpace(room.RoomName))
                 throw new ArgumentException("اسم القاعة مطلوب.");

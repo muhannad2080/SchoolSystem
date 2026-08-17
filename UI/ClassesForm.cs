@@ -1,5 +1,7 @@
 using System;
 using System.Data;
+using System.Drawing;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
@@ -18,10 +20,19 @@ namespace SchoolSystem.UI
 
         private int selectedClassId = 0;
         private int selectedRoomId = 0;
+        private ComboBox cmbClassName;
+        private ComboBox cmbRoomName;
+        private Button btnClassAdd;
 
         public ClassesForm()
         {
             InitializeComponent();
+            ReplaceNameTextBoxesWithDropdowns();
+            AddClassCreateButton();
+            txtClassID.ReadOnly = true;
+            txtClassCode.ReadOnly = true;
+            txtRoomID.ReadOnly = true;
+            txtRoomCode.ReadOnly = true;
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
             Dock = DockStyle.Fill;
@@ -32,6 +43,7 @@ namespace SchoolSystem.UI
         {
             UIHelper.StyleDataGridView(dataGridViewClasses);
             UIHelper.StyleDataGridView(dataGridViewRooms);
+            UIHelper.StylePrimaryButton(btnClassAdd);
             UIHelper.StylePrimaryButton(btnClassUpdate);
             UIHelper.StyleButton(btnClassClear, UIHelper.NeutralColor);
             UIHelper.StyleButton(btnClassRefresh, UIHelper.NeutralColor);
@@ -41,12 +53,12 @@ namespace SchoolSystem.UI
             UIHelper.StyleButton(btnRoomClear, UIHelper.NeutralColor);
             UIHelper.StyleButton(btnRoomRefresh, UIHelper.NeutralColor);
             UIHelper.StyleTextBox(txtClassCode);
-            UIHelper.StyleTextBox(txtClassName);
+            UIHelper.StyleComboBox(cmbClassName);
             UIHelper.StyleTextBox(txtStageName);
             UIHelper.StyleTextBox(txtClassNotes);
             UIHelper.StyleTextBox(txtClassSearch);
             UIHelper.StyleTextBox(txtRoomCode);
-            UIHelper.StyleTextBox(txtRoomName);
+            UIHelper.StyleComboBox(cmbRoomName);
             UIHelper.StyleTextBox(txtLocation);
             UIHelper.StyleTextBox(txtRoomNotes);
             UIHelper.StyleTextBox(txtRoomSearch);
@@ -63,6 +75,7 @@ namespace SchoolSystem.UI
 
                 await LoadClassesAsync();
                 await LoadRoomsAsync();
+                LoadNameDropdowns();
 
                 ClearClassFields();
                 ClearRoomFields();
@@ -74,6 +87,72 @@ namespace SchoolSystem.UI
                 Cursor = Cursors.Default;
                 UIHelper.ShowException("حدث خطأ أثناء تحميل واجهة الفصول والقاعات:\n", ex);
             }
+        }
+
+        private void ReplaceNameTextBoxesWithDropdowns()
+        {
+            cmbClassName = CreateNameDropdown("cmbClassName");
+            tableClassFields.Controls.Remove(txtClassName);
+            tableClassFields.Controls.Add(cmbClassName, 1, 1);
+
+            cmbRoomName = CreateNameDropdown("cmbRoomName");
+            tableRoomFields.Controls.Remove(txtRoomName);
+            tableRoomFields.Controls.Add(cmbRoomName, 1, 1);
+        }
+
+        private ComboBox CreateNameDropdown(string name)
+        {
+            return new ComboBox
+            {
+                Name = name, Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList,
+                Font = new Font("Tahoma", 10F), IntegralHeight = false, MaxDropDownItems = 12,
+                RightToLeft = RightToLeft.Yes, FormattingEnabled = true
+            };
+        }
+
+        private void AddClassCreateButton()
+        {
+            btnClassAdd = new Button { Name = "btnClassAdd", Text = "إضافة فصل", Size = new Size(115, 36), TabIndex = 0 };
+            btnClassAdd.Click += btnClassAdd_Click;
+            panelClassButtons.Controls.Add(btnClassAdd);
+            panelClassButtons.Controls.SetChildIndex(btnClassAdd, 0);
+        }
+
+        private void LoadNameDropdowns()
+        {
+            var classNames = new List<string> { "الأول الإعدادي", "الثاني الإعدادي", "الثالث الإعدادي", "الأول الثانوي", "الثاني الثانوي", "الثالث الثانوي" };
+            if (classesTable != null && classesTable.Columns.Contains("ClassName"))
+                foreach (DataRow row in classesTable.Rows) AddUnique(classNames, row["ClassName"] == DBNull.Value ? "" : row["ClassName"].ToString());
+            FillDropdown(cmbClassName, classNames);
+
+            var roomNames = new List<string> { "قاعة دراسية", "المختبر العلمي", "معمل الحاسوب", "قاعة الأنشطة", "المكتبة", "قاعة الاجتماعات" };
+            if (roomsTable != null && roomsTable.Columns.Contains("RoomName"))
+                foreach (DataRow row in roomsTable.Rows) AddUnique(roomNames, row["RoomName"] == DBNull.Value ? "" : row["RoomName"].ToString());
+            FillDropdown(cmbRoomName, roomNames);
+        }
+
+        private static void AddUnique(List<string> values, string value)
+        {
+            if (!string.IsNullOrWhiteSpace(value) && !values.Contains(value.Trim())) values.Add(value.Trim());
+        }
+
+        private static void FillDropdown(ComboBox combo, List<string> values)
+        {
+            if (combo == null) return;
+            string selected = combo.Text;
+            combo.BeginUpdate(); combo.Items.Clear();
+            foreach (string value in values) combo.Items.Add(value);
+            combo.EndUpdate();
+            SetDropdownValue(combo, selected);
+            if (combo.SelectedIndex < 0 && combo.Items.Count > 0) combo.SelectedIndex = 0;
+        }
+
+        private static void SetDropdownValue(ComboBox combo, string value)
+        {
+            if (combo == null) return;
+            int index = combo.Items.IndexOf(value);
+            if (index < 0 && !string.IsNullOrWhiteSpace(value)) { combo.Items.Add(value); index = combo.Items.IndexOf(value); }
+            combo.SelectedIndex = index;
         }
 
         // =========================================================
@@ -167,8 +246,8 @@ namespace SchoolSystem.UI
             SchoolClass item = new SchoolClass();
 
             item.ClassID = selectedClassId;
-            item.ClassCode = txtClassCode.Text.Trim();
-            item.ClassName = txtClassName.Text.Trim();
+            item.ClassCode = selectedClassId > 0 ? txtClassCode.Text.Trim() : "";
+            item.ClassName = cmbClassName.Text.Trim();
             item.StageName = txtStageName.Text.Trim();
             item.GradeOrder = Convert.ToInt32(nudGradeOrder.Value);
             item.IsActive = chkClassActive.Checked;
@@ -179,10 +258,10 @@ namespace SchoolSystem.UI
 
         private bool ValidateClassInputs()
         {
-            if (string.IsNullOrWhiteSpace(txtClassName.Text))
+            if (cmbClassName.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbClassName.Text))
             {
                 ShowWarning("اسم الفصل مطلوب.");
-                txtClassName.Focus();
+                cmbClassName.Focus();
                 return false;
             }
             if (string.IsNullOrWhiteSpace(txtStageName.Text))
@@ -208,31 +287,31 @@ namespace SchoolSystem.UI
 
         private bool ValidateRoomInputs()
         {
-            if (string.IsNullOrWhiteSpace(txtRoomCode.Text))
+            if (selectedRoomId > 0 && string.IsNullOrWhiteSpace(txtRoomCode.Text))
             {
                 ShowWarning("كود القاعة مطلوب.");
-                txtRoomCode.Focus();
+                cmbRoomName.Focus();
                 return false;
             }
-            if (txtRoomCode.Text.Trim().Length < 2 || txtRoomCode.Text.Trim().Length > 30)
+            if (selectedRoomId > 0 && (txtRoomCode.Text.Trim().Length < 2 || txtRoomCode.Text.Trim().Length > 30))
             {
                 ShowWarning("كود القاعة يجب أن يكون بين حرفين و30 حرفًا.");
-                txtRoomCode.Focus();
+                cmbRoomName.Focus();
                 return false;
             }
-            foreach (char character in txtRoomCode.Text.Trim())
+            foreach (char character in selectedRoomId > 0 ? txtRoomCode.Text.Trim() : "")
             {
                 if (!(char.IsLetterOrDigit(character) || character == '_' || character == '-'))
                 {
                     ShowWarning("كود القاعة يجب أن يحتوي على حروف أو أرقام أو (_) أو (-) فقط.");
-                    txtRoomCode.Focus();
+                    cmbRoomName.Focus();
                     return false;
                 }
             }
-            if (string.IsNullOrWhiteSpace(txtRoomName.Text))
+            if (cmbRoomName.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbRoomName.Text))
             {
                 ShowWarning("اسم القاعة مطلوب.");
-                txtRoomName.Focus();
+                cmbRoomName.Focus();
                 return false;
             }
             if (cmbRoomType.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbRoomType.Text))
@@ -254,6 +333,19 @@ namespace SchoolSystem.UI
                 return false;
             }
             return true;
+        }
+
+        private async void btnClassAdd_Click(object sender, EventArgs e)
+        {
+            if (!ValidateClassInputs()) return;
+            try
+            {
+                SchoolClass item = BuildClassModel(); item.ClassID = 0;
+                int classId = await Task.Run(() => classService.AddClass(item));
+                ShowInfo("تمت إضافة الفصل بنجاح. الرقم التلقائي: " + classId);
+                await LoadClassesAsync(); LoadNameDropdowns(); ClearClassFields();
+            }
+            catch (Exception ex) { UIHelper.ShowException("خطأ أثناء إضافة الفصل:\n", ex); }
         }
 
         private async void btnClassUpdate_Click(object sender, EventArgs e)
@@ -329,9 +421,7 @@ namespace SchoolSystem.UI
                 ? row["ClassCode"].ToString()
                 : "";
 
-            txtClassName.Text = row.Table.Columns.Contains("ClassName") && row["ClassName"] != DBNull.Value
-                ? row["ClassName"].ToString()
-                : "";
+            SetDropdownValue(cmbClassName, row.Table.Columns.Contains("ClassName") && row["ClassName"] != DBNull.Value ? row["ClassName"].ToString() : "");
 
             txtStageName.Text = row.Table.Columns.Contains("StageName") && row["StageName"] != DBNull.Value
                 ? row["StageName"].ToString()
@@ -357,8 +447,8 @@ namespace SchoolSystem.UI
             selectedClassId = 0;
 
             txtClassID.Clear();
-            txtClassCode.Clear();
-            txtClassName.Clear();
+            txtClassCode.Text = "تلقائي";
+            if (cmbClassName.Items.Count > 0) cmbClassName.SelectedIndex = 0;
             txtStageName.Clear();
 
             nudGradeOrder.Value = 1;
@@ -455,8 +545,8 @@ namespace SchoolSystem.UI
             Room room = new Room();
 
             room.RoomID = selectedRoomId;
-            room.RoomCode = txtRoomCode.Text.Trim();
-            room.RoomName = txtRoomName.Text.Trim();
+            room.RoomCode = selectedRoomId > 0 ? txtRoomCode.Text.Trim() : "";
+            room.RoomName = cmbRoomName.Text.Trim();
             room.RoomType = cmbRoomType.Text;
             room.Capacity = Convert.ToInt32(nudCapacity.Value);
             room.Location = txtLocation.Text.Trim();
@@ -475,11 +565,12 @@ namespace SchoolSystem.UI
             {
                 Room room = BuildRoomModel();
 
-                await Task.Run(() => roomService.AddRoom(room));
+                int roomId = await Task.Run(() => roomService.AddRoom(room));
 
-                ShowInfo("تمت إضافة القاعة بنجاح.");
+                ShowInfo("تمت إضافة القاعة بنجاح. الرقم التلقائي: " + roomId);
 
                 await LoadRoomsAsync();
+                LoadNameDropdowns();
                 ClearRoomFields();
             }
             catch (Exception ex)
@@ -602,9 +693,7 @@ namespace SchoolSystem.UI
                 ? row["RoomCode"].ToString()
                 : "";
 
-            txtRoomName.Text = row.Table.Columns.Contains("RoomName") && row["RoomName"] != DBNull.Value
-                ? row["RoomName"].ToString()
-                : "";
+            SetDropdownValue(cmbRoomName, row.Table.Columns.Contains("RoomName") && row["RoomName"] != DBNull.Value ? row["RoomName"].ToString() : "");
 
             string roomType = row.Table.Columns.Contains("RoomType") && row["RoomType"] != DBNull.Value
                 ? row["RoomType"].ToString()
@@ -639,8 +728,8 @@ namespace SchoolSystem.UI
             selectedRoomId = 0;
 
             txtRoomID.Clear();
-            txtRoomCode.Clear();
-            txtRoomName.Clear();
+            txtRoomCode.Text = "تلقائي";
+            if (cmbRoomName.Items.Count > 0) cmbRoomName.SelectedIndex = 0;
 
             if (cmbRoomType.Items.Count > 0)
                 cmbRoomType.SelectedIndex = 0;
@@ -648,9 +737,9 @@ namespace SchoolSystem.UI
             nudCapacity.Value = 30;
             txtLocation.Clear();
             chkRoomActive.Checked = true;
-            txtRoomNotes.Clear();
+            txtRoomCode.Text = "تلقائي";
 
-            txtRoomCode.Focus();
+            cmbRoomName.Focus();
         }
 
         private void txtRoomSearch_TextChanged(object sender, EventArgs e)

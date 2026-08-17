@@ -55,6 +55,58 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        public int AddClass(SchoolClass item)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                conn.Open();
+                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    const string duplicateQuery = @"
+                        SELECT COUNT(1)
+                        FROM Classes
+                        WHERE ClassName = @ClassName AND ISNULL(StageName, N'') = ISNULL(@StageName, N'')";
+                    using (SqlCommand duplicateCommand = new SqlCommand(duplicateQuery, conn, transaction))
+                    {
+                        duplicateCommand.Parameters.Add("@ClassName", SqlDbType.NVarChar, 100).Value = item.ClassName.Trim();
+                        duplicateCommand.Parameters.Add("@StageName", SqlDbType.NVarChar, 100).Value = item.StageName.Trim();
+                        if (Convert.ToInt32(duplicateCommand.ExecuteScalar()) > 0)
+                            throw new InvalidOperationException("الفصل بهذا الاسم والمرحلة موجود مسبقًا.");
+                    }
+
+                    const string query = @"
+                        INSERT INTO Classes (ClassCode, ClassName, StageName, GradeOrder, IsActive, Notes, CreatedAt)
+                        OUTPUT INSERTED.ClassID
+                        VALUES (NULL, @ClassName, @StageName, @GradeOrder, @IsActive, @Notes, GETDATE());";
+
+                    int classId;
+                    using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+                    {
+                        cmd.Parameters.Add("@ClassName", SqlDbType.NVarChar, 100).Value = item.ClassName.Trim();
+                        cmd.Parameters.Add("@StageName", SqlDbType.NVarChar, 100).Value = item.StageName.Trim();
+                        cmd.Parameters.Add("@GradeOrder", SqlDbType.Int).Value = item.GradeOrder;
+                        cmd.Parameters.Add("@IsActive", SqlDbType.Bit).Value = item.IsActive;
+                        cmd.Parameters.Add("@Notes", SqlDbType.NVarChar, -1).Value =
+                            string.IsNullOrWhiteSpace(item.Notes) ? (object)DBNull.Value : item.Notes.Trim();
+                        classId = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+
+                    string classCode = string.Format("CLS-{0:000}", classId);
+                    using (SqlCommand codeCommand = new SqlCommand(
+                        "UPDATE Classes SET ClassCode = @ClassCode, UpdatedAt = GETDATE() WHERE ClassID = @ClassID",
+                        conn, transaction))
+                    {
+                        codeCommand.Parameters.Add("@ClassCode", SqlDbType.NVarChar, 30).Value = classCode;
+                        codeCommand.Parameters.Add("@ClassID", SqlDbType.Int).Value = classId;
+                        codeCommand.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                    return classId;
+                }
+            }
+        }
+
         public bool UpdateClass(SchoolClass item)
         {
             using (SqlConnection conn = DbConnection.GetConnection())

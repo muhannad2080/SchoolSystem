@@ -23,23 +23,24 @@ namespace SchoolSystem.Services
             return repository.GetClassDetails();
         }
 
+        public int AddClass(SchoolClass item)
+        {
+            CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة الفصول.");
+            ValidateClass(item, false);
+
+            int classId = repository.AddClass(item);
+            auditLogService.Record(
+                "إضافة",
+                "Class",
+                classId.ToString(),
+                string.Format("إضافة الفصل: {0}، المرحلة: {1}", item.ClassName, item.StageName));
+            return classId;
+        }
+
         public bool UpdateClass(SchoolClass item)
         {
             CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة الفصول.");
-            if (item == null)
-                throw new ArgumentException("بيانات الفصل غير صحيحة.");
-
-            if (item.ClassID <= 0)
-                throw new ArgumentException("اختر فصلًا صحيحًا.");
-
-            if (string.IsNullOrWhiteSpace(item.ClassName))
-                throw new ArgumentException("اسم الفصل مطلوب.");
-
-            if (string.IsNullOrWhiteSpace(item.StageName))
-                throw new ArgumentException("اسم المرحلة مطلوب.");
-
-            if (item.GradeOrder <= 0)
-                throw new ArgumentException("ترتيب الفصل غير صحيح.");
+            ValidateClass(item, true);
 
             bool updated = repository.UpdateClass(item);
             if (updated)
@@ -53,6 +54,20 @@ namespace SchoolSystem.Services
 
             return updated;
         }
+        private void ValidateClass(SchoolClass item, bool requireId)
+        {
+            if (item == null)
+                throw new ArgumentException("بيانات الفصل غير صحيحة.");
+            if (requireId && item.ClassID <= 0)
+                throw new ArgumentException("اختر فصلًا صحيحًا.");
+            if (string.IsNullOrWhiteSpace(item.ClassName))
+                throw new ArgumentException("اسم الفصل مطلوب.");
+            if (string.IsNullOrWhiteSpace(item.StageName))
+                throw new ArgumentException("اسم المرحلة مطلوب.");
+            if (item.GradeOrder <= 0)
+                throw new ArgumentException("ترتيب الفصل غير صحيح.");
+        }
+
         private void DemandClassLookupAccess()
         {
             CurrentUser.DemandAny(
