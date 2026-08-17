@@ -87,6 +87,8 @@ namespace SchoolSystem.UI
             dataGridViewAttendance.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
             dataGridViewAttendance.RowTemplate.Height = 38;
             dataGridViewAttendance.ColumnHeadersHeight = 44;
+            dataGridViewAttendance.MultiSelect = true;
+            dataGridViewAttendance.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
         private async void DailyAttendanceForm_Load(object sender, EventArgs e)
@@ -306,11 +308,14 @@ namespace SchoolSystem.UI
             SetHeader("StudentName", "اسم الطالب");
             SetHeader("Gender", "الجنس");
             SetHeader("ArrivalTime", "وقت الوصول");
+            SetHeader("DepartureTime", "وقت الانصراف");
+            SetHeader("AbsenceReason", "سبب الغياب");
             SetHeader("Notes", "ملاحظات");
 
             MakeReadOnly("StudentNumber");
             MakeReadOnly("StudentName");
             MakeReadOnly("Gender");
+            MakeReadOnly("StudentID");
 
             if (dataGridViewAttendance.Columns.Contains("Status"))
             {
@@ -405,7 +410,7 @@ namespace SchoolSystem.UI
                         }
 
                         string notes = Convert.ToString(validationRow.Cells["Notes"].Value);
-                        if (notes.Length > 1000)
+                        if (notes.Length > 500)
                         {
                             ShowWarning("تجاوزت ملاحظات أحد الطلاب الحد المسموح به.");
                             return;
@@ -451,13 +456,18 @@ namespace SchoolSystem.UI
                     string arrival = row.Cells["ArrivalTime"].Value == null
                         ? ""
                         : row.Cells["ArrivalTime"].Value.ToString();
+                    string departure = row.Cells["DepartureTime"].Value == null
+                        ? ""
+                        : row.Cells["DepartureTime"].Value.ToString();
 
                     TimeSpan arrivalTime;
+                    TimeSpan departureTime;
 
-                    if (TimeSpan.TryParse(arrival, out arrivalTime))
-                        item.ArrivalTime = arrivalTime;
-                    else
-                        item.ArrivalTime = null;
+                    item.ArrivalTime = TimeSpan.TryParse(arrival, out arrivalTime) ? arrivalTime : (TimeSpan?)null;
+                    item.DepartureTime = TimeSpan.TryParse(departure, out departureTime) ? departureTime : (TimeSpan?)null;
+                    item.AbsenceReason = row.Cells["AbsenceReason"].Value == null
+                        ? ""
+                        : row.Cells["AbsenceReason"].Value.ToString().Trim();
 
                     bool saved = await Task.Run(() => attendanceService.SaveAttendance(item));
 
@@ -486,6 +496,36 @@ namespace SchoolSystem.UI
 
             object cellValue = row.Cells[columnName].Value;
             return cellValue != null && cellValue != DBNull.Value && int.TryParse(cellValue.ToString(), out value);
+        }
+
+        private void btnMarkAllAbsent_Click(object sender, EventArgs e)
+        {
+            ApplyBulkStatus("غائب", "بعذر");
+        }
+
+        private void btnMarkAllLate_Click(object sender, EventArgs e)
+        {
+            ApplyBulkStatus("متأخر", "بدون عذر");
+        }
+
+        private void ApplyBulkStatus(string status, string excuseStatus)
+        {
+            if (dataGridViewAttendance.Rows.Count == 0)
+            {
+                ShowWarning("لا توجد بيانات.");
+                return;
+            }
+
+            foreach (DataGridViewRow row in dataGridViewAttendance.Rows)
+            {
+                if (row.IsNewRow)
+                    continue;
+
+                row.Cells["Status"].Value = status;
+                row.Cells["ExcuseStatus"].Value = excuseStatus;
+            }
+
+            BuildSummary();
         }
 
         private void btnMarkAllPresent_Click(object sender, EventArgs e)

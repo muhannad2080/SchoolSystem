@@ -39,6 +39,8 @@
             this.dataGridViewAttendance = new System.Windows.Forms.DataGridView();
             this.panelActions = new System.Windows.Forms.FlowLayoutPanel();
             this.btnMarkAllPresent = new System.Windows.Forms.Button();
+            this.btnMarkAllAbsent = new System.Windows.Forms.Button();
+            this.btnMarkAllLate = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
@@ -53,9 +55,9 @@
             this.panelActions.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // panelTitle
-            // 
+            //
             this.panelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
@@ -63,9 +65,9 @@
             this.panelTitle.Name = "panelTitle";
             this.panelTitle.Size = new System.Drawing.Size(1150, 60);
             this.panelTitle.TabIndex = 1;
-            // 
+            //
             // lblTitle
-            // 
+            //
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.White;
@@ -75,9 +77,9 @@
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "التحضير اليومي للطلاب";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // mainContainer
-            // 
+            //
             this.mainContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
             this.mainContainer.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.mainContainer.ColumnCount = 1;
@@ -99,9 +101,9 @@
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.mainContainer.Size = new System.Drawing.Size(1150, 660);
             this.mainContainer.TabIndex = 0;
-            // 
+            //
             // groupBoxFilters
-            // 
+            //
             this.groupBoxFilters.BackColor = System.Drawing.Color.White;
             this.groupBoxFilters.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.groupBoxFilters.Controls.Add(this.tableLayoutFilters);
@@ -115,9 +117,9 @@
             this.groupBoxFilters.TabIndex = 0;
             this.groupBoxFilters.TabStop = false;
             this.groupBoxFilters.Text = "خيارات التحضير";
-            // 
+            //
             // tableLayoutFilters
-            // 
+            //
             this.tableLayoutFilters.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tableLayoutFilters.ColumnCount = 6;
             this.tableLayoutFilters.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 115F));
@@ -145,9 +147,9 @@
             this.tableLayoutFilters.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutFilters.Size = new System.Drawing.Size(1096, 80);
             this.tableLayoutFilters.TabIndex = 0;
-            // 
+            //
             // lblDate
-            // 
+            //
             this.lblDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblDate.Location = new System.Drawing.Point(984, 0);
             this.lblDate.Name = "lblDate";
@@ -156,9 +158,9 @@
             this.lblDate.Text = "التاريخ:";
             this.lblDate.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // dtpDate
-            // 
+            //
             this.dtpDate.CustomFormat = "yyyy/MM/dd";
             this.dtpDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dtpDate.Font = new System.Drawing.Font("Tahoma", 10F);
@@ -167,9 +169,9 @@
             this.dtpDate.Name = "dtpDate";
             this.dtpDate.Size = new System.Drawing.Size(244, 28);
             this.dtpDate.TabIndex = 1;
-            // 
+            //
             // lblYear
-            // 
+            //
             this.lblYear.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblYear.Location = new System.Drawing.Point(619, 0);
             this.lblYear.Name = "lblYear";
@@ -178,18 +180,18 @@
             this.lblYear.Text = "العام الدراسي:";
             this.lblYear.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblYear.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // txtAcademicYear
-            // 
+            //
             this.txtAcademicYear.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtAcademicYear.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtAcademicYear.Location = new System.Drawing.Point(369, 3);
             this.txtAcademicYear.Name = "txtAcademicYear";
             this.txtAcademicYear.Size = new System.Drawing.Size(244, 28);
             this.txtAcademicYear.TabIndex = 3;
-            // 
+            //
             // lblClass
-            // 
+            //
             this.lblClass.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblClass.Location = new System.Drawing.Point(254, 0);
             this.lblClass.Name = "lblClass";
@@ -198,9 +200,9 @@
             this.lblClass.Text = "الصف:";
             this.lblClass.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblClass.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // cmbClass
-            // 
+            //
             this.cmbClass.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbClass.Font = new System.Drawing.Font("Tahoma", 10F);
@@ -208,9 +210,9 @@
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(245, 29);
             this.cmbClass.TabIndex = 5;
-            // 
+            //
             // lblSection
-            // 
+            //
             this.lblSection.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblSection.Location = new System.Drawing.Point(984, 26);
             this.lblSection.Name = "lblSection";
@@ -219,9 +221,9 @@
             this.lblSection.Text = "الشعبة:";
             this.lblSection.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblSection.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // cmbSection
-            // 
+            //
             this.cmbSection.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbSection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbSection.Font = new System.Drawing.Font("Tahoma", 10F);
@@ -229,9 +231,9 @@
             this.cmbSection.Name = "cmbSection";
             this.cmbSection.Size = new System.Drawing.Size(244, 29);
             this.cmbSection.TabIndex = 7;
-            // 
+            //
             // lblSearch
-            // 
+            //
             this.lblSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblSearch.Location = new System.Drawing.Point(619, 26);
             this.lblSearch.Name = "lblSearch";
@@ -240,18 +242,18 @@
             this.lblSearch.Text = "بحث:";
             this.lblSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // txtSearch
-            // 
+            //
             this.txtSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtSearch.Location = new System.Drawing.Point(369, 29);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(244, 28);
             this.txtSearch.TabIndex = 9;
-            // 
+            //
             // btnLoad
-            // 
+            //
             this.btnLoad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.btnLoad.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnLoad.FlatAppearance.BorderSize = 0;
@@ -266,9 +268,9 @@
             this.btnLoad.Text = "تحميل الطلاب";
             this.btnLoad.UseVisualStyleBackColor = false;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
-            // 
+            //
             // panelSummary
-            // 
+            //
             this.panelSummary.BackColor = System.Drawing.Color.White;
             this.panelSummary.Controls.Add(this.lblSummary);
             this.panelSummary.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -276,9 +278,9 @@
             this.panelSummary.Name = "panelSummary";
             this.panelSummary.Size = new System.Drawing.Size(1120, 36);
             this.panelSummary.TabIndex = 1;
-            // 
+            //
             // lblSummary
-            // 
+            //
             this.lblSummary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblSummary.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.lblSummary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
@@ -289,9 +291,9 @@
             this.lblSummary.Text = "ملخص الحضور: لا توجد بيانات محملة.";
             this.lblSummary.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblSummary.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // dataGridViewAttendance
-            // 
+            //
             this.dataGridViewAttendance.AllowUserToAddRows = false;
             this.dataGridViewAttendance.AllowUserToDeleteRows = false;
             this.dataGridViewAttendance.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -324,12 +326,14 @@
             this.dataGridViewAttendance.TabIndex = 2;
             this.dataGridViewAttendance.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewAttendance_CellValueChanged);
             this.dataGridViewAttendance.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridViewAttendance_CurrentCellDirtyStateChanged);
-            // 
+            //
             // panelActions
-            // 
+            //
             this.panelActions.BackColor = System.Drawing.Color.Transparent;
             this.panelActions.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.panelActions.Controls.Add(this.btnMarkAllPresent);
+            this.panelActions.Controls.Add(this.btnMarkAllAbsent);
+            this.panelActions.Controls.Add(this.btnMarkAllLate);
             this.panelActions.Controls.Add(this.btnSave);
             this.panelActions.Controls.Add(this.btnClear);
             this.panelActions.Controls.Add(this.btnRefresh);
@@ -340,9 +344,9 @@
             this.panelActions.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
             this.panelActions.Size = new System.Drawing.Size(1120, 54);
             this.panelActions.TabIndex = 3;
-            // 
+            //
             // btnMarkAllPresent
-            // 
+            //
             this.btnMarkAllPresent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(184)))), ((int)(((byte)(166)))));
             this.btnMarkAllPresent.FlatAppearance.BorderSize = 0;
             this.btnMarkAllPresent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -354,9 +358,37 @@
             this.btnMarkAllPresent.Text = "الكل حاضر";
             this.btnMarkAllPresent.UseVisualStyleBackColor = false;
             this.btnMarkAllPresent.Click += new System.EventHandler(this.btnMarkAllPresent_Click);
-            // 
+            //
+            // btnMarkAllAbsent
+            //
+            this.btnMarkAllAbsent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
+            this.btnMarkAllAbsent.FlatAppearance.BorderSize = 0;
+            this.btnMarkAllAbsent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMarkAllAbsent.ForeColor = System.Drawing.Color.White;
+            this.btnMarkAllAbsent.Location = new System.Drawing.Point(134, 13);
+            this.btnMarkAllAbsent.Name = "btnMarkAllAbsent";
+            this.btnMarkAllAbsent.Size = new System.Drawing.Size(125, 36);
+            this.btnMarkAllAbsent.TabIndex = 1;
+            this.btnMarkAllAbsent.Text = "الكل غائب";
+            this.btnMarkAllAbsent.UseVisualStyleBackColor = false;
+            this.btnMarkAllAbsent.Click += new System.EventHandler(this.btnMarkAllAbsent_Click);
+            //
+            // btnMarkAllLate
+            //
+            this.btnMarkAllLate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(158)))), ((int)(((byte)(11)))));
+            this.btnMarkAllLate.FlatAppearance.BorderSize = 0;
+            this.btnMarkAllLate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMarkAllLate.ForeColor = System.Drawing.Color.White;
+            this.btnMarkAllLate.Location = new System.Drawing.Point(265, 13);
+            this.btnMarkAllLate.Name = "btnMarkAllLate";
+            this.btnMarkAllLate.Size = new System.Drawing.Size(125, 36);
+            this.btnMarkAllLate.TabIndex = 2;
+            this.btnMarkAllLate.Text = "الكل متأخر";
+            this.btnMarkAllLate.UseVisualStyleBackColor = false;
+            this.btnMarkAllLate.Click += new System.EventHandler(this.btnMarkAllLate_Click);
+            //
             // btnSave
-            // 
+            //
             this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
             this.btnSave.FlatAppearance.BorderSize = 0;
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -368,9 +400,9 @@
             this.btnSave.Text = "حفظ الحضور";
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
+            //
             // btnClear
-            // 
+            //
             this.btnClear.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
             this.btnClear.FlatAppearance.BorderSize = 0;
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -382,9 +414,9 @@
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
-            // 
+            //
             // btnRefresh
-            // 
+            //
             this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
             this.btnRefresh.FlatAppearance.BorderSize = 0;
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -396,9 +428,9 @@
             this.btnRefresh.Text = "تحديث";
             this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
+            //
             // panelBottom
-            // 
+            //
             this.panelBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
             this.panelBottom.Controls.Add(this.lblRecordCount);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -406,9 +438,9 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1120, 26);
             this.panelBottom.TabIndex = 4;
-            // 
+            //
             // lblRecordCount
-            // 
+            //
             this.lblRecordCount.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblRecordCount.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
             this.lblRecordCount.Location = new System.Drawing.Point(0, 0);
@@ -418,9 +450,9 @@
             this.lblRecordCount.Text = "عدد الطلاب: 0";
             this.lblRecordCount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblRecordCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // DailyAttendanceForm
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.mainContainer);
@@ -477,6 +509,8 @@
 
         private System.Windows.Forms.FlowLayoutPanel panelActions;
         private System.Windows.Forms.Button btnMarkAllPresent;
+        private System.Windows.Forms.Button btnMarkAllAbsent;
+        private System.Windows.Forms.Button btnMarkAllLate;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnClear;
         private System.Windows.Forms.Button btnRefresh;

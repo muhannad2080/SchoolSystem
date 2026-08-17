@@ -103,6 +103,23 @@ namespace SchoolSystem.Services
             {
                 throw new ArgumentException("حالة الحضور غير صحيحة.");
             }
+
+            if (item.ExcuseStatus != null &&
+                item.ExcuseStatus != "بدون عذر" &&
+                item.ExcuseStatus != "بعذر" &&
+                item.ExcuseStatus != "غير محدد")
+            {
+                throw new ArgumentException("حالة العذر غير صحيحة.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(item.AbsenceReason) && item.AbsenceReason.Trim().Length > 500)
+                throw new ArgumentException("سبب الغياب لا يمكن أن يتجاوز 500 حرف.");
+
+            if (!string.IsNullOrWhiteSpace(item.Notes) && item.Notes.Trim().Length > 500)
+                throw new ArgumentException("الملاحظات لا يمكن أن تتجاوز 500 حرف.");
+
+            if (item.ArrivalTime.HasValue && item.DepartureTime.HasValue && item.DepartureTime.Value < item.ArrivalTime.Value)
+                throw new ArgumentException("وقت الانصراف لا يمكن أن يسبق وقت الوصول.");
         }
 
         private bool IsValidAcademicYear(string academicYear)

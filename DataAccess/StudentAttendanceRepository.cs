@@ -44,7 +44,9 @@ namespace SchoolSystem.DataAccess
                         ISNULL(a.AttendanceID, 0) AS AttendanceID,
                         ISNULL(a.Status, N'حاضر') AS Status,
                         CONVERT(VARCHAR(5), a.ArrivalTime, 108) AS ArrivalTime,
+                        CONVERT(VARCHAR(5), a.DepartureTime, 108) AS DepartureTime,
                         ISNULL(a.ExcuseStatus, N'بدون عذر') AS ExcuseStatus,
+                        ISNULL(a.AbsenceReason, N'') AS AbsenceReason,
                         ISNULL(a.Notes, N'') AS Notes
                     FROM Students s
                     LEFT JOIN StudentAttendance a
@@ -102,7 +104,9 @@ namespace SchoolSystem.DataAccess
                             AcademicYear = @AcademicYear,
                             Status = @Status,
                             ArrivalTime = @ArrivalTime,
+                            DepartureTime = @DepartureTime,
                             ExcuseStatus = @ExcuseStatus,
+                            AbsenceReason = @AbsenceReason,
                             Notes = @Notes,
                             UpdatedAt = GETDATE()
                         WHERE StudentID = @StudentID
@@ -119,7 +123,9 @@ namespace SchoolSystem.DataAccess
                             AttendanceDate,
                             Status,
                             ArrivalTime,
+                            DepartureTime,
                             ExcuseStatus,
+                            AbsenceReason,
                             Notes,
                             CreatedAt
                         )
@@ -132,7 +138,9 @@ namespace SchoolSystem.DataAccess
                             @AttendanceDate,
                             @Status,
                             @ArrivalTime,
+                            @DepartureTime,
                             @ExcuseStatus,
+                            @AbsenceReason,
                             @Notes,
                             GETDATE()
                         )
@@ -162,10 +170,20 @@ namespace SchoolSystem.DataAccess
             else
                 cmd.Parameters.AddWithValue("@ArrivalTime", DBNull.Value);
 
+            if (item.DepartureTime.HasValue)
+                cmd.Parameters.AddWithValue("@DepartureTime", item.DepartureTime.Value);
+            else
+                cmd.Parameters.AddWithValue("@DepartureTime", DBNull.Value);
+
             if (string.IsNullOrWhiteSpace(item.ExcuseStatus))
                 cmd.Parameters.AddWithValue("@ExcuseStatus", DBNull.Value);
             else
                 cmd.Parameters.AddWithValue("@ExcuseStatus", item.ExcuseStatus.Trim());
+
+            if (string.IsNullOrWhiteSpace(item.AbsenceReason))
+                cmd.Parameters.AddWithValue("@AbsenceReason", DBNull.Value);
+            else
+                cmd.Parameters.AddWithValue("@AbsenceReason", item.AbsenceReason.Trim());
 
             if (string.IsNullOrWhiteSpace(item.Notes))
                 cmd.Parameters.AddWithValue("@Notes", DBNull.Value);

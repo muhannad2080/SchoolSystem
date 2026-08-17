@@ -145,7 +145,9 @@ BEGIN
         AttendanceDate DATE NOT NULL,
         Status NVARCHAR(30) NOT NULL CONSTRAINT DF_StudentAttendance_Status DEFAULT (N'حاضر'),
         ArrivalTime TIME NULL,
+        DepartureTime TIME NULL,
         ExcuseStatus NVARCHAR(50) NULL,
+        AbsenceReason NVARCHAR(500) NULL,
         Notes NVARCHAR(500) NULL,
         CreatedAt DATETIME NOT NULL CONSTRAINT DF_StudentAttendance_CreatedAt DEFAULT (GETDATE()),
         UpdatedAt DATETIME NULL
@@ -167,8 +169,12 @@ BEGIN
         ALTER TABLE dbo.StudentAttendance ADD Status NVARCHAR(30) NULL;
     IF COL_LENGTH(N'dbo.StudentAttendance', N'ArrivalTime') IS NULL
         ALTER TABLE dbo.StudentAttendance ADD ArrivalTime TIME NULL;
+    IF COL_LENGTH(N'dbo.StudentAttendance', N'DepartureTime') IS NULL
+        ALTER TABLE dbo.StudentAttendance ADD DepartureTime TIME NULL;
     IF COL_LENGTH(N'dbo.StudentAttendance', N'ExcuseStatus') IS NULL
         ALTER TABLE dbo.StudentAttendance ADD ExcuseStatus NVARCHAR(50) NULL;
+    IF COL_LENGTH(N'dbo.StudentAttendance', N'AbsenceReason') IS NULL
+        ALTER TABLE dbo.StudentAttendance ADD AbsenceReason NVARCHAR(500) NULL;
     IF COL_LENGTH(N'dbo.StudentAttendance', N'Notes') IS NULL
         ALTER TABLE dbo.StudentAttendance ADD Notes NVARCHAR(500) NULL;
     IF COL_LENGTH(N'dbo.StudentAttendance', N'CreatedAt') IS NULL
