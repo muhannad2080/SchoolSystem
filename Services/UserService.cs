@@ -20,15 +20,16 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllUsers()
         {
-            CurrentUser.DemandPermission(PermissionKeys.UsersManage, "ليس لديك صلاحية إدارة المستخدمين.");
+            CurrentUser.DemandAny("ليس لديك صلاحية عرض المستخدمين.", PermissionKeys.UsersView, PermissionKeys.UsersManage);
             return userRepository.GetAllUsers();
         }
 
         public bool AddUser(User user, string password)
         {
-            // السماح بالتهيئة الأولى فقط عندما لا يوجد أي حساب، ثم اشتراط Users.Manage دائمًا.
+            // السماح بالتهيئة الأولى فقط عندما لا يوجد أي حساب.
+            // بعد التهيئة يلزم مفتاح الإضافة الصريح أو المفتاح القديم للتوافق.
             if (userRepository.CountUsers() > 0)
-                CurrentUser.DemandPermission(PermissionKeys.UsersManage, "ليس لديك صلاحية إدارة المستخدمين.");
+                CurrentUser.DemandAny("ليس لديك صلاحية إضافة المستخدمين.", PermissionKeys.UsersAdd, PermissionKeys.UsersManage);
 
             NormalizeUser(user);
 
@@ -50,8 +51,7 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(password))
                 throw new Exception("كلمة المرور مطلوبة.");
 
-            if (password.Length < 6)
-                throw new Exception("كلمة المرور يجب ألا تقل عن 6 أحرف.");
+            ValidatePasswordPolicy(password);
 
             if (userRepository.UserNameExists(user.UserName))
                 throw new Exception("اسم المستخدم موجود مسبقاً.");
@@ -70,7 +70,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateUser(User user, string password, bool updatePassword)
         {
-            CurrentUser.DemandPermission(PermissionKeys.UsersManage, "ليس لديك صلاحية إدارة المستخدمين.");
+            CurrentUser.DemandAny("ليس لديك صلاحية تعديل المستخدمين.", PermissionKeys.UsersEdit, PermissionKeys.UsersManage);
             if (user.UserID <= 0)
                 throw new Exception("رقم المستخدم غير صحيح.");
 
@@ -81,14 +81,37 @@ namespace SchoolSystem.Services
             NormalizeUser(user);
             ValidateUser(user);
 
+            bool changingRoleOrPermissions = !string.Equals(
+                PermissionKeys.NormalizeRoleName(existingUser.RoleName),
+                PermissionKeys.NormalizeRoleName(user.RoleName),
+                StringComparison.OrdinalIgnoreCase)
+                || !string.Equals(
+                    PermissionKeys.NormalizePermissions(existingUser.Permissions),
+                    PermissionKeys.NormalizePermissions(user.Permissions),
+                    StringComparison.OrdinalIgnoreCase);
+
+            if (changingRoleOrPermissions)
+                CurrentUser.DemandAny("ليس لديك صلاحية إدارة أدوار وصلاحيات المستخدمين.", PermissionKeys.UsersManageRoles, PermissionKeys.UsersManage);
+
             bool removingAdministrator = PermissionKeys.IsSystemAdministratorRole(existingUser.RoleName) &&
                 (!PermissionKeys.IsSystemAdministratorRole(user.RoleName) || !user.IsActive);
 
             if (removingAdministrator && userRepository.CountAdmins() <= 1)
                 throw new Exception("لا يمكن تعطيل أو إزالة آخر مدير نظام.");
 
-            if (CurrentUser.IsLoggedIn && CurrentUser.User.UserID == user.UserID && !user.IsActive)
-                throw new Exception("لا يمكن تعطيل الحساب المستخدم حاليًا.");
+            if (CurrentUser.IsLoggedIn && CurrentUser.User.UserID == user.UserID)
+            {
+                if (!user.IsActive)
+                    throw new Exception("لا يمكن تعطيل الحساب المستخدم حاليًا.");
+
+                if (!PermissionKeys.IsSystemAdministratorRole(existingUser.RoleName) &&
+                    PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+                    throw new Exception("لا يمكن للمستخدم رفع حسابه إلى مدير النظام.");
+
+                if (PermissionKeys.IsSystemAdministratorRole(existingUser.RoleName) &&
+                    !PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+                    throw new Exception("لا يمكن للمستخدم خفض صلاحيات مدير النظام لحسابه.");
+            }
 
             if (userRepository.UserNameExists(user.UserName, user.UserID))
                 throw new Exception("اسم المستخدم موجود مسبقاً.");
@@ -106,8 +129,7 @@ namespace SchoolSystem.Services
                 if (string.IsNullOrWhiteSpace(password))
                     throw new Exception("كلمة المرور مطلوبة.");
 
-                if (password.Length < 6)
-                    throw new Exception("كلمة المرور يجب ألا تقل عن 6 أحرف.");
+                ValidatePasswordPolicy(password);
 
                 PasswordHasher.CreatePasswordHash(password, out string hash, out string salt);
 
@@ -135,7 +157,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteUser(int userId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.UsersManage, "ليس لديك صلاحية إدارة المستخدمين.");
+            CurrentUser.DemandAny("ليس لديك صلاحية حذف المستخدمين.", PermissionKeys.UsersDelete, PermissionKeys.UsersManage);
             if (userId <= 0)
                 throw new Exception("رقم المستخدم غير صحيح.");
 
@@ -302,8 +324,7 @@ namespace SchoolSystem.Services
                 throw new Exception("أدخل كلمة المرور الحالية.");
             if (string.IsNullOrWhiteSpace(newPassword))
                 throw new Exception("أدخل كلمة المرور الجديدة.");
-            if (newPassword.Length < 6)
-                throw new Exception("كلمة المرور الجديدة يجب ألا تقل عن 6 أحرف.");
+            ValidatePasswordPolicy(newPassword);
             if (!string.Equals(newPassword, confirmation, StringComparison.Ordinal))
                 throw new Exception("تأكيد كلمة المرور غير مطابق.");
             if (string.Equals(newPassword, currentPassword, StringComparison.Ordinal))
@@ -337,7 +358,7 @@ namespace SchoolSystem.Services
 
         public bool ResetPasswordByUserName(string userName, string newPassword)
         {
-            CurrentUser.DemandPermission(PermissionKeys.UsersManage, "ليس لديك صلاحية إدارة كلمات مرور المستخدمين.");
+            CurrentUser.DemandAny("ليس لديك صلاحية إعادة تعيين كلمات مرور المستخدمين.", PermissionKeys.UsersEdit, PermissionKeys.UsersManage);
             userName = NormalizeDigits(userName).Trim();
             newPassword = NormalizeDigits(newPassword).Trim();
 
@@ -347,8 +368,7 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(newPassword))
                 throw new Exception("كلمة المرور الجديدة مطلوبة.");
 
-            if (newPassword.Length < 6)
-                throw new Exception("كلمة المرور يجب ألا تقل عن 6 أحرف.");
+            ValidatePasswordPolicy(newPassword);
 
             User targetUser = userRepository.GetUserByUserName(userName);
             if (targetUser == null)
@@ -370,6 +390,14 @@ namespace SchoolSystem.Services
         private string GetAllPermissionsString()
         {
             return PermissionKeys.Serialize(PermissionKeys.All);
+        }
+
+        private void ValidatePasswordPolicy(string password)
+        {
+            if (string.IsNullOrWhiteSpace(password) || password.Length < 10)
+                throw new Exception("كلمة المرور يجب ألا تقل عن 10 أحرف.");
+            if (!password.Any(char.IsLetter) || !password.Any(char.IsDigit))
+                throw new Exception("كلمة المرور يجب أن تحتوي على أحرف وأرقام.");
         }
 
         private void EnsureRolePermissions(User user)

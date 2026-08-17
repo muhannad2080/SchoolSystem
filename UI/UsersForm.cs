@@ -29,6 +29,7 @@ namespace SchoolSystem.UI
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             InitializePermissionActions();
             ApplyCustomStyles();
+            ApplyPermissionUiState();
             Dock = DockStyle.Fill;
             Load += UsersForm_Load;
         }
@@ -123,6 +124,7 @@ namespace SchoolSystem.UI
 
                 await LoadUsersAsync();
 
+                ApplyPermissionUiState();
                 ClearInputs();
             }
             catch (Exception ex)
@@ -147,6 +149,13 @@ namespace SchoolSystem.UI
             cmbRole.Items.Add("المكتبة");
             cmbRole.Items.Add("النقل");
             cmbRole.Items.Add("التقارير");
+            cmbRole.Items.Add("مدير المدرسة");
+            cmbRole.Items.Add("وكيل المدرسة");
+            cmbRole.Items.Add("شؤون الموظفين");
+            cmbRole.Items.Add("أمين المكتبة");
+            cmbRole.Items.Add("مسؤول النقل");
+            cmbRole.Items.Add("موظف الاستقبال");
+            cmbRole.Items.Add("مدقق");
 
             if (cmbRole.Items.Count > 0)
                 cmbRole.SelectedIndex = 0;
@@ -448,9 +457,9 @@ namespace SchoolSystem.UI
                     return false;
                 }
 
-                if (txtPassword.Text.Length < 6)
+                if (txtPassword.Text.Length < 10 || !txtPassword.Text.Any(char.IsLetter) || !txtPassword.Text.Any(char.IsDigit))
                 {
-                    ShowWarning("كلمة المرور يجب ألا تقل عن 6 أحرف.");
+                    ShowWarning("كلمة المرور يجب ألا تقل عن 10 أحرف وتحتوي على أحرف وأرقام.");
                     txtPassword.Focus();
                     return false;
                 }
@@ -476,6 +485,30 @@ namespace SchoolSystem.UI
             }
 
             return true;
+        }
+
+        private void ApplyPermissionUiState()
+        {
+            bool canView = CurrentUser.CanView("Users") || CurrentUser.HasPermission(PermissionKeys.UsersManage);
+            bool canAdd = CurrentUser.CanAdd("Users") || CurrentUser.HasPermission(PermissionKeys.UsersManage);
+            bool canEdit = CurrentUser.CanEdit("Users") || CurrentUser.HasPermission(PermissionKeys.UsersManage);
+            bool canDelete = CurrentUser.CanDelete("Users") || CurrentUser.HasPermission(PermissionKeys.UsersManage);
+            bool canManageRoles = CurrentUser.HasAny(PermissionKeys.UsersManageRoles, PermissionKeys.UsersManage);
+
+            btnAdd.Enabled = canAdd;
+            btnUpdate.Enabled = canEdit;
+            btnDelete.Enabled = canDelete;
+            cmbRole.Enabled = canManageRoles;
+            checkedListPermissions.Enabled = canManageRoles;
+            btnSelectAllPermissions.Enabled = canManageRoles;
+            btnClearPermissions.Enabled = canManageRoles;
+
+            if (groupBoxPermissions != null)
+                groupBoxPermissions.Enabled = canView;
+
+            btnAdd.AccessibleDescription = canAdd ? "إضافة مستخدم" : "لا توجد صلاحية إضافة المستخدمين";
+            btnUpdate.AccessibleDescription = canEdit ? "تعديل مستخدم" : "لا توجد صلاحية تعديل المستخدمين";
+            btnDelete.AccessibleDescription = canDelete ? "حذف مستخدم" : "لا توجد صلاحية حذف المستخدمين";
         }
 
         private async void btnAdd_Click(object sender, EventArgs e)
