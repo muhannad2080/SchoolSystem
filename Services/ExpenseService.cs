@@ -20,13 +20,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllExpenses()
         {
-            EnsureCanManageExpenses();
+            CurrentUser.DemandAction("Expenses", "View", "ليس لديك صلاحية عرض المصروفات.");
             return expenseRepository.GetAllExpenses();
         }
 
         public int AddExpense(Expense expense)
         {
-            EnsureCanManageExpenses();
+            CurrentUser.DemandAction("Expenses", "Add", "ليس لديك صلاحية إضافة المصروفات.");
             ValidateExpense(expense);
 
             if (string.IsNullOrWhiteSpace(expense.ExpenseNumber))
@@ -55,7 +55,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateExpense(Expense expense)
         {
-            EnsureCanManageExpenses();
+            CurrentUser.DemandAction("Expenses", "Edit", "ليس لديك صلاحية تعديل المصروفات.");
             if (expense.ExpenseID <= 0)
                 throw new Exception("رقم المصروف غير صحيح.");
 
@@ -113,7 +113,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteExpense(int expenseId)
         {
-            EnsureCanManageExpenses();
+            CurrentUser.DemandAction("Expenses", "Delete", "ليس لديك صلاحية حذف المصروفات.");
             if (expenseId <= 0)
                 throw new Exception("رقم المصروف غير صحيح.");
 
@@ -121,12 +121,6 @@ namespace SchoolSystem.Services
             if (deleted)
                 auditLogService.Record("حذف", "Expense", expenseId.ToString(), "حذف سجل مصروفات.");
             return deleted;
-        }
-
-        private static void EnsureCanManageExpenses()
-        {
-            if (!CurrentUser.HasPermission(PermissionKeys.ExpensesManage))
-                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة المصروفات.");
         }
 
         private void ValidateExpense(Expense expense)
