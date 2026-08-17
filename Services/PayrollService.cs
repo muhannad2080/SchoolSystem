@@ -13,19 +13,19 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllPayrolls()
         {
-            EnsureCanManagePayroll();
+            CurrentUser.DemandAction("Payroll", "View", "ليس لديك صلاحية عرض الرواتب.");
             return repository.GetAllPayrolls();
         }
 
         public bool PayrollExists(int teacherId, int month, int year, int excludeId = 0)
         {
-            EnsureCanManagePayroll();
+            CurrentUser.DemandAction("Payroll", "View", "ليس لديك صلاحية التحقق من الرواتب.");
             return repository.PayrollExists(teacherId, month, year, excludeId);
         }
 
         public void AddPayroll(Payroll payroll)
         {
-            EnsureCanManagePayroll();
+            CurrentUser.DemandAction("Payroll", "Add", "ليس لديك صلاحية إضافة الرواتب.");
             ValidatePayroll(payroll);
             if (repository.PayrollExists(payroll.TeacherID, payroll.SalaryMonth, payroll.SalaryYear))
                 throw new Exception("تم صرف راتب هذا المعلم لهذا الشهر مسبقاً.");
@@ -37,7 +37,7 @@ namespace SchoolSystem.Services
 
         public bool UpdatePayroll(Payroll payroll)
         {
-            EnsureCanManagePayroll();
+            CurrentUser.DemandAction("Payroll", "Edit", "ليس لديك صلاحية تعديل الرواتب.");
             ValidatePayroll(payroll);
             if (repository.PayrollExists(payroll.TeacherID, payroll.SalaryMonth, payroll.SalaryYear, payroll.PayrollID))
                 throw new Exception("تم صرف راتب هذا المعلم لهذا الشهر مسبقاً.");
@@ -53,19 +53,13 @@ namespace SchoolSystem.Services
 
         public bool DeletePayroll(int payrollId)
         {
-            EnsureCanManagePayroll();
+            CurrentUser.DemandAction("Payroll", "Delete", "ليس لديك صلاحية حذف الرواتب.");
             if (payrollId <= 0)
                 throw new Exception("رقم سجل الراتب غير صحيح.");
             bool deleted = repository.DeletePayroll(payrollId);
             if (deleted)
                 auditLogService.Record("حذف", "Payroll", payrollId.ToString(), "حذف سجل راتب.");
             return deleted;
-        }
-
-        private static void EnsureCanManagePayroll()
-        {
-            if (!CurrentUser.HasPermission(PermissionKeys.PayrollManage))
-                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة الرواتب.");
         }
 
         private void ValidatePayroll(Payroll payroll)

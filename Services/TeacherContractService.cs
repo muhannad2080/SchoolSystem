@@ -13,13 +13,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllContracts()
         {
-            EnsureCanManageTeacherContracts();
+            CurrentUser.DemandAction("Contracts", "View", "ليس لديك صلاحية عرض عقود المعلمين.");
             return repository.GetAllContracts();
         }
 
         public void AddContract(TeacherContract contract)
         {
-            EnsureCanManageTeacherContracts();
+            CurrentUser.DemandAction("Contracts", "Add", "ليس لديك صلاحية إضافة عقود المعلمين.");
             if (contract == null)
                 throw new ArgumentException("بيانات العقد غير صحيحة.");
             repository.AddContract(contract);
@@ -29,7 +29,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateContract(TeacherContract contract)
         {
-            EnsureCanManageTeacherContracts();
+            CurrentUser.DemandAction("Contracts", "Edit", "ليس لديك صلاحية تعديل عقود المعلمين.");
             if (contract == null)
                 throw new ArgumentException("بيانات العقد غير صحيحة.");
             bool updated = repository.UpdateContract(contract);
@@ -41,7 +41,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteContract(int contractId)
         {
-            EnsureCanManageTeacherContracts();
+            CurrentUser.DemandAction("Contracts", "Delete", "ليس لديك صلاحية حذف عقود المعلمين.");
             if (contractId <= 0)
                 throw new ArgumentException("رقم العقد غير صحيح.");
             bool deleted = repository.DeleteContract(contractId);
@@ -50,10 +50,5 @@ namespace SchoolSystem.Services
             return deleted;
         }
 
-        private static void EnsureCanManageTeacherContracts()
-        {
-            if (!CurrentUser.HasPermission(PermissionKeys.TeachersManage))
-                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة عقود المعلمين.");
-        }
     }
 }
