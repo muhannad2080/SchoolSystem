@@ -126,9 +126,47 @@ namespace SchoolSystem.Security
                 return string.Empty;
 
             string value = permissionKey.Trim();
-            return All.FirstOrDefault(
-                       key => string.Equals(key, value, StringComparison.OrdinalIgnoreCase)) ??
-                   string.Empty;
+
+            // تقبل النسخ القديمة التي كانت تحفظ "المفتاح - الوصف" أو اسم العرض
+            // بدلاً من المفتاح البرمجي. هذا مهم حتى لا تتحول قيمة قديمة غير مفهومة
+            // إلى صلاحيات الدور الافتراضية المختصرة عند تسجيل الدخول.
+            int separatorIndex = value.IndexOf(" - ", StringComparison.Ordinal);
+            if (separatorIndex > 0)
+                value = value.Substring(0, separatorIndex).Trim();
+
+            string exactKey = All.FirstOrDefault(
+                key => string.Equals(key, value, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(exactKey))
+                return exactKey;
+
+            string displayKey = All.FirstOrDefault(
+                key => string.Equals(GetDisplayName(key), value, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(displayKey))
+                return displayKey;
+
+            switch (value)
+            {
+                case "Dashboard": return DashboardView;
+                case "Students": return StudentsView;
+                case "Enrollment": return EnrollmentManage;
+                case "ClassAssignment": return ClassAssignmentManage;
+                case "Teachers": return TeachersManage;
+                case "Subjects": return SubjectsManage;
+                case "Classes": return ClassesManage;
+                case "Timetable": return TimetableManage;
+                case "Attendance": return AttendanceManage;
+                case "Grades": return GradesManage;
+                case "Fees": return FeesManage;
+                case "Vouchers": return VouchersManage;
+                case "Expenses": return ExpensesManage;
+                case "Library": return LibraryManage;
+                case "Transport": return TransportManage;
+                case "Reports": return ReportsView;
+                case "Users": return UsersManage;
+                case "AuditLogs": return AuditLogsView;
+                case "Settings": return SettingsManage;
+                default: return string.Empty;
+            }
         }
 
         public static string NormalizePermissions(string permissions)
