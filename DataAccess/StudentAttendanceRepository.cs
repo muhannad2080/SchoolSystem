@@ -80,6 +80,9 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
+
                     IF NOT EXISTS
                     (
                         SELECT 1
@@ -92,7 +95,7 @@ namespace SchoolSystem.DataAccess
                     IF EXISTS
                     (
                         SELECT 1
-                        FROM StudentAttendance
+                        FROM StudentAttendance WITH (UPDLOCK, HOLDLOCK)
                         WHERE StudentID = @StudentID
                           AND AttendanceDate = @AttendanceDate
                     )
@@ -144,7 +147,9 @@ namespace SchoolSystem.DataAccess
                             @Notes,
                             GETDATE()
                         )
-                    END";
+                    END;
+
+                    COMMIT TRANSACTION;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

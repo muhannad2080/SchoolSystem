@@ -46,6 +46,18 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
+
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM TeacherAttendance WITH (UPDLOCK, HOLDLOCK)
+                        WHERE TeacherID = @TeacherID
+                          AND AttendanceDate = @AttendanceDate
+                    )
+                        THROW 51112, N'يوجد سجل حضور لهذا المعلم في التاريخ نفسه.', 1;
+
                     INSERT INTO TeacherAttendance
                     (
                         TeacherID,
@@ -73,7 +85,9 @@ namespace SchoolSystem.DataAccess
                         @AbsenceReason,
                         @Notes,
                         GETDATE()
-                    )";
+                    );
+
+                    COMMIT TRANSACTION;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
