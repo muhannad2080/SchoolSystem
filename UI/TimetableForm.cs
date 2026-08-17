@@ -598,8 +598,9 @@ namespace SchoolSystem.UI
                         return;
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    ApplicationLogger.LogException("قراءة قيمة القائمة في الجدول الدراسي", ex);
                 }
             }
         }

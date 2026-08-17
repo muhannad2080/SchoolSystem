@@ -588,6 +588,7 @@ namespace SchoolSystem
         {
             // لا تترك جلسة صالحة عند إغلاق النافذة مباشرة.
             CurrentUser.Clear();
+            Application.Exit();
         }
 
         private void tsmiLogout_Click(object sender, EventArgs e)

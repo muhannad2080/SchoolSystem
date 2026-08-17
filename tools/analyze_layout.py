@@ -122,11 +122,17 @@ def analyze_file(path):
                 continue
             rect = (p[0], p[1], p[0]+sz[0], p[1]+sz[1])
             rects.append((child, rect))
+        # صفحات TabControl تتشارك المساحة عمدًا، فلا تُعد تداخلًا.
+        parent_info = ctrl.get(parent, {})
+        parent_name = parent_info.get('Name', '').strip('"').lower()
+        parent_is_tab = parent_name in ('tabcontrol', 'tabs') or parent.lower().startswith('tab')
         # check overlap pairwise (same container)
         for i in range(len(rects)):
             for j in range(i+1, len(rects)):
                 a, ra = rects[i]
                 b, rb = rects[j]
+                if parent_is_tab:
+                    continue
                 ox = min(ra[2], rb[2]) - max(ra[0], rb[0])
                 oy = min(ra[3], rb[3]) - max(ra[1], rb[1])
                 if ox > 0 and oy > 0:

@@ -217,8 +217,11 @@ checks = {
             "tsmiUsers", "tsmiReports", "tsmiAuditLogs", "tsmiSettings"
         )
     ),
-    "main_logout_is_last_design_menu_item": "this.tsmiSettings,\n                this.tsmiLogout" in main_designer
-    and main_designer.rfind("this.tsmiLogout") > main_designer.rfind("this.tsmiSettings"),
+    "main_logout_is_last_design_menu_item": (
+        "this.tsmiUsers,\n            this.tsmiAuditLogs,\n            this.tsmiSettings" in main_designer
+        and "this.tsmiReports,\n            this.tsmiLogout" in main_designer
+        and main_designer.rfind("this.tsmiLogout") > main_designer.rfind("this.tsmiReports")
+    ),
 }
 
 failed = [name for name, passed in checks.items() if not passed]
