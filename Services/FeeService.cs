@@ -18,13 +18,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllFees()
         {
-            EnsureCanManageFees();
+            CurrentUser.DemandAction("Fees", "View", "ليس لديك صلاحية عرض الرسوم.");
             return feeRepository.GetAllFees();
         }
 
         public int AddFee(Fee fee)
         {
-            EnsureCanManageFees();
+            CurrentUser.DemandAction("Fees", "Add", "ليس لديك صلاحية إضافة الرسوم.");
             ValidateFee(fee);
             PrepareFee(fee);
             int feeId = feeRepository.AddFee(fee);
@@ -36,7 +36,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateFee(Fee fee)
         {
-            EnsureCanManageFees();
+            CurrentUser.DemandAction("Fees", "Edit", "ليس لديك صلاحية تعديل الرسوم.");
             if (fee.FeeID <= 0)
                 throw new Exception("رقم سجل الرسوم غير صحيح.");
 
@@ -51,7 +51,7 @@ namespace SchoolSystem.Services
 
         public DataTable RecordPayment(int feeId, decimal paymentAmount, DateTime paymentDate, string paymentMethod, string receiptNumber, string notes)
         {
-            EnsureCanManageFees();
+            CurrentUser.DemandAction("Fees", "Edit", "ليس لديك صلاحية تسجيل دفعات الرسوم.");
             if (feeId <= 0)
                 throw new Exception("رقم سجل الرسوم غير صحيح.");
             if (paymentAmount <= 0)
@@ -85,7 +85,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteFee(int feeId)
         {
-            EnsureCanManageFees();
+            CurrentUser.DemandAction("Fees", "Delete", "ليس لديك صلاحية حذف الرسوم.");
             if (feeId <= 0)
                 throw new Exception("رقم سجل الرسوم غير صحيح.");
 
@@ -98,7 +98,7 @@ namespace SchoolSystem.Services
         public int CreateRegistrationFeeIfMissing(int studentId, string academicYear, decimal registrationFee,
             decimal paidAmount, string paymentMethod, DateTime dueDate, string enrollmentMarker)
         {
-            EnsureCanManageFees();
+            CurrentUser.DemandAction("Fees", "Add", "ليس لديك صلاحية توليد رسوم التسجيل.");
             if (studentId <= 0)
                 throw new Exception("يجب اختيار الطالب.");
             if (string.IsNullOrWhiteSpace(academicYear))
@@ -133,7 +133,7 @@ namespace SchoolSystem.Services
 
         public int GenerateStudentFeesFromPlans(int studentId, string academicYear)
         {
-            EnsureCanManageFees();
+            CurrentUser.DemandAction("Fees", "Add", "ليس لديك صلاحية توليد رسوم الطلاب.");
             if (studentId <= 0)
                 throw new Exception("يجب اختيار الطالب.");
 
@@ -145,12 +145,6 @@ namespace SchoolSystem.Services
                 auditLogService.Record("توليد", "Fee", studentId.ToString(),
                     string.Format("توليد {0} سجل رسوم من خطط العام الدراسي {1}.", generated, academicYear));
             return generated;
-        }
-
-        private static void EnsureCanManageFees()
-        {
-            if (!CurrentUser.HasPermission(PermissionKeys.FeesManage))
-                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة الرسوم.");
         }
 
         private void ValidateFee(Fee fee)

@@ -18,13 +18,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllVouchers()
         {
-            EnsureCanManageVouchers();
+            CurrentUser.DemandAction("Vouchers", "View", "ليس لديك صلاحية عرض السندات.");
             return voucherRepository.GetAllVouchers();
         }
 
         public string GenerateVoucherNumber(string voucherType)
         {
-            EnsureCanManageVouchers();
+            CurrentUser.DemandAction("Vouchers", "Add", "ليس لديك صلاحية توليد رقم سند.");
             if (voucherType != "قبض" && voucherType != "صرف")
                 throw new ArgumentException("نوع السند غير صحيح.", "voucherType");
 
@@ -33,7 +33,7 @@ namespace SchoolSystem.Services
 
         public bool AddVoucher(Voucher voucher)
         {
-            EnsureCanManageVouchers();
+            CurrentUser.DemandAction("Vouchers", "Add", "ليس لديك صلاحية إضافة السندات.");
             ValidateVoucher(voucher);
 
             bool added = voucherRepository.AddVoucher(voucher);
@@ -45,7 +45,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateVoucher(Voucher voucher)
         {
-            EnsureCanManageVouchers();
+            CurrentUser.DemandAction("Vouchers", "Edit", "ليس لديك صلاحية تعديل السندات.");
             if (voucher.VoucherID <= 0)
                 throw new Exception("رقم السند غير صحيح.");
 
@@ -63,7 +63,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteVoucher(int voucherId)
         {
-            EnsureCanManageVouchers();
+            CurrentUser.DemandAction("Vouchers", "Delete", "ليس لديك صلاحية حذف السندات.");
             if (voucherId <= 0)
                 throw new Exception("رقم السند غير صحيح.");
 
@@ -143,14 +143,14 @@ namespace SchoolSystem.Services
 
         private static void EnsureCanCreateSystemVoucher(string owningPermission)
         {
-            if (!CurrentUser.HasPermission(owningPermission) && !CurrentUser.HasPermission(PermissionKeys.VouchersManage))
-                throw new UnauthorizedAccessException("ليس لديك صلاحية إنشاء السند التلقائي المرتبط بهذه العملية.");
-        }
+            bool canCreate = CurrentUser.CanAdd("Vouchers") || CurrentUser.HasPermission(PermissionKeys.VouchersManage);
+            if (owningPermission == PermissionKeys.FeesManage)
+                canCreate = canCreate || CurrentUser.CanAdd("Fees") || CurrentUser.HasPermission(PermissionKeys.FeesManage);
+            else if (owningPermission == PermissionKeys.ExpensesManage)
+                canCreate = canCreate || CurrentUser.CanAdd("Expenses") || CurrentUser.HasPermission(PermissionKeys.ExpensesManage);
 
-        private static void EnsureCanManageVouchers()
-        {
-            if (!CurrentUser.HasPermission(PermissionKeys.VouchersManage))
-                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة السندات.");
+            if (!canCreate)
+                throw new UnauthorizedAccessException("ليس لديك صلاحية إنشاء السند التلقائي المرتبط بهذه العملية.");
         }
 
         private void ValidateVoucher(Voucher voucher)

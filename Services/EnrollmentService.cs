@@ -15,13 +15,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllEnrollments()
         {
-            CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
+            CurrentUser.DemandAction("Enrollment", "View", "ليس لديك صلاحية عرض التسجيل.");
             return repository.GetAllEnrollments();
         }
 
         public string GenerateNextSeatNumber(string academicYear, int classId, string section)
         {
-            CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
+            CurrentUser.DemandAction("Enrollment", "Add", "ليس لديك صلاحية إضافة التسجيل.");
 
             string normalizedYear = (academicYear ?? string.Empty).Trim().Replace('-', '/');
             string normalizedSection = (section ?? string.Empty).Trim();
@@ -34,10 +34,10 @@ namespace SchoolSystem.Services
 
         public bool AddEnrollment(Enrollment enrollment)
         {
-            CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
+            CurrentUser.DemandAction("Enrollment", "Add", "ليس لديك صلاحية إضافة التسجيل.");
             NormalizeEnrollment(enrollment);
             ValidateEnrollment(enrollment, false);
-            EnsureFinancePermissionIfRequired(enrollment);
+            EnsureFinancePermissionIfRequired(enrollment, false);
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear))
                 throw new Exception("هذا الطالب مسجل بالفعل في هذا العام الدراسي.");
 
@@ -54,10 +54,10 @@ namespace SchoolSystem.Services
 
         public bool UpdateEnrollment(Enrollment enrollment)
         {
-            CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
+            CurrentUser.DemandAction("Enrollment", "Edit", "ليس لديك صلاحية تعديل التسجيل.");
             NormalizeEnrollment(enrollment);
             ValidateEnrollment(enrollment, true);
-            EnsureFinancePermissionIfRequired(enrollment);
+            EnsureFinancePermissionIfRequired(enrollment, true);
 
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear, enrollment.EnrollmentID))
                 throw new Exception("لا يمكن تعديل التسجيل: الطالب لديه تسجيل آخر فعال في هذا العام الدراسي.");
@@ -75,7 +75,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteEnrollment(int enrollmentId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
+            CurrentUser.DemandAction("Enrollment", "Delete", "ليس لديك صلاحية حذف التسجيل.");
             if (enrollmentId <= 0)
                 throw new ArgumentException("رقم طلب التسجيل غير صحيح.");
 
@@ -86,17 +86,17 @@ namespace SchoolSystem.Services
             return deleted;
         }
 
-        private void EnsureFinancePermissionIfRequired(Enrollment enrollment)
+        private void EnsureFinancePermissionIfRequired(Enrollment enrollment, bool isUpdate)
         {
             if (enrollment == null || enrollment.RegistrationFee <= 0)
                 return;
 
-            if (!CurrentUser.HasPermission(PermissionKeys.FeesManage))
-                throw new UnauthorizedAccessException("يحتاج التسجيل برسوم إلى صلاحية إدارة الرسوم.");
+            bool canManageFee = isUpdate ? CurrentUser.CanEdit("Fees") : CurrentUser.CanAdd("Fees");
+            if (!canManageFee)
+                throw new UnauthorizedAccessException("يحتاج التسجيل برسوم إلى صلاحية إضافة أو تعديل الرسوم.");
 
-            if (enrollment.PaidAmount > 0 &&
-                !CurrentUser.HasPermission(PermissionKeys.VouchersManage))
-                throw new UnauthorizedAccessException("يحتاج تسجيل دفعة إلى صلاحية إدارة السندات.");
+            if (enrollment.PaidAmount > 0 && !CurrentUser.CanAdd("Vouchers"))
+                throw new UnauthorizedAccessException("يحتاج تسجيل دفعة إلى صلاحية إضافة السندات.");
         }
 
         private void SynchronizeRegistrationFinance(Enrollment enrollment)

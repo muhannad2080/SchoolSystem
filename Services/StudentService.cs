@@ -48,7 +48,7 @@ namespace SchoolSystem.Services
 
         public int Add(Student student)
         {
-            EnsureCanManageStudents();
+            CurrentUser.DemandAction("Students", "Add", "ليس لديك صلاحية إضافة الطلاب.");
             ValidateStudent(student);
 
             if (_studentRepository.IsNationalIdExists(student.NationalId))
@@ -65,7 +65,7 @@ namespace SchoolSystem.Services
 
         public void Update(Student student)
         {
-            EnsureCanManageStudents();
+            CurrentUser.DemandAction("Students", "Edit", "ليس لديك صلاحية تعديل الطلاب.");
             if (student == null)
                 throw new Exception("بيانات الطالب غير صحيحة.");
 
@@ -87,7 +87,7 @@ namespace SchoolSystem.Services
 
         public void Delete(int studentId)
         {
-            EnsureCanManageStudents();
+            CurrentUser.DemandAction("Students", "Delete", "ليس لديك صلاحية حذف الطلاب.");
             if (studentId <= 0)
                 throw new Exception("يرجى اختيار طالب من الجدول قبل الحذف.");
 
@@ -98,7 +98,7 @@ namespace SchoolSystem.Services
 
         public string GenerateNextStudentNumber()
         {
-            EnsureCanManageStudents();
+            CurrentUser.DemandAction("Students", "Add", "ليس لديك صلاحية توليد رقم طالب جديد.");
             return _studentRepository.GenerateNextStudentNumber();
         }
 
@@ -216,6 +216,7 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandAny(
                 "ليس لديك صلاحية عرض بيانات الطلاب.",
+                PermissionKeys.StudentsView,
                 PermissionKeys.StudentsManage,
                 PermissionKeys.EnrollmentManage,
                 PermissionKeys.FeesManage,
@@ -224,11 +225,6 @@ namespace SchoolSystem.Services
                 PermissionKeys.AttendanceManage,
                 PermissionKeys.ReportsView,
                 PermissionKeys.DashboardView);
-        }
-
-        private static void EnsureCanManageStudents()
-        {
-            CurrentUser.DemandPermission(PermissionKeys.StudentsManage, "ليس لديك صلاحية إدارة الطلاب.");
         }
 
         private void ValidateStudent(Student student)
