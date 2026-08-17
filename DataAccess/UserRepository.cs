@@ -467,6 +467,25 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        public bool ChangePassword(int userId, string passwordHash, string passwordSalt)
+        {
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                UPDATE Users SET
+                    PasswordHash = @PasswordHash,
+                    PasswordSalt = @PasswordSalt,
+                    MustChangePassword = 0,
+                    UpdatedAt = GETDATE()
+                WHERE UserID = @UserID AND IsActive = 1", con))
+            {
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                cmd.Parameters.AddWithValue("@PasswordHash", passwordHash);
+                cmd.Parameters.AddWithValue("@PasswordSalt", passwordSalt);
+                con.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
         public bool ResetPasswordByUserName(string userName, string passwordHash, string passwordSalt)
         {
             using (SqlConnection con = DbConnection.GetConnection())
@@ -476,7 +495,10 @@ namespace SchoolSystem.DataAccess
                         PasswordHash = @PasswordHash,
                         PasswordSalt = @PasswordSalt,
                         IsActive = 1,
-                        MustChangePassword = 0,
+                        MustChangePassword = CASE
+                            WHEN LTRIM(RTRIM(RoleName)) IN (N'مدير النظام', N'Admin', N'Administrator') THEN 0
+                            ELSE 1
+                        END,
                         FailedLoginAttempts = 0,
                         LockedAt = NULL,
                         UpdatedAt = GETDATE()

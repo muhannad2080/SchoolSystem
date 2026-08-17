@@ -33,7 +33,15 @@ namespace SchoolSystem.Services
             NormalizeUser(user);
 
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+            {
                 user.Permissions = PermissionKeys.GetRoleDefaults(user.RoleName);
+                user.MustChangePassword = false;
+            }
+            else
+            {
+                // كل حساب غير إداري جديد يغيّر كلمة المرور التي أنشأها المدير عند أول دخول.
+                user.MustChangePassword = true;
+            }
 
             ValidateUser(user);
 
@@ -86,7 +94,10 @@ namespace SchoolSystem.Services
                 throw new Exception("اسم المستخدم موجود مسبقاً.");
 
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+            {
                 user.Permissions = PermissionKeys.GetRoleDefaults(user.RoleName);
+                user.MustChangePassword = false;
+            }
 
             if (updatePassword)
             {
@@ -257,6 +268,52 @@ namespace SchoolSystem.Services
             };
 
             AddUser(admin, initialPassword);
+        }
+
+        public bool ChangeCurrentUserPassword(string currentPassword, string newPassword, string confirmation)
+        {
+            if (!CurrentUser.IsLoggedIn || CurrentUser.User == null)
+                throw new Exception("انتهت جلسة المستخدم. سجّل الدخول مرة أخرى.");
+
+            currentPassword = NormalizeDigits(currentPassword);
+            newPassword = NormalizeDigits(newPassword);
+            confirmation = NormalizeDigits(confirmation);
+
+            if (string.IsNullOrEmpty(currentPassword))
+                throw new Exception("أدخل كلمة المرور الحالية.");
+            if (string.IsNullOrWhiteSpace(newPassword))
+                throw new Exception("أدخل كلمة المرور الجديدة.");
+            if (newPassword.Length < 6)
+                throw new Exception("كلمة المرور الجديدة يجب ألا تقل عن 6 أحرف.");
+            if (!string.Equals(newPassword, confirmation, StringComparison.Ordinal))
+                throw new Exception("تأكيد كلمة المرور غير مطابق.");
+            if (string.Equals(newPassword, currentPassword, StringComparison.Ordinal))
+                throw new Exception("يجب أن تختلف كلمة المرور الجديدة عن الحالية.");
+
+            User currentUser = userRepository.GetUserById(CurrentUser.User.UserID);
+            if (currentUser == null)
+                throw new Exception("تعذر العثور على حساب المستخدم.");
+
+            bool valid = PasswordHasher.VerifyPassword(currentPassword, currentUser.PasswordHash, currentUser.PasswordSalt)
+                || PasswordHasher.VerifyLegacyPassword(currentPassword, currentUser.PasswordHash, currentUser.PasswordSalt);
+            if (!valid)
+                throw new Exception("كلمة المرور الحالية غير صحيحة.");
+
+            PasswordHasher.CreatePasswordHash(newPassword, out string hash, out string salt);
+            if (!userRepository.ChangePassword(currentUser.UserID, hash, salt))
+                throw new Exception("تعذر حفظ كلمة المرور الجديدة.");
+
+            currentUser.PasswordHash = hash;
+            currentUser.PasswordSalt = salt;
+            currentUser.MustChangePassword = false;
+            CurrentUser.Set(currentUser);
+
+            auditLogService.Record(
+                "تغيير كلمة المرور",
+                "User",
+                currentUser.UserID.ToString(),
+                "تم تغيير كلمة المرور بنجاح من قبل المستخدم نفسه");
+            return true;
         }
 
         public bool ResetPasswordByUserName(string userName, string newPassword)

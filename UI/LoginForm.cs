@@ -148,7 +148,21 @@ namespace SchoolSystem.UI
                 btnLogin.Text = "جارٍ التحقق...";
                 Refresh();
 
-                userService.Authenticate(userName, password);
+                User authenticatedUser = userService.Authenticate(userName, password);
+
+                if (authenticatedUser.MustChangePassword &&
+                    !PermissionKeys.IsSystemAdministratorRole(authenticatedUser.RoleName))
+                {
+                    using (ChangePasswordForm changePasswordForm = new ChangePasswordForm(authenticatedUser))
+                    {
+                        if (changePasswordForm.ShowDialog(this) != DialogResult.OK)
+                        {
+                            CurrentUser.Clear();
+                            ShowWarning("لم يتم تغيير كلمة المرور؛ لن يتم فتح النظام.");
+                            return;
+                        }
+                    }
+                }
 
                 DialogResult = DialogResult.OK;
                 Close();
