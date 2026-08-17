@@ -13,13 +13,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetTeachers()
         {
-            EnsureCanManageTimetable();
+            CurrentUser.DemandAction("Timetable", "View", "ليس لديك صلاحية عرض بيانات الجدول.");
             return repository.GetTeachers();
         }
 
         public DataTable GetSections(int classId, string academicYear)
         {
-            EnsureCanManageTimetable();
+            CurrentUser.DemandAction("Timetable", "View", "ليس لديك صلاحية عرض شعب الجدول.");
             if (classId <= 0)
                 return new DataTable();
 
@@ -29,7 +29,7 @@ namespace SchoolSystem.Services
 
         public DataTable GetSubjectsByClass(int classId)
         {
-            EnsureCanManageTimetable();
+            CurrentUser.DemandAction("Timetable", "View", "ليس لديك صلاحية عرض مواد الجدول.");
             if (classId <= 0)
                 return new DataTable();
 
@@ -38,13 +38,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllTimetable()
         {
-            EnsureCanManageTimetable();
+            CurrentUser.DemandAction("Timetable", "View", "ليس لديك صلاحية عرض الجدول الدراسي.");
             return repository.GetAllTimetable();
         }
 
         public bool AddTimetable(TimetableEntry item)
         {
-            EnsureCanManageTimetable();
+            CurrentUser.DemandAction("Timetable", "Add", "ليس لديك صلاحية إضافة حصص الجدول.");
             Validate(item);
 
             if (item.IsActive)
@@ -68,7 +68,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateTimetable(TimetableEntry item)
         {
-            EnsureCanManageTimetable();
+            CurrentUser.DemandAction("Timetable", "Edit", "ليس لديك صلاحية تعديل حصص الجدول.");
             Validate(item);
 
             if (item.TimetableID <= 0)
@@ -95,7 +95,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteTimetable(int timetableId)
         {
-            EnsureCanManageTimetable();
+            CurrentUser.DemandAction("Timetable", "Delete", "ليس لديك صلاحية حذف حصص الجدول.");
             if (timetableId <= 0)
                 throw new ArgumentException("رقم الحصة غير صحيح.");
 
@@ -103,12 +103,6 @@ namespace SchoolSystem.Services
             if (deleted)
                 auditLogService.Record("حذف", "Timetable", timetableId.ToString(), "حذف حصة من الجدول الدراسي.");
             return deleted;
-        }
-
-        private static void EnsureCanManageTimetable()
-        {
-            if (!CurrentUser.HasPermission(PermissionKeys.TimetableManage))
-                throw new UnauthorizedAccessException("ليس لديك صلاحية إدارة الجدول الدراسي.");
         }
 
         private void ValidateAcademicYear(string academicYear)
