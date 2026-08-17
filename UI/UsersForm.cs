@@ -18,14 +18,63 @@ namespace SchoolSystem.UI
         private int selectedUserId = 0;
         private DataTable allUsers;
         private bool isLoading = false;
+        private FlowLayoutPanel permissionActions;
+        private Button btnSelectAllPermissions;
+        private Button btnClearPermissions;
 
         public UsersForm()
         {
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            InitializePermissionActions();
             ApplyCustomStyles();
             Dock = DockStyle.Fill;
             Load += UsersForm_Load;
+        }
+
+        private void InitializePermissionActions()
+        {
+            // تُنشأ الأدوات برمجياً بعد InitializeComponent حتى يبقى المصمم مستقراً
+            // وتبقى القائمة قابلة للعرض في نسخ Visual Studio المختلفة.
+            permissionActions = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Bottom,
+                Height = 36,
+                AutoSize = false,
+                FlowDirection = FlowDirection.RightToLeft,
+                WrapContents = false,
+                RightToLeft = RightToLeft.Yes,
+                Padding = new Padding(0, 3, 0, 0),
+                Margin = new Padding(0)
+            };
+
+            btnSelectAllPermissions = new Button
+            {
+                Name = "btnSelectAllPermissions",
+                Text = "منح كل الصلاحيات",
+                Width = 140,
+                Height = 30,
+                TabIndex = 0,
+                UseVisualStyleBackColor = false
+            };
+            btnClearPermissions = new Button
+            {
+                Name = "btnClearPermissions",
+                Text = "إلغاء كل الصلاحيات",
+                Width = 140,
+                Height = 30,
+                TabIndex = 1,
+                UseVisualStyleBackColor = false
+            };
+
+            btnSelectAllPermissions.AccessibleName = "منح المستخدم كل الصلاحيات";
+            btnSelectAllPermissions.Click += delegate { CheckAllPermissions(); };
+            btnClearPermissions.AccessibleName = "إلغاء جميع صلاحيات المستخدم";
+            btnClearPermissions.Click += delegate { ClearPermissionChecks(); };
+            permissionActions.Controls.Add(btnSelectAllPermissions);
+            permissionActions.Controls.Add(btnClearPermissions);
+
+            groupBoxPermissions.Controls.Add(permissionActions);
         }
 
         private void ApplyCustomStyles()
@@ -36,6 +85,11 @@ namespace SchoolSystem.UI
             UIHelper.StyleDangerButton(btnDelete);
             UIHelper.StyleButton(btnClear, UIHelper.NeutralColor);
             UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
+            if (btnSelectAllPermissions != null)
+            {
+                UIHelper.StyleButton(btnSelectAllPermissions, UIHelper.AccentColor);
+                UIHelper.StyleButton(btnClearPermissions, UIHelper.NeutralColor);
+            }
             UIHelper.StyleTextBox(txtFullName);
             UIHelper.StyleTextBox(txtUserName);
             UIHelper.StyleTextBox(txtPassword);
@@ -96,35 +150,8 @@ namespace SchoolSystem.UI
         {
             checkedListPermissions.Items.Clear();
 
-            AddPermission(PermissionKeys.DashboardView, "عرض لوحة التحكم");
-
-            AddPermission(PermissionKeys.StudentsView, "عرض الطلاب");
-            AddPermission(PermissionKeys.StudentsManage, "إدارة الطلاب");
-            AddPermission(PermissionKeys.EnrollmentManage, "القبول والتسجيل");
-            AddPermission(PermissionKeys.ClassAssignmentManage, "توزيع الطلاب على الفصول");
-
-            AddPermission(PermissionKeys.TeachersManage, "إدارة المعلمين");
-            AddPermission(PermissionKeys.StaffAttendanceManage, "حضور وانصراف الموظفين");
-            AddPermission(PermissionKeys.PayrollManage, "الرواتب والعقود");
-
-            AddPermission(PermissionKeys.SubjectsManage, "إدارة المواد");
-            AddPermission(PermissionKeys.ClassesManage, "إدارة الصفوف والفصول");
-            AddPermission(PermissionKeys.TimetableManage, "الجداول الدراسية");
-
-            AddPermission(PermissionKeys.AttendanceManage, "حضور الطلاب");
-            AddPermission(PermissionKeys.GradesManage, "إدارة الدرجات");
-
-            AddPermission(PermissionKeys.FeesManage, "الرسوم الدراسية");
-            AddPermission(PermissionKeys.VouchersManage, "السندات قبض/صرف");
-            AddPermission(PermissionKeys.ExpensesManage, "المصروفات");
-
-            AddPermission(PermissionKeys.LibraryManage, "المكتبة");
-            AddPermission(PermissionKeys.TransportManage, "النقل");
-
-            AddPermission(PermissionKeys.ReportsView, "التقارير");
-            AddPermission(PermissionKeys.UsersManage, "إدارة المستخدمين والصلاحيات");
-            AddPermission(PermissionKeys.AuditLogsView, "عرض سجل التدقيق");
-            AddPermission(PermissionKeys.SettingsManage, "الإعدادات والنسخ الاحتياطي");
+            foreach (string permissionKey in PermissionKeys.All)
+                AddPermission(permissionKey, PermissionKeys.GetDisplayName(permissionKey));
 
             ApplyRolePreset();
         }

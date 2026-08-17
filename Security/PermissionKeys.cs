@@ -70,6 +70,36 @@ namespace SchoolSystem.Security
             }
         }
 
+        public static string GetDisplayName(string permissionKey)
+        {
+            switch (NormalizePermissionKey(permissionKey))
+            {
+                case DashboardView: return "عرض لوحة التحكم";
+                case StudentsView: return "عرض الطلاب";
+                case StudentsManage: return "إدارة الطلاب";
+                case EnrollmentManage: return "القبول والتسجيل";
+                case ClassAssignmentManage: return "توزيع الطلاب على الفصول";
+                case TeachersManage: return "إدارة المعلمين";
+                case StaffAttendanceManage: return "حضور وانصراف الموظفين";
+                case PayrollManage: return "الرواتب والعقود";
+                case SubjectsManage: return "إدارة المواد";
+                case ClassesManage: return "إدارة الصفوف والفصول";
+                case TimetableManage: return "الجداول الدراسية";
+                case AttendanceManage: return "حضور الطلاب";
+                case GradesManage: return "إدارة الدرجات";
+                case FeesManage: return "الرسوم الدراسية";
+                case VouchersManage: return "السندات قبض/صرف";
+                case ExpensesManage: return "المصروفات";
+                case LibraryManage: return "المكتبة";
+                case TransportManage: return "النقل";
+                case ReportsView: return "التقارير والطباعة والتصدير";
+                case UsersManage: return "إدارة المستخدمين والصلاحيات";
+                case AuditLogsView: return "عرض سجل التدقيق";
+                case SettingsManage: return "الإعدادات والنسخ الاحتياطي";
+                default: return permissionKey ?? string.Empty;
+            }
+        }
+
         public static string NormalizeRoleName(string roleName)
         {
             string value = (roleName ?? string.Empty).Trim();
