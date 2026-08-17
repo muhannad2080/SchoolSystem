@@ -19,13 +19,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllBuses()
         {
-            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            CurrentUser.DemandAction("Transport", "View", "ليس لديك صلاحية عرض الحافلات.");
             return busRepository.GetAllBuses();
         }
 
         public bool AddBus(Bus bus)
         {
-            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            CurrentUser.DemandAction("Transport", "Add", "ليس لديك صلاحية إضافة الحافلات.");
             ValidateBus(bus);
 
             if (busRepository.BusNumberExists(bus.BusNumber))
@@ -39,7 +39,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateBus(Bus bus)
         {
-            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            CurrentUser.DemandAction("Transport", "Edit", "ليس لديك صلاحية تعديل الحافلات.");
             if (bus == null || bus.BusID <= 0)
                 throw new Exception("رقم الحافلة غير صحيح.");
 
@@ -56,7 +56,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteBus(int busId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            CurrentUser.DemandAction("Transport", "Delete", "ليس لديك صلاحية حذف الحافلات.");
             if (busId <= 0)
                 throw new Exception("رقم الحافلة غير صحيح.");
 
@@ -68,7 +68,7 @@ namespace SchoolSystem.Services
 
         public bool BusNumberExists(string busNumber)
         {
-            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            CurrentUser.DemandAction("Transport", "View", "ليس لديك صلاحية التحقق من بيانات النقل.");
             return busRepository.BusNumberExists(busNumber);
         }
 

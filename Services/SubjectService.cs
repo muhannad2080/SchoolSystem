@@ -34,7 +34,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateSubject(Subject subject)
         {
-            CurrentUser.DemandPermission(PermissionKeys.SubjectsManage, "ليس لديك صلاحية إدارة المواد.");
+            CurrentUser.DemandAction("Subjects", "Edit", "ليس لديك صلاحية تعديل المواد.");
             ValidateSubjectForUpdate(subject);
             bool updated = repository.UpdateSubject(subject);
             if (updated)
@@ -50,13 +50,7 @@ namespace SchoolSystem.Services
 
         public int GetSubjectCount()
         {
-            CurrentUser.DemandAny(
-                "ليس لديك صلاحية عرض بيانات المواد.",
-                PermissionKeys.SubjectsManage,
-                PermissionKeys.GradesManage,
-                PermissionKeys.TimetableManage,
-                PermissionKeys.ReportsView,
-                PermissionKeys.DashboardView);
+            DemandSubjectLookupAccess();
             return repository.GetSubjectCount();
         }
 
@@ -64,9 +58,12 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandAny(
                 "ليس لديك صلاحية عرض بيانات المواد.",
-                PermissionKeys.SubjectsManage,
-                PermissionKeys.GradesManage,
-                PermissionKeys.TimetableManage,
+                "Subjects.View",
+                "Subjects.Manage",
+                "Grades.View",
+                "Grades.Manage",
+                "Timetable.View",
+                "Timetable.Manage",
                 PermissionKeys.ReportsView,
                 PermissionKeys.DashboardView);
         }
