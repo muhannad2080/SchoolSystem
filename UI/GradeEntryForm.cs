@@ -14,7 +14,9 @@ namespace SchoolSystem.UI
     {
         private readonly GradeService gradeService = new GradeService();
         private readonly ClassService classService = new ClassService();
-        private readonly StudentAttendanceService sectionService = new StudentAttendanceService();
+        // قراءة الشعب الأكاديمية يجب أن تعتمد على صلاحيات القراءة المرتبطة بالدرجات،
+        // لا على صلاحية إدارة حضور الطلاب.
+        private readonly StudentClassService sectionService = new StudentClassService();
 
         private DataTable currentGradesTable;
         private int selectedGradeId = 0;

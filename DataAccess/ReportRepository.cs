@@ -642,9 +642,16 @@ namespace SchoolSystem.DataAccess
                         g.StudentID AS [رقم الطالب],
                         g.SubjectID AS [رقم المادة],
                         g.ClassID AS [رقم الصف],
+                        g.Section AS [الشعبة],
                         g.AcademicYear AS [العام الدراسي],
                         g.TermName AS [الفصل الدراسي],
+                        g.Quiz1 AS [الاختبار الأول],
+                        g.Quiz2 AS [الاختبار الثاني],
+                        g.CourseWork AS [أعمال السنة],
+                        g.FinalExam AS [الاختبار النهائي],
                         g.GradeValue AS [الدرجة],
+                        g.GradeLetter AS [التقدير],
+                        g.ResultStatus AS [الحالة],
                         g.Notes AS [ملاحظات],
                         g.CreatedAt AS [تاريخ الإنشاء]
                     FROM Grades g
