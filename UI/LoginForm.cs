@@ -26,6 +26,10 @@ namespace SchoolSystem.UI
             UIHelper.StyleTextBox(txtPassword);
             UIHelper.StylePrimaryButton(btnLogin);
             UIHelper.StyleButton(btnExit, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnClear, UIHelper.NeutralColor);
+            UIHelper.StyleButton(btnTogglePassword, UIHelper.NeutralColor);
+            btnTogglePassword.Text = "إظهار";
+            btnTogglePassword.TabStop = false;
 
             try
             {
@@ -44,6 +48,11 @@ namespace SchoolSystem.UI
 
             this.AcceptButton = btnLogin;
             this.CancelButton = btnExit;
+            this.Shown += (s, e) =>
+            {
+                txtUserName.Focus();
+                txtUserName.SelectAll();
+            };
         }
 
         private void ShowInitializationError(Exception exception)
@@ -186,9 +195,40 @@ namespace SchoolSystem.UI
             }
         }
 
+        private void btnTogglePassword_Click(object sender, EventArgs e)
+        {
+            if (txtPassword.Text == "كلمة المرور")
+                return;
+
+            bool showPassword = txtPassword.PasswordChar != '\0';
+            txtPassword.PasswordChar = showPassword ? '\0' : '●';
+            btnTogglePassword.Text = showPassword ? "إخفاء" : "إظهار";
+            txtPassword.Focus();
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtUserName.Text = "اسم المستخدم";
+            txtUserName.ForeColor = UIHelper.TextDisabledColor;
+            txtPassword.Text = "كلمة المرور";
+            txtPassword.ForeColor = UIHelper.TextDisabledColor;
+            txtPassword.PasswordChar = '\0';
+            btnTogglePassword.Text = "إظهار";
+            txtUserName.Focus();
+        }
+
         private void btnExit_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            DialogResult result = MessageBox.Show(
+                "هل تريد إغلاق نظام إدارة المدرسة؟",
+                "تأكيد الإغلاق",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2,
+                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+
+            if (result == DialogResult.Yes)
+                Application.Exit();
         }
 
         private void ShowWarning(string message)

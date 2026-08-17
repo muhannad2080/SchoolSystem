@@ -23,6 +23,8 @@
             this.txtUserName = new Krypton.Toolkit.KryptonTextBox();
             this.txtPassword = new Krypton.Toolkit.KryptonTextBox();
             this.btnLogin = new Krypton.Toolkit.KryptonButton();
+            this.btnTogglePassword = new Krypton.Toolkit.KryptonButton();
+            this.btnClear = new Krypton.Toolkit.KryptonButton();
             this.btnExit = new Krypton.Toolkit.KryptonButton();
 
             this.panelBackground.SuspendLayout();
@@ -50,6 +52,8 @@
             this.panelCard.Controls.Add(this.txtUserName);
             this.panelCard.Controls.Add(this.txtPassword);
             this.panelCard.Controls.Add(this.btnLogin);
+            this.panelCard.Controls.Add(this.btnTogglePassword);
+            this.panelCard.Controls.Add(this.btnClear);
             this.panelCard.Controls.Add(this.btnExit);
             this.panelCard.Location = new System.Drawing.Point(190, 0);
             this.panelCard.Name = "panelCard";
@@ -114,15 +118,29 @@
             this.txtPassword.Location = new System.Drawing.Point(60, 240);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.txtPassword.Size = new System.Drawing.Size(300, 25);
+            this.txtPassword.Size = new System.Drawing.Size(210, 25);
             this.txtPassword.TabIndex = 4;
             this.txtPassword.Text = "كلمة المرور";
             this.txtPassword.Enter += new System.EventHandler(this.txtPassword_Enter);
             this.txtPassword.Leave += new System.EventHandler(this.txtPassword_Leave);
 
-            // 
+            //
+            // btnTogglePassword
+            //
+            this.btnTogglePassword.BackColor = System.Drawing.Color.White;
+            this.btnTogglePassword.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnTogglePassword.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.btnTogglePassword.ForeColor = System.Drawing.Color.DimGray;
+            this.btnTogglePassword.Location = new System.Drawing.Point(280, 236);
+            this.btnTogglePassword.Name = "btnTogglePassword";
+            this.btnTogglePassword.Size = new System.Drawing.Size(80, 32);
+            this.btnTogglePassword.TabIndex = 5;
+            this.btnTogglePassword.Text = "إظهار";
+            this.btnTogglePassword.Click += new System.EventHandler(this.btnTogglePassword_Click);
+
+            //
             // btnLogin
-            // 
+            //
             this.btnLogin.BackColor = System.Drawing.Color.FromArgb(33, 42, 57);
             this.btnLogin.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnLogin.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold);
@@ -130,21 +148,35 @@
             this.btnLogin.Location = new System.Drawing.Point(60, 300);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(300, 45);
-            this.btnLogin.TabIndex = 5;
+            this.btnLogin.TabIndex = 6;
             this.btnLogin.Text = "تسجيل الدخول";
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
 
-            // 
+            //
+            // btnClear
+            //
+            this.btnClear.BackColor = System.Drawing.Color.White;
+            this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnClear.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.btnClear.ForeColor = System.Drawing.Color.DimGray;
+            this.btnClear.Location = new System.Drawing.Point(60, 360);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(145, 35);
+            this.btnClear.TabIndex = 7;
+            this.btnClear.Text = "مسح";
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+
+            //
             // btnExit
-            // 
+            //
             this.btnExit.BackColor = System.Drawing.Color.White;
             this.btnExit.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExit.Font = new System.Drawing.Font("Tahoma", 10F);
             this.btnExit.ForeColor = System.Drawing.Color.DimGray;
-            this.btnExit.Location = new System.Drawing.Point(60, 360);
+            this.btnExit.Location = new System.Drawing.Point(215, 360);
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(300, 35);
-            this.btnExit.TabIndex = 6;
+            this.btnExit.Size = new System.Drawing.Size(145, 35);
+            this.btnExit.TabIndex = 8;
             this.btnExit.Text = "إغلاق";
             this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
 
@@ -178,6 +210,8 @@
         private Krypton.Toolkit.KryptonTextBox txtUserName;
         private Krypton.Toolkit.KryptonTextBox txtPassword;
         private Krypton.Toolkit.KryptonButton btnLogin;
+        private Krypton.Toolkit.KryptonButton btnTogglePassword;
+        private Krypton.Toolkit.KryptonButton btnClear;
         private Krypton.Toolkit.KryptonButton btnExit;
     }
 }

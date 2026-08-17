@@ -240,6 +240,19 @@ namespace SchoolSystem.Services
 
             CurrentUser.Set(user);
 
+            try
+            {
+                auditLogService.Record(
+                    "تسجيل الدخول",
+                    "User",
+                    user.UserID.ToString(),
+                    "تم تسجيل الدخول بنجاح للحساب " + user.UserName);
+            }
+            catch (Exception auditException)
+            {
+                ApplicationLogger.LogException("تسجيل الدخول في سجل التدقيق", auditException);
+            }
+
             return user;
         }
 

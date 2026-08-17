@@ -11,6 +11,7 @@ namespace SchoolSystem
     public partial class MainForm : Form
     {
         public static MainForm Instance { get; private set; }
+        private readonly AuditLogService auditLogService = new AuditLogService();
 
         public MainForm()
         {
@@ -632,8 +633,25 @@ namespace SchoolSystem
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (CurrentUser.IsLoggedIn && CurrentUser.User != null)
+            {
+                try
+                {
+                    auditLogService.Record(
+                        "إغلاق التطبيق",
+                        "User",
+                        CurrentUser.User.UserID.ToString(),
+                        "تم إغلاق التطبيق مع إنهاء جلسة المستخدم");
+                }
+                catch (Exception auditException)
+                {
+                    ApplicationLogger.LogException("إغلاق التطبيق في سجل التدقيق", auditException);
+                }
+            }
+
             // لا تترك جلسة صالحة عند إغلاق النافذة مباشرة.
             CurrentUser.Clear();
+            Instance = null;
             Application.Exit();
         }
 
@@ -649,6 +667,22 @@ namespace SchoolSystem
 
             if (result != DialogResult.Yes)
                 return;
+
+            try
+            {
+                if (CurrentUser.IsLoggedIn && CurrentUser.User != null)
+                {
+                    auditLogService.Record(
+                        "تسجيل الخروج",
+                        "User",
+                        CurrentUser.User.UserID.ToString(),
+                        "تم إنهاء جلسة المستخدم بواسطة تسجيل الخروج");
+                }
+            }
+            catch (Exception auditException)
+            {
+                ApplicationLogger.LogException("تسجيل الخروج في سجل التدقيق", auditException);
+            }
 
             CurrentUser.Clear();
             RefreshCurrentUserSession();
