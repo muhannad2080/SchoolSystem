@@ -14,19 +14,19 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllRooms()
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة القاعات.");
+            CurrentUser.DemandAction("Rooms", "View", "ليس لديك صلاحية عرض القاعات.");
             return repository.GetAllRooms();
         }
 
         public DataTable GetActiveRooms()
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة القاعات.");
+            CurrentUser.DemandAction("Rooms", "View", "ليس لديك صلاحية عرض القاعات النشطة.");
             return repository.GetActiveRooms();
         }
 
         public int AddRoom(Room room)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة القاعات.");
+            CurrentUser.DemandAction("Rooms", "Add", "ليس لديك صلاحية إضافة القاعات.");
             Validate(room, false);
 
             int roomId = repository.AddRoom(room);
@@ -40,7 +40,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateRoom(Room room)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة القاعات.");
+            CurrentUser.DemandAction("Rooms", "Edit", "ليس لديك صلاحية تعديل القاعات.");
             Validate(room, true);
 
             if (repository.RoomCodeExists(room.RoomCode, room.RoomID))
@@ -60,7 +60,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteRoom(int roomId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة القاعات.");
+            CurrentUser.DemandAction("Rooms", "Delete", "ليس لديك صلاحية تعطيل القاعات.");
             if (roomId <= 0)
                 throw new ArgumentException("رقم القاعة غير صحيح.");
 
