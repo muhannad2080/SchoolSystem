@@ -17,13 +17,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllAttendance()
         {
-            CurrentUser.DemandPermission(PermissionKeys.StaffAttendanceManage, "ليس لديك صلاحية إدارة حضور الموظفين.");
+            CurrentUser.DemandAction("StaffAttendance", "View", "ليس لديك صلاحية عرض حضور الموظفين.");
             return repository.GetAllAttendance();
         }
 
         public bool AddAttendance(TeacherAttendance attendance)
         {
-            CurrentUser.DemandPermission(PermissionKeys.StaffAttendanceManage, "ليس لديك صلاحية إدارة حضور الموظفين.");
+            CurrentUser.DemandAction("StaffAttendance", "Add", "ليس لديك صلاحية إضافة حضور الموظفين.");
             ValidateAttendance(attendance, false);
             ApplyAttendanceCalculations(attendance);
             bool added = repository.AddAttendance(attendance);
@@ -35,7 +35,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateAttendance(TeacherAttendance attendance)
         {
-            CurrentUser.DemandPermission(PermissionKeys.StaffAttendanceManage, "ليس لديك صلاحية إدارة حضور الموظفين.");
+            CurrentUser.DemandAction("StaffAttendance", "Edit", "ليس لديك صلاحية تعديل حضور الموظفين.");
             ValidateAttendance(attendance, true);
             ApplyAttendanceCalculations(attendance);
             bool updated = repository.UpdateAttendance(attendance);
@@ -47,7 +47,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteAttendance(int attendanceId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.StaffAttendanceManage, "ليس لديك صلاحية إدارة حضور الموظفين.");
+            CurrentUser.DemandAction("StaffAttendance", "Delete", "ليس لديك صلاحية حذف حضور الموظفين.");
             if (attendanceId <= 0)
                 throw new ArgumentException("رقم سجل الحضور غير صحيح.");
 
@@ -59,20 +59,20 @@ namespace SchoolSystem.Services
 
         public bool AttendanceExists(int teacherId, DateTime attendanceDate)
         {
-            CurrentUser.DemandPermission(PermissionKeys.StaffAttendanceManage, "ليس لديك صلاحية إدارة حضور الموظفين.");
+            CurrentUser.DemandAction("StaffAttendance", "View", "ليس لديك صلاحية التحقق من حضور الموظفين.");
             return repository.AttendanceExists(teacherId, attendanceDate.Date, 0);
 
         }
 
         public bool AttendanceExists(int teacherId, DateTime attendanceDate, int excludedAttendanceId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.StaffAttendanceManage, "ليس لديك صلاحية إدارة حضور الموظفين.");
+            CurrentUser.DemandAction("StaffAttendance", "View", "ليس لديك صلاحية التحقق من حضور الموظفين.");
             return repository.AttendanceExists(teacherId, attendanceDate.Date, excludedAttendanceId);
         }
 
         public void ApplyAttendanceCalculations(TeacherAttendance attendance)
         {
-            CurrentUser.DemandPermission(PermissionKeys.StaffAttendanceManage, "ليس لديك صلاحية إدارة حضور الموظفين.");
+            CurrentUser.DemandAction("StaffAttendance", "View", "ليس لديك صلاحية حساب حضور الموظفين.");
             attendance.LateMinutes = 0;
             attendance.EarlyLeaveMinutes = 0;
             attendance.WorkHours = 0;
