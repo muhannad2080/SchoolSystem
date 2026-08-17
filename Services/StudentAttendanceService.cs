@@ -13,7 +13,7 @@ namespace SchoolSystem.Services
 
         public DataTable GetSections(int classId, string academicYear)
         {
-            CurrentUser.DemandPermission(PermissionKeys.AttendanceManage, "ليس لديك صلاحية إدارة حضور الطلاب.");
+            CurrentUser.DemandAction("Attendance", "View", "ليس لديك صلاحية عرض شعب الحضور.");
             if (classId <= 0)
                 throw new ArgumentException("يجب اختيار الصف.");
 
@@ -28,7 +28,7 @@ namespace SchoolSystem.Services
 
         public DataTable GetAttendanceSheet(int classId, string section, string academicYear, DateTime date)
         {
-            CurrentUser.DemandPermission(PermissionKeys.AttendanceManage, "ليس لديك صلاحية إدارة حضور الطلاب.");
+            CurrentUser.DemandAction("Attendance", "View", "ليس لديك صلاحية عرض كشف الحضور.");
             if (classId <= 0)
                 throw new ArgumentException("يجب اختيار الصف.");
 
@@ -53,7 +53,7 @@ namespace SchoolSystem.Services
 
         public bool SaveAttendance(StudentAttendance item)
         {
-            CurrentUser.DemandPermission(PermissionKeys.AttendanceManage, "ليس لديك صلاحية إدارة حضور الطلاب.");
+            CurrentUser.DemandAction("Attendance", "Edit", "ليس لديك صلاحية حفظ أو تعديل الحضور.");
             Validate(item);
             bool saved = repository.SaveAttendance(item);
             if (saved)
