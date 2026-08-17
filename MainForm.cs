@@ -1,5 +1,6 @@
 ﻿using SchoolSystem.UI;
 using SchoolSystem.Security;
+using SchoolSystem.Services;
 using SchoolSystem.Helpers;
 using System;
 using System.Drawing;
@@ -61,8 +62,7 @@ namespace SchoolSystem
                 item.AutoSize = true;
                 item.Height = 34;
 
-                ToolStripMenuItem menuItem = item as ToolStripMenuItem;
-                if (menuItem != null)
+                if (item is ToolStripMenuItem menuItem)
                     StyleDropDownItems(menuItem);
             }
 
@@ -161,8 +161,7 @@ namespace SchoolSystem
                 item.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
                 item.Padding = new Padding(8, 4, 8, 4);
 
-                ToolStripMenuItem child = item as ToolStripMenuItem;
-                if (child != null)
+                if (item is ToolStripMenuItem child)
                     StyleDropDownItems(child);
             }
         }
