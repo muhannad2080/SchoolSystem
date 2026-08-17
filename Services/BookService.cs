@@ -19,13 +19,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllBooks()
         {
-            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
+            CurrentUser.DemandAction("Library", "View", "ليس لديك صلاحية عرض كتب المكتبة.");
             return bookRepository.GetAllBooks();
         }
 
         public bool AddBook(Book book)
         {
-            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
+            CurrentUser.DemandAction("Library", "Add", "ليس لديك صلاحية إضافة كتب المكتبة.");
             ValidateBook(book);
             bool added = bookRepository.AddBook(book);
             if (added)
@@ -38,7 +38,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateBook(Book book)
         {
-            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
+            CurrentUser.DemandAction("Library", "Edit", "ليس لديك صلاحية تعديل كتب المكتبة.");
             if (book == null || book.BookID <= 0)
                 throw new Exception("رقم الكتاب غير صحيح.");
 
@@ -54,7 +54,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteBook(int bookId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
+            CurrentUser.DemandAction("Library", "Delete", "ليس لديك صلاحية حذف كتب المكتبة.");
             if (bookId <= 0)
                 throw new Exception("رقم الكتاب غير صحيح.");
 
@@ -69,7 +69,7 @@ namespace SchoolSystem.Services
 
         public int GetAvailableCopies(int bookId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.LibraryManage, "ليس لديك صلاحية إدارة المكتبة.");
+            CurrentUser.DemandAction("Library", "View", "ليس لديك صلاحية عرض مخزون المكتبة.");
             return bookRepository.GetAvailableCopies(bookId);
         }
 
