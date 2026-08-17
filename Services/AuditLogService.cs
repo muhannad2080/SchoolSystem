@@ -33,8 +33,20 @@ namespace SchoolSystem.Services
 
         public DataTable GetRecent(DateTime fromDate, DateTime toDate, string search)
         {
+            return GetRecent(fromDate, toDate, search, string.Empty, string.Empty, string.Empty);
+        }
+
+        public DataTable GetRecent(DateTime fromDate, DateTime toDate, string search,
+            string userName, string actionName, string entityName)
+        {
             CurrentUser.DemandPermission(PermissionKeys.AuditLogsView, "ليس لديك صلاحية عرض سجل التدقيق.");
-            return repository.GetRecent(fromDate, toDate, search);
+            return repository.GetRecent(fromDate, toDate, search, userName, actionName, entityName);
+        }
+
+        public DataTable GetFilterValues(string filterName)
+        {
+            CurrentUser.DemandPermission(PermissionKeys.AuditLogsView, "ليس لديك صلاحية عرض سجل التدقيق.");
+            return repository.GetFilterValues(filterName);
         }
     }
 }

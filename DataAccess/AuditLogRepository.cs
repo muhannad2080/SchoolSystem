@@ -28,6 +28,12 @@ namespace SchoolSystem.DataAccess
 
         public DataTable GetRecent(DateTime fromDate, DateTime toDate, string search)
         {
+            return GetRecent(fromDate, toDate, search, string.Empty, string.Empty, string.Empty);
+        }
+
+        public DataTable GetRecent(DateTime fromDate, DateTime toDate, string search,
+            string userName, string actionName, string entityName)
+        {
             EnsureTable();
             using (SqlConnection connection = DbConnection.GetConnection())
             using (SqlCommand command = new SqlCommand(@"
@@ -43,15 +49,59 @@ namespace SchoolSystem.DataAccess
                 WHERE CreatedAt >= @FromDate
                   AND CreatedAt < @ToDate
                   AND (@Search = N'' OR UserName LIKE @LikeSearch OR ActionName LIKE @LikeSearch OR EntityName LIKE @LikeSearch OR Details LIKE @LikeSearch)
+                  AND (@UserName = N'' OR UserName = @UserName)
+                  AND (@ActionName = N'' OR ActionName = @ActionName)
+                  AND (@EntityName = N'' OR EntityName = @EntityName)
                 ORDER BY CreatedAt DESC, AuditLogID DESC;", connection))
             using (SqlDataAdapter adapter = new SqlDataAdapter(command))
             {
+                string searchValue = (search ?? string.Empty).Trim();
+                string userValue = (userName ?? string.Empty).Trim();
+                string actionValue = (actionName ?? string.Empty).Trim();
+                string entityValue = (entityName ?? string.Empty).Trim();
+
                 command.Parameters.Add("@FromDate", SqlDbType.DateTime).Value = fromDate.Date;
                 command.Parameters.Add("@ToDate", SqlDbType.DateTime).Value = toDate.Date.AddDays(1);
-                string value = (search ?? string.Empty).Trim();
-                command.Parameters.Add("@Search", SqlDbType.NVarChar, 200).Value = value;
-                command.Parameters.Add("@LikeSearch", SqlDbType.NVarChar, 210).Value = "%" + value + "%";
+                command.Parameters.Add("@Search", SqlDbType.NVarChar, 200).Value = searchValue;
+                command.Parameters.Add("@LikeSearch", SqlDbType.NVarChar, 210).Value = "%" + searchValue + "%";
+                command.Parameters.Add("@UserName", SqlDbType.NVarChar, 150).Value = userValue;
+                command.Parameters.Add("@ActionName", SqlDbType.NVarChar, 100).Value = actionValue;
+                command.Parameters.Add("@EntityName", SqlDbType.NVarChar, 100).Value = entityValue;
+
                 DataTable table = new DataTable();
+                adapter.Fill(table);
+                return table;
+            }
+        }
+
+        public DataTable GetFilterValues(string filterName)
+        {
+            EnsureTable();
+            string columnName;
+            switch (filterName)
+            {
+                case "UserName":
+                    columnName = "UserName";
+                    break;
+                case "ActionName":
+                    columnName = "ActionName";
+                    break;
+                case "EntityName":
+                    columnName = "EntityName";
+                    break;
+                default:
+                    throw new ArgumentException("اسم فلتر سجل التدقيق غير مدعوم.", "filterName");
+            }
+
+            using (SqlConnection connection = DbConnection.GetConnection())
+            using (SqlCommand command = new SqlCommand(
+                "SELECT DISTINCT TOP 500 " + columnName + " AS Value " +
+                "FROM AuditLogs WHERE NULLIF(LTRIM(RTRIM(" + columnName + ")), N'') IS NOT NULL " +
+                "ORDER BY Value;", connection))
+            using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+            {
+                DataTable table = new DataTable();
+                connection.Open();
                 adapter.Fill(table);
                 return table;
             }
@@ -81,7 +131,7 @@ namespace SchoolSystem.DataAccess
                     return;
 
                 using (SqlConnection connection = DbConnection.GetConnection())
-            using (SqlCommand command = new SqlCommand(@"
+                using (SqlCommand command = new SqlCommand(@"
                 IF OBJECT_ID(N'dbo.AuditLogs', N'U') IS NULL
                 BEGIN
                     CREATE TABLE dbo.AuditLogs
@@ -98,7 +148,7 @@ namespace SchoolSystem.DataAccess
                     CREATE INDEX IX_AuditLogs_CreatedAt ON dbo.AuditLogs(CreatedAt DESC);
                     CREATE INDEX IX_AuditLogs_Entity ON dbo.AuditLogs(EntityName, EntityID);
                 END;", connection))
-            {
+                {
                     connection.Open();
                     command.ExecuteNonQuery();
                     tableEnsured = true;

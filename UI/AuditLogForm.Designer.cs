@@ -18,6 +18,12 @@ namespace SchoolSystem.UI
         private DateTimePicker fromDate;
         private DateTimePicker toDate;
         private TextBox searchBox;
+        private Label userFilterLabel;
+        private Label actionFilterLabel;
+        private Label entityFilterLabel;
+        private ComboBox userFilter;
+        private ComboBox actionFilter;
+        private ComboBox entityFilter;
         private Button refreshButton;
         private Button exportButton;
         private DataGridView grid;
@@ -43,6 +49,12 @@ namespace SchoolSystem.UI
             this.title = new System.Windows.Forms.Label();
             this.filters = new System.Windows.Forms.Panel();
             this.exportButton = new System.Windows.Forms.Button();
+            this.userFilterLabel = new System.Windows.Forms.Label();
+            this.actionFilterLabel = new System.Windows.Forms.Label();
+            this.entityFilterLabel = new System.Windows.Forms.Label();
+            this.userFilter = new System.Windows.Forms.ComboBox();
+            this.actionFilter = new System.Windows.Forms.ComboBox();
+            this.entityFilter = new System.Windows.Forms.ComboBox();
             this.refreshButton = new System.Windows.Forms.Button();
             this.searchBox = new System.Windows.Forms.TextBox();
             this.searchLabel = new System.Windows.Forms.Label();
@@ -60,9 +72,9 @@ namespace SchoolSystem.UI
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             this.footer.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // header
-            // 
+            //
             this.header.BackColor = System.Drawing.Color.White;
             this.header.Controls.Add(this.subtitle);
             this.header.Controls.Add(this.title);
@@ -73,9 +85,9 @@ namespace SchoolSystem.UI
             this.header.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.header.Size = new System.Drawing.Size(1027, 76);
             this.header.TabIndex = 3;
-            // 
+            //
             // subtitle
-            // 
+            //
             this.subtitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.subtitle.Font = new System.Drawing.Font("Tahoma", 9F);
             this.subtitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
@@ -86,9 +98,9 @@ namespace SchoolSystem.UI
             this.subtitle.TabIndex = 0;
             this.subtitle.Text = "مراجعة موثقة لتغييرات السندات والدرجات والرسوم والمستخدمين";
             this.subtitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // title
-            // 
+            //
             this.title.Dock = System.Windows.Forms.DockStyle.Top;
             this.title.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
             this.title.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
@@ -99,10 +111,16 @@ namespace SchoolSystem.UI
             this.title.TabIndex = 1;
             this.title.Text = "سجل الأنشطة والعمليات الحساسة";
             this.title.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // filters
-            // 
+            //
             this.filters.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.filters.Controls.Add(this.entityFilterLabel);
+            this.filters.Controls.Add(this.entityFilter);
+            this.filters.Controls.Add(this.actionFilterLabel);
+            this.filters.Controls.Add(this.actionFilter);
+            this.filters.Controls.Add(this.userFilterLabel);
+            this.filters.Controls.Add(this.userFilter);
             this.filters.Controls.Add(this.exportButton);
             this.filters.Controls.Add(this.refreshButton);
             this.filters.Controls.Add(this.searchBox);
@@ -116,11 +134,11 @@ namespace SchoolSystem.UI
             this.filters.Name = "filters";
             this.filters.Padding = new System.Windows.Forms.Padding(14, 8, 14, 8);
             this.filters.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.filters.Size = new System.Drawing.Size(1027, 82);
+            this.filters.Size = new System.Drawing.Size(1027, 128);
             this.filters.TabIndex = 2;
-            // 
+            //
             // exportButton
-            // 
+            //
             this.exportButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
             this.exportButton.FlatAppearance.BorderSize = 0;
             this.exportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -135,9 +153,75 @@ namespace SchoolSystem.UI
             this.exportButton.Text = "تصدير Excel / PDF";
             this.exportButton.UseVisualStyleBackColor = false;
             this.exportButton.Click += new System.EventHandler(this.ExportButton_Click);
-            // 
+            //
+            // userFilterLabel
+            //
+            this.userFilterLabel.AutoSize = true;
+            this.userFilterLabel.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.userFilterLabel.Location = new System.Drawing.Point(921, 54);
+            this.userFilterLabel.Name = "userFilterLabel";
+            this.userFilterLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.userFilterLabel.Size = new System.Drawing.Size(55, 18);
+            this.userFilterLabel.TabIndex = 8;
+            this.userFilterLabel.Text = "المستخدم:";
+            //
+            // userFilter
+            //
+            this.userFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.userFilter.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.userFilter.FormattingEnabled = true;
+            this.userFilter.Location = new System.Drawing.Point(680, 50);
+            this.userFilter.Name = "userFilter";
+            this.userFilter.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.userFilter.Size = new System.Drawing.Size(235, 26);
+            this.userFilter.TabIndex = 9;
+            //
+            // actionFilterLabel
+            //
+            this.actionFilterLabel.AutoSize = true;
+            this.actionFilterLabel.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.actionFilterLabel.Location = new System.Drawing.Point(575, 54);
+            this.actionFilterLabel.Name = "actionFilterLabel";
+            this.actionFilterLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.actionFilterLabel.Size = new System.Drawing.Size(49, 18);
+            this.actionFilterLabel.TabIndex = 10;
+            this.actionFilterLabel.Text = "العملية:";
+            //
+            // actionFilter
+            //
+            this.actionFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.actionFilter.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.actionFilter.FormattingEnabled = true;
+            this.actionFilter.Location = new System.Drawing.Point(333, 50);
+            this.actionFilter.Name = "actionFilter";
+            this.actionFilter.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.actionFilter.Size = new System.Drawing.Size(235, 26);
+            this.actionFilter.TabIndex = 11;
+            //
+            // entityFilterLabel
+            //
+            this.entityFilterLabel.AutoSize = true;
+            this.entityFilterLabel.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.entityFilterLabel.Location = new System.Drawing.Point(225, 54);
+            this.entityFilterLabel.Name = "entityFilterLabel";
+            this.entityFilterLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.entityFilterLabel.Size = new System.Drawing.Size(42, 18);
+            this.entityFilterLabel.TabIndex = 12;
+            this.entityFilterLabel.Text = "الكيان:";
+            //
+            // entityFilter
+            //
+            this.entityFilter.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.entityFilter.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.entityFilter.FormattingEnabled = true;
+            this.entityFilter.Location = new System.Drawing.Point(14, 50);
+            this.entityFilter.Name = "entityFilter";
+            this.entityFilter.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.entityFilter.Size = new System.Drawing.Size(205, 26);
+            this.entityFilter.TabIndex = 13;
+            //
             // refreshButton
-            // 
+            //
             this.refreshButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.refreshButton.FlatAppearance.BorderSize = 0;
             this.refreshButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -152,9 +236,9 @@ namespace SchoolSystem.UI
             this.refreshButton.Text = "تحديث";
             this.refreshButton.UseVisualStyleBackColor = false;
             this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
-            // 
+            //
             // searchBox
-            // 
+            //
             this.searchBox.Dock = System.Windows.Forms.DockStyle.Right;
             this.searchBox.Location = new System.Drawing.Point(426, 8);
             this.searchBox.Margin = new System.Windows.Forms.Padding(4);
@@ -163,9 +247,9 @@ namespace SchoolSystem.UI
             this.searchBox.Size = new System.Drawing.Size(220, 24);
             this.searchBox.TabIndex = 2;
             this.searchBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchBox_KeyDown);
-            // 
+            //
             // searchLabel
-            // 
+            //
             this.searchLabel.AutoSize = true;
             this.searchLabel.Dock = System.Windows.Forms.DockStyle.Right;
             this.searchLabel.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
@@ -177,9 +261,9 @@ namespace SchoolSystem.UI
             this.searchLabel.TabIndex = 3;
             this.searchLabel.Text = "بحث:";
             this.searchLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // toDate
-            // 
+            //
             this.toDate.Dock = System.Windows.Forms.DockStyle.Right;
             this.toDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.toDate.Location = new System.Drawing.Point(690, 8);
@@ -188,9 +272,9 @@ namespace SchoolSystem.UI
             this.toDate.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.toDate.Size = new System.Drawing.Size(125, 24);
             this.toDate.TabIndex = 4;
-            // 
+            //
             // toLabel
-            // 
+            //
             this.toLabel.AutoSize = true;
             this.toLabel.Dock = System.Windows.Forms.DockStyle.Right;
             this.toLabel.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
@@ -202,9 +286,9 @@ namespace SchoolSystem.UI
             this.toLabel.TabIndex = 5;
             this.toLabel.Text = "إلى:";
             this.toLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // fromDate
-            // 
+            //
             this.fromDate.Dock = System.Windows.Forms.DockStyle.Right;
             this.fromDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.fromDate.Location = new System.Drawing.Point(853, 8);
@@ -213,9 +297,9 @@ namespace SchoolSystem.UI
             this.fromDate.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.fromDate.Size = new System.Drawing.Size(125, 24);
             this.fromDate.TabIndex = 6;
-            // 
+            //
             // fromLabel
-            // 
+            //
             this.fromLabel.AutoSize = true;
             this.fromLabel.Dock = System.Windows.Forms.DockStyle.Right;
             this.fromLabel.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
@@ -227,9 +311,9 @@ namespace SchoolSystem.UI
             this.fromLabel.TabIndex = 7;
             this.fromLabel.Text = "من:";
             this.fromLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // grid
-            // 
+            //
             this.grid.AllowUserToAddRows = false;
             this.grid.AllowUserToDeleteRows = false;
             this.grid.AllowUserToResizeRows = false;
@@ -271,9 +355,9 @@ namespace SchoolSystem.UI
             this.grid.TabIndex = 0;
             this.grid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_CellFormatting);
             this.grid.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.Grid_DataBindingComplete);
-            // 
+            //
             // footer
-            // 
+            //
             this.footer.BackColor = System.Drawing.Color.White;
             this.footer.Controls.Add(this.statusLabel);
             this.footer.Controls.Add(this.countLabel);
@@ -285,9 +369,9 @@ namespace SchoolSystem.UI
             this.footer.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.footer.Size = new System.Drawing.Size(1027, 38);
             this.footer.TabIndex = 1;
-            // 
+            //
             // countLabel
-            // 
+            //
             this.countLabel.Dock = System.Windows.Forms.DockStyle.Right;
             this.countLabel.Font = new System.Drawing.Font("Tahoma", 9F);
             this.countLabel.Location = new System.Drawing.Point(833, 0);
@@ -297,9 +381,9 @@ namespace SchoolSystem.UI
             this.countLabel.TabIndex = 0;
             this.countLabel.Text = "عدد العمليات: 0";
             this.countLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // statusLabel
-            // 
+            //
             this.statusLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.statusLabel.Font = new System.Drawing.Font("Tahoma", 9F);
             this.statusLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
@@ -310,9 +394,9 @@ namespace SchoolSystem.UI
             this.statusLabel.TabIndex = 1;
             this.statusLabel.Text = "جاهز";
             this.statusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // rangeLabel
-            // 
+            //
             this.rangeLabel.Dock = System.Windows.Forms.DockStyle.Left;
             this.rangeLabel.Font = new System.Drawing.Font("Tahoma", 9F);
             this.rangeLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
@@ -323,9 +407,9 @@ namespace SchoolSystem.UI
             this.rangeLabel.TabIndex = 2;
             this.rangeLabel.Text = "الفترة: —";
             this.rangeLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
+            //
             // AuditLogForm
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));

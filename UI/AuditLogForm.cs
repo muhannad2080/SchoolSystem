@@ -14,6 +14,8 @@ namespace SchoolSystem.UI
     {
         private readonly AuditLogService service = new AuditLogService();
         private DataTable currentData;
+        private bool filtersReady;
+        private bool filterLoadInProgress;
 
         public AuditLogForm()
         {
@@ -28,11 +30,14 @@ namespace SchoolSystem.UI
             UIHelper.StylePrimaryButton(refreshButton);
             UIHelper.StyleButton(exportButton, UIHelper.SuccessColor);
             UIHelper.StyleDataGridView(grid);
-            searchBox.TextChanged += SearchBox_TextChanged;
+            userFilter.SelectedIndexChanged += Filter_SelectedIndexChanged;
+            actionFilter.SelectedIndexChanged += Filter_SelectedIndexChanged;
+            entityFilter.SelectedIndexChanged += Filter_SelectedIndexChanged;
         }
 
         private async void AuditLogForm_Load(object sender, EventArgs e)
         {
+            await LoadFilterOptionsAsync();
             await LoadLogsAsync();
         }
 
@@ -53,7 +58,13 @@ namespace SchoolSystem.UI
                 }
 
                 SetBusyState(true);
-                DataTable data = await Task.Run(() => service.GetRecent(fromDate.Value.Date, toDate.Value.Date, searchBox.Text));
+                DataTable data = await Task.Run(() => service.GetRecent(
+                    fromDate.Value.Date,
+                    toDate.Value.Date,
+                    searchBox.Text,
+                    GetSelectedFilterValue(userFilter),
+                    GetSelectedFilterValue(actionFilter),
+                    GetSelectedFilterValue(entityFilter)));
                 currentData = data ?? new DataTable();
                 grid.DataSource = currentData;
                 SetHeader("AuditLogID", "الرقم");
@@ -88,6 +99,9 @@ namespace SchoolSystem.UI
             fromDate.Enabled = !busy;
             toDate.Enabled = !busy;
             searchBox.Enabled = !busy;
+            userFilter.Enabled = !busy && filtersReady;
+            actionFilter.Enabled = !busy && filtersReady;
+            entityFilter.Enabled = !busy && filtersReady;
             refreshButton.Enabled = !busy;
             exportButton.Enabled = !busy && currentData != null && currentData.Rows.Count > 0;
             if (busy)
@@ -110,12 +124,69 @@ namespace SchoolSystem.UI
                 grid.Columns["AuditLogID"].FillWeight = 45;
         }
 
-        private async void SearchBox_TextChanged(object sender, EventArgs e)
+        private async void Filter_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!IsHandleCreated || !searchBox.Enabled)
+            if (!filtersReady || filterLoadInProgress || !IsHandleCreated)
                 return;
 
             await LoadLogsAsync();
+        }
+
+        private async Task LoadFilterOptionsAsync()
+        {
+            try
+            {
+                filterLoadInProgress = true;
+                SetFilterLoadingState(true);
+                await LoadFilterValuesAsync(userFilter, "UserName");
+                await LoadFilterValuesAsync(actionFilter, "ActionName");
+                await LoadFilterValuesAsync(entityFilter, "EntityName");
+                filtersReady = true;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                UIHelper.ShowWarning(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("تعذر تحميل فلاتر سجل الأنشطة:\n", ex);
+            }
+            finally
+            {
+                filterLoadInProgress = false;
+                SetFilterLoadingState(false);
+            }
+        }
+
+        private async Task LoadFilterValuesAsync(ComboBox combo, string filterName)
+        {
+            DataTable values = await Task.Run(() => service.GetFilterValues(filterName));
+            combo.Items.Clear();
+            combo.Items.Add("الكل");
+            if (values != null)
+            {
+                foreach (DataRow row in values.Rows)
+                {
+                    string value = Convert.ToString(row["Value"]);
+                    if (!string.IsNullOrWhiteSpace(value))
+                        combo.Items.Add(value);
+                }
+            }
+            combo.SelectedIndex = 0;
+        }
+
+        private static string GetSelectedFilterValue(ComboBox combo)
+        {
+            if (combo == null || combo.SelectedIndex <= 0 || combo.SelectedItem == null)
+                return string.Empty;
+            return combo.SelectedItem.ToString().Trim();
+        }
+
+        private void SetFilterLoadingState(bool loading)
+        {
+            userFilter.Enabled = !loading;
+            actionFilter.Enabled = !loading;
+            entityFilter.Enabled = !loading;
         }
 
         private async void SearchBox_KeyDown(object sender, KeyEventArgs e)
