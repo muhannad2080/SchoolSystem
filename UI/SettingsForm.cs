@@ -44,9 +44,9 @@ namespace SchoolSystem.UI
             ApplyPermissionState();
         }
 
-        private bool EnsureSettingsPermission(string message)
+        private bool EnsureSettingsPermission(string message, params string[] permissionKeys)
         {
-            if (CurrentUser.HasPermission(PermissionKeys.SettingsManage))
+            if (CurrentUser.HasPermission(PermissionKeys.SettingsManage) || CurrentUser.HasAny(permissionKeys))
                 return true;
 
             UIHelper.ShowWarning(message);
@@ -55,21 +55,24 @@ namespace SchoolSystem.UI
 
         private void ApplyPermissionState()
         {
-            bool allowed = CurrentUser.HasPermission(PermissionKeys.SettingsManage);
-            testConnectionButton.Enabled = allowed;
-            saveButton.Enabled = allowed;
-            backupButton.Enabled = allowed;
-            restoreButton.Enabled = allowed;
-            browseButton.Enabled = allowed;
-            serverTextBox.ReadOnly = !allowed;
-            databaseTextBox.ReadOnly = !allowed;
-            backupDirectoryTextBox.ReadOnly = !allowed;
-            replaceExistingCheckBox.Enabled = allowed;
+            bool canView = CurrentUser.HasPermission(PermissionKeys.SettingsManage) ||
+                CurrentUser.HasPermission(PermissionKeys.SettingsView);
+            bool canEdit = CurrentUser.HasPermission(PermissionKeys.SettingsManage) ||
+                CurrentUser.HasPermission(PermissionKeys.SettingsEdit);
+            testConnectionButton.Enabled = canView;
+            saveButton.Enabled = canEdit;
+            backupButton.Enabled = canEdit;
+            restoreButton.Enabled = canEdit;
+            browseButton.Enabled = canEdit;
+            serverTextBox.ReadOnly = !canEdit;
+            databaseTextBox.ReadOnly = !canEdit;
+            backupDirectoryTextBox.ReadOnly = !canEdit;
+            replaceExistingCheckBox.Enabled = canEdit;
         }
 
         private void BrowseButton_Click(object sender, EventArgs e)
         {
-            if (!EnsureSettingsPermission("لا تملك صلاحية إدارة إعدادات النظام."))
+            if (!EnsureSettingsPermission("لا تملك صلاحية إدارة إعدادات النظام.", PermissionKeys.SettingsEdit))
                 return;
 
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
@@ -88,7 +91,7 @@ namespace SchoolSystem.UI
 
         private async void TestConnectionButton_Click(object sender, EventArgs e)
         {
-            if (!EnsureSettingsPermission("لا تملك صلاحية اختبار إعدادات الاتصال."))
+            if (!EnsureSettingsPermission("لا تملك صلاحية اختبار إعدادات الاتصال.", PermissionKeys.SettingsView))
                 return;
 
             try
@@ -107,7 +110,7 @@ namespace SchoolSystem.UI
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
-            if (!EnsureSettingsPermission("لا تملك صلاحية حفظ إعدادات النظام."))
+            if (!EnsureSettingsPermission("لا تملك صلاحية حفظ إعدادات النظام.", PermissionKeys.SettingsEdit))
                 return;
 
             try
@@ -132,7 +135,7 @@ namespace SchoolSystem.UI
 
         private async void BackupButton_Click(object sender, EventArgs e)
         {
-            if (!CurrentUser.HasPermission(PermissionKeys.SettingsManage))
+            if (!CurrentUser.HasAny(PermissionKeys.SettingsEdit, PermissionKeys.SettingsManage))
             {
                 UIHelper.ShowWarning("لا تملك صلاحية إدارة الإعدادات والنسخ الاحتياطي.");
                 return;
@@ -166,7 +169,7 @@ namespace SchoolSystem.UI
 
         private async void RestoreButton_Click(object sender, EventArgs e)
         {
-            if (!CurrentUser.HasPermission(PermissionKeys.SettingsManage))
+            if (!CurrentUser.HasAny(PermissionKeys.SettingsEdit, PermissionKeys.SettingsManage))
             {
                 UIHelper.ShowWarning("لا تملك صلاحية إدارة الإعدادات والاستعادة.");
                 return;
@@ -222,7 +225,7 @@ namespace SchoolSystem.UI
 
         private void SaveSettingsSilently()
         {
-            if (!EnsureSettingsPermission("لا تملك صلاحية حفظ إعدادات النظام."))
+            if (!EnsureSettingsPermission("لا تملك صلاحية حفظ إعدادات النظام.", PermissionKeys.SettingsEdit))
                 throw new UnauthorizedAccessException("لا تملك صلاحية حفظ إعدادات النظام.");
 
             ValidateFields();

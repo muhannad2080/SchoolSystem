@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
@@ -13,6 +14,7 @@ namespace SchoolSystem.Services
 
         public void TestConnection(string serverInstance, string databaseName)
         {
+            CurrentUser.DemandAny("ليس لديك صلاحية اختبار اتصال قاعدة البيانات.", PermissionKeys.SettingsView, PermissionKeys.SettingsManage);
             using (SqlConnection connection = CreateConnection(serverInstance, databaseName))
             {
                 connection.Open();
@@ -21,6 +23,7 @@ namespace SchoolSystem.Services
 
         public string Backup(string serverInstance, string databaseName, string backupDirectory)
         {
+            CurrentUser.DemandAny("ليس لديك صلاحية إنشاء نسخة احتياطية لقاعدة البيانات.", PermissionKeys.SettingsEdit, PermissionKeys.SettingsManage);
             ValidateInputs(serverInstance, databaseName);
             string directory = EnsureBackupDirectory(backupDirectory);
 
@@ -43,6 +46,7 @@ namespace SchoolSystem.Services
 
         public void Restore(string serverInstance, string backupFile, string targetDatabase, bool replaceExisting)
         {
+            CurrentUser.DemandAny("ليس لديك صلاحية استعادة قاعدة البيانات.", PermissionKeys.SettingsEdit, PermissionKeys.SettingsManage);
             ValidateInputs(serverInstance, targetDatabase);
             if (string.IsNullOrWhiteSpace(backupFile) || !File.Exists(backupFile))
                 throw new FileNotFoundException("ملف النسخة الاحتياطية غير موجود.", backupFile);
