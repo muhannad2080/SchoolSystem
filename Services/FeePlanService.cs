@@ -97,6 +97,33 @@ namespace SchoolSystem.Services
 
             if (plan.Amount <= 0)
                 throw new Exception("مبلغ الرسوم يجب أن يكون أكبر من صفر.");
+
+            if (plan.Amount > 1000000000m)
+                throw new Exception("مبلغ خطة الرسوم يتجاوز الحد المسموح.");
+
+            if (plan.DueDate == DateTime.MinValue)
+                throw new Exception("تاريخ استحقاق الخطة مطلوب.");
+
+            if (plan.DueDate.Date < DateTime.Today.AddYears(-1))
+                throw new Exception("تاريخ استحقاق الخطة قديم بشكل غير منطقي.");
+
+            if (!string.IsNullOrWhiteSpace(plan.Notes) && plan.Notes.Trim().Length > 500)
+                throw new Exception("ملاحظات الخطة لا يمكن أن تتجاوز 500 حرف.");
+
+            string year = plan.AcademicYear.Trim().Replace('-', '/');
+            string[] parts = year.Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4 ||
+                !int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear) ||
+                secondYear != firstYear + 1)
+            {
+                throw new Exception("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
+            }
+
+            plan.AcademicYear = year;
+            plan.FeeType = plan.FeeType.Trim();
+            plan.Notes = string.IsNullOrWhiteSpace(plan.Notes) ? null : plan.Notes.Trim();
         }
     }
 }

@@ -59,6 +59,15 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 string query = @"
+                    IF EXISTS
+                    (
+                        SELECT 1 FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
+                        WHERE AcademicYear = @AcademicYear
+                          AND ClassID = @ClassID
+                          AND FeeType = @FeeType
+                    )
+                        THROW 51020, N'توجد خطة رسوم مكررة لنفس العام والصف ونوع الرسوم.', 1;
+
                     INSERT INTO FeePlans
                     (
                         AcademicYear,
@@ -85,7 +94,13 @@ namespace SchoolSystem.DataAccess
                     AddParameters(cmd, plan);
 
                     con.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
+                    {
+                        cmd.Transaction = transaction;
+                        int affected = cmd.ExecuteNonQuery();
+                        transaction.Commit();
+                        return affected > 0;
+                    }
                 }
             }
         }
@@ -95,6 +110,16 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 string query = @"
+                    IF EXISTS
+                    (
+                        SELECT 1 FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
+                        WHERE AcademicYear = @AcademicYear
+                          AND ClassID = @ClassID
+                          AND FeeType = @FeeType
+                          AND FeePlanID <> @FeePlanID
+                    )
+                        THROW 51021, N'توجد خطة رسوم مكررة لنفس العام والصف ونوع الرسوم.', 1;
+
                     UPDATE FeePlans SET
                         AcademicYear = @AcademicYear,
                         ClassID = @ClassID,
