@@ -38,6 +38,49 @@ BEGIN
 END;
 GO
 
+/* توحيد القيم القديمة العربية إلى الأسماء القياسية الإنجليزية دون إنشاء تكرار. */
+UPDATE ss
+   SET SectionName = CASE ss.SectionName
+       WHEN N'ألف' THEN N'Section A'
+       WHEN N'باء' THEN N'Section B'
+       WHEN N'جيم' THEN N'Section C'
+       WHEN N'دال' THEN N'Section D'
+       ELSE ss.SectionName
+   END
+FROM dbo.SchoolSections ss
+WHERE ss.SectionName IN (N'ألف', N'باء', N'جيم', N'دال')
+  AND NOT EXISTS
+  (
+      SELECT 1
+      FROM dbo.SchoolSections existing
+      WHERE existing.ClassID = ss.ClassID
+        AND existing.AcademicYear = ss.AcademicYear
+        AND existing.SectionName = CASE ss.SectionName
+            WHEN N'ألف' THEN N'Section A'
+            WHEN N'باء' THEN N'Section B'
+            WHEN N'جيم' THEN N'Section C'
+            WHEN N'دال' THEN N'Section D'
+        END
+  );
+
+/* حذف النسخ العربية المتبقية فقط عند وجود النسخة القياسية المقابلة. */
+DELETE ss
+FROM dbo.SchoolSections ss
+WHERE ss.SectionName IN (N'ألف', N'باء', N'جيم', N'دال')
+  AND EXISTS
+  (
+      SELECT 1
+      FROM dbo.SchoolSections existing
+      WHERE existing.ClassID = ss.ClassID
+        AND existing.AcademicYear = ss.AcademicYear
+        AND existing.SectionName = CASE ss.SectionName
+            WHEN N'ألف' THEN N'Section A'
+            WHEN N'باء' THEN N'Section B'
+            WHEN N'جيم' THEN N'Section C'
+            WHEN N'دال' THEN N'Section D'
+        END
+  );
+
 DECLARE @Years TABLE (AcademicYear NVARCHAR(20) NOT NULL PRIMARY KEY);
 INSERT INTO @Years (AcademicYear)
 VALUES (N'1447-1448'), (N'2026/2027');
@@ -45,7 +88,6 @@ VALUES (N'1447-1448'), (N'2026/2027');
 DECLARE @Sections TABLE (SectionName NVARCHAR(50) NOT NULL PRIMARY KEY);
 INSERT INTO @Sections (SectionName)
     VALUES
-        (N'ألف'), (N'باء'), (N'جيم'), (N'دال'),
         (N'Section A'), (N'Section B'), (N'Section C'), (N'Section D');
 
 INSERT INTO dbo.SchoolSections (ClassID, SectionName, AcademicYear, IsActive)
@@ -75,5 +117,5 @@ INNER JOIN dbo.Classes c ON c.ClassID = ss.ClassID
 WHERE ss.IsActive = 1
 ORDER BY ss.AcademicYear, c.ClassName, ss.SectionName;
 
-PRINT N'تم إنشاء مصدر الشعب الثابت وإضافة الشعب العربية والإنجليزية لكل صف نشط.';
+PRINT N'تم إنشاء مصدر الشعب الثابت وتوحيد الشعب القياسية إلى Section A وSection B وSection C وSection D لكل صف نشط.';
 GO

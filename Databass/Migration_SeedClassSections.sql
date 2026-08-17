@@ -29,9 +29,9 @@ BEGIN TRY
 
     /*
        الشعب التجريبية:
-       الصف الأول الثانوي: ألف، باء
-       الصف الثاني الثانوي: جيم
-       الصف الثالث الثانوي: دال
+       الصف الأول الثانوي: Section A، Section B
+       الصف الثاني الثانوي: Section C
+       الصف الثالث الثانوي: Section D
     */
     DECLARE @Assignments TABLE
     (
@@ -42,10 +42,10 @@ BEGIN TRY
 
     INSERT INTO @Assignments (StudentNumber, ClassID, Section)
     VALUES
-        (N'DEMO-STU-001', @Class1, N'ألف'),
-        (N'DEMO-STU-002', @Class1, N'باء'),
-        (N'DEMO-STU-003', @Class2, N'جيم'),
-        (N'DEMO-STU-004', @Class3, N'دال');
+        (N'DEMO-STU-001', @Class1, N'Section A'),
+        (N'DEMO-STU-002', @Class1, N'Section B'),
+        (N'DEMO-STU-003', @Class2, N'Section C'),
+        (N'DEMO-STU-004', @Class3, N'Section D');
 
     /* تحديث التوزيع الموجود فقط؛ لا يتم إنشاء طالب وهمي أو تكرار توزيع. */
     UPDATE sc
@@ -95,10 +95,10 @@ BEGIN TRY
     BEGIN
         UPDATE sa
            SET sa.Section = CASE sa.StudentID
-                                WHEN (SELECT StudentID FROM dbo.Students WHERE StudentNumber = N'DEMO-STU-001') THEN N'ألف'
-                                WHEN (SELECT StudentID FROM dbo.Students WHERE StudentNumber = N'DEMO-STU-002') THEN N'باء'
-                                WHEN (SELECT StudentID FROM dbo.Students WHERE StudentNumber = N'DEMO-STU-003') THEN N'جيم'
-                                WHEN (SELECT StudentID FROM dbo.Students WHERE StudentNumber = N'DEMO-STU-004') THEN N'دال'
+                                WHEN (SELECT StudentID FROM dbo.Students WHERE StudentNumber = N'DEMO-STU-001') THEN N'Section A'
+                                WHEN (SELECT StudentID FROM dbo.Students WHERE StudentNumber = N'DEMO-STU-002') THEN N'Section B'
+                                WHEN (SELECT StudentID FROM dbo.Students WHERE StudentNumber = N'DEMO-STU-003') THEN N'Section C'
+                                WHEN (SELECT StudentID FROM dbo.Students WHERE StudentNumber = N'DEMO-STU-004') THEN N'Section D'
                                 ELSE sa.Section
                             END
         WHERE sa.StudentID IN
@@ -132,5 +132,5 @@ WHERE sc.AcademicYear = @AcademicYear
 GROUP BY sc.ClassID, c.ClassName, sc.Section, sc.AcademicYear
 ORDER BY c.ClassName, sc.Section;
 
-PRINT N'تمت إضافة الشعب التجريبية: ألف، باء، جيم، دال.';
+PRINT N'تمت إضافة الشعب التجريبية: Section A، Section B، Section C، Section D.';
 GO

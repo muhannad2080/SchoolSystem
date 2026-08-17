@@ -52,7 +52,7 @@ PRINT N'4) الشعب المطلوبة المفقودة: يجب أن تكون ا
 DECLARE @Years TABLE (AcademicYear NVARCHAR(20) NOT NULL PRIMARY KEY);
 INSERT INTO @Years VALUES (N'1447-1448'), (N'2026/2027');
 DECLARE @Sections TABLE (SectionName NVARCHAR(50) NOT NULL PRIMARY KEY);
-INSERT INTO @Sections VALUES (N'ألف'), (N'باء'), (N'جيم'), (N'دال');
+INSERT INTO @Sections VALUES (N'Section A'), (N'Section B'), (N'Section C'), (N'Section D');
 
 SELECT c.ClassCode, c.ClassName, y.AcademicYear, s.SectionName
 FROM dbo.Classes c

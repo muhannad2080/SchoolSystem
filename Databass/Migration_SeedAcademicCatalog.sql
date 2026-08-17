@@ -1,6 +1,6 @@
 /*
     SchoolSystem - Initial academic catalog seed
-    الهدف: تهيئة الصفوف من الأول إلى الثالث الثانوي والمواد الأساسية لكل صف.
+    الهدف: تهيئة الصفوف من الأول إلى الثالث الإعدادي ومن الأول إلى الثالث الثانوي والمواد الأساسية لكل صف.
     آمن للتشغيل المتكرر: لا يحذف بيانات ولا يكرر الصفوف أو المواد الموجودة.
     شغّل هذا الملف بعد Migration_MissingApplicationTables.sql.
 */
@@ -54,7 +54,7 @@ GO
 BEGIN TRY
     BEGIN TRANSACTION;
 
-    /* الصفوف الأساسية: الأول والثاني والثالث الثانوي. */
+    /* الصفوف الأساسية: الأول إلى الثالث الإعدادي والأول إلى الثالث الثانوي. */
     DECLARE @Classes TABLE
     (
         ClassCode NVARCHAR(30) NOT NULL,
@@ -65,6 +65,9 @@ BEGIN TRY
 
     INSERT INTO @Classes (ClassCode, ClassName, StageName, GradeOrder)
     VALUES
+        (N'PREP-01', N'الأول الإعدادي', N'المرحلة الإعدادية', 1),
+        (N'PREP-02', N'الثاني الإعدادي', N'المرحلة الإعدادية', 2),
+        (N'PREP-03', N'الثالث الإعدادي', N'المرحلة الإعدادية', 3),
         (N'SEC-01', N'الأول الثانوي', N'المرحلة الثانوية', 10),
         (N'SEC-02', N'الثاني الثانوي', N'المرحلة الثانوية', 11),
         (N'SEC-03', N'الثالث الثانوي', N'المرحلة الثانوية', 12);
@@ -91,7 +94,7 @@ BEGIN TRY
            OR c.ClassCode = s.ClassCode
     );
 
-    /* المواد المشتركة المناسبة للمرحلة الثانوية. */
+    /* المواد الأساسية المشتركة للصفوف الإعدادية والثانوية؛ يمكن تخصيصها لاحقًا حسب المرحلة. */
     DECLARE @Subjects TABLE
     (
         SubjectCodeSuffix NVARCHAR(10) NOT NULL,
@@ -125,7 +128,7 @@ BEGIN TRY
     INNER JOIN dbo.Classes c ON c.ClassID IS NOT NULL
     INNER JOIN @Subjects s ON s.SubjectName = sub.SubjectName
     WHERE sub.ClassID = c.ClassID
-      AND c.ClassCode IN (N'SEC-01', N'SEC-02', N'SEC-03');
+      AND c.ClassCode IN (N'PREP-01', N'PREP-02', N'PREP-03', N'SEC-01', N'SEC-02', N'SEC-03');
 
     INSERT INTO dbo.Subjects
     (
@@ -143,7 +146,7 @@ BEGIN TRY
         GETDATE()
     FROM dbo.Classes c
     CROSS JOIN @Subjects s
-    WHERE c.ClassCode IN (N'SEC-01', N'SEC-02', N'SEC-03')
+    WHERE c.ClassCode IN (N'PREP-01', N'PREP-02', N'PREP-03', N'SEC-01', N'SEC-02', N'SEC-03')
       AND NOT EXISTS
       (
           SELECT 1
@@ -163,11 +166,11 @@ BEGIN TRY
         COUNT(s.SubjectID) AS SubjectCount
     FROM dbo.Classes c
     LEFT JOIN dbo.Subjects s ON s.ClassID = c.ClassID AND ISNULL(s.IsActive, 1) = 1
-    WHERE c.ClassCode IN (N'SEC-01', N'SEC-02', N'SEC-03')
+    WHERE c.ClassCode IN (N'PREP-01', N'PREP-02', N'PREP-03', N'SEC-01', N'SEC-02', N'SEC-03')
     GROUP BY c.ClassID, c.ClassCode, c.ClassName, c.StageName, c.GradeOrder
     ORDER BY c.GradeOrder;
 
-    PRINT N'تمت تهيئة الصفوف والمواد بنجاح. كل صف يجب أن يحتوي على 11 مادة نشطة.';
+    PRINT N'تمت تهيئة الصفوف والمواد بنجاح. كل صف إعدادي أو ثانوي يجب أن يحتوي على 11 مادة نشطة.';
 END TRY
 BEGIN CATCH
     IF XACT_STATE() <> 0
@@ -182,7 +185,7 @@ SELECT
     COUNT(s.SubjectID) AS SubjectCount
 FROM dbo.Classes c
 LEFT JOIN dbo.Subjects s ON s.ClassID = c.ClassID AND ISNULL(s.IsActive, 1) = 1
-WHERE c.ClassCode IN (N'SEC-01', N'SEC-02', N'SEC-03')
+    WHERE c.ClassCode IN (N'PREP-01', N'PREP-02', N'PREP-03', N'SEC-01', N'SEC-02', N'SEC-03')
 GROUP BY c.ClassName, c.GradeOrder
 ORDER BY c.GradeOrder;
 GO
