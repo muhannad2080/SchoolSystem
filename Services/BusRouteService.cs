@@ -19,13 +19,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllRoutes()
         {
-            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            CurrentUser.DemandAction("Transport", "View", "ليس لديك صلاحية عرض مسارات النقل.");
             return routeRepository.GetAllRoutes();
         }
 
         public bool AddRoute(BusRoute route)
         {
-            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            CurrentUser.DemandAction("Transport", "Add", "ليس لديك صلاحية إضافة مسارات النقل.");
             ValidateRoute(route);
             bool added = routeRepository.AddRoute(route);
             if (added)
@@ -35,7 +35,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateRoute(BusRoute route)
         {
-            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            CurrentUser.DemandAction("Transport", "Edit", "ليس لديك صلاحية تعديل مسارات النقل.");
             if (route == null || route.RouteID <= 0)
                 throw new Exception("رقم المسار غير صحيح.");
 
@@ -48,7 +48,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteRoute(int routeId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.TransportManage, "ليس لديك صلاحية إدارة النقل.");
+            CurrentUser.DemandAction("Transport", "Delete", "ليس لديك صلاحية حذف مسارات النقل.");
             if (routeId <= 0)
                 throw new Exception("رقم المسار غير صحيح.");
 
