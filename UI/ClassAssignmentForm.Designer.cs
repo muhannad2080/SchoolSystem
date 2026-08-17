@@ -41,6 +41,9 @@ namespace SchoolSystem.UI.Students
             this.dataGridViewAssigned = new System.Windows.Forms.DataGridView();
             this.panelLeftButtons = new System.Windows.Forms.Panel();
             this.btnRemove = new System.Windows.Forms.Button();
+            this.btnRemoveAll = new System.Windows.Forms.Button();
+            this.cmbTransferSection = new System.Windows.Forms.ComboBox();
+            this.btnTransfer = new System.Windows.Forms.Button();
             this.lblRecordCount = new System.Windows.Forms.Label();
             this.groupBoxUnassigned = new System.Windows.Forms.GroupBox();
             this.tableLayoutUnassigned = new System.Windows.Forms.TableLayoutPanel();
