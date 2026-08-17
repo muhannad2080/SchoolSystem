@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using SchoolSystem.Models;
@@ -139,13 +140,33 @@ namespace SchoolSystem.DataAccess
                     IF NOT EXISTS
                     (
                         SELECT 1
-                        FROM dbo.SchoolSections
-                        WHERE ClassID = @ClassID
-                          AND LTRIM(RTRIM(SectionName)) = LTRIM(RTRIM(@Section))
-                          AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
-                          AND ISNULL(IsActive, 1) = 1
+                        FROM dbo.SchoolSections ss
+                        INNER JOIN Students s ON s.StudentID = @StudentID
+                        WHERE ss.ClassID = @ClassID
+                          AND LTRIM(RTRIM(ss.SectionName)) = LTRIM(RTRIM(@Section))
+                          AND REPLACE(ss.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                          AND ISNULL(ss.IsActive, 1) = 1
+                          AND (ss.AllowedGender IS NULL OR LTRIM(RTRIM(ss.AllowedGender)) = N''
+                               OR LTRIM(RTRIM(ss.AllowedGender)) IN (N'Any', N'All', N'الكل', N'مختلط')
+                               OR (LTRIM(RTRIM(ss.AllowedGender)) IN (N'Male', N'ذكر', N'ذكور')
+                                   AND LTRIM(RTRIM(ISNULL(s.Gender, N''))) IN (N'Male', N'ذكر', N'ذكور'))
+                               OR (LTRIM(RTRIM(ss.AllowedGender)) IN (N'Female', N'أنثى', N'إناث')
+                                   AND LTRIM(RTRIM(ISNULL(s.Gender, N''))) IN (N'Female', N'أنثى', N'إناث')))
                     )
-                        THROW 50008, N'الشعبة المحددة غير موجودة أو غير مفعلة لهذا الصف والعام الدراسي.', 1;
+                        THROW 50008, N'الشعبة المحددة غير موجودة أو لا تسمح بجنس الطالب.', 1;
+
+                    IF EXISTS
+                    (
+                        SELECT 1 FROM dbo.SchoolSections ss
+                        WHERE ss.ClassID = @ClassID
+                          AND LTRIM(RTRIM(ss.SectionName)) = LTRIM(RTRIM(@Section))
+                          AND REPLACE(ss.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                          AND ISNULL(ss.IsActive, 1) = 1 AND ss.Capacity IS NOT NULL AND ss.Capacity > 0
+                          AND (SELECT COUNT(1) FROM StudentClasses sc
+                               WHERE sc.ClassID = @ClassID AND LTRIM(RTRIM(sc.Section)) = LTRIM(RTRIM(@Section))
+                                 AND REPLACE(sc.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')) >= ss.Capacity
+                    )
+                        THROW 50013, N'سعة الشعبة المحددة مكتملة.', 1;
 
                     IF EXISTS
                     (
@@ -261,6 +282,148 @@ namespace SchoolSystem.DataAccess
 
                     conn.Open();
                     return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+                }
+            }
+        }
+
+        public int RemoveAssignments(IList<int> studentClassIds)
+        {
+            if (studentClassIds == null || studentClassIds.Count == 0)
+                return 0;
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                const string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
+                    DECLARE @Removed TABLE (StudentID INT, AcademicYear NVARCHAR(20));
+                    DELETE FROM StudentClasses
+                    OUTPUT deleted.StudentID, deleted.AcademicYear INTO @Removed(StudentID, AcademicYear)
+                    WHERE StudentClassID IN (SELECT TRY_CONVERT(INT, value) FROM STRING_SPLIT(@Ids, N',') WHERE TRY_CONVERT(INT, value) IS NOT NULL);
+                    DECLARE @StudentID INT;
+                    DECLARE student_cursor CURSOR LOCAL FAST_FORWARD FOR
+                        SELECT DISTINCT StudentID FROM @Removed;
+                    OPEN student_cursor;
+                    FETCH NEXT FROM student_cursor INTO @StudentID;
+                    WHILE @@FETCH_STATUS = 0
+                    BEGIN
+                        IF EXISTS (SELECT 1 FROM StudentClasses WHERE StudentID = @StudentID)
+                        BEGIN
+                            UPDATE s SET s.ClassID = latest.ClassID, s.Section = latest.Section,
+                                s.AcademicYear = latest.AcademicYear, s.UpdatedAt = GETDATE()
+                            FROM Students s
+                            CROSS APPLY (SELECT TOP (1) sc.ClassID, sc.Section, sc.AcademicYear
+                                FROM StudentClasses sc WHERE sc.StudentID = @StudentID
+                                ORDER BY sc.AssignedDate DESC, sc.StudentClassID DESC) latest
+                            WHERE s.StudentID = @StudentID;
+                        END
+                        ELSE
+                        BEGIN
+                            UPDATE Students SET ClassID = NULL, Section = NULL, AcademicYear = NULL,
+                                UpdatedAt = GETDATE() WHERE StudentID = @StudentID;
+                        END;
+                        FETCH NEXT FROM student_cursor INTO @StudentID;
+                    END;
+                    CLOSE student_cursor;
+                    DEALLOCATE student_cursor;
+                    COMMIT TRANSACTION;
+                    SELECT COUNT(1) FROM @Removed;";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@Ids", SqlDbType.NVarChar, -1).Value = string.Join(",", studentClassIds);
+                    conn.Open();
+                    return Convert.ToInt32(cmd.ExecuteScalar());
+                }
+            }
+        }
+
+        public bool TransferAssignment(int studentClassId, int targetClassId, string targetSection, string academicYear)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                const string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
+                    DECLARE @StudentID INT;
+                    SELECT @StudentID = StudentID FROM StudentClasses WITH (UPDLOCK, HOLDLOCK)
+                    WHERE StudentClassID = @StudentClassID;
+                    IF @StudentID IS NULL THROW 50010, N'سجل التوزيع غير موجود.', 1;
+                    IF NOT EXISTS (SELECT 1 FROM SchoolSections ss INNER JOIN Students s ON s.StudentID = @StudentID
+                        WHERE ss.ClassID = @ClassID
+                        AND LTRIM(RTRIM(ss.SectionName)) = LTRIM(RTRIM(@Section))
+                        AND REPLACE(ss.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                        AND ISNULL(ss.IsActive, 1) = 1
+                        AND (ss.AllowedGender IS NULL OR LTRIM(RTRIM(ss.AllowedGender)) = N''
+                             OR LTRIM(RTRIM(ss.AllowedGender)) IN (N'Any', N'All', N'الكل', N'مختلط')
+                             OR (LTRIM(RTRIM(ss.AllowedGender)) IN (N'Male', N'ذكر', N'ذكور') AND LTRIM(RTRIM(ISNULL(s.Gender, N''))) IN (N'Male', N'ذكر', N'ذكور'))
+                             OR (LTRIM(RTRIM(ss.AllowedGender)) IN (N'Female', N'أنثى', N'إناث') AND LTRIM(RTRIM(ISNULL(s.Gender, N''))) IN (N'Female', N'أنثى', N'إناث')))
+                    )
+                        THROW 50011, N'الشعبة الهدف غير موجودة أو لا تسمح بجنس الطالب.', 1;
+                    IF EXISTS (SELECT 1 FROM SchoolSections ss WHERE ss.ClassID = @ClassID
+                        AND LTRIM(RTRIM(ss.SectionName)) = LTRIM(RTRIM(@Section))
+                        AND REPLACE(ss.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                        AND ISNULL(ss.IsActive, 1) = 1 AND ss.Capacity IS NOT NULL AND ss.Capacity > 0
+                        AND (SELECT COUNT(1) FROM StudentClasses sc WHERE sc.ClassID = @ClassID
+                             AND LTRIM(RTRIM(sc.Section)) = LTRIM(RTRIM(@Section))
+                             AND REPLACE(sc.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                             AND sc.StudentClassID <> @StudentClassID) >= ss.Capacity)
+                        THROW 50014, N'سعة الشعبة الهدف مكتملة.', 1;
+                    IF EXISTS (SELECT 1 FROM StudentClasses WHERE StudentID = @StudentID
+                        AND REPLACE(AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                        AND StudentClassID <> @StudentClassID)
+                        THROW 50012, N'يوجد توزيع آخر للطالب في نفس العام الدراسي.', 1;
+                    UPDATE StudentClasses SET ClassID = @ClassID, Section = LTRIM(RTRIM(@Section)),
+                        AcademicYear = REPLACE(@AcademicYear, N'-', N'/'), AssignedDate = GETDATE()
+                    WHERE StudentClassID = @StudentClassID;
+                    UPDATE Students SET ClassID = @ClassID, Section = LTRIM(RTRIM(@Section)),
+                        AcademicYear = REPLACE(@AcademicYear, N'-', N'/'), UpdatedAt = GETDATE()
+                    WHERE StudentID = @StudentID;
+                    COMMIT TRANSACTION;
+                    SELECT 1;";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@StudentClassID", SqlDbType.Int).Value = studentClassId;
+                    cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = targetClassId;
+                    cmd.Parameters.Add("@Section", SqlDbType.NVarChar, 50).Value = (targetSection ?? string.Empty).Trim();
+                    cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (academicYear ?? string.Empty).Trim().Replace('-', '/');
+                    conn.Open();
+                    return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+                }
+            }
+        }
+
+        public DataTable GetSectionStatistics(int classId, string academicYear)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                const string query = @"
+                    SELECT LTRIM(RTRIM(ss.SectionName)) AS Section,
+                        COUNT(sc.StudentClassID) AS AssignedCount,
+                        ss.Capacity
+                    FROM SchoolSections ss
+                    LEFT JOIN StudentClasses sc ON sc.ClassID = ss.ClassID
+                        AND LTRIM(RTRIM(sc.Section)) = LTRIM(RTRIM(ss.SectionName))
+                        AND REPLACE(sc.AcademicYear, N'/', N'-') = REPLACE(ss.AcademicYear, N'/', N'-')
+                    WHERE ss.ClassID = @ClassID
+                      AND REPLACE(ss.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                      AND ISNULL(ss.IsActive, 1) = 1
+                      AND NULLIF(LTRIM(RTRIM(ss.SectionName)), N'') IS NOT NULL
+                    GROUP BY LTRIM(RTRIM(ss.SectionName)), ss.Capacity
+                    ORDER BY LTRIM(RTRIM(ss.SectionName));";
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = classId;
+                    cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (academicYear ?? string.Empty).Trim();
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        adapter.Fill(dt);
+                        return dt;
+                    }
                 }
             }
         }

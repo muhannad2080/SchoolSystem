@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Models;
@@ -33,6 +35,9 @@ namespace SchoolSystem.UI.Students
             UIHelper.StylePrimaryButton(btnAssign);
             UIHelper.StyleButton(btnSelectAll, UIHelper.NeutralColor);
             UIHelper.StyleButton(btnRemove, UIHelper.DangerColor);
+            UIHelper.StyleButton(btnRemoveAll, Color.FromArgb(185, 28, 28));
+            UIHelper.StyleButton(btnTransfer, Color.FromArgb(124, 58, 237));
+            UIHelper.StyleComboBox(cmbTransferSection);
             UIHelper.StyleTextBox(txtAcademicYear);
             UIHelper.StyleTextBox(txtSearch);
             UIHelper.StyleComboBox(cmbClass);
@@ -75,6 +80,9 @@ namespace SchoolSystem.UI.Students
             cmbSection.DataSource = null;
             cmbSection.Items.Clear();
             cmbSection.Enabled = false;
+            cmbTransferSection.DataSource = null;
+            cmbTransferSection.Items.Clear();
+            cmbTransferSection.Enabled = false;
 
             DateTime today = DateTime.Today;
             int year = today.Month >= 8 ? today.Year : today.Year - 1;
@@ -131,6 +139,9 @@ namespace SchoolSystem.UI.Students
                     cmbSection.DataSource = null;
                     cmbSection.Items.Clear();
                     cmbSection.Enabled = false;
+                    cmbTransferSection.DataSource = null;
+                    cmbTransferSection.Items.Clear();
+                    cmbTransferSection.Enabled = false;
                     lblStatus.Text = "لا توجد شعب مسجلة لهذا الصف والعام الدراسي.";
                     return;
                 }
@@ -140,12 +151,16 @@ namespace SchoolSystem.UI.Students
                 cmbSection.ValueMember = "Section";
                 cmbSection.Enabled = true;
                 cmbSection.SelectedIndex = 0;
+                UpdateTransferSections(sections);
             }
             catch (Exception ex)
             {
                 cmbSection.DataSource = null;
                 cmbSection.Items.Clear();
                 cmbSection.Enabled = false;
+                cmbTransferSection.DataSource = null;
+                cmbTransferSection.Items.Clear();
+                cmbTransferSection.Enabled = false;
                 UIHelper.ShowException("تحميل شعب توزيع الطلاب", ex);
             }
         }
@@ -189,7 +204,9 @@ namespace SchoolSystem.UI.Students
 
                 lblAssignedTitle.Text = "الطلاب الموزعون على: " + cmbClass.Text + " - شعبة " + section;
                 lblRecordCount.Text = "عدد الطلاب: " + assigned.Rows.Count;
-                lblStatus.Text = "تم تحميل البيانات بنجاح.";
+                await RefreshStatisticsAsync(classId, academicYear, assigned.Rows.Count);
+                if (string.IsNullOrWhiteSpace(lblStatus.Text))
+                    lblStatus.Text = "تم تحميل البيانات بنجاح.";
             }
             catch (Exception ex)
             {
@@ -216,6 +233,63 @@ namespace SchoolSystem.UI.Students
                 return result;
 
             return 0;
+        }
+
+        private void UpdateTransferSections(DataTable sections)
+        {
+            string current = cmbSection.Text == null ? string.Empty : cmbSection.Text.Trim();
+            cmbTransferSection.DataSource = null;
+            cmbTransferSection.Items.Clear();
+
+            if (sections == null || !sections.Columns.Contains("Section"))
+            {
+                cmbTransferSection.Enabled = false;
+                return;
+            }
+
+            foreach (DataRow row in sections.Rows)
+            {
+                string section = Convert.ToString(row["Section"]).Trim();
+                if (!string.IsNullOrWhiteSpace(section) && !section.Equals(current, StringComparison.OrdinalIgnoreCase))
+                    cmbTransferSection.Items.Add(section);
+            }
+
+            cmbTransferSection.Enabled = cmbTransferSection.Items.Count > 0;
+            if (cmbTransferSection.Items.Count > 0)
+                cmbTransferSection.SelectedIndex = 0;
+        }
+
+        private async Task RefreshStatisticsAsync(int classId, string academicYear, int assignedInCurrentSection)
+        {
+            try
+            {
+                DataTable stats = await Task.Run(() => studentClassService.GetSectionStatistics(classId, academicYear));
+                int totalAssigned = 0;
+                int fullSections = 0;
+                foreach (DataRow row in stats.Rows)
+                {
+                    int count = row["AssignedCount"] == DBNull.Value ? 0 : Convert.ToInt32(row["AssignedCount"]);
+                    totalAssigned += count;
+                    if (row.Table.Columns.Contains("Capacity") && row["Capacity"] != DBNull.Value)
+                    {
+                        int capacity = Convert.ToInt32(row["Capacity"]);
+                        if (capacity > 0 && count >= capacity)
+                            fullSections++;
+                    }
+                }
+
+                int totalUnassigned = unassignedStudents == null ? 0 : unassignedStudents.Rows.Count;
+                lblUnassigned.Text = "الطلاب غير الموزعين: " + totalUnassigned;
+                lblStatus.Text = "إحصائيات الصف: موزعون " + totalAssigned +
+                    " | غير موزعين " + totalUnassigned +
+                    " | في الشعبة الحالية " + assignedInCurrentSection +
+                    " | عدد الشعب " + stats.Rows.Count +
+                    (fullSections > 0 ? " | مكتملة السعة " + fullSections : string.Empty);
+            }
+            catch
+            {
+                lblStatus.Text = "تم تحميل البيانات؛ تعذر إظهار بعض الإحصائيات.";
+            }
         }
 
         private void FillUnassignedList(DataTable dt)
@@ -295,7 +369,7 @@ namespace SchoolSystem.UI.Students
 
             dataGridViewAssigned.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridViewAssigned.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewAssigned.MultiSelect = false;
+            dataGridViewAssigned.MultiSelect = true;
             dataGridViewAssigned.ReadOnly = true;
             dataGridViewAssigned.AllowUserToAddRows = false;
             dataGridViewAssigned.AllowUserToDeleteRows = false;
@@ -379,12 +453,14 @@ namespace SchoolSystem.UI.Students
             if (unassignedStudents.Columns.Contains("StudentName"))
                 filter = "StudentName LIKE '%" + safe + "%'";
 
-            if (unassignedStudents.Columns.Contains("StudentNumber"))
+            string[] searchableColumns = { "StudentNumber", "Gender", "Phone" };
+            foreach (string column in searchableColumns)
             {
+                if (!unassignedStudents.Columns.Contains(column))
+                    continue;
                 if (!string.IsNullOrWhiteSpace(filter))
                     filter += " OR ";
-
-                filter += "StudentNumber LIKE '%" + safe + "%'";
+                filter += column + " LIKE '%" + safe + "%'";
             }
 
             dv.RowFilter = filter;
@@ -503,6 +579,22 @@ namespace SchoolSystem.UI.Students
             }
         }
 
+        private List<int> GetSelectedStudentClassIds()
+        {
+            List<int> ids = new List<int>();
+            if (!dataGridViewAssigned.Columns.Contains("StudentClassID"))
+                return ids;
+
+            foreach (DataGridViewRow row in dataGridViewAssigned.SelectedRows)
+            {
+                object value = row.Cells["StudentClassID"].Value;
+                int id;
+                if (value != null && value != DBNull.Value && int.TryParse(value.ToString(), out id) && id > 0 && !ids.Contains(id))
+                    ids.Add(id);
+            }
+            return ids;
+        }
+
         private void dataGridViewAssigned_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0 || dataGridViewAssigned.Rows.Count == 0)
@@ -563,6 +655,100 @@ namespace SchoolSystem.UI.Students
             {
                 Cursor = Cursors.Default;
                 UIHelper.ShowException("خطأ أثناء الإزالة:\n", ex);
+            }
+        }
+
+        private async void btnRemoveAll_Click(object sender, EventArgs e)
+        {
+            List<int> ids = GetSelectedStudentClassIds();
+            if (ids.Count == 0)
+            {
+                ShowWarning("حدد طالباً واحداً على الأقل من الجدول.");
+                return;
+            }
+
+            DialogResult result = MessageBox.Show(
+                "هل تريد إزالة توزيع " + ids.Count + " طالب؟",
+                "تأكيد الإزالة الجماعية", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            if (result != DialogResult.Yes)
+                return;
+
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+                int removed = await Task.Run(() => studentClassService.RemoveAssignments(ids));
+                ShowInfo("تمت إزالة توزيع " + removed + " طالب بنجاح.");
+                selectedStudentClassId = 0;
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("خطأ أثناء الإزالة الجماعية:\n", ex);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private async void btnTransfer_Click(object sender, EventArgs e)
+        {
+            List<int> ids = GetSelectedStudentClassIds();
+            string targetSection = cmbTransferSection.Text == null ? string.Empty : cmbTransferSection.Text.Trim();
+            if (ids.Count == 0)
+            {
+                ShowWarning("حدد طالباً واحداً على الأقل من الجدول.");
+                return;
+            }
+            if (!cmbTransferSection.Enabled || string.IsNullOrWhiteSpace(targetSection))
+            {
+                ShowWarning("لا توجد شعبة هدف أخرى متاحة لهذا الصف.");
+                return;
+            }
+            if (targetSection.Equals(cmbSection.Text.Trim(), StringComparison.OrdinalIgnoreCase))
+            {
+                ShowWarning("اختر شعبة مختلفة عن الشعبة الحالية.");
+                return;
+            }
+
+            DialogResult result = MessageBox.Show(
+                "هل تريد نقل " + ids.Count + " طالب إلى شعبة " + targetSection + "؟",
+                "تأكيد النقل", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
+                MessageBoxDefaultButton.Button2, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            if (result != DialogResult.Yes)
+                return;
+
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+                int success = 0;
+                int failed = 0;
+                foreach (int id in ids)
+                {
+                    try
+                    {
+                        if (await Task.Run(() => studentClassService.TransferAssignment(
+                            id, GetSelectedClassId(), targetSection, txtAcademicYear.Text.Trim())))
+                            success++;
+                        else
+                            failed++;
+                    }
+                    catch
+                    {
+                        failed++;
+                    }
+                }
+                ShowInfo("تم نقل " + success + " طالب بنجاح." + (failed > 0 ? " تعذر نقل " + failed + " طالب." : string.Empty));
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("خطأ أثناء نقل الطلاب:\n", ex);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
             }
         }
 

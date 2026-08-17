@@ -69,9 +69,9 @@ namespace SchoolSystem.UI.Students
             this.panelRightButtons.SuspendLayout();
             this.panelBottom.SuspendLayout();
             this.SuspendLayout();
-            // 
+            //
             // panelTitle
-            // 
+            //
             this.panelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
@@ -79,9 +79,9 @@ namespace SchoolSystem.UI.Students
             this.panelTitle.Name = "panelTitle";
             this.panelTitle.Size = new System.Drawing.Size(1120, 58);
             this.panelTitle.TabIndex = 0;
-            // 
+            //
             // lblTitle
-            // 
+            //
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.White;
@@ -91,9 +91,9 @@ namespace SchoolSystem.UI.Students
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "توزيع الطلاب على الفصول والشعب";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // mainContainer
-            // 
+            //
             this.mainContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
             this.mainContainer.ColumnCount = 1;
             this.mainContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -110,9 +110,9 @@ namespace SchoolSystem.UI.Students
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 34F));
             this.mainContainer.Size = new System.Drawing.Size(1120, 652);
             this.mainContainer.TabIndex = 1;
-            // 
+            //
             // panelTop
-            // 
+            //
             this.panelTop.BackColor = System.Drawing.Color.White;
             this.panelTop.Controls.Add(this.tableLayoutTop);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -121,9 +121,9 @@ namespace SchoolSystem.UI.Students
             this.panelTop.Padding = new System.Windows.Forms.Padding(10);
             this.panelTop.Size = new System.Drawing.Size(1090, 76);
             this.panelTop.TabIndex = 0;
-            // 
+            //
             // tableLayoutTop
-            // 
+            //
             this.tableLayoutTop.ColumnCount = 8;
             this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
             this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28F));
@@ -147,9 +147,9 @@ namespace SchoolSystem.UI.Students
             this.tableLayoutTop.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutTop.Size = new System.Drawing.Size(1070, 56);
             this.tableLayoutTop.TabIndex = 0;
-            // 
+            //
             // lblClass
-            // 
+            //
             this.lblClass.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblClass.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.lblClass.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(65)))), ((int)(((byte)(81)))));
@@ -159,9 +159,9 @@ namespace SchoolSystem.UI.Students
             this.lblClass.TabIndex = 0;
             this.lblClass.Text = "الصف:";
             this.lblClass.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
+            //
             // cmbClass
-            // 
+            //
             this.cmbClass.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
             this.cmbClass.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -174,9 +174,9 @@ namespace SchoolSystem.UI.Students
             this.cmbClass.Size = new System.Drawing.Size(210, 29);
             this.cmbClass.TabIndex = 1;
             this.cmbClass.SelectedIndexChanged += new System.EventHandler(this.cmbClass_SelectedIndexChanged);
-            // 
+            //
             // lblSection
-            // 
+            //
             this.lblSection.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblSection.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.lblSection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(65)))), ((int)(((byte)(81)))));
@@ -186,9 +186,9 @@ namespace SchoolSystem.UI.Students
             this.lblSection.TabIndex = 2;
             this.lblSection.Text = "الشعبة:";
             this.lblSection.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
+            //
             // cmbSection
-            // 
+            //
             this.cmbSection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
             this.cmbSection.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbSection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -201,9 +201,9 @@ namespace SchoolSystem.UI.Students
             this.cmbSection.Size = new System.Drawing.Size(132, 29);
             this.cmbSection.TabIndex = 3;
             this.cmbSection.SelectedIndexChanged += new System.EventHandler(this.cmbSection_SelectedIndexChanged);
-            // 
+            //
             // lblAcademicYear
-            // 
+            //
             this.lblAcademicYear.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblAcademicYear.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.lblAcademicYear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(65)))), ((int)(((byte)(81)))));
@@ -213,9 +213,9 @@ namespace SchoolSystem.UI.Students
             this.lblAcademicYear.TabIndex = 4;
             this.lblAcademicYear.Text = "العام الدراسي:";
             this.lblAcademicYear.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
+            //
             // txtAcademicYear
-            // 
+            //
             this.txtAcademicYear.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
             this.txtAcademicYear.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtAcademicYear.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -227,9 +227,9 @@ namespace SchoolSystem.UI.Students
             this.txtAcademicYear.TabIndex = 5;
             this.txtAcademicYear.Text = "2026/2027";
             this.txtAcademicYear.TextChanged += new System.EventHandler(this.txtAcademicYear_TextChanged);
-            // 
+            //
             // btnLoad
-            // 
+            //
             this.btnLoad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.btnLoad.Dock = System.Windows.Forms.DockStyle.Right;
             this.btnLoad.FlatAppearance.BorderSize = 0;
@@ -244,9 +244,9 @@ namespace SchoolSystem.UI.Students
             this.btnLoad.Text = "تحميل البيانات";
             this.btnLoad.UseVisualStyleBackColor = false;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
-            // 
+            //
             // tableLayoutMain
-            // 
+            //
             this.tableLayoutMain.ColumnCount = 2;
             this.tableLayoutMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
@@ -259,9 +259,9 @@ namespace SchoolSystem.UI.Students
             this.tableLayoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutMain.Size = new System.Drawing.Size(1090, 510);
             this.tableLayoutMain.TabIndex = 1;
-            // 
+            //
             // groupBoxAssigned
-            // 
+            //
             this.groupBoxAssigned.BackColor = System.Drawing.Color.White;
             this.groupBoxAssigned.Controls.Add(this.tableLayoutAssigned);
             this.groupBoxAssigned.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -275,9 +275,9 @@ namespace SchoolSystem.UI.Students
             this.groupBoxAssigned.TabIndex = 1;
             this.groupBoxAssigned.TabStop = false;
             this.groupBoxAssigned.Text = "الطلاب الموزعون";
-            // 
+            //
             // tableLayoutAssigned
-            // 
+            //
             this.tableLayoutAssigned.ColumnCount = 1;
             this.tableLayoutAssigned.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutAssigned.Controls.Add(this.lblAssignedTitle, 0, 0);
@@ -292,9 +292,9 @@ namespace SchoolSystem.UI.Students
             this.tableLayoutAssigned.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 58F));
             this.tableLayoutAssigned.Size = new System.Drawing.Size(519, 463);
             this.tableLayoutAssigned.TabIndex = 0;
-            // 
+            //
             // lblAssignedTitle
-            // 
+            //
             this.lblAssignedTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblAssignedTitle.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.lblAssignedTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(65)))), ((int)(((byte)(81)))));
@@ -304,9 +304,9 @@ namespace SchoolSystem.UI.Students
             this.lblAssignedTitle.TabIndex = 0;
             this.lblAssignedTitle.Text = "الطلاب الموزعون على الصف والشعبة المحددة";
             this.lblAssignedTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
+            //
             // dataGridViewAssigned
-            // 
+            //
             this.dataGridViewAssigned.AllowUserToAddRows = false;
             this.dataGridViewAssigned.AllowUserToDeleteRows = false;
             this.dataGridViewAssigned.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -327,7 +327,7 @@ namespace SchoolSystem.UI.Students
             this.dataGridViewAssigned.EnableHeadersVisualStyles = false;
             this.dataGridViewAssigned.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(231)))), ((int)(((byte)(235)))));
             this.dataGridViewAssigned.Location = new System.Drawing.Point(3, 39);
-            this.dataGridViewAssigned.MultiSelect = false;
+            this.dataGridViewAssigned.MultiSelect = true;
             this.dataGridViewAssigned.Name = "dataGridViewAssigned";
             this.dataGridViewAssigned.ReadOnly = true;
             this.dataGridViewAssigned.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -345,20 +345,23 @@ namespace SchoolSystem.UI.Students
             this.dataGridViewAssigned.Size = new System.Drawing.Size(513, 363);
             this.dataGridViewAssigned.TabIndex = 1;
             this.dataGridViewAssigned.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewAssigned_CellClick);
-            // 
+            //
             // panelLeftButtons
-            // 
+            //
             this.panelLeftButtons.BackColor = System.Drawing.Color.White;
             this.panelLeftButtons.Controls.Add(this.btnRemove);
+            this.panelLeftButtons.Controls.Add(this.btnRemoveAll);
+            this.panelLeftButtons.Controls.Add(this.cmbTransferSection);
+            this.panelLeftButtons.Controls.Add(this.btnTransfer);
             this.panelLeftButtons.Controls.Add(this.lblRecordCount);
             this.panelLeftButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelLeftButtons.Location = new System.Drawing.Point(3, 408);
             this.panelLeftButtons.Name = "panelLeftButtons";
             this.panelLeftButtons.Size = new System.Drawing.Size(513, 52);
             this.panelLeftButtons.TabIndex = 2;
-            // 
+            //
             // btnRemove
-            // 
+            //
             this.btnRemove.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnRemove.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
             this.btnRemove.FlatAppearance.BorderSize = 0;
@@ -372,9 +375,52 @@ namespace SchoolSystem.UI.Students
             this.btnRemove.Text = "إزالة التوزيع";
             this.btnRemove.UseVisualStyleBackColor = false;
             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
-            // 
+            //
+            // btnRemoveAll
+            //
+            this.btnRemoveAll.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.btnRemoveAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(185)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.btnRemoveAll.FlatAppearance.BorderSize = 0;
+            this.btnRemoveAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRemoveAll.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnRemoveAll.ForeColor = System.Drawing.Color.White;
+            this.btnRemoveAll.Location = new System.Drawing.Point(260, 9);
+            this.btnRemoveAll.Name = "btnRemoveAll";
+            this.btnRemoveAll.Size = new System.Drawing.Size(115, 36);
+            this.btnRemoveAll.TabIndex = 2;
+            this.btnRemoveAll.Text = "إزالة المحدد";
+            this.btnRemoveAll.UseVisualStyleBackColor = false;
+            this.btnRemoveAll.Click += new System.EventHandler(this.btnRemoveAll_Click);
+            //
+            // cmbTransferSection
+            //
+            this.cmbTransferSection.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.cmbTransferSection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTransferSection.Font = new System.Drawing.Font("Tahoma", 9F);
+            this.cmbTransferSection.FormattingEnabled = true;
+            this.cmbTransferSection.Location = new System.Drawing.Point(132, 14);
+            this.cmbTransferSection.Name = "cmbTransferSection";
+            this.cmbTransferSection.Size = new System.Drawing.Size(120, 26);
+            this.cmbTransferSection.TabIndex = 3;
+            //
+            // btnTransfer
+            //
+            this.btnTransfer.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.btnTransfer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(124)))), ((int)(((byte)(58)))), ((int)(((byte)(237)))));
+            this.btnTransfer.FlatAppearance.BorderSize = 0;
+            this.btnTransfer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnTransfer.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnTransfer.ForeColor = System.Drawing.Color.White;
+            this.btnTransfer.Location = new System.Drawing.Point(5, 9);
+            this.btnTransfer.Name = "btnTransfer";
+            this.btnTransfer.Size = new System.Drawing.Size(120, 36);
+            this.btnTransfer.TabIndex = 4;
+            this.btnTransfer.Text = "نقل إلى شعبة";
+            this.btnTransfer.UseVisualStyleBackColor = false;
+            this.btnTransfer.Click += new System.EventHandler(this.btnTransfer_Click);
+            //
             // lblRecordCount
-            // 
+            //
             this.lblRecordCount.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.lblRecordCount.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.lblRecordCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
@@ -384,9 +430,9 @@ namespace SchoolSystem.UI.Students
             this.lblRecordCount.TabIndex = 1;
             this.lblRecordCount.Text = "عدد الطلاب: 0";
             this.lblRecordCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
+            //
             // groupBoxUnassigned
-            // 
+            //
             this.groupBoxUnassigned.BackColor = System.Drawing.Color.White;
             this.groupBoxUnassigned.Controls.Add(this.tableLayoutUnassigned);
             this.groupBoxUnassigned.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -400,9 +446,9 @@ namespace SchoolSystem.UI.Students
             this.groupBoxUnassigned.TabIndex = 0;
             this.groupBoxUnassigned.TabStop = false;
             this.groupBoxUnassigned.Text = "الطلاب غير الموزعين";
-            // 
+            //
             // tableLayoutUnassigned
-            // 
+            //
             this.tableLayoutUnassigned.ColumnCount = 1;
             this.tableLayoutUnassigned.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutUnassigned.Controls.Add(this.lblUnassigned, 0, 0);
@@ -419,9 +465,9 @@ namespace SchoolSystem.UI.Students
             this.tableLayoutUnassigned.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 58F));
             this.tableLayoutUnassigned.Size = new System.Drawing.Size(519, 463);
             this.tableLayoutUnassigned.TabIndex = 0;
-            // 
+            //
             // lblUnassigned
-            // 
+            //
             this.lblUnassigned.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblUnassigned.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.lblUnassigned.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(65)))), ((int)(((byte)(81)))));
@@ -431,9 +477,9 @@ namespace SchoolSystem.UI.Students
             this.lblUnassigned.TabIndex = 0;
             this.lblUnassigned.Text = "الطلاب غير الموزعين: 0";
             this.lblUnassigned.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
+            //
             // panelSearch
-            // 
+            //
             this.panelSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
             this.panelSearch.Controls.Add(this.txtSearch);
             this.panelSearch.Controls.Add(this.lblSearch);
@@ -443,9 +489,9 @@ namespace SchoolSystem.UI.Students
             this.panelSearch.Padding = new System.Windows.Forms.Padding(8);
             this.panelSearch.Size = new System.Drawing.Size(513, 42);
             this.panelSearch.TabIndex = 1;
-            // 
+            //
             // txtSearch
-            // 
+            //
             this.txtSearch.BackColor = System.Drawing.Color.White;
             this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSearch.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -455,9 +501,9 @@ namespace SchoolSystem.UI.Students
             this.txtSearch.Size = new System.Drawing.Size(387, 28);
             this.txtSearch.TabIndex = 1;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
-            // 
+            //
             // lblSearch
-            // 
+            //
             this.lblSearch.Dock = System.Windows.Forms.DockStyle.Right;
             this.lblSearch.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.lblSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
@@ -467,9 +513,9 @@ namespace SchoolSystem.UI.Students
             this.lblSearch.TabIndex = 0;
             this.lblSearch.Text = "بحث طالب:";
             this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
+            //
             // listBoxUnassigned
-            // 
+            //
             this.listBoxUnassigned.BackColor = System.Drawing.Color.White;
             this.listBoxUnassigned.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBoxUnassigned.CheckOnClick = true;
@@ -480,9 +526,9 @@ namespace SchoolSystem.UI.Students
             this.listBoxUnassigned.Name = "listBoxUnassigned";
             this.listBoxUnassigned.Size = new System.Drawing.Size(513, 319);
             this.listBoxUnassigned.TabIndex = 2;
-            // 
+            //
             // panelRightButtons
-            // 
+            //
             this.panelRightButtons.BackColor = System.Drawing.Color.White;
             this.panelRightButtons.Controls.Add(this.btnSelectAll);
             this.panelRightButtons.Controls.Add(this.btnAssign);
@@ -494,9 +540,9 @@ namespace SchoolSystem.UI.Students
             this.panelRightButtons.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.panelRightButtons.Size = new System.Drawing.Size(513, 52);
             this.panelRightButtons.TabIndex = 3;
-            // 
+            //
             // btnSelectAll
-            // 
+            //
             this.btnSelectAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
             this.btnSelectAll.FlatAppearance.BorderSize = 0;
             this.btnSelectAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -510,9 +556,9 @@ namespace SchoolSystem.UI.Students
             this.btnSelectAll.Text = "تحديد الكل";
             this.btnSelectAll.UseVisualStyleBackColor = false;
             this.btnSelectAll.Click += new System.EventHandler(this.btnSelectAll_Click);
-            // 
+            //
             // btnAssign
-            // 
+            //
             this.btnAssign.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
             this.btnAssign.FlatAppearance.BorderSize = 0;
             this.btnAssign.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -526,9 +572,9 @@ namespace SchoolSystem.UI.Students
             this.btnAssign.Text = "توزيع الطلاب";
             this.btnAssign.UseVisualStyleBackColor = false;
             this.btnAssign.Click += new System.EventHandler(this.btnAssign_Click);
-            // 
+            //
             // panelBottom
-            // 
+            //
             this.panelBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
             this.panelBottom.Controls.Add(this.lblStatus);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -536,9 +582,9 @@ namespace SchoolSystem.UI.Students
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1090, 28);
             this.panelBottom.TabIndex = 2;
-            // 
+            //
             // lblStatus
-            // 
+            //
             this.lblStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblStatus.Font = new System.Drawing.Font("Tahoma", 9F);
             this.lblStatus.ForeColor = System.Drawing.Color.DimGray;
@@ -548,9 +594,9 @@ namespace SchoolSystem.UI.Students
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "جاهز";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // ClassAssignmentForm
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
@@ -621,6 +667,9 @@ namespace SchoolSystem.UI.Students
         private System.Windows.Forms.DataGridView dataGridViewAssigned;
         private System.Windows.Forms.Panel panelLeftButtons;
         private System.Windows.Forms.Button btnRemove;
+        private System.Windows.Forms.Button btnRemoveAll;
+        private System.Windows.Forms.ComboBox cmbTransferSection;
+        private System.Windows.Forms.Button btnTransfer;
         private System.Windows.Forms.Label lblRecordCount;
 
         private System.Windows.Forms.Panel panelBottom;

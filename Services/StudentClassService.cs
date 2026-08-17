@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
@@ -84,6 +85,53 @@ namespace SchoolSystem.Services
                     "تم إلغاء توزيع الطالب من السجل رقم " + studentClassId);
             }
             return removed;
+        }
+
+        public int RemoveAssignments(IList<int> studentClassIds)
+        {
+            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
+            if (studentClassIds == null || studentClassIds.Count == 0)
+                throw new ArgumentException("حدد طالباً موزعاً واحداً على الأقل.");
+
+            int removed = repository.RemoveAssignments(studentClassIds);
+            if (removed > 0)
+            {
+                auditLogService.Record("إلغاء توزيع جماعي", "StudentClass", string.Join(",", studentClassIds),
+                    "تم إلغاء توزيع " + removed + " سجل من الطلاب");
+            }
+            return removed;
+        }
+
+        public bool TransferAssignment(int studentClassId, int targetClassId, string targetSection, string academicYear)
+        {
+            CurrentUser.DemandPermission(PermissionKeys.ClassAssignmentManage, "ليس لديك صلاحية توزيع الطلاب.");
+            if (studentClassId <= 0)
+                throw new ArgumentException("حدد طالباً موزعاً من الجدول.");
+            if (targetClassId <= 0)
+                throw new ArgumentException("يجب اختيار الصف الهدف.");
+            if (string.IsNullOrWhiteSpace(targetSection))
+                throw new ArgumentException("يجب اختيار الشعبة الهدف.");
+            ValidateAcademicYear(academicYear);
+            if (!repository.ClassExists(targetClassId))
+                throw new ArgumentException("الصف الهدف غير موجود أو غير نشط.");
+
+            bool transferred = repository.TransferAssignment(studentClassId, targetClassId, targetSection.Trim(), academicYear.Trim());
+            if (transferred)
+            {
+                auditLogService.Record("نقل طالب بين الشعب", "StudentClass", studentClassId.ToString(),
+                    "تم نقل سجل التوزيع إلى الصف " + targetClassId + " والشعبة " + targetSection.Trim());
+            }
+            return transferred;
+        }
+
+        public DataTable GetSectionStatistics(int classId, string academicYear)
+        {
+            CurrentUser.DemandAny("ليس لديك صلاحية قراءة إحصائيات التوزيع.",
+                PermissionKeys.ClassAssignmentManage, PermissionKeys.ReportsView);
+            if (classId <= 0)
+                throw new ArgumentException("يجب اختيار الصف.");
+            ValidateAcademicYear(academicYear);
+            return repository.GetSectionStatistics(classId, academicYear.Trim());
         }
 
         private void ValidateAssignment(StudentClass assignment)
