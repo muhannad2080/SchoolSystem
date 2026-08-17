@@ -22,12 +22,14 @@ namespace SchoolSystem.UI
         private int selectedRoomId = 0;
         private ComboBox cmbClassName;
         private ComboBox cmbRoomName;
+        private ComboBox cmbStageName;
         private Button btnClassAdd;
 
         public ClassesForm()
         {
             InitializeComponent();
             ReplaceNameTextBoxesWithDropdowns();
+            ReplaceStageTextBoxWithDropdown();
             AddClassCreateButton();
             txtClassID.ReadOnly = true;
             txtClassCode.ReadOnly = true;
@@ -54,7 +56,7 @@ namespace SchoolSystem.UI
             UIHelper.StyleButton(btnRoomRefresh, UIHelper.NeutralColor);
             UIHelper.StyleTextBox(txtClassCode);
             UIHelper.StyleComboBox(cmbClassName);
-            UIHelper.StyleTextBox(txtStageName);
+            UIHelper.StyleComboBox(cmbStageName);
             UIHelper.StyleTextBox(txtClassNotes);
             UIHelper.StyleTextBox(txtClassSearch);
             UIHelper.StyleTextBox(txtRoomCode);
@@ -100,6 +102,13 @@ namespace SchoolSystem.UI
             tableRoomFields.Controls.Add(cmbRoomName, 1, 1);
         }
 
+        private void ReplaceStageTextBoxWithDropdown()
+        {
+            cmbStageName = CreateNameDropdown("cmbStageName");
+            tableClassFields.Controls.Remove(txtStageName);
+            tableClassFields.Controls.Add(cmbStageName, 1, 2);
+        }
+
         private ComboBox CreateNameDropdown(string name)
         {
             return new ComboBox
@@ -121,9 +130,16 @@ namespace SchoolSystem.UI
         private void LoadNameDropdowns()
         {
             var classNames = new List<string> { "الأول الإعدادي", "الثاني الإعدادي", "الثالث الإعدادي", "الأول الثانوي", "الثاني الثانوي", "الثالث الثانوي" };
-            if (classesTable != null && classesTable.Columns.Contains("ClassName"))
-                foreach (DataRow row in classesTable.Rows) AddUnique(classNames, row["ClassName"] == DBNull.Value ? "" : row["ClassName"].ToString());
+            var stageNames = new List<string> { "التعليم الأساسي", "المرحلة الإعدادية", "المرحلة الثانوية" };
+            if (classesTable != null)
+            {
+                if (classesTable.Columns.Contains("ClassName"))
+                    foreach (DataRow row in classesTable.Rows) AddUnique(classNames, row["ClassName"] == DBNull.Value ? "" : row["ClassName"].ToString());
+                if (classesTable.Columns.Contains("StageName"))
+                    foreach (DataRow row in classesTable.Rows) AddUnique(stageNames, row["StageName"] == DBNull.Value ? "" : row["StageName"].ToString());
+            }
             FillDropdown(cmbClassName, classNames);
+            FillDropdown(cmbStageName, stageNames);
 
             var roomNames = new List<string> { "قاعة دراسية", "المختبر العلمي", "معمل الحاسوب", "قاعة الأنشطة", "المكتبة", "قاعة الاجتماعات" };
             if (roomsTable != null && roomsTable.Columns.Contains("RoomName"))
@@ -248,7 +264,7 @@ namespace SchoolSystem.UI
             item.ClassID = selectedClassId;
             item.ClassCode = selectedClassId > 0 ? txtClassCode.Text.Trim() : "";
             item.ClassName = cmbClassName.Text.Trim();
-            item.StageName = txtStageName.Text.Trim();
+            item.StageName = cmbStageName.Text.Trim();
             item.GradeOrder = Convert.ToInt32(nudGradeOrder.Value);
             item.IsActive = chkClassActive.Checked;
             item.Notes = txtClassNotes.Text.Trim();
@@ -264,10 +280,10 @@ namespace SchoolSystem.UI
                 cmbClassName.Focus();
                 return false;
             }
-            if (string.IsNullOrWhiteSpace(txtStageName.Text))
+            if (cmbStageName.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbStageName.Text))
             {
                 ShowWarning("اسم المرحلة مطلوب.");
-                txtStageName.Focus();
+                cmbStageName.Focus();
                 return false;
             }
             if (nudGradeOrder.Value <= 0)
@@ -423,9 +439,7 @@ namespace SchoolSystem.UI
 
             SetDropdownValue(cmbClassName, row.Table.Columns.Contains("ClassName") && row["ClassName"] != DBNull.Value ? row["ClassName"].ToString() : "");
 
-            txtStageName.Text = row.Table.Columns.Contains("StageName") && row["StageName"] != DBNull.Value
-                ? row["StageName"].ToString()
-                : "";
+            SetDropdownValue(cmbStageName, row.Table.Columns.Contains("StageName") && row["StageName"] != DBNull.Value ? row["StageName"].ToString() : "");
 
             if (row.Table.Columns.Contains("GradeOrder") && row["GradeOrder"] != DBNull.Value)
                 nudGradeOrder.Value = Convert.ToDecimal(row["GradeOrder"]);
@@ -449,7 +463,7 @@ namespace SchoolSystem.UI
             txtClassID.Clear();
             txtClassCode.Text = "تلقائي";
             if (cmbClassName.Items.Count > 0) cmbClassName.SelectedIndex = 0;
-            txtStageName.Clear();
+            if (cmbStageName.Items.Count > 0) cmbStageName.SelectedIndex = 0;
 
             nudGradeOrder.Value = 1;
             chkClassActive.Checked = true;

@@ -69,13 +69,21 @@ namespace SchoolSystem.UI
             };
 
             btnSelectAllPermissions.AccessibleName = "منح المستخدم كل الصلاحيات";
-            btnSelectAllPermissions.Click += delegate { CheckAllPermissions(); };
+            btnSelectAllPermissions.Enabled = true;
+            btnSelectAllPermissions.Visible = true;
+            btnSelectAllPermissions.Click += btnSelectAllPermissions_Click;
             btnClearPermissions.AccessibleName = "إلغاء جميع صلاحيات المستخدم";
-            btnClearPermissions.Click += delegate { ClearPermissionChecks(); };
+            btnClearPermissions.Enabled = true;
+            btnClearPermissions.Visible = true;
+            btnClearPermissions.Click += btnClearPermissions_Click;
             permissionActions.Controls.Add(btnSelectAllPermissions);
             permissionActions.Controls.Add(btnClearPermissions);
 
             groupBoxPermissions.Controls.Add(permissionActions);
+            permissionActions.Visible = true;
+            permissionActions.Enabled = true;
+            permissionActions.BringToFront();
+            checkedListPermissions.SendToBack();
         }
 
         private void ApplyCustomStyles()
@@ -281,14 +289,30 @@ namespace SchoolSystem.UI
                 CheckPermission(permission.Trim());
         }
 
+        private void btnClearPermissions_Click(object sender, EventArgs e)
+        {
+            ClearPermissionChecks();
+            UIHelper.ShowInformation("تم إلغاء تحديد جميع الصلاحيات. اضغط تعديل أو إضافة لحفظ التغيير.");
+        }
+
+        private void btnSelectAllPermissions_Click(object sender, EventArgs e)
+        {
+            CheckAllPermissions();
+            UIHelper.ShowInformation("تم تحديد جميع الصلاحيات. اضغط تعديل أو إضافة لحفظ التغيير.");
+        }
+
         private void ClearPermissionChecks()
         {
+            if (checkedListPermissions == null)
+                return;
             for (int i = 0; i < checkedListPermissions.Items.Count; i++)
                 checkedListPermissions.SetItemChecked(i, false);
         }
 
         private void CheckAllPermissions()
         {
+            if (checkedListPermissions == null)
+                return;
             for (int i = 0; i < checkedListPermissions.Items.Count; i++)
                 checkedListPermissions.SetItemChecked(i, true);
         }
