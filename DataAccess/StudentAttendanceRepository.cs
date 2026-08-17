@@ -15,7 +15,7 @@ namespace SchoolSystem.DataAccess
                     SELECT SectionName AS Section
                     FROM SchoolSections
                     WHERE ClassID = @ClassID
-                      AND AcademicYear = @AcademicYear
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                       AND IsActive = 1
                     ORDER BY SectionName";
 
@@ -54,7 +54,7 @@ namespace SchoolSystem.DataAccess
                         AND a.AttendanceDate = @AttendanceDate
                     WHERE s.ClassID = @ClassID
                       AND ISNULL(s.Section, N'') = @Section
-                      AND ISNULL(s.AcademicYear, N'') = @AcademicYear
+                      AND REPLACE(ISNULL(s.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                       AND ISNULL(s.Status, N'نشط') = N'نشط'
                     ORDER BY s.FullName";
 
@@ -62,7 +62,7 @@ namespace SchoolSystem.DataAccess
                 {
                     cmd.Parameters.AddWithValue("@ClassID", classId);
                     cmd.Parameters.AddWithValue("@Section", section);
-                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear);
+                    cmd.Parameters.AddWithValue("@AcademicYear", (academicYear ?? string.Empty).Trim().Replace('-', '/'));
                     cmd.Parameters.AddWithValue("@AttendanceDate", date.Date);
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))

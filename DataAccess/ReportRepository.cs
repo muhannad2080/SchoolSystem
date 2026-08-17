@@ -142,7 +142,7 @@ namespace SchoolSystem.DataAccess
                 WHERE 1 = 1";
 
             if (!string.IsNullOrWhiteSpace(request.AcademicYear))
-                query += " AND ISNULL(s.AcademicYear, '') = @AcademicYear";
+                query += " AND REPLACE(ISNULL(s.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
 
             if (request.ClassID.HasValue)
                 query += " AND s.ClassID = @ClassID";
@@ -220,7 +220,7 @@ namespace SchoolSystem.DataAccess
                 WHERE e.ApplicationDate BETWEEN @FromDate AND @ToDate";
 
             if (!string.IsNullOrWhiteSpace(request.AcademicYear))
-                query += " AND e.AcademicYear = @AcademicYear";
+                query += " AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
 
             if (request.ClassID.HasValue)
                 query += " AND e.ClassID = @ClassID";
@@ -262,7 +262,7 @@ namespace SchoolSystem.DataAccess
                 WHERE 1 = 1";
 
             if (!string.IsNullOrWhiteSpace(request.AcademicYear))
-                query += " AND sc.AcademicYear = @AcademicYear";
+                query += " AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
 
             if (request.ClassID.HasValue)
                 query += " AND sc.ClassID = @ClassID";
@@ -423,7 +423,7 @@ namespace SchoolSystem.DataAccess
                       AND f.DueDate <= @ToDate";
 
                 if (!string.IsNullOrWhiteSpace(request.AcademicYear))
-                    query += " AND f.AcademicYear = @AcademicYear";
+                    query += " AND REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
 
                 if (request.ClassID.HasValue)
                     query += " AND s.ClassID = @ClassID";
@@ -579,7 +579,7 @@ namespace SchoolSystem.DataAccess
                       AND sg.CreatedAt <= @ToDate";
 
                 if (!string.IsNullOrWhiteSpace(request.AcademicYear))
-                    query += " AND sg.AcademicYear = @AcademicYear";
+                    query += " AND REPLACE(ISNULL(sg.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
 
                 if (request.ClassID.HasValue)
                     query += " AND sg.ClassID = @ClassID";

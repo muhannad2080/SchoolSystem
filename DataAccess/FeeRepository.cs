@@ -266,7 +266,7 @@ namespace SchoolSystem.DataAccess
                         SELECT 1
                         FROM Fees WITH (UPDLOCK, HOLDLOCK)
                         WHERE StudentID = @StudentID
-                          AND AcademicYear = @AcademicYear
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                           AND FeeType = @FeeType
                           AND Notes = @Notes
                     )
@@ -274,7 +274,7 @@ namespace SchoolSystem.DataAccess
                         SELECT TOP 1 FeeID
                         FROM Fees
                         WHERE StudentID = @StudentID
-                          AND AcademicYear = @AcademicYear
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                           AND FeeType = @FeeType
                           AND Notes = @Notes
                         RETURN;
@@ -357,14 +357,14 @@ namespace SchoolSystem.DataAccess
                         fp.Notes
                     FROM FeePlans fp
                     WHERE fp.ClassID = @ClassID
-                      AND fp.AcademicYear = @AcademicYear
+                      AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                       AND NOT EXISTS
                       (
                           SELECT 1
                           FROM Fees f
                           WHERE f.StudentID = @StudentID
                             AND f.FeePlanID = fp.FeePlanID
-                            AND f.AcademicYear = @AcademicYear
+                            AND REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                       );
 
                     SELECT @@ROWCOUNT;";
@@ -372,7 +372,7 @@ namespace SchoolSystem.DataAccess
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@StudentID", studentId);
-                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear);
+                    cmd.Parameters.AddWithValue("@AcademicYear", (academicYear ?? string.Empty).Trim().Replace('-', '/'));
 
                     con.Open();
 

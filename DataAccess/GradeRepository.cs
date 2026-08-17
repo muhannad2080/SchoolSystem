@@ -134,7 +134,7 @@ namespace SchoolSystem.DataAccess
                         FROM Grades
                         WHERE StudentID = @StudentID
                           AND SubjectID = @SubjectID
-                          AND AcademicYear = @AcademicYear
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                           AND TermName = @TermName
                     )
                     BEGIN
@@ -153,7 +153,7 @@ namespace SchoolSystem.DataAccess
                             UpdatedAt = GETDATE()
                         WHERE StudentID = @StudentID
                           AND SubjectID = @SubjectID
-                          AND AcademicYear = @AcademicYear
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                           AND TermName = @TermName
                     END
                     ELSE

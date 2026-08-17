@@ -35,14 +35,14 @@ namespace SchoolSystem.DataAccess
                     SELECT SectionName AS Section
                     FROM SchoolSections
                     WHERE ClassID = @ClassID
-                      AND AcademicYear = @AcademicYear
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                       AND IsActive = 1
                     ORDER BY SectionName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = classId;
-                    cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (academicYear ?? string.Empty).Trim();
+                    cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (academicYear ?? string.Empty).Trim().Replace('-', '/');
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
@@ -280,7 +280,7 @@ namespace SchoolSystem.DataAccess
                 WHERE TimetableID <> @TimetableID
                   AND ClassID = @ClassID
                   AND Section = @Section
-                  AND AcademicYear = @AcademicYear
+                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                   AND TermName = @TermName
                   AND DayName = @DayName
                   AND IsActive = 1
@@ -297,7 +297,7 @@ namespace SchoolSystem.DataAccess
                 FROM SchoolTimetable
                 WHERE TimetableID <> @TimetableID
                   AND TeacherID = @TeacherID
-                  AND AcademicYear = @AcademicYear
+                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                   AND TermName = @TermName
                   AND DayName = @DayName
                   AND IsActive = 1
@@ -317,7 +317,7 @@ namespace SchoolSystem.DataAccess
                 FROM SchoolTimetable
                 WHERE TimetableID <> @TimetableID
                   AND RoomName = @RoomName
-                  AND AcademicYear = @AcademicYear
+                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                   AND TermName = @TermName
                   AND DayName = @DayName
                   AND IsActive = 1

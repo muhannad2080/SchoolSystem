@@ -62,7 +62,7 @@ namespace SchoolSystem.DataAccess
                     IF EXISTS
                     (
                         SELECT 1 FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
-                        WHERE AcademicYear = @AcademicYear
+                        WHERE REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                           AND ClassID = @ClassID
                           AND FeeType = @FeeType
                     )
@@ -113,7 +113,7 @@ namespace SchoolSystem.DataAccess
                     IF EXISTS
                     (
                         SELECT 1 FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
-                        WHERE AcademicYear = @AcademicYear
+                        WHERE REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                           AND ClassID = @ClassID
                           AND FeeType = @FeeType
                           AND FeePlanID <> @FeePlanID
