@@ -111,18 +111,9 @@ namespace SchoolSystem.Helpers
                         table.Padding = new Padding(Space8);
                 }
 
-                FlowLayoutPanel flow = child as FlowLayoutPanel;
-                if (flow != null)
-                {
-                    flow.AutoScroll = true;
-                    flow.WrapContents = false;
-                    flow.Padding = new Padding(Space8);
-                    flow.FlowDirection = FlowDirection.RightToLeft;
-                }
-
-                Panel panel = child as Panel;
-                if (panel != null && panel.Padding == Padding.Empty)
-                    panel.Padding = new Padding(Space8);
+                // لا نفرض Padding أو FlowDirection أو WrapContents على حاويات المصمم.
+                // بعض النماذج تستخدم FlowLayoutPanel كأشرطة أزرار، وأي تغيير عام هنا
+                // قد يقص الأزرار أو يزيحها عند اختلاف حجم الشاشة.
 
                 Button button = child as Button;
                 if (button != null)
@@ -151,11 +142,11 @@ namespace SchoolSystem.Helpers
                 form.AutoSizeMode = AutoSizeMode.GrowOnly;
                 form.RightToLeft = RightToLeft.Yes;
                 form.RightToLeftLayout = true;
-                form.AutoScroll = true;
+                // AutoScroll يظل تحت تحكم Designer؛ فرضه على كل Form كان يضيف
+                // أشرطة تمرير ويغيّر المساحة المتاحة للعناصر المثبتة.
             }
             else if (root is UserControl userControl)
             {
-                userControl.AutoScroll = true;
                 userControl.RightToLeft = RightToLeft.Yes;
             }
 
@@ -174,7 +165,8 @@ namespace SchoolSystem.Helpers
                 if (child is DataGridView grid)
                 {
                     grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
-                    grid.ScrollBars = ScrollBars.Both;
+                    // لا نفرض ScrollBars؛ يحدد المصمم أو النموذج ما إذا كان يحتاج
+                    // تمريرًا أفقيًا أو عموديًا حسب عدد الأعمدة وحجم الشاشة.
                 }
 
                 ApplyResponsiveLayoutRecursive(child);
