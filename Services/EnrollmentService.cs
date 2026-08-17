@@ -12,8 +12,6 @@ namespace SchoolSystem.Services
         private readonly AuditLogService auditLogService = new AuditLogService();
         private readonly FeeService feeService = new FeeService();
         private readonly VoucherService voucherService = new VoucherService();
-        private readonly FeeService feeService = new FeeService();
-        private readonly VoucherService voucherService = new VoucherService();
 
         public DataTable GetAllEnrollments()
         {
@@ -86,46 +84,6 @@ namespace SchoolSystem.Services
                 auditLogService.Record("حذف", "Enrollment", enrollmentId.ToString(), "حذف طلب تسجيل.");
 
             return deleted;
-        }
-
-        private void EnsureFinancePermissionIfRequired(Enrollment enrollment)
-        {
-            if (enrollment == null || enrollment.RegistrationFee <= 0)
-                return;
-
-            if (!CurrentUser.HasPermission(PermissionKeys.FeesManage))
-                throw new UnauthorizedAccessException("يحتاج التسجيل برسوم إلى صلاحية إدارة الرسوم.");
-
-            if (enrollment.PaidAmount > 0 &&
-                !CurrentUser.HasPermission(PermissionKeys.VouchersManage))
-                throw new UnauthorizedAccessException("يحتاج تسجيل دفعة إلى صلاحية إدارة السندات.");
-        }
-
-        private void SynchronizeRegistrationFinance(Enrollment enrollment)
-        {
-            if (enrollment == null || enrollment.RegistrationFee <= 0)
-                return;
-
-            string marker = "EnrollmentID=" + enrollment.EnrollmentID;
-            int feeId = feeService.CreateRegistrationFeeIfMissing(
-                enrollment.StudentID,
-                enrollment.AcademicYear,
-                enrollment.RegistrationFee,
-                enrollment.PaidAmount,
-                enrollment.PaymentMethod,
-                enrollment.ApplicationDate,
-                marker);
-
-            if (feeId > 0 && enrollment.PaidAmount > 0)
-            {
-                voucherService.CreateReceiptVoucherForFeePayment(
-                    enrollment.PaidAmount,
-                    enrollment.ApplicationDate,
-                    "طالب رقم " + enrollment.StudentID,
-                    feeId,
-                    enrollment.PaymentMethod,
-                    "سند قبض تلقائي من التسجيل؛ " + marker);
-            }
         }
 
         private void EnsureFinancePermissionIfRequired(Enrollment enrollment)
