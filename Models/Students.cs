@@ -46,8 +46,10 @@ namespace SchoolSystem.Models
         // الصورة
         public byte[] Photo { get; set; }
 
-        // للعرض فقط داخل الجدول
+        // بيانات دراسية معكوسة للعرض فقط؛ إدارة التسجيل والتوزيع تبقى في Enrollment/StudentClass.
         public string CurrentClassName { get; set; }
+        public string CurrentSection { get; set; }
+        public string AcademicYear { get; set; }
 
         public DateTime CreatedAt { get; set; }
 

@@ -32,6 +32,7 @@ namespace SchoolSystem.UI
             _currentStudents = new List<Student>();
             cmbFilterClass.SelectedIndexChanged += cmbFilterClass_SelectedIndexChanged;
             cmbFilterStatus.SelectedIndexChanged += cmbFilterStatus_SelectedIndexChanged;
+            dgvStudents.CellDoubleClick += dgvStudents_CellDoubleClick;
             _studentCardPrintDocument.PrintPage += StudentCardPrintDocument_PrintPage;
             ConfigureStudentProfileButton();
         }
@@ -431,7 +432,9 @@ namespace SchoolSystem.UI
                     (s.FullName != null && s.FullName.Contains(search)) ||
                     (s.StudentNumber != null && s.StudentNumber.Contains(search)) ||
                     (s.NationalId != null && s.NationalId.Contains(search)) ||
-                    (s.StudentPhone != null && s.StudentPhone.Contains(search))
+                    (s.StudentPhone != null && s.StudentPhone.Contains(search)) ||
+                    (s.GuardianName != null && s.GuardianName.Contains(search)) ||
+                    (s.GuardianPhone != null && s.GuardianPhone.Contains(search))
                 );
             }
 
@@ -452,7 +455,10 @@ namespace SchoolSystem.UI
                 s.FullName,
                 s.Gender,
                 s.CurrentClassName,
+                s.CurrentSection,
+                s.AcademicYear,
                 s.StudentPhone,
+                s.GuardianName,
                 s.Status
             }).ToList();
 
@@ -462,7 +468,10 @@ namespace SchoolSystem.UI
             dgvStudents.Columns["FullName"].HeaderText = "الاسم";
             dgvStudents.Columns["Gender"].HeaderText = "الجنس";
             dgvStudents.Columns["CurrentClassName"].HeaderText = "الصف";
+            dgvStudents.Columns["CurrentSection"].HeaderText = "الشعبة";
+            dgvStudents.Columns["AcademicYear"].HeaderText = "العام الدراسي";
             dgvStudents.Columns["StudentPhone"].HeaderText = "الهاتف";
+            dgvStudents.Columns["GuardianName"].HeaderText = "ولي الأمر";
             dgvStudents.Columns["Status"].HeaderText = "الحالة";
 
             lblCount.Text = $"عدد الطلاب: {students.Count}";
@@ -621,6 +630,15 @@ namespace SchoolSystem.UI
         {
             ClearForm();
             txtFullName.Focus();
+        }
+
+        private void dgvStudents_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            dgvStudents_CellClick(sender, e);
+            btnStudentProfile_Click(sender, EventArgs.Empty);
         }
 
         private void dgvStudents_CellClick(object sender, DataGridViewCellEventArgs e)

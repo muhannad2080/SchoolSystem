@@ -35,8 +35,11 @@ SELECT
     s.Photo,
     s.CreatedAt,
     s.UpdatedAt,
-    CAST(N'' AS NVARCHAR(100)) AS CurrentClassName
+    ISNULL(c.ClassName, N'') AS CurrentClassName,
+    ISNULL(s.Section, N'') AS CurrentSection,
+    ISNULL(s.AcademicYear, N'') AS AcademicYear
 FROM Students s
+LEFT JOIN Classes c ON c.ClassID = s.ClassID
 ORDER BY s.StudentId DESC;";
 
             using (SqlConnection conn = GetConnection())
@@ -87,8 +90,11 @@ SELECT
     s.Photo,
     s.CreatedAt,
     s.UpdatedAt,
-    CAST(N'' AS NVARCHAR(100)) AS CurrentClassName
+    ISNULL(c.ClassName, N'') AS CurrentClassName,
+    ISNULL(s.Section, N'') AS CurrentSection,
+    ISNULL(s.AcademicYear, N'') AS AcademicYear
 FROM Students s
+LEFT JOIN Classes c ON c.ClassID = s.ClassID
 WHERE s.StudentId = @StudentId;";
 
             using (SqlConnection conn = GetConnection())
@@ -135,8 +141,11 @@ SELECT
     s.Photo,
     s.CreatedAt,
     s.UpdatedAt,
-    CAST(N'' AS NVARCHAR(100)) AS CurrentClassName
+    ISNULL(c.ClassName, N'') AS CurrentClassName,
+    ISNULL(s.Section, N'') AS CurrentSection,
+    ISNULL(s.AcademicYear, N'') AS AcademicYear
 FROM Students s
+LEFT JOIN Classes c ON c.ClassID = s.ClassID
 WHERE 
     ISNULL(s.FullName, N'') LIKE @Keyword
     OR ISNULL(s.StudentNumber, N'') LIKE @Keyword
@@ -416,6 +425,8 @@ WHERE ISNUMERIC(StudentNumber) = 1;";
 
             student.Photo = GetBytes(reader, "Photo");
             student.CurrentClassName = GetString(reader, "CurrentClassName");
+            student.CurrentSection = GetString(reader, "CurrentSection");
+            student.AcademicYear = GetString(reader, "AcademicYear");
             student.CreatedAt = GetDate(reader, "CreatedAt");
             student.UpdatedAt = GetNullableDate(reader, "UpdatedAt");
 
