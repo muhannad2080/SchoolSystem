@@ -705,8 +705,11 @@ namespace SchoolSystem.UI
                     }
                 }
 
+                // الشعبة اختيارية في مرحلة القبول؛ يمكن توزيع الطالب لاحقًا من واجهة التوزيع.
                 if (validSections.Rows.Count == 0)
-                    return;
+                {
+                    validSections.Rows.Add(string.Empty);
+                }
 
                 txtSection.DataSource = validSections;
                 txtSection.DisplayMember = "Section";
@@ -865,12 +868,6 @@ namespace SchoolSystem.UI
                 !int.TryParse(cmbClassID.SelectedValue.ToString(), out int classId) || classId <= 0)
             {
                 errorProvider1.SetError(cmbClassID, "يجب تحديد فصل صالح.");
-                isValid = false;
-            }
-
-            if (txtSection.SelectedIndex < 0 || string.IsNullOrWhiteSpace(txtSection.Text))
-            {
-                errorProvider1.SetError(txtSection, "يجب اختيار شعبة مرتبطة بالصف والعام الدراسي.");
                 isValid = false;
             }
 

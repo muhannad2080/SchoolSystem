@@ -23,7 +23,7 @@ namespace SchoolSystem.Services
 
             string normalizedYear = (academicYear ?? string.Empty).Trim().Replace('-', '/');
             string normalizedSection = (section ?? string.Empty).Trim();
-            if (classId <= 0 || string.IsNullOrWhiteSpace(normalizedSection))
+            if (classId <= 0)
                 return string.Empty;
 
             ValidateAcademicYear(normalizedYear);
@@ -94,9 +94,6 @@ namespace SchoolSystem.Services
             if (enrollment.ClassID <= 0)
                 throw new ArgumentException("يجب اختيار الصف المطلوب.");
 
-            if (string.IsNullOrWhiteSpace(enrollment.Section))
-                throw new ArgumentException("يجب اختيار الشعبة.");
-
             if (string.IsNullOrWhiteSpace(enrollment.AcademicYear))
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
@@ -123,6 +120,9 @@ namespace SchoolSystem.Services
             if (enrollment == null) return;
             enrollment.AcademicYear = (enrollment.AcademicYear ?? string.Empty).Trim().Replace('-', '/');
             enrollment.Section = (enrollment.Section ?? string.Empty).Trim();
+            // Section nullable في قاعدة البيانات؛ إبقاء القيمة فارغة يسمح بالتسجيل قبل توزيع الطالب على شعبة.
+            if (enrollment.Section == "بدون شعبة" || enrollment.Section == "(بدون شعبة)")
+                enrollment.Section = string.Empty;
         }
 
         private void ValidateAcademicYear(string academicYear)
