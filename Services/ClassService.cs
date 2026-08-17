@@ -25,7 +25,7 @@ namespace SchoolSystem.Services
 
         public int AddClass(SchoolClass item)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة الفصول.");
+            CurrentUser.DemandAction("Classes", "Add", "ليس لديك صلاحية إضافة الفصول.");
             ValidateClass(item, false);
 
             int classId = repository.AddClass(item);
@@ -39,7 +39,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateClass(SchoolClass item)
         {
-            CurrentUser.DemandPermission(PermissionKeys.ClassesManage, "ليس لديك صلاحية إدارة الفصول.");
+            CurrentUser.DemandAction("Classes", "Edit", "ليس لديك صلاحية تعديل الفصول.");
             ValidateClass(item, true);
 
             bool updated = repository.UpdateClass(item);
@@ -72,6 +72,7 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandAny(
                 "ليس لديك صلاحية عرض بيانات الفصول.",
+                "Classes.View",
                 PermissionKeys.ClassesManage,
                 PermissionKeys.ClassAssignmentManage,
                 PermissionKeys.EnrollmentManage,
