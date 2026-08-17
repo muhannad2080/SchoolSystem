@@ -201,20 +201,21 @@ namespace SchoolSystem.DataAccess
                     e.EnrollmentID AS [رقم الطلب],
                     e.ApplicationDate AS [تاريخ التقديم],
                     e.ApplicationType AS [نوع التسجيل],
-                    e.FullName AS [اسم الطالب],
-                    e.Gender AS [الجنس],
+                    s.FullName AS [اسم الطالب],
+                    s.Gender AS [الجنس],
                     c.ClassName AS [الصف],
                     e.Section AS [الشعبة],
                     e.AcademicYear AS [العام الدراسي],
                     e.Status AS [حالة الطلب],
-                    e.GuardianName AS [ولي الأمر],
-                    e.GuardianPhone AS [هاتف الولي],
+                    s.GuardianName AS [ولي الأمر],
+                    s.GuardianPhone AS [هاتف الولي],
                     e.RegistrationFee AS [رسوم التسجيل],
                     e.PaidAmount AS [المدفوع],
                     (ISNULL(e.RegistrationFee, 0) - ISNULL(e.PaidAmount, 0)) AS [المتبقي],
                     e.PaymentMethod AS [طريقة الدفع],
                     e.ReceiptNo AS [رقم السند]
                 FROM Enrollments e
+                LEFT JOIN Students s ON e.StudentID = s.StudentID
                 LEFT JOIN Classes c ON e.ClassID = c.ClassID
                 WHERE e.ApplicationDate BETWEEN @FromDate AND @ToDate";
 
@@ -231,7 +232,7 @@ namespace SchoolSystem.DataAccess
                 query += " AND e.Status = @Status";
 
             if (!string.IsNullOrWhiteSpace(request.SearchText))
-                query += " AND (e.FullName LIKE @Search OR e.GuardianPhone LIKE @Search OR e.NationalId LIKE @Search)";
+                query += " AND (ISNULL(s.FullName, '') LIKE @Search OR ISNULL(s.GuardianPhone, '') LIKE @Search OR ISNULL(s.NationalId, '') LIKE @Search)";
 
             query += " ORDER BY e.EnrollmentID DESC";
 
@@ -636,12 +637,15 @@ namespace SchoolSystem.DataAccess
 
             if (TableExists("Grades"))
             {
-                const string query = @"
+                string query = @"
                     SELECT
                         g.GradeID AS [المعرف],
                         g.StudentID AS [رقم الطالب],
+                        s.FullName AS [اسم الطالب],
                         g.SubjectID AS [رقم المادة],
+                        sub.SubjectName AS [المادة],
                         g.ClassID AS [رقم الصف],
+                        c.ClassName AS [الصف],
                         g.Section AS [الشعبة],
                         g.AcademicYear AS [العام الدراسي],
                         g.TermName AS [الفصل الدراسي],
@@ -655,9 +659,31 @@ namespace SchoolSystem.DataAccess
                         g.Notes AS [ملاحظات],
                         g.CreatedAt AS [تاريخ الإنشاء]
                     FROM Grades g
+                    INNER JOIN Students s ON g.StudentID = s.StudentID
+                        AND ISNULL(s.Status, N'نشط') = N'نشط'
+                    LEFT JOIN Classes c ON g.ClassID = c.ClassID
+                        AND ISNULL(c.IsActive, 1) = 1
+                    LEFT JOIN Subjects sub ON g.SubjectID = sub.SubjectID
+                        AND ISNULL(sub.IsActive, 1) = 1
                     WHERE g.CreatedAt >= @FromDate
-                      AND g.CreatedAt <= @ToDate
-                    ORDER BY g.CreatedAt DESC, g.GradeID DESC";
+                      AND g.CreatedAt <= @ToDate";
+
+                if (!string.IsNullOrWhiteSpace(request.AcademicYear))
+                    query += " AND REPLACE(ISNULL(g.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
+
+                if (request.ClassID.HasValue)
+                    query += " AND g.ClassID = @ClassID";
+
+                if (!string.IsNullOrWhiteSpace(request.Section))
+                    query += " AND LTRIM(RTRIM(ISNULL(g.Section, N''))) = LTRIM(RTRIM(@Section))";
+
+                if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
+                    query += " AND ISNULL(g.ResultStatus, N'') = @Status";
+
+                if (!string.IsNullOrWhiteSpace(request.SearchText))
+                    query += " AND (ISNULL(s.FullName, N'') LIKE @Search OR ISNULL(sub.SubjectName, N'') LIKE @Search OR ISNULL(g.TermName, N'') LIKE @Search)";
+
+                query += " ORDER BY g.CreatedAt DESC, g.GradeID DESC";
                 return ExecuteQuery(query, request);
             }
 

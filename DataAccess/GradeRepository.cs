@@ -77,11 +77,13 @@ namespace SchoolSystem.DataAccess
                     LEFT JOIN Grades g
                         ON g.StudentID = s.StudentID
                         AND g.SubjectID = @SubjectID
-                        AND g.AcademicYear = @AcademicYear
+                        AND g.ClassID = @ClassID
+                        AND LTRIM(RTRIM(ISNULL(g.Section, N''))) = LTRIM(RTRIM(@Section))
+                        AND REPLACE(ISNULL(g.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                         AND g.TermName = @TermName
                     WHERE s.ClassID = @ClassID
-                      AND ISNULL(s.Section, N'') = @Section
-                      AND ISNULL(s.AcademicYear, N'') = @AcademicYear
+                      AND LTRIM(RTRIM(ISNULL(s.Section, N''))) = LTRIM(RTRIM(@Section))
+                      AND REPLACE(ISNULL(s.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                       AND ISNULL(s.Status, N'نشط') = N'نشط'
                     ORDER BY s.FullName";
 
