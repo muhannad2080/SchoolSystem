@@ -16,9 +16,9 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection connection = DbConnection.GetConnection())
             using (SqlCommand command = new SqlCommand(@"
                 INSERT INTO AuditLogs
-                (UserID, UserName, ActionName, EntityName, EntityID, Details, CreatedAt)
+                (UserID, UserName, Module, MachineName, IpAddress, ActionName, EntityName, EntityID, Details, CreatedAt)
                 VALUES
-                (@UserID, @UserName, @ActionName, @EntityName, @EntityID, @Details, GETDATE());", connection))
+                (@UserID, @UserName, @Module, @MachineName, @IpAddress, @ActionName, @EntityName, @EntityID, @Details, GETDATE());", connection))
             {
                 AddParameters(command, item);
                 connection.Open();
@@ -41,6 +41,9 @@ namespace SchoolSystem.DataAccess
                     AuditLogID,
                     CreatedAt,
                     ISNULL(UserName, N'نظام') AS UserName,
+                    Module,
+                    MachineName,
+                    IpAddress,
                     ActionName,
                     EntityName,
                     EntityID,
@@ -113,8 +116,11 @@ namespace SchoolSystem.DataAccess
                 command.Parameters.Add("@UserID", SqlDbType.Int).Value = item.UserId.Value;
             else
                 command.Parameters.Add("@UserID", SqlDbType.Int).Value = DBNull.Value;
-            command.Parameters.Add("@UserName", SqlDbType.NVarChar, 150).Value = (object)(item.UserName ?? string.Empty);
-            command.Parameters.Add("@ActionName", SqlDbType.NVarChar, 100).Value = (object)(item.ActionName ?? string.Empty);
+                command.Parameters.Add("@UserName", SqlDbType.NVarChar, 150).Value = (object)(item.UserName ?? string.Empty);
+                command.Parameters.Add("@Module", SqlDbType.NVarChar, 100).Value = (object)(item.Module ?? string.Empty);
+                command.Parameters.Add("@MachineName", SqlDbType.NVarChar, 150).Value = (object)(item.MachineName ?? string.Empty);
+                command.Parameters.Add("@IpAddress", SqlDbType.NVarChar, 64).Value = (object)(item.IpAddress ?? string.Empty);
+                command.Parameters.Add("@ActionName", SqlDbType.NVarChar, 100).Value = (object)(item.ActionName ?? string.Empty);
             command.Parameters.Add("@EntityName", SqlDbType.NVarChar, 100).Value = (object)(item.EntityName ?? string.Empty);
             command.Parameters.Add("@EntityID", SqlDbType.NVarChar, 100).Value = (object)(item.EntityId ?? string.Empty);
             command.Parameters.Add("@Details", SqlDbType.NVarChar, -1).Value = (object)(item.Details ?? string.Empty);
@@ -139,6 +145,9 @@ namespace SchoolSystem.DataAccess
                         AuditLogID BIGINT IDENTITY(1,1) NOT NULL CONSTRAINT PK_AuditLogs PRIMARY KEY,
                         UserID INT NULL,
                         UserName NVARCHAR(150) NULL,
+                        Module NVARCHAR(100) NULL,
+                        MachineName NVARCHAR(150) NULL,
+                        IpAddress NVARCHAR(64) NULL,
                         ActionName NVARCHAR(100) NOT NULL,
                         EntityName NVARCHAR(100) NULL,
                         EntityID NVARCHAR(100) NULL,
@@ -147,7 +156,13 @@ namespace SchoolSystem.DataAccess
                     );
                     CREATE INDEX IX_AuditLogs_CreatedAt ON dbo.AuditLogs(CreatedAt DESC);
                     CREATE INDEX IX_AuditLogs_Entity ON dbo.AuditLogs(EntityName, EntityID);
-                END;", connection))
+                END;
+                IF COL_LENGTH(N'dbo.AuditLogs', N'Module') IS NULL ALTER TABLE dbo.AuditLogs ADD Module NVARCHAR(100) NULL;
+                IF COL_LENGTH(N'dbo.AuditLogs', N'MachineName') IS NULL ALTER TABLE dbo.AuditLogs ADD MachineName NVARCHAR(150) NULL;
+                IF COL_LENGTH(N'dbo.AuditLogs', N'IpAddress') IS NULL ALTER TABLE dbo.AuditLogs ADD IpAddress NVARCHAR(64) NULL;
+                IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_AuditLogs_Module' AND object_id = OBJECT_ID(N'dbo.AuditLogs'))
+                    CREATE INDEX IX_AuditLogs_Module ON dbo.AuditLogs(Module, CreatedAt DESC);
+                ", connection))
                 {
                     connection.Open();
                     command.ExecuteNonQuery();

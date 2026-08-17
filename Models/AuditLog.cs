@@ -8,6 +8,9 @@ namespace SchoolSystem.Models
         public int? UserId { get; set; }
         public string UserName { get; set; }
         public string ActionName { get; set; }
+        public string Module { get; set; }
+        public string MachineName { get; set; }
+        public string IpAddress { get; set; }
         public string EntityName { get; set; }
         public string EntityId { get; set; }
         public string Details { get; set; }
