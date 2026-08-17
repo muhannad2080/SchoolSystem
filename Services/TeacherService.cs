@@ -44,7 +44,7 @@ namespace SchoolSystem.Services
 
         public void AddTeacher(Teacher teacher)
         {
-            CurrentUser.DemandPermission(PermissionKeys.TeachersManage, "ليس لديك صلاحية إدارة المعلمين.");
+            CurrentUser.DemandAction("Teachers", "Add", "ليس لديك صلاحية إضافة المعلمين.");
             ValidateTeacher(teacher);
             if (!_repository.IsNationalIDUnique(teacher.NationalID))
                 throw new Exception("رقم الهوية مستخدم مسبقاً لمعلم آخر.");
@@ -59,7 +59,7 @@ namespace SchoolSystem.Services
 
         public void UpdateTeacher(Teacher teacher)
         {
-            CurrentUser.DemandPermission(PermissionKeys.TeachersManage, "ليس لديك صلاحية إدارة المعلمين.");
+            CurrentUser.DemandAction("Teachers", "Edit", "ليس لديك صلاحية تعديل المعلمين.");
             if (teacher.TeacherID <= 0)
                 throw new Exception("يرجى اختيار معلم للتعديل.");
 
@@ -78,7 +78,7 @@ namespace SchoolSystem.Services
 
         public void DeleteTeacher(int teacherId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.TeachersManage, "ليس لديك صلاحية إدارة المعلمين.");
+            CurrentUser.DemandAction("Teachers", "Delete", "ليس لديك صلاحية حذف المعلمين.");
             if (teacherId <= 0)
                 throw new Exception("يرجى اختيار معلم للحذف.");
             _repository.DeleteTeacher(teacherId);
@@ -146,6 +146,7 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandAny(
                 "ليس لديك صلاحية عرض بيانات المعلمين.",
+                "Teachers.View",
                 PermissionKeys.TeachersManage,
                 PermissionKeys.PayrollManage,
                 PermissionKeys.StaffAttendanceManage,
