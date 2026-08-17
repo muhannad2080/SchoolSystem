@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
@@ -10,6 +10,10 @@ namespace SchoolSystem.Services
     {
         private readonly EnrollmentRepository repository = new EnrollmentRepository();
         private readonly AuditLogService auditLogService = new AuditLogService();
+        private readonly FeeService feeService = new FeeService();
+        private readonly VoucherService voucherService = new VoucherService();
+        private readonly FeeService feeService = new FeeService();
+        private readonly VoucherService voucherService = new VoucherService();
 
         public DataTable GetAllEnrollments()
         {
@@ -35,6 +39,7 @@ namespace SchoolSystem.Services
             CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
             NormalizeEnrollment(enrollment);
             ValidateEnrollment(enrollment, false);
+            EnsureFinancePermissionIfRequired(enrollment);
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear))
                 throw new Exception("هذا الطالب مسجل بالفعل في هذا العام الدراسي.");
 
@@ -43,6 +48,7 @@ namespace SchoolSystem.Services
             {
                 auditLogService.Record("إنشاء", "Enrollment", enrollment.EnrollmentID.ToString(),
                     "إضافة طلب تسجيل للطالب رقم " + enrollment.StudentID);
+                SynchronizeRegistrationFinance(enrollment);
             }
 
             return added;
@@ -53,6 +59,7 @@ namespace SchoolSystem.Services
             CurrentUser.DemandPermission(PermissionKeys.EnrollmentManage, "ليس لديك صلاحية إدارة التسجيل.");
             NormalizeEnrollment(enrollment);
             ValidateEnrollment(enrollment, true);
+            EnsureFinancePermissionIfRequired(enrollment);
 
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear, enrollment.EnrollmentID))
                 throw new Exception("لا يمكن تعديل التسجيل: الطالب لديه تسجيل آخر فعال في هذا العام الدراسي.");
@@ -62,6 +69,7 @@ namespace SchoolSystem.Services
             {
                 auditLogService.Record("تعديل", "Enrollment", enrollment.EnrollmentID.ToString(),
                     "تعديل طلب تسجيل الطالب رقم " + enrollment.StudentID);
+                SynchronizeRegistrationFinance(enrollment);
             }
 
             return updated;
@@ -78,6 +86,86 @@ namespace SchoolSystem.Services
                 auditLogService.Record("حذف", "Enrollment", enrollmentId.ToString(), "حذف طلب تسجيل.");
 
             return deleted;
+        }
+
+        private void EnsureFinancePermissionIfRequired(Enrollment enrollment)
+        {
+            if (enrollment == null || enrollment.RegistrationFee <= 0)
+                return;
+
+            if (!CurrentUser.HasPermission(PermissionKeys.FeesManage))
+                throw new UnauthorizedAccessException("يحتاج التسجيل برسوم إلى صلاحية إدارة الرسوم.");
+
+            if (enrollment.PaidAmount > 0 &&
+                !CurrentUser.HasPermission(PermissionKeys.VouchersManage))
+                throw new UnauthorizedAccessException("يحتاج تسجيل دفعة إلى صلاحية إدارة السندات.");
+        }
+
+        private void SynchronizeRegistrationFinance(Enrollment enrollment)
+        {
+            if (enrollment == null || enrollment.RegistrationFee <= 0)
+                return;
+
+            string marker = "EnrollmentID=" + enrollment.EnrollmentID;
+            int feeId = feeService.CreateRegistrationFeeIfMissing(
+                enrollment.StudentID,
+                enrollment.AcademicYear,
+                enrollment.RegistrationFee,
+                enrollment.PaidAmount,
+                enrollment.PaymentMethod,
+                enrollment.ApplicationDate,
+                marker);
+
+            if (feeId > 0 && enrollment.PaidAmount > 0)
+            {
+                voucherService.CreateReceiptVoucherForFeePayment(
+                    enrollment.PaidAmount,
+                    enrollment.ApplicationDate,
+                    "طالب رقم " + enrollment.StudentID,
+                    feeId,
+                    enrollment.PaymentMethod,
+                    "سند قبض تلقائي من التسجيل؛ " + marker);
+            }
+        }
+
+        private void EnsureFinancePermissionIfRequired(Enrollment enrollment)
+        {
+            if (enrollment == null || enrollment.RegistrationFee <= 0)
+                return;
+
+            if (!CurrentUser.HasPermission(PermissionKeys.FeesManage))
+                throw new UnauthorizedAccessException("يحتاج التسجيل برسوم إلى صلاحية إدارة الرسوم.");
+
+            if (enrollment.PaidAmount > 0 &&
+                !CurrentUser.HasPermission(PermissionKeys.VouchersManage))
+                throw new UnauthorizedAccessException("يحتاج تسجيل دفعة إلى صلاحية إدارة السندات.");
+        }
+
+        private void SynchronizeRegistrationFinance(Enrollment enrollment)
+        {
+            if (enrollment == null || enrollment.RegistrationFee <= 0)
+                return;
+
+            string marker = "EnrollmentID=" + enrollment.EnrollmentID;
+            int feeId = feeService.CreateRegistrationFeeIfMissing(
+                enrollment.StudentID,
+                enrollment.AcademicYear,
+                enrollment.RegistrationFee,
+                enrollment.PaidAmount,
+                enrollment.PaymentMethod,
+                enrollment.ApplicationDate,
+                marker);
+
+            if (feeId > 0 && enrollment.PaidAmount > 0)
+            {
+                voucherService.CreateReceiptVoucherForFeePayment(
+                    enrollment.PaidAmount,
+                    enrollment.ApplicationDate,
+                    "طالب رقم " + enrollment.StudentID,
+                    feeId,
+                    enrollment.PaymentMethod,
+                    "سند قبض تلقائي من التسجيل؛ " + marker);
+            }
         }
 
         private void ValidateEnrollment(Enrollment enrollment, bool isUpdate)

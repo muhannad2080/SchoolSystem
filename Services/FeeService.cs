@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
@@ -59,6 +59,42 @@ namespace SchoolSystem.Services
             if (deleted)
                 auditLogService.Record("حذف", "Fee", feeId.ToString(), "حذف سجل الرسوم.");
             return deleted;
+        }
+
+        public int CreateRegistrationFeeIfMissing(int studentId, string academicYear, decimal registrationFee,
+            decimal paidAmount, string paymentMethod, DateTime dueDate, string enrollmentMarker)
+        {
+            EnsureCanManageFees();
+            if (studentId <= 0)
+                throw new Exception("يجب اختيار الطالب.");
+            if (string.IsNullOrWhiteSpace(academicYear))
+                throw new Exception("العام الدراسي مطلوب.");
+            if (registrationFee <= 0)
+                return 0;
+            if (paidAmount < 0 || paidAmount > registrationFee)
+                throw new Exception("المبلغ المدفوع لا يمكن أن يكون أكبر من رسوم التسجيل أو أقل من صفر.");
+
+            Fee fee = new Fee
+            {
+                StudentID = studentId,
+                AcademicYear = academicYear.Trim(),
+                FeeType = "رسوم تسجيل",
+                TotalAmount = registrationFee,
+                DiscountAmount = 0,
+                PaidAmount = paidAmount,
+                DueDate = dueDate == DateTime.MinValue ? DateTime.Today : dueDate.Date,
+                PaymentDate = paidAmount > 0 ? DateTime.Today : (DateTime?)null,
+                PaymentMethod = paymentMethod,
+                ReceiptNumber = string.Empty,
+                Notes = enrollmentMarker
+            };
+
+            PrepareFee(fee);
+            int feeId = feeRepository.CreateRegistrationFeeIfMissing(fee, enrollmentMarker);
+            if (feeId > 0)
+                auditLogService.Record("إنشاء/تحقق", "Fee", feeId.ToString(),
+                    string.Format("رسوم تسجيل للطالب {0}، العام {1}، المدفوع {2}", studentId, academicYear, paidAmount));
+            return feeId;
         }
 
         public int GenerateStudentFeesFromPlans(int studentId, string academicYear)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using SchoolSystem.Models;
@@ -171,6 +171,56 @@ namespace SchoolSystem.DataAccess
 
                     con.Open();
                     return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        public int CreateRegistrationFeeIfMissing(Fee fee, string enrollmentMarker)
+        {
+            CalculateAmounts(fee);
+
+            using (SqlConnection con = DbConnection.GetConnection())
+            {
+                const string query = @"
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                        WHERE StudentID = @StudentID
+                          AND AcademicYear = @AcademicYear
+                          AND FeeType = @FeeType
+                          AND Notes = @Notes
+                    )
+                    BEGIN
+                        SELECT TOP 1 FeeID
+                        FROM Fees
+                        WHERE StudentID = @StudentID
+                          AND AcademicYear = @AcademicYear
+                          AND FeeType = @FeeType
+                          AND Notes = @Notes
+                        RETURN;
+                    END;
+
+                    INSERT INTO Fees
+                    (StudentID, FeePlanID, AcademicYear, FeeType, TotalAmount, DiscountAmount, NetAmount,
+                     PaidAmount, RemainingAmount, DueDate, PaymentDate, PaymentMethod, ReceiptNumber, Status, Notes)
+                    VALUES
+                    (@StudentID, NULL, @AcademicYear, @FeeType, @TotalAmount, @DiscountAmount, @NetAmount,
+                     @PaidAmount, @RemainingAmount, @DueDate, @PaymentDate, @PaymentMethod, @ReceiptNumber, @Status, @Notes);
+
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    AddParameters(cmd, fee);
+                    con.Open();
+                    using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
+                    {
+                        cmd.Transaction = transaction;
+                        object result = cmd.ExecuteScalar();
+                        transaction.Commit();
+                        return result == null || result == DBNull.Value ? 0 : Convert.ToInt32(result);
+                    }
                 }
             }
         }
