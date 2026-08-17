@@ -80,6 +80,59 @@ namespace SchoolSystem.Security
             return false;
         }
 
+        public static bool CanView(string module)
+        {
+            return HasActionOrManage(module, "View");
+        }
+
+        public static bool CanAdd(string module)
+        {
+            return HasActionOrManage(module, "Add");
+        }
+
+        public static bool CanEdit(string module)
+        {
+            return HasActionOrManage(module, "Edit");
+        }
+
+        public static bool CanDelete(string module)
+        {
+            return HasActionOrManage(module, "Delete");
+        }
+
+        public static bool CanSearch(string module)
+        {
+            return HasActionOrManage(module, "Search");
+        }
+
+        public static bool CanPrint(string module)
+        {
+            return HasActionOrManage(module, "Print");
+        }
+
+        public static bool CanExport(string module)
+        {
+            return HasAny(module + ".ExportExcel", module + ".ExportPDF", module + ".Export") || HasPermission(module + ".Manage");
+        }
+
+        public static bool CanApprove(string module)
+        {
+            return HasActionOrManage(module, "Approve");
+        }
+
+        public static void DemandAction(string module, string action, string message)
+        {
+            if (!HasActionOrManage(module, action))
+                throw new UnauthorizedAccessException(message);
+        }
+
+        private static bool HasActionOrManage(string module, string action)
+        {
+            if (string.IsNullOrWhiteSpace(module) || string.IsNullOrWhiteSpace(action))
+                return false;
+            return HasPermission(module + "." + action) || HasPermission(module + ".Manage");
+        }
+
         public static void DemandPermission(string permissionKey, string message)
         {
             if (!HasPermission(permissionKey))
