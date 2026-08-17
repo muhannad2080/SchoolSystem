@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -842,6 +843,8 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Fees", "ExportExcel", "ليس لديك صلاحية تصدير تقارير الرسوم إلى Excel.");
+
                 DataTable report = GetVisibleFeesForReport();
                 if (report == null || report.Rows.Count == 0)
                 {
@@ -874,6 +877,8 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Fees", "ExportPDF", "ليس لديك صلاحية تصدير تقارير الرسوم إلى PDF.");
+
                 DataTable report = GetVisibleFeesForReport();
                 if (report == null || report.Rows.Count == 0)
                 {

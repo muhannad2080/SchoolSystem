@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using SchoolSystem.Models;
 using SchoolSystem.Services;
 using SchoolSystem.Helpers;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -169,6 +170,16 @@ namespace SchoolSystem.UI
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
+            try
+            {
+                CurrentUser.DemandAction("Students", "Print", "ليس لديك صلاحية طباعة بطاقات الطلاب.");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                UIHelper.ShowWarning(ex.Message);
+                return;
+            }
+
             if (_selectedStudentId == 0)
             {
                 UIHelper.ShowWarning("اختر طالبًا أولاً قبل الطباعة.");
@@ -287,6 +298,8 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Students", "ExportExcel", "ليس لديك صلاحية تصدير بيانات الطلاب إلى Excel.");
+
                 if (_currentStudents == null || _currentStudents.Count == 0)
                 {
                     UIHelper.ShowWarning("لا توجد بيانات لتصديرها.");

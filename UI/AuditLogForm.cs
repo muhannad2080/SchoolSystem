@@ -258,6 +258,15 @@ namespace SchoolSystem.UI
                     string extension = Path.GetExtension(dialog.FileName).ToLowerInvariant();
                     if (extension == ".pdf")
                     {
+                        CurrentUser.DemandPermission(PermissionKeys.AuditLogsExportPDF, "ليس لديك صلاحية تصدير سجل الأنشطة إلى PDF.");
+                    }
+                    else
+                    {
+                        CurrentUser.DemandPermission(PermissionKeys.AuditLogsExportExcel, "ليس لديك صلاحية تصدير سجل الأنشطة إلى Excel.");
+                    }
+
+                    if (extension == ".pdf")
+                    {
                         ReportOutputHelper.ExportToPdf(exportTable, dialog.FileName,
                             "سجل الأنشطة | Audit Log", "عدد السجلات | Records: " + exportTable.Rows.Count);
                     }

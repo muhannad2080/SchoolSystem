@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -365,6 +366,9 @@ namespace SchoolSystem.UI
         {
             try
             {
+                if (!EnsureReportAction("View", "ليس لديك صلاحية عرض التقارير."))
+                    return;
+
                 if (!ValidateReportFilters())
                     return;
 
@@ -488,6 +492,20 @@ namespace SchoolSystem.UI
             return currentReportData;
         }
 
+        private bool EnsureReportAction(string action, string message)
+        {
+            try
+            {
+                CurrentUser.DemandAction("Reports", action, message);
+                return true;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ShowWarning(ex.Message);
+                return false;
+            }
+        }
+
         private bool EnsureData()
         {
             DataTable dt = GetCurrentDataTable();
@@ -503,6 +521,9 @@ namespace SchoolSystem.UI
 
         private void btnExportExcel_Click(object sender, EventArgs e)
         {
+            if (!EnsureReportAction("ExportExcel", "ليس لديك صلاحية تصدير التقارير إلى Excel."))
+                return;
+
             if (!EnsureData())
                 return;
 
@@ -541,6 +562,9 @@ namespace SchoolSystem.UI
 
         private void btnExportCsv_Click(object sender, EventArgs e)
         {
+            if (!EnsureReportAction("ExportExcel", "ليس لديك صلاحية تصدير بيانات التقارير."))
+                return;
+
             if (!EnsureData())
                 return;
 
@@ -606,6 +630,9 @@ namespace SchoolSystem.UI
 
         private void btnExportPDF_Click(object sender, EventArgs e)
         {
+            if (!EnsureReportAction("ExportPDF", "ليس لديك صلاحية تصدير التقارير إلى PDF."))
+                return;
+
             if (!EnsureData())
                 return;
 
@@ -644,6 +671,9 @@ namespace SchoolSystem.UI
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
+            if (!EnsureReportAction("Print", "ليس لديك صلاحية طباعة التقارير."))
+                return;
+
             if (!EnsureData())
                 return;
 

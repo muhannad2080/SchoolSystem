@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -770,6 +771,17 @@ namespace SchoolSystem.UI
 
         private void ExportGrades(bool pdf)
         {
+            try
+            {
+                CurrentUser.DemandAction("Grades", pdf ? "ExportPDF" : "ExportExcel",
+                    pdf ? "ليس لديك صلاحية تصدير تقارير الدرجات إلى PDF." : "ليس لديك صلاحية تصدير تقارير الدرجات إلى Excel.");
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ShowWarning(ex.Message);
+                return;
+            }
+
             if (currentGradesTable == null || currentGradesTable.DefaultView.Count == 0)
             {
                 ShowWarning("لا توجد درجات ظاهرة للتصدير.");
