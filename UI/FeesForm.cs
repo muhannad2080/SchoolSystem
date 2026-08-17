@@ -665,6 +665,76 @@ namespace SchoolSystem.UI
             }
         }
 
+        private async void btnRecordPayment_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (selectedFeeId <= 0)
+                {
+                    UIHelper.ShowWarning("اختر سجل الرسوم من الجدول أولاً.");
+                    return;
+                }
+
+                decimal newTotalPaid = ReadDecimal(txtPaidAmount.Text);
+                decimal paymentAmount = newTotalPaid - originalPaidAmount;
+                decimal remainingBeforePayment = ReadDecimal(txtNetAmount.Text) - originalPaidAmount;
+                if (remainingBeforePayment < 0)
+                    remainingBeforePayment = 0;
+
+                if (paymentAmount <= 0)
+                {
+                    UIHelper.ShowWarning("أدخل إجمالي المدفوع الجديد في حقل المدفوع، ويجب أن يكون أكبر من المدفوع السابق.");
+                    txtPaidAmount.Focus();
+                    return;
+                }
+
+                if (paymentAmount > remainingBeforePayment)
+                {
+                    UIHelper.ShowWarning("مبلغ الدفعة يتجاوز المتبقي على الرسوم.");
+                    txtPaidAmount.Focus();
+                    return;
+                }
+
+                if (!dtpPaymentDate.Checked)
+                    dtpPaymentDate.Checked = true;
+
+                if (string.IsNullOrWhiteSpace(txtReceiptNumber.Text))
+                {
+                    UIHelper.ShowWarning("رقم السند مطلوب قبل تسجيل دفعة مستقلة.");
+                    txtReceiptNumber.Focus();
+                    return;
+                }
+
+                DataTable result = await Task.Run(() => feeService.RecordPayment(
+                    selectedFeeId,
+                    paymentAmount,
+                    dtpPaymentDate.Value.Date,
+                    cmbPaymentMethod.Text,
+                    txtReceiptNumber.Text,
+                    txtNotes.Text));
+
+                DataRow row = result.Rows[0];
+                await Task.Run(() => voucherService.CreateReceiptVoucherForFeePayment(
+                    paymentAmount,
+                    dtpPaymentDate.Value.Date,
+                    cmbStudent.Text,
+                    selectedFeeId,
+                    cmbPaymentMethod.Text,
+                    "دفعة مستقلة من شاشة الرسوم الدراسية.",
+                    "رسوم دفعة"));
+
+                UIHelper.ShowInfo("تم تسجيل الدفعة وإنشاء سند القبض بنجاح. المتبقي الجديد: " +
+                    Convert.ToDecimal(row["RemainingAmount"]).ToString("N2"));
+
+                await LoadFeesAsync();
+                ClearInputs();
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("فشل تسجيل الدفعة:", ex);
+            }
+        }
+
         private async void btnDelete_Click(object sender, EventArgs e)
         {
             try

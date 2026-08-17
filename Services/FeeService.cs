@@ -49,6 +49,40 @@ namespace SchoolSystem.Services
             return updated;
         }
 
+        public DataTable RecordPayment(int feeId, decimal paymentAmount, DateTime paymentDate, string paymentMethod, string receiptNumber, string notes)
+        {
+            EnsureCanManageFees();
+            if (feeId <= 0)
+                throw new Exception("رقم سجل الرسوم غير صحيح.");
+            if (paymentAmount <= 0)
+                throw new Exception("مبلغ الدفعة يجب أن يكون أكبر من صفر.");
+            if (paymentDate.Date > DateTime.Today)
+                throw new Exception("تاريخ الدفع لا يمكن أن يكون في المستقبل.");
+            if (string.IsNullOrWhiteSpace(paymentMethod))
+                throw new Exception("طريقة الدفع مطلوبة.");
+            if (receiptNumber != null && receiptNumber.Trim().Length > 100)
+                throw new Exception("رقم السند لا يمكن أن يتجاوز 100 حرف.");
+            if (notes != null && notes.Trim().Length > 500)
+                throw new Exception("ملاحظات الدفعة لا يمكن أن تتجاوز 500 حرف.");
+
+            DataTable result = feeRepository.RecordPayment(
+                feeId,
+                paymentAmount,
+                paymentDate.Date,
+                paymentMethod.Trim(),
+                receiptNumber == null ? string.Empty : receiptNumber.Trim(),
+                notes == null ? string.Empty : notes.Trim());
+
+            if (result.Rows.Count == 0)
+                throw new InvalidOperationException("تعذر تسجيل الدفعة؛ ربما تجاوزت المبلغ المتبقي أو تم تعديل السجل من مستخدم آخر.");
+
+            DataRow row = result.Rows[0];
+            auditLogService.Record("تحصيل دفعة", "Fee", feeId.ToString(),
+                string.Format("الطالب: {0}، المبلغ: {1}، المتبقي: {2}، الطريقة: {3}",
+                    row["StudentID"], paymentAmount, row["RemainingAmount"], paymentMethod));
+            return result;
+        }
+
         public bool DeleteFee(int feeId)
         {
             EnsureCanManageFees();

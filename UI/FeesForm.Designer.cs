@@ -69,6 +69,7 @@
             this.btnGenerateFees = new System.Windows.Forms.Button();
             this.btnExportExcel = new System.Windows.Forms.Button();
             this.btnExportPdf = new System.Windows.Forms.Button();
+            this.btnRecordPayment = new System.Windows.Forms.Button();
 
             this.panelSearch = new System.Windows.Forms.Panel();
             this.lblSearch = new System.Windows.Forms.Label();
@@ -329,10 +330,11 @@
             this.panelButtons.Controls.Add(this.btnGenerateFees);
             this.panelButtons.Controls.Add(this.btnExportExcel);
             this.panelButtons.Controls.Add(this.btnExportPdf);
+            this.panelButtons.Controls.Add(this.btnRecordPayment);
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelButtons.Location = new System.Drawing.Point(0, 378);
             this.panelButtons.Name = "panelButtons";
-            this.panelButtons.Size = new System.Drawing.Size(1100, 55);
+            this.panelButtons.Size = new System.Drawing.Size(1100, 85);
 
             this.btnAdd.BackColor = System.Drawing.Color.FromArgb(39, 174, 96);
             this.btnAdd.FlatAppearance.BorderSize = 0;
@@ -418,13 +420,25 @@
             this.btnExportPdf.UseVisualStyleBackColor = false;
             this.btnExportPdf.Click += new System.EventHandler(this.btnExportPdf_Click);
 
+            this.btnRecordPayment.BackColor = System.Drawing.Color.FromArgb(211, 84, 0);
+            this.btnRecordPayment.FlatAppearance.BorderSize = 0;
+            this.btnRecordPayment.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRecordPayment.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnRecordPayment.ForeColor = System.Drawing.Color.White;
+            this.btnRecordPayment.Location = new System.Drawing.Point(845, 50);
+            this.btnRecordPayment.Name = "btnRecordPayment";
+            this.btnRecordPayment.Size = new System.Drawing.Size(240, 28);
+            this.btnRecordPayment.Text = "تحصيل دفعة مستقلة";
+            this.btnRecordPayment.UseVisualStyleBackColor = false;
+            this.btnRecordPayment.Click += new System.EventHandler(this.btnRecordPayment_Click);
+
             // panelSearch
             this.panelSearch.BackColor = System.Drawing.Color.White;
             this.panelSearch.Controls.Add(this.lblSearch);
             this.panelSearch.Controls.Add(this.txtSearch);
             this.panelSearch.Controls.Add(this.cmbFilterStatus);
             this.panelSearch.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelSearch.Location = new System.Drawing.Point(0, 433);
+            this.panelSearch.Location = new System.Drawing.Point(0, 463);
             this.panelSearch.Name = "panelSearch";
             this.panelSearch.Size = new System.Drawing.Size(1100, 45);
 
@@ -456,7 +470,7 @@
             this.dataGridViewFees.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridViewFees.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewFees.EnableHeadersVisualStyles = false;
-            this.dataGridViewFees.Location = new System.Drawing.Point(0, 478);
+            this.dataGridViewFees.Location = new System.Drawing.Point(0, 508);
             this.dataGridViewFees.MultiSelect = false;
             this.dataGridViewFees.Name = "dataGridViewFees";
             this.dataGridViewFees.ReadOnly = true;
@@ -565,6 +579,7 @@
         private System.Windows.Forms.Button btnGenerateFees;
         private System.Windows.Forms.Button btnExportExcel;
         private System.Windows.Forms.Button btnExportPdf;
+        private System.Windows.Forms.Button btnRecordPayment;
 
         private System.Windows.Forms.Panel panelSearch;
         private System.Windows.Forms.Label lblSearch;

@@ -141,6 +141,85 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        public DataTable RecordPayment(int feeId, decimal paymentAmount, DateTime paymentDate, string paymentMethod, string receiptNumber, string notes)
+        {
+            using (SqlConnection con = DbConnection.GetConnection())
+            {
+                const string query = @"
+                    UPDATE Fees
+                    SET
+                        PaidAmount = ISNULL(PaidAmount, 0) + @PaymentAmount,
+                        RemainingAmount = ISNULL(RemainingAmount, 0) - @PaymentAmount,
+                        PaymentDate = @PaymentDate,
+                        PaymentMethod = @PaymentMethod,
+                        ReceiptNumber = @ReceiptNumber,
+                        Notes = CASE
+                            WHEN NULLIF(@Notes, N'') IS NULL THEN Notes
+                            WHEN NULLIF(Notes, N'') IS NULL THEN @Notes
+                            ELSE LEFT(Notes + N' | دفعة: ' + @Notes, 500)
+                        END,
+                        Status = CASE
+                            WHEN ISNULL(RemainingAmount, 0) - @PaymentAmount <= 0 THEN N'مسدد'
+                            ELSE N'مسدد جزئياً'
+                        END,
+                        UpdatedAt = GETDATE()
+                    WHERE FeeID = @FeeID
+                      AND @PaymentAmount > 0
+                      AND @PaymentAmount <= ISNULL(RemainingAmount, 0);
+
+                    SELECT
+                        f.FeeID,
+                        f.StudentID,
+                        s.FullName AS StudentName,
+                        f.AcademicYear,
+                        f.FeeType,
+                        f.TotalAmount,
+                        f.DiscountAmount,
+                        f.NetAmount,
+                        f.PaidAmount,
+                        f.RemainingAmount,
+                        f.DueDate,
+                        f.PaymentDate,
+                        f.PaymentMethod,
+                        f.ReceiptNumber,
+                        f.Status,
+                        f.Notes
+                    FROM Fees f
+                    INNER JOIN Students s ON f.StudentID = s.StudentID
+                    WHERE f.FeeID = @FeeID
+                      AND @PaymentAmount > 0;";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@FeeID", feeId);
+                    cmd.Parameters.AddWithValue("@PaymentAmount", paymentAmount);
+                    cmd.Parameters.AddWithValue("@PaymentDate", paymentDate.Date);
+                    cmd.Parameters.AddWithValue("@PaymentMethod", (object)(paymentMethod ?? string.Empty));
+                    cmd.Parameters.AddWithValue("@ReceiptNumber", (object)(receiptNumber ?? string.Empty));
+                    cmd.Parameters.AddWithValue("@Notes", (object)(notes ?? string.Empty));
+                    con.Open();
+                    using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
+                    {
+                        cmd.Transaction = transaction;
+                        DataTable result = new DataTable();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            result.Load(reader);
+                        }
+
+                        if (result.Rows.Count == 0)
+                        {
+                            transaction.Rollback();
+                            return result;
+                        }
+
+                        transaction.Commit();
+                        return result;
+                    }
+                }
+            }
+        }
+
         public bool DeleteFee(int feeId)
         {
             using (SqlConnection con = DbConnection.GetConnection())
