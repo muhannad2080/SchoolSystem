@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -887,6 +888,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Vouchers", "Add", "ليس لديك صلاحية إضافة السندات.");
                 if (!ValidateInputs())
                     return;
 
@@ -909,6 +911,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Vouchers", "Edit", "ليس لديك صلاحية تعديل السندات.");
                 if (selectedVoucherId == 0)
                 {
                     UIHelper.ShowWarning("اختر سنداً من الجدول أولاً.");
@@ -946,6 +949,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Vouchers", "Delete", "ليس لديك صلاحية حذف السندات.");
                 if (selectedVoucherId == 0)
                 {
                     UIHelper.ShowWarning("اختر سنداً من الجدول أولاً.");

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -206,6 +207,7 @@ namespace SchoolSystem.UI
 
         private async void btnAdd_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Subjects", "Add", "ليس لديك صلاحية إدارة المواد الأساسية.");
             ShowInfo(
                 "المواد الأساسية ثابتة في قاعدة البيانات.\n\n" +
                 "إذا كانت المواد غير ظاهرة، نفذ سكربت تثبيت المواد الافتراضية في SQL Server.\n" +
@@ -240,6 +242,7 @@ namespace SchoolSystem.UI
 
         private async void btnUpdate_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Subjects", "Edit", "ليس لديك صلاحية تعديل إعدادات المواد.");
             if (selectedSubjectId <= 0)
             {
                 ShowWarning("اختر مادة من الجدول أولاً.");
@@ -276,6 +279,7 @@ namespace SchoolSystem.UI
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Subjects", "Delete", "ليس لديك صلاحية حذف المواد.");
             ShowWarning("حذف المواد الأساسية غير مسموح؛ لأنها مرتبطة بالدرجات والمنهج الدراسي.");
         }
 

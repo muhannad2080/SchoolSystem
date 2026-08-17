@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -292,6 +293,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("FeePlans", "Add", "ليس لديك صلاحية إضافة خطط الرسوم.");
                 if (!ValidateInputs())
                     return;
 
@@ -314,6 +316,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("FeePlans", "Edit", "ليس لديك صلاحية تعديل خطط الرسوم.");
                 if (selectedFeePlanId == 0)
                 {
                     UIHelper.ShowWarning("اختر سجل الرسوم من الجدول.");
@@ -345,6 +348,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("FeePlans", "Delete", "ليس لديك صلاحية حذف خطط الرسوم.");
                 if (selectedFeePlanId == 0)
                 {
                     UIHelper.ShowWarning("اختر سجل الرسوم من الجدول.");

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -410,6 +411,7 @@ namespace SchoolSystem.UI
 
         private async void btnAdd_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("StaffAttendance", "Add", "ليس لديك صلاحية إضافة حضور الموظفين.");
             if (!ValidateAttendanceInputs())
                 return;
 
@@ -443,6 +445,7 @@ namespace SchoolSystem.UI
 
         private async void btnUpdate_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("StaffAttendance", "Edit", "ليس لديك صلاحية تعديل حضور الموظفين.");
             if (selectedAttendanceId == 0)
             {
                 UIHelper.ShowWarning("اختر سجل حضور من الجدول أولاً.");
@@ -485,6 +488,7 @@ namespace SchoolSystem.UI
 
         private async void btnDelete_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("StaffAttendance", "Delete", "ليس لديك صلاحية حذف حضور الموظفين.");
             if (selectedAttendanceId == 0)
             {
                 UIHelper.ShowWarning("اختر سجل حضور من الجدول أولاً.");

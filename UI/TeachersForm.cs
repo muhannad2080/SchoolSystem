@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -290,6 +291,7 @@ namespace SchoolSystem.UI
 
         private async void btnAdd_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Teachers", "Add", "ليس لديك صلاحية إضافة المعلمين.");
             if (!ValidateInputs()) return;
             var teacher = GetTeacherFromUI();
             try
@@ -307,6 +309,7 @@ namespace SchoolSystem.UI
 
         private async void btnUpdate_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Teachers", "Edit", "ليس لديك صلاحية تعديل المعلمين.");
             if (_selectedTeacherId == 0)
             {
                 MessageBox.Show("اختر معلماً أولاً", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -329,6 +332,7 @@ namespace SchoolSystem.UI
 
         private async void btnDelete_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Teachers", "Delete", "ليس لديك صلاحية حذف المعلمين.");
             if (_selectedTeacherId == 0)
             {
                 MessageBox.Show("اختر معلماً أولاً", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);

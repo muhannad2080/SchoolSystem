@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -379,6 +380,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Timetable", "Add", "ليس لديك صلاحية إضافة حصص الجدول الدراسي.");
                 TimetableEntry item = BuildModel();
 
                 bool added = await Task.Run(() => timetableService.AddTimetable(item));
@@ -409,6 +411,7 @@ namespace SchoolSystem.UI
 
         private async void btnUpdate_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Timetable", "Edit", "ليس لديك صلاحية تعديل الجدول الدراسي.");
             if (selectedTimetableId <= 0)
             {
                 ShowWarning("اختر حصة من الجدول أولاً.");
@@ -449,6 +452,7 @@ namespace SchoolSystem.UI
 
         private async void btnDelete_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Timetable", "Delete", "ليس لديك صلاحية حذف حصص الجدول الدراسي.");
             if (selectedTimetableId <= 0)
             {
                 ShowWarning("اختر حصة من الجدول أولاً.");

@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Services;
 using SchoolSystem.Helpers;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -357,6 +358,7 @@ namespace SchoolSystem.UI
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Enrollment", "Add", "ليس لديك صلاحية بدء تسجيل جديد.");
             isEditMode = false;
             ClearInputs();
             EnableInputs();
@@ -384,6 +386,9 @@ namespace SchoolSystem.UI
 
             try
             {
+                CurrentUser.DemandAction("Enrollment", isEditMode ? "Edit" : "Add",
+                    isEditMode ? "ليس لديك صلاحية تعديل التسجيل." : "ليس لديك صلاحية إضافة التسجيل.");
+
                 Enrollment enrollment = new Enrollment
                 {
                     StudentID = GetSelectedId(cmbStudentID, "يجب تحديد طالب صالح."),
@@ -458,6 +463,7 @@ namespace SchoolSystem.UI
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Enrollment", "Edit", "ليس لديك صلاحية تعديل التسجيل.");
             if (string.IsNullOrEmpty(txtEnrollmentID.Text) || txtEnrollmentID.Text == "جديد")
             {
                 UIHelper.ShowWarning("الرجاء تحديد طلب من الجدول أولاً.");
@@ -469,6 +475,7 @@ namespace SchoolSystem.UI
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
+            CurrentUser.DemandAction("Enrollment", "Delete", "ليس لديك صلاحية حذف التسجيل.");
             if (string.IsNullOrEmpty(txtEnrollmentID.Text) || txtEnrollmentID.Text == "جديد")
             {
                 UIHelper.ShowWarning("الرجاء تحديد طلب من الجدول أولاً.");
@@ -527,6 +534,7 @@ namespace SchoolSystem.UI
 
         private void PrintSelectedEnrollment(bool receipt)
         {
+            CurrentUser.DemandAction("Enrollment", "Print", "ليس لديك صلاحية طباعة بيانات التسجيل.");
             if (!CanPrintSelectedEnrollment())
                 return;
 

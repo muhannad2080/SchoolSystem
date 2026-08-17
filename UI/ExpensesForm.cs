@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -342,6 +343,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Expenses", "Add", "ليس لديك صلاحية إضافة المصروفات.");
                 if (!ValidateInputs())
                     return;
 
@@ -364,6 +366,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Expenses", "Edit", "ليس لديك صلاحية تعديل المصروفات.");
                 if (selectedExpenseId == 0)
                 {
                     UIHelper.ShowWarning("اختر المصروف من الجدول أولاً.");
@@ -392,6 +395,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Expenses", "Delete", "ليس لديك صلاحية حذف المصروفات.");
                 if (selectedExpenseId == 0)
                 {
                     UIHelper.ShowWarning("اختر المصروف من الجدول أولاً.");

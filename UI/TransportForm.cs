@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.UI
 {
@@ -280,6 +281,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Transport", "Add", "ليس لديك صلاحية إضافة الحافلات.");
                 if (!ValidateBusInputs())
                     return;
 
@@ -300,11 +302,13 @@ namespace SchoolSystem.UI
             }
         }
 
-        private async void btnUpdateBus_Click(object sender, EventArgs e)
+                private async void btnUpdateBus_Click(object sender, EventArgs e)
         {
             try
-            {
+                {
+                CurrentUser.DemandAction("Transport", "Edit", "ليس لديك صلاحية تعديل الحافلات.");
                 if (selectedBusId == 0)
+
                 {
                     UIHelper.ShowWarning("اختر الحافلة من الجدول أولاً.");
                     return;
@@ -336,6 +340,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Transport", "Delete", "ليس لديك صلاحية حذف الحافلات.");
                 if (selectedBusId == 0)
                 {
                     UIHelper.ShowWarning("اختر الحافلة من الجدول أولاً.");
@@ -582,6 +587,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Transport", "Add", "ليس لديك صلاحية إضافة مسارات النقل.");
                 if (!ValidateRouteInputs())
                     return;
 
@@ -606,6 +612,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Transport", "Edit", "ليس لديك صلاحية تعديل مسارات النقل.");
                 if (selectedRouteId == 0)
                 {
                     MessageBox.Show("اختر المسار من الجدول أولاً.");
@@ -634,6 +641,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                CurrentUser.DemandAction("Transport", "Delete", "ليس لديك صلاحية حذف مسارات النقل.");
                 if (selectedRouteId == 0)
                 {
                     MessageBox.Show("اختر المسار من الجدول أولاً.");
