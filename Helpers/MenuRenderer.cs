@@ -10,20 +10,27 @@ namespace SchoolSystem
 
         protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
         {
-            if (e.Item.Selected)
+            bool onMenuStrip = e.Item.Owner != null && e.Item.Owner is MenuStrip;
+
+            if (e.Item.Selected || e.Item.Pressed)
             {
-                using (SolidBrush brush = new SolidBrush(UIHelper.HoverColor))
+                // نص داكن فوق خلفية التحديد الفاتحة لضمان التباين.
+                SetItemTextColor(e.Item, UIHelper.TextColor);
+                using (SolidBrush brush = new SolidBrush(e.Item.Selected ? UIHelper.HoverColor : UIHelper.PressedColor))
                     e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
+                return;
             }
-            else if (e.Item.Pressed)
-            {
-                using (SolidBrush brush = new SolidBrush(UIHelper.PressedColor))
-                    e.Graphics.FillRectangle(brush, e.Item.ContentRectangle);
-            }
-            else
-            {
-                base.OnRenderMenuItemBackground(e);
-            }
+
+            // عناصر الشريط العلوي نصها أبيض على الخلفية الداكنة،
+            // وعناصر القوائم المنسدلة نصها داكن على الخلفية البيضاء.
+            SetItemTextColor(e.Item, onMenuStrip ? Color.White : UIHelper.TextColor);
+            base.OnRenderMenuItemBackground(e);
+        }
+
+        private static void SetItemTextColor(ToolStripItem item, Color color)
+        {
+            if (item.ForeColor != color)
+                item.ForeColor = color;
         }
     }
 
