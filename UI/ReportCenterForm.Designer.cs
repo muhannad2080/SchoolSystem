@@ -103,7 +103,7 @@
             this.mainContainer.RowCount = 5;
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
-            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 52F));
+            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 58F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.mainContainer.Size = new System.Drawing.Size(1200, 690);
@@ -375,10 +375,12 @@
             this.panelActions.Controls.Add(this.btnPrint);
             this.panelActions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelActions.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.panelActions.WrapContents = false;
+            this.panelActions.AutoScroll = true;
             this.panelActions.Location = new System.Drawing.Point(15, 205);
             this.panelActions.Name = "panelActions";
             this.panelActions.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.panelActions.Size = new System.Drawing.Size(1170, 46);
+            this.panelActions.Size = new System.Drawing.Size(1170, 52);
             this.panelActions.TabIndex = 2;
             // 
             // btnExportExcel

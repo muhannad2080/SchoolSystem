@@ -292,7 +292,7 @@ namespace SchoolSystem.UI.Students
             this.tableLayoutAssigned.RowCount = 3;
             this.tableLayoutAssigned.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 36F));
             this.tableLayoutAssigned.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutAssigned.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 58F));
+            this.tableLayoutAssigned.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 88F));
             this.tableLayoutAssigned.Size = new System.Drawing.Size(519, 463);
             this.tableLayoutAssigned.TabIndex = 0;
             //
@@ -360,7 +360,7 @@ namespace SchoolSystem.UI.Students
             this.panelLeftButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelLeftButtons.Location = new System.Drawing.Point(3, 408);
             this.panelLeftButtons.Name = "panelLeftButtons";
-            this.panelLeftButtons.Size = new System.Drawing.Size(513, 52);
+            this.panelLeftButtons.Size = new System.Drawing.Size(513, 82);
             this.panelLeftButtons.TabIndex = 2;
             //
             // btnRemove
@@ -401,7 +401,7 @@ namespace SchoolSystem.UI.Students
             this.cmbTransferSection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTransferSection.Font = new System.Drawing.Font("Tahoma", 9F);
             this.cmbTransferSection.FormattingEnabled = true;
-            this.cmbTransferSection.Location = new System.Drawing.Point(132, 14);
+            this.cmbTransferSection.Location = new System.Drawing.Point(135, 51);
             this.cmbTransferSection.Name = "cmbTransferSection";
             this.cmbTransferSection.Size = new System.Drawing.Size(120, 26);
             this.cmbTransferSection.TabIndex = 3;
@@ -414,7 +414,7 @@ namespace SchoolSystem.UI.Students
             this.btnTransfer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnTransfer.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
             this.btnTransfer.ForeColor = System.Drawing.Color.White;
-            this.btnTransfer.Location = new System.Drawing.Point(5, 9);
+            this.btnTransfer.Location = new System.Drawing.Point(5, 45);
             this.btnTransfer.Name = "btnTransfer";
             this.btnTransfer.Size = new System.Drawing.Size(120, 36);
             this.btnTransfer.TabIndex = 4;
@@ -429,7 +429,7 @@ namespace SchoolSystem.UI.Students
             this.lblRecordCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
             this.lblRecordCount.Location = new System.Drawing.Point(10, 14);
             this.lblRecordCount.Name = "lblRecordCount";
-            this.lblRecordCount.Size = new System.Drawing.Size(250, 24);
+            this.lblRecordCount.Size = new System.Drawing.Size(240, 24);
             this.lblRecordCount.TabIndex = 1;
             this.lblRecordCount.Text = "عدد الطلاب: 0";
             this.lblRecordCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;

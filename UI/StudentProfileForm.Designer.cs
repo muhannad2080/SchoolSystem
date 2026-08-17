@@ -355,10 +355,11 @@ namespace SchoolSystem.UI
             // dgvAttendance
             // 
             this.dgvAttendance.ColumnHeadersHeight = 29;
-            this.dgvAttendance.Location = new System.Drawing.Point(0, 0);
+            this.dgvAttendance.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvAttendance.Location = new System.Drawing.Point(10, 10);
             this.dgvAttendance.Name = "dgvAttendance";
             this.dgvAttendance.RowHeadersWidth = 51;
-            this.dgvAttendance.Size = new System.Drawing.Size(240, 150);
+            this.dgvAttendance.Size = new System.Drawing.Size(999, 292);
             this.dgvAttendance.TabIndex = 0;
             // 
             // marksTab
@@ -369,17 +370,18 @@ namespace SchoolSystem.UI
             this.marksTab.Name = "marksTab";
             this.marksTab.Padding = new System.Windows.Forms.Padding(10);
             this.marksTab.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.marksTab.Size = new System.Drawing.Size(192, 60);
+            this.marksTab.Size = new System.Drawing.Size(1019, 312);
             this.marksTab.TabIndex = 1;
             this.marksTab.Text = "الدرجات الأكاديمية";
             // 
             // dgvMarks
             // 
             this.dgvMarks.ColumnHeadersHeight = 29;
-            this.dgvMarks.Location = new System.Drawing.Point(0, 0);
+            this.dgvMarks.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvMarks.Location = new System.Drawing.Point(10, 10);
             this.dgvMarks.Name = "dgvMarks";
             this.dgvMarks.RowHeadersWidth = 51;
-            this.dgvMarks.Size = new System.Drawing.Size(240, 150);
+            this.dgvMarks.Size = new System.Drawing.Size(999, 292);
             this.dgvMarks.TabIndex = 0;
             // 
             // feesTab
@@ -390,17 +392,18 @@ namespace SchoolSystem.UI
             this.feesTab.Name = "feesTab";
             this.feesTab.Padding = new System.Windows.Forms.Padding(10);
             this.feesTab.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.feesTab.Size = new System.Drawing.Size(192, 60);
+            this.feesTab.Size = new System.Drawing.Size(1019, 312);
             this.feesTab.TabIndex = 2;
             this.feesTab.Text = "الرسوم والمدفوعات";
             // 
             // dgvFees
             // 
             this.dgvFees.ColumnHeadersHeight = 29;
-            this.dgvFees.Location = new System.Drawing.Point(0, 0);
+            this.dgvFees.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvFees.Location = new System.Drawing.Point(10, 10);
             this.dgvFees.Name = "dgvFees";
             this.dgvFees.RowHeadersWidth = 51;
-            this.dgvFees.Size = new System.Drawing.Size(240, 150);
+            this.dgvFees.Size = new System.Drawing.Size(999, 292);
             this.dgvFees.TabIndex = 0;
             // 
             // StudentProfileForm

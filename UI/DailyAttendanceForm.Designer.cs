@@ -339,6 +339,8 @@
             this.panelActions.Controls.Add(this.btnRefresh);
             this.panelActions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelActions.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.panelActions.WrapContents = false;
+            this.panelActions.AutoScroll = true;
             this.panelActions.Location = new System.Drawing.Point(15, 561);
             this.panelActions.Name = "panelActions";
             this.panelActions.Padding = new System.Windows.Forms.Padding(0, 10, 0, 0);
@@ -393,7 +395,7 @@
             this.btnSave.FlatAppearance.BorderSize = 0;
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSave.ForeColor = System.Drawing.Color.White;
-            this.btnSave.Location = new System.Drawing.Point(134, 13);
+            this.btnSave.Location = new System.Drawing.Point(396, 13);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(125, 36);
             this.btnSave.TabIndex = 1;
@@ -407,7 +409,7 @@
             this.btnClear.FlatAppearance.BorderSize = 0;
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClear.ForeColor = System.Drawing.Color.White;
-            this.btnClear.Location = new System.Drawing.Point(265, 13);
+            this.btnClear.Location = new System.Drawing.Point(527, 13);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(110, 36);
             this.btnClear.TabIndex = 2;
@@ -421,7 +423,7 @@
             this.btnRefresh.FlatAppearance.BorderSize = 0;
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
-            this.btnRefresh.Location = new System.Drawing.Point(381, 13);
+            this.btnRefresh.Location = new System.Drawing.Point(643, 13);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(110, 36);
             this.btnRefresh.TabIndex = 3;
