@@ -484,7 +484,17 @@ namespace SchoolSystem
             if (!EnsurePermission(PermissionKeys.ClassAssignmentManage))
                 return;
 
-            LoadUserControl(new SchoolSystem.UI.Students.ClassAssignmentForm());
+            try
+            {
+                // إنشاء UserControl داخل الحماية حتى تظهر أخطاء المُنشئ/Designer
+                // للمستخدم بصورة آمنة بدل أن تتسرب إلى معالج WinForms العام.
+                UserControl assignmentForm = new SchoolSystem.UI.Students.ClassAssignmentForm();
+                LoadUserControl(assignmentForm);
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("فتح واجهة توزيع الفصول", ex);
+            }
         }
 
         private void tsmiTeachersManage_Click(object sender, EventArgs e)
