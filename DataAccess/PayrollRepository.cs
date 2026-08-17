@@ -47,16 +47,17 @@ namespace SchoolSystem.DataAccess
         }
 
         // إضافة سجل راتب
-        public void AddPayroll(Payroll payroll)
+        public int AddPayroll(Payroll payroll)
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(
                 @"INSERT INTO Payroll (TeacherID, SalaryMonth, SalaryYear, BasicSalary, Allowances, Deductions, PaymentDate, Notes)
-                  VALUES (@TID, @Month, @Year, @Basic, @Allow, @Deduct, @PayDate, @Notes)", conn))
+                  VALUES (@TID, @Month, @Year, @Basic, @Allow, @Deduct, @PayDate, @Notes);
+                  SELECT CAST(SCOPE_IDENTITY() AS INT);", conn))
             {
                 AddPayrollParameters(cmd, payroll);
                 conn.Open();
-                cmd.ExecuteNonQuery();
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 

@@ -1,54 +1,43 @@
 ﻿using System;
 using System.Data;
-using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
-using SchoolSystem.Security;
 
 namespace SchoolSystem.Services
 {
+    // واجهة توافقية للخدمة القديمة؛ جميع قواعد الصلاحيات والتحقق والتدقيق مركزية في ContractService.
     public class TeacherContractService
     {
-        private readonly TeacherContractRepository repository = new TeacherContractRepository();
-        private readonly AuditLogService auditLogService = new AuditLogService();
+        private readonly ContractService contractService = new ContractService();
 
         public DataTable GetAllContracts()
         {
-            CurrentUser.DemandAction("Contracts", "View", "ليس لديك صلاحية عرض عقود المعلمين.");
-            return repository.GetAllContracts();
+            return contractService.GetAllContracts();
         }
 
         public void AddContract(TeacherContract contract)
         {
-            CurrentUser.DemandAction("Contracts", "Add", "ليس لديك صلاحية إضافة عقود المعلمين.");
-            if (contract == null)
-                throw new ArgumentException("بيانات العقد غير صحيحة.");
-            repository.AddContract(contract);
-            auditLogService.Record("إنشاء", "TeacherContract", contract.ContractID.ToString(),
-                "إنشاء عقد للمعلم رقم " + contract.TeacherID);
+            if (!contractService.AddContract(contract))
+                throw new InvalidOperationException("تعذر إضافة العقد.");
         }
 
         public bool UpdateContract(TeacherContract contract)
         {
-            CurrentUser.DemandAction("Contracts", "Edit", "ليس لديك صلاحية تعديل عقود المعلمين.");
-            if (contract == null)
-                throw new ArgumentException("بيانات العقد غير صحيحة.");
-            bool updated = repository.UpdateContract(contract);
-            if (updated)
-                auditLogService.Record("تعديل", "TeacherContract", contract.ContractID.ToString(),
-                    "تعديل عقد المعلم رقم " + contract.TeacherID);
-            return updated;
+            return contractService.UpdateContract(contract);
         }
 
         public bool DeleteContract(int contractId)
         {
-            CurrentUser.DemandAction("Contracts", "Delete", "ليس لديك صلاحية حذف عقود المعلمين.");
-            if (contractId <= 0)
-                throw new ArgumentException("رقم العقد غير صحيح.");
-            bool deleted = repository.DeleteContract(contractId);
-            if (deleted)
-                auditLogService.Record("حذف", "TeacherContract", contractId.ToString(), "حذف عقد معلم.");
-            return deleted;
+            return contractService.DeleteContract(contractId);
         }
 
+        public bool HasActiveContract(int teacherId)
+        {
+            return contractService.HasActiveContract(teacherId);
+        }
+
+        public bool HasActiveContract(int teacherId, int excludedContractId)
+        {
+            return contractService.HasActiveContract(teacherId, excludedContractId);
+        }
     }
 }

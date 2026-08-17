@@ -98,7 +98,7 @@ namespace SchoolSystem.Services
 
         public void CalculateSalary(TeacherContract contract)
         {
-            CurrentUser.DemandAction("Contracts", "View", "ليس لديك صلاحية حساب بيانات العقد.");
+            // الحساب عملية داخلية لازمة قبل الحفظ، وتُحكم صلاحية العملية المستدعية نفسها.
             if (contract == null)
                 return;
 

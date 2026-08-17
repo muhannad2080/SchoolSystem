@@ -23,16 +23,18 @@ namespace SchoolSystem.Services
             return repository.PayrollExists(teacherId, month, year, excludeId);
         }
 
-        public void AddPayroll(Payroll payroll)
+        public int AddPayroll(Payroll payroll)
         {
             CurrentUser.DemandAction("Payroll", "Add", "ليس لديك صلاحية إضافة الرواتب.");
             ValidatePayroll(payroll);
             if (repository.PayrollExists(payroll.TeacherID, payroll.SalaryMonth, payroll.SalaryYear))
                 throw new Exception("تم صرف راتب هذا المعلم لهذا الشهر مسبقاً.");
-            
-            repository.AddPayroll(payroll);
-            auditLogService.Record("إنشاء", "Payroll", payroll.PayrollID.ToString(),
+
+            int payrollId = repository.AddPayroll(payroll);
+            payroll.PayrollID = payrollId;
+            auditLogService.Record("إنشاء", "Payroll", payrollId.ToString(),
                 "إنشاء سجل راتب للمعلم رقم " + payroll.TeacherID + " عن " + payroll.SalaryMonth + "/" + payroll.SalaryYear);
+            return payrollId;
         }
 
         public bool UpdatePayroll(Payroll payroll)
@@ -84,8 +86,14 @@ namespace SchoolSystem.Services
 
             if (payroll.Deductions < 0)
                 throw new Exception("الخصومات لا يمكن أن تكون سالبة.");
-            
+
             payroll.NetSalary = (payroll.BasicSalary + payroll.Allowances) - payroll.Deductions;
+            if (payroll.NetSalary < 0)
+                throw new Exception("الخصومات لا يمكن أن تتجاوز إجمالي الراتب والبدلات.");
+            if (payroll.PaymentDate.HasValue && payroll.PaymentDate.Value.Date > DateTime.Today)
+                throw new Exception("تاريخ صرف الراتب لا يمكن أن يكون في المستقبل.");
+            if (!string.IsNullOrWhiteSpace(payroll.Notes) && payroll.Notes.Trim().Length > 200)
+                throw new Exception("ملاحظات الراتب لا يمكن أن تتجاوز 200 حرف.");
         }
     }
 }
