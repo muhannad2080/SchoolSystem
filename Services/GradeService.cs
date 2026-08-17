@@ -14,13 +14,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllSubjects()
         {
-            CurrentUser.DemandPermission(PermissionKeys.GradesManage, "ليس لديك صلاحية إدارة الدرجات.");
+            CurrentUser.DemandAction("Grades", "View", "ليس لديك صلاحية عرض المواد.");
             return repository.GetAllSubjects();
         }
 
         public DataTable GetSubjectsByClass(int classId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.GradesManage, "ليس لديك صلاحية إدارة الدرجات.");
+            CurrentUser.DemandAction("Grades", "View", "ليس لديك صلاحية عرض مواد الصف.");
             if (classId <= 0)
                 throw new ArgumentException("يجب اختيار الصف قبل تحميل المواد.");
 
@@ -29,7 +29,7 @@ namespace SchoolSystem.Services
 
         public DataTable GetGradeEntryStudents(int classId, string section, string academicYear, int subjectId, string termName)
         {
-            CurrentUser.DemandPermission(PermissionKeys.GradesManage, "ليس لديك صلاحية إدارة الدرجات.");
+            CurrentUser.DemandAction("Grades", "View", "ليس لديك صلاحية عرض قائمة إدخال الدرجات.");
             if (classId <= 0)
                 throw new ArgumentException("يجب اختيار الصف.");
 
@@ -58,7 +58,7 @@ namespace SchoolSystem.Services
 
         public bool SaveGrade(StudentGrade grade)
         {
-            CurrentUser.DemandPermission(PermissionKeys.GradesManage, "ليس لديك صلاحية إدارة الدرجات.");
+            CurrentUser.DemandAction("Grades", "Edit", "ليس لديك صلاحية حفظ أو تعديل الدرجات.");
             ValidateGrade(grade);
             CalculateGrade(grade);
 
@@ -73,7 +73,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteGrade(int gradeId)
         {
-            CurrentUser.DemandPermission(PermissionKeys.GradesManage, "ليس لديك صلاحية إدارة الدرجات.");
+            CurrentUser.DemandAction("Grades", "Delete", "ليس لديك صلاحية حذف الدرجات.");
             if (gradeId <= 0)
                 throw new ArgumentException("اختر درجة صحيحة للحذف.");
 
@@ -85,7 +85,8 @@ namespace SchoolSystem.Services
 
         public void CalculateGrade(StudentGrade grade)
         {
-            CurrentUser.DemandPermission(PermissionKeys.GradesManage, "ليس لديك صلاحية إدارة الدرجات.");
+            CurrentUser.DemandAny("ليس لديك صلاحية احتساب الدرجات.",
+                "Grades.View", "Grades.Add", "Grades.Edit", PermissionKeys.GradesManage);
             grade.Total = grade.Quiz1 + grade.Quiz2 + grade.CourseWork + grade.FinalExam;
 
             if (grade.Total >= 90)
