@@ -65,16 +65,22 @@ namespace SchoolSystem.DataAccess
                         s.FullName AS StudentName,
                         s.Gender,
                         ISNULL(g.GradeID, 0) AS GradeID,
-                        ISNULL(g.Quiz1, 0) AS Quiz1,
-                        ISNULL(g.Quiz2, 0) AS Quiz2,
-                        ISNULL(g.CourseWork, 0) AS CourseWork,
-                        ISNULL(g.FinalExam, 0) AS FinalExam,
-                        ISNULL(g.Total, 0) AS Total,
-                        ISNULL(g.GradeLetter, N'') AS GradeLetter,
-                        ISNULL(g.ResultStatus, N'') AS ResultStatus,
+                        CAST(0 AS DECIMAL(10,2)) AS Quiz1,
+                        CAST(0 AS DECIMAL(10,2)) AS Quiz2,
+                        CAST(0 AS DECIMAL(10,2)) AS CourseWork,
+                        CAST(0 AS DECIMAL(10,2)) AS FinalExam,
+                        ISNULL(g.GradeValue, 0) AS Total,
+                        CASE
+                            WHEN ISNULL(g.GradeValue, 0) >= 90 THEN N'A'
+                            WHEN ISNULL(g.GradeValue, 0) >= 80 THEN N'B'
+                            WHEN ISNULL(g.GradeValue, 0) >= 70 THEN N'C'
+                            WHEN ISNULL(g.GradeValue, 0) >= 60 THEN N'D'
+                            ELSE N'F'
+                        END AS GradeLetter,
+                        CASE WHEN ISNULL(g.GradeValue, 0) >= 50 THEN N'ناجح' ELSE N'راسب' END AS ResultStatus,
                         ISNULL(g.Notes, N'') AS Notes
                     FROM Students s
-                    LEFT JOIN StudentGrades g
+                    LEFT JOIN Grades g
                         ON g.StudentID = s.StudentID
                         AND g.SubjectID = @SubjectID
                         AND g.AcademicYear = @AcademicYear
@@ -129,26 +135,18 @@ namespace SchoolSystem.DataAccess
                     IF EXISTS
                     (
                         SELECT 1
-                        FROM StudentGrades
+                        FROM Grades
                         WHERE StudentID = @StudentID
                           AND SubjectID = @SubjectID
                           AND AcademicYear = @AcademicYear
                           AND TermName = @TermName
                     )
                     BEGIN
-                        UPDATE StudentGrades
+                        UPDATE Grades
                         SET
                             ClassID = @ClassID,
-                            Section = @Section,
-                            Quiz1 = @Quiz1,
-                            Quiz2 = @Quiz2,
-                            CourseWork = @CourseWork,
-                            FinalExam = @FinalExam,
-                            Total = @Total,
-                            GradeLetter = @GradeLetter,
-                            ResultStatus = @ResultStatus,
-                            Notes = @Notes,
-                            UpdatedAt = GETDATE()
+                            GradeValue = @Total,
+                            Notes = @Notes
                         WHERE StudentID = @StudentID
                           AND SubjectID = @SubjectID
                           AND AcademicYear = @AcademicYear
@@ -156,21 +154,14 @@ namespace SchoolSystem.DataAccess
                     END
                     ELSE
                     BEGIN
-                        INSERT INTO StudentGrades
+                        INSERT INTO Grades
                         (
                             StudentID,
                             SubjectID,
                             ClassID,
-                            Section,
                             AcademicYear,
                             TermName,
-                            Quiz1,
-                            Quiz2,
-                            CourseWork,
-                            FinalExam,
-                            Total,
-                            GradeLetter,
-                            ResultStatus,
+                            GradeValue,
                             Notes,
                             CreatedAt
                         )
@@ -179,16 +170,9 @@ namespace SchoolSystem.DataAccess
                             @StudentID,
                             @SubjectID,
                             @ClassID,
-                            @Section,
                             @AcademicYear,
                             @TermName,
-                            @Quiz1,
-                            @Quiz2,
-                            @CourseWork,
-                            @FinalExam,
                             @Total,
-                            @GradeLetter,
-                            @ResultStatus,
                             @Notes,
                             GETDATE()
                         )
@@ -208,7 +192,7 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = "DELETE FROM StudentGrades WHERE GradeID = @GradeID";
+                string query = "DELETE FROM Grades WHERE GradeID = @GradeID";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {

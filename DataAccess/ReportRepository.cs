@@ -543,7 +543,7 @@ namespace SchoolSystem.DataAccess
 
         private DataTable GetMarksReport(ReportRequest request)
         {
-            if (TableExists("StudentGrades"))
+            if (!TableExists("Grades") && TableExists("StudentGrades"))
             {
                 string query = @"
                     SELECT
