@@ -219,6 +219,12 @@ namespace SchoolSystem.Services
                             ApplicationLogger.LogException("تهيئة تنبيه قفل الحساب", emailException);
                         }
 
+                        auditLogService.Record(
+                            "قفل حساب",
+                            "User",
+                            user.UserID.ToString(),
+                            "تم قفل الحساب تلقائياً بعد ثلاث محاولات دخول فاشلة دون تسجيل كلمة المرور.");
+
                         throw new Exception("تم تعطيل الحساب بعد تجاوز ثلاث محاولات دخول فاشلة. اطلب من مدير النظام إعادة تفعيله.");
                     }
 
