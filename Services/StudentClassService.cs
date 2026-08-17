@@ -167,13 +167,11 @@ namespace SchoolSystem.Services
 
             string normalized = academicYear.Trim().Replace('-', '/');
             string[] parts = normalized.Split('/');
-            int firstYear;
-            int secondYear;
             if (parts.Length != 2 ||
                 parts[0].Length != 4 ||
                 parts[1].Length != 4 ||
-                !int.TryParse(parts[0], out firstYear) ||
-                !int.TryParse(parts[1], out secondYear) ||
+                !int.TryParse(parts[0], out int firstYear) ||
+                !int.TryParse(parts[1], out int secondYear) ||
                 secondYear != firstYear + 1)
             {
                 throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027 أو 1447-1448.");

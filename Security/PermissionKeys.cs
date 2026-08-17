@@ -16,6 +16,7 @@ namespace SchoolSystem.Security
         public const string StudentsView = "Students.View";
         public const string StudentsManage = "Students.Manage";
         public const string EnrollmentManage = "Enrollment.Manage";
+        public const string ClassAssignmentView = "ClassAssignment.View";
         public const string ClassAssignmentManage = "ClassAssignment.Manage";
         public const string TeachersManage = "Teachers.Manage";
         public const string StaffAttendanceManage = "StaffAttendance.Manage";
@@ -78,8 +79,8 @@ namespace SchoolSystem.Security
         {
             var values = new List<string>
             {
-                DashboardView, StudentsView, StudentsManage, EnrollmentManage, ClassAssignmentManage,
-                TeachersManage, StaffAttendanceManage, PayrollManage, SubjectsManage, ClassesManage,
+                DashboardView, StudentsView, StudentsManage, EnrollmentManage, ClassAssignmentView,
+                ClassAssignmentManage, TeachersManage, StaffAttendanceManage, PayrollManage, SubjectsManage, ClassesManage,
                 TimetableManage, AttendanceManage, GradesManage, FeesManage, VouchersManage,
                 ExpensesManage, LibraryManage, TransportManage, ReportsView, UsersManage,
                 AuditLogsView, SettingsManage, UsersView, UsersAdd, UsersEdit, UsersDelete,
