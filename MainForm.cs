@@ -40,15 +40,14 @@ namespace SchoolSystem
             menuStripMain.BackColor = mainColor;
             menuStripMain.ForeColor = Color.White;
             menuStripMain.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
-            menuStripMain.Padding = new Padding(4, 6, 4, 6);
-            menuStripMain.CanOverflow = false;
+            menuStripMain.Padding = new Padding(8, 6, 8, 6);
+            menuStripMain.CanOverflow = true;
             menuStripMain.AutoSize = false;
-            menuStripMain.RenderMode = ToolStripRenderMode.Professional;
-            tsmiAuditLogs.Overflow = ToolStripItemOverflow.Never;
-            tsmiSettings.Overflow = ToolStripItemOverflow.Never;
-            tsmiSettings.Alignment = ToolStripItemAlignment.Right;
+            menuStripMain.Renderer = new CustomMenuRenderer();
+
+            // عناصر حيوية لا يمكن إخفاؤها في زر الفائض عند تصغير النافذة.
+            tsmiDashboard.Overflow = ToolStripItemOverflow.Never;
             tsmiLogout.Overflow = ToolStripItemOverflow.Never;
-            tsmiLogout.Alignment = ToolStripItemAlignment.Right;
 
             foreach (ToolStripItem item in menuStripMain.Items)
             {
@@ -62,26 +61,35 @@ namespace SchoolSystem
                     StyleDropDownItems(menuItem);
             }
 
+            // تسجيل الخروج منفصل بصريًا في أقصى الجهة اليسرى.
+            // في شريط قوائم RTL يقصد ToolStripItemAlignment.Right الطرف الأيسر فيزيائيًا.
+            tsmiLogout.Alignment = ToolStripItemAlignment.Right;
+
+            // الترويسة: اسم النظام من اليمين وبيانات المستخدم والوقت من اليسار.
             panelTop.BackColor = UIHelper.SurfaceElevatedColor;
-            panelTop.Height = 76;
+            panelTop.Height = 80;
 
-            lblSystemTitle.Font = new Font(UIHelper.FontFamily, UIHelper.TitleFontSize, FontStyle.Bold);
-            lblSystemTitle.ForeColor = UIHelper.TextColor;
+            lblSystemTitle.Font = new Font(UIHelper.FontFamily, UIHelper.TitleFontSize + 4F, FontStyle.Bold);
+            lblSystemTitle.ForeColor = UIHelper.PrimaryColor;
             lblSystemTitle.Text = "نظام إدارة المدرسة";
+            lblSystemTitle.Margin = new Padding(3, 0, 12, 0);
 
-            lblUsername.BackColor = UIHelper.SurfaceSecondaryColor;
+            lblSystemSubtitle.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
+            lblSystemSubtitle.ForeColor = UIHelper.MutedTextColor;
+            lblSystemSubtitle.Text = "الحل المتكامل لإدارة المؤسسات التعليمية";
+            lblSystemSubtitle.Margin = new Padding(3, 0, 12, 0);
+
             lblUsername.ForeColor = accentColor;
-            lblUsername.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
-            lblUsername.Padding = new Padding(12, 0, 12, 0);
+            lblUsername.Font = new Font(UIHelper.FontFamily, UIHelper.TitleFontSize, FontStyle.Bold);
+            lblUsername.Margin = new Padding(3, 0, 3, 0);
 
-            string currentUserText = lblUsername.Text ?? string.Empty;
-            if (currentUserText.StartsWith("المستخدم:", StringComparison.Ordinal))
-                currentUserText = currentUserText.Substring("المستخدم:".Length).Trim();
-
-            lblUsername.Text = "المستخدم: " + currentUserText;
+            lblUserRole.ForeColor = UIHelper.MutedTextColor;
+            lblUserRole.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
+            lblUserRole.Margin = new Padding(3, 0, 3, 0);
 
             lblDateTime.ForeColor = UIHelper.MutedTextColor;
-            lblDateTime.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
+            lblDateTime.Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize);
+            lblDateTime.Margin = new Padding(3, 0, 3, 0);
 
             panelContent.BackColor = contentBack;
             panelContent.Padding = new Padding(18);
@@ -93,17 +101,27 @@ namespace SchoolSystem
 
             lblDBStatus.ForeColor = UIHelper.SuccessColor;
             lblOnlineUsers.ForeColor = UIHelper.MutedTextColor;
+            lblStatusUser.ForeColor = UIHelper.TextColor;
+            lblStatusUser.Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize, FontStyle.Bold);
 
             this.BackColor = contentBack;
-            this.MinimumSize = new Size(1100, 650);
+            this.MinimumSize = new Size(1024, 700);
             this.StartPosition = FormStartPosition.CenterScreen;
+            this.WindowState = FormWindowState.Maximized;
             this.Text = "نظام إدارة المدرسة";
+
+            lblDateTime.Text = FormatNow();
         }
 
         private void UpdateCurrentUserLabel()
         {
             if (!CurrentUser.IsLoggedIn || CurrentUser.User == null)
+            {
+                lblUsername.Text = "زائر";
+                lblUserRole.Text = string.Empty;
+                lblStatusUser.Text = "غير مسجل";
                 return;
+            }
 
             string displayName = CurrentUser.User.FullName;
 
@@ -113,7 +131,13 @@ namespace SchoolSystem
             if (string.IsNullOrWhiteSpace(displayName))
                 displayName = "مستخدم";
 
-            lblUsername.Text = "المستخدم: " + displayName;
+            lblUsername.Text = "👤 " + displayName;
+            lblStatusUser.Text = "المستخدم: " + displayName;
+
+            string role = CurrentUser.User.RoleName;
+            lblUserRole.Text = string.IsNullOrWhiteSpace(role)
+                ? string.Empty
+                : "الدور: " + role;
         }
 
         private void StyleDropDownItems(ToolStripMenuItem parent)
@@ -137,7 +161,12 @@ namespace SchoolSystem
 
         private void timerClock_Tick(object sender, EventArgs e)
         {
-            lblDateTime.Text = DateTime.Now.ToString("dddd, dd/MM/yyyy  HH:mm:ss");
+            lblDateTime.Text = FormatNow();
+        }
+
+        private static string FormatNow()
+        {
+            return DateTime.Now.ToString("dddd، dd/MM/yyyy  HH:mm:ss");
         }
 
         private void LoadWelcomeScreen()
@@ -284,9 +313,10 @@ namespace SchoolSystem
                 tsmiDashboard, tsmiStudents, tsmiStudentsManage, tsmiStudentsEnroll,
                 tsmiStudentsClasses, tsmiTeachers, tsmiTeachersManage, tsmiTeachersAttendance,
                 tsmiTeachersPayroll, tsmiAcademic, tsmiSubjects, tsmiClasses, tsmiTimetable,
-                tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
-                tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiTransport, tsmiLibrary,
-                tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings
+                tsmiAttendanceGrades, tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
+                tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiFinancialPayroll,
+                tsmiServices, tsmiTransport, tsmiLibrary,
+                tsmiAdmin, tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings
             };
 
             foreach (ToolStripMenuItem item in permissionItems)
@@ -309,6 +339,7 @@ namespace SchoolSystem
                 tsmiSubjects.Visible = true;
                 tsmiClasses.Visible = true;
                 tsmiTimetable.Visible = true;
+                tsmiAttendanceGrades.Visible = true;
                 tsmiGrades.Visible = true;
                 tsmiAttendance.Visible = true;
                 tsmiFinancial.Visible = true;
@@ -316,8 +347,11 @@ namespace SchoolSystem
                 tsmiVouchers.Visible = true;
                 tsmiExpenses.Visible = true;
                 تعريفرسومالصفوفToolStripMenuItem.Visible = true;
+                tsmiFinancialPayroll.Visible = true;
+                tsmiServices.Visible = true;
                 tsmiTransport.Visible = true;
                 tsmiLibrary.Visible = true;
+                tsmiAdmin.Visible = true;
                 tsmiUsers.Visible = true;
                 tsmiReports.Visible = true;
                 tsmiAuditLogs.Visible = true;
@@ -345,6 +379,7 @@ namespace SchoolSystem
             tsmiFees.Visible = Has(PermissionKeys.FeesManage);
             tsmiVouchers.Visible = Has(PermissionKeys.VouchersManage);
             tsmiExpenses.Visible = Has(PermissionKeys.ExpensesManage);
+            tsmiFinancialPayroll.Visible = Has(PermissionKeys.PayrollManage);
 
             tsmiTransport.Visible = Has(PermissionKeys.TransportManage);
             tsmiLibrary.Visible = Has(PermissionKeys.LibraryManage);
@@ -358,8 +393,11 @@ namespace SchoolSystem
             // إخفاء مجموعات القوائم التي لا تحتوي على أي خيار مسموح للمستخدم.
             tsmiStudents.Visible = tsmiStudentsManage.Visible || tsmiStudentsEnroll.Visible || tsmiStudentsClasses.Visible;
             tsmiTeachers.Visible = tsmiTeachersManage.Visible || tsmiTeachersAttendance.Visible || tsmiTeachersPayroll.Visible;
-            tsmiAcademic.Visible = tsmiSubjects.Visible || tsmiClasses.Visible || tsmiTimetable.Visible || tsmiGrades.Visible || tsmiAttendance.Visible;
-            tsmiFinancial.Visible = tsmiFees.Visible || tsmiVouchers.Visible || tsmiExpenses.Visible || تعريفرسومالصفوفToolStripMenuItem.Visible;
+            tsmiAcademic.Visible = tsmiSubjects.Visible || tsmiClasses.Visible || tsmiTimetable.Visible;
+            tsmiAttendanceGrades.Visible = tsmiGrades.Visible || tsmiAttendance.Visible;
+            tsmiFinancial.Visible = tsmiFees.Visible || tsmiVouchers.Visible || tsmiExpenses.Visible || تعريفرسومالصفوفToolStripMenuItem.Visible || tsmiFinancialPayroll.Visible;
+            tsmiServices.Visible = tsmiTransport.Visible || tsmiLibrary.Visible;
+            tsmiAdmin.Visible = tsmiUsers.Visible || tsmiAuditLogs.Visible || tsmiSettings.Visible;
         }
 
         private bool IsDesignTime()
@@ -381,9 +419,10 @@ namespace SchoolSystem
                 tsmiDashboard, tsmiStudents, tsmiStudentsManage, tsmiStudentsEnroll,
                 tsmiStudentsClasses, tsmiTeachers, tsmiTeachersManage, tsmiTeachersAttendance,
                 tsmiTeachersPayroll, tsmiAcademic, tsmiSubjects, tsmiClasses, tsmiTimetable,
-                tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
-                tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiTransport, tsmiLibrary,
-                tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings, tsmiLogout
+                tsmiAttendanceGrades, tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
+                tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiFinancialPayroll,
+                tsmiServices, tsmiTransport, tsmiLibrary,
+                tsmiAdmin, tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings, tsmiLogout
             };
 
             foreach (ToolStripMenuItem item in items)
