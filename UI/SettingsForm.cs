@@ -41,10 +41,37 @@ namespace SchoolSystem.UI
             UIHelper.StylePrimaryButton(saveButton);
             UIHelper.StyleButton(backupButton, UIHelper.SuccessColor);
             UIHelper.StyleButton(restoreButton, UIHelper.WarningColor);
+            ApplyPermissionState();
+        }
+
+        private bool EnsureSettingsPermission(string message)
+        {
+            if (CurrentUser.HasPermission(PermissionKeys.SettingsManage))
+                return true;
+
+            UIHelper.ShowWarning(message);
+            return false;
+        }
+
+        private void ApplyPermissionState()
+        {
+            bool allowed = CurrentUser.HasPermission(PermissionKeys.SettingsManage);
+            testConnectionButton.Enabled = allowed;
+            saveButton.Enabled = allowed;
+            backupButton.Enabled = allowed;
+            restoreButton.Enabled = allowed;
+            browseButton.Enabled = allowed;
+            serverTextBox.ReadOnly = !allowed;
+            databaseTextBox.ReadOnly = !allowed;
+            backupDirectoryTextBox.ReadOnly = !allowed;
+            replaceExistingCheckBox.Enabled = allowed;
         }
 
         private void BrowseButton_Click(object sender, EventArgs e)
         {
+            if (!EnsureSettingsPermission("لا تملك صلاحية إدارة إعدادات النظام."))
+                return;
+
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
             {
                 dialog.Description = "اختر مجلد النسخ الاحتياطية خارج مجلد البرنامج";
@@ -61,6 +88,9 @@ namespace SchoolSystem.UI
 
         private async void TestConnectionButton_Click(object sender, EventArgs e)
         {
+            if (!EnsureSettingsPermission("لا تملك صلاحية اختبار إعدادات الاتصال."))
+                return;
+
             try
             {
                 SetBusy(true, "جارٍ اختبار الاتصال...");
@@ -77,6 +107,9 @@ namespace SchoolSystem.UI
 
         private void SaveButton_Click(object sender, EventArgs e)
         {
+            if (!EnsureSettingsPermission("لا تملك صلاحية حفظ إعدادات النظام."))
+                return;
+
             try
             {
                 ValidateFields();
@@ -189,6 +222,9 @@ namespace SchoolSystem.UI
 
         private void SaveSettingsSilently()
         {
+            if (!EnsureSettingsPermission("لا تملك صلاحية حفظ إعدادات النظام."))
+                throw new UnauthorizedAccessException("لا تملك صلاحية حفظ إعدادات النظام.");
+
             ValidateFields();
             settings = new ApplicationSettingsData
             {
