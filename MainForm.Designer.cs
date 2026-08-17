@@ -95,17 +95,17 @@
             this.menuStripMain.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.menuStripMain.Location = new System.Drawing.Point(0, 0);
             this.menuStripMain.Name = "menuStripMain";
-            this.menuStripMain.Padding = new System.Windows.Forms.Padding(8, 5, 8, 5);
+            this.menuStripMain.Padding = new System.Windows.Forms.Padding(14, 6, 14, 6);
             this.menuStripMain.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.menuStripMain.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.menuStripMain.Size = new System.Drawing.Size(1280, 33);
+            this.menuStripMain.Size = new System.Drawing.Size(1280, 48);
             this.menuStripMain.TabIndex = 0;
             // 
             // tsmiDashboard
             // 
             this.tsmiDashboard.Name = "tsmiDashboard";
             this.tsmiDashboard.Size = new System.Drawing.Size(110, 24);
-            this.tsmiDashboard.Text = "📊 الرئيسية";
+            this.tsmiDashboard.Text = "الرئيسية";
             this.tsmiDashboard.Click += new System.EventHandler(this.tsmiDashboard_Click);
             // 
             // tsmiStudents
@@ -116,7 +116,7 @@
             this.tsmiStudentsClasses});
             this.tsmiStudents.Name = "tsmiStudents";
             this.tsmiStudents.Size = new System.Drawing.Size(95, 24);
-            this.tsmiStudents.Text = "👨‍🎓 الطلاب";
+            this.tsmiStudents.Text = "الطلاب";
             // 
             // tsmiStudentsManage
             // 
@@ -147,7 +147,7 @@
             this.tsmiTeachersPayroll});
             this.tsmiTeachers.Name = "tsmiTeachers";
             this.tsmiTeachers.Size = new System.Drawing.Size(115, 24);
-            this.tsmiTeachers.Text = "👨‍🏫 المعلمون";
+            this.tsmiTeachers.Text = "المعلمون";
             // 
             // tsmiTeachersManage
             // 
@@ -178,7 +178,7 @@
             this.tsmiTimetable});
             this.tsmiAcademic.Name = "tsmiAcademic";
             this.tsmiAcademic.Size = new System.Drawing.Size(171, 24);
-            this.tsmiAcademic.Text = "📚 الهيكل الأكاديمي";
+            this.tsmiAcademic.Text = "الهيكل الأكاديمي";
             // 
             // tsmiSubjects
             // 
@@ -208,7 +208,7 @@
             this.tsmiGrades});
             this.tsmiAttendanceGrades.Name = "tsmiAttendanceGrades";
             this.tsmiAttendanceGrades.Size = new System.Drawing.Size(171, 24);
-            this.tsmiAttendanceGrades.Text = "📝 الحضور والدرجات";
+            this.tsmiAttendanceGrades.Text = "الحضور والدرجات";
             // 
             // tsmiAttendance
             // 
@@ -234,7 +234,7 @@
             this.tsmiFinancialPayroll});
             this.tsmiFinancial.Name = "tsmiFinancial";
             this.tsmiFinancial.Size = new System.Drawing.Size(92, 24);
-            this.tsmiFinancial.Text = "💰 المالية";
+            this.tsmiFinancial.Text = "المالية";
             // 
             // tsmiFees
             // 
@@ -278,7 +278,7 @@
             this.tsmiLibrary});
             this.tsmiServices.Name = "tsmiServices";
             this.tsmiServices.Size = new System.Drawing.Size(108, 24);
-            this.tsmiServices.Text = "🚌 الخدمات";
+            this.tsmiServices.Text = "الخدمات";
             // 
             // tsmiTransport
             // 
@@ -302,7 +302,7 @@
             this.tsmiSettings});
             this.tsmiAdmin.Name = "tsmiAdmin";
             this.tsmiAdmin.Size = new System.Drawing.Size(92, 24);
-            this.tsmiAdmin.Text = "⚙️ الإدارة";
+            this.tsmiAdmin.Text = "الإدارة";
             // 
             // tsmiUsers
             // 
@@ -329,14 +329,14 @@
             // 
             this.tsmiReports.Name = "tsmiReports";
             this.tsmiReports.Size = new System.Drawing.Size(94, 24);
-            this.tsmiReports.Text = "📋 التقارير";
+            this.tsmiReports.Text = "التقارير";
             this.tsmiReports.Click += new System.EventHandler(this.tsmiReports_Click);
             // 
             // tsmiLogout
             // 
             this.tsmiLogout.Name = "tsmiLogout";
             this.tsmiLogout.Size = new System.Drawing.Size(83, 23);
-            this.tsmiLogout.Text = "🚪 خروج";
+            this.tsmiLogout.Text = "تسجيل الخروج";
             this.tsmiLogout.Click += new System.EventHandler(this.tsmiLogout_Click);
             // 
             // panelTop
@@ -344,18 +344,18 @@
             this.panelTop.BackColor = System.Drawing.Color.White;
             this.panelTop.Controls.Add(this.tblHeader);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTop.Location = new System.Drawing.Point(0, 33);
+            this.panelTop.Location = new System.Drawing.Point(0, 48);
             this.panelTop.Name = "panelTop";
             this.panelTop.Padding = new System.Windows.Forms.Padding(14, 6, 14, 6);
-            this.panelTop.Size = new System.Drawing.Size(1280, 80);
+            this.panelTop.Size = new System.Drawing.Size(1280, 92);
             this.panelTop.TabIndex = 1;
             // 
             // tblHeader
             // 
             this.tblHeader.ColumnCount = 3;
-            this.tblHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
-            this.tblHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            this.tblHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
+            this.tblHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tblHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 2F));
+            this.tblHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 48F));
             this.tblHeader.Controls.Add(this.tblTitle, 0, 0);
             this.tblHeader.Controls.Add(this.tblUserInfo, 2, 0);
             this.tblHeader.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -363,7 +363,7 @@
             this.tblHeader.Name = "tblHeader";
             this.tblHeader.RowCount = 1;
             this.tblHeader.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tblHeader.Size = new System.Drawing.Size(1252, 68);
+            this.tblHeader.Size = new System.Drawing.Size(1252, 80);
             this.tblHeader.TabIndex = 0;
             // 
             // tblTitle
@@ -393,7 +393,7 @@
             this.lblSystemTitle.Size = new System.Drawing.Size(548, 31);
             this.lblSystemTitle.TabIndex = 0;
             this.lblSystemTitle.Text = "نظام إدارة المدرسة";
-            this.lblSystemTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSystemTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblSystemSubtitle
             // 
@@ -406,7 +406,7 @@
             this.lblSystemSubtitle.Size = new System.Drawing.Size(548, 28);
             this.lblSystemSubtitle.TabIndex = 1;
             this.lblSystemSubtitle.Text = "الحل المتكامل لإدارة المؤسسات التعليمية";
-            this.lblSystemSubtitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSystemSubtitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tblUserInfo
             // 
@@ -420,10 +420,10 @@
             this.tblUserInfo.Margin = new System.Windows.Forms.Padding(0);
             this.tblUserInfo.Name = "tblUserInfo";
             this.tblUserInfo.RowCount = 3;
-            this.tblUserInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.tblUserInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.tblUserInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
             this.tblUserInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
-            this.tblUserInfo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 18F));
-            this.tblUserInfo.Size = new System.Drawing.Size(564, 68);
+            this.tblUserInfo.Size = new System.Drawing.Size(600, 80);
             this.tblUserInfo.TabIndex = 1;
             // 
             // lblUsername
@@ -436,7 +436,7 @@
             this.lblUsername.Name = "lblUsername";
             this.lblUsername.Size = new System.Drawing.Size(558, 25);
             this.lblUsername.TabIndex = 0;
-            this.lblUsername.Text = "👤 مدير النظام";
+            this.lblUsername.Text = "المستخدم الحالي";
             this.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblUserRole
@@ -462,17 +462,17 @@
             this.lblDateTime.Name = "lblDateTime";
             this.lblDateTime.Size = new System.Drawing.Size(558, 15);
             this.lblDateTime.TabIndex = 2;
-            this.lblDateTime.Text = "الخميس, 08/07/2026  10:30:45";
+            this.lblDateTime.Text = "التاريخ والوقت";
             this.lblDateTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panelContent
             // 
             this.panelContent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.panelContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelContent.Location = new System.Drawing.Point(0, 113);
+            this.panelContent.Location = new System.Drawing.Point(0, 140);
             this.panelContent.Name = "panelContent";
             this.panelContent.Padding = new System.Windows.Forms.Padding(18);
-            this.panelContent.Size = new System.Drawing.Size(1280, 663);
+            this.panelContent.Size = new System.Drawing.Size(1280, 636);
             this.panelContent.TabIndex = 2;
             // 
             // statusStripMain
@@ -487,7 +487,7 @@
             this.lblStatusUser});
             this.statusStripMain.Location = new System.Drawing.Point(0, 776);
             this.statusStripMain.Name = "statusStripMain";
-            this.statusStripMain.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
+            this.statusStripMain.Padding = new System.Windows.Forms.Padding(16, 0, 16, 0);
             this.statusStripMain.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.statusStripMain.Size = new System.Drawing.Size(1280, 24);
             this.statusStripMain.TabIndex = 3;
@@ -531,7 +531,7 @@
             this.Controls.Add(this.menuStripMain);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.MainMenuStrip = this.menuStripMain;
-            this.MinimumSize = new System.Drawing.Size(1024, 700);
+            this.MinimumSize = new System.Drawing.Size(1100, 720);
             this.Name = "MainForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.RightToLeftLayout = true;

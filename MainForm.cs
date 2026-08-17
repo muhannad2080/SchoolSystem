@@ -40,9 +40,11 @@ namespace SchoolSystem
             menuStripMain.BackColor = mainColor;
             menuStripMain.ForeColor = Color.White;
             menuStripMain.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
-            menuStripMain.Padding = new Padding(8, 6, 8, 6);
+            menuStripMain.Padding = new Padding(14, 6, 14, 6);
             menuStripMain.CanOverflow = true;
             menuStripMain.AutoSize = false;
+            menuStripMain.GripStyle = ToolStripGripStyle.Hidden;
+            menuStripMain.ShowItemToolTips = true;
             menuStripMain.Renderer = new CustomMenuRenderer();
 
             // عناصر حيوية لا يمكن إخفاؤها في زر الفائض عند تصغير النافذة.
@@ -53,21 +55,26 @@ namespace SchoolSystem
             {
                 item.BackColor = mainColor;
                 item.ForeColor = Color.White;
-                item.Margin = new Padding(2, 0, 2, 0);
-                item.Padding = new Padding(4, 0, 4, 0);
+                item.Margin = new Padding(3, 0, 3, 0);
+                item.Padding = new Padding(9, 0, 9, 0);
+                item.AutoSize = true;
+                item.Height = 34;
 
                 ToolStripMenuItem menuItem = item as ToolStripMenuItem;
                 if (menuItem != null)
                     StyleDropDownItems(menuItem);
             }
 
-            // تسجيل الخروج منفصل بصريًا في أقصى الجهة اليسرى.
-            // في شريط قوائم RTL يقصد ToolStripItemAlignment.Right الطرف الأيسر فيزيائيًا.
-            tsmiLogout.Alignment = ToolStripItemAlignment.Right;
+            // يبقى تسجيل الخروج منفصلًا في الطرف المقابل للقائمة مع هامش واضح.
+            // يتم استخدام Alignment بدل Location حتى يحافظ MenuStrip على التخطيط عند تغيير الحجم.
+            tsmiLogout.Alignment = ToolStripItemAlignment.Left;
+            tsmiLogout.Margin = new Padding(18, 0, 3, 0);
+            tsmiLogout.Padding = new Padding(12, 0, 12, 0);
+            tsmiLogout.ToolTipText = "إنهاء الجلسة الحالية والعودة إلى شاشة الدخول";
 
             // الترويسة: اسم النظام من اليمين وبيانات المستخدم والوقت من اليسار.
             panelTop.BackColor = UIHelper.SurfaceElevatedColor;
-            panelTop.Height = 80;
+            panelTop.Height = 92;
 
             lblSystemTitle.Font = new Font(UIHelper.FontFamily, UIHelper.TitleFontSize + 4F, FontStyle.Bold);
             lblSystemTitle.ForeColor = UIHelper.PrimaryColor;
@@ -92,12 +99,12 @@ namespace SchoolSystem
             lblDateTime.Margin = new Padding(3, 0, 3, 0);
 
             panelContent.BackColor = contentBack;
-            panelContent.Padding = new Padding(18);
+            panelContent.Padding = new Padding(20);
 
             statusStripMain.BackColor = UIHelper.SurfaceElevatedColor;
             statusStripMain.ForeColor = UIHelper.MutedTextColor;
             statusStripMain.Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize);
-            statusStripMain.Padding = new Padding(12, 0, 12, 0);
+            statusStripMain.Padding = new Padding(16, 0, 16, 0);
 
             lblDBStatus.ForeColor = UIHelper.SuccessColor;
             lblOnlineUsers.ForeColor = UIHelper.MutedTextColor;
@@ -105,7 +112,7 @@ namespace SchoolSystem
             lblStatusUser.Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize, FontStyle.Bold);
 
             this.BackColor = contentBack;
-            this.MinimumSize = new Size(1024, 700);
+            this.MinimumSize = new Size(1100, 720);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.WindowState = FormWindowState.Maximized;
             this.Text = "نظام إدارة المدرسة";
