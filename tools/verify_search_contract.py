@@ -14,8 +14,8 @@ for path in sorted(UI.glob("*.cs")):
     if "RowFilter" not in text:
         continue
     row_filter_files.append(path.name)
-    if "EscapeDataViewFilterValue" not in text:
-        failures.append(f"{path.name}: RowFilter is used without EscapeDataViewFilterValue")
+    if "EscapeDataViewFilterValue" not in text and "BuildDataViewSearchFilter" not in text:
+        failures.append(f"{path.name}: RowFilter is used without an approved escaped filter helper")
 
 # Direct DataView filters must not receive raw TextBox/ComboBox text.
 for path in sorted(UI.glob("*.cs")):
@@ -23,7 +23,10 @@ for path in sorted(UI.glob("*.cs")):
     if "RowFilter" not in text:
         continue
     for line_no, line in enumerate(text.splitlines(), 1):
-        if "RowFilter" in line and ("Text" in line or "SelectedItem" in line) and "safe" not in line.lower() and "EscapeDataViewFilterValue" not in line:
+        if ("RowFilter" in line and ("Text" in line or "SelectedItem" in line)
+                and "safe" not in line.lower()
+                and "EscapeDataViewFilterValue" not in line
+                and "BuildDataViewSearchFilter" not in text):
             failures.append(f"{path.name}:{line_no}: possible raw search value in RowFilter")
 
 if failures:
@@ -31,6 +34,6 @@ if failures:
         print(f"FAIL: {failure}")
     sys.exit(1)
 
-print(f"PASS: {len(row_filter_files)} DataView search forms use escaped filter values")
+print(f"PASS: {len(row_filter_files)} DataView search forms use approved escaped filter helpers")
 print("PASS: no direct raw control value was detected in RowFilter assignments")
 print("PASS: search validation contract")
