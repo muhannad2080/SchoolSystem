@@ -1,4 +1,3 @@
-"""Static audit-coverage report for mutating application services."""
 from pathlib import Path
 import re
 import sys
@@ -22,7 +21,10 @@ for path in sorted(SERVICES.glob("*.cs")):
 
     has_permission = any(
         token in text
-        for token in ("DemandPermission(", "DemandAny(", "HasPermission(", "DemandAction(", "CanAdd(", "CanEdit(", "CanDelete(")")
+        for token in (
+            "DemandPermission(", "DemandAny(", "HasPermission(",
+            "DemandAction(", "CanAdd(", "CanEdit(", "CanDelete("
+        )
     )
     has_audit = "AuditLogService" in text and "auditLogService.Record(" in text
     status = "PASS" if has_permission and has_audit else "FAIL"
