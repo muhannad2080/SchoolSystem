@@ -14,13 +14,13 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllContracts()
         {
-            CurrentUser.DemandAction("Contracts", "View", "ليس لديك صلاحية عرض عقود الموظفين.");
+            CurrentUser.DemandAction("TeacherContracts", "View", "ليس لديك صلاحية عرض عقود الموظفين.");
             return repository.GetAllContracts();
         }
 
         public bool AddContract(TeacherContract contract)
         {
-            CurrentUser.DemandAction("Contracts", "Add", "ليس لديك صلاحية إضافة عقود الموظفين.");
+            CurrentUser.DemandAction("TeacherContracts", "Add", "ليس لديك صلاحية إضافة عقود الموظفين.");
             CalculateSalary(contract);
             ValidateContract(contract, false);
 
@@ -44,7 +44,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateContract(TeacherContract contract)
         {
-            CurrentUser.DemandAction("Contracts", "Edit", "ليس لديك صلاحية تعديل عقود الموظفين.");
+            CurrentUser.DemandAction("TeacherContracts", "Edit", "ليس لديك صلاحية تعديل عقود الموظفين.");
             CalculateSalary(contract);
             ValidateContract(contract, true);
 
@@ -68,7 +68,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteContract(int contractId)
         {
-            CurrentUser.DemandAction("Contracts", "Delete", "ليس لديك صلاحية حذف عقود الموظفين.");
+            CurrentUser.DemandAction("TeacherContracts", "Delete", "ليس لديك صلاحية حذف عقود الموظفين.");
             if (contractId <= 0)
                 throw new ArgumentException("رقم العقد غير صحيح.");
 
@@ -86,13 +86,13 @@ namespace SchoolSystem.Services
 
         public bool HasActiveContract(int teacherId)
         {
-            CurrentUser.DemandAction("Contracts", "View", "ليس لديك صلاحية التحقق من عقود الموظفين.");
+            CurrentUser.DemandAction("TeacherContracts", "View", "ليس لديك صلاحية التحقق من عقود الموظفين.");
             return repository.HasActiveContract(teacherId);
         }
 
         public bool HasActiveContract(int teacherId, int excludedContractId)
         {
-            CurrentUser.DemandAction("Contracts", "View", "ليس لديك صلاحية التحقق من عقود الموظفين.");
+            CurrentUser.DemandAction("TeacherContracts", "View", "ليس لديك صلاحية التحقق من عقود الموظفين.");
             return repository.HasActiveContract(teacherId, excludedContractId);
         }
 
