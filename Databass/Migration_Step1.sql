@@ -242,57 +242,15 @@ IF NOT EXISTS (SELECT * FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[St
 
 GO
 
--- 12. إصلاح صلاحيات المستخدمين الحاليين وإضافة حماية اسم المستخدم
--- لا نغيّر الصلاحيات المخصصة يدويًا؛ نملأ الصلاحيات فقط للحسابات الفارغة.
+-- 12. حماية الصلاحيات المخصصة يدويًا وإضافة حماية اسم المستخدم
+-- مهم: لا تكتب هذه الهجرة أي قيمة في Users.Permissions.
+-- الصلاحيات الفارغة اختيار يدوي صالح (منع الكل)، وإعادة ملئها هنا كانت
+-- تعيد القيمة القديمة Dashboard.View,Reports.View بعد كل تشغيل للسكربت.
+-- الحسابات التي لا تزال Permissions فيها NULL تُعالج داخل UserService من
+-- كتالوج الدور المعياري، بينما القيمة الفارغة تبقى فارغة بشكل دائم.
 IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[Users]') AND name = N'Permissions')
 BEGIN
-    UPDATE Users
-    SET Permissions = N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,Teachers.Manage,StaffAttendance.Manage,Payroll.Manage,Subjects.Manage,Classes.Manage,Timetable.Manage,Attendance.Manage,Grades.Manage,Fees.Manage,Vouchers.Manage,Expenses.Manage,Library.Manage,Transport.Manage,Reports.View,Users.Manage,AuditLogs.View,Settings.Manage',
-        UpdatedAt = GETDATE()
-    WHERE RoleName = N'مدير النظام'
-      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
-
-    UPDATE Users
-    SET Permissions = N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,Teachers.Manage,Subjects.Manage,Classes.Manage,Timetable.Manage,Attendance.Manage,Grades.Manage,Reports.View',
-        UpdatedAt = GETDATE()
-    WHERE RoleName = N'الإدارة'
-      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
-
-    UPDATE Users
-    SET Permissions = N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,Attendance.Manage,Grades.Manage,Reports.View',
-        UpdatedAt = GETDATE()
-    WHERE RoleName = N'شؤون الطلاب'
-      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
-
-    UPDATE Users
-    SET Permissions = N'Dashboard.View,Students.View,Attendance.Manage,Grades.Manage,Timetable.Manage,Reports.View',
-        UpdatedAt = GETDATE()
-    WHERE RoleName = N'المعلمون'
-      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
-
-    UPDATE Users
-    SET Permissions = N'Dashboard.View,Fees.Manage,Vouchers.Manage,Expenses.Manage,Payroll.Manage,Reports.View',
-        UpdatedAt = GETDATE()
-    WHERE RoleName = N'المالية'
-      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
-
-    UPDATE Users
-    SET Permissions = N'Dashboard.View,Library.Manage,Reports.View',
-        UpdatedAt = GETDATE()
-    WHERE RoleName = N'المكتبة'
-      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
-
-    UPDATE Users
-    SET Permissions = N'Dashboard.View,Transport.Manage,Reports.View',
-        UpdatedAt = GETDATE()
-    WHERE RoleName = N'النقل'
-      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
-
-    UPDATE Users
-    SET Permissions = N'Dashboard.View,Reports.View',
-        UpdatedAt = GETDATE()
-    WHERE RoleName = N'التقارير'
-      AND (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'');
+    PRINT N'تم الحفاظ على Users.Permissions دون إعادة كتابة الصلاحيات المخصصة.';
 END
 GO
 

@@ -36,7 +36,12 @@ END;
 GO
 
 DECLARE @ReportsOnly NVARCHAR(200) = N'Dashboard.View,Reports.View';
+-- الوضع الآمن الافتراضي: لا نعدّل الحسابات تلقائيًا.
+-- غيّر القيمة إلى 1 فقط بعد مراجعة النتائج والتأكد أن الحسابات قديمة فعلًا.
+DECLARE @ApplyRepair BIT = 0;
 
+IF @ApplyRepair = 1
+BEGIN
 ;WITH LegacyUsers AS
 (
     SELECT
@@ -62,11 +67,15 @@ SET
 FROM dbo.Users U
 INNER JOIN LegacyUsers L ON L.UserID = U.UserID
 WHERE L.NormalizedPermissions = REPLACE(@ReportsOnly, N' ', N'');
+END;
 
 SELECT UserID, UserName, RoleName, Permissions
 FROM dbo.Users
 WHERE REPLACE(REPLACE(LTRIM(RTRIM(ISNULL(Permissions, N''))), N' ', N''), N';', N',') = REPLACE(@ReportsOnly, N' ', N'');
 GO
 
-PRINT N'تم إصلاح الحسابات القديمة ذات صلاحيات Dashboard وReports فقط للأدوار القياسية المعروفة.';
+IF @ApplyRepair = 1
+    PRINT N'تم إصلاح الحسابات القديمة المحددة فقط بعد تفعيل ApplyRepair.';
+ELSE
+    PRINT N'وضع التشخيص فقط: لم يتم تعديل أي صلاحيات. راجع النتائج ثم فعّل ApplyRepair عند الحاجة.';
 GO

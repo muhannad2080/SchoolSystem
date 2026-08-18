@@ -32,24 +32,12 @@ WHERE LOWER(LTRIM(RTRIM(ISNULL(RoleName, N'')))) IN (N'مدير النظام', N
 GO
 
 /*
-   إكمال الصلاحيات للحسابات ذات الدور المعروف إذا كانت القيمة فارغة فقط.
-   لا يتم استبدال أي تخصيص يدوي غير فارغ.
+   لا نعيد ملء Permissions للحسابات العادية هنا.
+   القيمة الفارغة قد تكون اختيارًا يدويًا صحيحًا لمنع جميع الصلاحيات،
+   وأي UPDATE تلقائي سيعيد المشكلة القديمة Dashboard.View,Reports.View.
+   الحساب NULL فقط يعالجه UserService عند تسجيل الدخول من كتالوج الدور.
 */
-UPDATE dbo.Users
-SET Permissions = CASE LTRIM(RTRIM(RoleName))
-    WHEN N'الإدارة' THEN N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,Teachers.Manage,Subjects.Manage,Classes.Manage,Timetable.Manage,Attendance.Manage,Grades.Manage,Reports.View'
-    WHEN N'شؤون الطلاب' THEN N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,Attendance.Manage,Grades.Manage,Reports.View'
-    WHEN N'المعلمون' THEN N'Dashboard.View,Students.View,Attendance.Manage,Grades.Manage,Timetable.Manage,Reports.View'
-    WHEN N'المالية' THEN N'Dashboard.View,Fees.Manage,Vouchers.Manage,Expenses.Manage,Payroll.Manage,Reports.View'
-    WHEN N'المكتبة' THEN N'Dashboard.View,Library.Manage,Reports.View'
-    WHEN N'النقل' THEN N'Dashboard.View,Transport.Manage,Reports.View'
-    WHEN N'التقارير' THEN N'Dashboard.View,Reports.View'
-    ELSE Permissions
-END,
-UpdatedAt = GETDATE()
-WHERE (Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'')
-  AND LTRIM(RTRIM(RoleName)) IN
-      (N'الإدارة', N'شؤون الطلاب', N'المعلمون', N'المالية', N'المكتبة', N'النقل', N'التقارير');
+PRINT N'لم تتم إعادة كتابة صلاحيات الحسابات العادية؛ التخصيص اليدوي محفوظ.';
 GO
 
 /*
