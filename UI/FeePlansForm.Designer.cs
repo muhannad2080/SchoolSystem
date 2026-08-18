@@ -44,6 +44,7 @@
             this.dataGridViewFeePlans = new System.Windows.Forms.DataGridView();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.lblRecordCount = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).BeginInit();
             this.panelTitle.SuspendLayout();
             this.panelFields.SuspendLayout();
             this.tableFields.SuspendLayout();
@@ -55,7 +56,6 @@
             // 
             // panelTitle
             // 
-            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(42)))), ((int)(((byte)(57)))));
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
@@ -432,9 +432,9 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "FeePlansForm";
-            this.Text = "تعريف خطط الرسوم";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1100, 700);
+            ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).EndInit();
             this.panelTitle.ResumeLayout(false);
             this.panelFields.ResumeLayout(false);
             this.tableFields.ResumeLayout(false);

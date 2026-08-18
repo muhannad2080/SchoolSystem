@@ -8,6 +8,9 @@ namespace SchoolSystem.Security
     /// مصدر الحقيقة الوحيد لمفاتيح RBAC. المفاتيح القديمة من نوع *.Manage محفوظة
     /// للتوافق، بينما المفاتيح الإجرائية الجديدة تفصل العرض والإضافة والتعديل والحذف
     /// والطباعة والتصدير والاعتماد.
+    ///
+    /// قاعدة هامة: أي مفتاح من الشكل Module.Action حيث Module وAction معروفان
+    /// يُعتبر مفتاحاً صالحاً ويُعاد كما هو دون حذفه.
     /// </summary>
     public static class PermissionKeys
     {
@@ -57,7 +60,7 @@ namespace SchoolSystem.Security
 
         private static readonly string[] StandardActions =
         {
-            "View", "Add", "Edit", "Delete", "Search", "Print", "ExportExcel", "ExportCsv", "ExportPDF", "Approve", "Cancel"
+            "View", "Add", "Edit", "Delete", "Search", "Print", "ExportExcel", "ExportCsv", "ExportPDF", "Approve", "Cancel", "Manage"
         };
 
         private static readonly string[] Modules =
@@ -65,8 +68,12 @@ namespace SchoolSystem.Security
             "Students", "Enrollment", "ClassAssignment", "Teachers", "TeacherAttendance",
             "StaffAttendance", "TeacherContracts", "Payroll", "Subjects", "Classes", "Rooms",
             "Timetable", "Grades", "Attendance", "Fees", "FeePlans", "Vouchers", "Expenses",
-            "Transport", "Library", "Reports", "Dashboard", "AuditLogs", "Settings"
+            "Transport", "Library", "Reports", "Dashboard", "AuditLogs", "Settings",
+            "Users", "Roles", "Permissions"
         };
+
+        private static readonly HashSet<string> ModuleSet = new HashSet<string>(Modules, StringComparer.OrdinalIgnoreCase);
+        private static readonly HashSet<string> ActionSet = new HashSet<string>(StandardActions, StringComparer.OrdinalIgnoreCase);
 
         private static readonly IReadOnlyList<string> Catalog = BuildCatalog();
 
@@ -98,9 +105,28 @@ namespace SchoolSystem.Security
             return values.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
         }
 
+        /// <summary>
+        /// يتحقق إذا كان المفتاح مفتاح Module.Action صالح حتى لو لم يكن ضمن Catalog المحدد مسبقاً.
+        /// هذا يمنع حذف أي صلاحية حقيقية بسبب عدم وجودها في Catalog.
+        /// </summary>
+        private static bool IsValidModuleActionKey(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return false;
+
+            int dot = value.IndexOf('.');
+            if (dot <= 0 || dot == value.Length - 1)
+                return false;
+
+            string module = value.Substring(0, dot);
+            string action = value.Substring(dot + 1);
+
+            return ModuleSet.Contains(module) && ActionSet.Contains(action);
+        }
+
         public static string GetDisplayName(string permissionKey)
         {
-            string normalized = NormalizePermissionKeyWithoutDisplay(permissionKey);
+            string normalized = NormalizePermissionKeyInternal(permissionKey);
             if (string.IsNullOrWhiteSpace(normalized))
                 return permissionKey ?? string.Empty;
 
@@ -170,6 +196,9 @@ namespace SchoolSystem.Security
                 case "Dashboard": return "لوحة التحكم";
                 case "AuditLogs": return "سجل التدقيق";
                 case "Settings": return "الإعدادات";
+                case "Users": return "المستخدمون";
+                case "Roles": return "الأدوار";
+                case "Permissions": return "الصلاحيات";
                 default: return module;
             }
         }
@@ -189,6 +218,7 @@ namespace SchoolSystem.Security
                 case "ExportPDF": return "تصدير PDF";
                 case "Approve": return "اعتماد";
                 case "Cancel": return "إلغاء";
+                case "Manage": return "إدارة";
                 default: return action;
             }
         }
@@ -208,24 +238,38 @@ namespace SchoolSystem.Security
             return string.Equals(NormalizeRoleName(roleName), SystemAdministratorRole, StringComparison.OrdinalIgnoreCase);
         }
 
+        /// <summary>
+        /// يُعيد المفتاح المُعيَّر ضمن Catalog، أو يُعيد المفتاح كما هو إذا كان صالح الشكل (Module.Action)،
+        /// أو يُعيد string.Empty إذا كان بالفعل غير صالح.
+        ///
+        /// الإصلاح الجذري: قبل الإرجاع بـ string.Empty، يتحقق إذا كان المفتاح
+        /// من الشكل Module.Action ويُعيده كما هو لمنع حذفه خطأً.
+        /// </summary>
         public static string NormalizePermissionKey(string permissionKey)
         {
             if (string.IsNullOrWhiteSpace(permissionKey))
                 return string.Empty;
 
+            // استخلاص المفتاح من النص المركب "Key - Description"
             string value = permissionKey.Trim();
             int separatorIndex = value.IndexOf(" - ", StringComparison.Ordinal);
             if (separatorIndex > 0)
                 value = value.Substring(0, separatorIndex).Trim();
 
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            // 1. البحث عن مطابقة دقيقة في Catalog (OrdinalIgnoreCase)
             string exact = Catalog.FirstOrDefault(key => string.Equals(key, value, StringComparison.OrdinalIgnoreCase));
             if (!string.IsNullOrWhiteSpace(exact))
                 return exact;
 
+            // 2. البحث في Catalog باستخدام الاسم المعروض (Display Name)
             string display = Catalog.FirstOrDefault(key => string.Equals(GetDisplayName(key), value, StringComparison.OrdinalIgnoreCase));
             if (!string.IsNullOrWhiteSpace(display))
                 return display;
 
+            // 3. التحويلات من الأسماء العربية القديمة والاختصارات
             switch (value)
             {
                 case "Dashboard": return DashboardView;
@@ -251,6 +295,8 @@ namespace SchoolSystem.Security
                 case "إدارة المستخدمين والصلاحيات": return UsersManage;
                 case "عرض سجل التدقيق": return AuditLogsView;
                 case "الإعدادات والنسخ الاحتياطي": return SettingsManage;
+
+                // اختصارات Module فقط (بدون Action) → View افتراضياً
                 case "Students": return StudentsView;
                 case "Enrollment": return EnrollmentManage;
                 case "ClassAssignment": return ClassAssignmentManage;
@@ -269,11 +315,24 @@ namespace SchoolSystem.Security
                 case "Users": return UsersManage;
                 case "AuditLogs": return AuditLogsView;
                 case "Settings": return SettingsManage;
-                default: return string.Empty;
+                case "Roles": return RolesManage;
+                case "Permissions": return PermissionsManage;
             }
+
+            // 4. الإصلاح الجذري: إذا كان المفتاح من الشكل Module.Action الصالح،
+            //    أعده كما هو بدلاً من حذفه. هذا يمنع فقدان الصلاحيات التي لم تُضف
+            //    بعد إلى Catalog لكنها صالحة منطقياً.
+            if (IsValidModuleActionKey(value))
+                return value;
+
+            // 5. المفتاح غير صالح تماماً
+            return string.Empty;
         }
 
-        private static string NormalizePermissionKeyWithoutDisplay(string permissionKey)
+        /// <summary>
+        /// نسخة داخلية لا تستخدم GetDisplayName لتجنب التكرار اللانهائي
+        /// </summary>
+        private static string NormalizePermissionKeyInternal(string permissionKey)
         {
             if (string.IsNullOrWhiteSpace(permissionKey))
                 return string.Empty;
@@ -298,7 +357,7 @@ namespace SchoolSystem.Security
                 return string.Empty;
             return string.Join(",", permissions
                 .Where(p => !string.IsNullOrWhiteSpace(p))
-                .Select(NormalizePermissionKey)
+                .Select(p => NormalizePermissionKey(p.Trim()))
                 .Where(p => !string.IsNullOrWhiteSpace(p))
                 .Distinct(StringComparer.OrdinalIgnoreCase));
         }
@@ -330,17 +389,22 @@ namespace SchoolSystem.Security
                 case SystemAdministratorRole:
                     return Serialize(All);
                 case "الإدارة":
-                    return Serialize(Grant("Dashboard", "View").Concat(Grant("Students", "View", "Add", "Edit", "Search", "Print", "ExportExcel", "ExportPDF"))
-                        .Concat(Grant("Enrollment", "View", "Add", "Edit", "Search", "Print"))
-                        .Concat(Grant("ClassAssignment", "View", "Add", "Edit", "Search"))
-                        .Concat(Grant("Teachers", "View", "Add", "Edit", "Search"))
-                        .Concat(Grant("Subjects", "View", "Add", "Edit"))
-                        .Concat(Grant("Classes", "View", "Add", "Edit"))
+                    return Serialize(Grant("Dashboard", "View").Concat(Grant("Students", "View", "Add", "Edit", "Delete", "Search", "Print", "ExportExcel", "ExportPDF"))
+                        .Concat(Grant("Enrollment", "View", "Add", "Edit", "Delete", "Search", "Print"))
+                        .Concat(Grant("ClassAssignment", "View", "Add", "Edit", "Delete", "Search"))
+                        .Concat(Grant("Teachers", "View", "Add", "Edit", "Delete", "Search"))
+                        .Concat(Grant("Subjects", "View", "Add", "Edit", "Delete"))
+                        .Concat(Grant("Classes", "View", "Add", "Edit", "Delete"))
                         .Concat(Grant("Rooms", "View", "Add", "Edit"))
-                        .Concat(Grant("Timetable", "View", "Add", "Edit", "Print"))
-                        .Concat(Grant("Attendance", "View", "Add", "Edit", "Print"))
-                        .Concat(Grant("Grades", "View", "Add", "Edit", "Approve", "Print"))
-                        .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv", "ExportPDF")));
+                        .Concat(Grant("Timetable", "View", "Add", "Edit", "Delete", "Print"))
+                        .Concat(Grant("Attendance", "View", "Add", "Edit", "Delete", "Print"))
+                        .Concat(Grant("Grades", "View", "Add", "Edit", "Delete", "Approve", "Print"))
+                        .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv", "ExportPDF"))
+                        .Concat(Grant("AuditLogs", "View")));
+                case "مدير المدرسة":
+                    return GetRoleDefaults("الإدارة");
+                case "وكيل المدرسة":
+                    return GetRoleDefaults("الإدارة");
                 case "شؤون الطلاب":
                     return Serialize(Grant("Dashboard", "View").Concat(Grant("Students", "View", "Add", "Edit", "Search", "Print"))
                         .Concat(Grant("Enrollment", "View", "Add", "Edit", "Search"))
@@ -355,20 +419,40 @@ namespace SchoolSystem.Security
                         .Concat(Grant("Timetable", "View"))
                         .Concat(Grant("Reports", "View")));
                 case "المالية":
-                    return Serialize(Grant("Dashboard", "View").Concat(Grant("Fees", "View", "Add", "Edit", "Search", "Print", "ExportExcel"))
-                        .Concat(Grant("FeePlans", "View", "Add", "Edit"))
-                        .Concat(Grant("Vouchers", "View", "Add", "Edit", "Print", "ExportExcel"))
-                        .Concat(Grant("Expenses", "View", "Add", "Edit", "Print", "ExportExcel"))
+                    return Serialize(Grant("Dashboard", "View").Concat(Grant("Fees", "View", "Add", "Edit", "Delete", "Search", "Print", "ExportExcel"))
+                        .Concat(Grant("FeePlans", "View", "Add", "Edit", "Delete"))
+                        .Concat(Grant("Vouchers", "View", "Add", "Edit", "Delete", "Print", "ExportExcel"))
+                        .Concat(Grant("Expenses", "View", "Add", "Edit", "Delete", "Print", "ExportExcel"))
                         .Concat(Grant("Payroll", "View", "Search", "Print", "ExportExcel"))
                         .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv", "ExportPDF")));
                 case "المكتبة":
                     return Serialize(Grant("Dashboard", "View").Concat(Grant("Library", "View", "Add", "Edit", "Delete", "Search", "Print"))
                         .Concat(Grant("Reports", "View")));
+                case "أمين المكتبة":
+                    return GetRoleDefaults("المكتبة");
                 case "النقل":
                     return Serialize(Grant("Dashboard", "View").Concat(Grant("Transport", "View", "Add", "Edit", "Delete", "Search", "Print"))
                         .Concat(Grant("Reports", "View")));
+                case "مسؤول النقل":
+                    return GetRoleDefaults("النقل");
                 case "التقارير":
                     return Serialize(Grant("Dashboard", "View").Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv", "ExportPDF")));
+                case "مدقق":
+                    return Serialize(Grant("Dashboard", "View")
+                        .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv", "ExportPDF"))
+                        .Concat(Grant("AuditLogs", "View", "Print", "ExportExcel", "ExportPDF")));
+                case "شؤون الموظفين":
+                    return Serialize(Grant("Dashboard", "View")
+                        .Concat(Grant("Teachers", "View", "Add", "Edit", "Delete", "Search"))
+                        .Concat(Grant("StaffAttendance", "View", "Add", "Edit", "Delete", "Search", "Print"))
+                        .Concat(Grant("Payroll", "View", "Add", "Edit", "Delete", "Search", "Print"))
+                        .Concat(Grant("TeacherContracts", "View", "Add", "Edit", "Delete", "Search"))
+                        .Concat(Grant("Reports", "View", "Print", "ExportExcel")));
+                case "موظف الاستقبال":
+                    return Serialize(Grant("Dashboard", "View")
+                        .Concat(Grant("Students", "View", "Search"))
+                        .Concat(Grant("Enrollment", "View", "Search"))
+                        .Concat(Grant("Reports", "View")));
                 default:
                     return string.Empty;
             }

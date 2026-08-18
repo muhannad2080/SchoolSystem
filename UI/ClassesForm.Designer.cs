@@ -79,6 +79,7 @@
             this.dataGridViewRooms = new System.Windows.Forms.DataGridView();
             this.panelRoomBottom = new System.Windows.Forms.Panel();
             this.lblRoomCount = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).BeginInit();
             this.panelTitle.SuspendLayout();
             this.tabControl.SuspendLayout();
             this.tabClasses.SuspendLayout();
@@ -103,7 +104,6 @@
             // 
             // panelTitle
             // 
-            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
@@ -943,9 +943,9 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "ClassesForm";
-            this.Text = "إدارة الفصول والقاعات";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1100, 720);
+            ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).EndInit();
             this.panelTitle.ResumeLayout(false);
             this.tabControl.ResumeLayout(false);
             this.tabClasses.ResumeLayout(false);

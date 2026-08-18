@@ -55,6 +55,7 @@
             this.dataGridViewAttendance = new System.Windows.Forms.DataGridView();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.lblRecordCount = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).BeginInit();
             this.panelTitle.SuspendLayout();
             this.mainContainer.SuspendLayout();
             this.groupBoxFields.SuspendLayout();
@@ -67,7 +68,6 @@
             // 
             // panelTitle
             // 
-            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
@@ -635,9 +635,9 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "StaffAttendanceForm";
-            this.Text = "حضور وانصراف الموظفين";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1050, 700);
+            ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).EndInit();
             this.panelTitle.ResumeLayout(false);
             this.mainContainer.ResumeLayout(false);
             this.groupBoxFields.ResumeLayout(false);

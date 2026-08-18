@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows.Forms;
 using SchoolSystem.Helpers;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -518,7 +519,7 @@ namespace SchoolSystem.UI
         private void CloseProfile()
         {
             if (MainForm.Instance != null)
-                MainForm.Instance.LoadFormInPanel(new StudentsForm());
+                MainForm.Instance.LoadFormInPanel("Students", "ليس لديك صلاحية عرض الطلاب.", new StudentsForm(), PermissionKeys.StudentsView, PermissionKeys.StudentsManage);
         }
     }
 }

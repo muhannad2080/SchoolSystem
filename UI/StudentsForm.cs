@@ -59,7 +59,7 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            MainForm.Instance.LoadUserControl(new StudentProfileForm(_selectedStudentId));
+            MainForm.Instance.LoadUserControl("Students", "ليس لديك صلاحية عرض ملف الطالب.", new StudentProfileForm(_selectedStudentId), PermissionKeys.StudentsView, PermissionKeys.StudentsManage);
         }
 
         private void StudentsForm_Load(object sender, EventArgs e)

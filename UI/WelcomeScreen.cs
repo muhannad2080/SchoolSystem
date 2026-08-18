@@ -46,32 +46,32 @@ namespace SchoolSystem.UI
         private void btnStudents_Click(object sender, EventArgs e)
         {
             if (CanOpen("Students", "ليس لديك صلاحية عرض الطلاب."))
-                MainForm.Instance?.LoadFormInPanel(new StudentsForm());
+                MainForm.Instance?.LoadFormInPanel("Students", "ليس لديك صلاحية عرض الطلاب.", new StudentsForm(), PermissionKeys.StudentsView, PermissionKeys.StudentsManage);
         }
 
         private void btnTeachers_Click(object sender, EventArgs e)
         {
             if (CanOpen("Teachers", "ليس لديك صلاحية عرض المعلمين."))
-                MainForm.Instance?.LoadUserControl(new TeachersForm());
+                MainForm.Instance?.LoadUserControl("Teachers", "ليس لديك صلاحية عرض المعلمين.", new TeachersForm(), PermissionKeys.TeachersManage);
         }
 
         private void btnFinance_Click(object sender, EventArgs e)
         {
             if (CurrentUser.CanAccessModule("Fees"))
             {
-                MainForm.Instance?.LoadUserControl(new FeesForm());
+                MainForm.Instance?.LoadUserControl("Fees", "ليس لديك صلاحية عرض الرسوم.", new FeesForm(), PermissionKeys.FeesManage);
                 return;
             }
 
             if (CurrentUser.CanAccessModule("Vouchers"))
             {
-                MainForm.Instance?.LoadUserControl(new VouchersForm());
+                MainForm.Instance?.LoadUserControl("Vouchers", "ليس لديك صلاحية عرض السندات.", new VouchersForm(), PermissionKeys.VouchersManage);
                 return;
             }
 
             if (CurrentUser.CanAccessModule("Expenses"))
             {
-                MainForm.Instance?.LoadUserControl(new ExpensesForm());
+                MainForm.Instance?.LoadUserControl("Expenses", "ليس لديك صلاحية عرض المصروفات.", new ExpensesForm(), PermissionKeys.ExpensesManage);
                 return;
             }
 
@@ -82,7 +82,7 @@ namespace SchoolSystem.UI
         private void btnAttendance_Click(object sender, EventArgs e)
         {
             if (CanOpen("Attendance", "ليس لديك صلاحية عرض الحضور."))
-                MainForm.Instance?.LoadUserControl(new DailyAttendanceForm());
+                MainForm.Instance?.LoadUserControl("Attendance", "ليس لديك صلاحية عرض الحضور.", new DailyAttendanceForm(), PermissionKeys.AttendanceManage);
         }
     }
 }

@@ -36,7 +36,8 @@ GO
 
 /*
    لا نخزن قائمة قديمة للمدير. القيمة NULL تجعل UserService يعيد
-   PermissionKeys.All مركزيًا عند تسجيل الدخول.
+   PermissionKeys.All مركزيًا عند تسجيل الدخول، سواء كانت جداول RBAC
+   المعيارية موجودة أم لم تكن قد نُفذت بعد.
 */
 UPDATE dbo.Users
 SET RoleName = N'مدير النظام',
