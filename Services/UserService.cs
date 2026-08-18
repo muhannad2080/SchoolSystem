@@ -67,8 +67,11 @@ namespace SchoolSystem.Services
 
             bool added = userRepository.AddUser(user);
             if (added)
+            {
+                VerifyPersistedPermissions(user);
                 auditLogService.Record("إنشاء", "User", user.UserID.ToString(),
                     string.Format("الحساب: {0}، الدور: {1}، الصلاحيات: {2}", user.UserName, user.RoleName, user.Permissions));
+            }
             return added;
         }
 
@@ -147,6 +150,9 @@ namespace SchoolSystem.Services
             }
 
             bool updated = userRepository.UpdateUser(user, updatePassword);
+
+            if (updated)
+                VerifyPersistedPermissions(user);
 
             // إذا عدّل المدير الحساب المستخدم حاليًا، أعد تحميل النسخة المحفوظة
             // حتى لا تبقى صلاحيات قديمة داخل الذاكرة.
@@ -268,7 +274,7 @@ namespace SchoolSystem.Services
             }
 
             user.RoleName = PermissionKeys.NormalizeRoleName(user.RoleName);
-            user.Permissions = PermissionKeys.NormalizePermissions(user.Permissions);
+            user.Permissions = LoadRuntimePermissions(user);
             EnsureRolePermissions(user);
             userRepository.RecordSuccessfulLogin(user.UserID);
             user.FailedLoginAttempts = 0;
@@ -425,6 +431,48 @@ namespace SchoolSystem.Services
                 throw new Exception("كلمة المرور يجب أن تحتوي على أحرف وأرقام.");
         }
 
+        private string LoadRuntimePermissions(User user)
+        {
+            if (user == null)
+                return string.Empty;
+
+            string directPermissions = PermissionKeys.NormalizePermissions(user.Permissions);
+            string reportsOnlyPermissions = PermissionKeys.NormalizePermissions(
+                PermissionKeys.GetRoleDefaults("التقارير"));
+
+            // بعض الحسابات القديمة أُنشئت بالدور الافتراضي للتقارير، فبقيت
+            // قيمتها Dashboard/Reports حتى بعد تصحيح الدور. لا نعيد صلاحيات
+            // الدور تلقائيًا للحسابات التي اختار مديرها منعها؛ نعالج فقط هذه
+            // القيمة القديمة المعروفة عندما يكون الدور الحالي مختلفًا.
+            bool isLegacyReportsOnlyValue =
+                string.Equals(directPermissions, reportsOnlyPermissions, StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(PermissionKeys.NormalizeRoleName(user.RoleName), "التقارير", StringComparison.OrdinalIgnoreCase);
+
+            if (!string.IsNullOrWhiteSpace(directPermissions) && !isLegacyReportsOnlyValue)
+                return directPermissions;
+
+            // توافق مع كتالوج RBAC المعياري: الحسابات التي لا تملك قيمة
+            // Permissions نصية تستمد صلاحياتها من UserRoles/RolePermissions.
+            // إذا لم تكن الهجرة منفذة أو لم يوجد ربط، نعود إلى إعدادات الدور.
+            List<string> rolePermissions = userRepository.GetRolePermissions(user.UserID)
+                .Select(PermissionKeys.NormalizePermissionKey)
+                .Where(key => !string.IsNullOrWhiteSpace(key))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            string recoveredPermissions = rolePermissions.Count > 0
+                ? PermissionKeys.Serialize(rolePermissions)
+                : PermissionKeys.NormalizePermissions(PermissionKeys.GetRoleDefaults(user.RoleName));
+
+            if (!string.Equals(directPermissions, recoveredPermissions, StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrWhiteSpace(recoveredPermissions))
+            {
+                userRepository.UpdatePermissions(user.UserID, recoveredPermissions);
+            }
+
+            return recoveredPermissions;
+        }
+
         private void EnsureRolePermissions(User user)
         {
             if (user == null)
@@ -461,6 +509,22 @@ namespace SchoolSystem.Services
             else if (!string.IsNullOrWhiteSpace(normalized))
             {
                 user.Permissions = normalized;
+            }
+        }
+
+        private void VerifyPersistedPermissions(User expectedUser)
+        {
+            User persistedUser = userRepository.GetUserById(expectedUser.UserID);
+            string expected = PermissionKeys.NormalizePermissions(expectedUser.Permissions);
+            string actual = persistedUser == null
+                ? string.Empty
+                : PermissionKeys.NormalizePermissions(persistedUser.Permissions);
+
+            if (persistedUser == null || !string.Equals(expected, actual, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException(
+                    "لم يتم حفظ صلاحيات المستخدم كاملة في قاعدة البيانات. " +
+                    "تحقق من نوع العمود Users.Permissions ثم أعد تنفيذ العملية.");
             }
         }
 
