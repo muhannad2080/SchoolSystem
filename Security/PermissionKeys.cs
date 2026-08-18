@@ -340,14 +340,14 @@ namespace SchoolSystem.Security
                         .Concat(Grant("Timetable", "View", "Add", "Edit", "Print"))
                         .Concat(Grant("Attendance", "View", "Add", "Edit", "Print"))
                         .Concat(Grant("Grades", "View", "Add", "Edit", "Approve", "Print"))
-                        .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportPDF")));
+                        .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv", "ExportPDF")));
                 case "شؤون الطلاب":
                     return Serialize(Grant("Dashboard", "View").Concat(Grant("Students", "View", "Add", "Edit", "Search", "Print"))
                         .Concat(Grant("Enrollment", "View", "Add", "Edit", "Search"))
                         .Concat(Grant("ClassAssignment", "View", "Add", "Edit", "Search"))
                         .Concat(Grant("Attendance", "View", "Add", "Edit"))
                         .Concat(Grant("Grades", "View", "Print"))
-                        .Concat(Grant("Reports", "View", "Print", "ExportExcel")));
+                        .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv")));
                 case "المعلمون":
                     return Serialize(Grant("Dashboard", "View").Concat(Grant("Students", "View", "Search"))
                         .Concat(Grant("Attendance", "View", "Add", "Edit"))
@@ -360,7 +360,7 @@ namespace SchoolSystem.Security
                         .Concat(Grant("Vouchers", "View", "Add", "Edit", "Print", "ExportExcel"))
                         .Concat(Grant("Expenses", "View", "Add", "Edit", "Print", "ExportExcel"))
                         .Concat(Grant("Payroll", "View", "Search", "Print", "ExportExcel"))
-                        .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportPDF")));
+                        .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv", "ExportPDF")));
                 case "المكتبة":
                     return Serialize(Grant("Dashboard", "View").Concat(Grant("Library", "View", "Add", "Edit", "Delete", "Search", "Print"))
                         .Concat(Grant("Reports", "View")));
@@ -368,7 +368,7 @@ namespace SchoolSystem.Security
                     return Serialize(Grant("Dashboard", "View").Concat(Grant("Transport", "View", "Add", "Edit", "Delete", "Search", "Print"))
                         .Concat(Grant("Reports", "View")));
                 case "التقارير":
-                    return Serialize(Grant("Dashboard", "View").Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportPDF")));
+                    return Serialize(Grant("Dashboard", "View").Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv", "ExportPDF")));
                 default:
                     return string.Empty;
             }
