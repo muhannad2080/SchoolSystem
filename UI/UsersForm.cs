@@ -757,7 +757,12 @@ namespace SchoolSystem.UI
             txtPhone.Clear();
 
             if (cmbRole.Items.Count > 0)
-                cmbRole.SelectedIndex = 0;
+            {
+                // الحسابات الجديدة تبدأ بدور محدود، ولا يجوز أن يعود النموذج
+                // تلقائيًا إلى مدير النظام بعد الحفظ أو الضغط على مسح.
+                int safeDefaultIndex = cmbRole.Items.IndexOf("التقارير");
+                cmbRole.SelectedIndex = safeDefaultIndex >= 0 ? safeDefaultIndex : 0;
+            }
 
             chkIsActive.Checked = true;
             chkMustChangePassword.Checked = true;
