@@ -10,8 +10,9 @@ namespace SchoolSystem.Services
 
         public DataTable GetVoucherParties()
         {
-            if (!CurrentUser.HasPermission(PermissionKeys.VouchersManage))
-                throw new System.UnauthorizedAccessException("ليس لديك صلاحية تحميل أطراف السندات.");
+            // تحميل الأطراف عملية عرض فقط؛ لا نربطها بصلاحية الإدارة القديمة
+            // حتى لا تختفي القائمة عن المستخدم الذي يملك View أو صلاحية جزئية.
+            CurrentUser.DemandAction("Vouchers", "View", "ليس لديك صلاحية عرض أطراف السندات.");
 
             return repository.GetVoucherParties();
         }

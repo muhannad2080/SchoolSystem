@@ -475,7 +475,9 @@ namespace SchoolSystem.UI
             cmbFilterType.Items.AddRange(new object[] { "كل السندات", "قبض", "صرف" });
             cmbFilterType.SelectedIndex = 0;
 
-            cmbPartyName.DropDownStyle = ComboBoxStyle.DropDown;
+            // الطرف يجب أن يكون طرفًا مسجلاً في النظام، وليس نصًا حرًا قد يسبب
+            // اختلاف الأسماء وتكرارها في التقارير والسندات.
+            cmbPartyName.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbPartyName.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             cmbPartyName.AutoCompleteSource = AutoCompleteSource.ListItems;
             cmbPartyName.IntegralHeight = false;
@@ -729,9 +731,9 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(cmbPartyName.Text) || cmbPartyName.Text.Trim().Length > 200)
+            if (cmbPartyName.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbPartyName.Text) || cmbPartyName.Text.Trim().Length > 200)
             {
-                UIHelper.FocusAndWarn(cmbPartyName, "اختر طرفًا من القائمة أو أدخل اسمًا بطول لا يتجاوز 200 حرف.");
+                UIHelper.FocusAndWarn(cmbPartyName, "اختر الطرف من القائمة.");
                 return false;
             }
 
