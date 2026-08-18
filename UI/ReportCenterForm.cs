@@ -359,7 +359,30 @@ namespace SchoolSystem.UI
 
         private async void btnRefresh_Click(object sender, EventArgs e)
         {
+            ResetFilters();
             await LoadReportAsync();
+        }
+
+        private void ResetFilters()
+        {
+            if (cmbReportType.Items.Count > 0)
+                cmbReportType.SelectedIndex = 0;
+
+            txtAcademicYear.Text = DateTime.Now.Year + "/" + (DateTime.Now.Year + 1);
+            txtSearch.Clear();
+
+            if (cmbClass.Items.Count > 0)
+                cmbClass.SelectedIndex = 0;
+
+            if (cmbStatus.Items.Count > 0)
+                cmbStatus.SelectedIndex = 0;
+
+            dtpFromDate.Value = new DateTime(DateTime.Now.Year, 1, 1);
+            dtpToDate.Value = DateTime.Today;
+            currentReportData = null;
+            dataGridViewReport.DataSource = null;
+            lblRecordCount.Text = "عدد السجلات: 0";
+            lblSummary.Text = "ملخص التقرير: لا توجد بيانات محملة.";
         }
 
         private async Task LoadReportAsync()

@@ -340,7 +340,7 @@
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(172, 29);
             this.btnRefresh.TabIndex = 17;
-            this.btnRefresh.Text = "تحديث";
+            this.btnRefresh.Text = "مسح الفلاتر";
             this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
