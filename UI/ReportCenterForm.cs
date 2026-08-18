@@ -562,7 +562,7 @@ namespace SchoolSystem.UI
 
         private void btnExportCsv_Click(object sender, EventArgs e)
         {
-            if (!EnsureReportAction("ExportExcel", "ليس لديك صلاحية تصدير بيانات التقارير."))
+            if (!EnsureReportAction("ExportCsv", "ليس لديك صلاحية تصدير بيانات التقارير."))
                 return;
 
             if (!EnsureData())
@@ -592,7 +592,7 @@ namespace SchoolSystem.UI
 
         private void ExportToCsv(DataTable dt, string filePath)
         {
-            using (StreamWriter sw = new StreamWriter(filePath, false, Encoding.UTF8))
+            using (StreamWriter sw = new StreamWriter(filePath, false, new UTF8Encoding(true)))
             {
                 for (int i = 0; i < dt.Columns.Count; i++)
                 {

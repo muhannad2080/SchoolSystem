@@ -57,7 +57,7 @@ namespace SchoolSystem.Security
 
         private static readonly string[] StandardActions =
         {
-            "View", "Add", "Edit", "Delete", "Search", "Print", "ExportExcel", "ExportPDF", "Approve", "Cancel"
+            "View", "Add", "Edit", "Delete", "Search", "Print", "ExportExcel", "ExportCsv", "ExportPDF", "Approve", "Cancel"
         };
 
         private static readonly string[] Modules =
@@ -185,6 +185,7 @@ namespace SchoolSystem.Security
                 case "Search": return "بحث";
                 case "Print": return "طباعة";
                 case "ExportExcel": return "تصدير Excel";
+                case "ExportCsv": return "تصدير CSV";
                 case "ExportPDF": return "تصدير PDF";
                 case "Approve": return "اعتماد";
                 case "Cancel": return "إلغاء";
