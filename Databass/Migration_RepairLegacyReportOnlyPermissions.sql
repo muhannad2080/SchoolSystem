@@ -71,8 +71,7 @@ END;
 
 SELECT UserID, UserName, RoleName, Permissions
 FROM dbo.Users
-WHERE REPLACE(REPLACE(LTRIM(RTRIM(ISNULL(Permissions, N''))), N' ', N''), N';', N',') = REPLACE(@ReportsOnly, N' ', N'');
-GO
+WHERE REPLACE(REPLACE(LTRIM(RTRIM(ISNULL(Permissions, N''))), N' ', N''), N';', N',') = REPLACE(@ReportsOnly, N' ', N',');
 
 IF @ApplyRepair = 1
     PRINT N'تم إصلاح الحسابات القديمة المحددة فقط بعد تفعيل ApplyRepair.';
