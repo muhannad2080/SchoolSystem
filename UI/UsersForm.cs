@@ -157,8 +157,12 @@ namespace SchoolSystem.UI
             cmbRole.Items.Add("موظف الاستقبال");
             cmbRole.Items.Add("مدقق");
 
+            // لا نختار مدير النظام افتراضيًا؛ الحسابات الجديدة تبدأ بدور محدود.
+            int safeDefaultIndex = cmbRole.Items.IndexOf("التقارير");
+            if (safeDefaultIndex < 0)
+                safeDefaultIndex = 0;
             if (cmbRole.Items.Count > 0)
-                cmbRole.SelectedIndex = 0;
+                cmbRole.SelectedIndex = safeDefaultIndex;
 
             cmbRole.SelectedIndexChanged -= cmbRole_SelectedIndexChanged;
             cmbRole.SelectedIndexChanged += cmbRole_SelectedIndexChanged;

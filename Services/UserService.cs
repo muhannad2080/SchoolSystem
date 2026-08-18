@@ -33,6 +33,10 @@ namespace SchoolSystem.Services
 
             NormalizeUser(user);
 
+            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName) &&
+                userRepository.CountUsers() > 0 && !CurrentUser.IsAdmin())
+                throw new UnauthorizedAccessException("لا يمكن إلا لمدير النظام إنشاء حساب مدير نظام.");
+
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
             {
                 user.Permissions = PermissionKeys.GetRoleDefaults(user.RoleName);
@@ -79,6 +83,11 @@ namespace SchoolSystem.Services
                 throw new Exception("المستخدم غير موجود.");
 
             NormalizeUser(user);
+
+            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName) &&
+                !PermissionKeys.IsSystemAdministratorRole(existingUser.RoleName) && !CurrentUser.IsAdmin())
+                throw new UnauthorizedAccessException("لا يمكن إلا لمدير النظام رفع حساب إلى مدير نظام.");
+
             ValidateUser(user);
 
             bool changingRoleOrPermissions = !string.Equals(
