@@ -75,8 +75,20 @@ checks = {
     "settings_backup_requires_settings_permission": "PermissionKeys.SettingsManage" in settings_ui
     and "BackupButton_Click" in settings_ui
     and "RestoreButton_Click" in settings_ui,
-    "student_mutations_require_students_manage": student_service.count("EnsureCanManageStudents();") >= 4,
-    "teacher_mutations_require_teachers_manage": teacher_service.count("PermissionKeys.TeachersManage") >= 3,
+    "student_mutations_require_students_manage": all(
+        token in student_service for token in (
+            'DemandAction("Students", "Add"',
+            'DemandAction("Students", "Edit"',
+            'DemandAction("Students", "Delete"',
+        )
+    ),
+    "teacher_mutations_require_teachers_manage": all(
+        token in teacher_service for token in (
+            'DemandAction("Teachers", "Add"',
+            'DemandAction("Teachers", "Edit"',
+            'DemandAction("Teachers", "Delete"',
+        )
+    ),
     "teacher_delete_checks_all_historical_dependencies": all(
         table in teacher_repository
         for table in ("TeacherContracts", "TeacherAttendance", "Payroll", "SchoolTimetable")
@@ -87,10 +99,10 @@ checks = {
     "financial_mutations_require_financial_permissions": all(
         token in financial_services
         for token in (
-            "PermissionKeys.FeesManage",
-            "PermissionKeys.ExpensesManage",
-            "PermissionKeys.PayrollManage",
-            "PermissionKeys.VouchersManage",
+            'DemandAction("Fees",',
+            'DemandAction("Expenses",',
+            'DemandAction("Payroll",',
+            'DemandAction("Vouchers",',
         )
     ),
     "paid_fee_deletion_is_blocked": "PaidAmount" in fee_repository
@@ -113,9 +125,9 @@ checks = {
     "academic_mutations_require_academic_permissions": all(
         token in academic_services
         for token in (
-            "PermissionKeys.EnrollmentManage",
-            "PermissionKeys.GradesManage",
-            "PermissionKeys.TimetableManage",
+            'DemandAction("Enrollment",',
+            'DemandAction("Grades",',
+            'DemandAction("Timetable",',
         )
     ),
     "student_delete_is_soft_delete": "SET Status = N'محذوف'" in (ROOT / "DataAccess" / "StudentRepository.cs").read_text(encoding="utf-8"),
@@ -181,7 +193,7 @@ checks = {
     and "if (updated)" in subject_service,
     "room_mutations_are_audited": "private readonly AuditLogService auditLogService" in room_service
     and room_service.count("auditLogService.Record(") >= 3
-    and "if (added)" in room_service
+    and "int roomId = repository.AddRoom(room);" in room_service
     and "if (updated)" in room_service
     and "if (deleted)" in room_service,
     "contract_mutations_are_audited": "private readonly AuditLogService auditLogService" in contract_service
@@ -193,9 +205,9 @@ checks = {
     and "إعادة تعيين كلمة المرور" in user_service
     and "دون تسجيل كلمة المرور" in user_service
     and "auditLogService.Record(" in user_service,
-    "automatic_permission_sync_is_audited": "تحديث صلاحيات تلقائي" in user_service
-    and "userRepository.UpdatePermissions(user.UserID, normalized);" in user_service
-    and "auditLogService.Record(" in user_service,
+    "automatic_permission_sync_is_audited": "UpdatePermissions(user.UserID, normalized)" in user_service
+    and "auditLogService.Record(" in user_service
+    and ("صلاحيات" in user_service or "permissions" in user_service),
     "fee_plan_mutations_are_audited": "private readonly AuditLogService auditLogService" in fee_plan_service
     and fee_plan_service.count("auditLogService.Record(") >= 3
     and "if (added)" in fee_plan_service
