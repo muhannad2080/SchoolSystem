@@ -33,6 +33,7 @@ namespace SchoolSystem.UI
             userFilter.SelectedIndexChanged += Filter_SelectedIndexChanged;
             actionFilter.SelectedIndexChanged += Filter_SelectedIndexChanged;
             entityFilter.SelectedIndexChanged += Filter_SelectedIndexChanged;
+            searchBox.TextChanged += SearchBox_TextChanged;
         }
 
         private async void AuditLogForm_Load(object sender, EventArgs e)
@@ -189,13 +190,19 @@ namespace SchoolSystem.UI
             entityFilter.Enabled = !loading;
         }
 
-        private async void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        private async void SearchBox_TextChanged(object sender, EventArgs e)
         {
-            if (e.KeyCode != Keys.Enter)
+            if (!filtersReady || filterLoadInProgress || !IsHandleCreated || !searchBox.Enabled)
                 return;
 
-            e.SuppressKeyPress = true;
             await LoadLogsAsync();
+        }
+
+        private void SearchBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            // البحث فوري مع كل تغيير، لذا يمنع Enter من إطلاق تحميل إضافي مكرر.
+            if (e.KeyCode == Keys.Enter)
+                e.SuppressKeyPress = true;
         }
 
         private void Grid_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
