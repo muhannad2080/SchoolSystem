@@ -131,8 +131,8 @@ namespace SchoolSystem.UI
             DataView dv = _allTeachers.DefaultView;
             if (!string.IsNullOrWhiteSpace(search))
             {
-                string safeSearch = UIHelper.EscapeDataViewFilterValue(search);
-                dv.RowFilter = $"FullName LIKE '%{safeSearch}%' OR EmployeeNumber LIKE '%{safeSearch}%' OR Specialization LIKE '%{safeSearch}%'";
+                dv.RowFilter = UIHelper.BuildDataViewSearchFilter(search,
+                    "FullName", "EmployeeNumber", "Specialization");
             }
             else
             {

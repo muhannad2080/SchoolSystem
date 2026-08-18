@@ -729,8 +729,8 @@ namespace SchoolSystem.UI
             string keyword = txtSearch.Text.Trim();
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                string safe = UIHelper.EscapeDataViewFilterValue(keyword);
-                filter = "(StudentName LIKE '%" + safe + "%' OR StudentNumber LIKE '%" + safe + "%')";
+                filter = UIHelper.BuildDataViewSearchFilter(
+                    keyword, "StudentName", "StudentNumber");
             }
 
             if (showIncompleteOnly)

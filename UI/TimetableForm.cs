@@ -259,14 +259,8 @@ namespace SchoolSystem.UI
             }
             else
             {
-                string safe = UIHelper.EscapeDataViewFilterValue(searchText);
-
-                dv.RowFilter =
-                    "ClassName LIKE '%" + safe + "%' OR " +
-                    "SubjectName LIKE '%" + safe + "%' OR " +
-                    "TeacherName LIKE '%" + safe + "%' OR " +
-                    "DayName LIKE '%" + safe + "%' OR " +
-                    "RoomName LIKE '%" + safe + "%'";
+                dv.RowFilter = UIHelper.BuildDataViewSearchFilter(searchText,
+                    "ClassName", "SubjectName", "TeacherName", "DayName", "RoomName");
             }
 
             dataGridViewTimetable.DataSource = dv;

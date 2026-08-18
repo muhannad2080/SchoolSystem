@@ -843,6 +843,36 @@ namespace SchoolSystem.Helpers
                 .Replace("*", "[*]");
         }
 
+        /// <summary>
+        /// يبني شرط DataView يدعم البحث الفوري متعدد الكلمات؛ كل كلمة يجب أن تظهر
+        /// في واحد من الأعمدة القابلة للبحث، مع حماية قيمة البحث من صيغة RowFilter.
+        /// </summary>
+        public static string BuildDataViewSearchFilter(string searchText, params string[] columns)
+        {
+            if (string.IsNullOrWhiteSpace(searchText) || columns == null || columns.Length == 0)
+                return string.Empty;
+
+            string[] terms = searchText.Trim()
+                .Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+            var termFilters = new System.Collections.Generic.List<string>();
+
+            foreach (string term in terms)
+            {
+                string safeTerm = EscapeDataViewFilterValue(term);
+                var columnFilters = new System.Collections.Generic.List<string>();
+                foreach (string column in columns)
+                {
+                    if (!string.IsNullOrWhiteSpace(column))
+                        columnFilters.Add(column + " LIKE '%" + safeTerm + "%'");
+                }
+
+                if (columnFilters.Count > 0)
+                    termFilters.Add("(" + string.Join(" OR ", columnFilters) + ")");
+            }
+
+            return string.Join(" AND ", termFilters);
+        }
+
         public static void StyleTextBox(TextBox txt)
         {
             txt.BorderStyle = BorderStyle.FixedSingle;

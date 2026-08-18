@@ -569,8 +569,8 @@ namespace SchoolSystem.UI
             }
             else
             {
-                currentAttendanceTable.DefaultView.RowFilter =
-                    "StudentName LIKE '%" + safe + "%' OR StudentNumber LIKE '%" + safe + "%'";
+                currentAttendanceTable.DefaultView.RowFilter = UIHelper.BuildDataViewSearchFilter(
+                    txtSearch.Text, "StudentName", "StudentNumber");
             }
 
             lblRecordCount.Text = "عدد الطلاب: " + currentAttendanceTable.DefaultView.Count;

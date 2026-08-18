@@ -444,26 +444,19 @@ namespace SchoolSystem.UI.Students
                 return;
             }
 
-            string safe = UIHelper.EscapeDataViewFilterValue(keyword);
-
             DataView dv = unassignedStudents.DefaultView;
-
-            string filter = "";
+            var searchableColumns = new List<string>();
 
             if (unassignedStudents.Columns.Contains("StudentName"))
-                filter = "StudentName LIKE '%" + safe + "%'";
+                searchableColumns.Add("StudentName");
 
-            string[] searchableColumns = { "StudentNumber", "Gender", "Phone" };
-            foreach (string column in searchableColumns)
+            foreach (string column in new[] { "StudentNumber", "Gender", "Phone" })
             {
-                if (!unassignedStudents.Columns.Contains(column))
-                    continue;
-                if (!string.IsNullOrWhiteSpace(filter))
-                    filter += " OR ";
-                filter += column + " LIKE '%" + safe + "%'";
+                if (unassignedStudents.Columns.Contains(column))
+                    searchableColumns.Add(column);
             }
 
-            dv.RowFilter = filter;
+            dv.RowFilter = UIHelper.BuildDataViewSearchFilter(keyword, searchableColumns.ToArray());
 
             FillUnassignedList(dv.ToTable());
         }

@@ -116,12 +116,8 @@ namespace SchoolSystem.UI
 
             if (!string.IsNullOrWhiteSpace(searchText))
             {
-                string safeText = UIHelper.EscapeDataViewFilterValue(searchText);
-                dv.RowFilter =
-                    "TeacherName LIKE '%" + safeText + "%' OR " +
-                    "Status LIKE '%" + safeText + "%' OR " +
-                    "AbsenceReason LIKE '%" + safeText + "%' OR " +
-                    "Notes LIKE '%" + safeText + "%'";
+                dv.RowFilter = UIHelper.BuildDataViewSearchFilter(searchText,
+                    "TeacherName", "Status", "AbsenceReason", "Notes");
             }
             else
             {
