@@ -49,7 +49,7 @@ namespace SchoolSystem.Services
                 user.MustChangePassword = true;
             }
 
-            ValidateUser(user);
+            ValidateUser(user, false);
 
             password = NormalizeDigits(password);
 
@@ -92,7 +92,7 @@ namespace SchoolSystem.Services
                 !PermissionKeys.IsSystemAdministratorRole(existingUser.RoleName) && !CurrentUser.IsAdmin())
                 throw new UnauthorizedAccessException("لا يمكن إلا لمدير النظام رفع حساب إلى مدير نظام.");
 
-            ValidateUser(user);
+            ValidateUser(user, true);
 
             bool changingRoleOrPermissions = !string.Equals(
                 PermissionKeys.NormalizeRoleName(existingUser.RoleName),
@@ -437,19 +437,12 @@ namespace SchoolSystem.Services
             if (user == null)
                 return string.Empty;
 
+            bool hasExplicitPermissionsValue = user.Permissions != null;
             string directPermissions = PermissionKeys.NormalizePermissions(user.Permissions);
-            string reportsOnlyPermissions = PermissionKeys.NormalizePermissions(
-                PermissionKeys.GetRoleDefaults("التقارير"));
-
-            // بعض الحسابات القديمة أُنشئت بالدور الافتراضي للتقارير، فبقيت
-            // قيمتها Dashboard/Reports حتى بعد تصحيح الدور. لا نعيد صلاحيات
-            // الدور تلقائيًا للحسابات التي اختار مديرها منعها؛ نعالج فقط هذه
-            // القيمة القديمة المعروفة عندما يكون الدور الحالي مختلفًا.
-            bool isLegacyReportsOnlyValue =
-                string.Equals(directPermissions, reportsOnlyPermissions, StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(PermissionKeys.NormalizeRoleName(user.RoleName), "التقارير", StringComparison.OrdinalIgnoreCase);
-
-            if (!string.IsNullOrWhiteSpace(directPermissions) && !isLegacyReportsOnlyValue)
+            // وجود قيمة Permissions، حتى لو كانت فارغة، يعني أن المدير حفظ تخصيصًا يدويًا.
+            // لا نستبدل الاختيار اليدوي بصلاحيات الدور أو بقيمة Reports-only قديمة.
+            // الحسابات القديمة التي لا تحتوي قيمة NULL فقط تدخل مسار الاستعادة.
+            if (hasExplicitPermissionsValue)
                 return directPermissions;
 
             // توافق مع كتالوج RBAC المعياري: الحسابات التي لا تملك قيمة
@@ -529,7 +522,7 @@ namespace SchoolSystem.Services
             }
         }
 
-        private void ValidateUser(User user)
+        private void ValidateUser(User user, bool allowEmptyPermissions)
         {
             if (user == null)
                 throw new Exception("بيانات المستخدم غير موجودة.");
@@ -549,7 +542,7 @@ namespace SchoolSystem.Services
             if (string.IsNullOrWhiteSpace(user.RoleName))
                 throw new Exception("اختر الدور.");
 
-            if (string.IsNullOrWhiteSpace(user.Permissions))
+            if (!allowEmptyPermissions && string.IsNullOrWhiteSpace(user.Permissions))
                 throw new Exception("يجب اختيار صلاحية واحدة على الأقل.");
 
             if (!string.IsNullOrWhiteSpace(user.Email) && !IsValidEmail(user.Email))

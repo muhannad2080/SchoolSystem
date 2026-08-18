@@ -591,8 +591,10 @@ namespace SchoolSystem.DataAccess
         private void AddPermissionsParameter(SqlCommand cmd, string permissions)
         {
             SqlParameter parameter = cmd.Parameters.Add("@Permissions", SqlDbType.NVarChar, -1);
+            // القيمة الفارغة هنا اختيار يدوي من زر "إلغاء كل الصلاحيات".
+            // لا نحولها إلى NULL لأن NULL تعني حسابًا قديمًا يحتاج استعادة صلاحيات الدور.
             parameter.Value = string.IsNullOrWhiteSpace(permissions)
-                ? (object)DBNull.Value
+                ? string.Empty
                 : permissions.Trim();
         }
 
@@ -608,7 +610,9 @@ namespace SchoolSystem.DataAccess
             user.PasswordSalt = reader["PasswordSalt"] == DBNull.Value ? "" : reader["PasswordSalt"].ToString();
 
             user.RoleName = reader["RoleName"] == DBNull.Value ? "" : reader["RoleName"].ToString();
-            user.Permissions = reader["Permissions"] == DBNull.Value ? "" : reader["Permissions"].ToString();
+            // NULL تعني سجلًا قديمًا لم يُحسم تخصيصه بعد، بينما النص الفارغ
+            // يعني أن المدير ضغط منع كل الصلاحيات عمدًا.
+            user.Permissions = reader["Permissions"] == DBNull.Value ? null : reader["Permissions"].ToString();
 
             user.Email = reader["Email"] == DBNull.Value ? "" : reader["Email"].ToString();
             user.Phone = reader["Phone"] == DBNull.Value ? "" : reader["Phone"].ToString();
