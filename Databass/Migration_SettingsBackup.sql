@@ -8,11 +8,11 @@ IF EXISTS (SELECT 1 FROM dbo.Users WHERE LOWER(LTRIM(RTRIM(ISNULL(RoleName, N'')
 BEGIN
     UPDATE dbo.Users
     SET RoleName = N'مدير النظام',
-        Permissions = CASE
-            WHEN Permissions IS NULL OR LTRIM(RTRIM(Permissions)) = N'' THEN N'Settings.Manage'
-            WHEN Permissions LIKE N'%Settings.Manage%' THEN Permissions
-            ELSE Permissions + N',Settings.Manage'
-        END,
+        /*
+           لا نكتب صلاحية جزئية للمدير. يحمّل UserService الكتالوج الكامل
+           مركزيًا عند تسجيل الدخول، ولذلك NULL هو الوضع الآمن هنا.
+        */
+        Permissions = NULL,
         UpdatedAt = GETDATE()
     WHERE LOWER(LTRIM(RTRIM(ISNULL(RoleName, N'')))) IN (N'مدير النظام', N'admin', N'administrator');
 END;

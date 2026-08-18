@@ -34,16 +34,13 @@ BEGIN
 END;
 GO
 
-DECLARE @AdminPermissions NVARCHAR(MAX) =
-    N'Dashboard.View,Students.View,Students.Manage,Enrollment.Manage,ClassAssignment.Manage,' +
-    N'Teachers.Manage,StaffAttendance.Manage,Payroll.Manage,Subjects.Manage,Classes.Manage,' +
-    N'Timetable.Manage,Attendance.Manage,Grades.Manage,Fees.Manage,Vouchers.Manage,' +
-    N'Expenses.Manage,Library.Manage,Transport.Manage,Reports.View,Users.Manage,' +
-    N'AuditLogs.View,Settings.Manage';
-
+/*
+   لا نخزن قائمة قديمة للمدير. القيمة NULL تجعل UserService يعيد
+   PermissionKeys.All مركزيًا عند تسجيل الدخول.
+*/
 UPDATE dbo.Users
 SET RoleName = N'مدير النظام',
-    Permissions = @AdminPermissions,
+    Permissions = NULL,
     UpdatedAt = GETDATE()
 WHERE LOWER(LTRIM(RTRIM(ISNULL(RoleName, N'')))) IN (N'مدير النظام', N'admin', N'administrator');
 
