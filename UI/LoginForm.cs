@@ -256,7 +256,7 @@ namespace SchoolSystem.UI
 
             if (message.Contains("Invalid column name") ||
                 message.Contains("اسم العمود غير صحيح") ||
-                message.Contains("The SELECT permission was denied") ||
+                message.IndexOf("permission was denied", StringComparison.OrdinalIgnoreCase) >= 0 ||
                 message.Contains("There is already an object named"))
             {
                 return "قاعدة البيانات غير محدثة مع نسخة النظام الحالية. نفّذ ملف Databass\\Migration_Step1.sql على قاعدة SchoolDB ثم أعد تشغيل البرنامج.";
