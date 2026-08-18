@@ -5,6 +5,10 @@ using SchoolSystem.Models;
 
 namespace SchoolSystem.Security
 {
+    /// <summary>
+    /// يحتفظ ببيانات المستخدم المُسجَّل دخوله حالياً وصلاحياته المُحمَّلة.
+    /// جميع الفحوصات مركزية هنا لضمان الاتساق عبر كامل التطبيق.
+    /// </summary>
     public static class CurrentUser
     {
         private static readonly object SyncRoot = new object();
@@ -32,12 +36,38 @@ namespace SchoolSystem.Security
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
                 user.Permissions = PermissionKeys.GetRoleDefaults(user.RoleName);
             else
+                // تُطبَّع الصلاحيات لضمان تنسيق موحد دون حذف أي مفتاح صالح
                 user.Permissions = PermissionKeys.NormalizePermissions(user.Permissions);
 
             lock (SyncRoot)
             {
                 User = user;
             }
+
+            // تسجيل تشخيصي: يُساعد في تتبع مشاكل الصلاحيات أثناء الاختبار
+            LogPermissions(user);
+        }
+
+        private static void LogPermissions(User user)
+        {
+            try
+            {
+                if (user == null) return;
+                int count = CountPermissions(user.Permissions);
+                System.Diagnostics.Debug.WriteLine(
+                    string.Format("[RBAC] تسجيل دخول: المستخدم={0}, الدور={1}, عدد الصلاحيات={2}",
+                        user.UserName, user.RoleName, count));
+            }
+            catch
+            {
+                // لا نسمح لفشل التسجيل بإيقاف التطبيق
+            }
+        }
+
+        private static int CountPermissions(string permissions)
+        {
+            if (string.IsNullOrWhiteSpace(permissions)) return 0;
+            return permissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Length;
         }
 
         public static void Clear()
@@ -53,6 +83,10 @@ namespace SchoolSystem.Security
             return User != null && PermissionKeys.IsSystemAdministratorRole(User.RoleName);
         }
 
+        /// <summary>
+        /// يتحقق إذا كان المستخدم يملك صلاحية محددة.
+        /// يدعم المفاتيح بتنسيق Module.Action أو المفاتيح القديمة *.Manage.
+        /// </summary>
         public static bool HasPermission(string permissionKey)
         {
             if (User == null || !User.IsActive || string.IsNullOrWhiteSpace(permissionKey))
@@ -80,6 +114,10 @@ namespace SchoolSystem.Security
             return false;
         }
 
+        /// <summary>
+        /// يتحقق إذا كان المستخدم يملك أي صلاحية تتعلق بالوحدة المحددة.
+        /// مثال: CanAccessModule("Students") = true إذا كان لديه Students.View أو Students.Add إلخ.
+        /// </summary>
         public static bool CanAccessModule(string module)
         {
             if (string.IsNullOrWhiteSpace(module) || User == null || !User.IsActive)
@@ -89,6 +127,12 @@ namespace SchoolSystem.Security
             HashSet<string> permissions = ParsePermissions(User.Permissions);
             return permissions.Any(permission =>
                 permission.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static void DemandModule(string module, string message)
+        {
+            if (!CanAccessModule(module))
+                throw new UnauthorizedAccessException(message);
         }
 
         public static bool CanView(string module)
@@ -137,6 +181,10 @@ namespace SchoolSystem.Security
                 throw new UnauthorizedAccessException(message);
         }
 
+        /// <summary>
+        /// يتحقق إذا كان المستخدم يملك صلاحية Action محددة أو صلاحية Manage الشاملة للوحدة.
+        /// هذا يضمن التوافق مع النظام القديم الذي يستخدم *.Manage.
+        /// </summary>
         private static bool HasActionOrManage(string module, string action)
         {
             if (string.IsNullOrWhiteSpace(module) || string.IsNullOrWhiteSpace(action))
@@ -156,17 +204,53 @@ namespace SchoolSystem.Security
                 throw new UnauthorizedAccessException(message);
         }
 
+        /// <summary>
+        /// يحلل سلسلة الصلاحيات إلى HashSet للبحث السريع.
+        /// يُطبَّع كل مفتاح ويُحذف الفارغ، لكن لا يُحذف أي مفتاح Module.Action صالح.
+        /// </summary>
         private static HashSet<string> ParsePermissions(string permissions)
         {
             if (string.IsNullOrWhiteSpace(permissions))
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            return new HashSet<string>(
-                permissions
-                    .Split(new[] { ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Select(PermissionKeys.NormalizePermissionKey)
-                    .Where(p => !string.IsNullOrWhiteSpace(p)),
-                StringComparer.OrdinalIgnoreCase);
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (string raw in permissions.Split(new[] { ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string trimmed = raw.Trim();
+                if (string.IsNullOrWhiteSpace(trimmed)) continue;
+
+                string normalized = PermissionKeys.NormalizePermissionKey(trimmed);
+                if (!string.IsNullOrWhiteSpace(normalized))
+                    result.Add(normalized);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// يُعيد عدد الصلاحيات الحالية للمستخدم المُسجَّل - مفيد للتشخيص.
+        /// </summary>
+        public static int GetPermissionCount()
+        {
+            if (User == null || string.IsNullOrWhiteSpace(User.Permissions))
+                return 0;
+            return ParsePermissions(User.Permissions).Count;
+        }
+
+        /// <summary>
+        /// يُعيد قائمة بجميع الأوحدات التي يمتلك المستخدم أي صلاحية لها.
+        /// </summary>
+        public static IEnumerable<string> GetAccessibleModules()
+        {
+            if (User == null || string.IsNullOrWhiteSpace(User.Permissions))
+                return Enumerable.Empty<string>();
+
+            var permissions = ParsePermissions(User.Permissions);
+            return permissions
+                .Where(p => p.Contains("."))
+                .Select(p => p.Split('.')[0])
+                .Distinct(StringComparer.OrdinalIgnoreCase);
         }
     }
 }

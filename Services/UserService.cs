@@ -275,6 +275,22 @@ namespace SchoolSystem.Services
             user.LockedAt = null;
             user.LastLoginAt = DateTime.Now;
 
+            try
+            {
+                string normalizedPermissions = PermissionKeys.NormalizePermissions(user.Permissions);
+                int permissionCount = string.IsNullOrWhiteSpace(normalizedPermissions)
+                    ? 0
+                    : normalizedPermissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Length;
+
+                ApplicationLogger.LogException("تشخيص الصلاحيات",
+                    new Exception(string.Format("تسجيل دخول ناجح: user={0}, role={1}, permissionsCount={2}",
+                        user.UserName, user.RoleName, permissionCount)));
+            }
+            catch
+            {
+                // لا نسمح لفشل التسجيل بإيقاف تسجيل الدخول.
+            }
+
             CurrentUser.Set(user);
 
             try
@@ -414,26 +430,37 @@ namespace SchoolSystem.Services
             if (user == null)
                 return;
 
+            // طبّع الصلاحيات المحفوظة لإزالة المسافات والتنسيق غير المتسق
             string normalized = PermissionKeys.NormalizePermissions(user.Permissions);
-            string defaults = PermissionKeys.GetRoleDefaults(user.RoleName);
 
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
             {
-                // مدير النظام فقط يحصل دائمًا على الصلاحيات الكاملة من الدور المركزي.
-                normalized = defaults;
+                // مدير النظام يحصل دائمًا على كامل الكتالوج من القاموس المركزي
+                // بغض النظر عما هو محفوظ في قاعدة البيانات
+                string adminPermissions = PermissionKeys.GetRoleDefaults(user.RoleName);
+                if (!string.Equals(user.Permissions ?? string.Empty, adminPermissions, StringComparison.Ordinal))
+                {
+                    user.Permissions = adminPermissions;
+                    userRepository.UpdatePermissions(user.UserID, adminPermissions);
+                }
+                return;
             }
-            // الحسابات العادية تعتمد على Permissions المحفوظة صراحةً.
-            // لا نعيد صلاحيات الدور تلقائيًا بعد أن يختار المدير إلغاءها كلها.
 
-            if (!string.Equals(user.Permissions ?? string.Empty, normalized, StringComparison.Ordinal))
+            // للمستخدمين العاديين: فقط نُصلح التنسيق (normalization)
+            // ولا نُعيد الكتابة بصلاحيات الدور الافتراضية لأن المدير قد يكون
+            // خصص صلاحيات مختلفة عن اقتراحات الدور عن قصد.
+            //
+            // لكن نُحدِّث قاعدة البيانات إذا تغير النص بعد التطبيع فقط
+            // (مثل إزالة مسافات زائدة أو توحيد فاصلة).
+            if (!string.IsNullOrWhiteSpace(user.Permissions) &&
+                !string.Equals(user.Permissions, normalized, StringComparison.Ordinal))
             {
                 user.Permissions = normalized;
                 userRepository.UpdatePermissions(user.UserID, normalized);
-                auditLogService.Record(
-                    "تحديث صلاحيات تلقائي",
-                    "User",
-                    user.UserID.ToString(),
-                    "تمت مزامنة صلاحيات الحساب " + user.UserName + " مع الدور " + user.RoleName);
+            }
+            else if (!string.IsNullOrWhiteSpace(normalized))
+            {
+                user.Permissions = normalized;
             }
         }
 

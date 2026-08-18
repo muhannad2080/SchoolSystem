@@ -51,6 +51,7 @@
             this.dataGridViewSubjects = new System.Windows.Forms.DataGridView();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.lblRecordCount = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).BeginInit();
             this.panelTitle.SuspendLayout();
             this.mainContainer.SuspendLayout();
             this.groupBoxFields.SuspendLayout();
@@ -65,7 +66,6 @@
             // 
             // panelTitle
             // 
-            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
@@ -377,7 +377,7 @@
             this.btnClear.ForeColor = System.Drawing.Color.White;
             this.btnClear.Location = new System.Drawing.Point(119, 13);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(110, 36);
+            this.btnClear.Size = new System.Drawing.Size(122, 36);
             this.btnClear.TabIndex = 1;
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
@@ -390,7 +390,7 @@
             this.btnDelete.FlatAppearance.BorderSize = 0;
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDelete.ForeColor = System.Drawing.Color.White;
-            this.btnDelete.Location = new System.Drawing.Point(235, 13);
+            this.btnDelete.Location = new System.Drawing.Point(247, 13);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(110, 36);
             this.btnDelete.TabIndex = 2;
@@ -404,7 +404,7 @@
             this.btnUpdate.FlatAppearance.BorderSize = 0;
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdate.ForeColor = System.Drawing.Color.White;
-            this.btnUpdate.Location = new System.Drawing.Point(351, 13);
+            this.btnUpdate.Location = new System.Drawing.Point(363, 13);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(110, 36);
             this.btnUpdate.TabIndex = 3;
@@ -418,7 +418,7 @@
             this.btnAdd.FlatAppearance.BorderSize = 0;
             this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAdd.ForeColor = System.Drawing.Color.White;
-            this.btnAdd.Location = new System.Drawing.Point(467, 13);
+            this.btnAdd.Location = new System.Drawing.Point(479, 13);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(140, 36);
             this.btnAdd.TabIndex = 4;
@@ -523,9 +523,9 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "SubjectsForm";
-            this.Text = "إدارة المواد الدراسية";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1100, 730);
+            ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).EndInit();
             this.panelTitle.ResumeLayout(false);
             this.mainContainer.ResumeLayout(false);
             this.groupBoxFields.ResumeLayout(false);

@@ -54,6 +54,7 @@
             this.dataGridViewVouchers = new System.Windows.Forms.DataGridView();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.lblRecordCount = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).BeginInit();
             this.panelTitle.SuspendLayout();
             this.panelFields.SuspendLayout();
             this.tableLayoutFields.SuspendLayout();
@@ -65,7 +66,6 @@
             // 
             // panelTitle
             // 
-            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(42)))), ((int)(((byte)(57)))));
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
@@ -238,7 +238,6 @@
             // cmbPartyName
             // 
             this.cmbPartyName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cmbPartyName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
             this.cmbPartyName.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.cmbPartyName.FormattingEnabled = true;
             this.cmbPartyName.Location = new System.Drawing.Point(538, 79);
@@ -555,9 +554,9 @@
             this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "VouchersForm";
-            this.Text = "إدارة السندات المالية";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.Size = new System.Drawing.Size(1100, 700);
+            ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).EndInit();
             this.panelTitle.ResumeLayout(false);
             this.panelFields.ResumeLayout(false);
             this.tableLayoutFields.ResumeLayout(false);
