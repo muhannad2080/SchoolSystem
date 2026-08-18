@@ -195,10 +195,8 @@ namespace SchoolSystem.UI
             if (!filtersReady || filterLoadInProgress || !IsHandleCreated || !searchBox.Enabled)
                 return;
 
-            string query = (searchBox.Text ?? string.Empty).Trim();
-            if (query.Length == 1)
-                return;
-
+            // البحث فوري من أول حرف أو رقم، وتدعم قيمة البحث المسافات والكلمات المتعددة.
+            // عند إفراغ الحقل يعاد تحميل السجل الكامل ضمن الفلاتر الحالية.
             await LoadLogsAsync();
         }
 
