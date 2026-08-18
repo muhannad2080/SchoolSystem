@@ -456,7 +456,9 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            if (checkedListPermissions.CheckedItems.Count == 0)
+            // عند إنشاء حساب جديد يجب تحديد صلاحية واحدة على الأقل.
+            // عند تعديل حساب موجود نسمح بحفظ صفر صلاحيات لتنفيذ زر "منع الكل".
+            if (!isUpdate && checkedListPermissions.CheckedItems.Count == 0)
             {
                 ShowWarning("اختر صلاحية واحدة على الأقل.");
                 return false;

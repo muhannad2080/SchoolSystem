@@ -418,9 +418,12 @@ namespace SchoolSystem.Services
             string defaults = PermissionKeys.GetRoleDefaults(user.RoleName);
 
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+            {
+                // مدير النظام فقط يحصل دائمًا على الصلاحيات الكاملة من الدور المركزي.
                 normalized = defaults;
-            else if (string.IsNullOrWhiteSpace(normalized) && !string.IsNullOrWhiteSpace(defaults))
-                normalized = defaults;
+            }
+            // الحسابات العادية تعتمد على Permissions المحفوظة صراحةً.
+            // لا نعيد صلاحيات الدور تلقائيًا بعد أن يختار المدير إلغاءها كلها.
 
             if (!string.Equals(user.Permissions ?? string.Empty, normalized, StringComparison.Ordinal))
             {
