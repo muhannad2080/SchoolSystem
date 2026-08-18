@@ -195,6 +195,10 @@ namespace SchoolSystem.UI
             if (!filtersReady || filterLoadInProgress || !IsHandleCreated || !searchBox.Enabled)
                 return;
 
+            string query = (searchBox.Text ?? string.Empty).Trim();
+            if (query.Length == 1)
+                return;
+
             await LoadLogsAsync();
         }
 
