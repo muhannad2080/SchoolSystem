@@ -82,6 +82,50 @@ namespace SchoolSystem.DataAccess
             return null;
         }
 
+        public List<string> GetRolePermissions(int userId)
+        {
+            List<string> permissions = new List<string>();
+
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                IF OBJECT_ID(N'dbo.UserRoles', N'U') IS NULL
+                   OR OBJECT_ID(N'dbo.RolePermissions', N'U') IS NULL
+                   OR OBJECT_ID(N'dbo.Permissions', N'U') IS NULL
+                BEGIN
+                    SELECT CAST(NULL AS NVARCHAR(150)) AS PermissionKey
+                    WHERE 1 = 0;
+                    RETURN;
+                END;
+
+                SELECT DISTINCT P.PermissionKey
+                FROM dbo.UserRoles UR
+                INNER JOIN dbo.RolePermissions RP ON RP.RoleID = UR.RoleID
+                INNER JOIN dbo.Permissions P ON P.PermissionID = RP.PermissionID
+                WHERE UR.UserID = @UserID
+                  AND P.IsActive = 1
+                  AND NULLIF(LTRIM(RTRIM(P.PermissionKey)), N'') IS NOT NULL
+                ORDER BY P.PermissionKey;", con))
+            {
+                cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                con.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["PermissionKey"] != DBNull.Value)
+                        {
+                            string key = reader["PermissionKey"].ToString().Trim();
+                            if (!string.IsNullOrWhiteSpace(key))
+                                permissions.Add(key);
+                        }
+                    }
+                }
+            }
+
+            return permissions;
+        }
+
         public User GetUserById(int userId)
         {
             using (SqlConnection con = DbConnection.GetConnection())
