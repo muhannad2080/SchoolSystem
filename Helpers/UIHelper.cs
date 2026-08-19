@@ -410,7 +410,7 @@ namespace SchoolSystem.Helpers
 
         private static bool IsTextOnlyField(string key)
         {
-            return ContainsAny(key, "birthplace", "nationality", "governorate", "district", "guardianrelation", "guardianjob", "previousschool", "previousclass", "transferreason", "مكانالميلاد", "الجنسية", "المحافظة", "المديرية", "صلة", "وظيفة", "المدرسةالسابقة", "الصفالسابق", "سببالنقل");
+            return ContainsAny(key, "birthplace", "nationality", "governorate", "district", "guardianrelation", "guardianjob", "previousschool", "previousclass", "transferreason", "specialization", "department", "jobtitle", "position", "مكانالميلاد", "الجنسية", "المحافظة", "المديرية", "صلة", "وظيفة", "تخصص", "المسمى", "القسم", "المدرسةالسابقة", "الصفالسابق", "سببالنقل");
         }
 
         private static bool IsAcademicYearField(string key)
