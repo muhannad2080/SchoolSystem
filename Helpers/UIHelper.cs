@@ -186,7 +186,7 @@ namespace SchoolSystem.Helpers
                 TextBox textBox = child as TextBox;
                 if (textBox != null)
                 {
-                    ConfigureTextInput(textBox, textBox.Name, textBox.Text);
+                    ConfigureTextInput(textBox, textBox.Name);
                     textBox.KeyPress -= TextInput_KeyPress;
                     textBox.KeyPress += TextInput_KeyPress;
                     textBox.Leave -= TextInput_Leave;
@@ -210,7 +210,7 @@ namespace SchoolSystem.Helpers
                 KryptonTextBox kryptonTextBox = child as KryptonTextBox;
                 if (kryptonTextBox != null)
                 {
-                    ConfigureTextInput(kryptonTextBox, kryptonTextBox.Name, kryptonTextBox.Text);
+                    ConfigureTextInput(kryptonTextBox, kryptonTextBox.Name);
                     kryptonTextBox.KeyPress -= TextInput_KeyPress;
                     kryptonTextBox.KeyPress += TextInput_KeyPress;
                     kryptonTextBox.Leave -= TextInput_Leave;
@@ -255,7 +255,7 @@ namespace SchoolSystem.Helpers
                 numericUpDown.Value = numericUpDown.Maximum;
         }
 
-        private static void ConfigureTextInput(Control control, string controlName, string currentText)
+        private static void ConfigureTextInput(Control control, string controlName)
         {
             string key = (controlName ?? string.Empty).ToLowerInvariant();
             if (IsEmailField(key))
@@ -458,16 +458,6 @@ namespace SchoolSystem.Helpers
             return value.Length >= 7 && value.Length <= 20 && value.All(char.IsDigit);
         }
 
-        private static bool IsValidAcademicYear(string value)
-        {
-            string[] parts = value.Split('/');
-            int first;
-            int second;
-            return parts.Length == 2 && parts[0].Length == 4 && parts[1].Length == 4 &&
-                   int.TryParse(parts[0], out first) && int.TryParse(parts[1], out second) &&
-                   second == first + 1;
-        }
-
         public static bool TryParseDecimal(string value, out decimal number)
         {
             return decimal.TryParse((value ?? string.Empty).Trim(),
@@ -483,8 +473,7 @@ namespace SchoolSystem.Helpers
 
         public static bool IsNumeric(string value)
         {
-            decimal ignored;
-            return TryParseDecimal(value, out ignored);
+            return TryParseDecimal(value, out _);
         }
 
         public static bool IsValidPositiveInteger(string value, out int number)
@@ -569,11 +558,9 @@ namespace SchoolSystem.Helpers
         {
             string text = (value ?? string.Empty).Trim().Replace('/', '-');
             string[] parts = text.Split('-');
-            int first;
-            int second;
             return parts.Length == 2
-                && int.TryParse(parts[0].Trim(), out first)
-                && int.TryParse(parts[1].Trim(), out second)
+                && int.TryParse(parts[0].Trim(), out int first)
+                && int.TryParse(parts[1].Trim(), out int second)
                 && second == first + 1;
         }
 

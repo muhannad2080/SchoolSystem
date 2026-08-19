@@ -584,18 +584,6 @@ namespace SchoolSystem.UI
             lblRecordCount.Text = "عدد السندات ضمن الفترة: " + recordCount;
         }
 
-        private string EscapeFilter(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return "";
-
-            return value
-                .Replace("'", "''")
-                .Replace("[", "[[]")
-                .Replace("%", "[%]")
-                .Replace("*", "[*]");
-        }
-
         private void FormatGrid()
         {
             if (dataGridViewVouchers.Columns.Count == 0)
