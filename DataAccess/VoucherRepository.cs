@@ -40,7 +40,12 @@ namespace SchoolSystem.DataAccess
 
         public bool AddVoucher(Voucher voucher)
         {
-            bool needsGeneratedNumber = string.IsNullOrWhiteSpace(voucher.VoucherNumber);
+            // الرقم الظاهر في الواجهة مجرد معاينة. الرقم النهائي يجب أن يُولد بعد
+            // الحصول على VoucherID داخل نفس عملية الحفظ حتى لا يتكرر مع مستخدم آخر.
+            bool needsGeneratedNumber = string.IsNullOrWhiteSpace(voucher.VoucherNumber) ||
+                IsGeneratedVoucherNumber(voucher.VoucherNumber, voucher.VoucherType);
+            if (needsGeneratedNumber)
+                voucher.VoucherNumber = null;
 
             using (SqlConnection con = DbConnection.GetConnection())
             {
@@ -213,6 +218,15 @@ namespace SchoolSystem.DataAccess
         {
             string prefix = voucherType == "صرف" ? "PAY" : "REC";
             return prefix + "-" + voucherDate.Year + "-" + voucherId.ToString("00000");
+        }
+
+        private bool IsGeneratedVoucherNumber(string voucherNumber, string voucherType)
+        {
+            if (string.IsNullOrWhiteSpace(voucherNumber))
+                return false;
+
+            string prefix = voucherType == "صرف" ? "PAY-" : "REC-";
+            return voucherNumber.Trim().StartsWith(prefix, StringComparison.OrdinalIgnoreCase);
         }
 
         public string GenerateVoucherNumber(string voucherType)
