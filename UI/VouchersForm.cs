@@ -477,11 +477,11 @@ namespace SchoolSystem.UI
 
             // الطرف يجب أن يكون طرفًا مسجلاً في النظام، وليس نصًا حرًا قد يسبب
             // اختلاف الأسماء وتكرارها في التقارير والسندات.
-            cmbPartyName.DropDownStyle = ComboBoxStyle.DropDownList;
-            // DropDownList لا يدعم SuggestAppend في WinForms.
-            // تبقى القائمة إلزامية، ويُستخدم البحث المدمج في عناصر القائمة فقط.
-            cmbPartyName.AutoCompleteSource = AutoCompleteSource.ListItems;
+            // الطرف قائمة إلزامية وليست مربع نص حر. إلغاء الإكمال التلقائي
+            // بالكامل يمنع تعارض إعدادات Designer مع DropDownList في WinForms.
             cmbPartyName.AutoCompleteMode = AutoCompleteMode.None;
+            cmbPartyName.AutoCompleteSource = AutoCompleteSource.None;
+            cmbPartyName.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbPartyName.IntegralHeight = false;
         }
 
