@@ -254,9 +254,14 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(txtPayeeName.Text) || txtPayeeName.Text.Trim().Length > 200)
+            if (string.IsNullOrWhiteSpace(txtPayeeName.Text))
             {
-                UIHelper.FocusAndWarn(txtPayeeName, "أدخل اسم المستفيد بطول لا يتجاوز 200 حرف.");
+                UIHelper.FocusAndWarn(txtPayeeName, "اسم المستفيد مطلوب.");
+                return false;
+            }
+            if (!UIHelper.IsValidTextOnly(txtPayeeName.Text, 2, 200))
+            {
+                UIHelper.FocusAndWarn(txtPayeeName, "اسم المستفيد يجب أن يحتوي على أحرف ومسافات فقط دون أرقام.");
                 return false;
             }
 
