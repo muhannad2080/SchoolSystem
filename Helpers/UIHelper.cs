@@ -270,13 +270,19 @@ namespace SchoolSystem.Helpers
                 return;
             }
 
+            if (IsAcademicYearField(key))
+            {
+                SetMaxLength(control, 9);
+                return;
+            }
+
             if (IsIdentityOrNumericField(key))
             {
                 SetMaxLength(control, 30);
                 return;
             }
 
-            if (IsPersonNameField(key))
+            if (IsPersonNameField(key) || IsTextOnlyField(key))
             {
                 SetMaxLength(control, 150);
                 return;
@@ -311,6 +317,17 @@ namespace SchoolSystem.Helpers
                 return;
             }
 
+            if (IsAcademicYearField(key))
+            {
+                Control textBox = sender as Control;
+                if (char.IsDigit(e.KeyChar))
+                    return;
+                if (e.KeyChar == '/' && textBox != null && textBox.Text.IndexOf('/') < 0)
+                    return;
+                e.Handled = true;
+                return;
+            }
+
             if (IsPhoneField(key) || IsIdentityOrNumericField(key))
             {
                 if (!char.IsDigit(e.KeyChar))
@@ -330,7 +347,8 @@ namespace SchoolSystem.Helpers
                 return;
             }
 
-            if (IsPersonNameField(key) && !(char.IsLetter(e.KeyChar) || char.IsWhiteSpace(e.KeyChar) || e.KeyChar == '-'))
+            if ((IsPersonNameField(key) || IsTextOnlyField(key)) &&
+                !(char.IsLetter(e.KeyChar) || char.IsWhiteSpace(e.KeyChar) || "-،,.()".IndexOf(e.KeyChar) >= 0))
                 e.Handled = true;
         }
 
@@ -364,6 +382,16 @@ namespace SchoolSystem.Helpers
                 e.Cancel = true;
                 FocusAndWarn(control, "يرجى إدخال رقم هاتف مكوّن من أرقام فقط.");
             }
+            else if (IsAcademicYearField(key) && !IsValidAcademicYear(value))
+            {
+                e.Cancel = true;
+                FocusAndWarn(control, "يرجى إدخال العام الدراسي بصيغة صحيحة مثل 1448/1449.");
+            }
+            else if (IsTextOnlyField(key) && !IsValidArabicOrLatinName(value, 2))
+            {
+                e.Cancel = true;
+                FocusAndWarn(control, "هذا الحقل يقبل الأحرف والمسافات فقط.");
+            }
         }
 
         private static string NormalizeText(string value)
@@ -378,6 +406,16 @@ namespace SchoolSystem.Helpers
         private static bool IsPersonNameField(string key)
         {
             return ContainsAny(key, "fullname", "firstname", "lastname", "middlename", "studentname", "teachername", "guardianname", "fathername", "mothername", "drivername", "partyname", "payeename", "routename", "stagename", "classname", "roomname", "subjectname", "اسم", "الاسم", "ولي", "اب", "أب", "ام", "أم");
+        }
+
+        private static bool IsTextOnlyField(string key)
+        {
+            return ContainsAny(key, "birthplace", "nationality", "governorate", "district", "guardianrelation", "guardianjob", "previousschool", "previousclass", "transferreason", "مكانالميلاد", "الجنسية", "المحافظة", "المديرية", "صلة", "وظيفة", "المدرسةالسابقة", "الصفالسابق", "سببالنقل");
+        }
+
+        private static bool IsAcademicYearField(string key)
+        {
+            return ContainsAny(key, "academicyear", "العامالدراسي");
         }
 
         private static bool IsPhoneField(string key)
@@ -397,7 +435,7 @@ namespace SchoolSystem.Helpers
 
         private static bool IsIdentityOrNumericField(string key)
         {
-            return ContainsAny(key, "studentnumber", "employeenumber", "teachernumber", "nationalid", "identitynumber", "quantity", "count", "hours", "minutes", "days", "number", "studentid", "teacherid", "employeeid", "classid", "subjectid", "roomid", "userid", "routeid", "bookid", "voucherid", "expenseid", "contractid", "enrollmentid", "attendanceid", "copies", "publicationyear", "seatnumber", "workhours", "capacity", "late", "earlyleave", "periodno", "gradeorder", "رقم", "هوية", "كمية", "عدد", "ساعات", "دقائق", "ايام", "أيام");
+            return ContainsAny(key, "studentnumber", "employeenumber", "teachernumber", "nationalid", "identitynumber", "quantity", "count", "hours", "minutes", "days", "number", "studentid", "teacherid", "employeeid", "classid", "subjectid", "roomid", "userid", "routeid", "bookid", "voucherid", "receiptno", "expenseid", "contractid", "enrollmentid", "attendanceid", "copies", "publicationyear", "seatnumber", "workhours", "capacity", "late", "earlyleave", "periodno", "gradeorder", "رقم", "هوية", "كمية", "عدد", "ساعات", "دقائق", "ايام", "أيام");
         }
 
         private static bool IsLongTextField(string key)
@@ -418,6 +456,16 @@ namespace SchoolSystem.Helpers
         private static bool IsValidPhoneDigitsOnly(string value)
         {
             return value.Length >= 7 && value.Length <= 20 && value.All(char.IsDigit);
+        }
+
+        private static bool IsValidAcademicYear(string value)
+        {
+            string[] parts = value.Split('/');
+            int first;
+            int second;
+            return parts.Length == 2 && parts[0].Length == 4 && parts[1].Length == 4 &&
+                   int.TryParse(parts[0], out first) && int.TryParse(parts[1], out second) &&
+                   second == first + 1;
         }
 
         public static bool TryParseDecimal(string value, out decimal number)

@@ -908,6 +908,10 @@ namespace SchoolSystem.UI
                 isValid = false;
             }
 
+            ValidateTextOnlyField(txtPreviousSchool, "المدرسة السابقة", ref isValid);
+            ValidateTextOnlyField(txtPreviousClass, "الصف السابق", ref isValid);
+            ValidateTextOnlyField(txtTransferReason, "سبب النقل", ref isValid);
+
             decimal fee = 0;
             if (!string.IsNullOrWhiteSpace(txtRegistrationFee.Text) &&
                 (!UIHelper.TryParseDecimal(txtRegistrationFee.Text, out fee) || fee < 0))
@@ -931,6 +935,16 @@ namespace SchoolSystem.UI
             }
 
             return isValid;
+        }
+
+        private void ValidateTextOnlyField(Control control, string label, ref bool isValid)
+        {
+            string value = control == null ? string.Empty : control.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(value) && !UIHelper.IsValidArabicOrLatinName(value, 2))
+            {
+                errorProvider1.SetError(control, label + " يقبل الأحرف والمسافات فقط.");
+                isValid = false;
+            }
         }
 
         private bool IsSequentialAcademicYear(string value)
