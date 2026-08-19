@@ -336,6 +336,12 @@ namespace SchoolSystem.UI
                 cmbRoomType.Focus();
                 return false;
             }
+            if (!string.IsNullOrWhiteSpace(txtLocation.Text) && !UIHelper.IsValidTextOnly(txtLocation.Text, 2, 150))
+            {
+                ShowWarning("موقع القاعة يجب أن يحتوي على نص صالح دون أرقام غير مسموحة.");
+                txtLocation.Focus();
+                return false;
+            }
             if (nudCapacity.Value <= 0)
             {
                 ShowWarning("سعة القاعة يجب أن تكون أكبر من صفر.");

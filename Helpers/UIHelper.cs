@@ -512,6 +512,21 @@ namespace SchoolSystem.Helpers
             return true;
         }
 
+        public static bool IsValidTextOnly(string value, int minimumLength = 2, int maximumLength = 200)
+        {
+            string text = (value ?? string.Empty).Trim();
+            if (text.Length < minimumLength || text.Length > maximumLength)
+                return false;
+
+            foreach (char character in text)
+            {
+                if (char.IsLetter(character) || char.IsWhiteSpace(character) || character == '-' || character == '_' || character == '.' || character == ',' || character == '(' || character == ')' || character == '/')
+                    continue;
+                return false;
+            }
+            return true;
+        }
+
         public static bool IsValidPhone(string value)
         {
             string text = (value ?? string.Empty).Trim();

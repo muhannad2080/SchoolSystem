@@ -176,6 +176,21 @@ namespace SchoolSystem.UI
                 UIHelper.FocusAndWarn(txtFullName, "الاسم الكامل مطلوب ويجب أن يحتوي على أحرف فقط وبطول مناسب.");
                 return false;
             }
+            if (!string.IsNullOrWhiteSpace(txtBirthPlace.Text) && !UIHelper.IsValidTextOnly(txtBirthPlace.Text, 2, 100))
+            {
+                UIHelper.FocusAndWarn(txtBirthPlace, "مكان الميلاد يجب أن يحتوي على نص فقط دون أرقام وبطول مناسب.");
+                return false;
+            }
+            if (!string.IsNullOrWhiteSpace(txtAddress.Text) && !UIHelper.IsValidTextOnly(txtAddress.Text, 2, 200))
+            {
+                UIHelper.FocusAndWarn(txtAddress, "العنوان يجب أن يحتوي على نص صالح دون أرقام غير مسموحة.");
+                return false;
+            }
+            if (!string.IsNullOrWhiteSpace(txtSpecialization.Text) && !UIHelper.IsValidTextOnly(txtSpecialization.Text, 2, 100))
+            {
+                UIHelper.FocusAndWarn(txtSpecialization, "التخصص يجب أن يحتوي على أحرف فقط وبطول مناسب.");
+                return false;
+            }
             if (cmbGender.SelectedIndex < 0)
             {
                 MessageBox.Show("يرجى اختيار الجنس", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
