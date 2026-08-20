@@ -209,7 +209,11 @@ namespace SchoolSystem.UI
         {
             checkedListPermissions.Items.Clear();
 
-            foreach (string permissionKey in PermissionKeys.All)
+            // واجهة المدير تعرض صلاحية الشاشة فقط (Module.View)، ولا تعرض
+            // مفاتيح العمليات الداخلية مثل Add/Edit/Delete. العمليات الفعلية
+            // تبقى محكومة داخل الخدمات والأدوار، بينما هذه القائمة تحدد ما يظهر
+            // للمستخدم في MainForm.
+            foreach (string permissionKey in PermissionKeys.ScreenPermissions)
                 AddPermission(permissionKey, PermissionKeys.GetDisplayName(permissionKey));
 
             ApplyRolePreset();
@@ -412,7 +416,10 @@ namespace SchoolSystem.UI
 
         private void CheckPermission(string permissionKey)
         {
-            string normalizedKey = PermissionKeys.NormalizePermissionKey(permissionKey);
+            // الأدوار القديمة تحتوي على مفاتيح عملية مثل Students.Add أو Students.Manage.
+            // عند عرضها في الواجهة نحولها إلى Students.View حتى لا تعتمد القائمة على
+            // ترتيب أو عدد مفاتيح العمليات.
+            string normalizedKey = PermissionKeys.ToScreenPermission(permissionKey);
             if (string.IsNullOrWhiteSpace(normalizedKey))
                 return;
 
@@ -455,7 +462,7 @@ namespace SchoolSystem.UI
                 string[] parts = normalizedPermissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                 HashSet<string> selectedKeys = new HashSet<string>(
-                    parts.Select(part => PermissionKeys.NormalizePermissionKey(part.Trim()))
+                    parts.Select(part => PermissionKeys.ToScreenPermission(part.Trim()))
                          .Where(key => !string.IsNullOrWhiteSpace(key)),
                     StringComparer.OrdinalIgnoreCase);
 

@@ -84,6 +84,43 @@ namespace SchoolSystem.Security
             get { return Catalog; }
         }
 
+        /// <summary>
+        /// الصلاحيات التي تعرض في واجهة إدارة المستخدمين. هذه القائمة تمثل الشاشة
+        /// نفسها فقط، بينما تبقى صلاحيات العمليات داخل الكود والخدمات للأدوار
+        /// والصلاحيات الداخلية. أي عنصر هنا هو Module.View.
+        /// </summary>
+        public static IReadOnlyList<string> ScreenPermissions
+        {
+            get { return ScreenCatalog; }
+        }
+
+        private static readonly IReadOnlyList<string> ScreenCatalog = BuildScreenCatalog();
+
+        private static IReadOnlyList<string> BuildScreenCatalog()
+        {
+            return Modules
+                .Select(module => module + ".View")
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+
+        /// <summary>
+        /// يحول صلاحية شاشة أو صلاحية عملية قديمة إلى مفتاح الشاشة الموافق.
+        /// </summary>
+        public static string ToScreenPermission(string permissionKey)
+        {
+            string normalized = NormalizePermissionKey(permissionKey);
+            if (string.IsNullOrWhiteSpace(normalized))
+                return string.Empty;
+
+            int dot = normalized.IndexOf('.');
+            if (dot <= 0)
+                return string.Empty;
+
+            string module = normalized.Substring(0, dot);
+            return ModuleSet.Contains(module) ? module + ".View" : string.Empty;
+        }
+
         private static IReadOnlyList<string> BuildCatalog()
         {
             var values = new List<string>

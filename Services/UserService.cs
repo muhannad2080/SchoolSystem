@@ -439,27 +439,25 @@ namespace SchoolSystem.Services
 
             bool hasExplicitPermissionsValue = user.Permissions != null;
             string directPermissions = PermissionKeys.NormalizePermissions(user.Permissions);
+            string rolePermissions = ResolveRolePermissions(user);
 
-            // وجود قيمة Permissions، حتى لو كانت فارغة، يعني أن المدير حفظ تخصيصًا يدويًا.
-            // لا نستبدل الاختيار اليدوي بصلاحيات الدور أو بقيمة افتراضية أخرى.
-            // الحسابات القديمة التي لا تحتوي قيمة NULL فقط تدخل مسار الاستعادة.
-            if (hasExplicitPermissionsValue)
-                return directPermissions;
+            // الصلاحيات الفعالة هي اتحاد صلاحيات الدور مع الصلاحيات الفردية المحفوظة.
+            // هذا يمنع فقدان صلاحيات الدور، ويضمن أن صلاحيات الشاشة التي منحها المدير
+            // مثل Students.View وTeachers.View تصل إلى CurrentUser ثم MainForm.
+            string effectivePermissions = PermissionKeys.Serialize(
+                (directPermissions ?? string.Empty)
+                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Concat((rolePermissions ?? string.Empty)
+                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)));
 
-            // توافق مع كتالوج RBAC المعياري: الحسابات التي لا تملك قيمة
-            // Permissions نصية تستمد صلاحياتها من UserRoles/RolePermissions.
-            // إذا لم تكن الهجرة منفذة أو لم يوجد ربط، نعود إلى إعدادات الدور.
-            // نعيد كتابة القيمة المستعادة في قاعدة البيانات حتى تصبح مصدر الحقيقة
-            // صريحًا ولا تعود القيمة الافتراضية إلى الظهور في الدخول التالي.
-            string recoveredPermissions = ResolveRolePermissions(user);
-
-            if (!string.Equals(directPermissions, recoveredPermissions, StringComparison.OrdinalIgnoreCase)
-                && !string.IsNullOrWhiteSpace(recoveredPermissions))
+            // الحسابات القديمة التي لا تحتوي قيمة Permissions تستعيد صلاحيات الدور
+            // وتُحفظ مرة واحدة كقيمة صريحة لتجنب العودة إلى Dashboard وReports فقط.
+            if (!hasExplicitPermissionsValue && !string.IsNullOrWhiteSpace(rolePermissions))
             {
-                userRepository.UpdatePermissions(user.UserID, recoveredPermissions);
+                userRepository.UpdatePermissions(user.UserID, rolePermissions);
             }
 
-            return recoveredPermissions;
+            return effectivePermissions;
         }
 
         private string ResolveRolePermissions(User user)
