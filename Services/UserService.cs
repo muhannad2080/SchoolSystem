@@ -439,8 +439,26 @@ namespace SchoolSystem.Services
 
             bool hasExplicitPermissionsValue = user.Permissions != null;
             string directPermissions = PermissionKeys.NormalizePermissions(user.Permissions);
+
+            // إصلاح توافق للحسابات القديمة التي أُنشئت أثناء نسخة RBAC الأولى:
+            // كانت بعض الحسابات غير التابعة لدور "التقارير" تُحفظ بصلاحيتين فقط
+            // (Dashboard.View و Reports.View)، فكانت MainForm تعرض هاتين القائمتين
+            // فقط بعد تسجيل الدخول مهما كانت صلاحيات الدور أو اختيار المدير.
+            // لا نلمس التخصيصات الصحيحة ولا الحسابات التي اختارها المدير عمداً لدور
+            // التقارير أو المدقق، ونحوّل هذه الحالة المحددة فقط إلى إعدادات الدور.
+            if (hasExplicitPermissionsValue && IsLegacyReportOnlyPermissions(user, directPermissions))
+            {
+                string repaired = ResolveRolePermissions(user);
+                if (!string.IsNullOrWhiteSpace(repaired) &&
+                    !string.Equals(directPermissions, repaired, StringComparison.OrdinalIgnoreCase))
+                {
+                    userRepository.UpdatePermissions(user.UserID, repaired);
+                    return repaired;
+                }
+            }
+
             // وجود قيمة Permissions، حتى لو كانت فارغة، يعني أن المدير حفظ تخصيصًا يدويًا.
-            // لا نستبدل الاختيار اليدوي بصلاحيات الدور أو بقيمة Reports-only قديمة.
+            // لا نستبدل الاختيار اليدوي بصلاحيات الدور أو بقيمة افتراضية أخرى.
             // الحسابات القديمة التي لا تحتوي قيمة NULL فقط تدخل مسار الاستعادة.
             if (hasExplicitPermissionsValue)
                 return directPermissions;
@@ -448,15 +466,7 @@ namespace SchoolSystem.Services
             // توافق مع كتالوج RBAC المعياري: الحسابات التي لا تملك قيمة
             // Permissions نصية تستمد صلاحياتها من UserRoles/RolePermissions.
             // إذا لم تكن الهجرة منفذة أو لم يوجد ربط، نعود إلى إعدادات الدور.
-            List<string> rolePermissions = userRepository.GetRolePermissions(user.UserID)
-                .Select(PermissionKeys.NormalizePermissionKey)
-                .Where(key => !string.IsNullOrWhiteSpace(key))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
-
-            string recoveredPermissions = rolePermissions.Count > 0
-                ? PermissionKeys.Serialize(rolePermissions)
-                : PermissionKeys.NormalizePermissions(PermissionKeys.GetRoleDefaults(user.RoleName));
+            string recoveredPermissions = ResolveRolePermissions(user);
 
             if (!string.Equals(directPermissions, recoveredPermissions, StringComparison.OrdinalIgnoreCase)
                 && !string.IsNullOrWhiteSpace(recoveredPermissions))
@@ -465,6 +475,44 @@ namespace SchoolSystem.Services
             }
 
             return recoveredPermissions;
+        }
+
+        private string ResolveRolePermissions(User user)
+        {
+            if (user == null)
+                return string.Empty;
+
+            List<string> rolePermissions = userRepository.GetRolePermissions(user.UserID)
+                .Select(PermissionKeys.NormalizePermissionKey)
+                .Where(key => !string.IsNullOrWhiteSpace(key))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            return rolePermissions.Count > 0
+                ? PermissionKeys.Serialize(rolePermissions)
+                : PermissionKeys.NormalizePermissions(PermissionKeys.GetRoleDefaults(user.RoleName));
+        }
+
+        private bool IsLegacyReportOnlyPermissions(User user, string permissions)
+        {
+            if (user == null || string.IsNullOrWhiteSpace(permissions))
+                return false;
+
+            string role = PermissionKeys.NormalizeRoleName(user.RoleName);
+            if (string.Equals(role, "التقارير", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(role, "مدقق", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            HashSet<string> keys = new HashSet<string>(
+                permissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(PermissionKeys.NormalizePermissionKey)
+                    .Where(key => !string.IsNullOrWhiteSpace(key)),
+                StringComparer.OrdinalIgnoreCase);
+
+            return keys.Count == 2 &&
+                   keys.Contains(PermissionKeys.DashboardView) &&
+                   keys.Contains(PermissionKeys.ReportsView) &&
+                   !string.IsNullOrWhiteSpace(PermissionKeys.GetRoleDefaults(role));
         }
 
         private void EnsureRolePermissions(User user)
