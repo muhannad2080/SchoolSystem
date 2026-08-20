@@ -60,7 +60,9 @@ namespace SchoolSystem.Security
 
         private static readonly string[] StandardActions =
         {
-            "View", "Add", "Edit", "Delete", "Search", "Print", "ExportExcel", "ExportCsv", "ExportPDF", "Approve", "Cancel", "Manage"
+            "View", "Add", "Edit", "Delete", "Search", "Print",
+            "ExportExcel", "ExportCsv", "ExportPDF",
+            "Approve", "Cancel", "Manage", "ManageRoles"
         };
 
         private static readonly string[] Modules =
@@ -107,7 +109,8 @@ namespace SchoolSystem.Security
 
         /// <summary>
         /// يتحقق إذا كان المفتاح مفتاح Module.Action صالح حتى لو لم يكن ضمن Catalog المحدد مسبقاً.
-        /// هذا يمنع حذف أي صلاحية حقيقية بسبب عدم وجودها في Catalog.
+        /// يقبل أي مفتاح بالشكل Module.Action حيث Module معروف والـ Action أي كلمة لاتينية.
+        /// هذا يمنع حذف أي صلاحية حقيقية بسبب غيابها من StandardActions.
         /// </summary>
         private static bool IsValidModuleActionKey(string value)
         {
@@ -121,7 +124,25 @@ namespace SchoolSystem.Security
             string module = value.Substring(0, dot);
             string action = value.Substring(dot + 1);
 
-            return ModuleSet.Contains(module) && ActionSet.Contains(action);
+            if (string.IsNullOrWhiteSpace(module) || string.IsNullOrWhiteSpace(action))
+                return false;
+
+            // الوحدة يجب أن تكون معروفة، لكن الـ Action يُقبل إذا كان من StandardActions
+            // أو أي كلمة لاتينية بدون مسافات أو رموز خاصة (للتوافق المستقبلي).
+            if (!ModuleSet.Contains(module))
+                return false;
+
+            // نقبل أي Action من StandardActions أو ManageRoles كاستثناء مُعتمد
+            if (ActionSet.Contains(action))
+                return true;
+
+            // نقبل أي action يتكون من أحرف إنجليزية فقط (مثل ManageRoles)
+            foreach (char c in action)
+            {
+                if (!char.IsLetter(c))
+                    return false;
+            }
+            return action.Length > 0;
         }
 
         public static string GetDisplayName(string permissionKey)
@@ -133,28 +154,28 @@ namespace SchoolSystem.Security
             switch (normalized)
             {
                 case DashboardView: return "عرض لوحة التحكم";
-                case StudentsManage: return "إدارة الطلاب القديمة";
-                case EnrollmentManage: return "إدارة القبول والتسجيل القديمة";
-                case ClassAssignmentManage: return "إدارة توزيع الطلاب القديمة";
-                case TeachersManage: return "إدارة المعلمين القديمة";
-                case StaffAttendanceManage: return "إدارة حضور الموظفين القديمة";
-                case PayrollManage: return "إدارة الرواتب والعقود القديمة";
-                case SubjectsManage: return "إدارة المواد القديمة";
-                case ClassesManage: return "إدارة الصفوف والفصول القديمة";
-                case TimetableManage: return "إدارة الجداول القديمة";
-                case AttendanceManage: return "إدارة الحضور القديمة";
-                case GradesManage: return "إدارة الدرجات القديمة";
-                case FeesManage: return "إدارة الرسوم القديمة";
-                case VouchersManage: return "إدارة السندات القديمة";
-                case ExpensesManage: return "إدارة المصروفات القديمة";
-                case LibraryManage: return "إدارة المكتبة القديمة";
-                case TransportManage: return "إدارة النقل القديمة";
+                case StudentsManage: return "إدارة الطلاب (شاملة)";
+                case EnrollmentManage: return "إدارة القبول والتسجيل";
+                case ClassAssignmentManage: return "إدارة توزيع الطلاب";
+                case TeachersManage: return "إدارة المعلمين";
+                case StaffAttendanceManage: return "إدارة حضور الموظفين";
+                case PayrollManage: return "إدارة الرواتب والعقود";
+                case SubjectsManage: return "إدارة المواد";
+                case ClassesManage: return "إدارة الصفوف والفصول";
+                case TimetableManage: return "إدارة الجداول الدراسية";
+                case AttendanceManage: return "إدارة حضور الطلاب";
+                case GradesManage: return "إدارة الدرجات";
+                case FeesManage: return "إدارة الرسوم الدراسية";
+                case VouchersManage: return "إدارة السندات";
+                case ExpensesManage: return "إدارة المصروفات";
+                case LibraryManage: return "إدارة المكتبة";
+                case TransportManage: return "إدارة النقل";
                 case ReportsView: return "عرض التقارير";
-                case UsersManage: return "إدارة المستخدمين القديمة";
+                case UsersManage: return "إدارة المستخدمين (شاملة)";
                 case AuditLogsView: return "عرض سجل التدقيق";
-                case SettingsManage: return "إدارة الإعدادات القديمة";
+                case SettingsManage: return "إدارة الإعدادات";
                 case UsersManageRoles: return "إدارة أدوار المستخدمين";
-                case RolesManage: return "إدارة الأدوار";
+                case RolesManage: return "إدارة الأدوار (شاملة)";
                 case PermissionsManage: return "إدارة الصلاحيات";
                 case AuditLogsExportExcel: return "تصدير سجل التدقيق إلى Excel";
                 case AuditLogsExportPDF: return "تصدير سجل التدقيق إلى PDF";

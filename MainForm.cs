@@ -409,31 +409,42 @@ namespace SchoolSystem
 
             tsmiDashboard.Visible = CanOpen("Dashboard", PermissionKeys.DashboardView);
 
+            // الطلاب: نفحص Students.View أو Students.Manage أو أي صلاحية للوحدة
             tsmiStudentsManage.Visible = CanOpen("Students", PermissionKeys.StudentsView, PermissionKeys.StudentsManage);
+            // التسجيل: نفحص Enrollment.View أو Enrollment.Manage
             tsmiStudentsEnroll.Visible = CanOpen("Enrollment", PermissionKeys.EnrollmentManage);
+            // توزيع الفصول
             tsmiStudentsClasses.Visible = CanOpen("ClassAssignment", PermissionKeys.ClassAssignmentView, PermissionKeys.ClassAssignmentManage);
 
+            // المعلمون
             tsmiTeachersManage.Visible = CanOpen("Teachers", PermissionKeys.TeachersManage);
+            // حضور المعلمين: يدعم كلاً من StaffAttendance و TeacherAttendance
             tsmiTeachersAttendance.Visible = CanOpen("StaffAttendance", PermissionKeys.StaffAttendanceManage)
                                           || CanOpen("TeacherAttendance");
             tsmiTeachersPayroll.Visible = CanOpen("Payroll", PermissionKeys.PayrollManage);
 
+            // الأكاديمي
             tsmiSubjects.Visible = CanOpen("Subjects", PermissionKeys.SubjectsManage);
             tsmiClasses.Visible = CanOpen("Classes", PermissionKeys.ClassesManage);
             tsmiTimetable.Visible = CanOpen("Timetable", PermissionKeys.TimetableManage);
 
+            // الدرجات والحضور
             tsmiGrades.Visible = CanOpen("Grades", PermissionKeys.GradesManage);
             tsmiAttendance.Visible = CanOpen("Attendance", PermissionKeys.AttendanceManage);
 
+            // المالي
             tsmiFees.Visible = CanOpen("Fees", PermissionKeys.FeesManage);
             tsmiVouchers.Visible = CanOpen("Vouchers", PermissionKeys.VouchersManage);
             tsmiExpenses.Visible = CanOpen("Expenses", PermissionKeys.ExpensesManage);
             tsmiFinancialPayroll.Visible = CanOpen("Payroll", PermissionKeys.PayrollManage);
-            تعريفرسومالصفوفToolStripMenuItem.Visible = CanOpen("FeePlans", PermissionKeys.FeesManage);
+            // خطط الرسوم: تُفتح بصلاحية FeePlans أو Fees.Manage
+            تعريفرسومالصفوفToolStripMenuItem.Visible = CanOpen("FeePlans") || CanOpen("Fees", PermissionKeys.FeesManage);
 
+            // الخدمات
             tsmiTransport.Visible = CanOpen("Transport", PermissionKeys.TransportManage);
             tsmiLibrary.Visible = CanOpen("Library", PermissionKeys.LibraryManage);
 
+            // الإدارة
             tsmiUsers.Visible = CanOpen("Users", PermissionKeys.UsersView, PermissionKeys.UsersManage);
             tsmiReports.Visible = CanOpen("Reports", PermissionKeys.ReportsView);
             tsmiAuditLogs.Visible = CanOpen("AuditLogs", PermissionKeys.AuditLogsView);

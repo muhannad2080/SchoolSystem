@@ -470,6 +470,8 @@
     <None Include="Databass\Migration_SeedAcademicCatalog.sql" />
     <None Include="Databass\Migration_RepairStudentAssignmentMirror.sql" />
     <None Include="Databass\Migration_Step1.sql" />
+    <None Include="Databass\FIX_RBAC_FINAL.sql" />
+    <None Include="Databass\FIX_RBAC_SourceOfTruth.sql" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

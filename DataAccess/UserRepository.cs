@@ -3,6 +3,7 @@ using System.Data;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 
 namespace SchoolSystem.DataAccess
 {
@@ -172,49 +173,64 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = @"
-                    INSERT INTO Users
-                    (
-                        FullName,
-                        UserName,
-                        PasswordHash,
-                        PasswordSalt,
-                        RoleName,
-                        Permissions,
-                        Email,
-                        Phone,
-                        IsActive,
-                        MustChangePassword,
-                        FailedLoginAttempts,
-                        LockedAt
-                    )
-                    VALUES
-                    (
-                        @FullName,
-                        @UserName,
-                        @PasswordHash,
-                        @PasswordSalt,
-                        @RoleName,
-                        @Permissions,
-                        @Email,
-                        @Phone,
-                        @IsActive,
-                        @MustChangePassword,
-                        0,
-                        NULL
-                    );
-                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
+                con.Open();
 
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlTransaction transaction = con.BeginTransaction())
                 {
-                    AddParameters(cmd, user, true);
+                    string query = @"
+                        INSERT INTO Users
+                        (
+                            FullName,
+                            UserName,
+                            PasswordHash,
+                            PasswordSalt,
+                            RoleName,
+                            Permissions,
+                            Email,
+                            Phone,
+                            IsActive,
+                            MustChangePassword,
+                            FailedLoginAttempts,
+                            LockedAt
+                        )
+                        VALUES
+                        (
+                            @FullName,
+                            @UserName,
+                            @PasswordHash,
+                            @PasswordSalt,
+                            @RoleName,
+                            @Permissions,
+                            @Email,
+                            @Phone,
+                            @IsActive,
+                            @MustChangePassword,
+                            0,
+                            NULL
+                        );
+                        SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
-                    con.Open();
-                    object result = cmd.ExecuteScalar();
-                    if (result == null || result == DBNull.Value)
-                        return false;
-                    user.UserID = Convert.ToInt32(result);
-                    return user.UserID > 0;
+                    int newUserId;
+                    using (SqlCommand cmd = new SqlCommand(query, con, transaction))
+                    {
+                        AddParameters(cmd, user, true);
+
+                        object result = cmd.ExecuteScalar();
+                        if (result == null || result == DBNull.Value)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+
+                        newUserId = Convert.ToInt32(result);
+                    }
+
+                    if (newUserId > 0)
+                        SyncUserRole(con, transaction, newUserId, user.RoleName);
+
+                    transaction.Commit();
+                    user.UserID = newUserId;
+                    return newUserId > 0;
                 }
             }
         }
@@ -223,52 +239,68 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query;
+                con.Open();
 
-                if (updatePassword)
+                using (SqlTransaction transaction = con.BeginTransaction())
                 {
-                    query = @"
-                        UPDATE Users SET
-                            FullName = @FullName,
-                            UserName = @UserName,
-                            PasswordHash = @PasswordHash,
-                            PasswordSalt = @PasswordSalt,
-                            RoleName = @RoleName,
-                            Permissions = @Permissions,
-                            Email = @Email,
-                            Phone = @Phone,
-                            IsActive = @IsActive,
-                            MustChangePassword = @MustChangePassword,
-                            FailedLoginAttempts = CASE WHEN @IsActive = 1 THEN 0 ELSE FailedLoginAttempts END,
-                            LockedAt = CASE WHEN @IsActive = 1 THEN NULL ELSE LockedAt END,
-                            UpdatedAt = GETDATE()
-                        WHERE UserID = @UserID";
-                }
-                else
-                {
-                    query = @"
-                        UPDATE Users SET
-                            FullName = @FullName,
-                            UserName = @UserName,
-                            RoleName = @RoleName,
-                            Permissions = @Permissions,
-                            Email = @Email,
-                            Phone = @Phone,
-                            IsActive = @IsActive,
-                            MustChangePassword = @MustChangePassword,
-                            FailedLoginAttempts = CASE WHEN @IsActive = 1 THEN 0 ELSE FailedLoginAttempts END,
-                            LockedAt = CASE WHEN @IsActive = 1 THEN NULL ELSE LockedAt END,
-                            UpdatedAt = GETDATE()
-                        WHERE UserID = @UserID";
-                }
+                    string query;
 
-                using (SqlCommand cmd = new SqlCommand(query, con))
-                {
-                    cmd.Parameters.AddWithValue("@UserID", user.UserID);
-                    AddParameters(cmd, user, updatePassword);
+                    if (updatePassword)
+                    {
+                        query = @"
+                            UPDATE Users SET
+                                FullName = @FullName,
+                                UserName = @UserName,
+                                PasswordHash = @PasswordHash,
+                                PasswordSalt = @PasswordSalt,
+                                RoleName = @RoleName,
+                                Permissions = @Permissions,
+                                Email = @Email,
+                                Phone = @Phone,
+                                IsActive = @IsActive,
+                                MustChangePassword = @MustChangePassword,
+                                FailedLoginAttempts = CASE WHEN @IsActive = 1 THEN 0 ELSE FailedLoginAttempts END,
+                                LockedAt = CASE WHEN @IsActive = 1 THEN NULL ELSE LockedAt END,
+                                UpdatedAt = GETDATE()
+                            WHERE UserID = @UserID";
+                    }
+                    else
+                    {
+                        query = @"
+                            UPDATE Users SET
+                                FullName = @FullName,
+                                UserName = @UserName,
+                                RoleName = @RoleName,
+                                Permissions = @Permissions,
+                                Email = @Email,
+                                Phone = @Phone,
+                                IsActive = @IsActive,
+                                MustChangePassword = @MustChangePassword,
+                                FailedLoginAttempts = CASE WHEN @IsActive = 1 THEN 0 ELSE FailedLoginAttempts END,
+                                LockedAt = CASE WHEN @IsActive = 1 THEN NULL ELSE LockedAt END,
+                                UpdatedAt = GETDATE()
+                            WHERE UserID = @UserID";
+                    }
 
-                    con.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    bool updated;
+                    using (SqlCommand cmd = new SqlCommand(query, con, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("@UserID", user.UserID);
+                        AddParameters(cmd, user, updatePassword);
+
+                        updated = cmd.ExecuteNonQuery() > 0;
+                    }
+
+                    if (!updated)
+                    {
+                        transaction.Rollback();
+                        return false;
+                    }
+
+                    SyncUserRole(con, transaction, user.UserID, user.RoleName);
+
+                    transaction.Commit();
+                    return true;
                 }
             }
         }
@@ -331,6 +363,13 @@ namespace SchoolSystem.DataAccess
                                 throw new InvalidOperationException("لا يمكن حذف آخر مدير نظام نشط.");
                             }
                         }
+                    }
+
+                    using (SqlCommand deleteRolesCommand = new SqlCommand(
+                        "DELETE FROM dbo.UserRoles WHERE UserID = @UserID", con, transaction))
+                    {
+                        deleteRolesCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                        deleteRolesCommand.ExecuteNonQuery();
                     }
 
                     using (SqlCommand deleteCommand = new SqlCommand(
@@ -435,6 +474,68 @@ namespace SchoolSystem.DataAccess
                     con.Open();
                     return cmd.ExecuteNonQuery() > 0;
                 }
+            }
+        }
+
+        // يحافظ على تطابق الجداول المعيارية (UserRoles) مع الدور المخزن في Users.RoleName
+        // حتى تبقى بيانات الاستعادة للمستخدمين القدامى متسقة دائمًا مع الاختيار الحالي.
+        private void SyncUserRole(SqlConnection con, SqlTransaction transaction, int userId, string roleName)
+        {
+            if (userId <= 0)
+                return;
+
+            using (SqlCommand deleteCommand = new SqlCommand(
+                "DELETE FROM dbo.UserRoles WHERE UserID = @UserID", con, transaction))
+            {
+                deleteCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                deleteCommand.ExecuteNonQuery();
+            }
+
+            int roleId = EnsureRole(con, transaction, roleName);
+            if (roleId <= 0)
+                return;
+
+            using (SqlCommand insertCommand = new SqlCommand(@"
+                IF NOT EXISTS (SELECT 1 FROM dbo.UserRoles WHERE UserID = @UserID AND RoleID = @RoleID)
+                BEGIN
+                    INSERT INTO dbo.UserRoles (UserID, RoleID, AssignedAt)
+                    VALUES (@UserID, @RoleID, GETDATE());
+                END;", con, transaction))
+            {
+                insertCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                insertCommand.Parameters.Add("@RoleID", SqlDbType.Int).Value = roleId;
+                insertCommand.ExecuteNonQuery();
+            }
+        }
+
+        private int EnsureRole(SqlConnection con, SqlTransaction transaction, string roleName)
+        {
+            string normalizedRole = string.IsNullOrWhiteSpace(roleName)
+                ? string.Empty
+                : roleName.Trim();
+
+            if (string.IsNullOrEmpty(normalizedRole))
+                return 0;
+
+            using (SqlCommand selectCommand = new SqlCommand(@"
+                SELECT TOP 1 RoleID
+                FROM dbo.Roles
+                WHERE LTRIM(RTRIM(RoleName)) = @RoleName", con, transaction))
+            {
+                selectCommand.Parameters.Add("@RoleName", SqlDbType.NVarChar, 100).Value = normalizedRole;
+                object existing = selectCommand.ExecuteScalar();
+                if (existing != null && existing != DBNull.Value)
+                    return Convert.ToInt32(existing);
+            }
+
+            using (SqlCommand insertCommand = new SqlCommand(@"
+                INSERT INTO dbo.Roles (RoleName, IsSystemRole, IsActive, CreatedAt)
+                OUTPUT INSERTED.RoleID
+                VALUES (@RoleName, 0, 1, GETDATE());", con, transaction))
+            {
+                insertCommand.Parameters.Add("@RoleName", SqlDbType.NVarChar, 100).Value = normalizedRole;
+                object inserted = insertCommand.ExecuteScalar();
+                return inserted != null && inserted != DBNull.Value ? Convert.ToInt32(inserted) : 0;
             }
         }
 

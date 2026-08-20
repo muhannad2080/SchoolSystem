@@ -19,9 +19,12 @@ namespace SchoolSystem.UI
         private int selectedUserId = 0;
         private DataTable allUsers;
         private bool isLoading = false;
+        private bool permissionsUserModified = false;
+        private bool suppressPermissionTracking = false;
         private FlowLayoutPanel permissionActions;
         private Button btnSelectAllPermissions;
         private Button btnClearPermissions;
+        private Button btnApplyRolePreset;
 
         private sealed class PermissionListItem
         {
@@ -47,6 +50,7 @@ namespace SchoolSystem.UI
             InitializePermissionActions();
             ApplyCustomStyles();
             ApplyPermissionUiState();
+            checkedListPermissions.ItemCheck += checkedListPermissions_ItemCheck;
             Dock = DockStyle.Fill;
             Load += UsersForm_Load;
         }
@@ -86,6 +90,16 @@ namespace SchoolSystem.UI
                 UseVisualStyleBackColor = false
             };
 
+            btnApplyRolePreset = new Button
+            {
+                Name = "btnApplyRolePreset",
+                Text = "تطبيق صلاحيات الدور",
+                Width = 150,
+                Height = 30,
+                TabIndex = 2,
+                UseVisualStyleBackColor = false
+            };
+
             btnSelectAllPermissions.AccessibleName = "منح المستخدم كل الصلاحيات";
             btnSelectAllPermissions.Enabled = true;
             btnSelectAllPermissions.Visible = true;
@@ -94,8 +108,13 @@ namespace SchoolSystem.UI
             btnClearPermissions.Enabled = true;
             btnClearPermissions.Visible = true;
             btnClearPermissions.Click += btnClearPermissions_Click;
+            btnApplyRolePreset.AccessibleName = "تطبيق الصلاحيات الافتراضية لدور المستخدم";
+            btnApplyRolePreset.Enabled = true;
+            btnApplyRolePreset.Visible = true;
+            btnApplyRolePreset.Click += btnApplyRolePreset_Click;
             permissionActions.Controls.Add(btnSelectAllPermissions);
             permissionActions.Controls.Add(btnClearPermissions);
+            permissionActions.Controls.Add(btnApplyRolePreset);
 
             groupBoxPermissions.Controls.Add(permissionActions);
             permissionActions.Visible = true;
@@ -116,6 +135,7 @@ namespace SchoolSystem.UI
             {
                 UIHelper.StyleButton(btnSelectAllPermissions, UIHelper.AccentColor);
                 UIHelper.StyleButton(btnClearPermissions, UIHelper.NeutralColor);
+                UIHelper.StyleButton(btnApplyRolePreset, UIHelper.AccentColor);
             }
             UIHelper.StyleTextBox(txtFullName);
             UIHelper.StyleTextBox(txtUserName);
@@ -304,10 +324,27 @@ namespace SchoolSystem.UI
 
         private void cmbRole_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // الدور يطبّق صلاحيات افتراضية للمستخدم الجديد فقط.
-            // عند تحرير مستخدم موجود نحافظ على الصلاحيات المخصصة التي حمّلناها من قاعدة البيانات.
-            if (!isLoading && selectedUserId == 0)
+            // الدور يطبّق صلاحيات افتراضية للمستخدم الجديد فقط، وفقط إذا لم يعدّل
+            // المدير التحديدات يدويًا. أي تغيير يدوي في مربعات الصلاحيات يلغي
+            // التطبيق التلقائي حتى لا تُمحى الصلاحيات المختارة بغير قصد.
+            if (!isLoading && selectedUserId == 0 && !permissionsUserModified)
                 ApplyRolePreset();
+        }
+
+        private void btnApplyRolePreset_Click(object sender, EventArgs e)
+        {
+            if (!CanManagePermissions())
+                return;
+            ApplyRolePreset();
+            permissionsUserModified = true;
+            UIHelper.ShowInformation("تم تطبيق الصلاحيات الافتراضية للدور المحدد. اضغط تعديل أو إضافة لحفظ التغيير.");
+        }
+
+        private void checkedListPermissions_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (isLoading || suppressPermissionTracking)
+                return;
+            permissionsUserModified = true;
         }
 
         private void ApplyRolePreset()
@@ -315,12 +352,20 @@ namespace SchoolSystem.UI
             if (checkedListPermissions.Items.Count == 0 || cmbRole.SelectedItem == null)
                 return;
 
-            ClearPermissionChecks();
+            suppressPermissionTracking = true;
+            try
+            {
+                ClearPermissionChecks();
 
-            string roleName = PermissionKeys.NormalizeRoleName(cmbRole.SelectedItem.ToString());
-            string permissions = PermissionKeys.GetRoleDefaults(roleName);
-            foreach (string permission in permissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                CheckPermission(permission.Trim());
+                string roleName = PermissionKeys.NormalizeRoleName(cmbRole.SelectedItem.ToString());
+                string permissions = PermissionKeys.GetRoleDefaults(roleName);
+                foreach (string permission in permissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                    CheckPermission(permission.Trim());
+            }
+            finally
+            {
+                suppressPermissionTracking = false;
+            }
         }
 
         private void btnClearPermissions_Click(object sender, EventArgs e)
@@ -328,6 +373,7 @@ namespace SchoolSystem.UI
             if (!CanManagePermissions())
                 return;
             ClearPermissionChecks();
+            permissionsUserModified = true;
             UIHelper.ShowInformation("تم إلغاء تحديد جميع الصلاحيات. اضغط تعديل أو إضافة لحفظ التغيير.");
         }
 
@@ -336,6 +382,7 @@ namespace SchoolSystem.UI
             if (!CanManagePermissions())
                 return;
             CheckAllPermissions();
+            permissionsUserModified = true;
             UIHelper.ShowInformation("تم تحديد جميع الصلاحيات. اضغط تعديل أو إضافة لحفظ التغيير.");
         }
 
@@ -396,24 +443,32 @@ namespace SchoolSystem.UI
 
         private void SetPermissionsFromString(string permissions)
         {
-            ClearPermissionChecks();
-
-            if (string.IsNullOrWhiteSpace(permissions))
-                return;
-
-            string normalizedPermissions = PermissionKeys.NormalizePermissions(permissions);
-            string[] parts = normalizedPermissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-            HashSet<string> selectedKeys = new HashSet<string>(
-                parts.Select(part => PermissionKeys.NormalizePermissionKey(part.Trim()))
-                     .Where(key => !string.IsNullOrWhiteSpace(key)),
-                StringComparer.OrdinalIgnoreCase);
-
-            for (int i = 0; i < checkedListPermissions.Items.Count; i++)
+            suppressPermissionTracking = true;
+            try
             {
-                PermissionListItem item = checkedListPermissions.Items[i] as PermissionListItem;
-                if (item != null && selectedKeys.Contains(item.Key))
-                    checkedListPermissions.SetItemChecked(i, true);
+                ClearPermissionChecks();
+
+                if (string.IsNullOrWhiteSpace(permissions))
+                    return;
+
+                string normalizedPermissions = PermissionKeys.NormalizePermissions(permissions);
+                string[] parts = normalizedPermissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                HashSet<string> selectedKeys = new HashSet<string>(
+                    parts.Select(part => PermissionKeys.NormalizePermissionKey(part.Trim()))
+                         .Where(key => !string.IsNullOrWhiteSpace(key)),
+                    StringComparer.OrdinalIgnoreCase);
+
+                for (int i = 0; i < checkedListPermissions.Items.Count; i++)
+                {
+                    PermissionListItem item = checkedListPermissions.Items[i] as PermissionListItem;
+                    if (item != null && selectedKeys.Contains(item.Key))
+                        checkedListPermissions.SetItemChecked(i, true);
+                }
+            }
+            finally
+            {
+                suppressPermissionTracking = false;
             }
         }
 
@@ -539,6 +594,7 @@ namespace SchoolSystem.UI
             checkedListPermissions.Enabled = canManageRoles;
             btnSelectAllPermissions.Enabled = canManageRoles;
             btnClearPermissions.Enabled = canManageRoles;
+            btnApplyRolePreset.Enabled = canManageRoles;
 
             if (groupBoxPermissions != null)
                 groupBoxPermissions.Enabled = canView;
@@ -687,6 +743,7 @@ namespace SchoolSystem.UI
 
             string permissions = ReadRowText(row, "Permissions");
             SetPermissionsFromString(permissions);
+            permissionsUserModified = false;
         }
 
         private string ReadRowText(DataRow row, string columnName)
@@ -792,6 +849,7 @@ namespace SchoolSystem.UI
 
             ApplyRolePreset();
 
+            permissionsUserModified = false;
             txtFullName.Focus();
         }
 
