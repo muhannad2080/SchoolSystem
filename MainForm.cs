@@ -412,37 +412,37 @@ namespace SchoolSystem
             // الطلاب: نفحص Students.View أو Students.Manage أو أي صلاحية للوحدة
             tsmiStudentsManage.Visible = CanOpen("Students", PermissionKeys.StudentsView, PermissionKeys.StudentsManage);
             // التسجيل: نفحص Enrollment.View أو Enrollment.Manage
-            tsmiStudentsEnroll.Visible = CanOpen("Enrollment", PermissionKeys.EnrollmentManage);
+            tsmiStudentsEnroll.Visible = CanOpen("Enrollment", "Enrollment.View", PermissionKeys.EnrollmentManage);
             // توزيع الفصول
             tsmiStudentsClasses.Visible = CanOpen("ClassAssignment", PermissionKeys.ClassAssignmentView, PermissionKeys.ClassAssignmentManage);
 
             // المعلمون
-            tsmiTeachersManage.Visible = CanOpen("Teachers", PermissionKeys.TeachersManage);
+            tsmiTeachersManage.Visible = CanOpen("Teachers", "Teachers.View", PermissionKeys.TeachersManage);
             // حضور المعلمين: يدعم كلاً من StaffAttendance و TeacherAttendance
-            tsmiTeachersAttendance.Visible = CanOpen("StaffAttendance", PermissionKeys.StaffAttendanceManage)
-                                          || CanOpen("TeacherAttendance");
-            tsmiTeachersPayroll.Visible = CanOpen("Payroll", PermissionKeys.PayrollManage);
+            tsmiTeachersAttendance.Visible = CanOpen("StaffAttendance", "StaffAttendance.View", PermissionKeys.StaffAttendanceManage)
+                                          || CanOpen("TeacherAttendance", "TeacherAttendance.View", "TeacherAttendance.Manage");
+            tsmiTeachersPayroll.Visible = CanOpen("Payroll", "Payroll.View", PermissionKeys.PayrollManage);
 
             // الأكاديمي
-            tsmiSubjects.Visible = CanOpen("Subjects", PermissionKeys.SubjectsManage);
-            tsmiClasses.Visible = CanOpen("Classes", PermissionKeys.ClassesManage);
-            tsmiTimetable.Visible = CanOpen("Timetable", PermissionKeys.TimetableManage);
+            tsmiSubjects.Visible = CanOpen("Subjects", "Subjects.View", PermissionKeys.SubjectsManage);
+            tsmiClasses.Visible = CanOpen("Classes", "Classes.View", PermissionKeys.ClassesManage);
+            tsmiTimetable.Visible = CanOpen("Timetable", "Timetable.View", PermissionKeys.TimetableManage);
 
             // الدرجات والحضور
-            tsmiGrades.Visible = CanOpen("Grades", PermissionKeys.GradesManage);
-            tsmiAttendance.Visible = CanOpen("Attendance", PermissionKeys.AttendanceManage);
+            tsmiGrades.Visible = CanOpen("Grades", "Grades.View", PermissionKeys.GradesManage);
+            tsmiAttendance.Visible = CanOpen("Attendance", "Attendance.View", PermissionKeys.AttendanceManage);
 
             // المالي
-            tsmiFees.Visible = CanOpen("Fees", PermissionKeys.FeesManage);
-            tsmiVouchers.Visible = CanOpen("Vouchers", PermissionKeys.VouchersManage);
-            tsmiExpenses.Visible = CanOpen("Expenses", PermissionKeys.ExpensesManage);
-            tsmiFinancialPayroll.Visible = CanOpen("Payroll", PermissionKeys.PayrollManage);
+            tsmiFees.Visible = CanOpen("Fees", "Fees.View", PermissionKeys.FeesManage);
+            tsmiVouchers.Visible = CanOpen("Vouchers", "Vouchers.View", PermissionKeys.VouchersManage);
+            tsmiExpenses.Visible = CanOpen("Expenses", "Expenses.View", PermissionKeys.ExpensesManage);
+            tsmiFinancialPayroll.Visible = CanOpen("Payroll", "Payroll.View", PermissionKeys.PayrollManage);
             // خطط الرسوم: تُفتح بصلاحية FeePlans أو Fees.Manage
-            تعريفرسومالصفوفToolStripMenuItem.Visible = CanOpen("FeePlans") || CanOpen("Fees", PermissionKeys.FeesManage);
+            تعريفرسومالصفوفToolStripMenuItem.Visible = CanOpen("FeePlans", "FeePlans.View", PermissionKeys.FeesManage);
 
             // الخدمات
-            tsmiTransport.Visible = CanOpen("Transport", PermissionKeys.TransportManage);
-            tsmiLibrary.Visible = CanOpen("Library", PermissionKeys.LibraryManage);
+            tsmiTransport.Visible = CanOpen("Transport", "Transport.View", PermissionKeys.TransportManage);
+            tsmiLibrary.Visible = CanOpen("Library", "Library.View", PermissionKeys.LibraryManage);
 
             // الإدارة
             tsmiUsers.Visible = CanOpen("Users", PermissionKeys.UsersView, PermissionKeys.UsersManage);
@@ -522,7 +522,7 @@ namespace SchoolSystem
 
         private void tsmiStudentsEnroll_Click(object sender, EventArgs e)
         {
-            LoadFormInPanel("Enrollment", "ليس لديك صلاحية عرض القبول والتسجيل.", new SchoolSystem.UI.EnrollmentForm(), PermissionKeys.EnrollmentManage);
+            LoadFormInPanel("Enrollment", "ليس لديك صلاحية عرض القبول والتسجيل.", new SchoolSystem.UI.EnrollmentForm(), "Enrollment.View", PermissionKeys.EnrollmentManage);
         }
 
         private void tsmiStudentsClasses_Click(object sender, EventArgs e)
@@ -532,7 +532,7 @@ namespace SchoolSystem
                 // إنشاء UserControl داخل الحماية حتى تظهر أخطاء المُنشئ/Designer
                 // للمستخدم بصورة آمنة بدل أن تتسرب إلى معالج WinForms العام.
                 UserControl assignmentForm = new SchoolSystem.UI.Students.ClassAssignmentForm();
-                LoadUserControl("ClassAssignment", "ليس لديك صلاحية عرض توزيع الطلاب.", assignmentForm, PermissionKeys.ClassAssignmentManage);
+                LoadUserControl("ClassAssignment", "ليس لديك صلاحية عرض توزيع الطلاب.", assignmentForm, PermissionKeys.ClassAssignmentView, PermissionKeys.ClassAssignmentManage);
             }
             catch (Exception ex)
             {
@@ -542,67 +542,67 @@ namespace SchoolSystem
 
         private void tsmiTeachersManage_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Teachers", "ليس لديك صلاحية عرض المعلمين.", new TeachersForm(), PermissionKeys.TeachersManage);
+            LoadUserControl("Teachers", "ليس لديك صلاحية عرض المعلمين.", new TeachersForm(), "Teachers.View", PermissionKeys.TeachersManage);
         }
 
         private void tsmiTeachersAttendance_Click(object sender, EventArgs e)
         {
-            LoadUserControl("StaffAttendance", "ليس لديك صلاحية عرض حضور الموظفين.", new StaffAttendanceForm(), PermissionKeys.StaffAttendanceManage);
+            LoadUserControl("StaffAttendance", "ليس لديك صلاحية عرض حضور الموظفين.", new StaffAttendanceForm(), "StaffAttendance.View", PermissionKeys.StaffAttendanceManage);
         }
 
         private void tsmiTeachersPayroll_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Payroll", "ليس لديك صلاحية عرض الرواتب.", new PayrollForm(), PermissionKeys.PayrollManage);
+            LoadUserControl("Payroll", "ليس لديك صلاحية عرض الرواتب.", new PayrollForm(), "Payroll.View", PermissionKeys.PayrollManage);
         }
 
         private void tsmiSubjects_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Subjects", "ليس لديك صلاحية عرض المواد.", new SubjectsForm(), PermissionKeys.SubjectsManage);
+            LoadUserControl("Subjects", "ليس لديك صلاحية عرض المواد.", new SubjectsForm(), "Subjects.View", PermissionKeys.SubjectsManage);
         }
 
         private void tsmiClasses_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Classes", "ليس لديك صلاحية عرض الفصول الدراسية.", new ClassesForm(), PermissionKeys.ClassesManage);
+            LoadUserControl("Classes", "ليس لديك صلاحية عرض الفصول الدراسية.", new ClassesForm(), "Classes.View", PermissionKeys.ClassesManage);
         }
 
         private void tsmiTimetable_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Timetable", "ليس لديك صلاحية عرض الجدول الدراسي.", new TimetableForm(), PermissionKeys.TimetableManage);
+            LoadUserControl("Timetable", "ليس لديك صلاحية عرض الجدول الدراسي.", new TimetableForm(), "Timetable.View", PermissionKeys.TimetableManage);
         }
 
         private void tsmiGrades_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Grades", "ليس لديك صلاحية عرض الدرجات.", new GradeEntryForm(), PermissionKeys.GradesManage);
+            LoadUserControl("Grades", "ليس لديك صلاحية عرض الدرجات.", new GradeEntryForm(), "Grades.View", PermissionKeys.GradesManage);
         }
 
         private void tsmiAttendance_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Attendance", "ليس لديك صلاحية عرض الحضور.", new DailyAttendanceForm(), PermissionKeys.AttendanceManage);
+            LoadUserControl("Attendance", "ليس لديك صلاحية عرض الحضور.", new DailyAttendanceForm(), "Attendance.View", PermissionKeys.AttendanceManage);
         }
 
         private void tsmiFees_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Fees", "ليس لديك صلاحية عرض الرسوم.", new FeesForm(), PermissionKeys.FeesManage);
+            LoadUserControl("Fees", "ليس لديك صلاحية عرض الرسوم.", new FeesForm(), "Fees.View", PermissionKeys.FeesManage);
         }
 
         private void tsmiVouchers_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Vouchers", "ليس لديك صلاحية عرض السندات.", new VouchersForm(), PermissionKeys.VouchersManage);
+            LoadUserControl("Vouchers", "ليس لديك صلاحية عرض السندات.", new VouchersForm(), "Vouchers.View", PermissionKeys.VouchersManage);
         }
 
         private void tsmiExpenses_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Expenses", "ليس لديك صلاحية عرض المصروفات.", new ExpensesForm(), PermissionKeys.ExpensesManage);
+            LoadUserControl("Expenses", "ليس لديك صلاحية عرض المصروفات.", new ExpensesForm(), "Expenses.View", PermissionKeys.ExpensesManage);
         }
 
         private void tsmiTransport_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Transport", "ليس لديك صلاحية عرض النقل.", new TransportForm(), PermissionKeys.TransportManage);
+            LoadUserControl("Transport", "ليس لديك صلاحية عرض النقل.", new TransportForm(), "Transport.View", PermissionKeys.TransportManage);
         }
 
         private void tsmiLibrary_Click(object sender, EventArgs e)
         {
-            LoadUserControl("Library", "ليس لديك صلاحية عرض المكتبة.", new LibraryForm(), PermissionKeys.LibraryManage);
+            LoadUserControl("Library", "ليس لديك صلاحية عرض المكتبة.", new LibraryForm(), "Library.View", PermissionKeys.LibraryManage);
         }
 
         private void tsmiUsers_Click(object sender, EventArgs e)
@@ -627,7 +627,7 @@ namespace SchoolSystem
 
         private void تعريفرسومالصفوفToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            LoadUserControl("FeePlans", "ليس لديك صلاحية عرض خطط الرسوم.", new FeePlansForm(), PermissionKeys.FeesManage);
+            LoadUserControl("FeePlans", "ليس لديك صلاحية عرض خطط الرسوم.", new FeePlansForm(), "FeePlans.View", PermissionKeys.FeesManage);
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
