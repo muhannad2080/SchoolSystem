@@ -2,6 +2,7 @@
 using System.Data;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using SchoolSystem.Models;
 using SchoolSystem.Security;
 
@@ -47,24 +48,25 @@ namespace SchoolSystem.DataAccess
             {
                 string query = @"
                     SELECT TOP 1
-                        UserID,
-                        FullName,
-                        UserName,
-                        PasswordHash,
-                        PasswordSalt,
-                        RoleName,
-                        Permissions,
-                        Email,
-                        Phone,
-                        IsActive,
-                        MustChangePassword,
-                        FailedLoginAttempts,
-                        LockedAt,
-                        LastLoginAt,
-                        CreatedAt,
-                        UpdatedAt
-                    FROM Users
-                    WHERE LTRIM(RTRIM(UserName)) = LTRIM(RTRIM(@UserName))";
+                        u.UserID,
+                        u.FullName,
+                        u.UserName,
+                        u.PasswordHash,
+                        u.PasswordSalt,
+                        u.RoleName,
+                        u.Permissions,
+                        u.Email,
+                        u.Phone,
+                        u.IsActive,
+                        u.MustChangePassword,
+                        u.FailedLoginAttempts,
+                        u.LockedAt,
+                        u.LastLoginAt,
+                        u.CreatedAt,
+                        u.UpdatedAt,
+                        (SELECT TOP 1 ur.RoleID FROM dbo.UserRoles ur WHERE ur.UserID = u.UserID) AS RoleId
+                    FROM Users u
+                    WHERE LTRIM(RTRIM(u.UserName)) = LTRIM(RTRIM(@UserName))";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
@@ -85,24 +87,83 @@ namespace SchoolSystem.DataAccess
 
         public List<string> GetRolePermissions(int userId)
         {
+            return GetRolePermissionsByRoleId(GetUserRoleId(userId));
+        }
+
+        /// <summary>
+        /// يُعيد مفاتيح صلاحيات الدور (الشاشات Module.View) من جدول RolePermissions.
+        /// </summary>
+        public List<string> GetRolePermissionsByRoleId(int roleId)
+        {
+            List<string> permissions = new List<string>();
+
+            if (roleId <= 0)
+                return permissions;
+
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT DISTINCT P.PermissionKey
+                FROM dbo.RolePermissions RP
+                INNER JOIN dbo.Permissions P ON P.PermissionID = RP.PermissionID
+                WHERE RP.RoleID = @RoleID
+                  AND P.IsActive = 1
+                  AND NULLIF(LTRIM(RTRIM(P.PermissionKey)), N'') IS NOT NULL
+                ORDER BY P.PermissionKey;", con))
+            {
+                cmd.Parameters.Add("@RoleID", SqlDbType.Int).Value = roleId;
+                con.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader["PermissionKey"] != DBNull.Value)
+                        {
+                            string key = reader["PermissionKey"].ToString().Trim();
+                            if (!string.IsNullOrWhiteSpace(key))
+                                permissions.Add(key);
+                        }
+                    }
+                }
+            }
+
+            return permissions;
+        }
+
+        /// <summary>
+        /// يُعيد رقم دور المستخدم من جدول UserRoles (0 إن لم يوجد).
+        /// </summary>
+        public int GetUserRoleId(int userId)
+        {
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT TOP 1 RoleID
+                FROM dbo.UserRoles
+                WHERE UserID = @UserID;", con))
+            {
+                cmd.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                con.Open();
+                object result = cmd.ExecuteScalar();
+                if (result == null || result == DBNull.Value)
+                    return 0;
+                int roleId = Convert.ToInt32(result);
+                return roleId > 0 ? roleId : 0;
+            }
+        }
+
+        /// <summary>
+        /// يُعيد مفاتيح الشاشات الإضافية للمستخدم (UserPermissions) من جدول UserPermissions.
+        /// </summary>
+        public List<string> GetUserPermissions(int userId)
+        {
             List<string> permissions = new List<string>();
 
             using (SqlConnection con = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(@"
-                IF OBJECT_ID(N'dbo.UserRoles', N'U') IS NULL
-                   OR OBJECT_ID(N'dbo.RolePermissions', N'U') IS NULL
-                   OR OBJECT_ID(N'dbo.Permissions', N'U') IS NULL
-                BEGIN
-                    SELECT CAST(NULL AS NVARCHAR(150)) AS PermissionKey
-                    WHERE 1 = 0;
-                    RETURN;
-                END;
-
                 SELECT DISTINCT P.PermissionKey
-                FROM dbo.UserRoles UR
-                INNER JOIN dbo.RolePermissions RP ON RP.RoleID = UR.RoleID
-                INNER JOIN dbo.Permissions P ON P.PermissionID = RP.PermissionID
-                WHERE UR.UserID = @UserID
+                FROM dbo.UserPermissions UP
+                INNER JOIN dbo.Permissions P ON P.PermissionID = UP.PermissionID
+                WHERE UP.UserID = @UserID
                   AND P.IsActive = 1
                   AND NULLIF(LTRIM(RTRIM(P.PermissionKey)), N'') IS NOT NULL
                 ORDER BY P.PermissionKey;", con))
@@ -127,30 +188,114 @@ namespace SchoolSystem.DataAccess
             return permissions;
         }
 
+        /// <summary>
+        /// الصلاحيات الفعالة للمستخدم (الشاشات Module.View):
+        /// إذا وُجدت صلاحيات إضافية محفوظة (UserPermissions) تُعدّ هي المرجع النهائي،
+        /// وإلا تُعاد صلاحيات دوره (RolePermissions) كقيمة افتراضية.
+        /// </summary>
+        public List<string> GetEffectivePermissions(int userId)
+        {
+            List<string> userPermissions = GetUserPermissions(userId);
+
+            List<string> source = userPermissions.Count > 0
+                ? userPermissions
+                : GetRolePermissionsByRoleId(GetUserRoleId(userId));
+
+            return source
+                .Where(key => PermissionKeys.IsScreenPermission(key))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(key => key, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        /// <summary>
+        /// يستبدل صلاحيات المستخدم الإضافية بالكامل داخل معاملة واحدة (حذف + إدراج).
+        /// يقبل مفاتيح الشاشات Module.View فقط، ويتجاهل أي مفتاح غير صالح.
+        /// </summary>
+        public int ReplaceUserPermissions(int userId, IList<string> screenKeys)
+        {
+            if (userId <= 0)
+                return 0;
+
+            List<string> validKeys = new List<string>();
+            if (screenKeys != null)
+            {
+                foreach (string key in screenKeys)
+                {
+                    string normalized = PermissionKeys.NormalizePermissionKey(key);
+                    if (PermissionKeys.IsScreenPermission(normalized))
+                        validKeys.Add(normalized);
+                }
+            }
+
+            using (SqlConnection con = DbConnection.GetConnection())
+            {
+                con.Open();
+                using (SqlTransaction transaction = con.BeginTransaction())
+                {
+                    using (SqlCommand deleteCommand = new SqlCommand(
+                        "DELETE FROM dbo.UserPermissions WHERE UserID = @UserID", con, transaction))
+                    {
+                        deleteCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                        deleteCommand.ExecuteNonQuery();
+                    }
+
+                    int inserted = 0;
+                    if (validKeys.Count > 0)
+                    {
+                        using (SqlCommand insertCommand = new SqlCommand(@"
+                            INSERT INTO dbo.UserPermissions (UserID, PermissionID, GrantedAt, GrantedBy)
+                            SELECT @UserID, P.PermissionID, GETDATE(), @GrantedBy
+                            FROM dbo.Permissions P
+                            WHERE P.PermissionKey = @PermissionKey
+                              AND P.IsActive = 1;", con, transaction))
+                        {
+                            insertCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                            insertCommand.Parameters.Add("@GrantedBy", SqlDbType.Int).Value =
+                                CurrentUser.IsLoggedIn && CurrentUser.User != null
+                                    ? (object)CurrentUser.User.UserID
+                                    : DBNull.Value;
+                            SqlParameter keyParameter = insertCommand.Parameters.Add("@PermissionKey", SqlDbType.NVarChar, 150);
+
+                            foreach (string key in validKeys)
+                            {
+                                keyParameter.Value = key;
+                                inserted += insertCommand.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    transaction.Commit();
+                    return inserted;
+                }
+            }
+        }
+
         public User GetUserById(int userId)
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 string query = @"
                     SELECT TOP 1
-                        UserID,
-                        FullName,
-                        UserName,
-                        PasswordHash,
-                        PasswordSalt,
-                        RoleName,
-                        Permissions,
-                        Email,
-                        Phone,
-                        IsActive,
-                        MustChangePassword,
-                        FailedLoginAttempts,
-                        LockedAt,
-                        LastLoginAt,
-                        CreatedAt,
-                        UpdatedAt
-                    FROM Users
-                    WHERE UserID = @UserID";
+                        u.UserID,
+                        u.FullName,
+                        u.UserName,
+                        u.PasswordHash,
+                        u.PasswordSalt,
+                        u.RoleName,
+                        u.Permissions,
+                        u.Email,
+                        u.Phone,
+                        u.IsActive,
+                        u.MustChangePassword,
+                        u.FailedLoginAttempts,
+                        u.LockedAt,
+                        u.LastLoginAt,
+                        u.CreatedAt,
+                        u.UpdatedAt,
+                        (SELECT TOP 1 ur.RoleID FROM dbo.UserRoles ur WHERE ur.UserID = u.UserID) AS RoleId
+                    FROM Users u
+                    WHERE u.UserID = @UserID";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
@@ -228,6 +373,9 @@ namespace SchoolSystem.DataAccess
                     if (newUserId > 0)
                         SyncUserRole(con, transaction, newUserId, user.RoleName);
 
+                    if (newUserId > 0)
+                        SyncUserPermissions(con, transaction, newUserId, user.Permissions);
+
                     transaction.Commit();
                     user.UserID = newUserId;
                     return newUserId > 0;
@@ -298,6 +446,8 @@ namespace SchoolSystem.DataAccess
                     }
 
                     SyncUserRole(con, transaction, user.UserID, user.RoleName);
+
+                    SyncUserPermissions(con, transaction, user.UserID, user.Permissions);
 
                     transaction.Commit();
                     return true;
@@ -370,6 +520,13 @@ namespace SchoolSystem.DataAccess
                     {
                         deleteRolesCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
                         deleteRolesCommand.ExecuteNonQuery();
+                    }
+
+                    using (SqlCommand deleteUserPermissionsCommand = new SqlCommand(
+                        "DELETE FROM dbo.UserPermissions WHERE UserID = @UserID", con, transaction))
+                    {
+                        deleteUserPermissionsCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                        deleteUserPermissionsCommand.ExecuteNonQuery();
                     }
 
                     using (SqlCommand deleteCommand = new SqlCommand(
@@ -536,6 +693,47 @@ namespace SchoolSystem.DataAccess
                 insertCommand.Parameters.Add("@RoleName", SqlDbType.NVarChar, 100).Value = normalizedRole;
                 object inserted = insertCommand.ExecuteScalar();
                 return inserted != null && inserted != DBNull.Value ? Convert.ToInt32(inserted) : 0;
+            }
+        }
+
+        // يزامن جدول UserPermissions (الصلاحيات الإضافية للمستخدم فوق صلاحيات دوره)
+        // مع الصلاحيات المختارة في واجهة المستخدمين. يقبل مفاتيح الشاشات Module.View فقط.
+        private void SyncUserPermissions(SqlConnection con, SqlTransaction transaction, int userId, string permissions)
+        {
+            if (userId <= 0)
+                return;
+
+            IReadOnlyList<string> screenKeys = PermissionKeys.GetScreenKeysFromPermissions(permissions);
+
+            using (SqlCommand deleteCommand = new SqlCommand(
+                "DELETE FROM dbo.UserPermissions WHERE UserID = @UserID", con, transaction))
+            {
+                deleteCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                deleteCommand.ExecuteNonQuery();
+            }
+
+            if (screenKeys.Count == 0)
+                return;
+
+            using (SqlCommand insertCommand = new SqlCommand(@"
+                INSERT INTO dbo.UserPermissions (UserID, PermissionID, GrantedAt, GrantedBy)
+                SELECT @UserID, P.PermissionID, GETDATE(), @GrantedBy
+                FROM dbo.Permissions P
+                WHERE P.PermissionKey = @PermissionKey
+                  AND P.IsActive = 1;", con, transaction))
+            {
+                insertCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = userId;
+                insertCommand.Parameters.Add("@GrantedBy", SqlDbType.Int).Value =
+                    CurrentUser.IsLoggedIn && CurrentUser.User != null
+                        ? (object)CurrentUser.User.UserID
+                        : DBNull.Value;
+                SqlParameter keyParameter = insertCommand.Parameters.Add("@PermissionKey", SqlDbType.NVarChar, 150);
+
+                foreach (string key in screenKeys)
+                {
+                    keyParameter.Value = key;
+                    insertCommand.ExecuteNonQuery();
+                }
             }
         }
 
@@ -714,6 +912,8 @@ namespace SchoolSystem.DataAccess
             // NULL تعني سجلًا قديمًا لم يُحسم تخصيصه بعد، بينما النص الفارغ
             // يعني أن المدير ضغط منع كل الصلاحيات عمدًا.
             user.Permissions = reader["Permissions"] == DBNull.Value ? null : reader["Permissions"].ToString();
+
+            user.RoleId = reader["RoleId"] == DBNull.Value ? 0 : Convert.ToInt32(reader["RoleId"]);
 
             user.Email = reader["Email"] == DBNull.Value ? "" : reader["Email"].ToString();
             user.Phone = reader["Phone"] == DBNull.Value ? "" : reader["Phone"].ToString();

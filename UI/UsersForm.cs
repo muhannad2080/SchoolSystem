@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,11 @@ namespace SchoolSystem.UI
         private Button btnSelectAllPermissions;
         private Button btnClearPermissions;
         private Button btnApplyRolePreset;
+        private Button btnSavePermissions;
+        private Button btnReloadPermissions;
+        private Button btnCloseForm;
+        private Label lblPermissionHeader;
+        private Label lblRoleScreens;
 
         private sealed class PermissionListItem
         {
@@ -62,31 +68,40 @@ namespace SchoolSystem.UI
             permissionActions = new FlowLayoutPanel
             {
                 Dock = DockStyle.Bottom,
-                Height = 36,
+                Height = 76,
                 AutoSize = false,
                 FlowDirection = FlowDirection.RightToLeft,
-                WrapContents = false,
+                WrapContents = true,
                 RightToLeft = RightToLeft.Yes,
                 Padding = new Padding(0, 3, 0, 0),
                 Margin = new Padding(0)
             };
 
+            btnSavePermissions = new Button
+            {
+                Name = "btnSavePermissions",
+                Text = "حفظ الصلاحيات",
+                Width = 150,
+                Height = 30,
+                TabIndex = 0,
+                UseVisualStyleBackColor = false
+            };
             btnSelectAllPermissions = new Button
             {
                 Name = "btnSelectAllPermissions",
-                Text = "منح كل الصلاحيات",
-                Width = 140,
+                Text = "تحديد الكل",
+                Width = 110,
                 Height = 30,
-                TabIndex = 0,
+                TabIndex = 1,
                 UseVisualStyleBackColor = false
             };
             btnClearPermissions = new Button
             {
                 Name = "btnClearPermissions",
-                Text = "إلغاء كل الصلاحيات",
-                Width = 140,
+                Text = "إلغاء تحديد الكل",
+                Width = 130,
                 Height = 30,
-                TabIndex = 1,
+                TabIndex = 2,
                 UseVisualStyleBackColor = false
             };
 
@@ -96,26 +111,96 @@ namespace SchoolSystem.UI
                 Text = "تطبيق صلاحيات الدور",
                 Width = 150,
                 Height = 30,
-                TabIndex = 2,
+                TabIndex = 3,
                 UseVisualStyleBackColor = false
             };
 
-            btnSelectAllPermissions.AccessibleName = "منح المستخدم كل الصلاحيات";
+            btnReloadPermissions = new Button
+            {
+                Name = "btnReloadPermissions",
+                Text = "إعادة تحميل",
+                Width = 120,
+                Height = 30,
+                TabIndex = 4,
+                UseVisualStyleBackColor = false
+            };
+
+            btnCloseForm = new Button
+            {
+                Name = "btnCloseForm",
+                Text = "إغلاق",
+                Width = 100,
+                Height = 30,
+                TabIndex = 5,
+                UseVisualStyleBackColor = false
+            };
+
+            btnSavePermissions.AccessibleName = "حفظ صلاحيات الشاشات للمستخدم المحدد";
+            btnSelectAllPermissions.AccessibleName = "تحديد جميع صلاحيات الشاشات";
+            btnClearPermissions.AccessibleName = "إلغاء تحديد جميع صلاحيات الشاشات";
+            btnApplyRolePreset.AccessibleName = "تطبيق الصلاحيات الافتراضية لدور المستخدم";
+            btnReloadPermissions.AccessibleName = "إعادة تحميل الصلاحيات من قاعدة البيانات";
+            btnCloseForm.AccessibleName = "إغلاق شاشة المستخدمين والعودة إلى الرئيسية";
+
+            btnSavePermissions.Enabled = true;
+            btnSavePermissions.Visible = true;
+            btnSavePermissions.Click += btnSavePermissions_Click;
+
             btnSelectAllPermissions.Enabled = true;
             btnSelectAllPermissions.Visible = true;
             btnSelectAllPermissions.Click += btnSelectAllPermissions_Click;
-            btnClearPermissions.AccessibleName = "إلغاء جميع صلاحيات المستخدم";
+
             btnClearPermissions.Enabled = true;
             btnClearPermissions.Visible = true;
             btnClearPermissions.Click += btnClearPermissions_Click;
-            btnApplyRolePreset.AccessibleName = "تطبيق الصلاحيات الافتراضية لدور المستخدم";
+
             btnApplyRolePreset.Enabled = true;
             btnApplyRolePreset.Visible = true;
             btnApplyRolePreset.Click += btnApplyRolePreset_Click;
+
+            btnReloadPermissions.Enabled = true;
+            btnReloadPermissions.Visible = true;
+            btnReloadPermissions.Click += btnReloadPermissions_Click;
+
+            btnCloseForm.Enabled = true;
+            btnCloseForm.Visible = true;
+            btnCloseForm.Click += btnCloseForm_Click;
+
+            permissionActions.Controls.Add(btnSavePermissions);
             permissionActions.Controls.Add(btnSelectAllPermissions);
             permissionActions.Controls.Add(btnClearPermissions);
             permissionActions.Controls.Add(btnApplyRolePreset);
+            permissionActions.Controls.Add(btnReloadPermissions);
+            permissionActions.Controls.Add(btnCloseForm);
 
+            lblPermissionHeader = new Label
+            {
+                Name = "lblPermissionHeader",
+                Dock = DockStyle.Top,
+                Height = 26,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleRight,
+                Font = new System.Drawing.Font(UIHelper.FontFamily, 9.5F, System.Drawing.FontStyle.Bold),
+                ForeColor = UIHelper.PrimaryColor,
+                Text = "صلاحيات المستخدم",
+                Margin = new Padding(0, 0, 0, 2)
+            };
+
+            lblRoleScreens = new Label
+            {
+                Name = "lblRoleScreens",
+                Dock = DockStyle.Bottom,
+                Height = 40,
+                AutoSize = false,
+                TextAlign = ContentAlignment.MiddleRight,
+                Font = new System.Drawing.Font(UIHelper.FontFamily, 8.5F),
+                ForeColor = UIHelper.MutedTextColor,
+                Text = "",
+                Margin = new Padding(0, 2, 0, 0)
+            };
+
+            groupBoxPermissions.Controls.Add(lblPermissionHeader);
+            groupBoxPermissions.Controls.Add(lblRoleScreens);
             groupBoxPermissions.Controls.Add(permissionActions);
             permissionActions.Visible = true;
             permissionActions.Enabled = true;
@@ -133,9 +218,12 @@ namespace SchoolSystem.UI
             UIHelper.StyleButton(btnRefresh, UIHelper.NeutralColor);
             if (btnSelectAllPermissions != null)
             {
+                UIHelper.StylePrimaryButton(btnSavePermissions);
                 UIHelper.StyleButton(btnSelectAllPermissions, UIHelper.AccentColor);
                 UIHelper.StyleButton(btnClearPermissions, UIHelper.NeutralColor);
                 UIHelper.StyleButton(btnApplyRolePreset, UIHelper.AccentColor);
+                UIHelper.StyleButton(btnReloadPermissions, UIHelper.NeutralColor);
+                UIHelper.StyleButton(btnCloseForm, UIHelper.DangerColor);
             }
             UIHelper.StyleTextBox(txtFullName);
             UIHelper.StyleTextBox(txtUserName);
@@ -328,10 +416,10 @@ namespace SchoolSystem.UI
 
         private void cmbRole_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // الدور يطبّق صلاحيات افتراضية للمستخدم الجديد فقط، وفقط إذا لم يعدّل
-            // المدير التحديدات يدويًا. أي تغيير يدوي في مربعات الصلاحيات يلغي
+            // عند تغيير الدور تُطبَّق صلاحياته الافتراضية على القائمة فقط إذا لم يعدّل
+            // المدير التحديدات يدوياً (سواء لحساب جديد أو قائم). أي تعديل يدوي يلغي
             // التطبيق التلقائي حتى لا تُمحى الصلاحيات المختارة بغير قصد.
-            if (!isLoading && selectedUserId == 0 && !permissionsUserModified)
+            if (!isLoading && !permissionsUserModified)
                 ApplyRolePreset();
         }
 
@@ -351,6 +439,141 @@ namespace SchoolSystem.UI
             permissionsUserModified = true;
         }
 
+        private async void btnSavePermissions_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!CanManagePermissions())
+                    return;
+
+                if (selectedUserId <= 0)
+                {
+                    ShowWarning("اختر مستخدماً من الجدول أولاً.");
+                    return;
+                }
+
+                List<string> selectedKeys = new List<string>();
+                for (int i = 0; i < checkedListPermissions.Items.Count; i++)
+                {
+                    if (!checkedListPermissions.GetItemChecked(i))
+                        continue;
+
+                    PermissionListItem item = checkedListPermissions.Items[i] as PermissionListItem;
+                    if (item != null && !string.IsNullOrWhiteSpace(item.Key))
+                        selectedKeys.Add(item.Key);
+                }
+
+                string userNameBeforeReload = txtUserName.Text.Trim();
+                if (string.IsNullOrWhiteSpace(userNameBeforeReload))
+                    userNameBeforeReload = selectedUserId.ToString();
+
+                string effective = await Task.Run(() =>
+                    userService.SaveUserPermissions(selectedUserId, selectedKeys));
+
+                if (CurrentUser.IsLoggedIn && CurrentUser.User != null &&
+                    CurrentUser.User.UserID == selectedUserId)
+                    MainForm.Instance?.RefreshCurrentUserSession();
+
+                await LoadUsersAsync();
+
+                ShowInfo(string.Format(
+                    "تم حفظ صلاحيات الشاشات بنجاح للمستخدم {0}. عدد الشاشات: {1}",
+                    userNameBeforeReload,
+                    PermissionKeys.GetScreenKeysFromPermissions(effective).Count));
+
+                permissionsUserModified = false;
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("حفظ الصلاحيات", ex);
+            }
+        }
+
+        private async void btnReloadPermissions_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (selectedUserId <= 0)
+                {
+                    ShowWarning("اختر مستخدماً من الجدول أولاً.");
+                    return;
+                }
+
+                await LoadUsersAsync();
+
+                foreach (DataGridViewRow row in dataGridViewUsers.Rows)
+                {
+                    DataRowView rowView = row.DataBoundItem as DataRowView;
+                    if (rowView == null)
+                        continue;
+
+                    object value = rowView.Row["UserID"];
+                    if (value != null && value != DBNull.Value &&
+                        Convert.ToInt32(value) == selectedUserId)
+                    {
+                        dataGridViewUsers.ClearSelection();
+                        row.Selected = true;
+                        FillFieldsFromRow(rowView.Row);
+                        break;
+                    }
+                }
+
+                ShowInfo("تم إعادة تحميل صلاحيات المستخدم من قاعدة البيانات.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("إعادة تحميل الصلاحيات", ex);
+            }
+        }
+
+        private void btnCloseForm_Click(object sender, EventArgs e)
+        {
+            MainForm.Instance?.ShowWelcomeScreen();
+        }
+
+        /// <summary>
+        /// يُحدِّث رأس لوحة الصلاحيات (اسم المستخدم والدور).
+        /// </summary>
+        private void UpdatePermissionHeader(string userName, string roleName)
+        {
+            if (lblPermissionHeader == null)
+                return;
+
+            string displayName = string.IsNullOrWhiteSpace(userName) ? "مستخدم جديد" : userName;
+            string role = string.IsNullOrWhiteSpace(roleName) ? "-" : roleName;
+            lblPermissionHeader.Text = string.Format("صلاحيات المستخدم — المستخدم: {0} — الدور: {1}", displayName, role);
+        }
+
+        /// <summary>
+        /// يُحدِّث تلميح الشاشات التي يوفرها الدور تلقائياً (قراءة فقط).
+        /// </summary>
+        private void UpdateRoleScreensLabel(string roleName)
+        {
+            if (lblRoleScreens == null)
+                return;
+
+            string normalizedRole = PermissionKeys.NormalizeRoleName(roleName);
+            if (string.IsNullOrWhiteSpace(normalizedRole))
+            {
+                lblRoleScreens.Text = "";
+                return;
+            }
+
+            List<string> screens = new List<string>();
+            foreach (string permission in PermissionKeys.GetRoleDefaults(normalizedRole)
+                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string screen = PermissionKeys.ToScreenPermission(permission.Trim());
+                if (!string.IsNullOrWhiteSpace(screen) && !screens.Contains(screen, StringComparer.OrdinalIgnoreCase))
+                    screens.Add(screen);
+            }
+
+            lblRoleScreens.Text = screens.Count == 0
+                ? "صلاحيات الدور التلقائية: لا توجد (يُحدد يدوياً من القائمة)"
+                : "صلاحيات الدور التلقائية: " + string.Join("، ",
+                    screens.Select(key => PermissionKeys.GetDisplayName(key)));
+        }
+
         private void ApplyRolePreset()
         {
             if (checkedListPermissions.Items.Count == 0 || cmbRole.SelectedItem == null)
@@ -365,6 +588,8 @@ namespace SchoolSystem.UI
                 string permissions = PermissionKeys.GetRoleDefaults(roleName);
                 foreach (string permission in permissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                     CheckPermission(permission.Trim());
+
+                UpdateRoleScreensLabel(roleName);
             }
             finally
             {
@@ -392,7 +617,7 @@ namespace SchoolSystem.UI
 
         private bool CanManagePermissions()
         {
-            if (CurrentUser.HasAny(PermissionKeys.UsersManageRoles, PermissionKeys.UsersManage))
+            if (CurrentUser.CanAccessModule("Users"))
                 return true;
             UIHelper.ShowError("ليس لديك صلاحية إدارة أدوار وصلاحيات المستخدمين.");
             return false;
@@ -588,27 +813,27 @@ namespace SchoolSystem.UI
 
         private void ApplyPermissionUiState()
         {
-            bool canView = CurrentUser.CanView("Users") || CurrentUser.HasPermission(PermissionKeys.UsersManage);
-            bool canAdd = CurrentUser.CanAdd("Users") || CurrentUser.HasPermission(PermissionKeys.UsersManage);
-            bool canEdit = CurrentUser.CanEdit("Users") || CurrentUser.HasPermission(PermissionKeys.UsersManage);
-            bool canDelete = CurrentUser.CanDelete("Users") || CurrentUser.HasPermission(PermissionKeys.UsersManage);
-            bool canManageRoles = CurrentUser.HasAny(PermissionKeys.UsersManageRoles, PermissionKeys.UsersManage);
+            bool canManage = CurrentUser.CanAccessModule("Users");
+            bool canView = canManage;
 
-            btnAdd.Enabled = canAdd;
-            btnUpdate.Enabled = canEdit;
-            btnDelete.Enabled = canDelete;
-            cmbRole.Enabled = canManageRoles;
-            checkedListPermissions.Enabled = canManageRoles;
-            btnSelectAllPermissions.Enabled = canManageRoles;
-            btnClearPermissions.Enabled = canManageRoles;
-            btnApplyRolePreset.Enabled = canManageRoles;
+            btnAdd.Enabled = canManage;
+            btnUpdate.Enabled = canManage;
+            btnDelete.Enabled = canManage;
+            cmbRole.Enabled = canManage;
+            checkedListPermissions.Enabled = canManage;
+            btnSelectAllPermissions.Enabled = canManage;
+            btnClearPermissions.Enabled = canManage;
+            btnApplyRolePreset.Enabled = canManage;
+            btnSavePermissions.Enabled = canManage;
+            btnReloadPermissions.Enabled = canManage;
+            btnCloseForm.Enabled = true;
 
             if (groupBoxPermissions != null)
                 groupBoxPermissions.Enabled = canView;
 
-            btnAdd.AccessibleDescription = canAdd ? "إضافة مستخدم" : "لا توجد صلاحية إضافة المستخدمين";
-            btnUpdate.AccessibleDescription = canEdit ? "تعديل مستخدم" : "لا توجد صلاحية تعديل المستخدمين";
-            btnDelete.AccessibleDescription = canDelete ? "حذف مستخدم" : "لا توجد صلاحية حذف المستخدمين";
+            btnAdd.AccessibleDescription = canManage ? "إضافة مستخدم" : "لا توجد صلاحية إدارة المستخدمين";
+            btnUpdate.AccessibleDescription = canManage ? "تعديل مستخدم" : "لا توجد صلاحية إدارة المستخدمين";
+            btnDelete.AccessibleDescription = canManage ? "حذف مستخدم" : "لا توجد صلاحية إدارة المستخدمين";
         }
 
         private async void btnAdd_Click(object sender, EventArgs e)
@@ -751,6 +976,9 @@ namespace SchoolSystem.UI
             string permissions = ReadRowText(row, "Permissions");
             SetPermissionsFromString(permissions);
             permissionsUserModified = false;
+
+            UpdatePermissionHeader(txtUserName.Text.Trim(), roleName);
+            UpdateRoleScreensLabel(roleName);
         }
 
         private string ReadRowText(DataRow row, string columnName)
@@ -855,6 +1083,9 @@ namespace SchoolSystem.UI
             txtConfirmPassword.PasswordChar = '●';
 
             ApplyRolePreset();
+
+            UpdatePermissionHeader("", "");
+            UpdateRoleScreensLabel(cmbRole.SelectedItem != null ? cmbRole.SelectedItem.ToString() : "");
 
             permissionsUserModified = false;
             txtFullName.Focus();

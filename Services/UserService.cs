@@ -21,16 +21,16 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllUsers()
         {
-            CurrentUser.DemandAny("ليس لديك صلاحية عرض المستخدمين.", PermissionKeys.UsersView, PermissionKeys.UsersManage);
+            CurrentUser.DemandModule("Users", "ليس لديك صلاحية عرض المستخدمين.");
             return userRepository.GetAllUsers();
         }
 
         public bool AddUser(User user, string password)
         {
             // السماح بالتهيئة الأولى فقط عندما لا يوجد أي حساب.
-            // بعد التهيئة يلزم مفتاح الإضافة الصريح أو المفتاح القديم للتوافق.
+            // بعد التهيئة يلزم صلاحية الوصول لشاشة المستخدمين.
             if (userRepository.CountUsers() > 0)
-                CurrentUser.DemandAny("ليس لديك صلاحية إضافة المستخدمين.", PermissionKeys.UsersAdd, PermissionKeys.UsersManage);
+                CurrentUser.DemandModule("Users", "ليس لديك صلاحية إضافة المستخدمين.");
 
             NormalizeUser(user);
 
@@ -40,7 +40,7 @@ namespace SchoolSystem.Services
 
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
             {
-                user.Permissions = PermissionKeys.GetRoleDefaults(user.RoleName);
+                user.Permissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
                 user.MustChangePassword = false;
             }
             else
@@ -69,6 +69,8 @@ namespace SchoolSystem.Services
             bool added = userRepository.AddUser(user);
             if (added)
             {
+                user.Permissions = BuildEffectivePermissions(user.UserID, user.RoleName);
+                userRepository.UpdatePermissions(user.UserID, user.Permissions);
                 VerifyPersistedPermissions(user);
                 auditLogService.Record("إنشاء", "User", user.UserID.ToString(),
                     string.Format("الحساب: {0}، الدور: {1}، الصلاحيات: {2}", user.UserName, user.RoleName, user.Permissions));
@@ -78,7 +80,7 @@ namespace SchoolSystem.Services
 
         public bool UpdateUser(User user, string password, bool updatePassword)
         {
-            CurrentUser.DemandAny("ليس لديك صلاحية تعديل المستخدمين.", PermissionKeys.UsersEdit, PermissionKeys.UsersManage);
+            CurrentUser.DemandModule("Users", "ليس لديك صلاحية تعديل المستخدمين.");
             if (user.UserID <= 0)
                 throw new Exception("رقم المستخدم غير صحيح.");
 
@@ -93,18 +95,6 @@ namespace SchoolSystem.Services
                 throw new UnauthorizedAccessException("لا يمكن إلا لمدير النظام رفع حساب إلى مدير نظام.");
 
             ValidateUser(user, true);
-
-            bool changingRoleOrPermissions = !string.Equals(
-                PermissionKeys.NormalizeRoleName(existingUser.RoleName),
-                PermissionKeys.NormalizeRoleName(user.RoleName),
-                StringComparison.OrdinalIgnoreCase)
-                || !string.Equals(
-                    PermissionKeys.NormalizePermissions(existingUser.Permissions),
-                    PermissionKeys.NormalizePermissions(user.Permissions),
-                    StringComparison.OrdinalIgnoreCase);
-
-            if (changingRoleOrPermissions)
-                CurrentUser.DemandAny("ليس لديك صلاحية إدارة أدوار وصلاحيات المستخدمين.", PermissionKeys.UsersManageRoles, PermissionKeys.UsersManage);
 
             bool removingAdministrator = PermissionKeys.IsSystemAdministratorRole(existingUser.RoleName) &&
                 (!PermissionKeys.IsSystemAdministratorRole(user.RoleName) || !user.IsActive);
@@ -131,7 +121,7 @@ namespace SchoolSystem.Services
 
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
             {
-                user.Permissions = PermissionKeys.GetRoleDefaults(user.RoleName);
+                user.Permissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
                 user.MustChangePassword = false;
             }
 
@@ -153,7 +143,11 @@ namespace SchoolSystem.Services
             bool updated = userRepository.UpdateUser(user, updatePassword);
 
             if (updated)
+            {
+                user.Permissions = BuildEffectivePermissions(user.UserID, user.RoleName);
+                userRepository.UpdatePermissions(user.UserID, user.Permissions);
                 VerifyPersistedPermissions(user);
+            }
 
             // إذا عدّل المدير الحساب المستخدم حاليًا، أعد تحميل النسخة المحفوظة
             // حتى لا تبقى صلاحيات قديمة داخل الذاكرة.
@@ -173,7 +167,7 @@ namespace SchoolSystem.Services
 
         public bool DeleteUser(int userId)
         {
-            CurrentUser.DemandAny("ليس لديك صلاحية حذف المستخدمين.", PermissionKeys.UsersDelete, PermissionKeys.UsersManage);
+            CurrentUser.DemandModule("Users", "ليس لديك صلاحية حذف المستخدمين.");
             if (userId <= 0)
                 throw new Exception("رقم المستخدم غير صحيح.");
 
@@ -275,8 +269,13 @@ namespace SchoolSystem.Services
             }
 
             user.RoleName = PermissionKeys.NormalizeRoleName(user.RoleName);
-            user.Permissions = LoadRuntimePermissions(user);
-            EnsureRolePermissions(user);
+
+            // تحميل الصلاحيات الفعالة من قاعدة البيانات (UserPermissions إن وجدت وإلا RolePermissions)
+            // وتحديث الكاش Users.Permissions ليتطابق مع ما سيُطبَّق فعلياً عند الدخول.
+            user.Permissions = BuildEffectivePermissions(user.UserID, user.RoleName);
+            userRepository.UpdatePermissions(user.UserID, user.Permissions);
+            user.RoleId = userRepository.GetUserRoleId(user.UserID);
+
             userRepository.RecordSuccessfulLogin(user.UserID);
             user.FailedLoginAttempts = 0;
             user.LockedAt = null;
@@ -390,7 +389,7 @@ namespace SchoolSystem.Services
 
         public bool ResetPasswordByUserName(string userName, string newPassword)
         {
-            CurrentUser.DemandAny("ليس لديك صلاحية إعادة تعيين كلمات مرور المستخدمين.", PermissionKeys.UsersEdit, PermissionKeys.UsersManage);
+            CurrentUser.DemandModule("Users", "ليس لديك صلاحية إعادة تعيين كلمات مرور المستخدمين.");
             userName = NormalizeDigits(userName).Trim();
             newPassword = NormalizeDigits(newPassword).Trim();
 
@@ -421,7 +420,7 @@ namespace SchoolSystem.Services
 
         private string GetAllPermissionsString()
         {
-            return PermissionKeys.Serialize(PermissionKeys.All);
+            return PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
         }
 
         private void ValidatePasswordPolicy(string password)
@@ -432,87 +431,53 @@ namespace SchoolSystem.Services
                 throw new Exception("كلمة المرور يجب أن تحتوي على أحرف وأرقام.");
         }
 
-        private string LoadRuntimePermissions(User user)
+        /// <summary>
+        /// الصلاحيات الفعلية للمستخدم من قاعدة البيانات:
+        /// UserPermissions إن وُجدت (اللقطة المحددة)، وإلا RolePermissions (افتراضيات الدور).
+        /// مدير النظام يحصل على كامل كتالوج الشاشات كسياسة مركزية.
+        /// </summary>
+        private string BuildEffectivePermissions(int userId, string roleName)
         {
-            if (user == null)
-                return string.Empty;
+            List<string> effective = userRepository.GetEffectivePermissions(userId);
 
-            bool hasExplicitPermissionsValue = user.Permissions != null;
-            string directPermissions = PermissionKeys.NormalizePermissions(user.Permissions);
-            string rolePermissions = ResolveRolePermissions(user);
+            if (PermissionKeys.IsSystemAdministratorRole(roleName))
+                return PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
 
-            // الصلاحيات الفعالة هي اتحاد صلاحيات الدور مع الصلاحيات الفردية المحفوظة.
-            // هذا يمنع فقدان صلاحيات الدور، ويضمن أن صلاحيات الشاشة التي منحها المدير
-            // مثل Students.View وTeachers.View تصل إلى CurrentUser ثم MainForm.
-            string effectivePermissions = PermissionKeys.Serialize(
-                (directPermissions ?? string.Empty)
-                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Concat((rolePermissions ?? string.Empty)
-                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)));
-
-            // الحسابات القديمة التي لا تحتوي قيمة Permissions تستعيد صلاحيات الدور
-            // وتُحفظ مرة واحدة كقيمة صريحة لتجنب العودة إلى Dashboard وReports فقط.
-            if (!hasExplicitPermissionsValue && !string.IsNullOrWhiteSpace(rolePermissions))
-            {
-                userRepository.UpdatePermissions(user.UserID, rolePermissions);
-            }
-
-            return effectivePermissions;
+            return PermissionKeys.Serialize(effective);
         }
 
-        private string ResolveRolePermissions(User user)
+        /// <summary>
+        /// يحفظ صلاحيات شاشات مستخدم محدد (استبدال كامل) في جدول UserPermissions
+        /// ويُحدِّث الكاش Users.Permissions. يُستخدم من زر "حفظ الصلاحيات" في واجهة المستخدمين.
+        /// </summary>
+        public string SaveUserPermissions(int userId, IList<string> screenKeys)
         {
+            CurrentUser.DemandModule("Users", "ليس لديك صلاحية إدارة صلاحيات المستخدمين.");
+
+            if (userId <= 0)
+                throw new Exception("رقم المستخدم غير صحيح.");
+
+            User user = userRepository.GetUserById(userId);
             if (user == null)
-                return string.Empty;
+                throw new Exception("المستخدم غير موجود.");
 
-            List<string> rolePermissions = userRepository.GetRolePermissions(user.UserID)
-                .Select(PermissionKeys.NormalizePermissionKey)
-                .Where(key => !string.IsNullOrWhiteSpace(key))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
+            userRepository.ReplaceUserPermissions(userId, screenKeys);
 
-            return rolePermissions.Count > 0
-                ? PermissionKeys.Serialize(rolePermissions)
-                : PermissionKeys.NormalizePermissions(PermissionKeys.GetRoleDefaults(user.RoleName));
-        }
+            string effective = BuildEffectivePermissions(userId, user.RoleName);
+            userRepository.UpdatePermissions(userId, effective);
 
-        private void EnsureRolePermissions(User user)
-        {
-            if (user == null)
-                return;
-
-            // طبّع الصلاحيات المحفوظة لإزالة المسافات والتنسيق غير المتسق
-            string normalized = PermissionKeys.NormalizePermissions(user.Permissions);
-
-            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+            if (CurrentUser.IsLoggedIn && CurrentUser.User != null && CurrentUser.User.UserID == userId)
             {
-                // مدير النظام يحصل دائمًا على كامل الكتالوج من القاموس المركزي
-                // بغض النظر عما هو محفوظ في قاعدة البيانات
-                string adminPermissions = PermissionKeys.GetRoleDefaults(user.RoleName);
-                if (!string.Equals(user.Permissions ?? string.Empty, adminPermissions, StringComparison.Ordinal))
-                {
-                    user.Permissions = adminPermissions;
-                    userRepository.UpdatePermissions(user.UserID, adminPermissions);
-                }
-                return;
+                User refreshedUser = userRepository.GetUserById(userId);
+                if (refreshedUser != null)
+                    CurrentUser.Set(refreshedUser);
             }
 
-            // للمستخدمين العاديين: فقط نُصلح التنسيق (normalization)
-            // ولا نُعيد الكتابة بصلاحيات الدور الافتراضية لأن المدير قد يكون
-            // خصص صلاحيات مختلفة عن اقتراحات الدور عن قصد.
-            //
-            // لكن نُحدِّث قاعدة البيانات إذا تغير النص بعد التطبيع فقط
-            // (مثل إزالة مسافات زائدة أو توحيد فاصلة).
-            if (!string.IsNullOrWhiteSpace(user.Permissions) &&
-                !string.Equals(user.Permissions, normalized, StringComparison.Ordinal))
-            {
-                user.Permissions = normalized;
-                userRepository.UpdatePermissions(user.UserID, normalized);
-            }
-            else if (!string.IsNullOrWhiteSpace(normalized))
-            {
-                user.Permissions = normalized;
-            }
+            auditLogService.Record("تعديل الصلاحيات", "User", userId.ToString(),
+                string.Format("الحساب: {0}، الدور: {1}، عدد شاشات الصلاحية: {2}",
+                    user.UserName, user.RoleName, screenKeys == null ? 0 : screenKeys.Count));
+
+            return effective;
         }
 
         private void VerifyPersistedPermissions(User expectedUser)

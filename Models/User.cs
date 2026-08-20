@@ -15,6 +15,7 @@ namespace SchoolSystem.Models
         public string PasswordSalt { get; set; }
 
         public string RoleName { get; set; }
+        public int RoleId { get; set; }
         public string Permissions { get; set; }
 
         public string Email { get; set; }

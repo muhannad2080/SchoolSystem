@@ -362,8 +362,8 @@
             this.groupBoxPermissions.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.groupBoxPermissions.Size = new System.Drawing.Size(339, 204);
             this.groupBoxPermissions.TabIndex = 1;
-            this.groupBoxPermissions.TabStop = false;
-            this.groupBoxPermissions.Text = "الصلاحيات";
+this.groupBoxPermissions.TabStop = false;
+this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             // 
             // checkedListPermissions
             // 

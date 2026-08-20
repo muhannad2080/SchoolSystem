@@ -212,6 +212,7 @@
     <Compile Include="Services\StudentProfileService.cs" />
     <Compile Include="Services\AuditLogService.cs" />
     <Compile Include="Services\ApplicationSettingsService.cs" />
+<Compile Include="Services\AuthorizationService.cs" />
     <Compile Include="Services\DatabaseBackupService.cs" />
     <Compile Include="Services\EmailNotificationService.cs" />
     <Compile Include="Services\SubjectService.cs" />
@@ -470,8 +471,9 @@
     <None Include="Databass\Migration_SeedAcademicCatalog.sql" />
     <None Include="Databass\Migration_RepairStudentAssignmentMirror.sql" />
     <None Include="Databass\Migration_Step1.sql" />
-    <None Include="Databass\FIX_RBAC_FINAL.sql" />
-    <None Include="Databass\FIX_RBAC_SourceOfTruth.sql" />
+<None Include="Databass\FIX_RBAC_FINAL.sql" />
+<None Include="Databass\FIX_RBAC_SourceOfTruth.sql" />
+<None Include="Databass\FIX_RBAC_SCREEN_LEVEL.sql" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -115,13 +115,17 @@ namespace SchoolSystem.Security
         }
 
         /// <summary>
-        /// يتحقق إذا كان المستخدم يملك أي صلاحية تتعلق بالوحدة المحددة.
-        /// مثال: CanAccessModule("Students") = true إذا كان لديه Students.View أو Students.Add إلخ.
+        /// يتحقق إذا كان المستخدم يملك أي صلاحية تتعلق بالوحدة (الشاشة) المحددة.
+        /// مثال: CanAccessModule("Students") = true إذا كان لديه Students.View.
+        /// مدير النظام يملك الوصول لكل الشاشات كسياسة مركزية واحدة.
         /// </summary>
         public static bool CanAccessModule(string module)
         {
             if (string.IsNullOrWhiteSpace(module) || User == null || !User.IsActive)
                 return false;
+
+            if (IsAdmin())
+                return true;
 
             string prefix = module.Trim() + ".";
             HashSet<string> permissions = ParsePermissions(User.Permissions);
@@ -167,12 +171,13 @@ namespace SchoolSystem.Security
 
         public static bool CanExport(string module)
         {
-            return HasAny(module + ".ExportExcel", module + ".ExportPDF", module + ".Export") || HasPermission(module + ".Manage");
+            // نظام الشاشات: امتلاك الشاشة يمنح كامل عملياتها (طباعة/تصدير/اعتماد...).
+            return CanAccessModule(module);
         }
 
         public static bool CanApprove(string module)
         {
-            return HasActionOrManage(module, "Approve");
+            return CanAccessModule(module);
         }
 
         public static void DemandAction(string module, string action, string message)
@@ -182,14 +187,14 @@ namespace SchoolSystem.Security
         }
 
         /// <summary>
-        /// يتحقق إذا كان المستخدم يملك صلاحية Action محددة أو صلاحية Manage الشاملة للوحدة.
-        /// هذا يضمن التوافق مع النظام القديم الذي يستخدم *.Manage.
+        /// نظام الشاشات: الوصول للشاشة يمنح كامل عملياتها، لذلك أي فحص عملية
+        /// (Add/Edit/Delete/Search/Print/Approve...) يعتمد على صلاحية الشاشة نفسها.
         /// </summary>
         private static bool HasActionOrManage(string module, string action)
         {
             if (string.IsNullOrWhiteSpace(module) || string.IsNullOrWhiteSpace(action))
                 return false;
-            return HasPermission(module + "." + action) || HasPermission(module + ".Manage");
+            return CanAccessModule(module);
         }
 
         public static void DemandPermission(string permissionKey, string message)

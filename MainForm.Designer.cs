@@ -121,21 +121,21 @@
             // tsmiStudentsManage
             // 
             this.tsmiStudentsManage.Name = "tsmiStudentsManage";
-            this.tsmiStudentsManage.Size = new System.Drawing.Size(214, 26);
+            this.tsmiStudentsManage.Size = new System.Drawing.Size(224, 26);
             this.tsmiStudentsManage.Text = "إدارة الطلاب";
             this.tsmiStudentsManage.Click += new System.EventHandler(this.tsmiStudentsManage_Click);
             // 
             // tsmiStudentsEnroll
             // 
             this.tsmiStudentsEnroll.Name = "tsmiStudentsEnroll";
-            this.tsmiStudentsEnroll.Size = new System.Drawing.Size(214, 26);
+            this.tsmiStudentsEnroll.Size = new System.Drawing.Size(224, 26);
             this.tsmiStudentsEnroll.Text = "التسجيل والقبول";
             this.tsmiStudentsEnroll.Click += new System.EventHandler(this.tsmiStudentsEnroll_Click);
             // 
             // tsmiStudentsClasses
             // 
             this.tsmiStudentsClasses.Name = "tsmiStudentsClasses";
-            this.tsmiStudentsClasses.Size = new System.Drawing.Size(214, 26);
+            this.tsmiStudentsClasses.Size = new System.Drawing.Size(224, 26);
             this.tsmiStudentsClasses.Text = "توزيع الفصول";
             this.tsmiStudentsClasses.Click += new System.EventHandler(this.tsmiStudentsClasses_Click);
             // 
@@ -183,21 +183,21 @@
             // tsmiSubjects
             // 
             this.tsmiSubjects.Name = "tsmiSubjects";
-            this.tsmiSubjects.Size = new System.Drawing.Size(215, 26);
+            this.tsmiSubjects.Size = new System.Drawing.Size(224, 26);
             this.tsmiSubjects.Text = "المواد الدراسية";
             this.tsmiSubjects.Click += new System.EventHandler(this.tsmiSubjects_Click);
             // 
             // tsmiClasses
             // 
             this.tsmiClasses.Name = "tsmiClasses";
-            this.tsmiClasses.Size = new System.Drawing.Size(215, 26);
+            this.tsmiClasses.Size = new System.Drawing.Size(224, 26);
             this.tsmiClasses.Text = "الفصول والقاعات";
             this.tsmiClasses.Click += new System.EventHandler(this.tsmiClasses_Click);
             // 
             // tsmiTimetable
             // 
             this.tsmiTimetable.Name = "tsmiTimetable";
-            this.tsmiTimetable.Size = new System.Drawing.Size(215, 26);
+            this.tsmiTimetable.Size = new System.Drawing.Size(224, 26);
             this.tsmiTimetable.Text = "الجداول الدراسية";
             this.tsmiTimetable.Click += new System.EventHandler(this.tsmiTimetable_Click);
             // 
@@ -213,14 +213,14 @@
             // tsmiAttendance
             // 
             this.tsmiAttendance.Name = "tsmiAttendance";
-            this.tsmiAttendance.Size = new System.Drawing.Size(196, 26);
+            this.tsmiAttendance.Size = new System.Drawing.Size(224, 26);
             this.tsmiAttendance.Text = "حضور الطلاب";
             this.tsmiAttendance.Click += new System.EventHandler(this.tsmiAttendance_Click);
             // 
             // tsmiGrades
             // 
             this.tsmiGrades.Name = "tsmiGrades";
-            this.tsmiGrades.Size = new System.Drawing.Size(196, 26);
+            this.tsmiGrades.Size = new System.Drawing.Size(224, 26);
             this.tsmiGrades.Text = "إدخال الدرجات";
             this.tsmiGrades.Click += new System.EventHandler(this.tsmiGrades_Click);
             // 
@@ -239,35 +239,35 @@
             // tsmiFees
             // 
             this.tsmiFees.Name = "tsmiFees";
-            this.tsmiFees.Size = new System.Drawing.Size(216, 26);
+            this.tsmiFees.Size = new System.Drawing.Size(224, 26);
             this.tsmiFees.Text = "الرسوم الدراسية";
             this.tsmiFees.Click += new System.EventHandler(this.tsmiFees_Click);
             // 
             // تعريفرسومالصفوفToolStripMenuItem
             // 
             this.تعريفرسومالصفوفToolStripMenuItem.Name = "تعريفرسومالصفوفToolStripMenuItem";
-            this.تعريفرسومالصفوفToolStripMenuItem.Size = new System.Drawing.Size(216, 26);
+            this.تعريفرسومالصفوفToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.تعريفرسومالصفوفToolStripMenuItem.Text = "خطط الرسوم";
             this.تعريفرسومالصفوفToolStripMenuItem.Click += new System.EventHandler(this.تعريفرسومالصفوفToolStripMenuItem_Click);
             // 
             // tsmiVouchers
             // 
             this.tsmiVouchers.Name = "tsmiVouchers";
-            this.tsmiVouchers.Size = new System.Drawing.Size(216, 26);
+            this.tsmiVouchers.Size = new System.Drawing.Size(224, 26);
             this.tsmiVouchers.Text = "السندات";
             this.tsmiVouchers.Click += new System.EventHandler(this.tsmiVouchers_Click);
             // 
             // tsmiExpenses
             // 
             this.tsmiExpenses.Name = "tsmiExpenses";
-            this.tsmiExpenses.Size = new System.Drawing.Size(216, 26);
+            this.tsmiExpenses.Size = new System.Drawing.Size(224, 26);
             this.tsmiExpenses.Text = "المصروفات";
             this.tsmiExpenses.Click += new System.EventHandler(this.tsmiExpenses_Click);
             // 
             // tsmiFinancialPayroll
             // 
             this.tsmiFinancialPayroll.Name = "tsmiFinancialPayroll";
-            this.tsmiFinancialPayroll.Size = new System.Drawing.Size(216, 26);
+            this.tsmiFinancialPayroll.Size = new System.Drawing.Size(224, 26);
             this.tsmiFinancialPayroll.Text = "الرواتب";
             this.tsmiFinancialPayroll.Click += new System.EventHandler(this.tsmiTeachersPayroll_Click);
             // 
@@ -283,14 +283,14 @@
             // tsmiTransport
             // 
             this.tsmiTransport.Name = "tsmiTransport";
-            this.tsmiTransport.Size = new System.Drawing.Size(206, 26);
+            this.tsmiTransport.Size = new System.Drawing.Size(224, 26);
             this.tsmiTransport.Text = "النقل المدرسي";
             this.tsmiTransport.Click += new System.EventHandler(this.tsmiTransport_Click);
             // 
             // tsmiLibrary
             // 
             this.tsmiLibrary.Name = "tsmiLibrary";
-            this.tsmiLibrary.Size = new System.Drawing.Size(206, 26);
+            this.tsmiLibrary.Size = new System.Drawing.Size(224, 26);
             this.tsmiLibrary.Text = "المكتبة";
             this.tsmiLibrary.Click += new System.EventHandler(this.tsmiLibrary_Click);
             // 
@@ -307,21 +307,21 @@
             // tsmiUsers
             // 
             this.tsmiUsers.Name = "tsmiUsers";
-            this.tsmiUsers.Size = new System.Drawing.Size(203, 26);
+            this.tsmiUsers.Size = new System.Drawing.Size(224, 26);
             this.tsmiUsers.Text = "المستخدمون";
             this.tsmiUsers.Click += new System.EventHandler(this.tsmiUsers_Click);
             // 
             // tsmiAuditLogs
             // 
             this.tsmiAuditLogs.Name = "tsmiAuditLogs";
-            this.tsmiAuditLogs.Size = new System.Drawing.Size(203, 26);
+            this.tsmiAuditLogs.Size = new System.Drawing.Size(224, 26);
             this.tsmiAuditLogs.Text = "سجل الأنشطة";
             this.tsmiAuditLogs.Click += new System.EventHandler(this.tsmiAuditLogs_Click);
             // 
             // tsmiSettings
             // 
             this.tsmiSettings.Name = "tsmiSettings";
-            this.tsmiSettings.Size = new System.Drawing.Size(203, 26);
+            this.tsmiSettings.Size = new System.Drawing.Size(224, 26);
             this.tsmiSettings.Text = "الإعدادات";
             this.tsmiSettings.Click += new System.EventHandler(this.tsmiSettings_Click);
             // 

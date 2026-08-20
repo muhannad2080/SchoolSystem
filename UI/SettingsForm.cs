@@ -46,7 +46,7 @@ namespace SchoolSystem.UI
 
         private bool EnsureSettingsPermission(string message, params string[] permissionKeys)
         {
-            if (CurrentUser.HasPermission(PermissionKeys.SettingsManage) || CurrentUser.HasAny(permissionKeys))
+            if (CurrentUser.CanAccessModule("Settings"))
                 return true;
 
             UIHelper.ShowWarning(message);
@@ -55,10 +55,9 @@ namespace SchoolSystem.UI
 
         private void ApplyPermissionState()
         {
-            bool canView = CurrentUser.HasPermission(PermissionKeys.SettingsManage) ||
-                CurrentUser.HasPermission(PermissionKeys.SettingsView);
-            bool canEdit = CurrentUser.HasPermission(PermissionKeys.SettingsManage) ||
-                CurrentUser.HasPermission(PermissionKeys.SettingsEdit);
+            // نظام الشاشات: امتلاك صلاحية شاشة الإعدادات يمنح العرض والإدارة كاملة.
+            bool canEdit = CurrentUser.CanAccessModule("Settings");
+            bool canView = canEdit;
             testConnectionButton.Enabled = canView;
             saveButton.Enabled = canEdit;
             backupButton.Enabled = canEdit;
@@ -135,7 +134,7 @@ namespace SchoolSystem.UI
 
         private async void BackupButton_Click(object sender, EventArgs e)
         {
-            if (!CurrentUser.HasAny(PermissionKeys.SettingsEdit, PermissionKeys.SettingsManage))
+            if (!CurrentUser.CanAccessModule("Settings"))
             {
                 UIHelper.ShowWarning("لا تملك صلاحية إدارة الإعدادات والنسخ الاحتياطي.");
                 return;
@@ -169,7 +168,7 @@ namespace SchoolSystem.UI
 
         private async void RestoreButton_Click(object sender, EventArgs e)
         {
-            if (!CurrentUser.HasAny(PermissionKeys.SettingsEdit, PermissionKeys.SettingsManage))
+            if (!CurrentUser.CanAccessModule("Settings"))
             {
                 UIHelper.ShowWarning("لا تملك صلاحية إدارة الإعدادات والاستعادة.");
                 return;

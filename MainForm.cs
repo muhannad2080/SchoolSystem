@@ -187,6 +187,16 @@ namespace SchoolSystem
             panelContent.Controls.Add(welcome);
         }
 
+        /// <summary>
+        /// يُعيد عرض شاشة الترحيب (يُستخدم من زر "إغلاق" في الواجهات).
+        /// </summary>
+        public void ShowWelcomeScreen()
+        {
+            if (IsDisposed || Disposing)
+                return;
+            LoadWelcomeScreen();
+        }
+
         private void ClearPanelContent()
         {
             while (panelContent.Controls.Count > 0)
@@ -286,11 +296,10 @@ namespace SchoolSystem
 
         private bool CanOpen(string module, params string[] legacyPermissions)
         {
-            // إظهار الوحدة عند امتلاك أي صلاحية صحيحة لها؛ فالصلاحيات الإجرائية
-            // مثل Add/Edit/Delete لا ينبغي أن تجعل الشاشة تختفي إذا غاب View بالخطأ.
-            return CurrentUser.CanAccessModule(module)
-                || CurrentUser.CanView(module)
-                || HasAny(legacyPermissions);
+            // مصدر الحقيقة الوحيد للوصول هو خدمة الصلاحيات المركزية (AuthorizationService)
+            // التي تعتمد على الصلاحيات المحمّلة من قاعدة البيانات عند تسجيل الدخول.
+            // مدير النظام يملك كل الشاشات تلقائياً كسياسة مركزية.
+            return AuthorizationService.CanAccessScreen(module);
         }
 
         private bool EnsureModule(string module, string message, params string[] legacyPermissions)
@@ -370,42 +379,8 @@ namespace SchoolSystem
             foreach (ToolStripMenuItem item in permissionItems)
                 item.Visible = false;
 
-            // مدير النظام يرى كامل كتالوج الواجهات. يبقى EnsurePermission
-            // داخل كل معالج وخدمة هو الحاجز الأمني الفعلي عند الفتح والتنفيذ.
-            if (CurrentUser.IsAdmin())
-            {
-                tsmiDashboard.Visible = true;
-                tsmiStudents.Visible = true;
-                tsmiStudentsManage.Visible = true;
-                tsmiStudentsEnroll.Visible = true;
-                tsmiStudentsClasses.Visible = true;
-                tsmiTeachers.Visible = true;
-                tsmiTeachersManage.Visible = true;
-                tsmiTeachersAttendance.Visible = true;
-                tsmiTeachersPayroll.Visible = true;
-                tsmiAcademic.Visible = true;
-                tsmiSubjects.Visible = true;
-                tsmiClasses.Visible = true;
-                tsmiTimetable.Visible = true;
-                tsmiAttendanceGrades.Visible = true;
-                tsmiGrades.Visible = true;
-                tsmiAttendance.Visible = true;
-                tsmiFinancial.Visible = true;
-                tsmiFees.Visible = true;
-                tsmiVouchers.Visible = true;
-                tsmiExpenses.Visible = true;
-                تعريفرسومالصفوفToolStripMenuItem.Visible = true;
-                tsmiFinancialPayroll.Visible = true;
-                tsmiServices.Visible = true;
-                tsmiTransport.Visible = true;
-                tsmiLibrary.Visible = true;
-                tsmiAdmin.Visible = true;
-                tsmiUsers.Visible = true;
-                tsmiReports.Visible = true;
-                tsmiAuditLogs.Visible = true;
-                tsmiSettings.Visible = true;
-                return;
-            }
+            // يُبنى كل شيء ديناميكياً من صلاحيات الشاشات المحمّلة من قاعدة البيانات.
+            // مدير النظام يملك كل الشاشات تلقائياً عبر AuthorizationService.CanAccessScreen.
 
             tsmiDashboard.Visible = CanOpen("Dashboard", PermissionKeys.DashboardView);
 
@@ -451,13 +426,16 @@ namespace SchoolSystem
             tsmiSettings.Visible = CanOpen("Settings", PermissionKeys.SettingsView, PermissionKeys.SettingsManage);
 
             // إخفاء مجموعات القوائم التي لا تحتوي على أي خيار مسموح للمستخدم.
-            tsmiStudents.Visible = tsmiStudentsManage.Visible || tsmiStudentsEnroll.Visible || tsmiStudentsClasses.Visible;
-            tsmiTeachers.Visible = tsmiTeachersManage.Visible || tsmiTeachersAttendance.Visible || tsmiTeachersPayroll.Visible;
-            tsmiAcademic.Visible = tsmiSubjects.Visible || tsmiClasses.Visible || tsmiTimetable.Visible;
-            tsmiAttendanceGrades.Visible = tsmiGrades.Visible || tsmiAttendance.Visible;
-            tsmiFinancial.Visible = tsmiFees.Visible || tsmiVouchers.Visible || tsmiExpenses.Visible || تعريفرسومالصفوفToolStripMenuItem.Visible || tsmiFinancialPayroll.Visible;
-            tsmiServices.Visible = tsmiTransport.Visible || tsmiLibrary.Visible;
-            tsmiAdmin.Visible = tsmiUsers.Visible || tsmiAuditLogs.Visible || tsmiSettings.Visible;
+            // ملاحظة: لا نقرأ child.Visible لأن عنصر قائمة منسدلة يقرأ Visible=false
+            // ما دامت قائمته المنسدلة لم تُعرض بعد (سلوك WinForms)، لذلك نعيد تقييم
+            // وصول كل مجموعة مباشرة من صلاحيات الشاشات نفسها.
+            tsmiStudents.Visible = CanOpen("Students") || CanOpen("Enrollment") || CanOpen("ClassAssignment");
+            tsmiTeachers.Visible = CanOpen("Teachers") || CanOpen("StaffAttendance") || CanOpen("TeacherAttendance") || CanOpen("Payroll");
+            tsmiAcademic.Visible = CanOpen("Subjects") || CanOpen("Classes") || CanOpen("Timetable");
+            tsmiAttendanceGrades.Visible = CanOpen("Grades") || CanOpen("Attendance");
+            tsmiFinancial.Visible = CanOpen("Fees") || CanOpen("FeePlans") || CanOpen("Vouchers") || CanOpen("Expenses") || CanOpen("Payroll");
+            tsmiServices.Visible = CanOpen("Transport") || CanOpen("Library");
+            tsmiAdmin.Visible = CanOpen("Users") || CanOpen("AuditLogs") || CanOpen("Settings");
         }
 
         private bool IsDesignTime()

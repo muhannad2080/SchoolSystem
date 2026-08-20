@@ -105,6 +105,42 @@ namespace SchoolSystem.Security
         }
 
         /// <summary>
+        /// يتحقق إذا كان المفتاح مفتاح شاشة فقط (Module.View) وليس مفتاح عملية.
+        /// </summary>
+        public static bool IsScreenPermission(string permissionKey)
+        {
+            string normalized = NormalizePermissionKey(permissionKey);
+            if (string.IsNullOrWhiteSpace(normalized))
+                return false;
+            int dot = normalized.IndexOf('.');
+            if (dot <= 0 || dot == normalized.Length - 1)
+                return false;
+            string module = normalized.Substring(0, dot);
+            string action = normalized.Substring(dot + 1);
+            return ModuleSet.Contains(module) && action.Equals("View", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// يستخرج من سلسلة الصلاحيات قائمة مفاتيح الشاشات (Module.View) المرتبة بدون تكرار.
+        /// تُستخدم كمصدر موحد لعرض وإدارة صلاحيات المستخدمين على مستوى الشاشات.
+        /// </summary>
+        public static IReadOnlyList<string> GetScreenKeysFromPermissions(string permissions)
+        {
+            if (string.IsNullOrWhiteSpace(permissions))
+                return Array.Empty<string>();
+
+            List<string> result = new List<string>();
+            foreach (string raw in permissions.Split(new[] { ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string screen = ToScreenPermission(raw.Trim());
+                if (!string.IsNullOrWhiteSpace(screen))
+                    result.Add(screen);
+            }
+
+            return result.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        }
+
+        /// <summary>
         /// يحول صلاحية شاشة أو صلاحية عملية قديمة إلى مفتاح الشاشة الموافق.
         /// </summary>
         public static string ToScreenPermission(string permissionKey)

@@ -14,10 +14,10 @@ namespace SchoolSystem.Services
             if (studentId <= 0)
                 throw new ArgumentException("رقم الطالب غير صحيح.");
 
-            if (!CurrentUser.HasAny(PermissionKeys.StudentsView, PermissionKeys.StudentsManage))
+            if (!CurrentUser.CanAccessModule("Students"))
                 throw new UnauthorizedAccessException("ليس لديك صلاحية عرض ملفات الطلاب.");
 
-            bool includeFinancials = CurrentUser.HasPermission(PermissionKeys.FeesManage);
+            bool includeFinancials = CurrentUser.CanAccessModule("Fees");
             return repository.GetProfile(studentId, includeFinancials);
         }
     }
