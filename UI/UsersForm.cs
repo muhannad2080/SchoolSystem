@@ -45,7 +45,7 @@ namespace SchoolSystem.UI
 
             public override string ToString()
             {
-                return Key + " - " + DisplayText;
+                return DisplayText;
             }
         }
 
@@ -68,12 +68,12 @@ namespace SchoolSystem.UI
             permissionActions = new FlowLayoutPanel
             {
                 Dock = DockStyle.Bottom,
-                Height = 76,
-                AutoSize = false,
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowOnly,
                 FlowDirection = FlowDirection.RightToLeft,
                 WrapContents = true,
                 RightToLeft = RightToLeft.Yes,
-                Padding = new Padding(0, 3, 0, 0),
+                Padding = new Padding(0, 4, 0, 4),
                 Margin = new Padding(0)
             };
 
@@ -141,6 +141,15 @@ namespace SchoolSystem.UI
             btnApplyRolePreset.AccessibleName = "تطبيق الصلاحيات الافتراضية لدور المستخدم";
             btnReloadPermissions.AccessibleName = "إعادة تحميل الصلاحيات من قاعدة البيانات";
             btnCloseForm.AccessibleName = "إغلاق شاشة المستخدمين والعودة إلى الرئيسية";
+
+            Button[] permissionButtons =
+            {
+                btnSavePermissions, btnSelectAllPermissions, btnClearPermissions,
+                btnApplyRolePreset, btnReloadPermissions, btnCloseForm
+            };
+
+            foreach (Button button in permissionButtons)
+                button.Margin = new Padding(2);
 
             btnSavePermissions.Enabled = true;
             btnSavePermissions.Visible = true;

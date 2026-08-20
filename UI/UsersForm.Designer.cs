@@ -101,6 +101,7 @@
             this.mainContainer.Controls.Add(this.panelSearch, 0, 2);
             this.mainContainer.Controls.Add(this.dataGridViewUsers, 0, 3);
             this.mainContainer.Controls.Add(this.panelBottom, 0, 4);
+            this.mainContainer.SetRowSpan(this.groupBoxPermissions, 5);
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainContainer.Location = new System.Drawing.Point(0, 58);
             this.mainContainer.Name = "mainContainer";
@@ -379,7 +380,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             // panelButtons
             // 
             this.panelButtons.BackColor = System.Drawing.Color.Transparent;
-            this.mainContainer.SetColumnSpan(this.panelButtons, 2);
+            this.mainContainer.SetColumnSpan(this.panelButtons, 1);
             this.panelButtons.Controls.Add(this.btnRefresh);
             this.panelButtons.Controls.Add(this.btnClear);
             this.panelButtons.Controls.Add(this.btnDelete);
@@ -467,7 +468,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             // panelSearch
             // 
             this.panelSearch.BackColor = System.Drawing.Color.White;
-            this.mainContainer.SetColumnSpan(this.panelSearch, 2);
+            this.mainContainer.SetColumnSpan(this.panelSearch, 1);
             this.panelSearch.Controls.Add(this.txtSearch);
             this.panelSearch.Controls.Add(this.lblSearch);
             this.panelSearch.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -517,7 +518,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
             this.dataGridViewUsers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewUsers.ColumnHeadersHeight = 42;
-            this.mainContainer.SetColumnSpan(this.dataGridViewUsers, 2);
+            this.mainContainer.SetColumnSpan(this.dataGridViewUsers, 1);
             this.dataGridViewUsers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewUsers.EnableHeadersVisualStyles = false;
             this.dataGridViewUsers.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(231)))), ((int)(((byte)(235)))));
@@ -544,7 +545,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             // panelBottom
             // 
             this.panelBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
-            this.mainContainer.SetColumnSpan(this.panelBottom, 2);
+            this.mainContainer.SetColumnSpan(this.panelBottom, 1);
             this.panelBottom.Controls.Add(this.lblRecordCount);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelBottom.Location = new System.Drawing.Point(15, 603);
