@@ -23,6 +23,23 @@ namespace SchoolSystem.UI
         private Button btnSelectAllPermissions;
         private Button btnClearPermissions;
 
+        private sealed class PermissionListItem
+        {
+            public string Key { get; private set; }
+            public string DisplayText { get; private set; }
+
+            public PermissionListItem(string key, string displayText)
+            {
+                Key = key ?? string.Empty;
+                DisplayText = displayText ?? string.Empty;
+            }
+
+            public override string ToString()
+            {
+                return Key + " - " + DisplayText;
+            }
+        }
+
         public UsersForm()
         {
             InitializeComponent();
@@ -180,7 +197,11 @@ namespace SchoolSystem.UI
 
         private void AddPermission(string key, string text)
         {
-            checkedListPermissions.Items.Add(key + " - " + text);
+            string normalizedKey = PermissionKeys.NormalizePermissionKey(key);
+            if (string.IsNullOrWhiteSpace(normalizedKey))
+                return;
+
+            checkedListPermissions.Items.Add(new PermissionListItem(normalizedKey, text));
         }
 
         private async Task LoadUsersAsync()
@@ -344,28 +365,30 @@ namespace SchoolSystem.UI
 
         private void CheckPermission(string permissionKey)
         {
+            string normalizedKey = PermissionKeys.NormalizePermissionKey(permissionKey);
+            if (string.IsNullOrWhiteSpace(normalizedKey))
+                return;
+
             for (int i = 0; i < checkedListPermissions.Items.Count; i++)
             {
-                string item = checkedListPermissions.Items[i].ToString();
-
-                string itemKey = item.Split('-')[0].Trim();
-                if (string.Equals(itemKey, PermissionKeys.NormalizePermissionKey(permissionKey), StringComparison.OrdinalIgnoreCase))
+                PermissionListItem item = checkedListPermissions.Items[i] as PermissionListItem;
+                if (item != null && string.Equals(item.Key, normalizedKey, StringComparison.OrdinalIgnoreCase))
                     checkedListPermissions.SetItemChecked(i, true);
             }
         }
 
         private string GetSelectedPermissions()
         {
-            // لا نستخرج المفتاح من النص الظاهر للمستخدم؛ النص قد يتغير أو يحتوي
-            // على شرطة داخل الوصف العربي. مصدر الحقيقة هو ترتيب PermissionKeys.All
-            // الذي بُنيت منه قائمة CheckedListBox نفسها.
             List<string> selectedKeys = new List<string>();
-            IReadOnlyList<string> allKeys = PermissionKeys.All;
 
-            for (int i = 0; i < checkedListPermissions.Items.Count && i < allKeys.Count; i++)
+            for (int i = 0; i < checkedListPermissions.Items.Count; i++)
             {
-                if (checkedListPermissions.GetItemChecked(i))
-                    selectedKeys.Add(allKeys[i]);
+                if (!checkedListPermissions.GetItemChecked(i))
+                    continue;
+
+                PermissionListItem item = checkedListPermissions.Items[i] as PermissionListItem;
+                if (item != null && !string.IsNullOrWhiteSpace(item.Key))
+                    selectedKeys.Add(item.Key);
             }
 
             return PermissionKeys.Serialize(selectedKeys);
@@ -381,20 +404,16 @@ namespace SchoolSystem.UI
             string normalizedPermissions = PermissionKeys.NormalizePermissions(permissions);
             string[] parts = normalizedPermissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            IReadOnlyList<string> allKeys = PermissionKeys.All;
-            for (int i = 0; i < checkedListPermissions.Items.Count && i < allKeys.Count; i++)
+            HashSet<string> selectedKeys = new HashSet<string>(
+                parts.Select(part => PermissionKeys.NormalizePermissionKey(part.Trim()))
+                     .Where(key => !string.IsNullOrWhiteSpace(key)),
+                StringComparer.OrdinalIgnoreCase);
+
+            for (int i = 0; i < checkedListPermissions.Items.Count; i++)
             {
-                string itemKey = allKeys[i];
-                foreach (string part in parts)
-                {
-                    string normalizedKey = PermissionKeys.NormalizePermissionKey(part.Trim());
-                    if (!string.IsNullOrWhiteSpace(normalizedKey) &&
-                        string.Equals(itemKey, normalizedKey, StringComparison.OrdinalIgnoreCase))
-                    {
-                        checkedListPermissions.SetItemChecked(i, true);
-                        break;
-                    }
-                }
+                PermissionListItem item = checkedListPermissions.Items[i] as PermissionListItem;
+                if (item != null && selectedKeys.Contains(item.Key))
+                    checkedListPermissions.SetItemChecked(i, true);
             }
         }
 
