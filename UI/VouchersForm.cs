@@ -479,9 +479,11 @@ namespace SchoolSystem.UI
             // اختلاف الأسماء وتكرارها في التقارير والسندات.
             // الطرف قائمة إلزامية وليست مربع نص حر. إلغاء الإكمال التلقائي
             // بالكامل يمنع تعارض إعدادات Designer مع DropDownList في WinForms.
-            cmbPartyName.AutoCompleteMode = AutoCompleteMode.None;
-            cmbPartyName.AutoCompleteSource = AutoCompleteSource.None;
+            // يجب ضبط DropDownStyle وAutoCompleteSource قبل AutoCompleteMode؛
+            // لأن WinForms يرفض بعض التركيبات القديمة أثناء تحميل الواجهة.
             cmbPartyName.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbPartyName.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbPartyName.AutoCompleteMode = AutoCompleteMode.None;
             cmbPartyName.IntegralHeight = false;
         }
 

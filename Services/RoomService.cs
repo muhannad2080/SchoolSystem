@@ -14,13 +14,23 @@ namespace SchoolSystem.Services
 
         public DataTable GetAllRooms()
         {
-            CurrentUser.DemandAction("Rooms", "View", "ليس لديك صلاحية عرض القاعات.");
+            CurrentUser.DemandAny(
+                "ليس لديك صلاحية عرض القاعات.",
+                "Rooms.View",
+                "Rooms.Manage",
+                "Classes.View",
+                "Classes.Manage");
             return repository.GetAllRooms();
         }
 
         public DataTable GetActiveRooms()
         {
-            CurrentUser.DemandAction("Rooms", "View", "ليس لديك صلاحية عرض القاعات النشطة.");
+            CurrentUser.DemandAny(
+                "ليس لديك صلاحية عرض القاعات النشطة.",
+                "Rooms.View",
+                "Rooms.Manage",
+                "Classes.View",
+                "Classes.Manage");
             return repository.GetActiveRooms();
         }
 

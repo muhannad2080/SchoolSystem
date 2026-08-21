@@ -102,7 +102,20 @@ namespace SchoolSystem.Security
                 return false;
 
             HashSet<string> permissions = ParsePermissions(User.Permissions);
-            return permissions.Contains(normalizedKey);
+            if (permissions.Contains(normalizedKey))
+                return true;
+
+            // التوافق مع الصلاحيات القديمة: امتلاك Module.Manage يمنح صلاحية
+            // عرض الشاشة Module.View، حتى لا تفشل الخدمات التي تستخدم DemandPermission
+            // بعد نقل النظام إلى مفاتيح View الجديدة.
+            if (normalizedKey.EndsWith(".View", StringComparison.OrdinalIgnoreCase))
+            {
+                string legacyManageKey = PermissionKeys.GetLegacyManageKey(normalizedKey);
+                if (!string.IsNullOrWhiteSpace(legacyManageKey) && permissions.Contains(legacyManageKey))
+                    return true;
+            }
+
+            return false;
         }
 
         public static bool HasAny(params string[] permissionKeys)

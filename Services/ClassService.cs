@@ -74,13 +74,21 @@ namespace SchoolSystem.Services
                 "ليس لديك صلاحية عرض بيانات الفصول.",
                 "Classes.View",
                 PermissionKeys.ClassesManage,
+                "ClassAssignment.View",
                 PermissionKeys.ClassAssignmentManage,
+                "Enrollment.View",
                 PermissionKeys.EnrollmentManage,
+                "Attendance.View",
                 PermissionKeys.AttendanceManage,
+                "Subjects.View",
                 PermissionKeys.SubjectsManage,
+                "Timetable.View",
                 PermissionKeys.TimetableManage,
                 PermissionKeys.ReportsView,
+                "Reports.View",
+                "Fees.View",
                 PermissionKeys.FeesManage,
+                "Grades.View",
                 PermissionKeys.GradesManage);
         }
     }
