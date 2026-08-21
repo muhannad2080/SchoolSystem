@@ -473,7 +473,7 @@ namespace SchoolSystem.Services
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
             {
                 string fixedPermissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
-                userRepository.ReplaceUserPermissions(userId, PermissionKeys.ScreenPermissions);
+                userRepository.ReplaceUserPermissions(userId, new List<string>(PermissionKeys.ScreenPermissions));
                 userRepository.UpdatePermissions(userId, fixedPermissions);
                 return fixedPermissions;
             }
