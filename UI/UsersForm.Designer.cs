@@ -102,14 +102,15 @@
             this.mainContainer.Controls.Add(this.dataGridViewUsers, 0, 3);
             this.mainContainer.Controls.Add(this.panelBottom, 0, 4);
             this.mainContainer.SetRowSpan(this.groupBoxPermissions, 5);
+            this.mainContainer.AutoScroll = true;
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainContainer.Location = new System.Drawing.Point(0, 58);
             this.mainContainer.Name = "mainContainer";
             this.mainContainer.Padding = new System.Windows.Forms.Padding(12, 10, 12, 10);
             this.mainContainer.RowCount = 5;
-            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 210F));
-            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
-            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
+            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 232F));
+            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 58F));
+            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 52F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
             this.mainContainer.Size = new System.Drawing.Size(1100, 642);
@@ -126,7 +127,8 @@
             this.groupBoxAccount.Name = "groupBoxAccount";
             this.groupBoxAccount.Padding = new System.Windows.Forms.Padding(12, 8, 12, 10);
             this.groupBoxAccount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.groupBoxAccount.Size = new System.Drawing.Size(725, 204);
+            this.groupBoxAccount.MinimumSize = new System.Drawing.Size(0, 226);
+            this.groupBoxAccount.Size = new System.Drawing.Size(725, 226);
             this.groupBoxAccount.TabIndex = 0;
             this.groupBoxAccount.TabStop = false;
             this.groupBoxAccount.Text = "بيانات الحساب";
@@ -361,7 +363,8 @@
             this.groupBoxPermissions.Name = "groupBoxPermissions";
             this.groupBoxPermissions.Padding = new System.Windows.Forms.Padding(12, 8, 12, 10);
             this.groupBoxPermissions.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.groupBoxPermissions.Size = new System.Drawing.Size(339, 204);
+            this.groupBoxPermissions.MinimumSize = new System.Drawing.Size(300, 226);
+            this.groupBoxPermissions.Size = new System.Drawing.Size(339, 226);
             this.groupBoxPermissions.TabIndex = 1;
 this.groupBoxPermissions.TabStop = false;
 this.groupBoxPermissions.Text = "صلاحيات المستخدم";
@@ -392,7 +395,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
             this.panelButtons.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.panelButtons.Size = new System.Drawing.Size(1070, 48);
+            this.panelButtons.Size = new System.Drawing.Size(1070, 52);
             this.panelButtons.TabIndex = 2;
             // 
             // btnRefresh
@@ -476,7 +479,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             this.panelSearch.Name = "panelSearch";
             this.panelSearch.Padding = new System.Windows.Forms.Padding(10, 7, 10, 7);
             this.panelSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.panelSearch.Size = new System.Drawing.Size(1070, 42);
+            this.panelSearch.Size = new System.Drawing.Size(1070, 46);
             this.panelSearch.TabIndex = 3;
             // 
             // txtSearch
@@ -537,6 +540,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(64)))), ((int)(((byte)(175)))));
             this.dataGridViewUsers.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewUsers.RowTemplate.Height = 34;
+            this.dataGridViewUsers.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.None;
             this.dataGridViewUsers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewUsers.Size = new System.Drawing.Size(1070, 272);
             this.dataGridViewUsers.TabIndex = 4;
@@ -575,6 +579,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "UsersForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.MinimumSize = new System.Drawing.Size(760, 620);
             this.Size = new System.Drawing.Size(1100, 700);
             ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).EndInit();
             this.panelTitle.ResumeLayout(false);
