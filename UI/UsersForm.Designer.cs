@@ -93,8 +93,8 @@
             // 
             this.mainContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
             this.mainContainer.ColumnCount = 2;
-            this.mainContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68F));
-            this.mainContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32F));
+            this.mainContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 62F));
+            this.mainContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 38F));
             this.mainContainer.Controls.Add(this.groupBoxAccount, 0, 0);
             this.mainContainer.Controls.Add(this.groupBoxPermissions, 1, 0);
             this.mainContainer.Controls.Add(this.panelButtons, 0, 1);
@@ -363,7 +363,7 @@
             this.groupBoxPermissions.Name = "groupBoxPermissions";
             this.groupBoxPermissions.Padding = new System.Windows.Forms.Padding(12, 8, 12, 10);
             this.groupBoxPermissions.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.groupBoxPermissions.MinimumSize = new System.Drawing.Size(300, 226);
+            this.groupBoxPermissions.MinimumSize = new System.Drawing.Size(360, 226);
             this.groupBoxPermissions.Size = new System.Drawing.Size(339, 226);
             this.groupBoxPermissions.TabIndex = 1;
 this.groupBoxPermissions.TabStop = false;
@@ -579,7 +579,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Name = "UsersForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.MinimumSize = new System.Drawing.Size(760, 620);
+            this.MinimumSize = new System.Drawing.Size(980, 620);
             this.Size = new System.Drawing.Size(1100, 700);
             ((System.ComponentModel.ISupportInitialize)(this.panelTitle)).EndInit();
             this.panelTitle.ResumeLayout(false);

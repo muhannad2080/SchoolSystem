@@ -24,6 +24,7 @@ namespace SchoolSystem.UI
         private bool suppressPermissionTracking = false;
         private bool selectedSystemAdministrator = false;
         private FlowLayoutPanel permissionActions;
+        private TableLayoutPanel permissionLayout;
         private Button btnSelectAllPermissions;
         private Button btnClearPermissions;
         private Button btnApplyRolePreset;
@@ -68,14 +69,15 @@ namespace SchoolSystem.UI
             // وتبقى القائمة قابلة للعرض في نسخ Visual Studio المختلفة.
             permissionActions = new FlowLayoutPanel
             {
-                Dock = DockStyle.Bottom,
+                Dock = DockStyle.Fill,
                 AutoSize = true,
                 AutoSizeMode = AutoSizeMode.GrowOnly,
                 FlowDirection = FlowDirection.RightToLeft,
                 WrapContents = true,
                 RightToLeft = RightToLeft.Yes,
                 Padding = new Padding(0, 4, 0, 4),
-                Margin = new Padding(0)
+                Margin = new Padding(0),
+                MinimumSize = new Size(0, 38)
             };
 
             btnSavePermissions = new Button
@@ -209,13 +211,40 @@ namespace SchoolSystem.UI
                 Margin = new Padding(0, 2, 0, 0)
             };
 
-            groupBoxPermissions.Controls.Add(lblPermissionHeader);
-            groupBoxPermissions.Controls.Add(lblRoleScreens);
-            groupBoxPermissions.Controls.Add(permissionActions);
-            permissionActions.Visible = true;
-            permissionActions.Enabled = true;
-            permissionActions.BringToFront();
-            checkedListPermissions.SendToBack();
+            // لا نضع العناصر مباشرة فوق بعضها داخل GroupBox؛ فهذا كان يؤدي إلى
+            // اختفاء CheckedListBox عند تمدد شريط الأزرار. نستخدم تخطيطاً داخلياً
+            // بصف مستقل للقائمة وصفوف ثابتة للعناوين والأزرار.
+            permissionLayout = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 1,
+                RowCount = 4,
+                RightToLeft = RightToLeft.Yes,
+                Padding = new Padding(4, 2, 4, 2),
+                Margin = new Padding(0),
+                AutoScroll = true
+            };
+            permissionLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            permissionLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
+            permissionLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            permissionLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38F));
+            permissionLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+            checkedListPermissions.Dock = DockStyle.Fill;
+            checkedListPermissions.Margin = new Padding(0, 2, 0, 2);
+            checkedListPermissions.MinimumSize = new Size(0, 90);
+            checkedListPermissions.IntegralHeight = false;
+
+            lblPermissionHeader.Dock = DockStyle.Fill;
+            lblRoleScreens.Dock = DockStyle.Fill;
+            permissionActions.Dock = DockStyle.Fill;
+
+            groupBoxPermissions.Controls.Clear();
+            permissionLayout.Controls.Add(lblPermissionHeader, 0, 0);
+            permissionLayout.Controls.Add(checkedListPermissions, 0, 1);
+            permissionLayout.Controls.Add(lblRoleScreens, 0, 2);
+            permissionLayout.Controls.Add(permissionActions, 0, 3);
+            groupBoxPermissions.Controls.Add(permissionLayout);
         }
 
         private void ApplyCustomStyles()
