@@ -101,8 +101,11 @@
             this.mainContainer.Controls.Add(this.panelSearch, 0, 2);
             this.mainContainer.Controls.Add(this.dataGridViewUsers, 0, 3);
             this.mainContainer.Controls.Add(this.panelBottom, 0, 4);
+<<<<<<< Updated upstream
             this.mainContainer.SetRowSpan(this.groupBoxPermissions, 5);
             this.mainContainer.AutoScroll = true;
+=======
+>>>>>>> Stashed changes
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainContainer.Location = new System.Drawing.Point(0, 58);
             this.mainContainer.Name = "mainContainer";
@@ -363,11 +366,16 @@
             this.groupBoxPermissions.Name = "groupBoxPermissions";
             this.groupBoxPermissions.Padding = new System.Windows.Forms.Padding(12, 8, 12, 10);
             this.groupBoxPermissions.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+<<<<<<< Updated upstream
             this.groupBoxPermissions.MinimumSize = new System.Drawing.Size(360, 226);
             this.groupBoxPermissions.Size = new System.Drawing.Size(339, 226);
+=======
+            this.mainContainer.SetRowSpan(this.groupBoxPermissions, 5);
+            this.groupBoxPermissions.Size = new System.Drawing.Size(339, 616);
+>>>>>>> Stashed changes
             this.groupBoxPermissions.TabIndex = 1;
-this.groupBoxPermissions.TabStop = false;
-this.groupBoxPermissions.Text = "صلاحيات المستخدم";
+            this.groupBoxPermissions.TabStop = false;
+            this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             // 
             // checkedListPermissions
             // 
@@ -377,13 +385,12 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             this.checkedListPermissions.FormattingEnabled = true;
             this.checkedListPermissions.Location = new System.Drawing.Point(12, 29);
             this.checkedListPermissions.Name = "checkedListPermissions";
-            this.checkedListPermissions.Size = new System.Drawing.Size(315, 165);
+            this.checkedListPermissions.Size = new System.Drawing.Size(315, 577);
             this.checkedListPermissions.TabIndex = 0;
             // 
             // panelButtons
             // 
             this.panelButtons.BackColor = System.Drawing.Color.Transparent;
-            this.mainContainer.SetColumnSpan(this.panelButtons, 1);
             this.panelButtons.Controls.Add(this.btnRefresh);
             this.panelButtons.Controls.Add(this.btnClear);
             this.panelButtons.Controls.Add(this.btnDelete);
@@ -391,11 +398,15 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             this.panelButtons.Controls.Add(this.btnAdd);
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.panelButtons.Location = new System.Drawing.Point(15, 223);
+            this.panelButtons.Location = new System.Drawing.Point(360, 223);
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
             this.panelButtons.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+<<<<<<< Updated upstream
             this.panelButtons.Size = new System.Drawing.Size(1070, 52);
+=======
+            this.panelButtons.Size = new System.Drawing.Size(725, 48);
+>>>>>>> Stashed changes
             this.panelButtons.TabIndex = 2;
             // 
             // btnRefresh
@@ -471,15 +482,18 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             // panelSearch
             // 
             this.panelSearch.BackColor = System.Drawing.Color.White;
-            this.mainContainer.SetColumnSpan(this.panelSearch, 1);
             this.panelSearch.Controls.Add(this.txtSearch);
             this.panelSearch.Controls.Add(this.lblSearch);
             this.panelSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelSearch.Location = new System.Drawing.Point(15, 277);
+            this.panelSearch.Location = new System.Drawing.Point(360, 277);
             this.panelSearch.Name = "panelSearch";
             this.panelSearch.Padding = new System.Windows.Forms.Padding(10, 7, 10, 7);
             this.panelSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+<<<<<<< Updated upstream
             this.panelSearch.Size = new System.Drawing.Size(1070, 46);
+=======
+            this.panelSearch.Size = new System.Drawing.Size(725, 42);
+>>>>>>> Stashed changes
             this.panelSearch.TabIndex = 3;
             // 
             // txtSearch
@@ -488,7 +502,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtSearch.Location = new System.Drawing.Point(10, 7);
             this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(930, 28);
+            this.txtSearch.Size = new System.Drawing.Size(585, 28);
             this.txtSearch.TabIndex = 0;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             // 
@@ -497,7 +511,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             this.lblSearch.Dock = System.Windows.Forms.DockStyle.Right;
             this.lblSearch.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.lblSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(55)))), ((int)(((byte)(65)))), ((int)(((byte)(81)))));
-            this.lblSearch.Location = new System.Drawing.Point(940, 7);
+            this.lblSearch.Location = new System.Drawing.Point(595, 7);
             this.lblSearch.Name = "lblSearch";
             this.lblSearch.Size = new System.Drawing.Size(120, 28);
             this.lblSearch.TabIndex = 1;
@@ -521,11 +535,10 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
             this.dataGridViewUsers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dataGridViewUsers.ColumnHeadersHeight = 42;
-            this.mainContainer.SetColumnSpan(this.dataGridViewUsers, 1);
             this.dataGridViewUsers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewUsers.EnableHeadersVisualStyles = false;
             this.dataGridViewUsers.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(231)))), ((int)(((byte)(235)))));
-            this.dataGridViewUsers.Location = new System.Drawing.Point(15, 325);
+            this.dataGridViewUsers.Location = new System.Drawing.Point(360, 325);
             this.dataGridViewUsers.MultiSelect = false;
             this.dataGridViewUsers.Name = "dataGridViewUsers";
             this.dataGridViewUsers.ReadOnly = true;
@@ -542,19 +555,18 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             this.dataGridViewUsers.RowTemplate.Height = 34;
             this.dataGridViewUsers.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.None;
             this.dataGridViewUsers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewUsers.Size = new System.Drawing.Size(1070, 272);
+            this.dataGridViewUsers.Size = new System.Drawing.Size(725, 272);
             this.dataGridViewUsers.TabIndex = 4;
             this.dataGridViewUsers.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewUsers_CellClick);
             // 
             // panelBottom
             // 
             this.panelBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(243)))), ((int)(((byte)(247)))));
-            this.mainContainer.SetColumnSpan(this.panelBottom, 1);
             this.panelBottom.Controls.Add(this.lblRecordCount);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(15, 603);
+            this.panelBottom.Location = new System.Drawing.Point(360, 603);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1070, 26);
+            this.panelBottom.Size = new System.Drawing.Size(725, 26);
             this.panelBottom.TabIndex = 5;
             // 
             // lblRecordCount
@@ -564,7 +576,7 @@ this.groupBoxPermissions.Text = "صلاحيات المستخدم";
             this.lblRecordCount.ForeColor = System.Drawing.Color.DimGray;
             this.lblRecordCount.Location = new System.Drawing.Point(0, 0);
             this.lblRecordCount.Name = "lblRecordCount";
-            this.lblRecordCount.Size = new System.Drawing.Size(1070, 26);
+            this.lblRecordCount.Size = new System.Drawing.Size(725, 26);
             this.lblRecordCount.TabIndex = 0;
             this.lblRecordCount.Text = "عدد المستخدمين: 0";
             this.lblRecordCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
