@@ -217,6 +217,10 @@ namespace SchoolSystem.DataAccess
             if (userId <= 0)
                 return 0;
 
+            User targetUser = GetUserById(userId);
+            if (targetUser != null && IsAdministratorRole(targetUser.RoleName))
+                throw new InvalidOperationException("صلاحيات مدير النظام ثابتة ولا يمكن استبدالها من التطبيق.");
+
             List<string> validKeys = new List<string>();
             if (screenKeys != null)
             {
@@ -496,6 +500,12 @@ namespace SchoolSystem.DataAccess
                         throw new InvalidOperationException("لا يمكن حذف المستخدم المسجل دخوله حالياً.");
                     }
 
+                    if (IsAdministratorRole(targetRole))
+                    {
+                        transaction.Rollback();
+                        throw new InvalidOperationException("حساب مدير النظام محمي ولا يمكن حذفه من التطبيق.");
+                    }
+
                     if (targetIsActive && IsAdministratorRole(targetRole))
                     {
                         const string adminCountQuery = @"
@@ -619,7 +629,11 @@ namespace SchoolSystem.DataAccess
             {
                 const string query = @"
                     UPDATE Users SET
-                        Permissions = @Permissions,
+                        Permissions = CASE
+                            WHEN LTRIM(RTRIM(RoleName)) IN (N'مدير النظام', N'Admin', N'Administrator')
+                                THEN Permissions
+                            ELSE @Permissions
+                        END,
                         UpdatedAt = GETDATE()
                     WHERE UserID = @UserID";
 

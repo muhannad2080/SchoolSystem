@@ -22,6 +22,7 @@ namespace SchoolSystem.UI
         private bool isLoading = false;
         private bool permissionsUserModified = false;
         private bool suppressPermissionTracking = false;
+        private bool selectedSystemAdministrator = false;
         private FlowLayoutPanel permissionActions;
         private Button btnSelectAllPermissions;
         private Button btnClearPermissions;
@@ -626,10 +627,19 @@ namespace SchoolSystem.UI
 
         private bool CanManagePermissions()
         {
-            if (CurrentUser.CanAccessModule("Users"))
-                return true;
-            UIHelper.ShowError("ليس لديك صلاحية إدارة أدوار وصلاحيات المستخدمين.");
-            return false;
+            if (!CurrentUser.CanAccessModule("Users"))
+            {
+                UIHelper.ShowError("ليس لديك صلاحية إدارة أدوار وصلاحيات المستخدمين.");
+                return false;
+            }
+
+            if (selectedSystemAdministrator)
+            {
+                UIHelper.ShowInformation("حساب مدير النظام محمي وتُمنح له جميع صلاحيات الشاشات تلقائياً. لا يمكن تعديل صلاحياته من الواجهة.");
+                return false;
+            }
+
+            return true;
         }
 
         private void ClearPermissionChecks()
@@ -824,18 +834,23 @@ namespace SchoolSystem.UI
         {
             bool canManage = CurrentUser.CanAccessModule("Users");
             bool canView = canManage;
+            bool canEditSelectedPermissions = canManage && !selectedSystemAdministrator;
 
             btnAdd.Enabled = canManage;
             btnUpdate.Enabled = canManage;
-            btnDelete.Enabled = canManage;
-            cmbRole.Enabled = canManage;
-            checkedListPermissions.Enabled = canManage;
-            btnSelectAllPermissions.Enabled = canManage;
-            btnClearPermissions.Enabled = canManage;
-            btnApplyRolePreset.Enabled = canManage;
-            btnSavePermissions.Enabled = canManage;
+            btnDelete.Enabled = canManage && !selectedSystemAdministrator;
+            cmbRole.Enabled = canEditSelectedPermissions;
+            chkIsActive.Enabled = canEditSelectedPermissions;
+            checkedListPermissions.Enabled = canEditSelectedPermissions;
+            btnSelectAllPermissions.Enabled = canEditSelectedPermissions;
+            btnClearPermissions.Enabled = canEditSelectedPermissions;
+            btnApplyRolePreset.Enabled = canEditSelectedPermissions;
+            btnSavePermissions.Enabled = canEditSelectedPermissions;
             btnReloadPermissions.Enabled = canManage;
             btnCloseForm.Enabled = true;
+
+            if (selectedSystemAdministrator && lblPermissionHeader != null)
+                lblPermissionHeader.Text = "صلاحيات المستخدم — مدير النظام (محمي — وصول كامل ثابت)";
 
             if (groupBoxPermissions != null)
                 groupBoxPermissions.Enabled = canView;
@@ -983,11 +998,16 @@ namespace SchoolSystem.UI
             txtConfirmPassword.Clear();
 
             string permissions = ReadRowText(row, "Permissions");
+            selectedSystemAdministrator = PermissionKeys.IsSystemAdministratorRole(roleName);
+            if (selectedSystemAdministrator)
+                permissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
+
             SetPermissionsFromString(permissions);
             permissionsUserModified = false;
 
             UpdatePermissionHeader(txtUserName.Text.Trim(), roleName);
             UpdateRoleScreensLabel(roleName);
+            ApplyPermissionUiState();
         }
 
         private string ReadRowText(DataRow row, string columnName)
@@ -1068,6 +1088,7 @@ namespace SchoolSystem.UI
         private void ClearInputs()
         {
             selectedUserId = 0;
+            selectedSystemAdministrator = false;
 
             txtFullName.Clear();
             txtUserName.Clear();
@@ -1097,6 +1118,7 @@ namespace SchoolSystem.UI
             UpdateRoleScreensLabel(cmbRole.SelectedItem != null ? cmbRole.SelectedItem.ToString() : "");
 
             permissionsUserModified = false;
+            ApplyPermissionUiState();
             txtFullName.Focus();
         }
 

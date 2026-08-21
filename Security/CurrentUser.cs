@@ -92,6 +92,11 @@ namespace SchoolSystem.Security
             if (User == null || !User.IsActive || string.IsNullOrWhiteSpace(permissionKey))
                 return false;
 
+            // مدير النظام سياسة وصول ثابتة: أي فحص لصلاحية مباشرة ينجح
+            // حتى لو كان المفتاح غير موجود في نسخة قاعدة البيانات الحالية.
+            if (IsAdmin())
+                return true;
+
             string normalizedKey = PermissionKeys.NormalizePermissionKey(permissionKey);
             if (string.IsNullOrWhiteSpace(normalizedKey))
                 return false;

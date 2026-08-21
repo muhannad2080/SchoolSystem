@@ -90,17 +90,25 @@ namespace SchoolSystem.Services
 
             NormalizeUser(user);
 
+            bool existingIsSystemAdministrator = PermissionKeys.IsSystemAdministratorRole(existingUser.RoleName);
+            if (existingIsSystemAdministrator)
+            {
+                // حساب مدير النظام محمي: لا يمكن تغيير دوره أو تعطيله أو خفض صلاحياته.
+                user.RoleName = existingUser.RoleName;
+                user.IsActive = true;
+                user.Permissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
+                user.MustChangePassword = false;
+            }
+
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName) &&
                 !PermissionKeys.IsSystemAdministratorRole(existingUser.RoleName) && !CurrentUser.IsAdmin())
                 throw new UnauthorizedAccessException("لا يمكن إلا لمدير النظام رفع حساب إلى مدير نظام.");
 
             ValidateUser(user, true);
 
-            bool removingAdministrator = PermissionKeys.IsSystemAdministratorRole(existingUser.RoleName) &&
-                (!PermissionKeys.IsSystemAdministratorRole(user.RoleName) || !user.IsActive);
-
-            if (removingAdministrator && userRepository.CountAdmins() <= 1)
-                throw new Exception("لا يمكن تعطيل أو إزالة آخر مدير نظام.");
+            if (existingIsSystemAdministrator &&
+                (!PermissionKeys.IsSystemAdministratorRole(user.RoleName) || !user.IsActive))
+                throw new UnauthorizedAccessException("حساب مدير النظام محمي ولا يمكن خفض دوره أو تعطيله من الواجهة.");
 
             if (CurrentUser.IsLoggedIn && CurrentUser.User.UserID == user.UserID)
             {
@@ -123,6 +131,7 @@ namespace SchoolSystem.Services
             {
                 user.Permissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
                 user.MustChangePassword = false;
+                user.IsActive = true;
             }
 
             if (updatePassword)
@@ -179,8 +188,8 @@ namespace SchoolSystem.Services
             if (CurrentUser.IsLoggedIn && CurrentUser.User.UserID == userId)
                 throw new Exception("لا يمكن حذف المستخدم المسجل دخوله حاليًا.");
 
-            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName) && userRepository.CountAdmins() <= 1)
-                throw new Exception("لا يمكن حذف آخر مدير نظام.");
+            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+                throw new UnauthorizedAccessException("حساب مدير النظام محمي ولا يمكن حذفه من الواجهة. للحذف الاستثنائي استخدم إجراءً مباشراً ومصرحاً به في قاعدة البيانات.");
 
             int protectedUserId = CurrentUser.IsLoggedIn ? CurrentUser.User.UserID : 0;
             bool deleted = userRepository.DeleteUser(userId, protectedUserId);
@@ -460,6 +469,14 @@ namespace SchoolSystem.Services
             User user = userRepository.GetUserById(userId);
             if (user == null)
                 throw new Exception("المستخدم غير موجود.");
+
+            if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
+            {
+                string fixedPermissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
+                userRepository.ReplaceUserPermissions(userId, PermissionKeys.ScreenPermissions);
+                userRepository.UpdatePermissions(userId, fixedPermissions);
+                return fixedPermissions;
+            }
 
             userRepository.ReplaceUserPermissions(userId, screenKeys);
 
