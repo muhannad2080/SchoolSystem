@@ -161,7 +161,7 @@ namespace SchoolSystem.UI
         {
             try
             {
-                AuthorizationService.RequireAny("ليس لديك صلاحية اعتماد الترحيل.", PermissionKeys.AnnualClosingManage);
+                AuthorizationService.RequireAny("ليس لديك صلاحية اعتماد الترحيل.", PermissionKeys.AnnualClosingApprove, PermissionKeys.AnnualClosingManage);
                 if (grid.CurrentRow == null || !grid.Columns.Contains("MigrationID"))
                     throw new InvalidOperationException("اعرض تقرير الترحيل وحدد سجلاً مخططاً أولاً.");
                 int migrationId;

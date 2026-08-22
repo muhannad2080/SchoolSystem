@@ -57,6 +57,7 @@ namespace SchoolSystem.Security
         public const string SettingsEdit = "Settings.Edit";
         public const string AnnualClosingView = "AnnualClosing.View";
         public const string AnnualClosingManage = "AnnualClosing.Manage";
+        public const string AnnualClosingApprove = "AnnualClosing.Approve";
 
         public const string SystemAdministratorRole = "مدير النظام";
 
@@ -166,7 +167,7 @@ namespace SchoolSystem.Security
                 DashboardView, StudentsView, StudentsManage, EnrollmentManage, ClassAssignmentView,
                 ClassAssignmentManage, TeachersManage, StaffAttendanceManage, PayrollManage, SubjectsManage, ClassesManage,
                 TimetableManage, AttendanceManage, GradesManage, FeesManage, VouchersManage,
-                ExpensesManage, LibraryManage, TransportManage, ReportsView, UsersManage, AnnualClosingView, AnnualClosingManage,
+                ExpensesManage, LibraryManage, TransportManage, ReportsView, UsersManage, AnnualClosingView, AnnualClosingManage, AnnualClosingApprove,
                 AuditLogsView, SettingsManage, UsersView, UsersAdd, UsersEdit, UsersDelete,
                 UsersManageRoles, RolesView, RolesAdd, RolesEdit, RolesDelete, RolesManage,
                 PermissionsManage, AuditLogsExportExcel, AuditLogsExportPDF, AuditLogsPrint,
@@ -250,6 +251,7 @@ namespace SchoolSystem.Security
                 case AuditLogsView: return "عرض سجل التدقيق";
                 case SettingsManage: return "إدارة الإعدادات";
                 case AnnualClosingManage: return "إدارة الإغلاق السنوي والترحيل";
+                case AnnualClosingApprove: return "اعتماد وتنفيذ ترحيل الطلاب";
                 case AnnualClosingView: return "عرض الإغلاق السنوي والترحيل";
                 case UsersManageRoles: return "إدارة أدوار المستخدمين";
                 case RolesManage: return "إدارة الأدوار (شاملة)";
