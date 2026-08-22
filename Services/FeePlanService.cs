@@ -110,12 +110,21 @@ namespace SchoolSystem.Services
             if (!string.IsNullOrWhiteSpace(plan.Notes) && plan.Notes.Trim().Length > 500)
                 throw new Exception("ملاحظات الخطة لا يمكن أن تتجاوز 500 حرف.");
 
-            string year = plan.AcademicYear.Trim().Replace('-', '/');
+            string year = plan.AcademicYear.Trim()
+                .Replace('-', '/')
+                .Replace('–', '/');
             string[] parts = year.Split('/');
             int firstYear;
             int secondYear;
-            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4 ||
-                !int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear) ||
+            if (parts.Length != 2)
+            {
+                throw new Exception("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
+            }
+
+            string firstYearText = parts[0].Trim();
+            string secondYearText = parts[1].Trim();
+            if (firstYearText.Length != 4 || secondYearText.Length != 4 ||
+                !int.TryParse(firstYearText, out firstYear) || !int.TryParse(secondYearText, out secondYear) ||
                 secondYear != firstYear + 1)
             {
                 throw new Exception("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027.");
