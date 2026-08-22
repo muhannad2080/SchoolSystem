@@ -193,7 +193,8 @@ BEGIN
     FROM dbo.StudentClasses sc
     INNER JOIN dbo.Students s ON s.StudentID=sc.StudentID
     WHERE REPLACE(ISNULL(sc.AcademicYear,N''),N'-',N'/')=@FromAcademicYear
-      AND ISNULL(s.IsActive,1)=1
+      /* يعتمد الترحيل على وجود توزيع للطالب في العام المغلق؛
+         لا نستخدم Students.IsActive لأنه غير موجود في المخطط الفعلي. */
       AND NOT EXISTS (SELECT 1 FROM dbo.AnnualMigrationLog ml WHERE ml.StudentID=sc.StudentID AND ml.FromAcademicYear=@FromAcademicYear AND ml.ToAcademicYear=@ToAcademicYear);
 
     SELECT MigrationID,StudentID,FromAcademicYear,ToAcademicYear,FromClassID,FromSection,MigrationStatus FROM dbo.AnnualMigrationLog WHERE FromAcademicYear=@FromAcademicYear AND ToAcademicYear=@ToAcademicYear ORDER BY MigrationID;
