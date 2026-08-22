@@ -251,5 +251,60 @@ BEGIN
 END;
 GO
 
-PRINT N'تم تجهيز بنية الإغلاق السنوي وإجراءات الفحص والإغلاق وتخطيط الترحيل وتقرير الترحيل.';
+IF OBJECT_ID(N'dbo.ApproveStudentYearMigration', N'P') IS NOT NULL
+    DROP PROCEDURE dbo.ApproveStudentYearMigration;
+GO
+CREATE PROCEDURE dbo.ApproveStudentYearMigration
+    @MigrationID INT,
+    @ToClassID INT,
+    @ToSection NVARCHAR(50),
+    @ApprovedByUserID INT = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+    SET @ToSection = LTRIM(RTRIM(ISNULL(@ToSection, N'')));
+    IF @MigrationID IS NULL OR @ToClassID IS NULL OR NULLIF(@ToSection, N'') IS NULL
+        THROW 51030, N'يجب تحديد سجل الترحيل والصف والشعبة الجديدة.', 1;
+
+    BEGIN TRANSACTION;
+    DECLARE @StudentID INT, @FromYear NVARCHAR(20), @ToYear NVARCHAR(20), @FromClassID INT, @FromSection NVARCHAR(50), @Status NVARCHAR(20);
+    SELECT @StudentID=StudentID, @FromYear=FromAcademicYear, @ToYear=ToAcademicYear,
+           @FromClassID=FromClassID, @FromSection=FromSection, @Status=MigrationStatus
+    FROM dbo.AnnualMigrationLog WITH (UPDLOCK, HOLDLOCK)
+    WHERE MigrationID=@MigrationID;
+    IF @StudentID IS NULL THROW 51031, N'سجل الترحيل غير موجود.', 1;
+    IF @Status <> N'مخطط' THROW 51032, N'لا يمكن اعتماد سجل غير مخطط أو سبق تنفيذه.', 1;
+    IF EXISTS (SELECT 1 FROM dbo.AnnualClosings WHERE AcademicYear=@ToYear AND ClosingStatus IN (N'مغلق',N'مؤرشف'))
+        THROW 51033, N'لا يمكن الترحيل إلى عام مغلق أو مؤرشف.', 1;
+    IF NOT EXISTS (SELECT 1 FROM dbo.Classes WHERE ClassID=@ToClassID)
+        THROW 51034, N'الصف الجديد غير موجود.', 1;
+    IF NOT EXISTS
+    (
+        SELECT 1 FROM dbo.Enrollments e
+        WHERE e.StudentID=@StudentID AND REPLACE(ISNULL(e.AcademicYear,N''),N'-',N'/')=REPLACE(@ToYear,N'-',N'/')
+          AND LTRIM(RTRIM(ISNULL(e.Status,N''))) IN (N'مقبول',N'Accepted')
+    )
+        THROW 51035, N'لا يمكن اعتماد الترحيل قبل قبول تسجيل الطالب في العام الجديد.', 1;
+    IF OBJECT_ID(N'dbo.SchoolSections',N'U') IS NOT NULL
+       AND NOT EXISTS (SELECT 1 FROM dbo.SchoolSections WHERE ClassID=@ToClassID AND SectionName=@ToSection AND AcademicYear=@ToYear AND ISNULL(IsActive,1)=1)
+        THROW 51036, N'الشعبة الجديدة غير موجودة أو غير فعالة في العام الجديد.', 1;
+    IF EXISTS (SELECT 1 FROM dbo.StudentClasses WHERE StudentID=@StudentID AND REPLACE(ISNULL(AcademicYear,N''),N'-',N'/')=REPLACE(@ToYear,N'-',N'/'))
+        THROW 51037, N'للطالب توزيع مسجل مسبقاً في العام الجديد.', 1;
+    IF OBJECT_ID(N'dbo.SchoolSections',N'U') IS NOT NULL
+       AND EXISTS (SELECT 1 FROM dbo.SchoolSections ss WHERE ss.ClassID=@ToClassID AND ss.SectionName=@ToSection AND ss.AcademicYear=@ToYear AND ss.Capacity IS NOT NULL
+           AND (SELECT COUNT(*) FROM dbo.StudentClasses sc WHERE sc.ClassID=@ToClassID AND sc.Section=@ToSection AND REPLACE(ISNULL(sc.AcademicYear,N''),N'-',N'/')=REPLACE(@ToYear,N'-',N'/')) >= ss.Capacity)
+        THROW 51038, N'لا توجد مقاعد شاغرة في الشعبة الجديدة.', 1;
+
+    INSERT dbo.StudentClasses(StudentID,ClassID,Section,AcademicYear,AssignedDate,AssignedBy)
+    VALUES(@StudentID,@ToClassID,@ToSection,@ToYear,GETDATE(),@ApprovedByUserID);
+    UPDATE dbo.AnnualMigrationLog
+       SET ToClassID=@ToClassID, ToSection=@ToSection, MigrationStatus=N'منفذ', CreatedByUserID=COALESCE(@ApprovedByUserID,CreatedByUserID), Notes=COALESCE(Notes,N'') + CASE WHEN LEN(ISNULL(Notes,N''))>0 THEN N' ' ELSE N'' END + N'تم الاعتماد والتنفيذ.'
+     WHERE MigrationID=@MigrationID;
+    COMMIT TRANSACTION;
+    SELECT @MigrationID AS MigrationID, @StudentID AS StudentID, @ToYear AS AcademicYear, N'منفذ' AS MigrationStatus;
+END;
+GO
+
+PRINT N'تم تجهيز بنية الإغلاق السنوي وإجراءات الفحص والإغلاق وتخطيط الترحيل وتقرير الترحيل واعتماد الترحيل.';
 GO

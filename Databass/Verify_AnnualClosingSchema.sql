@@ -34,6 +34,8 @@ INSERT @Checks
 SELECT N'VerifyAnnualClosing', CASE WHEN OBJECT_ID(N'dbo.VerifyAnnualClosing',N'P') IS NULL THEN N'FAIL' ELSE N'PASS' END, N'إجراء فحص الإغلاق.';
 INSERT @Checks
 SELECT N'CloseAcademicYear', CASE WHEN OBJECT_ID(N'dbo.CloseAcademicYear',N'P') IS NULL THEN N'FAIL' ELSE N'PASS' END, N'إجراء الإغلاق.';
+INSERT @Checks
+SELECT N'ApproveStudentYearMigration', CASE WHEN OBJECT_ID(N'dbo.ApproveStudentYearMigration',N'P') IS NULL THEN N'FAIL' ELSE N'PASS' END, N'إجراء اعتماد وإنشاء توزيع العام الجديد.';
 
 SELECT CheckName, Result, Details FROM @Checks ORDER BY CASE Result WHEN N'FAIL' THEN 1 ELSE 2 END, CheckName;
 SELECT COUNT(*) AS CriticalIssueCount FROM @Checks WHERE Result=N'FAIL';

@@ -132,6 +132,24 @@ namespace SchoolSystem.Services
             }
         }
 
+        public void ApproveMigration(int migrationId, int toClassId, string toSection, int? userId)
+        {
+            if (migrationId <= 0 || toClassId <= 0 || string.IsNullOrWhiteSpace(toSection))
+                throw new ArgumentException("يجب تحديد سجل الترحيل والصف والشعبة الجديدة.");
+            using (SqlConnection connection = DbConnection.GetConnection())
+            using (SqlCommand command = new SqlCommand("dbo.ApproveStudentYearMigration", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add("@MigrationID", SqlDbType.Int).Value = migrationId;
+                command.Parameters.Add("@ToClassID", SqlDbType.Int).Value = toClassId;
+                command.Parameters.Add("@ToSection", SqlDbType.NVarChar, 50).Value = toSection.Trim();
+                command.Parameters.Add("@ApprovedByUserID", SqlDbType.Int).Value = (object)userId ?? DBNull.Value;
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+            new AuditLogService().Record("AnnualClosing", "اعتماد وتنفيذ ترحيل طالب", "AnnualMigrationLog", migrationId.ToString(), "الصف: " + toClassId + "، الشعبة: " + toSection.Trim());
+        }
+
         public void CloseWithRequiredBackup(string academicYear, string nextAcademicYear, int? userId, string notes)
         {
             string file = CreatePreClosingBackup(academicYear, userId);

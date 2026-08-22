@@ -18,6 +18,9 @@ namespace SchoolSystem.UI
         private Button btnClose;
         private Button btnPlan;
         private Button btnMigrationReport;
+        private Button btnApproveMigration;
+        private TextBox txtTargetClassId;
+        private TextBox txtTargetSection;
         private Label lblStatus;
 
         public AnnualClosingForm()
@@ -40,7 +43,7 @@ namespace SchoolSystem.UI
                 Dock = DockStyle.Fill,
                 Padding = new Padding(16),
                 ColumnCount = 2,
-                RowCount = 6,
+                RowCount = 7,
                 BackColor = Color.White
             };
             root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150));
@@ -49,6 +52,7 @@ namespace SchoolSystem.UI
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 42));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 70));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 52));
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 42));
             root.RowStyles.Add(new RowStyle(SizeType.Absolute, 42));
             root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
@@ -64,19 +68,27 @@ namespace SchoolSystem.UI
             txtNotes = new TextBox { Dock = DockStyle.Fill, MaxLength = 1000, Multiline = true, ScrollBars = ScrollBars.Vertical };
             nextPanel.Controls.Add(txtNextYear, 0, 0); nextPanel.Controls.Add(txtNotes, 1, 0);
             root.Controls.Add(nextPanel, 1, 2);
+            root.Controls.Add(new Label { Text = "الصف والشعبة الجديدة للاعتماد", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleRight }, 0, 3);
+            TableLayoutPanel targetPanel = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2 };
+            targetPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45)); targetPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55));
+            txtTargetClassId = new TextBox { Dock = DockStyle.Fill, MaxLength = 10 };
+            txtTargetSection = new TextBox { Dock = DockStyle.Fill, MaxLength = 50 };
+            targetPanel.Controls.Add(txtTargetClassId, 0, 0); targetPanel.Controls.Add(txtTargetSection, 1, 0);
+            root.Controls.Add(targetPanel, 1, 3);
 
             FlowLayoutPanel actions = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, WrapContents = false };
             btnVerify = CreateButton("فحص المطابقة", Color.FromArgb(31, 119, 180)); btnVerify.Click += VerifyClick;
             btnClose = CreateButton("إغلاق العام", Color.FromArgb(192, 80, 77)); btnClose.Click += CloseClick;
             btnPlan = CreateButton("تخطيط الترحيل", Color.FromArgb(112, 173, 71)); btnPlan.Click += PlanClick;
             btnMigrationReport = CreateButton("تقرير الترحيل", Color.FromArgb(91, 155, 213)); btnMigrationReport.Click += MigrationReportClick;
-            actions.Controls.Add(btnClose); actions.Controls.Add(btnMigrationReport); actions.Controls.Add(btnPlan); actions.Controls.Add(btnVerify);
-            root.Controls.Add(actions, 0, 3); root.SetColumnSpan(actions, 2);
+            btnApproveMigration = CreateButton("اعتماد المحدد", Color.FromArgb(237, 125, 49)); btnApproveMigration.Click += ApproveMigrationClick;
+            actions.Controls.Add(btnClose); actions.Controls.Add(btnApproveMigration); actions.Controls.Add(btnMigrationReport); actions.Controls.Add(btnPlan); actions.Controls.Add(btnVerify);
+            root.Controls.Add(actions, 0, 4); root.SetColumnSpan(actions, 2);
             lblStatus = new Label { Text = "ابدأ بفحص المطابقة قبل الإغلاق.", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleRight, ForeColor = Color.DarkSlateGray };
-            root.Controls.Add(lblStatus, 0, 4); root.SetColumnSpan(lblStatus, 2);
+            root.Controls.Add(lblStatus, 0, 5); root.SetColumnSpan(lblStatus, 2);
 
             grid = new DataGridView { Dock = DockStyle.Fill, ReadOnly = true, AllowUserToAddRows = false, AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill, SelectionMode = DataGridViewSelectionMode.FullRowSelect, RightToLeft = RightToLeft.Yes, BackgroundColor = Color.White };
-            root.Controls.Add(grid, 0, 5); root.SetColumnSpan(grid, 2);
+            root.Controls.Add(grid, 0, 6); root.SetColumnSpan(grid, 2);
             Controls.Add(root);
         }
 
@@ -145,6 +157,28 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "تقرير الترحيل", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
         }
+        private void ApproveMigrationClick(object sender, EventArgs e)
+        {
+            try
+            {
+                AuthorizationService.RequireAny("ليس لديك صلاحية اعتماد الترحيل.", PermissionKeys.AnnualClosingManage);
+                if (grid.CurrentRow == null || !grid.Columns.Contains("MigrationID"))
+                    throw new InvalidOperationException("اعرض تقرير الترحيل وحدد سجلاً مخططاً أولاً.");
+                int migrationId;
+                if (!int.TryParse(Convert.ToString(grid.CurrentRow.Cells["MigrationID"].Value), out migrationId) || migrationId <= 0)
+                    throw new InvalidOperationException("السجل المحدد لا يحتوي على رقم ترحيل صالح.");
+                int classId;
+                if (!int.TryParse(txtTargetClassId.Text.Trim(), out classId) || classId <= 0 || string.IsNullOrWhiteSpace(txtTargetSection.Text))
+                    throw new InvalidOperationException("أدخل رقم الصف الجديد واسم الشعبة الجديدة.");
+                if (MessageBox.Show("سيتم إنشاء توزيع الطالب في العام الجديد وتسجيل العملية. هل تريد المتابعة؟", "تأكيد اعتماد الترحيل", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+                service.ApproveMigration(migrationId, classId, txtTargetSection.Text, null);
+                lblStatus.Text = "تم اعتماد ترحيل الطالب وإنشاء توزيعه في العام الجديد بنجاح.";
+                lblStatus.ForeColor = Color.DarkGreen;
+                grid.DataSource = service.GetMigrationReport(SelectedYear(), txtNextYear.Text);
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "تعذر اعتماد الترحيل", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+        }
+
         private void CloseClick(object sender, EventArgs e)
         {
             try

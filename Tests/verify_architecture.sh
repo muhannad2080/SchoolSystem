@@ -38,10 +38,21 @@ done
 [ "$service_checks" -ge 3 ] || fail "Expected permission checks in at least three services, found $service_checks"
 pass 'Service-layer permission checks'
 
-xbuild SchoolSystem.sln /verbosity:minimal >/tmp/schoolsystem-smoke-build.log 2>&1 || {
-  cat /tmp/schoolsystem-smoke-build.log >&2
-  fail 'xbuild failed'
-}
-pass 'Clean xbuild compilation'
+build_tool=''
+if command -v msbuild >/dev/null 2>&1; then
+  build_tool='msbuild'
+elif command -v xbuild >/dev/null 2>&1; then
+  build_tool='xbuild'
+fi
 
-echo 'All architecture smoke checks passed.'
+if [ -n "$build_tool" ]; then
+  "$build_tool" SchoolSystem.sln /verbosity:minimal >/tmp/schoolsystem-smoke-build.log 2>&1 || {
+    cat /tmp/schoolsystem-smoke-build.log >&2
+    fail "$build_tool compilation failed"
+  }
+  pass "Clean $build_tool compilation"
+else
+  echo 'SKIP: .NET Framework build tool (MSBuild/xbuild) is unavailable; run this check on Windows.'
+fi
+
+echo 'All available architecture smoke checks passed.'
