@@ -85,6 +85,70 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.Fees'
         ON dbo.Fees(StudentID, AcademicYearKey, FeePlanID)
         WHERE FeePlanID IS NOT NULL AND AcademicYearKey <> N'';
 
+/* Prevent duplicate student attendance on the same calendar day. */
+IF OBJECT_ID(N'dbo.StudentAttendance', N'U') IS NOT NULL
+   AND COL_LENGTH(N'dbo.StudentAttendance', N'StudentID') IS NOT NULL
+   AND COL_LENGTH(N'dbo.StudentAttendance', N'AttendanceDate') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.StudentAttendance', N'AttendanceDay') IS NULL
+        ALTER TABLE dbo.StudentAttendance ADD AttendanceDay AS (CONVERT(date, AttendanceDate)) PERSISTED;
+
+    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.StudentAttendance') AND name = N'UX_StudentAttendance_StudentDay_Hardened')
+       AND NOT EXISTS
+       (
+           SELECT StudentID, AttendanceDay
+           FROM dbo.StudentAttendance
+           GROUP BY StudentID, AttendanceDay
+           HAVING COUNT(*) > 1
+       )
+        CREATE UNIQUE INDEX UX_StudentAttendance_StudentDay_Hardened
+            ON dbo.StudentAttendance(StudentID, AttendanceDay);
+END;
+
+/* Prevent duplicate teacher attendance on the same calendar day. */
+IF OBJECT_ID(N'dbo.TeacherAttendance', N'U') IS NOT NULL
+   AND COL_LENGTH(N'dbo.TeacherAttendance', N'TeacherID') IS NOT NULL
+   AND COL_LENGTH(N'dbo.TeacherAttendance', N'AttendanceDate') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.TeacherAttendance', N'AttendanceDay') IS NULL
+        ALTER TABLE dbo.TeacherAttendance ADD AttendanceDay AS (CONVERT(date, AttendanceDate)) PERSISTED;
+
+    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.TeacherAttendance') AND name = N'UX_TeacherAttendance_TeacherDay_Hardened')
+       AND NOT EXISTS
+       (
+           SELECT TeacherID, AttendanceDay
+           FROM dbo.TeacherAttendance
+           GROUP BY TeacherID, AttendanceDay
+           HAVING COUNT(*) > 1
+       )
+        CREATE UNIQUE INDEX UX_TeacherAttendance_TeacherDay_Hardened
+            ON dbo.TeacherAttendance(TeacherID, AttendanceDay);
+END;
+
+/* Prevent duplicate grade records for one student, subject, year and term. */
+IF OBJECT_ID(N'dbo.Grades', N'U') IS NOT NULL
+   AND COL_LENGTH(N'dbo.Grades', N'StudentID') IS NOT NULL
+   AND COL_LENGTH(N'dbo.Grades', N'SubjectID') IS NOT NULL
+   AND COL_LENGTH(N'dbo.Grades', N'AcademicYear') IS NOT NULL
+   AND COL_LENGTH(N'dbo.Grades', N'TermName') IS NOT NULL
+BEGIN
+    IF COL_LENGTH(N'dbo.Grades', N'AcademicYearKey') IS NULL
+        ALTER TABLE dbo.Grades ADD AcademicYearKey AS (REPLACE(LTRIM(RTRIM(ISNULL(AcademicYear, N''))), N'-', N'/')) PERSISTED;
+
+    IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.Grades') AND name = N'UX_Grades_StudentSubjectYearTerm')
+       AND NOT EXISTS
+       (
+           SELECT StudentID, SubjectID, AcademicYearKey, TermName
+           FROM dbo.Grades
+           WHERE StudentID IS NOT NULL AND SubjectID IS NOT NULL AND AcademicYearKey <> N'' AND NULLIF(LTRIM(RTRIM(TermName)), N'') IS NOT NULL
+           GROUP BY StudentID, SubjectID, AcademicYearKey, TermName
+           HAVING COUNT(*) > 1
+       )
+        CREATE UNIQUE INDEX UX_Grades_StudentSubjectYearTerm
+            ON dbo.Grades(StudentID, SubjectID, AcademicYearKey, TermName)
+            WHERE StudentID IS NOT NULL AND SubjectID IS NOT NULL AND AcademicYearKey <> N'' AND NULLIF(LTRIM(RTRIM(TermName)), N'') IS NOT NULL;
+END;
+
 /* Prevent two active assignments for the same student and year. */
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.StudentClasses') AND name = N'UX_StudentClasses_StudentYear')
    AND NOT EXISTS
