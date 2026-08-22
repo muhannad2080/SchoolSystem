@@ -46,7 +46,10 @@ namespace SchoolSystem.Services
                     payroll.SalaryYear,
                     "تم إنشاء سند صرف الراتب تلقائياً.");
                 if (!voucherCreated)
-                    throw new InvalidOperationException("تم حفظ الراتب، لكن تعذر إنشاء سند الصرف التلقائي.");
+                {
+                    repository.DeletePayrollAfterVoucherFailure(payrollId);
+                    throw new InvalidOperationException("تعذر إنشاء سند صرف الراتب، وتم التراجع عن حفظ الراتب.");
+                }
             }
 
             auditLogService.Record("إنشاء", "Payroll", payrollId.ToString(),
@@ -74,7 +77,10 @@ namespace SchoolSystem.Services
                     payroll.SalaryYear,
                     "تم إنشاء أو تثبيت سند صرف الراتب تلقائياً.");
                 if (!voucherCreated)
-                    throw new InvalidOperationException("تم تعديل الراتب، لكن تعذر إنشاء سند الصرف التلقائي.");
+                {
+                    repository.ResetPaymentDateAfterVoucherFailure(payroll.PayrollID);
+                    throw new InvalidOperationException("تعذر تثبيت سند صرف الراتب، وتم إلغاء حالة الصرف.");
+                }
             }
 
             if (updated)
