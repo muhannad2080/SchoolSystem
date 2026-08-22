@@ -19,6 +19,12 @@ DECLARE @Expected TABLE
 );
 INSERT INTO @Expected VALUES
 (N'FK_AuditLogs_Users', N'AuditLogs', N'UserID', N'Users', N'UserID'),
+(N'FK_Enrollments_Students_Complete', N'Enrollments', N'StudentID', N'Students', N'StudentID'),
+(N'FK_Enrollments_Classes_Complete', N'Enrollments', N'ClassID', N'Classes', N'ClassID'),
+(N'FK_Classes_Rooms_Complete', N'Classes', N'RoomID', N'Rooms', N'RoomID'),
+(N'FK_Rooms_CreatedByUser_Complete', N'Rooms', N'CreatedByUserID', N'Users', N'UserID'),
+(N'FK_Expenses_CreatedByUser_Complete', N'Expenses', N'CreatedByUserID', N'Users', N'UserID'),
+(N'FK_Vouchers_CreatedByUser_Complete', N'Vouchers', N'CreatedByUserID', N'Users', N'UserID'),
 (N'FK_FeePlans_Classes', N'FeePlans', N'ClassID', N'Classes', N'ClassID'),
 (N'FK_Fees_Students', N'Fees', N'StudentID', N'Students', N'StudentID'),
 (N'FK_Fees_FeePlans', N'Fees', N'FeePlanID', N'FeePlans', N'FeePlanID'),
@@ -55,7 +61,13 @@ INSERT INTO @Orphans VALUES
 (N'Fees.FeePlanID -> FeePlans', CASE WHEN OBJECT_ID(N'dbo.Fees') IS NULL OR OBJECT_ID(N'dbo.FeePlans') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.Fees f LEFT JOIN dbo.FeePlans p ON p.FeePlanID=f.FeePlanID WHERE f.FeePlanID IS NOT NULL AND p.FeePlanID IS NULL) END),
 (N'Grades.StudentID -> Students', CASE WHEN OBJECT_ID(N'dbo.Grades') IS NULL OR OBJECT_ID(N'dbo.Students') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.Grades g LEFT JOIN dbo.Students s ON s.StudentID=g.StudentID WHERE g.StudentID IS NOT NULL AND s.StudentID IS NULL) END),
 (N'Grades.SubjectID -> Subjects', CASE WHEN OBJECT_ID(N'dbo.Grades') IS NULL OR OBJECT_ID(N'dbo.Subjects') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.Grades g LEFT JOIN dbo.Subjects s ON s.SubjectID=g.SubjectID WHERE g.SubjectID IS NOT NULL AND s.SubjectID IS NULL) END),
-(N'Payroll.TeacherID -> Teachers', CASE WHEN OBJECT_ID(N'dbo.Payroll') IS NULL OR OBJECT_ID(N'dbo.Teachers') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.Payroll p LEFT JOIN dbo.Teachers t ON t.TeacherID=p.TeacherID WHERE t.TeacherID IS NULL) END);
+(N'Payroll.TeacherID -> Teachers', CASE WHEN OBJECT_ID(N'dbo.Payroll') IS NULL OR OBJECT_ID(N'dbo.Teachers') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.Payroll p LEFT JOIN dbo.Teachers t ON t.TeacherID=p.TeacherID WHERE t.TeacherID IS NULL) END),
+(N'Enrollments.StudentID -> Students', CASE WHEN OBJECT_ID(N'dbo.Enrollments') IS NULL OR OBJECT_ID(N'dbo.Students') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.Enrollments e LEFT JOIN dbo.Students s ON s.StudentID=e.StudentID WHERE e.StudentID IS NOT NULL AND s.StudentID IS NULL) END),
+(N'Enrollments.ClassID -> Classes', CASE WHEN OBJECT_ID(N'dbo.Enrollments') IS NULL OR OBJECT_ID(N'dbo.Classes') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.Enrollments e LEFT JOIN dbo.Classes c ON c.ClassID=e.ClassID WHERE e.ClassID IS NOT NULL AND c.ClassID IS NULL) END),
+(N'Classes.RoomID -> Rooms', CASE WHEN OBJECT_ID(N'dbo.Classes') IS NULL OR OBJECT_ID(N'dbo.Rooms') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.Classes c LEFT JOIN dbo.Rooms r ON r.RoomID=c.RoomID WHERE c.RoomID IS NOT NULL AND r.RoomID IS NULL) END),
+(N'AuditLogs.UserID -> Users', CASE WHEN OBJECT_ID(N'dbo.AuditLogs') IS NULL OR OBJECT_ID(N'dbo.Users') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.AuditLogs a LEFT JOIN dbo.Users u ON u.UserID=a.UserID WHERE a.UserID IS NOT NULL AND u.UserID IS NULL) END),
+(N'Expenses.CreatedByUserID -> Users', CASE WHEN OBJECT_ID(N'dbo.Expenses') IS NULL OR OBJECT_ID(N'dbo.Users') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.Expenses e LEFT JOIN dbo.Users u ON u.UserID=e.CreatedByUserID WHERE e.CreatedByUserID IS NOT NULL AND u.UserID IS NULL) END),
+(N'Vouchers.CreatedByUserID -> Users', CASE WHEN OBJECT_ID(N'dbo.Vouchers') IS NULL OR OBJECT_ID(N'dbo.Users') IS NULL THEN -1 ELSE (SELECT COUNT(*) FROM dbo.Vouchers v LEFT JOIN dbo.Users u ON u.UserID=v.CreatedByUserID WHERE v.CreatedByUserID IS NOT NULL AND u.UserID IS NULL) END);
 SELECT RelationName, OrphanRows, CASE WHEN OrphanRows = 0 THEN N'PASS' WHEN OrphanRows = -1 THEN N'NOT_CHECKED_MISSING_TABLE' ELSE N'REVIEW' END AS Status
 FROM @Orphans ORDER BY RelationName;
 
@@ -64,6 +76,6 @@ FROM sys.tables t
 JOIN sys.columns c ON c.object_id=t.object_id
 LEFT JOIN sys.index_columns ic ON ic.object_id=t.object_id AND ic.column_id=c.column_id
 LEFT JOIN sys.indexes i ON i.object_id=ic.object_id AND i.index_id=ic.index_id
-WHERE c.name IN (N'StudentID',N'TeacherID',N'ClassID',N'SubjectID',N'FeePlanID')
+WHERE c.name IN (N'StudentID',N'TeacherID',N'ClassID',N'SubjectID',N'FeePlanID',N'RoomID',N'UserID',N'CreatedByUserID')
 ORDER BY t.name, c.name;
 GO
