@@ -23,7 +23,7 @@ for path in sorted(SERVICES.glob("*.cs")):
         token in text
         for token in (
             "DemandPermission(", "DemandAny(", "HasPermission(",
-            "DemandAction(", "CanAdd(", "CanEdit(", "CanDelete("
+            "DemandAction(", "DemandModule(", "CanAdd(", "CanEdit(", "CanDelete("
         )
     )
     has_audit = "AuditLogService" in text and "auditLogService.Record(" in text

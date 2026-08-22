@@ -482,7 +482,7 @@ namespace SchoolSystem.UI
             // يجب ضبط DropDownStyle وAutoCompleteSource قبل AutoCompleteMode؛
             // لأن WinForms يرفض بعض التركيبات القديمة أثناء تحميل الواجهة.
             cmbPartyName.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbPartyName.AutoCompleteSource = AutoCompleteSource.ListItems;
+            cmbPartyName.AutoCompleteSource = AutoCompleteSource.None;
             cmbPartyName.AutoCompleteMode = AutoCompleteMode.None;
             cmbPartyName.IntegralHeight = false;
         }

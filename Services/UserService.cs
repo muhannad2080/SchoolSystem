@@ -478,6 +478,8 @@ namespace SchoolSystem.Services
                 return fixedPermissions;
             }
 
+            // لا تسمح القائمة الفارغة أو null بتسريب حالة قديمة؛ الحفظ هنا استبدال كامل.
+            screenKeys = screenKeys ?? new List<string>();
             userRepository.ReplaceUserPermissions(userId, screenKeys);
 
             string effective = BuildEffectivePermissions(userId, user.RoleName);
