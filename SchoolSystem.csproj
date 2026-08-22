@@ -159,6 +159,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\AnnualClosingForm.cs" />
     <Compile Include="Models\Book.cs" />
     <Compile Include="Models\Borrowing.cs" />
     <Compile Include="Models\Bus.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="Services\StudentService.cs" />
     <Compile Include="Services\StudentProfileService.cs" />
     <Compile Include="Services\AuditLogService.cs" />
+    <Compile Include="Services\AnnualClosingService.cs" />
     <Compile Include="Services\ApplicationSettingsService.cs" />
 <Compile Include="Services\AuthorizationService.cs" />
     <Compile Include="Services\DatabaseBackupService.cs" />

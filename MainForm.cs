@@ -13,10 +13,12 @@ namespace SchoolSystem
     {
         public static MainForm Instance { get; private set; }
         private readonly AuditLogService auditLogService = new AuditLogService();
+        private ToolStripMenuItem tsmiAnnualClosing;
 
         public MainForm()
         {
             InitializeComponent();
+            ConfigureAnnualClosingMenu();
             FormClosed += MainForm_FormClosed;
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
 
@@ -31,6 +33,19 @@ namespace SchoolSystem
             LoadWelcomeScreen();
 
             ApplyCurrentUserPermissions();
+        }
+
+        private void ConfigureAnnualClosingMenu()
+        {
+            tsmiAnnualClosing = new ToolStripMenuItem("الإغلاق السنوي والترحيل");
+            tsmiAnnualClosing.Name = "tsmiAnnualClosing";
+            tsmiAnnualClosing.Click += tsmiAnnualClosing_Click;
+            tsmiAdmin.DropDownItems.Add(tsmiAnnualClosing);
+        }
+
+        private void tsmiAnnualClosing_Click(object sender, EventArgs e)
+        {
+            LoadFormInPanel("AnnualClosing", "ليس لديك صلاحية عرض الإغلاق السنوي والترحيل.", new AnnualClosingForm(), PermissionKeys.AnnualClosingView, PermissionKeys.AnnualClosingManage);
         }
 
         private void ApplyModernMenuStyle()
@@ -373,7 +388,7 @@ namespace SchoolSystem
                 tsmiAttendanceGrades, tsmiGrades, tsmiAttendance, tsmiFinancial, tsmiFees, tsmiVouchers,
                 tsmiExpenses, تعريفرسومالصفوفToolStripMenuItem, tsmiFinancialPayroll,
                 tsmiServices, tsmiTransport, tsmiLibrary,
-                tsmiAdmin, tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings
+                tsmiAdmin, tsmiUsers, tsmiReports, tsmiAuditLogs, tsmiSettings, tsmiAnnualClosing
             };
 
             foreach (ToolStripMenuItem item in permissionItems)
@@ -424,6 +439,8 @@ namespace SchoolSystem
             tsmiReports.Visible = CanOpen("Reports", PermissionKeys.ReportsView);
             tsmiAuditLogs.Visible = CanOpen("AuditLogs", PermissionKeys.AuditLogsView);
             tsmiSettings.Visible = CanOpen("Settings", PermissionKeys.SettingsView, PermissionKeys.SettingsManage);
+            if (tsmiAnnualClosing != null)
+                tsmiAnnualClosing.Visible = CanOpen("AnnualClosing", PermissionKeys.AnnualClosingView, PermissionKeys.AnnualClosingManage);
 
             // إخفاء مجموعات القوائم التي لا تحتوي على أي خيار مسموح للمستخدم.
             // ملاحظة: لا نقرأ child.Visible لأن عنصر قائمة منسدلة يقرأ Visible=false
@@ -435,7 +452,7 @@ namespace SchoolSystem
             tsmiAttendanceGrades.Visible = CanOpen("Grades") || CanOpen("Attendance");
             tsmiFinancial.Visible = CanOpen("Fees") || CanOpen("FeePlans") || CanOpen("Vouchers") || CanOpen("Expenses") || CanOpen("Payroll");
             tsmiServices.Visible = CanOpen("Transport") || CanOpen("Library");
-            tsmiAdmin.Visible = CanOpen("Users") || CanOpen("AuditLogs") || CanOpen("Settings");
+            tsmiAdmin.Visible = CanOpen("Users") || CanOpen("AuditLogs") || CanOpen("Settings") || CanOpen("AnnualClosing");
         }
 
         private bool IsDesignTime()
