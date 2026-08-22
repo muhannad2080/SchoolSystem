@@ -14,6 +14,25 @@ IF OBJECT_ID(N'dbo.StudentClasses', N'U') IS NULL
 
 BEGIN TRANSACTION;
 
+IF OBJECT_ID(N'dbo.SchoolSections', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.SchoolSections
+    (
+        SectionID INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_SchoolSections_Ensure PRIMARY KEY,
+        ClassID INT NOT NULL,
+        SectionName NVARCHAR(50) NOT NULL,
+        AcademicYear NVARCHAR(20) NOT NULL,
+        IsActive BIT NOT NULL CONSTRAINT DF_SchoolSections_Ensure_IsActive DEFAULT (1),
+        Capacity INT NULL,
+        AllowedGender NVARCHAR(20) NULL,
+        CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_SchoolSections_Ensure_CreatedAt DEFAULT (SYSDATETIME()),
+        CONSTRAINT FK_SchoolSections_Ensure_Classes FOREIGN KEY (ClassID) REFERENCES dbo.Classes(ClassID),
+        CONSTRAINT CK_SchoolSections_Ensure_Name CHECK (NULLIF(LTRIM(RTRIM(SectionName)), N'') IS NOT NULL),
+        CONSTRAINT CK_SchoolSections_Ensure_Year CHECK (NULLIF(LTRIM(RTRIM(AcademicYear)), N'') IS NOT NULL),
+        CONSTRAINT CK_SchoolSections_Ensure_Capacity CHECK (Capacity IS NULL OR Capacity > 0)
+    );
+END;
+
 IF COL_LENGTH(N'dbo.StudentClasses', N'Section') IS NULL
     ALTER TABLE dbo.StudentClasses ADD Section NVARCHAR(50) NULL;
 IF COL_LENGTH(N'dbo.StudentClasses', N'AcademicYear') IS NULL
