@@ -298,6 +298,12 @@ BEGIN
 
     INSERT dbo.StudentClasses(StudentID,ClassID,Section,AcademicYear,AssignedDate,AssignedBy)
     VALUES(@StudentID,@ToClassID,@ToSection,@ToYear,GETDATE(),@ApprovedByUserID);
+
+    /* حافظ على مرآة الطالب التي تعتمد عليها الشاشات القديمة، مع بقاء StudentClasses هو المصدر التاريخي لكل عام. */
+    UPDATE dbo.Students
+       SET ClassID=@ToClassID, Section=@ToSection, AcademicYear=@ToYear
+     WHERE StudentID=@StudentID;
+
     UPDATE dbo.AnnualMigrationLog
        SET ToClassID=@ToClassID, ToSection=@ToSection, MigrationStatus=N'منفذ', CreatedByUserID=COALESCE(@ApprovedByUserID,CreatedByUserID), Notes=COALESCE(Notes,N'') + CASE WHEN LEN(ISNULL(Notes,N''))>0 THEN N' ' ELSE N'' END + N'تم الاعتماد والتنفيذ.'
      WHERE MigrationID=@MigrationID;
