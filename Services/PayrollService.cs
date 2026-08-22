@@ -9,6 +9,7 @@ namespace SchoolSystem.Services
     public class PayrollService
     {
         private readonly PayrollRepository repository = new PayrollRepository();
+        private readonly VoucherService voucherService = new VoucherService();
         private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetAllPayrolls()
@@ -32,6 +33,22 @@ namespace SchoolSystem.Services
 
             int payrollId = repository.AddPayroll(payroll);
             payroll.PayrollID = payrollId;
+
+            if (payroll.PaymentDate.HasValue)
+            {
+                bool voucherCreated = voucherService.CreatePaymentVoucherForPayroll(
+                    payroll.NetSalary,
+                    payroll.PaymentDate.Value,
+                    "المعلم رقم " + payroll.TeacherID,
+                    payrollId,
+                    "نقدي",
+                    payroll.SalaryMonth,
+                    payroll.SalaryYear,
+                    "تم إنشاء سند صرف الراتب تلقائياً.");
+                if (!voucherCreated)
+                    throw new InvalidOperationException("تم حفظ الراتب، لكن تعذر إنشاء سند الصرف التلقائي.");
+            }
+
             auditLogService.Record("إنشاء", "Payroll", payrollId.ToString(),
                 "إنشاء سجل راتب للمعلم رقم " + payroll.TeacherID + " عن " + payroll.SalaryMonth + "/" + payroll.SalaryYear);
             return payrollId;
@@ -45,6 +62,21 @@ namespace SchoolSystem.Services
                 throw new Exception("تم صرف راتب هذا المعلم لهذا الشهر مسبقاً.");
             
             bool updated = repository.UpdatePayroll(payroll);
+            if (updated && payroll.PaymentDate.HasValue)
+            {
+                bool voucherCreated = voucherService.CreatePaymentVoucherForPayroll(
+                    payroll.NetSalary,
+                    payroll.PaymentDate.Value,
+                    "المعلم رقم " + payroll.TeacherID,
+                    payroll.PayrollID,
+                    "نقدي",
+                    payroll.SalaryMonth,
+                    payroll.SalaryYear,
+                    "تم إنشاء أو تثبيت سند صرف الراتب تلقائياً.");
+                if (!voucherCreated)
+                    throw new InvalidOperationException("تم تعديل الراتب، لكن تعذر إنشاء سند الصرف التلقائي.");
+            }
+
             if (updated)
             {
                 auditLogService.Record("تعديل", "Payroll", payroll.PayrollID.ToString(),
