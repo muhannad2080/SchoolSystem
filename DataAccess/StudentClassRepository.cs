@@ -21,6 +21,14 @@ namespace SchoolSystem.DataAccess
                         s.StudentPhone AS Phone
                     FROM Students s
                     WHERE ISNULL(s.Status, N'نشط') = N'نشط'
+                      AND EXISTS
+                      (
+                          SELECT 1
+                          FROM Enrollments e
+                          WHERE e.StudentID = s.StudentID
+                            AND REPLACE(e.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                            AND LTRIM(RTRIM(ISNULL(e.Status, N''))) = N'مقبول'
+                      )
                       AND NOT EXISTS
                       (
                           SELECT 1
@@ -119,6 +127,10 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
+
                     IF NOT EXISTS
                     (
                         SELECT 1
@@ -136,6 +148,16 @@ namespace SchoolSystem.DataAccess
                           AND ISNULL(IsActive, 1) = 1
                     )
                         THROW 50007, N'لا يمكن التعيين إلى فصل غير نشط.', 1;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Enrollments e
+                        WHERE e.StudentID = @StudentID
+                          AND REPLACE(e.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) = N'مقبول'
+                    )
+                        THROW 50014, N'لا يمكن توزيع الطالب قبل قبول تسجيله في العام الدراسي المحدد.', 1;
 
                     IF NOT EXISTS
                     (
@@ -202,7 +224,9 @@ namespace SchoolSystem.DataAccess
                         Section = @Section,
                         AcademicYear = @AcademicYear,
                         UpdatedAt = GETDATE()
-                    WHERE StudentID = @StudentID;";
+                    WHERE StudentID = @StudentID;
+
+                    COMMIT TRANSACTION;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
