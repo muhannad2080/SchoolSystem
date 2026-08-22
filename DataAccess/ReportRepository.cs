@@ -396,8 +396,9 @@ namespace SchoolSystem.DataAccess
                         f.FeeID AS [المعرف],
                         f.StudentID AS [رقم الطالب],
                         s.FullName AS [اسم الطالب],
-                        s.ClassID AS [رقم الصف],
+                        sc.ClassID AS [رقم الصف],
                         c.ClassName AS [الصف],
+                        sc.Section AS [الشعبة],
                         f.FeePlanID AS [خطة الرسوم],
                         f.AcademicYear AS [العام الدراسي],
                         f.FeeType AS [نوع الرسوم],
@@ -417,7 +418,9 @@ namespace SchoolSystem.DataAccess
                     FROM Fees f
                     INNER JOIN Students s ON f.StudentID = s.StudentID
                         AND ISNULL(s.Status, N'نشط') = N'نشط'
-                    LEFT JOIN Classes c ON s.ClassID = c.ClassID
+                    LEFT JOIN StudentClasses sc ON sc.StudentID = f.StudentID
+                        AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/')
+                    LEFT JOIN Classes c ON sc.ClassID = c.ClassID
                         AND ISNULL(c.IsActive, 1) = 1
                     WHERE f.DueDate >= @FromDate
                       AND f.DueDate <= @ToDate";
@@ -426,10 +429,9 @@ namespace SchoolSystem.DataAccess
                     query += " AND REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
 
                 if (request.ClassID.HasValue)
-                    query += " AND s.ClassID = @ClassID";
-
+                    query += " AND sc.ClassID = @ClassID";
                 if (!string.IsNullOrWhiteSpace(request.Section))
-                    query += " AND (s.Section = @Section OR EXISTS (SELECT 1 FROM StudentClasses sc WHERE sc.StudentID = s.StudentID AND sc.Section = @Section))";
+                    query += " AND LTRIM(RTRIM(ISNULL(sc.Section, N''))) = LTRIM(RTRIM(@Section))";
 
                 if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
                     query += " AND f.Status = @Status";
