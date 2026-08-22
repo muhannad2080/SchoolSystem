@@ -13,6 +13,7 @@ namespace SchoolSystem.UI
         private readonly DashboardService dashboardService = new DashboardService();
         private readonly Button btnRefreshDashboard = new Button();
         private readonly Label lblActiveAcademicYear = new Label();
+        private readonly Label lblOperationalStatus = new Label();
 
         public DashboardHome()
         {
@@ -22,6 +23,7 @@ namespace SchoolSystem.UI
             this.Dock = DockStyle.Fill;
             ConfigureDashboardActions();
             ConfigureActiveYearIndicator();
+            ConfigureOperationalStatusIndicator();
             this.Load += DashboardHome_Load;
         }
 
@@ -37,6 +39,21 @@ namespace SchoolSystem.UI
             lblActiveAcademicYear.Size = new Size(300, 34);
             Controls.Add(lblActiveAcademicYear);
             lblActiveAcademicYear.BringToFront();
+        }
+
+        private void ConfigureOperationalStatusIndicator()
+        {
+            lblOperationalStatus.Name = "lblOperationalStatus";
+            lblOperationalStatus.Text = "حالة التشغيل: جاري التحميل...";
+            lblOperationalStatus.AutoSize = false;
+            lblOperationalStatus.Dock = DockStyle.Top;
+            lblOperationalStatus.Height = 72;
+            lblOperationalStatus.TextAlign = ContentAlignment.MiddleLeft;
+            lblOperationalStatus.Padding = new Padding(8, 2, 8, 2);
+            lblOperationalStatus.Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize, FontStyle.Bold);
+            lblOperationalStatus.ForeColor = UIHelper.TextColor;
+            panelAlerts.Controls.Add(lblOperationalStatus);
+            lblOperationalStatus.BringToFront();
         }
 
         private void ConfigureDashboardActions()
@@ -69,6 +86,7 @@ namespace SchoolSystem.UI
                 btnRefreshDashboard.Enabled = false;
                 Cursor = Cursors.WaitCursor;
                 await LoadActiveYearAsync();
+                await LoadOperationalStatusAsync();
                 await LoadStatisticsAsync();
                 LoadChart();
                 await LoadAlertsAsync();
@@ -96,6 +114,31 @@ namespace SchoolSystem.UI
             catch
             {
                 lblActiveAcademicYear.Text = "العام النشط: تعذر التحميل";
+            }
+        }
+
+        private async Task LoadOperationalStatusAsync()
+        {
+            try
+            {
+                DataTable table = await Task.Run(() => dashboardService.GetOperationalStatus());
+                if (table == null || table.Rows.Count == 0)
+                {
+                    lblOperationalStatus.Text = "حالة التشغيل: لم تُطبّق بنية المتابعة بعد";
+                    return;
+                }
+
+                DataRow row = table.Rows[0];
+                string backupFile = row["LastBackupFile"] == DBNull.Value ? string.Empty : row["LastBackupFile"].ToString();
+                string backupDate = row["LastBackupDate"] == DBNull.Value ? "غير متوفر" : Convert.ToDateTime(row["LastBackupDate"]).ToString("yyyy-MM-dd HH:mm");
+                string closingYear = row["LastClosingYear"] == DBNull.Value ? "غير متوفر" : row["LastClosingYear"].ToString();
+                string closingStatus = row["LastClosingStatus"] == DBNull.Value ? "غير متوفر" : row["LastClosingStatus"].ToString();
+                lblOperationalStatus.Text = "آخر نسخة: " + (string.IsNullOrWhiteSpace(backupFile) ? "غير متوفرة" : backupDate)
+                    + " | آخر إغلاق: " + closingYear + " / " + closingStatus;
+            }
+            catch
+            {
+                lblOperationalStatus.Text = "حالة التشغيل: تعذر تحميل النسخة أو الإغلاق";
             }
         }
 
@@ -247,7 +290,8 @@ namespace SchoolSystem.UI
 
                     if (control != lblAlertsTitle &&
                         control != lblPendingFees &&
-                        control != lblTodayAbsence)
+                        control != lblTodayAbsence &&
+                        control != lblOperationalStatus)
                     {
                         panelAlerts.Controls.RemoveAt(i);
                         control.Dispose();
@@ -256,6 +300,7 @@ namespace SchoolSystem.UI
 
                 lblPendingFees.Text = "الرسوم غير المدفوعة: جاري التحميل...";
                 lblTodayAbsence.Text = "غياب اليوم: جاري التحميل...";
+                lblOperationalStatus.Text = "حالة التشغيل: جاري التحميل...";
                 panelAlerts.PerformLayout();
 
                 int pendingFees = await Task.Run(() => dashboardService.GetPendingFeesCount());
@@ -263,11 +308,13 @@ namespace SchoolSystem.UI
 
                 lblPendingFees.Text = $"رسوم غير مدفوعة: {pendingFees}";
                 lblTodayAbsence.Text = $"غياب اليوم: {todayAbsence}";
+                await LoadOperationalStatusAsync();
             }
             catch (Exception ex)
             {
                 lblPendingFees.Text = "الرسوم غير المدفوعة: تعذر التحميل";
                 lblTodayAbsence.Text = "غياب اليوم: تعذر التحميل";
+                lblOperationalStatus.Text = "حالة التشغيل: تعذر التحميل";
                 UIHelper.ShowException("تعذر تحميل تنبيهات لوحة التحكم: ", ex);
             }
         }

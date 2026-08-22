@@ -88,3 +88,22 @@ BEGIN
     SELECT CAST(SCOPE_IDENTITY() AS BIGINT) AS BackupHistoryID;
 END;
 GO
+
+IF OBJECT_ID(N'dbo.GetDashboardOperationalStatus', N'P') IS NOT NULL
+    DROP PROCEDURE dbo.GetDashboardOperationalStatus;
+GO
+CREATE PROCEDURE dbo.GetDashboardOperationalStatus
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT
+        (SELECT TOP (1) ActiveAcademicYear FROM dbo.SystemAcademicSettings ORDER BY SettingID) AS ActiveAcademicYear,
+        (SELECT TOP (1) BackupFile FROM dbo.DatabaseBackupHistory ORDER BY BackupHistoryID DESC) AS LastBackupFile,
+        (SELECT TOP (1) CreatedAt FROM dbo.DatabaseBackupHistory ORDER BY BackupHistoryID DESC) AS LastBackupDate,
+        (SELECT TOP (1) AcademicYear FROM dbo.AnnualClosings ORDER BY AnnualClosingID DESC) AS LastClosingYear,
+        (SELECT TOP (1) ClosingStatus FROM dbo.AnnualClosings ORDER BY AnnualClosingID DESC) AS LastClosingStatus,
+        (SELECT TOP (1) VerifiedAt FROM dbo.AnnualClosings ORDER BY AnnualClosingID DESC) AS LastClosingVerifiedAt;
+END;
+GO
+PRINT N'تم تجهيز إجراء ملخص حالة لوحة التحكم.';
+GO

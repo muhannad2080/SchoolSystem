@@ -134,6 +134,22 @@ namespace SchoolSystem.Services
             }
         }
 
+        public DataTable GetOperationalStatus()
+        {
+            CurrentUser.DemandPermission(PermissionKeys.DashboardView, "ليس لديك صلاحية عرض لوحة التحكم.");
+            using (var conn = DbConnection.GetConnection())
+            using (var cmd = new SqlCommand("dbo.GetDashboardOperationalStatus", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                using (var da = new SqlDataAdapter(cmd))
+                {
+                    var table = new DataTable();
+                    da.Fill(table);
+                    return table;
+                }
+            }
+        }
+
         public int GetTodayAbsenceCount()
         {
             CurrentUser.DemandPermission(PermissionKeys.DashboardView, "ليس لديك صلاحية عرض لوحة التحكم.");
