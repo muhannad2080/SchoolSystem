@@ -9,7 +9,8 @@ markers = (
     "DemandPermission", "DemandAction", "DemandAny", "DemandModule", "CanAccessModule",
     "CurrentUser.IsAdmin", "HasPermission", "contractService.",
     "return Add(", "return Update(", "return Delete(",
-    "return UpdateStudent(", "return DeleteStudent(", "AuditLogRepository"
+    "return UpdateStudent(", "return DeleteStudent(",
+    "Update(student)", "Delete(studentId)", "AuditLogRepository"
 )
 for path in sorted((ROOT / "Services").glob("*Service.cs")):
     if path.name == "AuditLogService.cs":
