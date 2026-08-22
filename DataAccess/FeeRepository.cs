@@ -36,7 +36,15 @@ namespace SchoolSystem.DataAccess
                         f.UpdatedAt
                     FROM Fees f
                     INNER JOIN Students s ON f.StudentID = s.StudentID
-                    LEFT JOIN Classes c ON s.ClassID = c.ClassID
+                    LEFT JOIN StudentClasses sc ON sc.StudentClassID =
+                    (
+                        SELECT TOP (1) sc2.StudentClassID
+                        FROM StudentClasses sc2
+                        WHERE sc2.StudentID = f.StudentID
+                          AND REPLACE(ISNULL(sc2.AcademicYear, N''), N'-', N'/') = REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/')
+                        ORDER BY sc2.AssignedDate DESC, sc2.StudentClassID DESC
+                    )
+                    LEFT JOIN Classes c ON c.ClassID = COALESCE(sc.ClassID, s.ClassID)
                     ORDER BY f.FeeID DESC";
 
                 using (SqlDataAdapter da = new SqlDataAdapter(query, con))
@@ -55,6 +63,25 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+
+                    /* إذا اختيرت خطة، يجب أن تطابق توزيع الطالب الفعلي في العام نفسه. */
+                    IF @FeePlanID IS NOT NULL AND NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM FeePlans fp
+                        INNER JOIN StudentClasses sc ON sc.ClassID = fp.ClassID
+                        WHERE fp.FeePlanID = @FeePlanID
+                          AND sc.StudentID = @StudentID
+                          AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                          AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                          AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
+                    )
+                    BEGIN
+                        THROW 51041, N'خطة الرسوم لا تطابق صف الطالب في العام الدراسي المحدد.', 1;
+                    END;
+
                     INSERT INTO Fees
                     (
                         StudentID,
@@ -111,6 +138,24 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+
+                    IF @FeePlanID IS NOT NULL AND NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM FeePlans fp
+                        INNER JOIN StudentClasses sc ON sc.ClassID = fp.ClassID
+                        WHERE fp.FeePlanID = @FeePlanID
+                          AND sc.StudentID = @StudentID
+                          AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                          AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                          AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
+                    )
+                    BEGIN
+                        THROW 51041, N'خطة الرسوم لا تطابق صف الطالب في العام الدراسي المحدد.', 1;
+                    END;
+
                     UPDATE Fees SET
                         StudentID = @StudentID,
                         FeePlanID = @FeePlanID,
@@ -261,6 +306,30 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 const string query = @"
+                    DECLARE @FeePlanID INT = NULL;
+
+                    /* اربط رسوم التسجيل بخطة الصف والعام إن كانت معرفة،
+                       مع الإبقاء عليها كبند مستقل عن الرسوم الدراسية. */
+                    SELECT TOP (1) @FeePlanID = fp.FeePlanID
+                    FROM StudentClasses sc
+                    INNER JOIN FeePlans fp ON fp.ClassID = sc.ClassID
+                    WHERE sc.StudentID = @StudentID
+                      AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) IN (N'رسوم تسجيل', N'التسجيل', N'Registration Fee')
+                    ORDER BY fp.FeePlanID;
+
+                    IF @FeePlanID IS NOT NULL
+                    BEGIN
+                        UPDATE Fees
+                        SET FeePlanID = @FeePlanID
+                        WHERE StudentID = @StudentID
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                          AND FeeType = @FeeType
+                          AND Notes = @Notes
+                          AND FeePlanID IS NULL;
+                    END;
+
                     IF EXISTS
                     (
                         SELECT 1
@@ -284,7 +353,7 @@ namespace SchoolSystem.DataAccess
                     (StudentID, FeePlanID, AcademicYear, FeeType, TotalAmount, DiscountAmount, NetAmount,
                      PaidAmount, RemainingAmount, DueDate, PaymentDate, PaymentMethod, ReceiptNumber, Status, Notes)
                     VALUES
-                    (@StudentID, NULL, @AcademicYear, @FeeType, @TotalAmount, @DiscountAmount, @NetAmount,
+                    (@StudentID, @FeePlanID, @AcademicYear, @FeeType, @TotalAmount, @DiscountAmount, @NetAmount,
                      @PaidAmount, @RemainingAmount, @DueDate, @PaymentDate, @PaymentMethod, @ReceiptNumber, @Status, @Notes);
 
                     SELECT CAST(SCOPE_IDENTITY() AS INT);";
