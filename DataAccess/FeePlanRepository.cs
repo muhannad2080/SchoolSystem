@@ -54,6 +54,52 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        public FeePlan GetStudentFeePlan(int studentId, string academicYear, string feeType)
+        {
+            using (SqlConnection con = DbConnection.GetConnection())
+            {
+                const string query = @"
+                    SELECT TOP (1)
+                        fp.FeePlanID, fp.AcademicYear, fp.ClassID, c.ClassName,
+                        fp.FeeType, fp.Amount, fp.DueDate, fp.IsRequired, fp.Notes, fp.CreatedAt
+                    FROM StudentClasses sc
+                    INNER JOIN FeePlans fp ON fp.ClassID = sc.ClassID
+                    INNER JOIN Classes c ON c.ClassID = fp.ClassID
+                    WHERE sc.StudentID = @StudentID
+                      AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) = LTRIM(RTRIM(@FeeType))
+                    ORDER BY fp.FeePlanID;";
+
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.Add("@StudentID", SqlDbType.Int).Value = studentId;
+                    cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (academicYear ?? string.Empty).Trim().Replace('-', '/');
+                    cmd.Parameters.Add("@FeeType", SqlDbType.NVarChar, 100).Value = (feeType ?? string.Empty).Trim();
+                    con.Open();
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (!reader.Read())
+                            return null;
+
+                        return new FeePlan
+                        {
+                            FeePlanID = Convert.ToInt32(reader["FeePlanID"]),
+                            AcademicYear = reader["AcademicYear"].ToString(),
+                            ClassID = Convert.ToInt32(reader["ClassID"]),
+                            ClassName = reader["ClassName"].ToString(),
+                            FeeType = reader["FeeType"].ToString(),
+                            Amount = Convert.ToDecimal(reader["Amount"]),
+                            DueDate = Convert.ToDateTime(reader["DueDate"]),
+                            IsRequired = reader["IsRequired"] != DBNull.Value && Convert.ToBoolean(reader["IsRequired"]),
+                            Notes = reader["Notes"] == DBNull.Value ? string.Empty : reader["Notes"].ToString(),
+                            CreatedAt = reader["CreatedAt"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(reader["CreatedAt"])
+                        };
+                    }
+                }
+            }
+        }
+
         public bool AddFeePlan(FeePlan plan)
         {
             using (SqlConnection con = DbConnection.GetConnection())

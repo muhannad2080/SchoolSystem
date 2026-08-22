@@ -22,6 +22,18 @@ namespace SchoolSystem.Services
             return feePlanRepository.GetAllFeePlans();
         }
 
+        public FeePlan GetStudentFeePlan(int studentId, string academicYear, string feeType)
+        {
+            CurrentUser.DemandAction("Fees", "View", "ليس لديك صلاحية عرض الرسوم وخططها.");
+            if (studentId <= 0)
+                throw new Exception("يجب اختيار الطالب.");
+            if (string.IsNullOrWhiteSpace(academicYear))
+                throw new Exception("يجب اختيار العام الدراسي.");
+            if (string.IsNullOrWhiteSpace(feeType))
+                throw new Exception("يجب اختيار نوع الرسوم.");
+            return feePlanRepository.GetStudentFeePlan(studentId, academicYear, feeType);
+        }
+
         public DataTable GetClasses()
         {
             CurrentUser.DemandAction("FeePlans", "View", "ليس لديك صلاحية عرض صفوف خطط الرسوم.");

@@ -15,6 +15,7 @@ namespace SchoolSystem.UI
         private readonly FeeService feeService = new FeeService();
         private readonly StudentService studentService = new StudentService();
         private readonly VoucherService voucherService = new VoucherService();
+        private readonly FeePlanService feePlanService = new FeePlanService();
 
         private int selectedFeeId = 0;
         private int? selectedFeePlanId = null;
@@ -28,6 +29,9 @@ namespace SchoolSystem.UI
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             txtSearch.TextChanged += (sender, e) => ApplyFilter();
+            cmbStudent.SelectedIndexChanged += async (sender, e) => await ApplySelectedFeePlanAsync();
+            cmbAcademicYear.SelectedIndexChanged += async (sender, e) => await ApplySelectedFeePlanAsync();
+            cmbFeeType.SelectedIndexChanged += async (sender, e) => await ApplySelectedFeePlanAsync();
             Dock = DockStyle.Fill;
             Load += FeesForm_Load;
         }
@@ -127,6 +131,44 @@ namespace SchoolSystem.UI
 
             if (cmbStudent.Items.Count > 0)
                 cmbStudent.SelectedIndex = 0;
+        }
+
+        private async Task ApplySelectedFeePlanAsync()
+        {
+            if (isLoading || selectedFeeId != 0 || cmbStudent.SelectedValue == null ||
+                string.IsNullOrWhiteSpace(cmbAcademicYear.Text) || string.IsNullOrWhiteSpace(cmbFeeType.Text))
+                return;
+
+            int studentId;
+            if (!int.TryParse(Convert.ToString(cmbStudent.SelectedValue), out studentId) || studentId <= 0)
+                return;
+
+            try
+            {
+                FeePlan plan = await Task.Run(() => feePlanService.GetStudentFeePlan(
+                    studentId, cmbAcademicYear.Text.Trim(), cmbFeeType.Text.Trim()));
+
+                if (plan == null)
+                {
+                    selectedFeePlanId = null;
+                    txtTotalAmount.Text = "0";
+                    dtpDueDate.Value = DateTime.Today.AddDays(30);
+                    CalculateAmounts();
+                    return;
+                }
+
+                selectedFeePlanId = plan.FeePlanID;
+                txtTotalAmount.Text = plan.Amount.ToString("N2");
+                dtpDueDate.Value = plan.DueDate < DateTime.Today ? DateTime.Today : plan.DueDate;
+                if (!string.IsNullOrWhiteSpace(plan.Notes))
+                    txtNotes.Text = plan.Notes;
+                CalculateAmounts();
+            }
+            catch (Exception ex)
+            {
+                if (!isLoading)
+                    UIHelper.ShowException("تعذر جلب خطة الرسوم المطابقة للطالب والصف:\n", ex);
+            }
         }
 
         private async Task LoadFeesAsync()
@@ -463,6 +505,12 @@ namespace SchoolSystem.UI
                 return false;
             }
 
+            if (selectedFeeId == 0 && !selectedFeePlanId.HasValue)
+            {
+                UIHelper.ShowWarning("لا توجد خطة رسوم مطابقة لصف الطالب في العام المحدد. أنشئ الخطة أولاً من واجهة خطط الرسوم.");
+                return false;
+            }
+
             decimal total;
             decimal discount;
             decimal paid;
@@ -604,6 +652,7 @@ namespace SchoolSystem.UI
         {
             try
             {
+                await ApplySelectedFeePlanAsync();
                 if (!ValidateInputs())
                     return;
 
