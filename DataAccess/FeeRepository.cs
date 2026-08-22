@@ -309,7 +309,24 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
                     DECLARE @ClassID INT;
+
+                    /* لا رسوم صفية قبل قبول التسجيل في العام المحدد. */
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Enrollments e
+                        WHERE e.StudentID = @StudentID
+                          AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) = N'مقبول'
+                    )
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                        THROW 51040, N'لا يمكن توليد رسوم الصف قبل قبول تسجيل الطالب في العام الدراسي المحدد.', 1;
+                    END;
 
                     /* الرسوم تعتمد على توزيع الطالب في العام المحدد، لا على الحقول الحالية المختصرة في Students. */
                     SELECT TOP (1) @ClassID = sc.ClassID
@@ -320,6 +337,7 @@ namespace SchoolSystem.DataAccess
 
                     IF @ClassID IS NULL
                     BEGIN
+                        COMMIT TRANSACTION;
                         SELECT 0;
                         RETURN;
                     END
@@ -370,7 +388,9 @@ namespace SchoolSystem.DataAccess
                             AND REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                       );
 
-                    SELECT @@ROWCOUNT;";
+                    DECLARE @Generated INT = @@ROWCOUNT;
+                    COMMIT TRANSACTION;
+                    SELECT @Generated;";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {

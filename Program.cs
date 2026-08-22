@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Windows.Forms;
 using SchoolSystem.Helpers;
+using SchoolSystem.Services;
 using SchoolSystem.UI;
 
 namespace SchoolSystem
@@ -17,6 +18,22 @@ namespace SchoolSystem
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += OnUiThreadException;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
+            try
+            {
+                StudentWorkflowSchemaService.EnsureReady();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("فشل تجهيز مخطط دورة الطالب", ex);
+                MessageBox.Show(
+                    "لا يمكن تشغيل النظام لأن مخطط قاعدة البيانات غير مكتمل أو غير قابل للاتصال.\n\n" + ex.Message +
+                    "\n\nنفّذ ملفات الترحيل الموجودة في مجلد Databass ثم أعد تشغيل النظام.",
+                    "قاعدة البيانات غير جاهزة",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
 
             using (LoginForm loginForm = new LoginForm())
             {

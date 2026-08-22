@@ -201,6 +201,7 @@
     <Compile Include="Services\ExpenseService.cs" />
     <Compile Include="Services\FeePlanService.cs" />
     <Compile Include="Services\FeeService.cs" />
+    <Compile Include="Services\StudentWorkflowSchemaService.cs" />
     <Compile Include="Services\GradeService.cs" />
     <Compile Include="Services\MarkService.cs" />
     <Compile Include="Services\PayrollService.cs" />
