@@ -51,6 +51,40 @@ IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.Fees'
     CREATE INDEX IX_Fees_StudentYearPlan
         ON dbo.Fees(StudentID, AcademicYear, FeePlanID);
 
+/* Prevent duplicate enrollments for the same student and normalized academic year. */
+IF COL_LENGTH(N'dbo.Enrollments', N'AcademicYearKey') IS NULL
+    ALTER TABLE dbo.Enrollments ADD AcademicYearKey AS (REPLACE(LTRIM(RTRIM(ISNULL(AcademicYear, N''))), N'-', N'/')) PERSISTED;
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.Enrollments') AND name = N'UX_Enrollments_StudentYear')
+   AND NOT EXISTS
+   (
+       SELECT StudentID, AcademicYearKey
+       FROM dbo.Enrollments
+       WHERE AcademicYearKey <> N''
+       GROUP BY StudentID, AcademicYearKey
+       HAVING COUNT(*) > 1
+   )
+    CREATE UNIQUE INDEX UX_Enrollments_StudentYear
+        ON dbo.Enrollments(StudentID, AcademicYearKey)
+        WHERE AcademicYearKey <> N'';
+
+/* Prevent duplicate plan-generated fees for the same student, year and plan. */
+IF COL_LENGTH(N'dbo.Fees', N'AcademicYearKey') IS NULL
+    ALTER TABLE dbo.Fees ADD AcademicYearKey AS (REPLACE(LTRIM(RTRIM(ISNULL(AcademicYear, N''))), N'-', N'/')) PERSISTED;
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.Fees') AND name = N'UX_Fees_StudentYearPlan')
+   AND NOT EXISTS
+   (
+       SELECT StudentID, AcademicYearKey, FeePlanID
+       FROM dbo.Fees
+       WHERE FeePlanID IS NOT NULL AND AcademicYearKey <> N''
+       GROUP BY StudentID, AcademicYearKey, FeePlanID
+       HAVING COUNT(*) > 1
+   )
+    CREATE UNIQUE INDEX UX_Fees_StudentYearPlan
+        ON dbo.Fees(StudentID, AcademicYearKey, FeePlanID)
+        WHERE FeePlanID IS NOT NULL AND AcademicYearKey <> N'';
+
 /* Prevent two active assignments for the same student and year. */
 IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.StudentClasses') AND name = N'UX_StudentClasses_StudentYear')
    AND NOT EXISTS
@@ -80,7 +114,7 @@ WHERE NOT EXISTS
     SELECT 1 FROM dbo.Enrollments e
     WHERE e.StudentID = sc.StudentID
       AND REPLACE(ISNULL(e.AcademicYear,N''),N'-',N'/') = REPLACE(ISNULL(sc.AcademicYear,N''),N'-',N'/')
-      AND LTRIM(RTRIM(ISNULL(e.Status,N''))) = N'مقبول'
+      AND LTRIM(RTRIM(ISNULL(e.Status,N''))) IN (N'مقبول', N'Accepted')
 );
 
 SELECT N'Duplicate assignments' AS CheckName, COUNT(*) AS IssueCount
