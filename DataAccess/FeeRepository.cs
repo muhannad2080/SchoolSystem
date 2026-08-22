@@ -311,9 +311,12 @@ namespace SchoolSystem.DataAccess
                 string query = @"
                     DECLARE @ClassID INT;
 
-                    SELECT @ClassID = ClassID
-                    FROM Students
-                    WHERE StudentID = @StudentID;
+                    /* الرسوم تعتمد على توزيع الطالب في العام المحدد، لا على الحقول الحالية المختصرة في Students. */
+                    SELECT TOP (1) @ClassID = sc.ClassID
+                    FROM StudentClasses sc
+                    WHERE sc.StudentID = @StudentID
+                      AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                    ORDER BY sc.AssignedDate DESC, sc.StudentClassID DESC;
 
                     IF @ClassID IS NULL
                     BEGIN
