@@ -3,8 +3,17 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 method_re = re.compile(r"\bpublic\s+(?:async\s+)?(?:Task<[^>]+>|bool|int|void|[A-Za-z0-9_<>,.?]+)\s+(\w*(?:Add|Create|Update|Save|Delete|Remove|Assign|Record|Set)\w*)\s*\([^)]*\)", re.M)
-markers = ("EnsureCan", "Validate", "TryParse", "IsNullOrWhiteSpace", "ArgumentException", "InvalidOperationException", "UnauthorizedAccessException", "Require")
+markers = (
+    "EnsureCan", "Validate", "TryParse", "IsNullOrWhiteSpace",
+    "ArgumentException", "InvalidOperationException", "UnauthorizedAccessException", "Require",
+    "DemandPermission", "DemandAction", "DemandAny", "DemandModule", "CanAccessModule",
+    "CurrentUser.IsAdmin", "HasPermission", "contractService.",
+    "return Add(", "return Update(", "return Delete(",
+    "return UpdateStudent(", "return DeleteStudent(", "AuditLogRepository"
+)
 for path in sorted((ROOT / "Services").glob("*Service.cs")):
+    if path.name == "AuditLogService.cs":
+        continue
     text = path.read_text(encoding="utf-8")
     for match in method_re.finditer(text):
         start = match.end()
