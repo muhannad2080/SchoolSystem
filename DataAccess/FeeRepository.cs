@@ -339,11 +339,11 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 const string query = @"
-                    DECLARE @FeePlanID INT = NULL;
+                    DECLARE @ResolvedFeePlanID INT = NULL;
 
                     /* اربط رسوم التسجيل بخطة الصف والعام إن كانت معرفة،
                        مع الإبقاء عليها كبند مستقل عن الرسوم الدراسية. */
-                    SELECT TOP (1) @FeePlanID = fp.FeePlanID
+                    SELECT TOP (1) @ResolvedFeePlanID = fp.FeePlanID
                     FROM StudentClasses sc
                     INNER JOIN FeePlans fp ON fp.ClassID = sc.ClassID
                     WHERE sc.StudentID = @StudentID
@@ -352,10 +352,10 @@ namespace SchoolSystem.DataAccess
                       AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) IN (N'رسوم تسجيل', N'التسجيل', N'Registration Fee')
                     ORDER BY fp.FeePlanID;
 
-                    IF @FeePlanID IS NOT NULL
+                    IF @ResolvedFeePlanID IS NOT NULL
                     BEGIN
                         UPDATE Fees
-                        SET FeePlanID = @FeePlanID
+                        SET FeePlanID = @ResolvedFeePlanID
                         WHERE StudentID = @StudentID
                           AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                           AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
@@ -387,7 +387,7 @@ namespace SchoolSystem.DataAccess
                     (StudentID, FeePlanID, AcademicYear, FeeType, TotalAmount, DiscountAmount, NetAmount,
                      PaidAmount, RemainingAmount, DueDate, PaymentDate, PaymentMethod, ReceiptNumber, Status, Notes)
                     VALUES
-                    (@StudentID, @FeePlanID, @AcademicYear, @FeeType, @TotalAmount, @DiscountAmount, @NetAmount,
+                    (@StudentID, @ResolvedFeePlanID, @AcademicYear, @FeeType, @TotalAmount, @DiscountAmount, @NetAmount,
                      @PaidAmount, @RemainingAmount, @DueDate, @PaymentDate, @PaymentMethod, @ReceiptNumber, @Status, @Notes);
 
                     SELECT CAST(SCOPE_IDENTITY() AS INT);";
@@ -424,7 +424,7 @@ namespace SchoolSystem.DataAccess
                         FROM Enrollments e
                         WHERE e.StudentID = @StudentID
                           AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) = N'مقبول'
+                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted')
                     )
                     BEGIN
                         ROLLBACK TRANSACTION;

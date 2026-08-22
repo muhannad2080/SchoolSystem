@@ -117,7 +117,7 @@ namespace SchoolSystem.DataAccess
                     FROM StudentClasses sc
                     INNER JOIN Enrollments e ON e.StudentID = sc.StudentID
                         AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                        AND LTRIM(RTRIM(ISNULL(e.Status, N''))) = N'مقبول'
+                        AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted')
                     WHERE sc.ClassID = @ClassID
                       AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                       AND NOT EXISTS
