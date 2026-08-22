@@ -84,6 +84,17 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 string query = @"
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM Vouchers
+                        WHERE ReferenceType = N'مصروفات'
+                          AND ReferenceID = @ExpenseID
+                    )
+                    BEGIN
+                        THROW 51005, N'لا يمكن تعديل المصروف لأنه مرتبط بسند مالي. استخدم إجراء تصحيح أو إلغاء موثق.', 1;
+                    END;
+
                     UPDATE Expenses SET
                         ExpenseNumber = @ExpenseNumber,
                         Amount = @Amount,

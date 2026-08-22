@@ -35,18 +35,31 @@ namespace SchoolSystem.Services
             int expenseId = expenseRepository.AddExpense(expense);
 
             // إنشاء سند صرف تلقائي عند إضافة المصروف
-            bool voucherCreated = voucherService.CreatePaymentVoucherForExpense(
-                expense.Amount,
-                expense.ExpenseDate,
-                string.IsNullOrWhiteSpace(expense.PayeeName) ? "مصروفات مدرسية" : expense.PayeeName,
-                expenseId,
-                expense.PaymentMethod,
-                expense.Description,
-                "تم إنشاء سند الصرف تلقائياً من شاشة المصروفات. رقم المصروف: " + expense.ExpenseNumber
-            );
+            bool voucherCreated;
+            try
+            {
+                voucherCreated = voucherService.CreatePaymentVoucherForExpense(
+                    expense.Amount,
+                    expense.ExpenseDate,
+                    string.IsNullOrWhiteSpace(expense.PayeeName) ? "مصروفات مدرسية" : expense.PayeeName,
+                    expenseId,
+                    expense.PaymentMethod,
+                    expense.Description,
+                    "تم إنشاء سند الصرف تلقائياً من شاشة المصروفات. رقم المصروف: " + expense.ExpenseNumber
+                );
+            }
+            catch
+            {
+                // لا نترك مصروفاً يتيماً بلا سند مالي عند فشل الإنشاء التلقائي.
+                expenseRepository.DeleteExpense(expenseId);
+                throw;
+            }
 
             if (!voucherCreated)
-                throw new InvalidOperationException("تم حفظ المصروف، لكن تعذر إنشاء سند الصرف التلقائي. راجع سجل الأنشطة قبل المتابعة.");
+            {
+                expenseRepository.DeleteExpense(expenseId);
+                throw new InvalidOperationException("تعذر إنشاء سند الصرف التلقائي، وتم التراجع عن حفظ المصروف.");
+            }
 
             auditLogService.Record("إنشاء", "Expense", expenseId.ToString(),
                 string.Format("المبلغ: {0}، الفئة: {1}، البيان: {2}", expense.Amount, expense.Category, expense.Description));

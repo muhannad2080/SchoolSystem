@@ -66,12 +66,66 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(
-                @"UPDATE Payroll SET BasicSalary = @Basic, Allowances = @Allow, 
+                @"IF EXISTS
+                  (
+                      SELECT 1
+                      FROM Payroll
+                      WHERE PayrollID = @PID
+                        AND PaymentDate IS NOT NULL
+                  )
+                  BEGIN
+                      THROW 51006, N'لا يمكن تعديل راتب تم صرفه. استخدم إجراء تصحيح أو سند عكسي موثق.', 1;
+                  END;
+
+                  UPDATE Payroll SET BasicSalary = @Basic, Allowances = @Allow,
                   Deductions = @Deduct, PaymentDate = @PayDate, Notes = @Notes
                   WHERE PayrollID = @PID", conn))
             {
                 cmd.Parameters.Add("@PID", SqlDbType.Int).Value = payroll.PayrollID;
                 AddPayrollParameters(cmd, payroll);
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        // إلغاء حالة الصرف لسجل راتب غير المرتبط بسند بعد فشل العملية الذرية
+        public bool ResetPaymentDateAfterVoucherFailure(int payrollId)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(
+                @"UPDATE Payroll
+                  SET PaymentDate = NULL
+                  WHERE PayrollID = @PID
+                    AND NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Vouchers
+                        WHERE ReferenceType = N'رواتب'
+                          AND ReferenceID = @PID
+                    );", conn))
+            {
+                cmd.Parameters.Add("@PID", SqlDbType.Int).Value = payrollId;
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        // حذف سجل راتب أنشئ حديثاً ولم يرتبط بسند بسبب فشل العملية الذرية
+        public bool DeletePayrollAfterVoucherFailure(int payrollId)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(
+                @"DELETE FROM Payroll
+                  WHERE PayrollID = @PID
+                    AND NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Vouchers
+                        WHERE ReferenceType = N'رواتب'
+                          AND ReferenceID = @PID
+                    );", conn))
+            {
+                cmd.Parameters.Add("@PID", SqlDbType.Int).Value = payrollId;
                 conn.Open();
                 return cmd.ExecuteNonQuery() > 0;
             }
