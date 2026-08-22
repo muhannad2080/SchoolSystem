@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using SchoolSystem.DataAccess;
+using SchoolSystem.Models;
 
 namespace SchoolSystem.Services
 {
@@ -63,6 +64,68 @@ namespace SchoolSystem.Services
                     adapter.Fill(result);
                     return result;
                 }
+            }
+        }
+
+        public string GetActiveAcademicYear()
+        {
+            using (SqlConnection connection = DbConnection.GetConnection())
+            using (SqlCommand command = new SqlCommand("dbo.GetActiveAcademicYear", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                connection.Open();
+                object value = command.ExecuteScalar();
+                return value == null || value == DBNull.Value ? string.Empty : Normalize(value.ToString());
+            }
+        }
+
+        public void SetActiveAcademicYear(string academicYear, int? userId)
+        {
+            RequireYear(academicYear);
+            using (SqlConnection connection = DbConnection.GetConnection())
+            using (SqlCommand command = new SqlCommand("dbo.SetActiveAcademicYear", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = Normalize(academicYear);
+                command.Parameters.Add("@UserID", SqlDbType.Int).Value = (object)userId ?? DBNull.Value;
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+            new AuditLogService().Record("AnnualClosing", "تعيين العام النشط", "SystemAcademicSettings", null, "العام: " + Normalize(academicYear));
+        }
+
+        public string CreatePreClosingBackup(string academicYear, int? userId)
+        {
+            RequireYear(academicYear);
+            ApplicationSettingsData settings = ApplicationSettingsService.Load();
+            string file = new DatabaseBackupService().Backup(settings.ServerInstance, settings.DatabaseName, settings.BackupDirectory);
+            using (SqlConnection connection = DbConnection.GetConnection())
+            using (SqlCommand command = new SqlCommand("dbo.RegisterDatabaseBackup", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add("@BackupFile", SqlDbType.NVarChar, 500).Value = file;
+                command.Parameters.Add("@BackupType", SqlDbType.NVarChar, 50).Value = "قبل الإغلاق";
+                command.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = Normalize(academicYear);
+                command.Parameters.Add("@UserID", SqlDbType.Int).Value = (object)userId ?? DBNull.Value;
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+            new AuditLogService().Record("AnnualClosing", "إنشاء نسخة احتياطية قبل الإغلاق", "DatabaseBackup", file, "العام: " + Normalize(academicYear));
+            return file;
+        }
+
+        public void CloseWithRequiredBackup(string academicYear, string nextAcademicYear, int? userId, string notes)
+        {
+            string file = CreatePreClosingBackup(academicYear, userId);
+            try
+            {
+                Close(academicYear, nextAcademicYear, userId, notes);
+                new AuditLogService().Record("AnnualClosing", "إغلاق عام دراسي", "AnnualClosing", Normalize(academicYear), "النسخة السابقة: " + file);
+            }
+            catch (Exception ex)
+            {
+                new AuditLogService().Record("AnnualClosing", "فشل إغلاق عام دراسي", "AnnualClosing", Normalize(academicYear), ex.Message);
+                throw;
             }
         }
 

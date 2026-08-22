@@ -96,7 +96,18 @@ namespace SchoolSystem.UI
             }
             string current = DateTime.Today.Year + "/" + (DateTime.Today.Year + 1);
             if (!cmbYear.Items.Contains(current)) cmbYear.Items.Add(current);
-            cmbYear.SelectedIndex = 0;
+            try
+            {
+                string active = service.GetActiveAcademicYear();
+                if (!string.IsNullOrWhiteSpace(active) && cmbYear.Items.Contains(active))
+                    cmbYear.SelectedItem = active;
+                else
+                    cmbYear.SelectedIndex = 0;
+            }
+            catch
+            {
+                cmbYear.SelectedIndex = 0;
+            }
         }
 
         private string SelectedYear()
@@ -126,8 +137,10 @@ namespace SchoolSystem.UI
             {
                 AuthorizationService.RequireAny("ليس لديك صلاحية تنفيذ الإغلاق السنوي.", PermissionKeys.AnnualClosingManage);
                 if (MessageBox.Show("سيتم إغلاق العام ومنع العمليات المستقبلية عليه. هل تريد المتابعة؟", "تأكيد الإغلاق", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
-                service.Close(SelectedYear(), txtNextYear.Text, null, txtNotes.Text);
-                lblStatus.Text = "تم إغلاق العام بنجاح. لم يتم تعديل بيانات السنوات السابقة.";
+                service.CloseWithRequiredBackup(SelectedYear(), txtNextYear.Text, null, txtNotes.Text);
+                if (!string.IsNullOrWhiteSpace(txtNextYear.Text))
+                    service.SetActiveAcademicYear(txtNextYear.Text, null);
+                lblStatus.Text = "تم إنشاء النسخة الاحتياطية وإغلاق العام وتحديث العام النشط بنجاح. لم يتم تعديل بيانات السنوات السابقة.";
                 MessageBox.Show(lblStatus.Text, "الإغلاق السنوي", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex) { MessageBox.Show(ex.Message, "تعذر الإغلاق", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
