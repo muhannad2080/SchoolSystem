@@ -87,7 +87,45 @@ namespace SchoolSystem.DataAccess
                         @DueDate,
                         @IsRequired,
                         @Notes
-                    )";
+                    );
+
+                    DECLARE @NewFeePlanID INT = CONVERT(INT, SCOPE_IDENTITY());
+
+                    /* نشر الخطة تلقائياً للطلاب المقبولين والموزعين في الصف نفسه. */
+                    INSERT INTO Fees
+                    (
+                        StudentID, FeePlanID, AcademicYear, FeeType, TotalAmount,
+                        DiscountAmount, NetAmount, PaidAmount, RemainingAmount,
+                        DueDate, PaymentDate, PaymentMethod, ReceiptNumber, Status, Notes
+                    )
+                    SELECT DISTINCT
+                        sc.StudentID,
+                        @NewFeePlanID,
+                        @AcademicYear,
+                        @FeeType,
+                        @Amount,
+                        0,
+                        @Amount,
+                        0,
+                        @Amount,
+                        @DueDate,
+                        NULL,
+                        NULL,
+                        NULL,
+                        N'غير مسدد',
+                        @Notes
+                    FROM StudentClasses sc
+                    INNER JOIN Enrollments e ON e.StudentID = sc.StudentID
+                        AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                        AND LTRIM(RTRIM(ISNULL(e.Status, N''))) = N'مقبول'
+                    WHERE sc.ClassID = @ClassID
+                      AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND NOT EXISTS
+                      (
+                          SELECT 1 FROM Fees f
+                          WHERE f.StudentID = sc.StudentID
+                            AND f.FeePlanID = @NewFeePlanID
+                      )";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
@@ -120,6 +158,19 @@ namespace SchoolSystem.DataAccess
                     )
                         THROW 51021, N'توجد خطة رسوم مكررة لنفس العام والصف ونوع الرسوم.', 1;
 
+                    IF EXISTS
+                    (
+                        SELECT 1 FROM Fees f
+                        INNER JOIN FeePlans oldPlan ON oldPlan.FeePlanID = f.FeePlanID
+                        WHERE f.FeePlanID = @FeePlanID
+                          AND (
+                              REPLACE(ISNULL(oldPlan.AcademicYear, N''), N'-', N'/') <> REPLACE(@AcademicYear, N'-', N'/')
+                              OR oldPlan.ClassID <> @ClassID
+                              OR oldPlan.FeeType <> @FeeType
+                          )
+                    )
+                        THROW 51022, N'لا يمكن تغيير صف أو عام أو نوع خطة مستخدمة في رسوم موجودة. أنشئ خطة جديدة بدلاً من تغيير هوية الخطة.', 1;
+
                     UPDATE FeePlans SET
                         AcademicYear = @AcademicYear,
                         ClassID = @ClassID,
@@ -128,7 +179,19 @@ namespace SchoolSystem.DataAccess
                         DueDate = @DueDate,
                         IsRequired = @IsRequired,
                         Notes = @Notes
-                    WHERE FeePlanID = @FeePlanID";
+                    WHERE FeePlanID = @FeePlanID;
+
+                    /* تحديث البنود غير المسددة فقط؛ السجلات المسددة تبقى تاريخية. */
+                    UPDATE f SET
+                        TotalAmount = @Amount,
+                        NetAmount = CASE WHEN f.DiscountAmount > @Amount THEN 0 ELSE @Amount - f.DiscountAmount END,
+                        RemainingAmount = CASE WHEN f.DiscountAmount > @Amount THEN 0 ELSE @Amount - f.DiscountAmount - f.PaidAmount END,
+                        DueDate = @DueDate,
+                        Notes = @Notes,
+                        UpdatedAt = GETDATE()
+                    FROM Fees f
+                    WHERE f.FeePlanID = @FeePlanID
+                      AND f.PaidAmount = 0";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
