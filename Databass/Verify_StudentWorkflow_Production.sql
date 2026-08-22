@@ -51,15 +51,24 @@ FROM
     HAVING COUNT(*) > 1
 ) d;
 
-SELECT N'Section capacity violations' AS CheckName, COUNT(*) AS IssueCount
-FROM dbo.SchoolSections ss
-JOIN
-(
-    SELECT ClassID, LTRIM(RTRIM(Section)) AS SectionName,
-           REPLACE(AcademicYear, N'/', N'-') AS AcademicYearKey, COUNT(*) AS AssignedCount
-    FROM dbo.StudentClasses
-    GROUP BY ClassID, LTRIM(RTRIM(Section)), REPLACE(AcademicYear, N'/', N'-')
-) a ON a.ClassID = ss.ClassID
-   AND a.SectionName = LTRIM(RTRIM(ss.SectionName))
-   AND a.AcademicYearKey = REPLACE(ss.AcademicYear, N'/', N'-')
-WHERE ss.Capacity IS NOT NULL AND ss.Capacity > 0 AND a.AssignedCount > ss.Capacity;
+IF COL_LENGTH(N'dbo.SchoolSections', N'Capacity') IS NULL
+BEGIN
+    SELECT N'Section capacity violations' AS CheckName, 0 AS IssueCount,
+           N'Capacity column is not present; capacity validation was skipped.' AS Details;
+END
+ELSE
+BEGIN
+    EXEC sys.sp_executesql N'
+        SELECT N''Section capacity violations'' AS CheckName, COUNT(*) AS IssueCount
+        FROM dbo.SchoolSections ss
+        JOIN
+        (
+            SELECT ClassID, LTRIM(RTRIM(Section)) AS SectionName,
+                   REPLACE(AcademicYear, N''/'', N''-'') AS AcademicYearKey, COUNT(*) AS AssignedCount
+            FROM dbo.StudentClasses
+            GROUP BY ClassID, LTRIM(RTRIM(Section)), REPLACE(AcademicYear, N''/'', N''-'')
+        ) a ON a.ClassID = ss.ClassID
+           AND a.SectionName = LTRIM(RTRIM(ss.SectionName))
+           AND a.AcademicYearKey = REPLACE(ss.AcademicYear, N''/'', N''-'')
+        WHERE ss.Capacity IS NOT NULL AND ss.Capacity > 0 AND a.AssignedCount > ss.Capacity;';
+END;

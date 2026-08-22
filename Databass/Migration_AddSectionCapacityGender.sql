@@ -12,8 +12,9 @@ IF COL_LENGTH(N'dbo.SchoolSections', N'AllowedGender') IS NULL
     ALTER TABLE dbo.SchoolSections ADD AllowedGender NVARCHAR(20) NULL;
 
 IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = N'CK_SchoolSections_Capacity')
-    ALTER TABLE dbo.SchoolSections ADD CONSTRAINT CK_SchoolSections_Capacity
-        CHECK (Capacity IS NULL OR Capacity > 0);
+BEGIN
+    EXEC sys.sp_executesql N'ALTER TABLE dbo.SchoolSections ADD CONSTRAINT CK_SchoolSections_Capacity CHECK (Capacity IS NULL OR Capacity > 0);';
+END;
 
 UPDATE dbo.SchoolSections
 SET AllowedGender = NULL
