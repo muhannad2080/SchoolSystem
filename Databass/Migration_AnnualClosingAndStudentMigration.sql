@@ -201,5 +201,55 @@ BEGIN
 END;
 GO
 
-PRINT N'تم تجهيز بنية الإغلاق السنوي وإجراءات الفحص والإغلاق وتخطيط الترحيل.';
+IF OBJECT_ID(N'dbo.GetStudentMigrationReport', N'P') IS NOT NULL
+    DROP PROCEDURE dbo.GetStudentMigrationReport;
+GO
+CREATE PROCEDURE dbo.GetStudentMigrationReport
+    @FromAcademicYear NVARCHAR(20),
+    @ToAcademicYear NVARCHAR(20)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @FromAcademicYear=REPLACE(LTRIM(RTRIM(@FromAcademicYear)),N'-',N'/');
+    SET @ToAcademicYear=REPLACE(LTRIM(RTRIM(@ToAcademicYear)),N'-',N'/');
+    IF NULLIF(@FromAcademicYear,N'') IS NULL OR NULLIF(@ToAcademicYear,N'') IS NULL OR @FromAcademicYear=@ToAcademicYear
+        THROW 51028,N'يجب تحديد عامين مختلفين لتقرير الترحيل.',1;
+    IF OBJECT_ID(N'dbo.StudentClasses',N'U') IS NULL OR OBJECT_ID(N'dbo.Students',N'U') IS NULL
+        THROW 51029,N'جداول الطلاب والتوزيع غير موجودة.',1;
+
+    ;WITH SourceAssignments AS
+    (
+        SELECT sc.StudentID, sc.ClassID, sc.Section,
+               COUNT(*) OVER (PARTITION BY sc.StudentID) AS AssignmentCount
+        FROM dbo.StudentClasses sc
+        WHERE REPLACE(ISNULL(sc.AcademicYear,N''),N'-',N'/')=@FromAcademicYear
+    )
+    SELECT sa.StudentID,
+           s.FullName AS StudentName,
+           sa.ClassID AS FromClassID,
+           sa.Section AS FromSection,
+           sa.AssignmentCount,
+           ml.MigrationID,
+           ml.MigrationStatus,
+           CASE
+             WHEN sa.AssignmentCount > 1 THEN N'مستبعد - توزيع مكرر'
+             WHEN ml.MigrationID IS NOT NULL AND ml.MigrationStatus=N'منفذ' THEN N'منقول'
+             WHEN ml.MigrationID IS NOT NULL AND ml.MigrationStatus=N'مستبعد' THEN N'مستبعد'
+             WHEN ml.MigrationID IS NOT NULL THEN N'مخطط'
+             ELSE N'مرشح - يحتاج اعتماداً'
+           END AS MigrationResult
+    FROM SourceAssignments sa
+    INNER JOIN dbo.Students s ON s.StudentID=sa.StudentID
+    OUTER APPLY
+    (
+        SELECT TOP (1) m.MigrationID, m.MigrationStatus
+        FROM dbo.AnnualMigrationLog m
+        WHERE m.StudentID=sa.StudentID AND m.FromAcademicYear=@FromAcademicYear AND m.ToAcademicYear=@ToAcademicYear
+        ORDER BY m.MigrationID DESC
+    ) ml
+    ORDER BY MigrationResult, s.FullName, sa.StudentID;
+END;
+GO
+
+PRINT N'تم تجهيز بنية الإغلاق السنوي وإجراءات الفحص والإغلاق وتخطيط الترحيل وتقرير الترحيل.';
 GO

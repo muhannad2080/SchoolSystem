@@ -29,6 +29,8 @@ SELECT N'StudentClasses.AcademicYear', CASE WHEN COL_LENGTH(N'dbo.StudentClasses
 INSERT @Checks
 SELECT N'PlanStudentYearMigration', CASE WHEN OBJECT_ID(N'dbo.PlanStudentYearMigration',N'P') IS NULL THEN N'FAIL' ELSE N'PASS' END, N'إجراء تخطيط الترحيل.';
 INSERT @Checks
+SELECT N'GetStudentMigrationReport', CASE WHEN OBJECT_ID(N'dbo.GetStudentMigrationReport',N'P') IS NULL THEN N'FAIL' ELSE N'PASS' END, N'إجراء تقرير المرشحين والمستبعدين والمنقولين.';
+INSERT @Checks
 SELECT N'VerifyAnnualClosing', CASE WHEN OBJECT_ID(N'dbo.VerifyAnnualClosing',N'P') IS NULL THEN N'FAIL' ELSE N'PASS' END, N'إجراء فحص الإغلاق.';
 INSERT @Checks
 SELECT N'CloseAcademicYear', CASE WHEN OBJECT_ID(N'dbo.CloseAcademicYear',N'P') IS NULL THEN N'FAIL' ELSE N'PASS' END, N'إجراء الإغلاق.';

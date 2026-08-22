@@ -17,6 +17,7 @@ namespace SchoolSystem.UI
         private Button btnVerify;
         private Button btnClose;
         private Button btnPlan;
+        private Button btnMigrationReport;
         private Label lblStatus;
 
         public AnnualClosingForm()
@@ -68,7 +69,8 @@ namespace SchoolSystem.UI
             btnVerify = CreateButton("فحص المطابقة", Color.FromArgb(31, 119, 180)); btnVerify.Click += VerifyClick;
             btnClose = CreateButton("إغلاق العام", Color.FromArgb(192, 80, 77)); btnClose.Click += CloseClick;
             btnPlan = CreateButton("تخطيط الترحيل", Color.FromArgb(112, 173, 71)); btnPlan.Click += PlanClick;
-            actions.Controls.Add(btnClose); actions.Controls.Add(btnPlan); actions.Controls.Add(btnVerify);
+            btnMigrationReport = CreateButton("تقرير الترحيل", Color.FromArgb(91, 155, 213)); btnMigrationReport.Click += MigrationReportClick;
+            actions.Controls.Add(btnClose); actions.Controls.Add(btnMigrationReport); actions.Controls.Add(btnPlan); actions.Controls.Add(btnVerify);
             root.Controls.Add(actions, 0, 3); root.SetColumnSpan(actions, 2);
             lblStatus = new Label { Text = "ابدأ بفحص المطابقة قبل الإغلاق.", Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleRight, ForeColor = Color.DarkSlateGray };
             root.Controls.Add(lblStatus, 0, 4); root.SetColumnSpan(lblStatus, 2);
@@ -131,6 +133,18 @@ namespace SchoolSystem.UI
             catch (Exception ex) { MessageBox.Show(ex.Message, "فحص الإغلاق", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
         }
 
+        private void MigrationReportClick(object sender, EventArgs e)
+        {
+            try
+            {
+                AuthorizationService.RequireAny("ليس لديك صلاحية عرض تقرير الترحيل.", PermissionKeys.AnnualClosingView, PermissionKeys.AnnualClosingManage);
+                DataTable table = service.GetMigrationReport(SelectedYear(), txtNextYear.Text);
+                grid.DataSource = table;
+                lblStatus.Text = "تم عرض تقرير الترحيل: المرشحون يحتاجون اعتماداً، والمخططون ينتظرون التنفيذ، والمستبعدون يحتاجون مراجعة.";
+                lblStatus.ForeColor = Color.DarkSlateGray;
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message, "تقرير الترحيل", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+        }
         private void CloseClick(object sender, EventArgs e)
         {
             try

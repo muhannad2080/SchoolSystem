@@ -114,6 +114,24 @@ namespace SchoolSystem.Services
             return file;
         }
 
+        public DataTable GetMigrationReport(string fromYear, string toYear)
+        {
+            RequireDifferentYears(fromYear, toYear);
+            using (SqlConnection connection = DbConnection.GetConnection())
+            using (SqlCommand command = new SqlCommand("dbo.GetStudentMigrationReport", connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.Add("@FromAcademicYear", SqlDbType.NVarChar, 20).Value = Normalize(fromYear);
+                command.Parameters.Add("@ToAcademicYear", SqlDbType.NVarChar, 20).Value = Normalize(toYear);
+                using (SqlDataAdapter adapter = new SqlDataAdapter(command))
+                {
+                    DataTable result = new DataTable();
+                    adapter.Fill(result);
+                    return result;
+                }
+            }
+        }
+
         public void CloseWithRequiredBackup(string academicYear, string nextAcademicYear, int? userId, string notes)
         {
             string file = CreatePreClosingBackup(academicYear, userId);
