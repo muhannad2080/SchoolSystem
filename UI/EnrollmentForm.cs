@@ -317,26 +317,25 @@ namespace SchoolSystem.UI
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
+            ApplyEnrollmentSearch();
+        }
+
+        private void ApplyEnrollmentSearch()
+        {
             if (enrollmentsView == null)
             {
                 UpdateCount();
                 return;
             }
 
-            string keyword = UIHelper.EscapeDataViewFilterValue(txtSearch.Text);
-            if (string.IsNullOrEmpty(keyword))
-            {
-                enrollmentsView.RowFilter = "";
-            }
-            else
-            {
-                enrollmentsView.RowFilter = $@"
-                    Convert(EnrollmentID, 'System.String') LIKE '%{keyword}%' OR 
-                    StudentName LIKE '%{keyword}%' OR 
-                    Convert(StudentID, 'System.String') LIKE '%{keyword}%' OR 
-                    AcademicYear LIKE '%{keyword}%' OR 
-                    Status LIKE '%{keyword}%'";
-            }
+            // بحث فوري من أول حرف، مع دعم عدة كلمات في جميع حقول التسجيل.
+            enrollmentsView.RowFilter = UIHelper.BuildDataViewSearchFilter(
+                txtSearch.Text,
+                "StudentName",
+                "AcademicYear",
+                "Status",
+                "Section",
+                "ClassName");
             UpdateCount();
         }
 
@@ -345,6 +344,7 @@ namespace SchoolSystem.UI
             if (e.KeyCode == Keys.Enter)
             {
                 btnSearch_Click(sender, e);
+                e.SuppressKeyPress = true;
             }
         }
 

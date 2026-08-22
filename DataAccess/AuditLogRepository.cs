@@ -35,38 +35,41 @@ namespace SchoolSystem.DataAccess
             string userName, string actionName, string entityName)
         {
             EnsureTable();
-            using (SqlConnection connection = DbConnection.GetConnection())
-            using (SqlCommand command = new SqlCommand(@"
+            string searchValue = (search ?? string.Empty).Trim();
+            string userValue = (userName ?? string.Empty).Trim();
+            string actionValue = (actionName ?? string.Empty).Trim();
+            string entityValue = (entityName ?? string.Empty).Trim();
+            string[] terms = searchValue.Split((char[])null, System.StringSplitOptions.RemoveEmptyEntries);
+
+            var sql = new System.Text.StringBuilder(@"
                 SELECT TOP 1000
-                    AuditLogID,
-                    CreatedAt,
-                    ISNULL(UserName, N'نظام') AS UserName,
-                    Module,
-                    MachineName,
-                    IpAddress,
-                    ActionName,
-                    EntityName,
-                    EntityID,
-                    Details
+                    AuditLogID, CreatedAt, ISNULL(UserName, N'نظام') AS UserName,
+                    Module, MachineName, IpAddress, ActionName, EntityName, EntityID, Details
                 FROM AuditLogs
-                WHERE CreatedAt >= @FromDate
-                  AND CreatedAt < @ToDate
-                  AND (@Search = N'' OR UserName LIKE @LikeSearch OR ActionName LIKE @LikeSearch OR EntityName LIKE @LikeSearch OR Details LIKE @LikeSearch)
+                WHERE CreatedAt >= @FromDate AND CreatedAt < @ToDate");
+
+            for (int i = 0; i < terms.Length; i++)
+            {
+                sql.Append(" AND (UserName LIKE @Search").Append(i)
+                   .Append(" OR ActionName LIKE @Search").Append(i)
+                   .Append(" OR EntityName LIKE @Search").Append(i)
+                   .Append(" OR Details LIKE @Search").Append(i).Append(")");
+            }
+
+            sql.Append(@"
                   AND (@UserName = N'' OR UserName = @UserName)
                   AND (@ActionName = N'' OR ActionName = @ActionName)
                   AND (@EntityName = N'' OR EntityName = @EntityName)
-                ORDER BY CreatedAt DESC, AuditLogID DESC;", connection))
+                ORDER BY CreatedAt DESC, AuditLogID DESC;");
+
+            using (SqlConnection connection = DbConnection.GetConnection())
+            using (SqlCommand command = new SqlCommand(sql.ToString(), connection))
             using (SqlDataAdapter adapter = new SqlDataAdapter(command))
             {
-                string searchValue = (search ?? string.Empty).Trim();
-                string userValue = (userName ?? string.Empty).Trim();
-                string actionValue = (actionName ?? string.Empty).Trim();
-                string entityValue = (entityName ?? string.Empty).Trim();
-
                 command.Parameters.Add("@FromDate", SqlDbType.DateTime).Value = fromDate.Date;
                 command.Parameters.Add("@ToDate", SqlDbType.DateTime).Value = toDate.Date.AddDays(1);
-                command.Parameters.Add("@Search", SqlDbType.NVarChar, 200).Value = searchValue;
-                command.Parameters.Add("@LikeSearch", SqlDbType.NVarChar, 210).Value = "%" + searchValue + "%";
+                for (int i = 0; i < terms.Length; i++)
+                    command.Parameters.Add("@Search" + i, SqlDbType.NVarChar, 210).Value = "%" + terms[i] + "%";
                 command.Parameters.Add("@UserName", SqlDbType.NVarChar, 150).Value = userValue;
                 command.Parameters.Add("@ActionName", SqlDbType.NVarChar, 100).Value = actionValue;
                 command.Parameters.Add("@EntityName", SqlDbType.NVarChar, 100).Value = entityValue;

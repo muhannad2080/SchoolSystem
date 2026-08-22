@@ -233,7 +233,7 @@ namespace SchoolSystem.UI
             this.refreshButton.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.refreshButton.Size = new System.Drawing.Size(96, 38);
             this.refreshButton.TabIndex = 1;
-            this.refreshButton.Text = "تحديث";
+            this.refreshButton.Text = "بحث / تحديث";
             this.refreshButton.UseVisualStyleBackColor = false;
             this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
             //
