@@ -148,6 +148,10 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
+
                     IF EXISTS
                     (
                         SELECT 1 FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
@@ -191,7 +195,9 @@ namespace SchoolSystem.DataAccess
                         UpdatedAt = GETDATE()
                     FROM Fees f
                     WHERE f.FeePlanID = @FeePlanID
-                      AND f.PaidAmount = 0";
+                      AND f.PaidAmount = 0;
+
+                    COMMIT TRANSACTION";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {

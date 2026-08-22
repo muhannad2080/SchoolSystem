@@ -16,8 +16,9 @@ namespace SchoolSystem.DataAccess
                         f.FeeID,
                         f.StudentID,
                         s.FullName AS StudentName,
-                        s.ClassID,
+                        sc.ClassID,
                         c.ClassName,
+                        sc.Section,
                         f.FeePlanID,
                         f.AcademicYear,
                         f.FeeType,
@@ -80,6 +81,23 @@ namespace SchoolSystem.DataAccess
                     )
                     BEGIN
                         THROW 51041, N'خطة الرسوم لا تطابق صف الطالب في العام الدراسي المحدد.', 1;
+                    END;
+
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                        WHERE StudentID = @StudentID
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                          AND (
+                                (@FeePlanID IS NOT NULL AND FeePlanID = @FeePlanID)
+                                OR (@FeePlanID IS NULL AND FeePlanID IS NULL
+                                    AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
+                                    AND ISNULL(Notes, N'') = ISNULL(@Notes, N''))
+                              )
+                    )
+                    BEGIN
+                        THROW 51042, N'يوجد بند رسوم مماثل للطالب في العام الدراسي نفسه؛ لا يمكن إنشاء رسوم مكررة.', 1;
                     END;
 
                     INSERT INTO Fees
@@ -155,6 +173,21 @@ namespace SchoolSystem.DataAccess
                     BEGIN
                         THROW 51041, N'خطة الرسوم لا تطابق صف الطالب في العام الدراسي المحدد.', 1;
                     END;
+
+                    IF EXISTS
+                    (
+                        SELECT 1 FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                        WHERE FeeID <> @FeeID
+                          AND StudentID = @StudentID
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                          AND (
+                                (@FeePlanID IS NOT NULL AND FeePlanID = @FeePlanID)
+                                OR (@FeePlanID IS NULL AND FeePlanID IS NULL
+                                    AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
+                                    AND ISNULL(Notes, N'') = ISNULL(@Notes, N''))
+                              )
+                    )
+                        THROW 51043, N'التعديل سيؤدي إلى تكرار بند رسوم موجود للطالب في العام نفسه.', 1;
 
                     UPDATE Fees SET
                         StudentID = @StudentID,
@@ -325,8 +358,8 @@ namespace SchoolSystem.DataAccess
                         SET FeePlanID = @FeePlanID
                         WHERE StudentID = @StudentID
                           AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND FeeType = @FeeType
-                          AND Notes = @Notes
+                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
+                          AND ISNULL(Notes, N'') = ISNULL(@Notes, N'')
                           AND FeePlanID IS NULL;
                     END;
 
@@ -336,16 +369,17 @@ namespace SchoolSystem.DataAccess
                         FROM Fees WITH (UPDLOCK, HOLDLOCK)
                         WHERE StudentID = @StudentID
                           AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND FeeType = @FeeType
-                          AND Notes = @Notes
+                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
+                          AND ISNULL(Notes, N'') = ISNULL(@Notes, N'')
                     )
                     BEGIN
                         SELECT TOP 1 FeeID
                         FROM Fees
                         WHERE StudentID = @StudentID
                           AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND FeeType = @FeeType
-                          AND Notes = @Notes
+                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
+                          AND ISNULL(Notes, N'') = ISNULL(@Notes, N'')
+                        ORDER BY FeeID;
                         RETURN;
                     END;
 

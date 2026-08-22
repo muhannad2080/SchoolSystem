@@ -220,6 +220,8 @@ namespace SchoolSystem.UI
 
             SetHeader("StudentName", "الطالب");
             SetHeader("AcademicYear", "العام الدراسي");
+            SetHeader("ClassName", "الصف الفعلي");
+            SetHeader("Section", "الشعبة الفعلية");
             SetHeader("FeeType", "نوع الرسوم");
             SetHeader("TotalAmount", "الإجمالي");
             SetHeader("DiscountAmount", "الخصم");
