@@ -53,7 +53,8 @@ DECLARE
     @ParentTable SYSNAME,
     @ParentColumn SYSNAME,
     @DeleteAction NVARCHAR(30),
-    @Sql NVARCHAR(MAX);
+    @Sql NVARCHAR(MAX),
+    @OrphanCount INT;
 
 WHILE @RowNo <= ISNULL(@MaxRow, 0)
 BEGIN
@@ -90,32 +91,34 @@ BEGIN
     END
     ELSE
     BEGIN
-        SET @Sql = N'
-IF EXISTS
-(
-    SELECT 1
-    FROM dbo.' + QUOTENAME(@ChildTable) + N' AS C
-    LEFT JOIN dbo.' + QUOTENAME(@ParentTable) + N' AS P
-        ON C.' + QUOTENAME(@ChildColumn) + N' = P.' + QUOTENAME(@ParentColumn) + N'
-    WHERE C.' + QUOTENAME(@ChildColumn) + N' IS NOT NULL
-      AND P.' + QUOTENAME(@ParentColumn) + N' IS NULL
-)
-BEGIN
-    PRINT N''تم التخطي لوجود بيانات يتيمة للعلاقة: ' + REPLACE(@ConstraintName, '''', '''''') + N''';
-END
-ELSE
-BEGIN
-    ALTER TABLE dbo.' + QUOTENAME(@ChildTable) + N' WITH CHECK ADD CONSTRAINT ' + QUOTENAME(@ConstraintName) + N'
-        FOREIGN KEY (' + QUOTENAME(@ChildColumn) + N') REFERENCES dbo.' + QUOTENAME(@ParentTable) + N' (' + QUOTENAME(@ParentColumn) + N')' +
-        CASE
-            WHEN @DeleteAction = N'CASCADE' THEN N' ON DELETE CASCADE'
-            WHEN @DeleteAction = N'SET NULL' THEN N' ON DELETE SET NULL'
-            ELSE N''
-        END + N';';
-    ALTER TABLE dbo.' + QUOTENAME(@ChildTable) + N' CHECK CONSTRAINT ' + QUOTENAME(@ConstraintName) + N';
-    PRINT N''تمت إضافة العلاقة: ' + REPLACE(@ConstraintName, '''', '''''') + N''';
-END;';
-        EXEC sys.sp_executesql @Sql;
+        SET @Sql = N'SELECT @Count = COUNT(*)
+FROM ' + QUOTENAME(N'dbo') + N'.' + QUOTENAME(@ChildTable) + N' AS C
+LEFT JOIN ' + QUOTENAME(N'dbo') + N'.' + QUOTENAME(@ParentTable) + N' AS P
+    ON C.' + QUOTENAME(@ChildColumn) + N' = P.' + QUOTENAME(@ParentColumn) + N'
+WHERE C.' + QUOTENAME(@ChildColumn) + N' IS NOT NULL
+  AND P.' + QUOTENAME(@ParentColumn) + N' IS NULL;';
+        SET @OrphanCount = 0;
+        EXEC sys.sp_executesql @Sql, N'@Count INT OUTPUT', @Count = @OrphanCount OUTPUT;
+
+        IF @OrphanCount > 0
+        BEGIN
+            PRINT N'تم التخطي لوجود بيانات يتيمة للعلاقة: ' + @ConstraintName;
+        END
+        ELSE
+        BEGIN
+            SET @Sql = N'ALTER TABLE ' + QUOTENAME(N'dbo') + N'.' + QUOTENAME(@ChildTable) +
+                N' WITH CHECK ADD CONSTRAINT ' + QUOTENAME(@ConstraintName) +
+                N' FOREIGN KEY (' + QUOTENAME(@ChildColumn) + N') REFERENCES ' +
+                QUOTENAME(N'dbo') + N'.' + QUOTENAME(@ParentTable) + N' (' + QUOTENAME(@ParentColumn) + N')' +
+                CASE
+                    WHEN @DeleteAction = N'CASCADE' THEN N' ON DELETE CASCADE'
+                    WHEN @DeleteAction = N'SET NULL' THEN N' ON DELETE SET NULL'
+                    ELSE N''
+                END + N'; ALTER TABLE ' + QUOTENAME(N'dbo') + N'.' + QUOTENAME(@ChildTable) +
+                N' CHECK CONSTRAINT ' + QUOTENAME(@ConstraintName) + N';';
+            EXEC sys.sp_executesql @Sql;
+            PRINT N'تمت إضافة العلاقة: ' + @ConstraintName;
+        END;
     END;
 
     SET @RowNo += 1;
