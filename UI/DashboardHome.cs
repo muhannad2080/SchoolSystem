@@ -12,6 +12,7 @@ namespace SchoolSystem.UI
     {
         private readonly DashboardService dashboardService = new DashboardService();
         private readonly Button btnRefreshDashboard = new Button();
+        private readonly Label lblActiveAcademicYear = new Label();
 
         public DashboardHome()
         {
@@ -20,7 +21,22 @@ namespace SchoolSystem.UI
             UIHelper.ApplyTheme(this);
             this.Dock = DockStyle.Fill;
             ConfigureDashboardActions();
+            ConfigureActiveYearIndicator();
             this.Load += DashboardHome_Load;
+        }
+
+        private void ConfigureActiveYearIndicator()
+        {
+            lblActiveAcademicYear.Name = "lblActiveAcademicYear";
+            lblActiveAcademicYear.Text = "العام النشط: جاري التحميل...";
+            lblActiveAcademicYear.AutoSize = false;
+            lblActiveAcademicYear.TextAlign = ContentAlignment.MiddleLeft;
+            lblActiveAcademicYear.Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold);
+            lblActiveAcademicYear.ForeColor = UIHelper.TextColor;
+            lblActiveAcademicYear.Location = new Point(18, 16);
+            lblActiveAcademicYear.Size = new Size(300, 34);
+            Controls.Add(lblActiveAcademicYear);
+            lblActiveAcademicYear.BringToFront();
         }
 
         private void ConfigureDashboardActions()
@@ -52,6 +68,7 @@ namespace SchoolSystem.UI
             {
                 btnRefreshDashboard.Enabled = false;
                 Cursor = Cursors.WaitCursor;
+                await LoadActiveYearAsync();
                 await LoadStatisticsAsync();
                 LoadChart();
                 await LoadAlertsAsync();
@@ -64,6 +81,21 @@ namespace SchoolSystem.UI
             {
                 Cursor = Cursors.Default;
                 btnRefreshDashboard.Enabled = true;
+            }
+        }
+
+        private async Task LoadActiveYearAsync()
+        {
+            try
+            {
+                string year = await Task.Run(() => new AnnualClosingService().GetActiveAcademicYear());
+                lblActiveAcademicYear.Text = string.IsNullOrWhiteSpace(year)
+                    ? "العام النشط: غير محدد"
+                    : "العام النشط: " + year;
+            }
+            catch
+            {
+                lblActiveAcademicYear.Text = "العام النشط: تعذر التحميل";
             }
         }
 

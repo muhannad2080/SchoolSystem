@@ -16,6 +16,7 @@ namespace SchoolSystem.UI
     public partial class ReportCenterForm : UserControl
     {
         private readonly ReportService reportService = new ReportService();
+        private readonly AnnualClosingService annualClosingService = new AnnualClosingService();
         private readonly ClassService classService = new ClassService();
 
         private DataTable currentReportData;
@@ -160,12 +161,27 @@ namespace SchoolSystem.UI
 
             int year = DateTime.Now.Year;
             txtAcademicYear.Text = year + "/" + (year + 1);
+            LoadActiveAcademicYear();
 
             dtpFromDate.Value = new DateTime(DateTime.Now.Year, 1, 1);
             dtpToDate.Value = DateTime.Today;
 
             lblSummary.Text = "ملخص التقرير: لا توجد بيانات محملة.";
             lblRecordCount.Text = "عدد السجلات: 0";
+        }
+
+        private void LoadActiveAcademicYear()
+        {
+            try
+            {
+                string activeYear = annualClosingService.GetActiveAcademicYear();
+                if (!string.IsNullOrWhiteSpace(activeYear))
+                    txtAcademicYear.Text = activeYear;
+            }
+            catch
+            {
+                // يبقى البديل المحلي عند عدم تطبيق ترحيل العام النشط بعد.
+            }
         }
 
         private async void cmbClass_SelectedIndexChanged(object sender, EventArgs e)
@@ -369,6 +385,7 @@ namespace SchoolSystem.UI
                 cmbReportType.SelectedIndex = 0;
 
             txtAcademicYear.Text = DateTime.Now.Year + "/" + (DateTime.Now.Year + 1);
+            LoadActiveAcademicYear();
             txtSearch.Clear();
 
             if (cmbClass.Items.Count > 0)
