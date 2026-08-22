@@ -949,7 +949,10 @@ namespace SchoolSystem.UI
 
         private bool IsSequentialAcademicYear(string value)
         {
-            Match match = Regex.Match(value == null ? "" : value.Trim(), @"^(\d{4})[/-](\d{4})$");
+            string normalized = (value ?? string.Empty).Trim()
+                .Replace('–', '/')
+                .Replace('-', '/');
+            Match match = Regex.Match(normalized, @"^(\d{4})\s*/\s*(\d{4})$");
             int firstYear;
             int secondYear;
             return match.Success &&
