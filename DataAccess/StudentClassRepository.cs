@@ -155,7 +155,7 @@ namespace SchoolSystem.DataAccess
                         FROM Enrollments e
                         WHERE e.StudentID = @StudentID
                           AND REPLACE(e.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
-                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) = N'مقبول'
+                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted')
                     )
                         THROW 50014, N'لا يمكن توزيع الطالب قبل قبول تسجيله في العام الدراسي المحدد.', 1;
 
