@@ -74,6 +74,11 @@ namespace SchoolSystem.DataAccess
                         ISNULL(g.ResultStatus, CASE WHEN ISNULL(g.GradeValue, 0) >= 50 THEN N'ناجح' ELSE N'راسب' END) AS ResultStatus,
                         ISNULL(g.Notes, N'') AS Notes
                     FROM Students s
+                    INNER JOIN StudentClasses sc
+                        ON sc.StudentID = s.StudentID
+                        AND sc.ClassID = @ClassID
+                        AND LTRIM(RTRIM(ISNULL(sc.Section, N''))) = LTRIM(RTRIM(@Section))
+                        AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                     LEFT JOIN Grades g
                         ON g.StudentID = s.StudentID
                         AND g.SubjectID = @SubjectID
@@ -81,10 +86,7 @@ namespace SchoolSystem.DataAccess
                         AND LTRIM(RTRIM(ISNULL(g.Section, N''))) = LTRIM(RTRIM(@Section))
                         AND REPLACE(ISNULL(g.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                         AND g.TermName = @TermName
-                    WHERE s.ClassID = @ClassID
-                      AND LTRIM(RTRIM(ISNULL(s.Section, N''))) = LTRIM(RTRIM(@Section))
-                      AND REPLACE(ISNULL(s.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                      AND ISNULL(s.Status, N'نشط') = N'نشط'
+                    WHERE ISNULL(s.Status, N'نشط') = N'نشط'
                     ORDER BY s.FullName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -127,6 +129,17 @@ namespace SchoolSystem.DataAccess
                           AND ISNULL(IsActive, 1) = 1
                     )
                         THROW 50005, N'لا يمكن حفظ درجة لمادة غير نشطة.', 1;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM StudentClasses sc
+                        WHERE sc.StudentID = @StudentID
+                          AND sc.ClassID = @ClassID
+                          AND LTRIM(RTRIM(ISNULL(sc.Section, N''))) = LTRIM(RTRIM(ISNULL(@Section, N'')))
+                          AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                    )
+                        THROW 50006, N'لا يمكن حفظ الدرجة؛ الطالب غير موزع في الصف والشعبة والعام المحدد.', 1;
 
                     IF EXISTS
                     (
