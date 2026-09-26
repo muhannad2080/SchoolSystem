@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- يوثق عنصر XML المستخدم في إعدادات المشروع أو موارده. -->
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
+  <!-- يوثق عنصر XML المستخدم في إعدادات المشروع أو موارده. -->
+  <Profiles>
+    <!-- يوثق عنصر XML المستخدم في إعدادات المشروع أو موارده. -->
+    <Profile Name="(Default)" />
+  <!-- يوثق عنصر XML المستخدم في إعدادات المشروع أو موارده. -->
+  </Profiles>
+  <!-- يوثق عنصر XML المستخدم في إعدادات المشروع أو موارده. -->
+  <Settings />
+<!-- يوثق عنصر XML المستخدم في إعدادات المشروع أو موارده. -->
+</SettingsFile>

@@ -1,0 +1,345 @@
+using System;
+using System.Data;
+using System.Data.SqlClient;
+using SchoolSystem.Helpers;
+using SchoolSystem.Models;
+
+
+namespace SchoolSystem.DataAccess
+{
+
+    public class EnrollmentRepository
+    {
+        // تعريف الدالة GetAllEnrollments لتنفيذ العملية المرتبطة بها.
+        public DataTable GetAllEnrollments()
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                string query = @"
+                    SELECT
+                        e.EnrollmentID,
+                        e.StudentID,
+                        s.FullName AS StudentName,
+                        s.StudentNumber,
+                        e.ApplicationDate,
+                        e.ApplicationType,
+                        e.AcademicYear,
+                        e.ClassID,
+                        c.ClassName,
+                        e.Section,
+                        e.SeatNumber,
+                        e.Status,
+                        e.PreviousSchool,
+                        e.PreviousClass,
+                        e.TransferReason,
+                        e.RegistrationFee,
+                        e.PaidAmount,
+                        (ISNULL(e.RegistrationFee, 0) - ISNULL(e.PaidAmount, 0)) AS RemainingAmount,
+                        e.PaymentMethod,
+                        e.ReceiptNo,
+                        e.HasBirthCertificate,
+                        e.HasGuardianId,
+                        e.HasPhoto,
+                        e.HasLastCertificate,
+                        e.HasMedicalReport,
+                        e.GeneralNotes AS Notes
+                    FROM Enrollments e
+                    LEFT JOIN Students s ON e.StudentID = s.StudentID
+                    LEFT JOIN Classes c ON e.ClassID = c.ClassID
+                    ORDER BY e.EnrollmentID DESC";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
+                {
+                    DataTable dt = new DataTable();
+
+                    adapter.Fill(dt);
+
+                    return dt;
+                }
+            }
+        }
+
+        // تعريف الدالة AddEnrollment لتنفيذ العملية المرتبطة بها.
+        public bool AddEnrollment(Enrollment enrollment)
+        {
+            const string nextSeatNumberQuery = @"
+SELECT ISNULL(MAX(TRY_CONVERT(INT, NULLIF(LTRIM(RTRIM(SeatNumber)), N''))), 0) + 1
+FROM Enrollments WITH (UPDLOCK, HOLDLOCK)
+WHERE REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+  AND ClassID = @ClassID
+  AND ISNULL(Section, N'') = ISNULL(@Section, N'')
+  AND (Status IS NULL OR Status <> N'مرفوض');";
+
+            const string insertQuery = @"
+IF NOT EXISTS
+(
+    SELECT 1
+    FROM Students
+    WHERE StudentID = @StudentID
+      AND ISNULL(Status, N'نشط') = N'نشط'
+)
+    THROW 50003, N'لا يمكن تسجيل طالب غير نشط.', 1;
+
+INSERT INTO Enrollments
+(
+    StudentID, ApplicationDate, ApplicationType, AcademicYear, ClassID, Section, SeatNumber, Status,
+    PreviousSchool, PreviousClass, TransferReason, RegistrationFee, PaidAmount, PaymentMethod, ReceiptNo,
+    HasBirthCertificate, HasGuardianId, HasPhoto, HasLastCertificate, HasMedicalReport, GeneralNotes, CreatedAt
+)
+VALUES
+(
+    @StudentID, @ApplicationDate, @ApplicationType, @AcademicYear, @ClassID, @Section, @SeatNumber, @Status,
+    @PreviousSchool, @PreviousClass, @TransferReason, @RegistrationFee, @PaidAmount, @PaymentMethod, @ReceiptNo,
+    @HasBirthCertificate, @HasGuardianId, @HasPhoto, @HasLastCertificate, @HasMedicalReport, @Notes, GETDATE()
+);
+
+SELECT CAST(SCOPE_IDENTITY() AS INT);";
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+
+                conn.Open();
+
+                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
+                    try
+                    {
+                        if (string.IsNullOrWhiteSpace(enrollment.SeatNumber))
+                        {
+                            using (SqlCommand nextSeatCommand = new SqlCommand(nextSeatNumberQuery, conn, transaction))
+                            {
+
+                                nextSeatCommand.Parameters.AddWithValue("@AcademicYear", SafeText(enrollment.AcademicYear));
+
+                                nextSeatCommand.Parameters.AddWithValue("@ClassID", enrollment.ClassID);
+
+                                nextSeatCommand.Parameters.AddWithValue("@Section", NullableText(enrollment.Section));
+
+                                enrollment.SeatNumber = Convert.ToInt32(nextSeatCommand.ExecuteScalar()).ToString("0000");
+                            }
+                        }
+
+                        using (SqlCommand insertCommand = new SqlCommand(insertQuery, conn, transaction))
+                        {
+                            AddParameters(insertCommand, enrollment, false);
+
+                            object result = insertCommand.ExecuteScalar();
+
+                            if (result == null || result == DBNull.Value)
+                            {
+                                transaction.Rollback();
+
+                                return false;
+                            }
+
+                            enrollment.EnrollmentID = Convert.ToInt32(result);
+
+                            transaction.Commit();
+
+                            return true;
+                        }
+                    }
+
+                    catch (Exception ex)
+                    {
+                        ApplicationLogger.LogException("مستودع " + nameof(EnrollmentRepository) + ": إضافة تسجيل", ex);
+                        transaction.Rollback();
+
+                        throw;
+                    }
+                }
+            }
+        }
+
+        // تعريف الدالة UpdateEnrollment لتنفيذ العملية المرتبطة بها.
+        public bool UpdateEnrollment(Enrollment enrollment)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                string query = @"
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Students
+                        WHERE StudentID = @StudentID
+                          AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 50003, N'لا يمكن ربط تسجيل بطالب غير نشط.', 1;
+
+                    UPDATE Enrollments
+                    SET
+                        StudentID = @StudentID,
+                        ApplicationDate = @ApplicationDate,
+                        ApplicationType = @ApplicationType,
+                        AcademicYear = @AcademicYear,
+                        ClassID = @ClassID,
+                        Section = @Section,
+                        SeatNumber = @SeatNumber,
+                        Status = @Status,
+                        PreviousSchool = @PreviousSchool,
+                        PreviousClass = @PreviousClass,
+                        TransferReason = @TransferReason,
+                        RegistrationFee = @RegistrationFee,
+                        PaidAmount = @PaidAmount,
+                        PaymentMethod = @PaymentMethod,
+                        ReceiptNo = @ReceiptNo,
+                        HasBirthCertificate = @HasBirthCertificate,
+                        HasGuardianId = @HasGuardianId,
+                        HasPhoto = @HasPhoto,
+                        HasLastCertificate = @HasLastCertificate,
+                        HasMedicalReport = @HasMedicalReport,
+                        GeneralNotes = @Notes,
+                        UpdatedAt = GETDATE()
+                    WHERE EnrollmentID = @EnrollmentID";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    AddParameters(cmd, enrollment, true);
+
+                    conn.Open();
+
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        // تعريف الدالة DeleteEnrollment لتنفيذ العملية المرتبطة بها.
+        public bool DeleteEnrollment(int enrollmentId)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                string query = "DELETE FROM Enrollments WHERE EnrollmentID = @EnrollmentID";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+
+                    cmd.Parameters.AddWithValue("@EnrollmentID", enrollmentId);
+
+                    conn.Open();
+
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+
+        // تعريف الدالة GenerateNextSeatNumber لتنفيذ العملية المرتبطة بها.
+        public string GenerateNextSeatNumber(string academicYear, int classId, string section)
+        {
+            const string query = @"
+SELECT ISNULL(MAX(TRY_CONVERT(INT, NULLIF(LTRIM(RTRIM(SeatNumber)), N''))), 0) + 1
+FROM Enrollments
+WHERE REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+  AND ClassID = @ClassID
+  AND ISNULL(Section, N'') = ISNULL(@Section, N'')
+  AND (Status IS NULL OR Status <> N'مرفوض');";
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+
+                cmd.Parameters.AddWithValue("@AcademicYear", SafeText(academicYear));
+
+                cmd.Parameters.AddWithValue("@ClassID", classId);
+
+                cmd.Parameters.AddWithValue("@Section", NullableText(section));
+
+                conn.Open();
+
+                int nextNumber = Convert.ToInt32(cmd.ExecuteScalar());
+
+                return nextNumber.ToString("0000");
+            }
+        }
+
+        // تعريف الدالة IsStudentEnrolled لتنفيذ العملية المرتبطة بها.
+        public bool IsStudentEnrolled(int studentId, string academicYear, int excludeEnrollmentId = 0)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                string query = @"
+                    SELECT COUNT(*)
+                    FROM Enrollments
+                    WHERE StudentID = @StudentID
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND (Status IS NULL OR Status <> N'مرفوض')
+                      AND (@ExcludeEnrollmentID = 0 OR EnrollmentID <> @ExcludeEnrollmentID)";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+
+                    cmd.Parameters.AddWithValue("@StudentID", studentId);
+
+                    cmd.Parameters.AddWithValue("@AcademicYear", academicYear.Trim());
+
+                    cmd.Parameters.AddWithValue("@ExcludeEnrollmentID", excludeEnrollmentId);
+
+
+                    conn.Open();
+
+                    return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+                }
+            }
+        }
+
+        // تعريف الدالة AddParameters لتنفيذ العملية المرتبطة بها.
+        private void AddParameters(SqlCommand cmd, Enrollment enrollment, bool includeId)
+        {
+
+            if (includeId) cmd.Parameters.AddWithValue("@EnrollmentID", enrollment.EnrollmentID);
+
+
+            cmd.Parameters.AddWithValue("@StudentID", enrollment.StudentID);
+
+            cmd.Parameters.AddWithValue("@ApplicationDate", enrollment.ApplicationDate.Date);
+
+            cmd.Parameters.AddWithValue("@ApplicationType", SafeText(enrollment.ApplicationType));
+
+            cmd.Parameters.AddWithValue("@AcademicYear", SafeText(enrollment.AcademicYear));
+
+            cmd.Parameters.AddWithValue("@ClassID", enrollment.ClassID);
+
+            cmd.Parameters.AddWithValue("@Section", NullableText(enrollment.Section));
+
+            cmd.Parameters.AddWithValue("@SeatNumber", NullableText(enrollment.SeatNumber));
+
+            cmd.Parameters.AddWithValue("@Status", SafeText(enrollment.Status));
+
+
+            cmd.Parameters.AddWithValue("@PreviousSchool", NullableText(enrollment.PreviousSchool));
+
+            cmd.Parameters.AddWithValue("@PreviousClass", NullableText(enrollment.PreviousClass));
+
+            cmd.Parameters.AddWithValue("@TransferReason", NullableText(enrollment.TransferReason));
+
+
+            cmd.Parameters.AddWithValue("@RegistrationFee", enrollment.RegistrationFee);
+
+            cmd.Parameters.AddWithValue("@PaidAmount", enrollment.PaidAmount);
+
+            cmd.Parameters.AddWithValue("@PaymentMethod", NullableText(enrollment.PaymentMethod));
+
+            cmd.Parameters.AddWithValue("@ReceiptNo", NullableText(enrollment.ReceiptNo));
+
+
+            cmd.Parameters.AddWithValue("@HasBirthCertificate", enrollment.HasBirthCertificate);
+
+            cmd.Parameters.AddWithValue("@HasGuardianId", enrollment.HasGuardianId);
+
+            cmd.Parameters.AddWithValue("@HasPhoto", enrollment.HasPhoto);
+
+            cmd.Parameters.AddWithValue("@HasLastCertificate", enrollment.HasLastCertificate);
+
+            cmd.Parameters.AddWithValue("@HasMedicalReport", enrollment.HasMedicalReport);
+
+
+            cmd.Parameters.AddWithValue("@Notes", NullableText(enrollment.Notes));
+        }
+
+        // تعريف الدالة NullableText لتنفيذ العملية المرتبطة بها.
+        private object NullableText(string value) => string.IsNullOrWhiteSpace(value) ? DBNull.Value : (object)value.Trim();
+        // تعريف الدالة SafeText لتنفيذ العملية المرتبطة بها.
+        private string SafeText(string value) => string.IsNullOrWhiteSpace(value) ? "" : value.Trim();
+    }
+}

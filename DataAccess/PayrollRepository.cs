@@ -1,0 +1,327 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using SchoolSystem.Models;
+
+
+namespace SchoolSystem.DataAccess.Repositories
+{
+
+    /// <summary>الوصول لبيانات الرواتب — يطابق مباشرة جدول dbo.Payroll الحقيقي.</summary>
+    public class PayrollRepository
+    {
+
+        private const string BaseSelect = @"
+SELECT
+    p.PayrollID,
+    p.TeacherID,
+    t.FullName AS TeacherName,
+    p.SalaryMonth,
+    p.SalaryYear,
+    p.BasicSalary,
+    p.Allowances,
+    p.Deductions,
+    p.NetSalary,
+    p.PaymentDate,
+    p.Notes,
+    p.CreatedAt
+FROM dbo.Payroll p
+LEFT JOIN dbo.Teachers t ON t.TeacherID = p.TeacherID";
+
+        public DataTable GetAllPayrolls()
+        {
+            var payrolls = new List<Payroll>();
+
+            string query = BaseSelect + " ORDER BY p.SalaryYear DESC, p.SalaryMonth DESC, p.PayrollID DESC";
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        payrolls.Add(ReadPayroll(reader));
+                    }
+                }
+            }
+
+            return ToDataTable(payrolls);
+        }
+
+        public DataTable GetPayrollsByTeacherAndMonth(int teacherId, int month, int year)
+        {
+            var payrolls = new List<Payroll>();
+
+            string query = BaseSelect + @"
+WHERE p.TeacherID = @TeacherID AND p.SalaryMonth = @Month AND p.SalaryYear = @Year
+ORDER BY p.CreatedAt DESC";
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.Add("@TeacherID", SqlDbType.Int).Value = teacherId;
+                cmd.Parameters.Add("@Month", SqlDbType.Int).Value = month;
+                cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
+
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        payrolls.Add(ReadPayroll(reader));
+                    }
+                }
+            }
+
+            return ToDataTable(payrolls);
+        }
+
+        /// <summary>يضيف راتباً جديداً ويعرف الرقم المولد (PayrollID). صافي الراتب عمود محسوب لا يُكتب.</summary>
+        public int AddPayroll(Payroll payroll)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                conn.Open();
+
+                using (SqlCommand check = new SqlCommand(
+                    "SELECT COUNT(1) FROM dbo.Payroll WHERE TeacherID = @TeacherID AND SalaryMonth = @Month AND SalaryYear = @Year", conn))
+                {
+                    check.Parameters.Add("@TeacherID", SqlDbType.Int).Value = payroll.TeacherID;
+                    check.Parameters.Add("@Month", SqlDbType.Int).Value = payroll.SalaryMonth;
+                    check.Parameters.Add("@Year", SqlDbType.Int).Value = payroll.SalaryYear;
+
+                    if (Convert.ToInt32(check.ExecuteScalar()) > 0)
+                        throw new InvalidOperationException("هناك راتب مسجل لنفس الموظف في نفس الشهر والسنة.");
+                }
+
+                string insertQuery = @"
+INSERT INTO dbo.Payroll
+    (TeacherID, SalaryMonth, SalaryYear, BasicSalary, Allowances, Deductions, PaymentDate, Notes, CreatedAt)
+VALUES
+    (@TeacherID, @Month, @Year, @BasicSalary, @Allowances, @Deductions, @PaymentDate, @Notes, GETDATE());
+SELECT CONVERT(int, SCOPE_IDENTITY());";
+
+                using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
+                {
+                    insertCmd.Parameters.Add("@TeacherID", SqlDbType.Int).Value = payroll.TeacherID;
+                    insertCmd.Parameters.Add("@Month", SqlDbType.Int).Value = payroll.SalaryMonth;
+                    insertCmd.Parameters.Add("@Year", SqlDbType.Int).Value = payroll.SalaryYear;
+                    insertCmd.Parameters.Add("@BasicSalary", SqlDbType.Decimal).Value = payroll.BasicSalary;
+                    insertCmd.Parameters.Add("@Allowances", SqlDbType.Decimal).Value = payroll.Allowances;
+                    insertCmd.Parameters.Add("@Deductions", SqlDbType.Decimal).Value = payroll.Deductions;
+                    insertCmd.Parameters.Add("@PaymentDate", SqlDbType.Date).Value =
+                        (object)payroll.PaymentDate ?? DBNull.Value;
+                    insertCmd.Parameters.Add("@Notes", SqlDbType.NVarChar, -1).Value =
+                        string.IsNullOrWhiteSpace(payroll.Notes) ? (object)DBNull.Value : payroll.Notes;
+
+                    object result = insertCmd.ExecuteScalar();
+                    return result == null || result == DBNull.Value ? 0 : Convert.ToInt32(result);
+                }
+            }
+        }
+
+        /// <summary>يحدّث راتباً غير مصروف فقط. يعيد false إذا كان مصروفاً أو غير موجود.</summary>
+        public bool UpdatePayroll(Payroll payroll)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+UPDATE dbo.Payroll SET
+    BasicSalary = @BasicSalary,
+    Allowances = @Allowances,
+    Deductions = @Deductions,
+    PaymentDate = @PaymentDate,
+    Notes = @Notes
+WHERE PayrollID = @PayrollID AND PaymentDate IS NULL", conn))
+            {
+                cmd.Parameters.Add("@PayrollID", SqlDbType.Int).Value = payroll.PayrollID;
+                cmd.Parameters.Add("@BasicSalary", SqlDbType.Decimal).Value = payroll.BasicSalary;
+                cmd.Parameters.Add("@Allowances", SqlDbType.Decimal).Value = payroll.Allowances;
+                cmd.Parameters.Add("@Deductions", SqlDbType.Decimal).Value = payroll.Deductions;
+                cmd.Parameters.Add("@PaymentDate", SqlDbType.Date).Value =
+                    (object)payroll.PaymentDate ?? DBNull.Value;
+                cmd.Parameters.Add("@Notes", SqlDbType.NVarChar, -1).Value =
+                    string.IsNullOrWhiteSpace(payroll.Notes) ? (object)DBNull.Value : payroll.Notes;
+
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        /// <summary>يمنع حذف راتب مصروف أو مرتبط بسند صرف.</summary>
+        public bool DeletePayroll(int payrollId)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+IF EXISTS (
+    SELECT 1 FROM dbo.Payroll
+    WHERE PayrollID = @PayrollID AND PaymentDate IS NOT NULL
+)
+    THROW 51005, N'لا يمكن حذف راتب تم صرفه.', 1;
+IF EXISTS (
+    SELECT 1 FROM dbo.Vouchers
+    WHERE ReferenceType = N'رواتب' AND ReferenceID = @PayrollID
+)
+    THROW 51004, N'لا يمكن حذف سجل راتب مرتبط بسند مالي. استخدم التسوية أو الإلغاء المالي.', 1;
+DELETE FROM dbo.Payroll WHERE PayrollID = @PayrollID AND PaymentDate IS NULL", conn))
+            {
+                cmd.Parameters.Add("@PayrollID", SqlDbType.Int).Value = payrollId;
+
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
+        public bool PayrollExists(int teacherId, int month, int year, int excludeId = 0)
+        {
+            string query = @"
+SELECT COUNT(1) FROM dbo.Payroll
+WHERE TeacherID = @TeacherID AND SalaryMonth = @Month AND SalaryYear = @Year";
+
+            if (excludeId > 0)
+                query += " AND PayrollID <> @ExcludeId";
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.Add("@TeacherID", SqlDbType.Int).Value = teacherId;
+                cmd.Parameters.Add("@Month", SqlDbType.Int).Value = month;
+                cmd.Parameters.Add("@Year", SqlDbType.Int).Value = year;
+
+                if (excludeId > 0)
+                    cmd.Parameters.Add("@ExcludeId", SqlDbType.Int).Value = excludeId;
+
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
+        public string GetTeacherName(int teacherId)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(
+                "SELECT FullName FROM dbo.Teachers WHERE TeacherID = @TeacherID", conn))
+            {
+                cmd.Parameters.Add("@TeacherID", SqlDbType.Int).Value = teacherId;
+
+                conn.Open();
+
+                object value = cmd.ExecuteScalar();
+
+                return value == null || value == DBNull.Value ? "معلم رقم " + teacherId : Convert.ToString(value);
+            }
+        }
+
+        public decimal GetPayrollNet(int payrollId)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(
+                "SELECT NetSalary FROM dbo.Payroll WHERE PayrollID = @PayrollID", conn))
+            {
+                cmd.Parameters.Add("@PayrollID", SqlDbType.Int).Value = payrollId;
+
+                conn.Open();
+
+                object value = cmd.ExecuteScalar();
+
+                if (value == null || value == DBNull.Value)
+                    throw new InvalidOperationException("لم يتم العثور على سجل الراتب.");
+
+                return Convert.ToDecimal(value);
+            }
+        }
+
+        private static Payroll ReadPayroll(SqlDataReader reader)
+        {
+            return new Payroll
+            {
+                PayrollID = GetInt(reader, "PayrollID"),
+                TeacherID = GetInt(reader, "TeacherID"),
+                TeacherName = GetString(reader, "TeacherName"),
+                SalaryMonth = GetInt(reader, "SalaryMonth"),
+                SalaryYear = GetInt(reader, "SalaryYear"),
+                BasicSalary = GetDecimal(reader, "BasicSalary"),
+                Allowances = GetDecimal(reader, "Allowances"),
+                Deductions = GetDecimal(reader, "Deductions"),
+                NetSalary = GetDecimal(reader, "NetSalary"),
+                PaymentDate = GetNullableDate(reader, "PaymentDate"),
+                Notes = GetString(reader, "Notes"),
+                CreatedAt = GetDate(reader, "CreatedAt")
+            };
+        }
+
+        private static int GetInt(SqlDataReader reader, string column)
+        {
+            int ordinal = reader.GetOrdinal(column);
+            if (reader.IsDBNull(ordinal)) return 0;
+            return Convert.ToInt32(reader.GetValue(ordinal));
+        }
+
+        private static decimal GetDecimal(SqlDataReader reader, string column)
+        {
+            int ordinal = reader.GetOrdinal(column);
+            if (reader.IsDBNull(ordinal)) return 0m;
+            return Convert.ToDecimal(reader.GetValue(ordinal));
+        }
+
+        private static string GetString(SqlDataReader reader, string column)
+        {
+            int ordinal = reader.GetOrdinal(column);
+            if (reader.IsDBNull(ordinal)) return string.Empty;
+            return Convert.ToString(reader.GetValue(ordinal));
+        }
+
+        private static DateTime GetDate(SqlDataReader reader, string column)
+        {
+            int ordinal = reader.GetOrdinal(column);
+            if (reader.IsDBNull(ordinal)) return DateTime.MinValue;
+            return Convert.ToDateTime(reader.GetValue(ordinal));
+        }
+
+        private static DateTime? GetNullableDate(SqlDataReader reader, string column)
+        {
+            int ordinal = reader.GetOrdinal(column);
+            if (reader.IsDBNull(ordinal)) return null;
+            return Convert.ToDateTime(reader.GetValue(ordinal));
+        }
+
+        private static DataTable ToDataTable(List<Payroll> payrolls)
+        {
+            var table = new DataTable();
+            table.Columns.Add("PayrollID", typeof(int));
+            table.Columns.Add("TeacherName", typeof(string));
+            table.Columns.Add("SalaryMonth", typeof(int));
+            table.Columns.Add("SalaryYear", typeof(int));
+            table.Columns.Add("BasicSalary", typeof(decimal));
+            table.Columns.Add("Allowances", typeof(decimal));
+            table.Columns.Add("Deductions", typeof(decimal));
+            table.Columns.Add("NetSalary", typeof(decimal));
+            table.Columns.Add("PaymentDate", typeof(DateTime));
+            table.Columns.Add("Notes", typeof(string));
+            table.Columns.Add("CreatedAt", typeof(DateTime));
+
+            foreach (var p in payrolls)
+            {
+                var row = table.NewRow();
+                row["PayrollID"] = p.PayrollID;
+                row["TeacherName"] = p.TeacherName ?? "";
+                row["SalaryMonth"] = p.SalaryMonth;
+                row["SalaryYear"] = p.SalaryYear;
+                row["BasicSalary"] = p.BasicSalary;
+                row["Allowances"] = p.Allowances;
+                row["Deductions"] = p.Deductions;
+                row["NetSalary"] = p.NetSalary;
+                row["PaymentDate"] = (object)p.PaymentDate ?? DBNull.Value;
+                row["Notes"] = p.Notes ?? "";
+                row["CreatedAt"] = p.CreatedAt;
+                table.Rows.Add(row);
+            }
+
+            return table;
+        }
+    }
+}

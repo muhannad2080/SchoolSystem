@@ -1,0 +1,66 @@
+cat > .gitignore <<'EOF'
+# Visual Studio
+.vs/
+.vscode/
+
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResults/
+*.trx
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Visual Studio cache
+*.pdb
+*.cache
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Publish
+publish/
+PublishProfiles/
+
+# Backup files
+*.bak
+*.backup
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Node
+node_modules/
+
+# Secrets / local configuration
+.env
+.env.*
+!.env.example
+EOF
+# Database backups
+*.bak
+
+# Application logs
+Logs/
+*.log

@@ -1,0 +1,196 @@
+using System;
+using System.Data;
+using SchoolSystem.DataAccess;
+using SchoolSystem.Models;
+using SchoolSystem.Security;
+
+
+namespace SchoolSystem.Services
+{
+
+    public class StudentAttendanceService
+    {
+        // تعريف الدالة StudentAttendanceRepository لتنفيذ العملية المرتبطة بها.
+        private readonly StudentAttendanceRepository repository = new StudentAttendanceRepository();
+        // تعريف الدالة AuditLogService لتنفيذ العملية المرتبطة بها.
+        private readonly AuditLogService auditLogService = new AuditLogService();
+
+        // تعريف الدالة GetSections لتنفيذ العملية المرتبطة بها.
+        public DataTable GetSections(int classId, string academicYear)
+        {
+            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
+            CurrentUser.DemandAction("Attendance", "View", "ليس لديك صلاحية عرض شعب الحضور.");
+            if (classId <= 0)
+
+                throw new ArgumentException("يجب اختيار الصف.");
+
+
+            if (string.IsNullOrWhiteSpace(academicYear))
+
+                throw new ArgumentException("العام الدراسي مطلوب.");
+
+
+            if (!IsValidAcademicYear(academicYear))
+
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون مثل 2026/2027.");
+
+
+            return repository.GetSections(classId, academicYear.Trim());
+        }
+
+        // تعريف الدالة GetAttendanceSheet لتنفيذ العملية المرتبطة بها.
+        public DataTable GetAttendanceSheet(int classId, string section, string academicYear, DateTime date)
+        {
+            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
+            CurrentUser.DemandAction("Attendance", "View", "ليس لديك صلاحية عرض كشف الحضور.");
+            if (classId <= 0)
+
+                throw new ArgumentException("يجب اختيار الصف.");
+
+
+            if (string.IsNullOrWhiteSpace(section))
+
+                throw new ArgumentException("يجب اختيار الشعبة.");
+
+
+            if (string.IsNullOrWhiteSpace(academicYear))
+
+                throw new ArgumentException("العام الدراسي مطلوب.");
+
+
+            if (!IsValidAcademicYear(academicYear))
+
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون مثل 2026/2027.");
+
+
+            if (date.Date > DateTime.Today)
+
+                throw new ArgumentException("لا يمكن تحميل حضور بتاريخ مستقبلي.");
+
+
+            return repository.GetAttendanceSheet(
+                classId,
+                section.Trim(),
+                academicYear.Trim(),
+                date.Date);
+        }
+
+        // تعريف الدالة SaveAttendance لتنفيذ العملية المرتبطة بها.
+        public bool SaveAttendance(StudentAttendance item)
+        {
+            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
+            CurrentUser.DemandAction("Attendance", "Edit", "ليس لديك صلاحية حفظ أو تعديل الحضور.");
+            Validate(item);
+            bool saved = repository.SaveAttendance(item);
+            if (saved)
+            {
+                auditLogService.Record(
+                    "حفظ حضور طالب",
+                    "StudentAttendance",
+                    item.AttendanceID.ToString(),
+                    "تم حفظ سجل حضور الطالب رقم " + item.StudentID + " بتاريخ " + item.AttendanceDate.ToString("yyyy-MM-dd"));
+            }
+
+            return saved;
+        }
+
+        // تعريف الدالة Validate لتنفيذ العملية المرتبطة بها.
+        private void Validate(StudentAttendance item)
+        {
+            if (item == null)
+
+                throw new ArgumentException("بيانات الحضور غير صحيحة.");
+
+
+            if (item.StudentID <= 0)
+
+                throw new ArgumentException("بيانات الطالب غير صحيحة.");
+
+
+            if (item.ClassID <= 0)
+
+                throw new ArgumentException("بيانات الصف غير صحيحة.");
+
+
+            if (string.IsNullOrWhiteSpace(item.Section))
+
+                throw new ArgumentException("الشعبة مطلوبة.");
+
+
+            if (string.IsNullOrWhiteSpace(item.AcademicYear))
+
+                throw new ArgumentException("العام الدراسي مطلوب.");
+
+
+            if (!IsValidAcademicYear(item.AcademicYear))
+
+                throw new ArgumentException("صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027 أو 1447-1448.");
+
+
+            if (item.AttendanceDate == DateTime.MinValue)
+
+                throw new ArgumentException("تاريخ الحضور مطلوب وصحيح.");
+
+
+            if (item.AttendanceDate.Date > DateTime.Today)
+
+                throw new ArgumentException("لا يمكن تسجيل حضور بتاريخ مستقبلي.");
+
+
+            if (string.IsNullOrWhiteSpace(item.Status))
+
+                throw new ArgumentException("حالة الحضور مطلوبة.");
+
+
+            if (item.Status != "حاضر" &&
+                item.Status != "غائب" &&
+                item.Status != "متأخر" &&
+                item.Status != "مستأذن")
+            {
+
+                throw new ArgumentException("حالة الحضور غير صحيحة.");
+            }
+
+            if (item.ExcuseStatus != null &&
+                item.ExcuseStatus != "بدون عذر" &&
+                item.ExcuseStatus != "بعذر" &&
+                item.ExcuseStatus != "غير محدد")
+            {
+
+                throw new ArgumentException("حالة العذر غير صحيحة.");
+            }
+
+            if (!string.IsNullOrWhiteSpace(item.AbsenceReason) && item.AbsenceReason.Trim().Length > 500)
+
+                throw new ArgumentException("سبب الغياب لا يمكن أن يتجاوز 500 حرف.");
+
+
+            if (!string.IsNullOrWhiteSpace(item.Notes) && item.Notes.Trim().Length > 500)
+
+                throw new ArgumentException("الملاحظات لا يمكن أن تتجاوز 500 حرف.");
+
+
+            if (item.ArrivalTime.HasValue && item.DepartureTime.HasValue && item.DepartureTime.Value < item.ArrivalTime.Value)
+
+                throw new ArgumentException("وقت الانصراف لا يمكن أن يسبق وقت الوصول.");
+        }
+
+        // تعريف الدالة IsValidAcademicYear لتنفيذ العملية المرتبطة بها.
+        private bool IsValidAcademicYear(string academicYear)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            string[] parts = academicYear.Trim().Replace('-', '/').Split('/');
+            int firstYear;
+            int secondYear;
+            if (parts.Length != 2 || parts[0].Length != 4 || parts[1].Length != 4)
+                return false;
+            if (!int.TryParse(parts[0], out firstYear) || !int.TryParse(parts[1], out secondYear))
+                return false;
+
+
+            return secondYear == firstYear + 1;
+        }
+    }
+}

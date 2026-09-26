@@ -1,0 +1,17 @@
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+charset = utf-8-bom
+end_of_line = crlf
+insert_final_newline = true
+
+# WinForms event handlers conventionally follow the Designer event name format,
+# so naming suggestions must not be reported as build issues.
+dotnet_diagnostic.IDE1006.severity = silent
+
+# These are refactoring suggestions only; compiler errors remain enabled.
+dotnet_diagnostic.IDE0017.severity = silent
+dotnet_diagnostic.IDE0018.severity = silent
+dotnet_diagnostic.IDE0019.severity = silent

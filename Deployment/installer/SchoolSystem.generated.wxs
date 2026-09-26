@@ -1,0 +1,184 @@
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="نظام إدارة المدارس - SchoolSystem" Manufacturer="SchoolSystem"
+           Version="1.0.0" UpgradeCode="9F5C7E62-1A2B-4C3D-8E4F-5A6B7C8D9E0F" Language="1025" Codepage="65001" Scope="perMachine">
+    <MajorUpgrade DowngradeErrorMessage="يوجد إصدار أحدث من SchoolSystem مثبّت بالفعل." />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+    <StandardDirectory Id="ProgramFilesFolder">
+      <Directory Id="INSTALLFOLDER" Name="SchoolSystem">
+        <Component Id='cmp_BouncyCastle_Cryptography_dll' Guid='63C8C67B-883A-3280-9D0C-02F0AF15450F'>
+          <File Id='fil_cmp_BouncyCastle_Cryptography_dll' Source='D:\E\SchoolSystems\bin\Release\BouncyCastle.Cryptography.dll' Name='BouncyCastle.Cryptography.dll' />
+        </Component>
+        <Component Id='cmp_BouncyCastle_Cryptography_xml' Guid='BE669E54-A087-3E4B-A5AE-BFF277F86F1C'>
+          <File Id='fil_cmp_BouncyCastle_Cryptography_xml' Source='D:\E\SchoolSystems\bin\Release\BouncyCastle.Cryptography.xml' Name='BouncyCastle.Cryptography.xml' />
+        </Component>
+        <Component Id='cmp_ClosedXML_dll' Guid='8D61ED1B-5E4C-39DC-9478-3E915BC92799'>
+          <File Id='fil_cmp_ClosedXML_dll' Source='D:\E\SchoolSystems\bin\Release\ClosedXML.dll' Name='ClosedXML.dll' />
+        </Component>
+        <Component Id='cmp_ClosedXML_Parser_dll' Guid='54339123-D07C-3E19-9F35-FCBBFEC18E63'>
+          <File Id='fil_cmp_ClosedXML_Parser_dll' Source='D:\E\SchoolSystems\bin\Release\ClosedXML.Parser.dll' Name='ClosedXML.Parser.dll' />
+        </Component>
+        <Component Id='cmp_ClosedXML_Parser_xml' Guid='5FE5C053-83D7-38B3-B123-F56AB7CE9C56'>
+          <File Id='fil_cmp_ClosedXML_Parser_xml' Source='D:\E\SchoolSystems\bin\Release\ClosedXML.Parser.xml' Name='ClosedXML.Parser.xml' />
+        </Component>
+        <Component Id='cmp_ClosedXML_Report_dll' Guid='910C3E04-1EC2-33A3-AD58-24C20B60D663'>
+          <File Id='fil_cmp_ClosedXML_Report_dll' Source='D:\E\SchoolSystems\bin\Release\ClosedXML.Report.dll' Name='ClosedXML.Report.dll' />
+        </Component>
+        <Component Id='cmp_ClosedXML_xml' Guid='5AFAF3DC-7B19-30A9-8B67-2BB2802EA26E'>
+          <File Id='fil_cmp_ClosedXML_xml' Source='D:\E\SchoolSystems\bin\Release\ClosedXML.xml' Name='ClosedXML.xml' />
+        </Component>
+        <Component Id='cmp_DocumentFormat_OpenXml_dll' Guid='E065BF71-7140-378E-9AA5-A016EB905C78'>
+          <File Id='fil_cmp_DocumentFormat_OpenXml_dll' Source='D:\E\SchoolSystems\bin\Release\DocumentFormat.OpenXml.dll' Name='DocumentFormat.OpenXml.dll' />
+        </Component>
+        <Component Id='cmp_DocumentFormat_OpenXml_Framework_dll' Guid='AF215288-1C36-3116-9BD5-563635454FA7'>
+          <File Id='fil_cmp_DocumentFormat_OpenXml_Framework_dll' Source='D:\E\SchoolSystems\bin\Release\DocumentFormat.OpenXml.Framework.dll' Name='DocumentFormat.OpenXml.Framework.dll' />
+        </Component>
+        <Component Id='cmp_DocumentFormat_OpenXml_Framework_xml' Guid='CA08DD60-2F6C-3D83-B290-9D6250473582'>
+          <File Id='fil_cmp_DocumentFormat_OpenXml_Framework_xml' Source='D:\E\SchoolSystems\bin\Release\DocumentFormat.OpenXml.Framework.xml' Name='DocumentFormat.OpenXml.Framework.xml' />
+        </Component>
+        <Component Id='cmp_DocumentFormat_OpenXml_xml' Guid='8199094A-F616-3B4F-91EB-CA90B58C86C4'>
+          <File Id='fil_cmp_DocumentFormat_OpenXml_xml' Source='D:\E\SchoolSystems\bin\Release\DocumentFormat.OpenXml.xml' Name='DocumentFormat.OpenXml.xml' />
+        </Component>
+        <Component Id='cmp_ExcelNumberFormat_dll' Guid='A28596D4-6A54-324B-B851-C6FC890BEABE'>
+          <File Id='fil_cmp_ExcelNumberFormat_dll' Source='D:\E\SchoolSystems\bin\Release\ExcelNumberFormat.dll' Name='ExcelNumberFormat.dll' />
+        </Component>
+        <Component Id='cmp_ExcelNumberFormat_xml' Guid='EAE60AED-B05D-35CF-8511-2559F3EB5BB1'>
+          <File Id='fil_cmp_ExcelNumberFormat_xml' Source='D:\E\SchoolSystems\bin\Release\ExcelNumberFormat.xml' Name='ExcelNumberFormat.xml' />
+        </Component>
+        <Component Id='cmp_iTextSharp_LGPLv2_Core_dll' Guid='3A470C23-6640-36B5-B744-FF36DD054C86'>
+          <File Id='fil_cmp_iTextSharp_LGPLv2_Core_dll' Source='D:\E\SchoolSystems\bin\Release\iTextSharp.LGPLv2.Core.dll' Name='iTextSharp.LGPLv2.Core.dll' />
+        </Component>
+        <Component Id='cmp_iTextSharp_LGPLv2_Core_xml' Guid='2469EB6F-ED7D-39AE-B1B5-732B2ECFE09A'>
+          <File Id='fil_cmp_iTextSharp_LGPLv2_Core_xml' Source='D:\E\SchoolSystems\bin\Release\iTextSharp.LGPLv2.Core.xml' Name='iTextSharp.LGPLv2.Core.xml' />
+        </Component>
+        <Component Id='cmp_Krypton_Toolkit_dll' Guid='F208DAEE-ED43-3396-8161-A3C68739DCBE'>
+          <File Id='fil_cmp_Krypton_Toolkit_dll' Source='D:\E\SchoolSystems\bin\Release\Krypton.Toolkit.dll' Name='Krypton.Toolkit.dll' />
+        </Component>
+        <Component Id='cmp_Krypton_Toolkit_xml' Guid='B08A4CDB-ED74-30C7-9B74-F2713AD8C75B'>
+          <File Id='fil_cmp_Krypton_Toolkit_xml' Source='D:\E\SchoolSystems\bin\Release\Krypton.Toolkit.xml' Name='Krypton.Toolkit.xml' />
+        </Component>
+        <Component Id='cmp_Microsoft_Bcl_HashCode_dll' Guid='18EB37F0-AEBD-3640-BDCA-89CE62E32566'>
+          <File Id='fil_cmp_Microsoft_Bcl_HashCode_dll' Source='D:\E\SchoolSystems\bin\Release\Microsoft.Bcl.HashCode.dll' Name='Microsoft.Bcl.HashCode.dll' />
+        </Component>
+        <Component Id='cmp_Microsoft_Bcl_HashCode_xml' Guid='D4763615-982B-3D4A-8B0D-A919AC0EF0B7'>
+          <File Id='fil_cmp_Microsoft_Bcl_HashCode_xml' Source='D:\E\SchoolSystems\bin\Release\Microsoft.Bcl.HashCode.xml' Name='Microsoft.Bcl.HashCode.xml' />
+        </Component>
+        <Component Id='cmp_MoreLinq_dll' Guid='09456D10-96C4-3B48-90CA-8C131F3EBCFD'>
+          <File Id='fil_cmp_MoreLinq_dll' Source='D:\E\SchoolSystems\bin\Release\MoreLinq.dll' Name='MoreLinq.dll' />
+        </Component>
+        <Component Id='cmp_MoreLinq_xml' Guid='AA8F06DF-206C-3882-B2D0-4482985200F2'>
+          <File Id='fil_cmp_MoreLinq_xml' Source='D:\E\SchoolSystems\bin\Release\MoreLinq.xml' Name='MoreLinq.xml' />
+        </Component>
+        <Component Id='cmp_RBush_dll' Guid='FB00AEBB-61A8-34F2-BDE2-FCE6943AF577'>
+          <File Id='fil_cmp_RBush_dll' Source='D:\E\SchoolSystems\bin\Release\RBush.dll' Name='RBush.dll' />
+        </Component>
+        <Component Id='cmp_RBush_xml' Guid='5DB389F6-857E-362E-A336-E460F90821AE'>
+          <File Id='fil_cmp_RBush_xml' Source='D:\E\SchoolSystems\bin\Release\RBush.xml' Name='RBush.xml' />
+        </Component>
+        <Component Id='cmp_SchoolSystem_exe' Guid='7674A93C-BD7B-3957-AB31-9360F2EAE000'>
+          <File Id='fil_cmp_SchoolSystem_exe' Source='D:\E\SchoolSystems\bin\Release\SchoolSystem.exe' Name='SchoolSystem.exe' />
+        </Component>
+        <Component Id='cmp_SchoolSystem_exe_config' Guid='B87FC5D0-D11B-3F86-8118-57AACBEB574D'>
+          <File Id='fil_cmp_SchoolSystem_exe_config' Source='D:\E\SchoolSystems\bin\Release\SchoolSystem.exe.config' Name='SchoolSystem.exe.config' />
+        </Component>
+        <Component Id='cmp_SixLabors_Fonts_dll' Guid='9A3A0BCF-7352-3223-8C3B-50A4E4C01049'>
+          <File Id='fil_cmp_SixLabors_Fonts_dll' Source='D:\E\SchoolSystems\bin\Release\SixLabors.Fonts.dll' Name='SixLabors.Fonts.dll' />
+        </Component>
+        <Component Id='cmp_SixLabors_Fonts_xml' Guid='D3EDD431-BC37-38A1-8713-49B2103725F9'>
+          <File Id='fil_cmp_SixLabors_Fonts_xml' Source='D:\E\SchoolSystems\bin\Release\SixLabors.Fonts.xml' Name='SixLabors.Fonts.xml' />
+        </Component>
+        <Component Id='cmp_SkiaSharp_dll' Guid='85B6B524-C527-3B07-A292-0658E1731F82'>
+          <File Id='fil_cmp_SkiaSharp_dll' Source='D:\E\SchoolSystems\bin\Release\SkiaSharp.dll' Name='SkiaSharp.dll' />
+        </Component>
+        <Component Id='cmp_System_Buffers_dll' Guid='D94D1A04-8CDE-3FB3-98A2-F5080C8550F4'>
+          <File Id='fil_cmp_System_Buffers_dll' Source='D:\E\SchoolSystems\bin\Release\System.Buffers.dll' Name='System.Buffers.dll' />
+        </Component>
+        <Component Id='cmp_System_Buffers_xml' Guid='BCA7E862-0306-3051-A128-32E1C9FB8F05'>
+          <File Id='fil_cmp_System_Buffers_xml' Source='D:\E\SchoolSystems\bin\Release\System.Buffers.xml' Name='System.Buffers.xml' />
+        </Component>
+        <Component Id='cmp_System_Linq_Dynamic_Core_dll' Guid='60557048-6513-3EE5-A555-C5630CF6007D'>
+          <File Id='fil_cmp_System_Linq_Dynamic_Core_dll' Source='D:\E\SchoolSystems\bin\Release\System.Linq.Dynamic.Core.dll' Name='System.Linq.Dynamic.Core.dll' />
+        </Component>
+        <Component Id='cmp_System_Linq_Dynamic_Core_xml' Guid='7430FF1A-4DB0-3687-B295-F0D3B0449B07'>
+          <File Id='fil_cmp_System_Linq_Dynamic_Core_xml' Source='D:\E\SchoolSystems\bin\Release\System.Linq.Dynamic.Core.xml' Name='System.Linq.Dynamic.Core.xml' />
+        </Component>
+        <Component Id='cmp_System_Memory_dll' Guid='BBFF6EF0-829D-3FE5-8379-5FB3382DA899'>
+          <File Id='fil_cmp_System_Memory_dll' Source='D:\E\SchoolSystems\bin\Release\System.Memory.dll' Name='System.Memory.dll' />
+        </Component>
+        <Component Id='cmp_System_Memory_xml' Guid='E160E303-DFAA-3E97-B7BB-DE7F24B7EC72'>
+          <File Id='fil_cmp_System_Memory_xml' Source='D:\E\SchoolSystems\bin\Release\System.Memory.xml' Name='System.Memory.xml' />
+        </Component>
+        <Component Id='cmp_System_Numerics_Vectors_dll' Guid='CFB5584A-883B-3DB7-B951-861E9B5AAC4C'>
+          <File Id='fil_cmp_System_Numerics_Vectors_dll' Source='D:\E\SchoolSystems\bin\Release\System.Numerics.Vectors.dll' Name='System.Numerics.Vectors.dll' />
+        </Component>
+        <Component Id='cmp_System_Numerics_Vectors_xml' Guid='61131054-4003-3D6A-8DB3-EDE44EB782A1'>
+          <File Id='fil_cmp_System_Numerics_Vectors_xml' Source='D:\E\SchoolSystems\bin\Release\System.Numerics.Vectors.xml' Name='System.Numerics.Vectors.xml' />
+        </Component>
+        <Component Id='cmp_System_Resources_Extensions_dll' Guid='7C72F456-9B1B-313D-9D4F-6E89B147E832'>
+          <File Id='fil_cmp_System_Resources_Extensions_dll' Source='D:\E\SchoolSystems\bin\Release\System.Resources.Extensions.dll' Name='System.Resources.Extensions.dll' />
+        </Component>
+        <Component Id='cmp_System_Resources_Extensions_xml' Guid='30FBFEFE-D868-3AE7-8E0C-0A65160C86A1'>
+          <File Id='fil_cmp_System_Resources_Extensions_xml' Source='D:\E\SchoolSystems\bin\Release\System.Resources.Extensions.xml' Name='System.Resources.Extensions.xml' />
+        </Component>
+        <Component Id='cmp_System_Runtime_CompilerServices_Unsafe_dll' Guid='88B0EE5C-6745-3487-BB93-2C9C05966B37'>
+          <File Id='fil_cmp_System_Runtime_CompilerServices_Unsafe_dll' Source='D:\E\SchoolSystems\bin\Release\System.Runtime.CompilerServices.Unsafe.dll' Name='System.Runtime.CompilerServices.Unsafe.dll' />
+        </Component>
+        <Component Id='cmp_System_Runtime_CompilerServices_Unsafe_xml' Guid='3A7C19DF-0ECD-34F9-81F9-DDC2DD9705F9'>
+          <File Id='fil_cmp_System_Runtime_CompilerServices_Unsafe_xml' Source='D:\E\SchoolSystems\bin\Release\System.Runtime.CompilerServices.Unsafe.xml' Name='System.Runtime.CompilerServices.Unsafe.xml' />
+        </Component>
+        <Component Id='cmp_System_ValueTuple_dll' Guid='45C26A73-1D65-3B78-8F98-2B8DA76B2E84'>
+          <File Id='fil_cmp_System_ValueTuple_dll' Source='D:\E\SchoolSystems\bin\Release\System.ValueTuple.dll' Name='System.ValueTuple.dll' />
+        </Component>
+        <Component Id='cmp_System_ValueTuple_xml' Guid='0E028032-3DD5-3AE7-B912-56DD0178F68A'>
+          <File Id='fil_cmp_System_ValueTuple_xml' Source='D:\E\SchoolSystems\bin\Release\System.ValueTuple.xml' Name='System.ValueTuple.xml' />
+        </Component>
+        <Component Id='cmp_arm64_libSkiaSharp_dll' Guid='C8FCC59A-8731-3777-BC38-4F2ED19277DC' Bitness='always64'>
+          <File Id='fil_cmp_arm64_libSkiaSharp_dll' Source='D:\E\SchoolSystems\bin\Release\arm64\libSkiaSharp.dll' Name='libSkiaSharp.dll' />
+        </Component>
+        <Component Id='cmp_Assets_Brand_SchoolSystem_ico' Guid='A7DB9A93-79D0-3E19-B409-D15EE66E3C4A'>
+          <File Id='fil_cmp_Assets_Brand_SchoolSystem_ico' Source='D:\E\SchoolSystems\bin\Release\Assets\Brand\SchoolSystem.ico' Name='SchoolSystem.ico' />
+        </Component>
+        <Component Id='cmp_Assets_Welcome_welcome_hero_png' Guid='7759B533-8C79-38D9-BA82-C6BA0213D754'>
+          <File Id='fil_cmp_Assets_Welcome_welcome_hero_png' Source='D:\E\SchoolSystems\bin\Release\Assets\Welcome\welcome_hero.png' Name='welcome_hero.png' />
+        </Component>
+        <Component Id='cmp_Database_databaseschool_sql' Guid='AC94808C-2E84-3594-866A-19C9A1C35C58'>
+          <File Id='fil_cmp_Database_databaseschool_sql' Source='D:\E\SchoolSystems\bin\Release\Database\databaseschool.sql' Name='databaseschool.sql' />
+        </Component>
+        <Component Id='cmp_Database_SchoolDB_14480309_230530_bak' Guid='40D92D46-FD3F-3FB4-A598-7EEBADA700F9'>
+          <File Id='fil_cmp_Database_SchoolDB_14480309_230530_bak' Source='D:\E\SchoolSystems\bin\Release\Database\SchoolDB_14480309_230530.bak' Name='SchoolDB_14480309_230530.bak' />
+        </Component>
+        <Component Id='cmp_x64_libSkiaSharp_dll' Guid='D005FE0E-E811-353E-9854-3A92D5C661F6' Bitness='always64'>
+          <File Id='fil_cmp_x64_libSkiaSharp_dll' Source='D:\E\SchoolSystems\bin\Release\x64\libSkiaSharp.dll' Name='libSkiaSharp.dll' />
+        </Component>
+        <Component Id='cmp_x86_libSkiaSharp_dll' Guid='3266D9AE-C815-3C96-A52B-1A184FE0AFE9' Bitness='always64'>
+          <File Id='fil_cmp_x86_libSkiaSharp_dll' Source='D:\E\SchoolSystems\bin\Release\x86\libSkiaSharp.dll' Name='libSkiaSharp.dll' />
+        </Component>
+
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ProgramMenuDir" Name="SchoolSystem">
+        <Component Id="cm_startmenu" Guid="C21B45C7-8FD8-3466-AC83-184CBD3527CC">
+          <Shortcut Id="startShortcut" Name="SchoolSystem" Description="نظام إدارة المدارس"
+                    Target="[INSTALLFOLDER]SchoolSystem.exe" WorkingDirectory="INSTALLFOLDER"
+                    Icon="SchoolSystem.ico" />
+          <RemoveFolder Id="RemoveProgramMenuDir" Directory="ProgramMenuDir" On="uninstall" />
+          <RegistryValue Root="HKMU" Key="Software\SchoolSystem" Name="installed"
+                         Type="integer" Value="1" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="DesktopFolder">
+      <Component Id="cm_desktop" Guid="3FE9BCA1-EF85-3152-9BBE-B370747EEC05">
+        <Shortcut Id="desktopShortcut" Name="SchoolSystem" Description="نظام إدارة المدارس"
+                  Target="[INSTALLFOLDER]SchoolSystem.exe" WorkingDirectory="INSTALLFOLDER"
+                  Icon="SchoolSystem.ico" />
+        <RegistryValue Root="HKMU" Key="Software\SchoolSystem" Name="desktopShortcut"
+                       Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+    <Icon Id="SchoolSystem.ico" SourceFile="D:\E\SchoolSystems\Assets\Brand\SchoolSystem.ico" />
+    <Property Id="ARPPRODUCTICON" Value="SchoolSystem.ico" />
+    <Property Id="ARPNOREPAIR" Value="1" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+  </Package>
+</Wix>
