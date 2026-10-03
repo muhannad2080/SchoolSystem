@@ -65,28 +65,70 @@ namespace SchoolSystem.DataAccess
         public void AddMark(Mark mark)
         {
             using (SqlConnection conn = DbConnection.GetConnection())
-            using (SqlCommand cmd = new SqlCommand(
-                @"INSERT INTO Marks (StudentID, SubjectID, TeacherID, Mark, ExamType)
-                  VALUES (@SID, @SubID, @TID, @Mark, @Exam);
-                  SELECT CAST(SCOPE_IDENTITY() AS INT);", conn))
             {
+                const string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
 
-                cmd.Parameters.Add("@SID", SqlDbType.Int).Value = mark.StudentID;
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Students
+                        WHERE StudentID = @SID AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 53001, N'لا يمكن إضافة درجة لطالب غير نشط.', 1;
 
-                cmd.Parameters.Add("@SubID", SqlDbType.Int).Value = mark.SubjectID;
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Subjects
+                        WHERE SubjectID = @SubID AND ISNULL(IsActive, 1) = 1
+                    )
+                        THROW 53002, N'لا يمكن إضافة درجة لمادة غير نشطة.', 1;
 
-                cmd.Parameters.Add("@TID", SqlDbType.Int).Value = mark.TeacherID.HasValue ? (object)mark.TeacherID.Value : DBNull.Value;
+                    IF @TID IS NOT NULL AND NOT EXISTS
+                    (
+                        SELECT 1 FROM Teachers
+                        WHERE TeacherID = @TID AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 53003, N'المعلم المحدد غير موجود أو غير نشط.', 1;
 
-                cmd.Parameters.Add("@Mark", SqlDbType.Decimal).Value = mark.MarkValue;
+                    IF @Mark < 0 OR @Mark > 100
+                        THROW 53004, N'الدرجة يجب أن تكون بين 0 و100.', 1;
 
-                cmd.Parameters.Add("@Exam", SqlDbType.NVarChar, 50).Value = string.IsNullOrWhiteSpace(mark.ExamType) ? (object)DBNull.Value : mark.ExamType;
+                    IF NULLIF(LTRIM(RTRIM(ISNULL(@Exam, N''))), N'') IS NULL
+                        THROW 53005, N'نوع الاختبار مطلوب.', 1;
 
-                conn.Open();
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM Marks WITH (UPDLOCK, HOLDLOCK)
+                        WHERE StudentID = @SID
+                          AND SubjectID = @SubID
+                          AND LTRIM(RTRIM(ISNULL(ExamType, N''))) = LTRIM(RTRIM(@Exam))
+                    )
+                        THROW 53006, N'توجد درجة مسجلة مسبقاً لنفس الطالب والمادة ونوع الاختبار.', 1;
 
-                object result = cmd.ExecuteScalar();
+                    INSERT INTO Marks (StudentID, SubjectID, TeacherID, Mark, ExamType)
+                    VALUES (@SID, @SubID, @TID, @Mark, LTRIM(RTRIM(@Exam)));
 
-                if (result != null && result != DBNull.Value)
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);
+                    COMMIT TRANSACTION;";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@SID", SqlDbType.Int).Value = mark.StudentID;
+                    cmd.Parameters.Add("@SubID", SqlDbType.Int).Value = mark.SubjectID;
+                    cmd.Parameters.Add("@TID", SqlDbType.Int).Value = mark.TeacherID.HasValue ? (object)mark.TeacherID.Value : DBNull.Value;
+                    cmd.Parameters.Add("@Mark", SqlDbType.Decimal).Value = mark.MarkValue;
+                    cmd.Parameters.Add("@Exam", SqlDbType.NVarChar, 50).Value = mark.ExamType.Trim();
+
+                    conn.Open();
+                    object result = cmd.ExecuteScalar();
+                    if (result == null || result == DBNull.Value)
+                        throw new InvalidOperationException("تعذر إنشاء سجل الدرجة.");
+
                     mark.MarkID = Convert.ToInt32(result);
+                }
             }
         }
 
@@ -94,26 +136,74 @@ namespace SchoolSystem.DataAccess
         public bool UpdateMark(Mark mark)
         {
             using (SqlConnection conn = DbConnection.GetConnection())
-            using (SqlCommand cmd = new SqlCommand(
-                @"UPDATE Marks SET StudentID=@SID, SubjectID=@SubID, TeacherID=@TID, Mark=@Mark, ExamType=@Exam
-                  WHERE MarkID=@MID", conn))
             {
+                const string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
 
-                cmd.Parameters.Add("@MID", SqlDbType.Int).Value = mark.MarkID;
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Marks WHERE MarkID = @MID
+                    )
+                        THROW 53007, N'سجل الدرجة المحدد غير موجود.', 1;
 
-                cmd.Parameters.Add("@SID", SqlDbType.Int).Value = mark.StudentID;
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Students
+                        WHERE StudentID = @SID AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 53001, N'لا يمكن تعديل درجة لطالب غير نشط.', 1;
 
-                cmd.Parameters.Add("@SubID", SqlDbType.Int).Value = mark.SubjectID;
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Subjects
+                        WHERE SubjectID = @SubID AND ISNULL(IsActive, 1) = 1
+                    )
+                        THROW 53002, N'لا يمكن تعديل درجة لمادة غير نشطة.', 1;
 
-                cmd.Parameters.Add("@TID", SqlDbType.Int).Value = mark.TeacherID.HasValue ? (object)mark.TeacherID.Value : DBNull.Value;
+                    IF @TID IS NOT NULL AND NOT EXISTS
+                    (
+                        SELECT 1 FROM Teachers
+                        WHERE TeacherID = @TID AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 53003, N'المعلم المحدد غير موجود أو غير نشط.', 1;
 
-                cmd.Parameters.Add("@Mark", SqlDbType.Decimal).Value = mark.MarkValue;
+                    IF @Mark < 0 OR @Mark > 100
+                        THROW 53004, N'الدرجة يجب أن تكون بين 0 و100.', 1;
 
-                cmd.Parameters.Add("@Exam", SqlDbType.NVarChar, 50).Value = string.IsNullOrWhiteSpace(mark.ExamType) ? (object)DBNull.Value : mark.ExamType;
+                    IF NULLIF(LTRIM(RTRIM(ISNULL(@Exam, N''))), N'') IS NULL
+                        THROW 53005, N'نوع الاختبار مطلوب.', 1;
 
-                conn.Open();
+                    IF EXISTS
+                    (
+                        SELECT 1 FROM Marks
+                        WHERE StudentID = @SID
+                          AND SubjectID = @SubID
+                          AND LTRIM(RTRIM(ISNULL(ExamType, N''))) = LTRIM(RTRIM(@Exam))
+                          AND MarkID <> @MID
+                    )
+                        THROW 53006, N'توجد درجة أخرى لنفس الطالب والمادة ونوع الاختبار.', 1;
 
-                return cmd.ExecuteNonQuery() > 0;
+                    UPDATE Marks
+                    SET StudentID = @SID,
+                        SubjectID = @SubID,
+                        TeacherID = @TID,
+                        Mark = @Mark,
+                        ExamType = LTRIM(RTRIM(@Exam))
+                    WHERE MarkID = @MID;";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.Add("@MID", SqlDbType.Int).Value = mark.MarkID;
+                    cmd.Parameters.Add("@SID", SqlDbType.Int).Value = mark.StudentID;
+                    cmd.Parameters.Add("@SubID", SqlDbType.Int).Value = mark.SubjectID;
+                    cmd.Parameters.Add("@TID", SqlDbType.Int).Value = mark.TeacherID.HasValue ? (object)mark.TeacherID.Value : DBNull.Value;
+                    cmd.Parameters.Add("@Mark", SqlDbType.Decimal).Value = mark.MarkValue;
+                    cmd.Parameters.Add("@Exam", SqlDbType.NVarChar, 50).Value = mark.ExamType.Trim();
+
+                    conn.Open();
+                    return cmd.ExecuteNonQuery() > 0;
+                }
             }
         }
 
