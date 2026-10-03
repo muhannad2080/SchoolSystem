@@ -20,12 +20,13 @@ namespace SchoolSystem.Services
                 throw new ArgumentException("رقم الطالب غير صحيح.");
 
 
-            if (!CurrentUser.CanAccessModule("Students"))
+            CurrentUser.DemandAction(
+                "Students",
+                "View",
+                "ليس لديك صلاحية عرض ملفات الطلاب.");
 
-                throw new UnauthorizedAccessException("ليس لديك صلاحية عرض ملفات الطلاب.");
-
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            bool includeFinancials = CurrentUser.CanAccessModule("Fees");
+            // البيانات المالية تُضمّن فقط لمن يملك صلاحية عرض الرسوم فعلياً.
+            bool includeFinancials = CurrentUser.CanView("Fees");
 
             return repository.GetProfile(studentId, includeFinancials);
         }
