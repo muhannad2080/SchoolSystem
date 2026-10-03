@@ -334,6 +334,38 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        // تعريف الدالة DeleteTimetable لتنفيذ العملية المرتبطة بها.
+        public bool DeleteTimetable(int timetableId)
+        {
+            if (timetableId <= 0)
+                throw new ArgumentException("رقم الحصة غير صحيح.");
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            {
+                conn.Open();
+                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    const string query = @"
+                        DELETE FROM SchoolTimetable
+                        WHERE TimetableID = @TimetableID";
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+                    {
+                        cmd.Parameters.Add("@TimetableID", SqlDbType.Int).Value = timetableId;
+                        bool deleted = cmd.ExecuteNonQuery() > 0;
+                        if (!deleted)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
+                }
+            }
+        }
+
         // تعريف الدالة HasClassConflict لتنفيذ العملية المرتبطة بها.
         public bool HasClassConflict(TimetableEntry item)
         {
