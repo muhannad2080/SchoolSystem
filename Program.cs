@@ -157,6 +157,7 @@ namespace SchoolSystem
                 };
             }
 
+            TryApplyDatabaseMigrations(server, database, useSqlAuth, sqlUser, sqlPassword);
             HealthCheckResult health = DatabaseHealthCheckService.Check(server, database, useSql, sqlUser, sqlPassword);
             if (!health.StructuralHealthy)
             {
@@ -174,6 +175,49 @@ namespace SchoolSystem
                 Message = string.Empty,
                 ShowSetupForm = false
             };
+        }
+
+        /// <summary>
+        /// يطبّق ترحيلات قاعدة البيانات المعلّقة قبل فحص الصحة النهائي.
+        /// أي خطأ في الترحيل يُسجّل ثم يتولى فحص الصحة تحديد ما إذا كانت القاعدة ما زالت غير جاهزة.
+        /// </summary>
+        private static void TryApplyDatabaseMigrations(
+            string server,
+            string database,
+            bool useSqlAuth,
+            string sqlUser,
+            string sqlPassword)
+        {
+            try
+            {
+                string databaseFolder = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Database");
+
+                if (!Directory.Exists(databaseFolder))
+                {
+                    ApplicationLogger.Log(
+                        "DatabaseMigration",
+                        "لم يتم العثور على مجلد Database بجوار التطبيق؛ تم تخطي الترحيلات التلقائية.");
+                    return;
+                }
+
+                string result = DatabaseMigrationService.Apply(
+                    server,
+                    database,
+                    useSqlAuth,
+                    sqlUser,
+                    sqlPassword,
+                    databaseFolder);
+
+                ApplicationLogger.Log("DatabaseMigration", result);
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "التحديث التلقائي لقاعدة البيانات عند بدء التشغيل",
+                    ex);
+            }
         }
 
         private static bool CanOpenConnection(string connectionString, out Exception failure)
