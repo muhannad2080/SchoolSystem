@@ -91,7 +91,7 @@ INNER JOIN RankedCurrent r
 WHERE r.rn > 1;
 
 /* مزامنة من AcademicYears عند غياب المصدر الحالي. */
-IF NOT EXISTS (SELECT 1 FROM dbo.AcademicYearCurrent WHERE ISCurrent = 1)
+IF NOT EXISTS (SELECT 1 FROM dbo.AcademicYearCurrent WHERE IsCurrent = 1)
 BEGIN
     DECLARE @SeedYear NVARCHAR(20);
 
