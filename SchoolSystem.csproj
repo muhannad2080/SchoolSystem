@@ -146,6 +146,7 @@
     <Compile Include="DataAccess\SchoolSectionRepository.cs" />
     <Compile Include="DataAccess\StudentAttendanceRepository.cs" />
     <Compile Include="DataAccess\StudentClassRepository.cs" />
+    <Compile Include="DataAccess\StudentTransportRepository.cs" />
     <Compile Include="DataAccess\StudentRepository.cs" />
     <Compile Include="DataAccess\StudentProfileRepository.cs" />
     <Compile Include="DataAccess\AuditLogRepository.cs" />
@@ -197,6 +198,7 @@
     <Compile Include="Models\SchoolSettings.cs" />
     <Compile Include="Models\SchoolSection.cs" />
     <Compile Include="Models\StudentAttendance.cs" />
+    <Compile Include="Models\StudentTransportAssignment.cs" />
     <Compile Include="Models\StudentClass.cs" />
     <Compile Include="Models\StudentGrade.cs" />
     <Compile Include="Models\Students.cs" />
@@ -233,6 +235,7 @@
     <Compile Include="Services\RoomService.cs" />
     <Compile Include="Services\StudentAttendanceService.cs" />
     <Compile Include="Services\StudentClassService.cs" />
+    <Compile Include="Services\StudentTransportService.cs" />
     <Compile Include="Services\StudentService.cs" />
     <Compile Include="Services\StudentProfileService.cs" />
     <Compile Include="Services\AuditLogService.cs" />
