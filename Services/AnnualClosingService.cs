@@ -153,7 +153,11 @@ namespace SchoolSystem.Services
             RequireYear(academicYear);
 
             ApplicationSettingsData settings = ApplicationSettingsService.Load();
-            string file = new DatabaseBackupService().Backup(settings.ServerInstance, settings.DatabaseName, settings.BackupDirectory);
+            string file = new DatabaseBackupService().Backup(
+                settings.ServerInstance,
+                settings.DatabaseName,
+                settings.BackupDirectory,
+                true);
             using (SqlConnection connection = DbConnection.GetConnection())
             using (SqlCommand command = new SqlCommand("dbo.RegisterDatabaseBackup", connection))
             {
