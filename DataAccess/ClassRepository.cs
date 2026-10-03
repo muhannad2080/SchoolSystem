@@ -194,6 +194,36 @@ namespace SchoolSystem.DataAccess
                         }
                     }
 
+                    const string duplicateQuery = @"
+                        SELECT COUNT(1)
+                        FROM Classes
+                        WHERE ClassID <> @ClassID
+                          AND LTRIM(RTRIM(ClassName)) = LTRIM(RTRIM(@ClassName))
+                          AND LTRIM(RTRIM(ISNULL(StageName, N''))) = LTRIM(RTRIM(ISNULL(@StageName, N'')))";
+                    using (SqlCommand duplicateCommand = new SqlCommand(duplicateQuery, conn, transaction))
+                    {
+                        duplicateCommand.Parameters.Add("@ClassID", SqlDbType.Int).Value = item.ClassID;
+                        duplicateCommand.Parameters.Add("@ClassName", SqlDbType.NVarChar, 100).Value = item.ClassName.Trim();
+                        duplicateCommand.Parameters.Add("@StageName", SqlDbType.NVarChar, 100).Value = item.StageName.Trim();
+
+                        if (Convert.ToInt32(duplicateCommand.ExecuteScalar()) > 0)
+                            throw new InvalidOperationException("الفصل بهذا الاسم والمرحلة موجود مسبقًا.");
+                    }
+
+                    if (item.StageID.HasValue)
+                    {
+                        const string stageQuery = @"
+                            SELECT COUNT(1)
+                            FROM Stages
+                            WHERE StageID = @StageID AND ISNULL(IsActive, 1) = 1";
+                        using (SqlCommand stageCommand = new SqlCommand(stageQuery, conn, transaction))
+                        {
+                            stageCommand.Parameters.Add("@StageID", SqlDbType.Int).Value = item.StageID.Value;
+                            if (Convert.ToInt32(stageCommand.ExecuteScalar()) == 0)
+                                throw new InvalidOperationException("المرحلة المحددة غير موجودة أو غير نشطة.");
+                        }
+                    }
+
                     const string query = @"
                         UPDATE Classes
                         SET
