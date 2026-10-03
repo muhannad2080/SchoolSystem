@@ -79,6 +79,8 @@ namespace SchoolSystem.Services
         {
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             CurrentUser.DemandAction("ClassAssignment", "Add", "ليس لديك صلاحية توزيع الطلاب.");
+            if (CurrentUser.User != null)
+                assignment.AssignedBy = CurrentUser.User.UserID;
             ValidateAssignment(assignment);
 
             if (repository.IsStudentAssignedInYear(assignment.StudentID, assignment.AcademicYear))
