@@ -218,6 +218,7 @@ namespace SchoolSystem.Services
             if (AppliedInLastRun == 0)
                 return "تم إنشاء قاعدة البيانات من السكربت وتسجيل الـ baseline بنجاح.";
             return "تم إنشاء قاعدة البيانات وتحديثها بنجاح. " + migrationResult;
+        }
 
         /// <summary>
         /// يقرأ نص سكربت SQL كاملاً ويتعامل مع ترميز UTF-16 LE (المنتج من تصدير SQL Server)
