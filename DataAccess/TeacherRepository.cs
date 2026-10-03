@@ -162,6 +162,13 @@ WHERE EmployeeNumber LIKE @Prefix + N'%';";
             if (teacherId <= 0)
                 throw new ArgumentException("رقم المعلم غير صحيح.");
 
+            const string referenceQuery = @"
+                SELECT
+                    (SELECT COUNT(1) FROM TeacherContracts WHERE TeacherID = @TeacherID) +
+                    (SELECT COUNT(1) FROM TeacherAttendance WHERE TeacherID = @TeacherID) +
+                    (SELECT COUNT(1) FROM Payroll WHERE TeacherID = @TeacherID) +
+                    (SELECT COUNT(1) FROM SchoolTimetable WHERE TeacherID = @TeacherID);";
+
             const string deleteQuery = @"
 UPDATE Teachers
 SET Status = N'محذوف'
@@ -170,12 +177,23 @@ WHERE TeacherID = @TeacherID
 
             using (var conn = new SqlConnection(_connectionString))
             using (var transaction = BeginSerializableTransaction(conn))
-            using (var deleteCommand = new SqlCommand(deleteQuery, conn, transaction))
             {
-                deleteCommand.Parameters.Add("@TeacherID", SqlDbType.Int).Value = teacherId;
+                using (var referenceCommand = new SqlCommand(referenceQuery, conn, transaction))
+                {
+                    referenceCommand.Parameters.Add("@TeacherID", SqlDbType.Int).Value = teacherId;
+                    int references = Convert.ToInt32(referenceCommand.ExecuteScalar());
+                    if (references > 0)
+                        throw new InvalidOperationException(
+                            "لا يمكن حذف المعلم لأنه مرتبط بعقود أو حضور أو رواتب أو جدول دراسي. قم بتغيير حالته بدلاً من الحذف.");
+                }
 
-                if (deleteCommand.ExecuteNonQuery() == 0)
-                    throw new InvalidOperationException("المعلم غير موجود أو تم تعطيله مسبقاً.");
+                using (var deleteCommand = new SqlCommand(deleteQuery, conn, transaction))
+                {
+                    deleteCommand.Parameters.Add("@TeacherID", SqlDbType.Int).Value = teacherId;
+
+                    if (deleteCommand.ExecuteNonQuery() == 0)
+                        throw new InvalidOperationException("المعلم غير موجود أو تم تعطيله مسبقاً.");
+                }
 
                 transaction.Commit();
             }
