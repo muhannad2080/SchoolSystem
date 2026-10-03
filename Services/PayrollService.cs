@@ -70,7 +70,7 @@ namespace SchoolSystem.Services
             catch (Exception ex)
             {
                 ApplicationLogger.LogException("خدمة " + nameof(PayrollService) + ": إنشاء سند صرف الراتب تلقائياً", ex);
-                repository.DeletePayroll(payrollId);
+                repository.RollbackPayrollCreation(payrollId);
                 throw;
             }
 
