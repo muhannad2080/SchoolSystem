@@ -587,7 +587,7 @@ namespace SchoolSystem.UI
                     DataTable teachers = await Task.Run(() => teacherService.GetActiveTeachers());
 
                     cmbBorrower.DataSource = teachers;
-                    cmbBorrower.DisplayMember = "TeacherName";
+                    cmbBorrower.DisplayMember = "FullName";
                     cmbBorrower.ValueMember = "TeacherID";
                 }
 
