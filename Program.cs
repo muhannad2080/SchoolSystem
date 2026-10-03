@@ -110,9 +110,6 @@ namespace SchoolSystem
         private static StartupCheckResult CheckStartupState()
         {
             ApplicationSettingsData config = ApplicationSettingsService.Load();
-            bool useSql = config.UseSqlAuthentication;
-            string sqlUser = config.SqlUser;
-            string sqlPassword = ApplicationSettingsService.GetSqlPassword(config);
             string effectiveConnection = DbConnection.BuildEffectiveConnectionString(config, 15);
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(effectiveConnection);
 
@@ -157,7 +154,7 @@ namespace SchoolSystem
                 };
             }
 
-            TryApplyDatabaseMigrations(server, database, useSqlAuth, sqlUser, sqlPassword);
+            TryApplyDatabaseMigrations(server, database, useSql, sqlUser, sqlPassword);
             HealthCheckResult health = DatabaseHealthCheckService.Check(server, database, useSql, sqlUser, sqlPassword);
             if (!health.StructuralHealthy)
             {
