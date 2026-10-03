@@ -66,7 +66,7 @@ Copy-Item (Join-Path $PSScriptRoot 'Install-SchoolSystem.ps1') $packageRoot -For
 $legacyScriptsTarget = Join-Path $packageRoot 'Database\Legacy-Reference'
 New-Item -ItemType Directory -Path $legacyScriptsTarget -Force | Out-Null
 foreach ($referenceFile in @('SchoolDB_Schema.sql', 'SchoolDB_OperationalData.sql')) {
-    $databaseSource = Join-Path $root "Databass\$referenceFile"
+    $databaseSource = Join-Path $root "Database\$referenceFile"
     if (Test-Path $databaseSource) {
         Copy-Item -LiteralPath $databaseSource -Destination $legacyScriptsTarget -Force
     }
