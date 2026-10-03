@@ -569,185 +569,74 @@ namespace SchoolSystem.DataAccess
         }
 
         // تعريف الدالة GetFeesReport لتنفيذ العملية المرتبطة بها.
+        // تعريف الدالة GetFeesReport لتنفيذ العملية المرتبطة بها.
         private DataTable GetFeesReport(ReportRequest request)
         {
-            if (TableExists("Fees"))
-            {
-                string query = @"
-                    SELECT
-                        f.FeeID AS [المعرف],
-                        f.StudentID AS [رقم الطالب],
-                        s.FullName AS [اسم الطالب],
-                        sc.ClassID AS [رقم الصف],
-                        c.ClassName AS [الصف],
-                        sc.Section AS [الشعبة],
-                        f.FeePlanID AS [خطة الرسوم],
-                        f.AcademicYear AS [العام الدراسي],
-                        f.FeeType AS [نوع الرسوم],
-                        f.TotalAmount AS [الإجمالي],
-                        f.DiscountAmount AS [الخصم],
-                        f.NetAmount AS [الصافي],
-                        f.PaidAmount AS [المدفوع],
-                        f.RemainingAmount AS [المتبقي],
-                        f.DueDate AS [تاريخ الاستحقاق],
-                        f.PaymentDate AS [تاريخ السداد],
-                        f.PaymentMethod AS [طريقة الدفع],
-                        f.ReceiptNumber AS [رقم الإيصال],
-                        f.Status AS [الحالة],
-                        f.Notes AS [ملاحظات],
-                        f.CreatedAt AS [تاريخ الإنشاء],
-                        f.UpdatedAt AS [تاريخ التعديل]
-                    FROM Fees f
-                    INNER JOIN Students s ON f.StudentID = s.StudentID
-                        AND ISNULL(s.Status, N'نشط') = N'نشط'
-                    LEFT JOIN StudentClasses sc ON sc.StudentID = f.StudentID
-                        AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/')
-                    LEFT JOIN Classes c ON sc.ClassID = c.ClassID
-                        AND ISNULL(c.IsActive, 1) = 1
-                    WHERE f.DueDate >= @FromDate
-                      AND f.DueDate <= @ToDate";
-
-                if (!string.IsNullOrWhiteSpace(request.AcademicYear))
-                    query += " AND REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
-
-
-                if (request.ClassID.HasValue)
-                    query += " AND sc.ClassID = @ClassID";
-
-                if (!string.IsNullOrWhiteSpace(request.Section))
-                    query += " AND LTRIM(RTRIM(ISNULL(sc.Section, N''))) = LTRIM(RTRIM(@Section))";
-
-
-                if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
-                    query += " AND f.Status = @Status";
-
-
-                if (!string.IsNullOrWhiteSpace(request.SearchText))
-                    query += " AND (s.FullName LIKE @Search OR f.FeeType LIKE @Search OR f.ReceiptNumber LIKE @Search)";
-
-
-                query += " ORDER BY f.DueDate DESC, f.FeeID DESC";
-
-                return ExecuteQuery(query, request);
-            }
-
-            if (TableExists("StudentFees"))
-            {
-                const string query = @"
-                    SELECT
-                        sf.StudentFeeID AS [المعرف],
-                        sf.StudentID AS [رقم الطالب],
-                        sf.FeeType AS [نوع الرسم],
-                        sf.AcademicYear AS [العام الدراسي],
-                        sf.Amount AS [المبلغ],
-                        sf.PaidAmount AS [المدفوع],
-                        sf.Status AS [الحالة],
-                        sf.Notes AS [ملاحظات],
-                        sf.CreatedAt AS [تاريخ الإنشاء]
-                    FROM StudentFees sf
-                    WHERE sf.CreatedAt >= @FromDate
-                      AND sf.CreatedAt <= @ToDate
-                    ORDER BY sf.CreatedAt DESC, sf.StudentFeeID DESC";
-
-                return ExecuteQuery(query, request);
-            }
-
-            if (TableExists("Receipts"))
-            {
-                const string query = @"
-                    SELECT
-                        r.ReceiptID AS [المعرف],
-                        r.ReceiptNumber AS [رقم الإيصال],
-                        r.StudentID AS [رقم الطالب],
-                        r.Amount AS [المبلغ],
-                        r.ReceiptDate AS [التاريخ],
-                        r.PaymentMethod AS [طريقة الدفع],
-                        r.Description AS [البيان],
-                        r.Notes AS [ملاحظات],
-                        r.CreatedAt AS [تاريخ الإنشاء]
-                    FROM Receipts r
-                    WHERE r.ReceiptDate >= @FromDate
-                      AND r.ReceiptDate <= @ToDate
-                    ORDER BY r.ReceiptDate DESC, r.ReceiptID DESC";
-
-                return ExecuteQuery(query, request);
-            }
-
-
-            return CreateMessageTable("لم يتم العثور على جدول رسوم معروف مثل Fees أو StudentFees أو Receipts.");
-        }
-
-        // تعريف الدالة GetFinancialMovementReport لتنفيذ العملية المرتبطة بها.
-        private DataTable GetFinancialMovementReport(ReportRequest request)
-        {
-            if (!TableExists("Vouchers"))
-                return CreateMessageTable("جدول السندات Vouchers غير موجود. نفّذ ترحيل قاعدة البيانات أولًا.");
-
-            bool hasFees = TableExists("Fees");
-            bool hasExpenses = TableExists("Expenses");
-            bool hasExpenseAcademicYear = hasExpenses && ColumnExists("Expenses", "AcademicYear");
-            string feeJoin = hasFees ? "LEFT JOIN Fees f ON v.ReferenceType = N'رسوم' AND v.ReferenceID = f.FeeID" : string.Empty;
-            string expenseJoin = hasExpenses ? "LEFT JOIN Expenses e ON v.ReferenceType = N'مصروفات' AND v.ReferenceID = e.ExpenseID" : string.Empty;
-            string sourceDetails = "v.ReferenceType";
-            if (hasFees && hasExpenses)
-            {
-                sourceDetails = "CASE WHEN v.ReferenceType = N'رسوم' THEN ISNULL(f.FeeType, N'رسوم') " +
-                                "WHEN v.ReferenceType = N'مصروفات' THEN ISNULL(e.Category, N'مصروفات') " +
-                                "ELSE ISNULL(v.ReferenceType, N'عام') END";
-            }
-
-            else if (hasFees)
-            {
-                sourceDetails = "CASE WHEN v.ReferenceType = N'رسوم' THEN ISNULL(f.FeeType, N'رسوم') ELSE ISNULL(v.ReferenceType, N'عام') END";
-            }
-
-            else if (hasExpenses)
-            {
-                sourceDetails = "CASE WHEN v.ReferenceType = N'مصروفات' THEN ISNULL(e.Category, N'مصروفات') ELSE ISNULL(v.ReferenceType, N'عام') END";
-            }
+            if (!TableExists("Fees"))
+                return CreateMessageTable("جدول الرسوم الأساسي Fees غير موجود.");
 
             string query = @"
                 SELECT
-                    v.VoucherID AS [المعرف],
-                    v.VoucherNumber AS [رقم السند],
-                    v.VoucherType AS [نوع الحركة],
-                    v.VoucherDate AS [التاريخ],
-                    v.PartyName AS [الطرف],
-                    v.Description AS [البيان],
-                    v.PaymentMethod AS [طريقة الدفع],
-                    ISNULL(v.ReferenceType, N'عام') AS [نوع المصدر],
-                    v.ReferenceID AS [رقم المصدر],
-                    " + sourceDetails + @" AS [تفاصيل المصدر],
-                    v.Amount AS [المبلغ],
-                    CASE WHEN v.VoucherType = N'قبض' THEN v.Amount ELSE 0 END AS [القبض],
-                    CASE WHEN v.VoucherType = N'صرف' THEN v.Amount ELSE 0 END AS [الصرف],
-                    CASE WHEN v.VoucherType = N'قبض' THEN v.Amount ELSE -v.Amount END AS [الصافي],
-                    CASE WHEN ISNULL(v.IsAutoGenerated, 0) = 1 THEN N'نعم' ELSE N'لا' END AS [تلقائي],
-                    v.CreatedAt AS [تاريخ الإنشاء]
-                FROM Vouchers v
-                " + feeJoin + " " + expenseJoin + @"
-                WHERE v.VoucherDate >= @FromDate
-                  AND v.VoucherDate <= @ToDate";
-
-                        if (request.Status == "قبض" || request.Status == "صرف")
-                query += " AND v.VoucherType = @Status";
+                    f.FeeID AS [المعرف],
+                    f.StudentID AS [رقم الطالب],
+                    s.FullName AS [اسم الطالب],
+                    sc.ClassID AS [رقم الصف],
+                    c.ClassName AS [الصف],
+                    sc.Section AS [الشعبة],
+                    f.FeePlanID AS [خطة الرسوم],
+                    f.AcademicYear AS [العام الدراسي],
+                    f.FeeType AS [نوع الرسوم],
+                    f.TotalAmount AS [الإجمالي],
+                    f.DiscountAmount AS [الخصم],
+                    f.NetAmount AS [الصافي],
+                    f.PaidAmount AS [المدفوع],
+                    f.RemainingAmount AS [المتبقي],
+                    f.DueDate AS [تاريخ الاستحقاق],
+                    f.PaymentDate AS [تاريخ السداد],
+                    f.PaymentMethod AS [طريقة الدفع],
+                    f.ReceiptNumber AS [رقم الإيصال],
+                    v.VoucherNumber AS [رقم سند القبض],
+                    f.Status AS [الحالة],
+                    f.Notes AS [ملاحظات],
+                    f.CreatedAt AS [تاريخ الإنشاء],
+                    f.UpdatedAt AS [تاريخ التعديل]
+                FROM Fees f
+                INNER JOIN Students s ON f.StudentID = s.StudentID
+                    AND ISNULL(s.Status, N'نشط') = N'نشط'
+                LEFT JOIN StudentClasses sc ON sc.StudentClassID =
+                (
+                    SELECT TOP (1) sc2.StudentClassID
+                    FROM StudentClasses sc2
+                    WHERE sc2.StudentID = f.StudentID
+                      AND REPLACE(ISNULL(sc2.AcademicYear, N''), N'-', N'/') =
+                          REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/')
+                    ORDER BY sc2.AssignedDate DESC, sc2.StudentClassID DESC
+                )
+                LEFT JOIN Classes c ON c.ClassID = sc.ClassID
+                    AND ISNULL(c.IsActive, 1) = 1
+                LEFT JOIN Vouchers v ON v.ReferenceType = N'رسوم'
+                    AND v.ReferenceID = f.FeeID
+                    AND v.VoucherType = N'قبض'
+                    AND v.IsAutoGenerated = 1
+                WHERE f.DueDate >= @FromDate
+                  AND f.DueDate <= @ToDate";
 
             if (!string.IsNullOrWhiteSpace(request.AcademicYear))
-            {
-                string normalizedYear = "REPLACE(@AcademicYear, N'-', N'/')";
-                string feeYearCondition = hasFees
-                    ? "(v.ReferenceType <> N'رسوم' OR REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/') = " + normalizedYear + ")"
-                    : "1 = 1";
-                string expenseYearCondition = hasExpenses && hasExpenseAcademicYear
-                    ? "(v.ReferenceType <> N'مصروفات' OR REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = " + normalizedYear + ")"
-                    : "1 = 1";
-                query += " AND " + feeYearCondition + " AND " + expenseYearCondition;
-            }
+                query += " AND REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
+
+            if (request.ClassID.HasValue)
+                query += " AND sc.ClassID = @ClassID";
+
+            if (!string.IsNullOrWhiteSpace(request.Section))
+                query += " AND LTRIM(RTRIM(ISNULL(sc.Section, N''))) = LTRIM(RTRIM(@Section))";
+
+            if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
+                query += " AND f.Status = @Status";
+
             if (!string.IsNullOrWhiteSpace(request.SearchText))
-                query += " AND (v.VoucherNumber LIKE @Search OR v.PartyName LIKE @Search OR v.Description LIKE @Search OR v.ReferenceType LIKE @Search)";
+                query += " AND (s.FullName LIKE @Search OR f.FeeType LIKE @Search OR f.ReceiptNumber LIKE @Search OR v.VoucherNumber LIKE @Search)";
 
-
-            query += " ORDER BY v.VoucherDate DESC, v.VoucherID DESC";
+            query += " ORDER BY f.DueDate DESC, f.FeeID DESC";
 
             return ExecuteQuery(query, request);
         }
