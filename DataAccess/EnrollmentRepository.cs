@@ -253,6 +253,119 @@ WHERE REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'
             }
         }
 
+        // تعريف الدالة GetEnrollmentById لتنفيذ العملية المرتبطة بها.
+        public Enrollment GetEnrollmentById(int enrollmentId)
+        {
+            if (enrollmentId <= 0)
+                return null;
+
+            const string query = @"
+                SELECT TOP 1
+                    e.EnrollmentID,
+                    e.StudentID,
+                    s.FullName AS StudentName,
+                    s.StudentNumber,
+                    e.ApplicationDate,
+                    e.ApplicationType,
+                    e.AcademicYear,
+                    e.ClassID,
+                    c.ClassName,
+                    e.Section,
+                    e.SeatNumber,
+                    e.Status,
+                    e.PreviousSchool,
+                    e.PreviousClass,
+                    e.TransferReason,
+                    ISNULL(e.RegistrationFee, 0) AS RegistrationFee,
+                    ISNULL(e.PaidAmount, 0) AS PaidAmount,
+                    e.PaymentMethod,
+                    e.ReceiptNo,
+                    ISNULL(e.HasBirthCertificate, 0) AS HasBirthCertificate,
+                    ISNULL(e.HasGuardianId, 0) AS HasGuardianId,
+                    ISNULL(e.HasPhoto, 0) AS HasPhoto,
+                    ISNULL(e.HasLastCertificate, 0) AS HasLastCertificate,
+                    ISNULL(e.HasMedicalReport, 0) AS HasMedicalReport,
+                    e.GeneralNotes AS Notes
+                FROM Enrollments e
+                LEFT JOIN Students s ON e.StudentID = s.StudentID
+                LEFT JOIN Classes c ON e.ClassID = c.ClassID
+                WHERE e.EnrollmentID = @EnrollmentID;";
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@EnrollmentID", enrollmentId);
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read())
+                        return null;
+
+                    return MapEnrollment(reader);
+                }
+            }
+        }
+
+        // تعريف الدالة HasRegistrationFinance لتنفيذ العملية المرتبطة بها.
+        public bool HasRegistrationFinance(int studentId, string academicYear)
+        {
+            if (studentId <= 0 || string.IsNullOrWhiteSpace(academicYear))
+                return false;
+
+            const string query = @"
+                SELECT COUNT(*)
+                FROM Fees
+                WHERE StudentID = @StudentID
+                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                      REPLACE(@AcademicYear, N'-', N'/')
+                  AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
+                      (N'رسوم تسجيل', N'رسوم التسجيل', N'التسجيل', N'Registration Fee');";
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.AddWithValue("@StudentID", studentId);
+                cmd.Parameters.AddWithValue("@AcademicYear", academicYear.Trim());
+                conn.Open();
+
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
+        // تعريف الدالة MapEnrollment لتنفيذ العملية المرتبطة بها.
+        private Enrollment MapEnrollment(SqlDataReader reader)
+        {
+            return new Enrollment
+            {
+                EnrollmentID = Convert.ToInt32(reader["EnrollmentID"]),
+                StudentID = Convert.ToInt32(reader["StudentID"]),
+                StudentName = reader["StudentName"] == DBNull.Value ? string.Empty : reader["StudentName"].ToString(),
+                StudentNumber = reader["StudentNumber"] == DBNull.Value ? string.Empty : reader["StudentNumber"].ToString(),
+                ApplicationDate = reader["ApplicationDate"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(reader["ApplicationDate"]),
+                ApplicationType = reader["ApplicationType"] == DBNull.Value ? string.Empty : reader["ApplicationType"].ToString(),
+                AcademicYear = reader["AcademicYear"] == DBNull.Value ? string.Empty : reader["AcademicYear"].ToString(),
+                ClassID = reader["ClassID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["ClassID"]),
+                ClassName = reader["ClassName"] == DBNull.Value ? string.Empty : reader["ClassName"].ToString(),
+                Section = reader["Section"] == DBNull.Value ? string.Empty : reader["Section"].ToString(),
+                SeatNumber = reader["SeatNumber"] == DBNull.Value ? string.Empty : reader["SeatNumber"].ToString(),
+                Status = reader["Status"] == DBNull.Value ? string.Empty : reader["Status"].ToString(),
+                PreviousSchool = reader["PreviousSchool"] == DBNull.Value ? string.Empty : reader["PreviousSchool"].ToString(),
+                PreviousClass = reader["PreviousClass"] == DBNull.Value ? string.Empty : reader["PreviousClass"].ToString(),
+                TransferReason = reader["TransferReason"] == DBNull.Value ? string.Empty : reader["TransferReason"].ToString(),
+                RegistrationFee = reader["RegistrationFee"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["RegistrationFee"]),
+                PaidAmount = reader["PaidAmount"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["PaidAmount"]),
+                PaymentMethod = reader["PaymentMethod"] == DBNull.Value ? string.Empty : reader["PaymentMethod"].ToString(),
+                ReceiptNo = reader["ReceiptNo"] == DBNull.Value ? string.Empty : reader["ReceiptNo"].ToString(),
+                HasBirthCertificate = reader["HasBirthCertificate"] != DBNull.Value && Convert.ToBoolean(reader["HasBirthCertificate"]),
+                HasGuardianId = reader["HasGuardianId"] != DBNull.Value && Convert.ToBoolean(reader["HasGuardianId"]),
+                HasPhoto = reader["HasPhoto"] != DBNull.Value && Convert.ToBoolean(reader["HasPhoto"]),
+                HasLastCertificate = reader["HasLastCertificate"] != DBNull.Value && Convert.ToBoolean(reader["HasLastCertificate"]),
+                HasMedicalReport = reader["HasMedicalReport"] != DBNull.Value && Convert.ToBoolean(reader["HasMedicalReport"]),
+                Notes = reader["Notes"] == DBNull.Value ? string.Empty : reader["Notes"].ToString()
+            };
+        }
+
         // تعريف الدالة IsStudentEnrolled لتنفيذ العملية المرتبطة بها.
         public bool IsStudentEnrolled(int studentId, string academicYear, int excludeEnrollmentId = 0)
         {
