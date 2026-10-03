@@ -237,9 +237,10 @@ namespace SchoolSystem.Security
         // تعريف الدالة CanExport لتنفيذ العملية المرتبطة بها.
         public static bool CanExport(string module)
         {
-
-
-            return CanAccessModule(module);
+            return HasActionOrManage(module, "ExportExcel")
+                || HasActionOrManage(module, "ExportCsv")
+                || HasActionOrManage(module, "ExportPDF")
+                || HasActionOrManage(module, "Export");
         }
 
         // تعريف الدالة CanApprove لتنفيذ العملية المرتبطة بها.
