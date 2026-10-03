@@ -155,7 +155,6 @@ namespace SchoolSystem.DataAccess
                     const string query = @"
                         UPDATE Subjects
                         SET
-                            SubjectCode = @SubjectCode,
                             SubjectName = @SubjectName,
                             ClassID = @ClassID,
                             MaxDegree = @MaxDegree,
