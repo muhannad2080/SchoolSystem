@@ -160,6 +160,7 @@ namespace SchoolSystem.DataAccess
                     return book.BookID > 0;
                 }
             }
+            }
         }
 
         // تعريف الدالة UpdateBook لتنفيذ العملية المرتبطة بها.
