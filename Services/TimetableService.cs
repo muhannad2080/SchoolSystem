@@ -207,8 +207,8 @@ namespace SchoolSystem.Services
             item.Section = item.Section.Trim();
             item.TermName = item.TermName.Trim();
             item.DayName = item.DayName.Trim();
-            item.RoomName = item.RoomName == null ? null : item.RoomName.Trim();
-            item.Notes = item.Notes == null ? null : item.Notes.Trim();
+            item.RoomName = item.RoomName?.Trim();
+            item.Notes = item.Notes?.Trim();
 
             if (string.IsNullOrWhiteSpace(item.DayName))
                 throw new ArgumentException("يجب اختيار اليوم.");
