@@ -182,6 +182,7 @@ namespace SchoolSystem.UI
             SetHeader("NetSalary", "الصافي");
             SetHeader("PaymentDate", "تاريخ الصرف");
             SetHeader("PaymentMethod", "طريقة الصرف");
+            SetHeader("VoucherNumber", "رقم سند الصرف");
             SetHeader("Notes", "ملاحظات");
             SetHeader("CreatedAt", "تاريخ الإدخال");
 
