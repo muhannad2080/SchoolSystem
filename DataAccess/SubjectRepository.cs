@@ -108,6 +108,9 @@ namespace SchoolSystem.DataAccess
                 conn.Open();
                 using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    if (string.IsNullOrWhiteSpace(subject.SubjectCode))
+                        subject.SubjectCode = GenerateNextSubjectCode(conn, transaction);
+
                     ValidateSubjectReferences(conn, transaction, subject, 0);
                     EnsureNoDuplicateSubject(conn, transaction, subject, 0);
 
@@ -230,6 +233,26 @@ namespace SchoolSystem.DataAccess
                     transaction.Commit();
                     return true;
                 }
+            }
+        }
+
+        /// <summary>يولّد كود مادة متسلسلاً وفريداً داخل نفس معاملة الإضافة.</summary>
+        private string GenerateNextSubjectCode(SqlConnection conn, SqlTransaction transaction)
+        {
+            const string query = @"
+                SELECT ISNULL(MAX(TRY_CONVERT(INT, SUBSTRING(SubjectCode, 5, 10))), 0) + 1
+                FROM dbo.Subjects WITH (TABLOCKX, HOLDLOCK)
+                WHERE SubjectCode LIKE N'MAT-%'
+                  AND TRY_CONVERT(INT, SUBSTRING(SubjectCode, 5, 10)) IS NOT NULL;";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+            {
+                object result = cmd.ExecuteScalar();
+                int next = result == null || result == DBNull.Value ? 1 : Convert.ToInt32(result);
+                if (next > 999999)
+                    throw new InvalidOperationException("تم الوصول إلى الحد الأقصى لأكواد المواد التلقائية.");
+
+                return "MAT-" + next.ToString("D6");
             }
         }
 
