@@ -152,78 +152,38 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = @"
-                    IF NOT EXISTS
-                    (
-                        SELECT 1 FROM Subjects
-                        WHERE SubjectID = @SubjectID AND ISNULL(IsActive, 1) = 1
-                    )
-                        THROW 50006, N'لا يمكن إضافة حصة لمادة غير نشطة.', 1;
-
-                    IF NOT EXISTS
-                    (
-                        SELECT 1 FROM Teachers
-                        WHERE TeacherID = @TeacherID AND ISNULL(Status, N'نشط') <> N'غير نشط'
-                    )
-                        THROW 50007, N'لا يمكن إضافة حصة لمعلم غير نشط.', 1;
-
-                    IF NOT EXISTS
-                    (
-                        SELECT 1 FROM Classes
-                        WHERE ClassID = @ClassID AND ISNULL(IsActive, 1) = 1
-                    )
-                        THROW 50008, N'لا يمكن إضافة حصة لصف غير نشط.', 1;
-
-                    INSERT INTO SchoolTimetable
-                    (
-                        ClassID,
-                        Section,
-                        SubjectID,
-                        TeacherID,
-                        AcademicYear,
-                        TermName,
-                        DayName,
-                        PeriodNo,
-                        StartTime,
-                        EndTime,
-                        RoomName,
-                        Notes,
-                        IsActive,
-                        CreatedAt
-                    )
-                    VALUES
-                    (
-                        @ClassID,
-                        @Section,
-                        @SubjectID,
-                        @TeacherID,
-                        @AcademicYear,
-                        @TermName,
-                        @DayName,
-                        @PeriodNo,
-                        @StartTime,
-                        @EndTime,
-                        @RoomName,
-                        @Notes,
-                        @IsActive,
-                        GETDATE()
-                    );
-                    SELECT CAST(SCOPE_IDENTITY() AS INT);";
-
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                conn.Open();
+                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    AddParameters(cmd, item, false);
+                    ValidateAndLockSlot(conn, transaction, item, 0);
 
-                    conn.Open();
+                    const string query = @"
+                        INSERT INTO SchoolTimetable
+                        (
+                            ClassID, Section, SubjectID, TeacherID, AcademicYear, TermName,
+                            DayName, PeriodNo, StartTime, EndTime, RoomName, Notes, IsActive, CreatedAt
+                        )
+                        VALUES
+                        (
+                            @ClassID, @Section, @SubjectID, @TeacherID, @AcademicYear, @TermName,
+                            @DayName, @PeriodNo, @StartTime, @EndTime, @RoomName, @Notes, @IsActive, GETDATE()
+                        );
+                        SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
-                    object result = cmd.ExecuteScalar();
+                    using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+                    {
+                        AddParameters(cmd, item, false);
+                        object result = cmd.ExecuteScalar();
+                        if (result == null || result == DBNull.Value)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
 
-                    if (result == null || result == DBNull.Value)
-                        return false;
+                        item.TimetableID = Convert.ToInt32(result);
+                    }
 
-                    item.TimetableID = Convert.ToInt32(result);
-
+                    transaction.Commit();
                     return item.TimetableID > 0;
                 }
             }
@@ -234,73 +194,143 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = @"
-                    IF NOT EXISTS
-                    (
-                        SELECT 1 FROM Subjects
-                        WHERE SubjectID = @SubjectID AND ISNULL(IsActive, 1) = 1
-                    )
-                        THROW 50006, N'لا يمكن تعديل الحصة إلى مادة غير نشطة.', 1;
-
-                    IF NOT EXISTS
-                    (
-                        SELECT 1 FROM Teachers
-                        WHERE TeacherID = @TeacherID AND ISNULL(Status, N'نشط') <> N'غير نشط'
-                    )
-                        THROW 50007, N'لا يمكن تعديل الحصة إلى معلم غير نشط.', 1;
-
-                    IF NOT EXISTS
-                    (
-                        SELECT 1 FROM Classes
-                        WHERE ClassID = @ClassID AND ISNULL(IsActive, 1) = 1
-                    )
-                        THROW 50008, N'لا يمكن تعديل الحصة إلى صف غير نشط.', 1;
-
-                    UPDATE SchoolTimetable
-                    SET
-                        ClassID = @ClassID,
-                        Section = @Section,
-                        SubjectID = @SubjectID,
-                        TeacherID = @TeacherID,
-                        AcademicYear = @AcademicYear,
-                        TermName = @TermName,
-                        DayName = @DayName,
-                        PeriodNo = @PeriodNo,
-                        StartTime = @StartTime,
-                        EndTime = @EndTime,
-                        RoomName = @RoomName,
-                        Notes = @Notes,
-                        IsActive = @IsActive,
-                        UpdatedAt = GETDATE()
-                    WHERE TimetableID = @TimetableID";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
+                conn.Open();
+                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    AddParameters(cmd, item, true);
+                    ValidateAndLockSlot(conn, transaction, item, item.TimetableID);
 
-                    conn.Open();
+                    const string query = @"
+                        UPDATE SchoolTimetable
+                        SET
+                            ClassID = @ClassID,
+                            Section = @Section,
+                            SubjectID = @SubjectID,
+                            TeacherID = @TeacherID,
+                            AcademicYear = @AcademicYear,
+                            TermName = @TermName,
+                            DayName = @DayName,
+                            PeriodNo = @PeriodNo,
+                            StartTime = @StartTime,
+                            EndTime = @EndTime,
+                            RoomName = @RoomName,
+                            Notes = @Notes,
+                            IsActive = @IsActive,
+                            UpdatedAt = GETDATE()
+                        WHERE TimetableID = @TimetableID";
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+                    {
+                        AddParameters(cmd, item, true);
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
                 }
             }
         }
 
-        // تعريف الدالة DeleteTimetable لتنفيذ العملية المرتبطة بها.
-        public bool DeleteTimetable(int timetableId)
+        // تعريف الدالة ValidateAndLockSlot لتنفيذ العملية المرتبطة بها.
+        private void ValidateAndLockSlot(SqlConnection conn, SqlTransaction transaction, TimetableEntry item, int excludedTimetableId)
         {
-            using (SqlConnection conn = DbConnection.GetConnection())
+            const string validation = @"
+                IF NOT EXISTS
+                (
+                    SELECT 1
+                    FROM Classes WITH (UPDLOCK, HOLDLOCK)
+                    WHERE ClassID = @ClassID AND ISNULL(IsActive, 1) = 1
+                )
+                    THROW 50008, N'لا يمكن حفظ حصة لصف غير نشط.', 1;
+
+                IF NOT EXISTS
+                (
+                    SELECT 1
+                    FROM Teachers WITH (UPDLOCK, HOLDLOCK)
+                    WHERE TeacherID = @TeacherID AND ISNULL(Status, N'نشط') <> N'غير نشط'
+                )
+                    THROW 50007, N'لا يمكن حفظ حصة لمعلم غير نشط.', 1;
+
+                IF NOT EXISTS
+                (
+                    SELECT 1
+                    FROM Subjects WITH (UPDLOCK, HOLDLOCK)
+                    WHERE SubjectID = @SubjectID
+                      AND ISNULL(IsActive, 1) = 1
+                      AND (ClassID = @ClassID OR ClassID IS NULL)
+                )
+                    THROW 50006, N'المادة غير نشطة أو غير مرتبطة بالصف المحدد.', 1;
+
+                IF NOT EXISTS
+                (
+                    SELECT 1
+                    FROM SchoolSections WITH (UPDLOCK, HOLDLOCK)
+                    WHERE ClassID = @ClassID
+                      AND LTRIM(RTRIM(SectionName)) = LTRIM(RTRIM(@Section))
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/')
+                          = REPLACE(@AcademicYear, N'-', N'/')
+                      AND ISNULL(IsActive, 1) = 1
+                )
+                    THROW 50009, N'الشعبة غير موجودة أو غير فعالة لهذا الصف والعام الدراسي.', 1;
+
+                IF EXISTS
+                (
+                    SELECT 1
+                    FROM SchoolTimetable WITH (UPDLOCK, HOLDLOCK)
+                    WHERE TimetableID <> @ExcludedTimetableID
+                      AND IsActive = 1
+                      AND ClassID = @ClassID
+                      AND LTRIM(RTRIM(Section)) = LTRIM(RTRIM(@Section))
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/')
+                          = REPLACE(@AcademicYear, N'-', N'/')
+                      AND TermName = @TermName
+                      AND DayName = @DayName
+                      AND StartTime < @EndTime
+                      AND EndTime > @StartTime
+                )
+                    THROW 50020, N'يوجد تعارض زمني مع حصة أخرى للصف والشعبة.', 1;
+
+                IF EXISTS
+                (
+                    SELECT 1
+                    FROM SchoolTimetable WITH (UPDLOCK, HOLDLOCK)
+                    WHERE TimetableID <> @ExcludedTimetableID
+                      AND IsActive = 1
+                      AND TeacherID = @TeacherID
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/')
+                          = REPLACE(@AcademicYear, N'-', N'/')
+                      AND TermName = @TermName
+                      AND DayName = @DayName
+                      AND StartTime < @EndTime
+                      AND EndTime > @StartTime
+                )
+                    THROW 50021, N'المعلم لديه حصة أخرى في نفس الوقت.', 1;
+
+                IF NULLIF(LTRIM(RTRIM(@RoomName)), N'') IS NOT NULL
+                   AND EXISTS
+                (
+                    SELECT 1
+                    FROM SchoolTimetable WITH (UPDLOCK, HOLDLOCK)
+                    WHERE TimetableID <> @ExcludedTimetableID
+                      AND IsActive = 1
+                      AND LTRIM(RTRIM(ISNULL(RoomName, N''))) = LTRIM(RTRIM(@RoomName))
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/')
+                          = REPLACE(@AcademicYear, N'-', N'/')
+                      AND TermName = @TermName
+                      AND DayName = @DayName
+                      AND StartTime < @EndTime
+                      AND EndTime > @StartTime
+                )
+                    THROW 50022, N'القاعة مستخدمة في حصة أخرى في نفس الوقت.', 1;";
+
+            using (SqlCommand cmd = new SqlCommand(validation, conn, transaction))
             {
-                string query = "DELETE FROM SchoolTimetable WHERE TimetableID = @TimetableID";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-
-                    cmd.Parameters.AddWithValue("@TimetableID", timetableId);
-
-                    conn.Open();
-
-                    return cmd.ExecuteNonQuery() > 0;
-                }
+                AddParameters(cmd, item, true);
+                cmd.Parameters.Add("@ExcludedTimetableID", SqlDbType.Int).Value = excludedTimetableId;
+                cmd.ExecuteNonQuery();
             }
         }
 
