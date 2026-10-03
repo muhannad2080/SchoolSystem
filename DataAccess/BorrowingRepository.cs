@@ -177,27 +177,60 @@ namespace SchoolSystem.DataAccess
         // تعريف الدالة ReturnBook لتنفيذ العملية المرتبطة بها.
         public bool ReturnBook(int borrowingId, DateTime returnDate)
         {
+            if (borrowingId <= 0)
+                throw new ArgumentException("رقم الإعارة غير صحيح.");
+
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = @"
-                    UPDATE BookBorrowings SET
-                        ReturnDate = @ReturnDate,
-                        Status = N'مسترجع',
-                        UpdatedAt = GETDATE()
-                    WHERE BorrowingID = @BorrowingID
-                      AND Status = N'معار'";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                con.Open();
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    const string validationQuery = @"
+                        DECLARE @BorrowDate DATE;
 
-                    cmd.Parameters.AddWithValue("@BorrowingID", borrowingId);
+                        SELECT @BorrowDate = BorrowDate
+                        FROM dbo.BookBorrowings WITH (UPDLOCK, HOLDLOCK)
+                        WHERE BorrowingID = @BorrowingID
+                          AND Status = N'معار';
 
-                    cmd.Parameters.AddWithValue("@ReturnDate", returnDate.Date);
+                        IF @BorrowDate IS NULL
+                            THROW 50007, N'الإعارة غير موجودة أو تم إرجاع الكتاب مسبقاً.', 1;
 
+                        IF @ReturnDate < @BorrowDate
+                            THROW 50008, N'تاريخ الاسترجاع لا يمكن أن يسبق تاريخ الإعارة.', 1;
 
-                    con.Open();
+                        IF @ReturnDate > CAST(GETDATE() AS DATE)
+                            THROW 50009, N'تاريخ الاسترجاع لا يمكن أن يكون في المستقبل.', 1;";
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    using (SqlCommand validation = new SqlCommand(validationQuery, con, transaction))
+                    {
+                        validation.Parameters.Add("@BorrowingID", SqlDbType.Int).Value = borrowingId;
+                        validation.Parameters.Add("@ReturnDate", SqlDbType.Date).Value = returnDate.Date;
+                        validation.ExecuteNonQuery();
+                    }
+
+                    const string updateQuery = @"
+                        UPDATE dbo.BookBorrowings
+                        SET ReturnDate = @ReturnDate,
+                            Status = N'مسترجع',
+                            UpdatedAt = GETDATE()
+                        WHERE BorrowingID = @BorrowingID
+                          AND Status = N'معار';";
+
+                    using (SqlCommand update = new SqlCommand(updateQuery, con, transaction))
+                    {
+                        update.Parameters.Add("@BorrowingID", SqlDbType.Int).Value = borrowingId;
+                        update.Parameters.Add("@ReturnDate", SqlDbType.Date).Value = returnDate.Date;
+
+                        if (update.ExecuteNonQuery() == 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
                 }
             }
         }
