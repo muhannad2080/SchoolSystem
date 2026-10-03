@@ -33,6 +33,26 @@ namespace SchoolSystem.UI
 
         private bool isLoading = false;
 
+        private readonly StudentTransportService studentTransportService = new StudentTransportService();
+        private TabPage tabStudentTransport;
+        private DataGridView dataGridViewStudentTransport;
+        private ComboBox cmbTransportStudent;
+        private ComboBox cmbTransportRoute;
+        private TextBox txtTransportAcademicYear;
+        private TextBox txtPickupPoint;
+        private TextBox txtDropoffPoint;
+        private TextBox txtTransportNotes;
+        private CheckBox chkTransportActive;
+        private DateTimePicker dtpTransportStartDate;
+        private DateTimePicker dtpTransportEndDate;
+        private Button btnAddTransportAssignment;
+        private Button btnUpdateTransportAssignment;
+        private Button btnDeleteTransportAssignment;
+        private Button btnClearTransportAssignment;
+        private Label lblTransportAssignmentCount;
+        private int selectedTransportAssignmentId;
+
+
         // تعريف الدالة TransportForm لتنفيذ العملية المرتبطة بها.
         public TransportForm()
         {
@@ -46,6 +66,8 @@ namespace SchoolSystem.UI
             Load += TransportForm_Load;
 
             tabControl.SelectedIndexChanged += TabControl_SelectedIndexChanged;
+
+            ConfigureStudentTransportTab();
 
             // تقييد حقل رقم الحافلة: أحرف وأرقام وشرطات فقط.
             txtBusNumber.MaxLength = 30;
@@ -121,6 +143,8 @@ namespace SchoolSystem.UI
 
                 await LoadRoutesAsync();
 
+                await LoadStudentTransportAsync();
+
                 ClearBusInputs();
                 ClearRouteInputs();
 
@@ -157,6 +181,12 @@ namespace SchoolSystem.UI
 
                 await LoadRoutesAsync();
                 lblRecordCount.Text = "عدد المسارات: " + (allRoutes == null ? 0 : allRoutes.Rows.Count);
+            }
+            else if (tabControl.SelectedTab == tabStudentTransport)
+            {
+                await LoadStudentTransportAsync();
+                lblRecordCount.Text = "عدد توزيعات النقل: " +
+                    (dataGridViewStudentTransport == null ? 0 : dataGridViewStudentTransport.Rows.Count);
             }
         }
 
@@ -720,6 +750,310 @@ namespace SchoolSystem.UI
 
 
             return TimeSpan.TryParse(value == null ? string.Empty : value.ToString(), out time);
+        }
+
+        private void ConfigureStudentTransportTab()
+        {
+            tabStudentTransport = new TabPage("توزيع الطلاب");
+            tabStudentTransport.Name = "tabStudentTransport";
+            tabStudentTransport.Padding = new Padding(8);
+
+            TableLayoutPanel editor = new TableLayoutPanel();
+            editor.Dock = DockStyle.Top;
+            editor.AutoSize = true;
+            editor.ColumnCount = 4;
+            editor.RowCount = 5;
+            editor.Padding = new Padding(4);
+            editor.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            editor.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            editor.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            editor.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+
+            txtTransportAcademicYear = new TextBox { Text = "2026/2027", Dock = DockStyle.Fill };
+            cmbTransportStudent = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Fill };
+            cmbTransportRoute = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Fill };
+            txtPickupPoint = new TextBox { Dock = DockStyle.Fill, MaxLength = 200 };
+            txtDropoffPoint = new TextBox { Dock = DockStyle.Fill, MaxLength = 200 };
+            txtTransportNotes = new TextBox { Dock = DockStyle.Fill, MaxLength = 1000 };
+            chkTransportActive = new CheckBox { Text = "الاشتراك نشط", Checked = true, Dock = DockStyle.Fill };
+            dtpTransportStartDate = new DateTimePicker { Format = DateTimePickerFormat.Short, Value = DateTime.Today, Dock = DockStyle.Fill };
+            dtpTransportEndDate = new DateTimePicker { Format = DateTimePickerFormat.Short, ShowCheckBox = true, Checked = false, Value = DateTime.Today, Dock = DockStyle.Fill };
+
+            AddEditorField(editor, 0, 0, "العام الدراسي", txtTransportAcademicYear);
+            AddEditorField(editor, 1, 0, "الطالب", cmbTransportStudent);
+            AddEditorField(editor, 2, 0, "المسار", cmbTransportRoute);
+            AddEditorField(editor, 3, 0, "الحالة", chkTransportActive);
+            AddEditorField(editor, 0, 1, "نقطة الصعود", txtPickupPoint);
+            AddEditorField(editor, 1, 1, "نقطة النزول", txtDropoffPoint);
+            AddEditorField(editor, 2, 1, "بداية النقل", dtpTransportStartDate);
+            AddEditorField(editor, 3, 1, "نهاية النقل", dtpTransportEndDate);
+            AddEditorField(editor, 0, 2, "ملاحظات", txtTransportNotes);
+            editor.Controls.Add(new Label { Text = "", Dock = DockStyle.Fill }, 1, 2);
+
+            FlowLayoutPanel actions = new FlowLayoutPanel();
+            actions.Dock = DockStyle.Fill;
+            actions.AutoSize = true;
+
+            btnAddTransportAssignment = new Button { Text = "إضافة", Width = 100 };
+            btnUpdateTransportAssignment = new Button { Text = "تعديل", Width = 100 };
+            btnDeleteTransportAssignment = new Button { Text = "إلغاء التوزيع", Width = 120 };
+            btnClearTransportAssignment = new Button { Text = "تفريغ", Width = 100 };
+            lblTransportAssignmentCount = new Label { Text = "عدد التوزيعات: 0", AutoSize = true, Padding = new Padding(10, 8, 10, 0) };
+
+            btnAddTransportAssignment.Click += async (s, e) => await AddTransportAssignmentAsync();
+            btnUpdateTransportAssignment.Click += async (s, e) => await UpdateTransportAssignmentAsync();
+            btnDeleteTransportAssignment.Click += async (s, e) => await DeleteTransportAssignmentAsync();
+            btnClearTransportAssignment.Click += (s, e) => ClearTransportAssignmentInputs();
+
+            actions.Controls.Add(btnAddTransportAssignment);
+            actions.Controls.Add(btnUpdateTransportAssignment);
+            actions.Controls.Add(btnDeleteTransportAssignment);
+            actions.Controls.Add(btnClearTransportAssignment);
+            actions.Controls.Add(lblTransportAssignmentCount);
+
+            editor.Controls.Add(actions, 0, 3);
+            editor.SetColumnSpan(actions, 4);
+
+            dataGridViewStudentTransport = new DataGridView();
+            dataGridViewStudentTransport.Dock = DockStyle.Fill;
+            dataGridViewStudentTransport.AutoGenerateColumns = true;
+            dataGridViewStudentTransport.ReadOnly = true;
+            dataGridViewStudentTransport.AllowUserToAddRows = false;
+            dataGridViewStudentTransport.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewStudentTransport.MultiSelect = false;
+            dataGridViewStudentTransport.CellClick += DataGridViewStudentTransport_CellClick;
+
+            tabStudentTransport.Controls.Add(dataGridViewStudentTransport);
+            tabStudentTransport.Controls.Add(editor);
+            tabControl.TabPages.Add(tabStudentTransport);
+
+            TrySetDefaultTransportYear();
+        }
+
+        private static void AddEditorField(TableLayoutPanel layout, int column, int row, string labelText, Control control)
+        {
+            Panel panel = new Panel { Dock = DockStyle.Fill, Padding = new Padding(3) };
+            Label label = new Label { Text = labelText, Dock = DockStyle.Top, Height = 23 };
+            panel.Controls.Add(control);
+            panel.Controls.Add(label);
+            layout.Controls.Add(panel, column, row);
+        }
+
+        private void TrySetDefaultTransportYear()
+        {
+            try
+            {
+                string year = AcademicYearHelper.GetCurrentAcademicYear();
+                if (!string.IsNullOrWhiteSpace(year))
+                    txtTransportAcademicYear.Text = year;
+            }
+            catch
+            {
+                // يظل العام الافتراضي الظاهر عند تعذر قراءة المصدر أثناء تهيئة الواجهة.
+            }
+        }
+
+        private async Task LoadStudentTransportAsync()
+        {
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+                DataTable assignments = await Task.Run(() => studentTransportService.GetAll());
+                DataTable students = await Task.Run(() => studentTransportService.GetActiveStudents());
+                DataTable routes = await Task.Run(() => studentTransportService.GetRoutes());
+
+                dataGridViewStudentTransport.DataSource = assignments;
+                FormatStudentTransportGrid();
+
+                cmbTransportStudent.DataSource = students;
+                cmbTransportStudent.DisplayMember = "FullName";
+                cmbTransportStudent.ValueMember = "StudentID";
+
+                cmbTransportRoute.DataSource = routes;
+                cmbTransportRoute.DisplayMember = "RouteName";
+                cmbTransportRoute.ValueMember = "RouteID";
+
+                lblTransportAssignmentCount.Text = "عدد التوزيعات: " + assignments.Rows.Count;
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private void FormatStudentTransportGrid()
+        {
+            if (dataGridViewStudentTransport == null || dataGridViewStudentTransport.Columns.Count == 0)
+                return;
+
+            HideTransportAssignmentColumn("AssignmentID");
+            HideTransportAssignmentColumn("StudentID");
+            HideTransportAssignmentColumn("RouteID");
+            HideTransportAssignmentColumn("CreatedAt");
+            HideTransportAssignmentColumn("UpdatedAt");
+
+            SetTransportAssignmentHeader("StudentNumber", "رقم الطالب");
+            SetTransportAssignmentHeader("StudentName", "الطالب");
+            SetTransportAssignmentHeader("RouteName", "المسار");
+            SetTransportAssignmentHeader("BusNumber", "الحافلة");
+            SetTransportAssignmentHeader("AcademicYear", "العام");
+            SetTransportAssignmentHeader("PickupPoint", "نقطة الصعود");
+            SetTransportAssignmentHeader("DropoffPoint", "نقطة النزول");
+            SetTransportAssignmentHeader("IsActive", "نشط");
+            SetTransportAssignmentHeader("StartDate", "بداية النقل");
+            SetTransportAssignmentHeader("EndDate", "نهاية النقل");
+            SetTransportAssignmentHeader("Notes", "ملاحظات");
+        }
+
+        private void HideTransportAssignmentColumn(string columnName)
+        {
+            if (dataGridViewStudentTransport.Columns.Contains(columnName))
+                dataGridViewStudentTransport.Columns[columnName].Visible = false;
+        }
+
+        private void SetTransportAssignmentHeader(string columnName, string headerText)
+        {
+            if (dataGridViewStudentTransport.Columns.Contains(columnName))
+                dataGridViewStudentTransport.Columns[columnName].HeaderText = headerText;
+        }
+
+        private StudentTransportAssignment GetTransportAssignmentFromInputs()
+        {
+            int studentId = cmbTransportStudent.SelectedValue != null &&
+                            int.TryParse(cmbTransportStudent.SelectedValue.ToString(), out int parsedStudent)
+                ? parsedStudent : 0;
+
+            int routeId = cmbTransportRoute.SelectedValue != null &&
+                          int.TryParse(cmbTransportRoute.SelectedValue.ToString(), out int parsedRoute)
+                ? parsedRoute : 0;
+
+            return new StudentTransportAssignment
+            {
+                AssignmentID = selectedTransportAssignmentId,
+                StudentID = studentId,
+                RouteID = routeId,
+                AcademicYear = txtTransportAcademicYear.Text.Trim(),
+                PickupPoint = txtPickupPoint.Text.Trim(),
+                DropoffPoint = txtDropoffPoint.Text.Trim(),
+                IsActive = chkTransportActive.Checked,
+                StartDate = dtpTransportStartDate.Value.Date,
+                EndDate = dtpTransportEndDate.Checked ? (DateTime?)dtpTransportEndDate.Value.Date : null,
+                Notes = txtTransportNotes.Text.Trim()
+            };
+        }
+
+        private async Task AddTransportAssignmentAsync()
+        {
+            try
+            {
+                StudentTransportAssignment assignment = GetTransportAssignmentFromInputs();
+                await Task.Run(() => studentTransportService.Add(assignment));
+                UIHelper.ShowInfo("تم توزيع الطالب على مسار النقل بنجاح.");
+                ClearTransportAssignmentInputs();
+                await LoadStudentTransportAsync();
+            }
+            catch (Exception ex) { UIHelper.ShowException("إضافة توزيع النقل", ex); }
+        }
+
+        private async Task UpdateTransportAssignmentAsync()
+        {
+            try
+            {
+                if (selectedTransportAssignmentId <= 0)
+                {
+                    UIHelper.ShowWarning("اختر توزيعًا من الجدول أولاً.");
+                    return;
+                }
+
+                StudentTransportAssignment assignment = GetTransportAssignmentFromInputs();
+                bool updated = await Task.Run(() => studentTransportService.Update(assignment));
+                UIHelper.ShowInfo(updated ? "تم تعديل توزيع النقل." : "لم يتم تعديل توزيع النقل.");
+                if (updated)
+                {
+                    ClearTransportAssignmentInputs();
+                    await LoadStudentTransportAsync();
+                }
+            }
+            catch (Exception ex) { UIHelper.ShowException("تعديل توزيع النقل", ex); }
+        }
+
+        private async Task DeleteTransportAssignmentAsync()
+        {
+            try
+            {
+                if (selectedTransportAssignmentId <= 0)
+                {
+                    UIHelper.ShowWarning("اختر توزيعًا من الجدول أولاً.");
+                    return;
+                }
+
+                if (MessageBox.Show("سيتم إلغاء توزيع النقل للطالب المحدد. هل تريد المتابعة؟",
+                    "تأكيد الإلغاء", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                    return;
+
+                bool deleted = await Task.Run(() => studentTransportService.Delete(selectedTransportAssignmentId));
+                UIHelper.ShowInfo(deleted ? "تم إلغاء توزيع النقل." : "لم يتم إلغاء التوزيع.");
+                if (deleted)
+                {
+                    ClearTransportAssignmentInputs();
+                    await LoadStudentTransportAsync();
+                }
+            }
+            catch (Exception ex) { UIHelper.ShowException("إلغاء توزيع النقل", ex); }
+        }
+
+        private void DataGridViewStudentTransport_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || dataGridViewStudentTransport.Rows.Count == 0)
+                return;
+
+            DataRowView rowView = dataGridViewStudentTransport.Rows[e.RowIndex].DataBoundItem as DataRowView;
+            if (rowView == null)
+                return;
+
+            DataRow row = rowView.Row;
+            selectedTransportAssignmentId = row["AssignmentID"] != DBNull.Value &&
+                int.TryParse(row["AssignmentID"].ToString(), out int assignmentId) ? assignmentId : 0;
+
+            if (row["StudentID"] != DBNull.Value)
+                cmbTransportStudent.SelectedValue = Convert.ToInt32(row["StudentID"]);
+            if (row["RouteID"] != DBNull.Value)
+                cmbTransportRoute.SelectedValue = Convert.ToInt32(row["RouteID"]);
+
+            txtTransportAcademicYear.Text = row["AcademicYear"].ToString();
+            txtPickupPoint.Text = row["PickupPoint"].ToString();
+            txtDropoffPoint.Text = row["DropoffPoint"].ToString();
+            chkTransportActive.Checked = row["IsActive"] != DBNull.Value && Convert.ToBoolean(row["IsActive"]);
+
+            if (row["StartDate"] != DBNull.Value)
+                dtpTransportStartDate.Value = Convert.ToDateTime(row["StartDate"]);
+
+            if (row["EndDate"] == DBNull.Value)
+                dtpTransportEndDate.Checked = false;
+            else
+            {
+                dtpTransportEndDate.Checked = true;
+                dtpTransportEndDate.Value = Convert.ToDateTime(row["EndDate"]);
+            }
+
+            txtTransportNotes.Text = row["Notes"] == DBNull.Value ? "" : row["Notes"].ToString();
+        }
+
+        private void ClearTransportAssignmentInputs()
+        {
+            selectedTransportAssignmentId = 0;
+            if (cmbTransportStudent.Items.Count > 0)
+                cmbTransportStudent.SelectedIndex = 0;
+            if (cmbTransportRoute.Items.Count > 0)
+                cmbTransportRoute.SelectedIndex = 0;
+            TrySetDefaultTransportYear();
+            txtPickupPoint.Clear();
+            txtDropoffPoint.Clear();
+            txtTransportNotes.Clear();
+            chkTransportActive.Checked = true;
+            dtpTransportStartDate.Value = DateTime.Today;
+            dtpTransportEndDate.Checked = false;
+            dtpTransportEndDate.Value = DateTime.Today;
         }
 
         // تعريف الدالة btnAddRoute_Click لتنفيذ العملية المرتبطة بها.
