@@ -86,22 +86,24 @@ namespace SchoolSystem.UI
             }
         }
 
-        // تعريف الدالة ConfigureFixedSubjectsMode لتنفيذ العملية المرتبطة بها.
-        private void ConfigureFixedSubjectsMode()
+        // تعريف الدالة ConfigureSubjectEditingState لتنفيذ العملية المرتبطة بها.
+        private void ConfigureSubjectEditingState()
         {
             txtSubjectID.ReadOnly = true;
-            txtSubjectCode.ReadOnly = true;
-            txtSubjectName.ReadOnly = true;
+            txtSubjectCode.ReadOnly = false;
+            txtSubjectName.ReadOnly = false;
             cmbClass.Enabled = true;
 
-            txtSubjectCode.BackColor = UIHelper.DisabledSurfaceColor;
-            txtSubjectName.BackColor = UIHelper.DisabledSurfaceColor;
-            txtSubjectCode.ForeColor = UIHelper.MutedTextColor;
-            txtSubjectName.ForeColor = UIHelper.MutedTextColor;
+            txtSubjectID.BackColor = UIHelper.DisabledSurfaceColor;
+            txtSubjectCode.BackColor = System.Drawing.Color.White;
+            txtSubjectName.BackColor = System.Drawing.Color.White;
+            txtSubjectID.ForeColor = UIHelper.MutedTextColor;
+            txtSubjectCode.ForeColor = System.Drawing.Color.Black;
+            txtSubjectName.ForeColor = System.Drawing.Color.Black;
 
-            btnAdd.Text = "تثبيت المواد";
-            btnDelete.Enabled = false;
-            btnDelete.Text = "حذف معطل";
+            btnAdd.Text = selectedSubjectId > 0 ? "إضافة جديدة" : "إضافة مادة";
+            btnDelete.Enabled = selectedSubjectId > 0 && CurrentUser.CanDelete("Subjects");
+            btnDelete.Text = "حذف المادة";
         }
 
         // تعريف الدالة LoadClassesAsync لتنفيذ العملية المرتبطة بها.
@@ -241,16 +243,53 @@ namespace SchoolSystem.UI
         // تعريف الدالة btnAdd_Click لتنفيذ العملية المرتبطة بها.
         private async void btnAdd_Click(object sender, EventArgs e)
         {
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            CurrentUser.DemandAction("Subjects", "Add", "ليس لديك صلاحية إدارة المواد الأساسية.");
-            ShowInfo(
-                "المواد الأساسية ثابتة في قاعدة البيانات.\n\n" +
-                "إذا كانت المواد غير ظاهرة، نفذ سكربت تثبيت المواد الافتراضية في SQL Server.\n" +
-                "ثم اضغط تحديث."
-            );
+            CurrentUser.DemandAction("Subjects", "Add", "ليس لديك صلاحية إضافة المواد.");
+            if (!ValidateSubjectInputs())
+                return;
 
+            try
+            {
+                Subject subject = BuildSubjectModel();
+                subject.SubjectID = 0;
+                int subjectId = await Task.Run(() => subjectService.AddSubject(subject));
+                ShowInfo("تمت إضافة المادة بنجاح. الرقم: " + subjectId);
+                await LoadSubjectsAsync();
+                ClearFields();
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("إضافة المادة", ex);
+            }
+        }
 
-            await LoadSubjectsAsync();
+        // تعريف الدالة ValidateSubjectInputs لتنفيذ العملية المرتبطة بها.
+        private bool ValidateSubjectInputs()
+        {
+            if (string.IsNullOrWhiteSpace(txtSubjectCode.Text) || txtSubjectCode.Text.Trim().Length < 2 || txtSubjectCode.Text.Trim().Length > 30)
+            {
+                ShowWarning("كود المادة يجب أن يكون بين حرفين و30 حرفاً.");
+                txtSubjectCode.Focus();
+                return false;
+            }
+
+            foreach (char character in txtSubjectCode.Text.Trim())
+            {
+                if (!(char.IsLetterOrDigit(character) || character == '_' || character == '-'))
+                {
+                    ShowWarning("كود المادة يجب أن يحتوي على حروف أو أرقام أو (_) أو (-) فقط.");
+                    txtSubjectCode.Focus();
+                    return false;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(txtSubjectName.Text) || txtSubjectName.Text.Trim().Length < 2 || txtSubjectName.Text.Trim().Length > 100)
+            {
+                ShowWarning("اسم المادة يجب أن يكون بين حرفين و100 حرف.");
+                txtSubjectName.Focus();
+                return false;
+            }
+
+            return ValidateSubjectSettings();
         }
 
         // تعريف الدالة ValidateSubjectSettings لتنفيذ العملية المرتبطة بها.
@@ -328,10 +367,44 @@ namespace SchoolSystem.UI
         }
 
         // تعريف الدالة btnDelete_Click لتنفيذ العملية المرتبطة بها.
-        private void btnDelete_Click(object sender, EventArgs e)
+        private async void btnDelete_Click(object sender, EventArgs e)
         {
             CurrentUser.DemandAction("Subjects", "Delete", "ليس لديك صلاحية حذف المواد.");
-            ShowWarning("حذف المواد الأساسية غير مسموح؛ لأنها مرتبطة بالدرجات والمنهج الدراسي.");
+            if (selectedSubjectId <= 0)
+            {
+                ShowWarning("اختر مادة من الجدول أولاً.");
+                return;
+            }
+
+            DialogResult confirmation = MessageBox.Show(
+                "هل تريد حذف المادة المحددة؟\\n\\nإذا كانت المادة مرتبطة بدرجات أو جدول أو مقرر دراسي فسيمنع النظام الحذف حفاظاً على البيانات.",
+                "تأكيد حذف المادة",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning,
+                MessageBoxDefaultButton.Button2,
+                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+
+            if (confirmation != DialogResult.Yes)
+                return;
+
+            try
+            {
+                bool deleted = await Task.Run(() => subjectService.DeleteSubject(selectedSubjectId));
+                if (deleted)
+                {
+                    ShowInfo("تم حذف المادة بنجاح.");
+                    await LoadSubjectsAsync();
+                    ClearFields();
+                }
+                else
+                {
+                    ShowWarning("لم يتم العثور على المادة أو لم يتم حذفها.");
+                }
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("حذف المادة", ex);
+            }
         }
 
         // تعريف الدالة btnClear_Click لتنفيذ العملية المرتبطة بها.
