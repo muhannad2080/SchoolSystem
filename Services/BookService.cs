@@ -31,6 +31,13 @@ namespace SchoolSystem.Services
             return bookRepository.GetAllBooks();
         }
 
+        // تعريف الدالة GetActiveBooks لتنفيذ العملية المرتبطة بها.
+        public DataTable GetActiveBooks()
+        {
+            CurrentUser.DemandAction("Library", "View", "ليس لديك صلاحية عرض الكتب القابلة للإعارة.");
+            return bookRepository.GetActiveBooks();
+        }
+
         // تعريف الدالة AddBook لتنفيذ العملية المرتبطة بها.
         public bool AddBook(Book book)
         {
