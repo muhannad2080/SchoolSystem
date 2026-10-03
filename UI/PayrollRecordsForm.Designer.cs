@@ -133,17 +133,97 @@
             this.tableLayoutFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
 
-            AddField(this.tableLayoutFields, this.lblTeacher, "المعلم", this.cmbTeacher, 0, 0);
-            AddField(this.tableLayoutFields, this.lblMonth, "الشهر", this.cmbMonth, 2, 0);
-            AddField(this.tableLayoutFields, this.lblYear, "السنة", this.txtSalaryYear, 4, 0);
-            AddField(this.tableLayoutFields, this.lblBasicSalary, "الأساسي", this.txtBasicSalary, 0, 1);
-            AddField(this.tableLayoutFields, this.lblAllowances, "البدلات", this.txtAllowances, 2, 1);
-            AddField(this.tableLayoutFields, this.lblDeductions, "الخصومات", this.txtDeductions, 4, 1);
-            AddField(this.tableLayoutFields, this.lblNetSalary, "الصافي", this.txtNetSalary, 0, 2);
-            AddField(this.tableLayoutFields, this.lblPaymentDate, "تاريخ الصرف", this.dtpPaymentDate, 2, 2);
-            AddField(this.tableLayoutFields, this.lblPaymentMethod, "طريقة الصرف", this.cmbPaymentMethod, 4, 2);
-            AddField(this.tableLayoutFields, this.lblNotes, "ملاحظات", this.txtNotes, 0, 3);
-            this.tableLayoutFields.SetColumnSpan(this.txtNotes, 5);
+            this.lblTeacher.Text = "المعلم";
+            this.lblTeacher.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblTeacher.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblTeacher.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.cmbTeacher.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cmbTeacher.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutFields.Controls.Add(this.lblTeacher, 0, 0);
+            this.tableLayoutFields.Controls.Add(this.cmbTeacher, 1, 0);
+
+            this.lblMonth.Text = "الشهر";
+            this.lblMonth.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblMonth.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblMonth.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.cmbMonth.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cmbMonth.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutFields.Controls.Add(this.lblMonth, 2, 0);
+            this.tableLayoutFields.Controls.Add(this.cmbMonth, 3, 0);
+
+            this.lblYear.Text = "السنة";
+            this.lblYear.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblYear.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblYear.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.txtSalaryYear.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtSalaryYear.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutFields.Controls.Add(this.lblYear, 4, 0);
+            this.tableLayoutFields.Controls.Add(this.txtSalaryYear, 5, 0);
+
+            this.lblBasicSalary.Text = "الأساسي";
+            this.lblBasicSalary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblBasicSalary.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblBasicSalary.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.txtBasicSalary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtBasicSalary.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutFields.Controls.Add(this.lblBasicSalary, 0, 1);
+            this.tableLayoutFields.Controls.Add(this.txtBasicSalary, 1, 1);
+
+            this.lblAllowances.Text = "البدلات";
+            this.lblAllowances.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblAllowances.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblAllowances.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.txtAllowances.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtAllowances.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutFields.Controls.Add(this.lblAllowances, 2, 1);
+            this.tableLayoutFields.Controls.Add(this.txtAllowances, 3, 1);
+
+            this.lblDeductions.Text = "الخصومات";
+            this.lblDeductions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblDeductions.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblDeductions.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.txtDeductions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtDeductions.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutFields.Controls.Add(this.lblDeductions, 4, 1);
+            this.tableLayoutFields.Controls.Add(this.txtDeductions, 5, 1);
+
+            this.lblNetSalary.Text = "الصافي";
+            this.lblNetSalary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblNetSalary.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblNetSalary.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.txtNetSalary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtNetSalary.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutFields.Controls.Add(this.lblNetSalary, 0, 2);
+            this.tableLayoutFields.Controls.Add(this.txtNetSalary, 1, 2);
+
+            this.lblPaymentDate.Text = "تاريخ الصرف";
+            this.lblPaymentDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblPaymentDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPaymentDate.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.dtpPaymentDate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dtpPaymentDate.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutFields.Controls.Add(this.lblPaymentDate, 2, 2);
+            this.tableLayoutFields.Controls.Add(this.dtpPaymentDate, 3, 2);
+
+            this.lblPaymentMethod.Text = "طريقة الصرف";
+            this.lblPaymentMethod.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblPaymentMethod.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPaymentMethod.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.cmbPaymentMethod.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cmbPaymentMethod.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutFields.Controls.Add(this.lblPaymentMethod, 4, 2);
+            this.tableLayoutFields.Controls.Add(this.cmbPaymentMethod, 5, 2);
+
+            this.lblNotes.Text = "ملاحظات";
+            this.lblNotes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblNotes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblNotes.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.txtNotes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtNotes.Margin = new System.Windows.Forms.Padding(4);
+            this.tableLayoutFields.Controls.Add(this.lblNotes, 0, 3);
+            this.tableLayoutFields.Controls.Add(this.txtNotes, 1, 3);
+
+                        this.tableLayoutFields.SetColumnSpan(this.txtNotes, 5);
 
             this.txtSalaryYear.Minimum = 2000;
             this.txtSalaryYear.Maximum = 2100;
@@ -225,24 +305,5 @@
             this.ResumeLayout(false);
         }
 
-        private static void AddField(
-            System.Windows.Forms.TableLayoutPanel table,
-            System.Windows.Forms.Label label,
-            string text,
-            System.Windows.Forms.Control control,
-            int column,
-            int row)
-        {
-            label.Text = text;
-            label.Dock = System.Windows.Forms.DockStyle.Fill;
-            label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            label.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
-
-            control.Dock = System.Windows.Forms.DockStyle.Fill;
-            control.Margin = new System.Windows.Forms.Padding(4);
-
-            table.Controls.Add(label, column, row);
-            table.Controls.Add(control, column + 1, row);
-        }
     }
 }
