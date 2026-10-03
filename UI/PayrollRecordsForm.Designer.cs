@@ -120,18 +120,18 @@
 
             this.tableLayoutFields.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutFields.ColumnCount = 6;
-            for (int i = 0; i < 6; i++)
-            {
-                this.tableLayoutFields.ColumnStyles.Add(
-                    i % 2 == 0
-                        ? new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105F)
-                        : new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            }
+            this.tableLayoutFields.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105F));
+            this.tableLayoutFields.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutFields.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105F));
+            this.tableLayoutFields.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutFields.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105F));
+            this.tableLayoutFields.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 
             this.tableLayoutFields.RowCount = 4;
-            for (int i = 0; i < 4; i++)
-                this.tableLayoutFields.RowStyles.Add(
-                    new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
 
             AddField(this.tableLayoutFields, this.lblTeacher, "المعلم", this.cmbTeacher, 0, 0);
             AddField(this.tableLayoutFields, this.lblMonth, "الشهر", this.cmbMonth, 2, 0);
