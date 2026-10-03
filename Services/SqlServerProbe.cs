@@ -43,7 +43,8 @@ namespace SchoolSystem.Services
         {
             "Students", "StudentClasses", "Classes", "SchoolSections", "Users",
             "Roles", "RolePermissions", "UserRoles", "Permissions",
-            "Fees", "FeePlans", "Vouchers", "Payroll", "TeacherContracts", "Expenses"
+            "Fees", "FeePlans", "Vouchers", "StudentAttendance", "TeacherAttendance",
+            "Payroll", "TeacherContracts", "Expenses"
         };
 
         public static ProbeResult Probe(string server, string database,
