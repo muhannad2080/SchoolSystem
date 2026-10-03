@@ -115,9 +115,9 @@ namespace SchoolSystem
 
             string server = builder.DataSource ?? string.Empty;
             string database = builder.InitialCatalog ?? string.Empty;
-            useSql = !builder.IntegratedSecurity;
-            sqlUser = builder.UserID;
-            sqlPassword = builder.Password;
+            bool useSql = !builder.IntegratedSecurity;
+            string sqlUser = builder.UserID;
+            string sqlPassword = builder.Password;
 
             string masterConnection = BuildConnectionString(server, "master", useSql, sqlUser, sqlPassword, 15);
 
