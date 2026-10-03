@@ -82,7 +82,7 @@ namespace SchoolSystem.Services
                 }
                 catch (Exception rollbackEx)
                 {
-                    ApplicationLogger.LogException(
+                    SchoolSystem.Helpers.ApplicationLogger.LogException(
                         "EnrollmentService: rollback failed after finance synchronization error",
                         rollbackEx);
                 }
@@ -147,7 +147,7 @@ namespace SchoolSystem.Services
                 }
                 catch (Exception rollbackEx)
                 {
-                    ApplicationLogger.LogException(
+                    SchoolSystem.Helpers.ApplicationLogger.LogException(
                         "EnrollmentService: enrollment restore failed after finance synchronization error",
                         rollbackEx);
                 }
@@ -173,7 +173,7 @@ namespace SchoolSystem.Services
             if (repository.HasRegistrationFinance(existing.StudentID, existing.AcademicYear))
             {
                 throw new InvalidOperationException(
-                    "لا يمكن حذف طلب تسجيل له سجل مالي مرتبط. استخدم تغيير الحالة إلى \"ملغي\" بدلاً من الحذف للحفاظ على السجل المالي والتاريخي.");
+                    "لا يمكن حذف طلب تسجيل له سجل مالي مرتبط. استخدم تغيير الحالة إلى «ملغي» بدلاً من الحذف للحفاظ على السجل المالي والتاريخي.");
             }
 
             bool deleted = repository.DeleteEnrollment(enrollmentId);
