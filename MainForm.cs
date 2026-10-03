@@ -606,6 +606,7 @@ namespace SchoolSystem
                 tsmiAcademic,
                 tsmiSubjects,
                 tsmiClasses,
+                tsmiSections,
                 tsmiTimetable,
 
                 tsmiAttendanceGrades,
@@ -697,6 +698,12 @@ namespace SchoolSystem
                     "Classes",
                     "Classes.View",
                     PermissionKeys.ClassesManage);
+
+            tsmiSections.Visible =
+                CanOpen(
+                    "Sections",
+                    "Sections.View",
+                    PermissionKeys.SectionsManage);
 
             tsmiTimetable.Visible =
                 CanOpen(
@@ -804,6 +811,7 @@ namespace SchoolSystem
             tsmiAcademic.Visible =
                 CanOpen("Subjects") ||
                 CanOpen("Classes") ||
+                CanOpen("Sections") ||
                 CanOpen("Timetable");
 
             tsmiAttendanceGrades.Visible =
@@ -1095,6 +1103,16 @@ namespace SchoolSystem
                 new ClassesForm(),
                 "Classes.View",
                 PermissionKeys.ClassesManage);
+        }
+
+        private void tsmiSections_Click(object sender, EventArgs e)
+        {
+            LoadUserControl(
+                "Sections",
+                "ليس لديك صلاحية عرض الشعب الدراسية.",
+                new SchoolSectionsForm(),
+                "Sections.View",
+                PermissionKeys.SectionsManage);
         }
 
         private void tsmiTimetable_Click(
