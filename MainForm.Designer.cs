@@ -32,6 +32,7 @@ namespace SchoolSystem
             this.tsmiAcademic = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSubjects = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiClasses = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSections = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiTimetable = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiAttendanceGrades = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiAttendance = new System.Windows.Forms.ToolStripMenuItem();
@@ -176,6 +177,7 @@ namespace SchoolSystem
             this.tsmiAcademic.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiSubjects,
             this.tsmiClasses,
+            this.tsmiSections,
             this.tsmiTimetable});
             this.tsmiAcademic.Name = "tsmiAcademic";
             this.tsmiAcademic.Size = new System.Drawing.Size(147, 24);
@@ -194,6 +196,13 @@ namespace SchoolSystem
             this.tsmiClasses.Size = new System.Drawing.Size(215, 26);
             this.tsmiClasses.Text = "الفصول والقاعات";
             this.tsmiClasses.Click += new System.EventHandler(this.tsmiClasses_Click);
+            // 
+            // tsmiSections
+            // 
+            this.tsmiSections.Name = "tsmiSections";
+            this.tsmiSections.Size = new System.Drawing.Size(215, 26);
+            this.tsmiSections.Text = "الشعب الدراسية";
+            this.tsmiSections.Click += new System.EventHandler(this.tsmiSections_Click);
             // 
             // tsmiTimetable
             // 
@@ -585,6 +594,7 @@ namespace SchoolSystem
         private System.Windows.Forms.ToolStripMenuItem tsmiAcademic;
         private System.Windows.Forms.ToolStripMenuItem tsmiSubjects;
         private System.Windows.Forms.ToolStripMenuItem tsmiClasses;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSections;
         private System.Windows.Forms.ToolStripMenuItem tsmiTimetable;
 
         private System.Windows.Forms.ToolStripMenuItem tsmiAttendanceGrades;
