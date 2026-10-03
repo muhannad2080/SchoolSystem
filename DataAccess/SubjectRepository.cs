@@ -111,7 +111,7 @@ namespace SchoolSystem.DataAccess
                     if (string.IsNullOrWhiteSpace(subject.SubjectCode))
                         subject.SubjectCode = GenerateNextSubjectCode(conn, transaction);
 
-                    ValidateSubjectReferences(conn, transaction, subject, 0);
+                    ValidateSubjectReferences(conn, transaction, subject);
                     EnsureNoDuplicateSubject(conn, transaction, subject, 0);
 
                     const string query = @"
@@ -149,7 +149,7 @@ namespace SchoolSystem.DataAccess
                 conn.Open();
                 using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    ValidateSubjectReferences(conn, transaction, subject, subject.SubjectID);
+                    ValidateSubjectReferences(conn, transaction, subject);
                     EnsureNoDuplicateSubject(conn, transaction, subject, subject.SubjectID);
 
                     const string query = @"
@@ -255,7 +255,7 @@ namespace SchoolSystem.DataAccess
             }
         }
 
-        private void ValidateSubjectReferences(SqlConnection conn, SqlTransaction transaction, Subject subject, int excludedSubjectId)
+        private void ValidateSubjectReferences(SqlConnection conn, SqlTransaction transaction, Subject subject)
         {
             const string query = @"
                 IF @ClassID IS NOT NULL
@@ -309,6 +309,33 @@ namespace SchoolSystem.DataAccess
                 cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = subject.ClassID.HasValue ? (object)subject.ClassID.Value : DBNull.Value;
                 cmd.ExecuteNonQuery();
             }
+        }
+
+        /// <summary>يضيف معاملات المادة إلى أمر SQL، مع اختيار تضمين رقم المادة عند التعديل.</summary>
+        private void AddParameters(SqlCommand cmd, Subject subject, bool includeId)
+        {
+            if (includeId)
+                cmd.Parameters.Add("@SubjectID", SqlDbType.Int).Value = subject.SubjectID;
+
+            cmd.Parameters.Add("@SubjectCode", SqlDbType.NVarChar, 30).Value = subject.SubjectCode.Trim();
+            cmd.Parameters.Add("@SubjectName", SqlDbType.NVarChar, 100).Value = subject.SubjectName.Trim();
+            cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = subject.ClassID.HasValue
+                ? (object)subject.ClassID.Value
+                : DBNull.Value;
+
+            SqlParameter maxDegree = cmd.Parameters.Add("@MaxDegree", SqlDbType.Decimal);
+            maxDegree.Precision = 18;
+            maxDegree.Scale = 2;
+            maxDegree.Value = subject.MaxDegree;
+
+            SqlParameter passDegree = cmd.Parameters.Add("@PassDegree", SqlDbType.Decimal);
+            passDegree.Precision = 18;
+            passDegree.Scale = 2;
+            passDegree.Value = subject.PassDegree;
+
+            cmd.Parameters.Add("@IsActive", SqlDbType.Bit).Value = subject.IsActive;
+            cmd.Parameters.Add("@Notes", SqlDbType.NVarChar, 1000).Value =
+                string.IsNullOrWhiteSpace(subject.Notes) ? (object)DBNull.Value : subject.Notes.Trim();
         }
 
         // تعريف الدالة GetSubjectCount لتنفيذ العملية المرتبطة بها.
