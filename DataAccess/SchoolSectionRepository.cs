@@ -200,7 +200,7 @@ namespace SchoolSystem.DataAccess
                 using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
                 {
                     const string currentQuery = @"
-                        SELECT TOP (1) ClassID, SectionName, AcademicYear, IsActive
+                        SELECT TOP (1) ClassID, SectionName, AcademicYear, IsActive, AllowedGender
                         FROM dbo.SchoolSections WITH (UPDLOCK, HOLDLOCK)
                         WHERE SectionID = @SectionID;";
 
@@ -217,7 +217,8 @@ namespace SchoolSystem.DataAccess
                                     ClassID = Convert.ToInt32(reader["ClassID"]),
                                     SectionName = Convert.ToString(reader["SectionName"]),
                                     AcademicYear = Convert.ToString(reader["AcademicYear"]),
-                                    IsActive = Convert.ToBoolean(reader["IsActive"])
+                                    IsActive = Convert.ToBoolean(reader["IsActive"]),
+                                    AllowedGender = Convert.ToString(reader["AllowedGender"])
                                 };
                             }
                         }
@@ -238,6 +239,18 @@ namespace SchoolSystem.DataAccess
                     if (references > 0 && identityChanged)
                         throw new InvalidOperationException(
                             "لا يمكن تغيير الصف أو اسم الشعبة أو العام الدراسي لأن للشعبة سجلات طلاب أو حضور أو درجات أو جدول مرتبطة بها.");
+
+                    int assignedStudents = GetAssignedStudentCountInTransaction(
+                        conn, transaction, item.SectionID);
+
+                    if (assignedStudents > 0 && item.Capacity.HasValue && item.Capacity.Value < assignedStudents)
+                        throw new InvalidOperationException(
+                            "لا يمكن تخفيض سعة الشعبة إلى أقل من عدد الطلاب الموزعين عليها (" + assignedStudents + ").");
+
+                    if (assignedStudents > 0 &&
+                        !Normalize(current.AllowedGender).Equals(Normalize(item.AllowedGender), StringComparison.OrdinalIgnoreCase))
+                        throw new InvalidOperationException(
+                            "لا يمكن تغيير فئة الجنس لشعبة تحتوي على طلاب. انقل الطلاب أولاً أو أنشئ شعبة جديدة.");
 
                     if (references > 0 && current.IsActive && !item.IsActive)
                         throw new InvalidOperationException(
@@ -323,6 +336,25 @@ namespace SchoolSystem.DataAccess
 
                 if (Convert.ToInt32(duplicateCommand.ExecuteScalar()) > 0)
                     throw new InvalidOperationException("هذه الشعبة موجودة مسبقًا لهذا الصف والعام الدراسي.");
+            }
+        }
+
+        private int GetAssignedStudentCountInTransaction(SqlConnection conn, SqlTransaction transaction, int sectionId)
+        {
+            const string query = @"
+                SELECT COUNT(1)
+                FROM dbo.StudentClasses sc
+                INNER JOIN dbo.SchoolSections ss
+                    ON ss.SectionID = @SectionID
+                WHERE sc.ClassID = ss.ClassID
+                  AND LTRIM(RTRIM(ISNULL(sc.Section, N''))) = LTRIM(RTRIM(ISNULL(ss.SectionName, N'')))
+                  AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/')
+                      = REPLACE(ISNULL(ss.AcademicYear, N''), N'-', N'/');";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+            {
+                cmd.Parameters.Add("@SectionID", SqlDbType.Int).Value = sectionId;
+                return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
