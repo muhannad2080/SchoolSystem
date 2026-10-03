@@ -555,7 +555,7 @@ namespace SchoolSystem.UI
         private async Task LoadBooksIntoComboAsync()
         {
 
-            DataTable books = await Task.Run(() => bookService.GetAllBooks());
+            DataTable books = await Task.Run(() => bookService.GetActiveBooks());
 
             cmbBook.DataSource = books;
             cmbBook.DisplayMember = "Title";
