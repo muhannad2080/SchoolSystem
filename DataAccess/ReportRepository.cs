@@ -725,6 +725,214 @@ namespace SchoolSystem.DataAccess
         }
 
 
+        // تعريف الدالة GetStudentAttendanceReport لتنفيذ العملية المرتبطة بها.
+        private DataTable GetStudentAttendanceReport(ReportRequest request)
+        {
+            if (!TableExists("StudentAttendance"))
+                return CreateMessageTable("جدول حضور الطلاب StudentAttendance غير موجود.");
+
+            string query = @"
+                SELECT
+                    a.AttendanceID AS [المعرف],
+                    a.AttendanceDate AS [التاريخ],
+                    a.StudentID AS [رقم الطالب],
+                    s.StudentNumber AS [الرقم الأكاديمي],
+                    s.FullName AS [اسم الطالب],
+                    c.ClassName AS [الصف],
+                    a.Section AS [الشعبة],
+                    a.AcademicYear AS [العام الدراسي],
+                    a.Status AS [الحالة],
+                    a.ExcuseStatus AS [حالة العذر],
+                    a.AbsenceReason AS [سبب الغياب],
+                    a.ArrivalTime AS [وقت الحضور],
+                    a.DepartureTime AS [وقت الانصراف],
+                    a.Notes AS [ملاحظات]
+                FROM StudentAttendance a
+                INNER JOIN Students s ON s.StudentID = a.StudentID
+                LEFT JOIN Classes c ON c.ClassID = a.ClassID
+                WHERE a.AttendanceDate >= @FromDate
+                  AND a.AttendanceDate <= @ToDate";
+
+            if (!string.IsNullOrWhiteSpace(request.AcademicYear))
+                query += " AND REPLACE(ISNULL(a.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
+            if (request.ClassID.HasValue)
+                query += " AND a.ClassID = @ClassID";
+            if (!string.IsNullOrWhiteSpace(request.Section))
+                query += " AND LTRIM(RTRIM(ISNULL(a.Section, N''))) = LTRIM(RTRIM(@Section))";
+            if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
+                query += " AND ISNULL(a.Status, N'') = @Status";
+            if (!string.IsNullOrWhiteSpace(request.SearchText))
+                query += " AND (s.FullName LIKE @Search OR s.StudentNumber LIKE @Search)";
+
+            query += " ORDER BY a.AttendanceDate DESC, s.FullName";
+            return ExecuteQuery(query, request);
+        }
+
+        // تعريف الدالة GetSubjectsReport لتنفيذ العملية المرتبطة بها.
+        private DataTable GetSubjectsReport(ReportRequest request)
+        {
+            if (!TableExists("Subjects"))
+                return CreateMessageTable("جدول المواد Subjects غير موجود.");
+
+            string query = @"
+                SELECT
+                    sub.SubjectID AS [رقم المادة],
+                    sub.SubjectCode AS [كود المادة],
+                    sub.SubjectName AS [اسم المادة],
+                    c.ClassName AS [الصف],
+                    sub.MaxDegree AS [الدرجة الكبرى],
+                    sub.PassDegree AS [درجة النجاح],
+                    sub.IsActive AS [نشطة],
+                    sub.Notes AS [ملاحظات],
+                    sub.CreatedAt AS [تاريخ الإضافة]
+                FROM Subjects sub
+                LEFT JOIN Classes c ON c.ClassID = sub.ClassID
+                WHERE 1 = 1";
+
+            if (request.ClassID.HasValue)
+                query += " AND sub.ClassID = @ClassID";
+            if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
+            {
+                if (request.Status == "نشط" || request.Status == "غير نشط")
+                    query += " AND sub.IsActive = @IsActive";
+            }
+            if (!string.IsNullOrWhiteSpace(request.SearchText))
+                query += " AND (sub.SubjectCode LIKE @Search OR sub.SubjectName LIKE @Search)";
+
+            query += " ORDER BY c.ClassName, sub.SubjectName, sub.SubjectID";
+            return ExecuteQuery(query, request);
+        }
+
+        // تعريف الدالة GetLibraryReport لتنفيذ العملية المرتبطة بها.
+        private DataTable GetLibraryReport(ReportRequest request)
+        {
+            if (!TableExists("Books"))
+                return CreateMessageTable("جدول الكتب Books غير موجود.");
+            if (!TableExists("BookBorrowings"))
+                return CreateMessageTable("جدول الإعارات BookBorrowings غير موجود.");
+
+            string query = @"
+                SELECT
+                    br.BorrowingID AS [رقم الإعارة],
+                    b.BookID AS [رقم الكتاب],
+                    b.Title AS [الكتاب],
+                    b.Category AS [التصنيف],
+                    br.BorrowerType AS [نوع المستعير],
+                    br.BorrowerID AS [رقم المستعير],
+                    CASE
+                        WHEN br.BorrowerType = N'طالب' THEN ISNULL(s.FullName, N'غير معروف')
+                        WHEN br.BorrowerType = N'معلم' THEN ISNULL(t.FullName, N'غير معروف')
+                        ELSE N'غير معروف'
+                    END AS [اسم المستعير],
+                    br.BorrowDate AS [تاريخ الإعارة],
+                    br.DueDate AS [تاريخ الاستحقاق],
+                    br.ReturnDate AS [تاريخ الإرجاع],
+                    CASE
+                        WHEN br.Status = N'معار' AND br.DueDate < CAST(GETDATE() AS DATE) THEN N'متأخر'
+                        ELSE br.Status
+                    END AS [الحالة],
+                    b.Copies AS [إجمالي النسخ],
+                    b.Copies - ISNULL((SELECT COUNT(*) FROM BookBorrowings x WHERE x.BookID = b.BookID AND x.Status = N'معار'), 0) AS [النسخ المتاحة],
+                    br.Notes AS [ملاحظات]
+                FROM BookBorrowings br
+                INNER JOIN Books b ON b.BookID = br.BookID
+                LEFT JOIN Students s ON br.BorrowerType = N'طالب' AND br.BorrowerID = s.StudentID
+                LEFT JOIN Teachers t ON br.BorrowerType = N'معلم' AND br.BorrowerID = t.TeacherID
+                WHERE br.BorrowDate >= @FromDate
+                  AND br.BorrowDate <= @ToDate";
+
+            if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
+            {
+                if (request.Status == "متأخر")
+                    query += " AND br.Status = N'معار' AND br.DueDate < CAST(GETDATE() AS DATE)";
+                else if (request.Status == "معار" || request.Status == "مسترجع")
+                    query += " AND br.Status = @Status";
+            }
+            if (!string.IsNullOrWhiteSpace(request.SearchText))
+                query += " AND (b.Title LIKE @Search OR b.ISBN LIKE @Search OR s.FullName LIKE @Search OR t.FullName LIKE @Search)";
+
+            query += " ORDER BY br.BorrowDate DESC, br.BorrowingID DESC";
+            return ExecuteQuery(query, request);
+        }
+
+        // تعريف الدالة GetTransportReport لتنفيذ العملية المرتبطة بها.
+        private DataTable GetTransportReport(ReportRequest request)
+        {
+            if (!TableExists("StudentTransportAssignments"))
+                return CreateMessageTable("جدول توزيع النقل StudentTransportAssignments غير موجود.");
+
+            string query = @"
+                SELECT
+                    a.AssignmentID AS [رقم التوزيع],
+                    a.StudentID AS [رقم الطالب],
+                    s.StudentNumber AS [الرقم الأكاديمي],
+                    s.FullName AS [اسم الطالب],
+                    a.AcademicYear AS [العام الدراسي],
+                    r.RouteName AS [المسار],
+                    b.BusNumber AS [الحافلة],
+                    a.PickupPoint AS [نقطة الصعود],
+                    a.DropoffPoint AS [نقطة النزول],
+                    a.StartDate AS [بداية النقل],
+                    a.EndDate AS [نهاية النقل],
+                    a.IsActive AS [نشط],
+                    r.Fee AS [رسوم النقل],
+                    a.Notes AS [ملاحظات]
+                FROM StudentTransportAssignments a
+                INNER JOIN Students s ON s.StudentID = a.StudentID
+                LEFT JOIN BusRoutes r ON r.RouteID = a.RouteID
+                LEFT JOIN Buses b ON b.BusID = r.BusID
+                WHERE 1 = 1";
+
+            if (!string.IsNullOrWhiteSpace(request.AcademicYear))
+                query += " AND REPLACE(ISNULL(a.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
+            if (request.ClassID.HasValue)
+                query += " AND s.ClassID = @ClassID";
+            if (!string.IsNullOrWhiteSpace(request.Status))
+            {
+                if (request.Status == "نشط")
+                    query += " AND a.IsActive = 1";
+                else if (request.Status == "غير نشط")
+                    query += " AND a.IsActive = 0";
+            }
+            if (!string.IsNullOrWhiteSpace(request.SearchText))
+                query += " AND (s.FullName LIKE @Search OR s.StudentNumber LIKE @Search OR r.RouteName LIKE @Search OR b.BusNumber LIKE @Search)";
+
+            query += " ORDER BY s.FullName, r.RouteName, a.AssignmentID DESC";
+            return ExecuteQuery(query, request);
+        }
+
+        // تعريف الدالة GetExpensesReport لتنفيذ العملية المرتبطة بها.
+        private DataTable GetExpensesReport(ReportRequest request)
+        {
+            if (!TableExists("Expenses"))
+                return CreateMessageTable("جدول المصروفات Expenses غير موجود.");
+
+            string query = @"
+                SELECT
+                    e.ExpenseID AS [رقم المصروف],
+                    e.ExpenseNumber AS [رقم السند],
+                    e.ExpenseDate AS [التاريخ],
+                    e.Category AS [التصنيف],
+                    e.PayeeName AS [المستفيد],
+                    e.PaymentMethod AS [طريقة الدفع],
+                    e.Amount AS [المبلغ],
+                    e.Description AS [البيان],
+                    e.Notes AS [ملاحظات],
+                    e.CreatedAt AS [تاريخ الإنشاء]
+                FROM Expenses e
+                WHERE e.ExpenseDate >= @FromDate
+                  AND e.ExpenseDate <= @ToDate";
+
+            if (!string.IsNullOrWhiteSpace(request.SearchText))
+                query += " AND (e.ExpenseNumber LIKE @Search OR e.Category LIKE @Search OR e.PayeeName LIKE @Search OR e.Description LIKE @Search)";
+
+            if (request.Status == "مصروف")
+                query += " AND e.Amount > 0";
+
+            query += " ORDER BY e.ExpenseDate DESC, e.ExpenseID DESC";
+            return ExecuteQuery(query, request);
+        }
+
         // تعريف الدالة GetMarksReport لتنفيذ العملية المرتبطة بها.
         private DataTable GetMarksReport(ReportRequest request)
         {
