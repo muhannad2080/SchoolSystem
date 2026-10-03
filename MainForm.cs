@@ -1044,6 +1044,18 @@ namespace SchoolSystem
                 PermissionKeys.StaffAttendanceManage);
         }
 
+        private void tsmiFinancialPayroll_Click(
+            object sender,
+            EventArgs e)
+        {
+            LoadUserControl(
+                "Payroll",
+                "ليس لديك صلاحية عرض الرواتب.",
+                new PayrollRecordsForm(),
+                "Payroll.View",
+                PermissionKeys.PayrollManage);
+        }
+
         private void tsmiTeachersPayroll_Click(
             object sender,
             EventArgs e)
