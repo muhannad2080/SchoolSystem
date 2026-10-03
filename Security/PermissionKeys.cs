@@ -745,6 +745,7 @@ namespace SchoolSystem.Security
                     return Serialize(Grant("Dashboard", "View").Concat(Grant("Students", "View", "Add", "Edit", "Search", "Print"))
                         .Concat(Grant("Enrollment", "View", "Add", "Edit", "Search"))
                         .Concat(Grant("ClassAssignment", "View", "Add", "Edit", "Search"))
+                        .Concat(Grant("Sections", "View", "Add", "Edit", "Search"))
                         .Concat(Grant("Attendance", "View", "Add", "Edit"))
                         .Concat(Grant("Grades", "View", "Print"))
                         .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv")));
@@ -755,6 +756,7 @@ namespace SchoolSystem.Security
                         .Concat(Grant("Attendance", "View", "Add", "Edit"))
                         .Concat(Grant("Grades", "View", "Add", "Edit"))
                         .Concat(Grant("Timetable", "View"))
+                        .Concat(Grant("Sections", "View"))
                         .Concat(Grant("Reports", "View")));
 
                 case "المالية":
