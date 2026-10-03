@@ -258,13 +258,18 @@ namespace SchoolSystem.UI
             cmbReportType.Items.Add("تقرير المعلمين");
             cmbReportType.Items.Add("تقرير القبول والتسجيل");
             cmbReportType.Items.Add("تقرير توزيع الفصول");
+            cmbReportType.Items.Add("تقرير حضور الطلاب");
             cmbReportType.Items.Add("تقرير حضور المعلمين");
+            cmbReportType.Items.Add("تقرير المواد الدراسية");
             cmbReportType.Items.Add("تقرير الرواتب");
             cmbReportType.Items.Add("تقرير المستخدمين والصلاحيات");
             cmbReportType.Items.Add("تقرير الرسوم");
             cmbReportType.Items.Add("تقرير الدرجات");
             cmbReportType.Items.Add("كشف درجات طالب");
             cmbReportType.Items.Add("كشف نتائج الفصل");
+            cmbReportType.Items.Add("تقرير المكتبة والإعارات");
+            cmbReportType.Items.Add("تقرير النقل المدرسي");
+            cmbReportType.Items.Add("تقرير المصروفات");
             cmbReportType.Items.Add("تقرير الحركة المالية");
 
             if (cmbReportType.Items.Count > 0)
