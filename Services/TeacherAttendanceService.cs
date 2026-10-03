@@ -51,6 +51,16 @@ namespace SchoolSystem.Services
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             CurrentUser.DemandAction("StaffAttendance", "Edit", "ليس لديك صلاحية تعديل حضور الموظفين.");
             ValidateAttendance(attendance, true);
+
+            if (repository.AttendanceExists(
+                    attendance.TeacherID,
+                    attendance.AttendanceDate.Date,
+                    attendance.AttendanceID))
+            {
+                throw new InvalidOperationException(
+                    "لا يمكن تعديل السجل؛ يوجد سجل حضور آخر لنفس المعلم في التاريخ نفسه.");
+            }
+
             ApplyAttendanceCalculations(attendance);
             bool updated = repository.UpdateAttendance(attendance);
             if (updated)
