@@ -88,10 +88,31 @@ namespace SchoolSystem.Services
         // تعريف الدالة SaveGrade لتنفيذ العملية المرتبطة بها.
         public bool SaveGrade(StudentGrade grade)
         {
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            CurrentUser.DemandAction("Grades", "Edit", "ليس لديك صلاحية حفظ أو تعديل الدرجات.");
             ValidateGrade(grade);
             CalculateGrade(grade);
+
+            bool exists = repository.GradeExists(
+                grade.StudentID,
+                grade.SubjectID,
+                grade.ClassID,
+                grade.Section,
+                grade.AcademicYear,
+                grade.TermName);
+
+            if (exists)
+            {
+                CurrentUser.DemandAction(
+                    "Grades",
+                    "Edit",
+                    "ليس لديك صلاحية تعديل الدرجة.");
+            }
+            else
+            {
+                CurrentUser.DemandAction(
+                    "Grades",
+                    "Add",
+                    "ليس لديك صلاحية إضافة الدرجة.");
+            }
 
             bool saved = repository.SaveGrade(grade);
             if (saved)
