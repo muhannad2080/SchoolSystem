@@ -275,23 +275,34 @@ namespace SchoolSystem.UI
                 ApplicationSettingsService.Save(updated);
                 DbConnection.Reload();
 
-                if (DatabaseExists(updated.ServerInstance, updated.DatabaseName, updated.UseSqlAuthentication, updated.SqlUser, ApplicationSettingsService.GetSqlPassword(updated)))
-                {
-                    SetStatus("قاعدة البيانات موجودة بالفعل. لن يتم استبدالها تلقائياً.", UIHelper.WarningColor);
-                    return;
-                }
+                bool databaseExists = DatabaseExists(
+                    updated.ServerInstance,
+                    updated.DatabaseName,
+                    updated.UseSqlAuthentication,
+                    updated.SqlUser,
+                    ApplicationSettingsService.GetSqlPassword(updated));
 
                 ApplicationLogger.Log(
                     "DatabaseMigration",
-                    "بدء إنشاء قاعدة البيانات على " + updated.ServerInstance + " وقاعدة " + updated.DatabaseName + ".");
+                    (databaseExists ? "بدء إصلاح/تحديث قاعدة البيانات الموجودة على " : "بدء إنشاء قاعدة البيانات على ") +
+                    updated.ServerInstance + " وقاعدة " + updated.DatabaseName + ".");
 
                 string databaseFolder = ResolveDatabaseFolder();
-                string initialFolder = Path.Combine(databaseFolder, "initial");
-                bool hasInitialSchemaFolder = Directory.Exists(initialFolder)
-                    && Directory.GetFiles(initialFolder, "*.sql").Length > 0;
                 string backupFile = FindBackupFile(databaseFolder);
                 string migrationResult;
-                if (!string.IsNullOrWhiteSpace(backupFile))
+
+                if (databaseExists)
+                {
+                    // القاعدة موجودة: لا نحذف البيانات ولا نستبدلها؛ نطبّق الترحيلات المعلقة فقط.
+                    migrationResult = DatabaseMigrationService.Apply(
+                        updated.ServerInstance,
+                        updated.DatabaseName,
+                        updated.UseSqlAuthentication,
+                        updated.SqlUser,
+                        ApplicationSettingsService.GetSqlPassword(updated),
+                        databaseFolder);
+                }
+                else if (!string.IsNullOrWhiteSpace(backupFile))
                 {
                     migrationResult = DatabaseMigrationService.Apply(
                         updated.ServerInstance,
