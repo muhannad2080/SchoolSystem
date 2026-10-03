@@ -28,7 +28,7 @@ namespace SchoolSystem.Services
         public DataTable GetAllUsers()
         {
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            CurrentUser.DemandModule("Users", "ليس لديك صلاحية عرض المستخدمين.");
+            CurrentUser.DemandAction("Users", "View", "ليس لديك صلاحية عرض المستخدمين.");
 
             return userRepository.GetAllUsers();
         }
@@ -40,7 +40,7 @@ namespace SchoolSystem.Services
             // بعد التهيئة يلزم صلاحية الوصول لشاشة المستخدمين.
             if (userRepository.CountUsers() > 0)
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                CurrentUser.DemandModule("Users", "ليس لديك صلاحية إضافة المستخدمين.");
+                CurrentUser.DemandAction("Users", "Add", "ليس لديك صلاحية إضافة المستخدمين.");
 
 
             NormalizeUser(user);
@@ -116,7 +116,7 @@ namespace SchoolSystem.Services
         public bool UpdateUser(User user, string password, bool updatePassword)
         {
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            CurrentUser.DemandModule("Users", "ليس لديك صلاحية تعديل المستخدمين.");
+            CurrentUser.DemandAction("Users", "Edit", "ليس لديك صلاحية تعديل المستخدمين.");
             if (user.UserID <= 0)
 
                 throw new Exception("رقم المستخدم غير صحيح.");
@@ -253,7 +253,7 @@ namespace SchoolSystem.Services
         public bool DeleteUser(int userId)
         {
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            CurrentUser.DemandModule("Users", "ليس لديك صلاحية حذف المستخدمين.");
+            CurrentUser.DemandAction("Users", "Delete", "ليس لديك صلاحية حذف المستخدمين.");
             if (userId <= 0)
 
                 throw new Exception("رقم المستخدم غير صحيح.");
@@ -588,7 +588,7 @@ namespace SchoolSystem.Services
         public bool ResetPasswordByUserName(string userName, string newPassword)
         {
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            CurrentUser.DemandModule("Users", "ليس لديك صلاحية إعادة تعيين كلمات مرور المستخدمين.");
+            CurrentUser.DemandAction("Users", "Edit", "ليس لديك صلاحية إعادة تعيين كلمات مرور المستخدمين.");
             userName = NormalizeDigits(userName).Trim();
             // تجهيز قيمة كلمة المرور لمسار التحقق والحماية.
             newPassword = NormalizeDigits(newPassword).Trim();
