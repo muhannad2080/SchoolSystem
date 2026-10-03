@@ -45,6 +45,8 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandAction("Payroll", "Add", "ليس لديك صلاحية إضافة الرواتب.");
 
+            ValidatePayroll(payroll);
+
             if (PayrollExists(payroll.TeacherID, payroll.SalaryMonth, payroll.SalaryYear))
                 throw new InvalidOperationException("هناك راتب مسجل لنفس المعلم في نفس الشهر والسنة.");
 
@@ -57,7 +59,7 @@ namespace SchoolSystem.Services
                     payroll.PaymentDate ?? DateTime.Today,
                     repository.GetTeacherName(payroll.TeacherID),
                     payrollId,
-                    "نقداً",
+                    string.IsNullOrWhiteSpace(payroll.PaymentMethod) ? "نقداً" : payroll.PaymentMethod.Trim(),
                     payroll.SalaryMonth,
                     payroll.SalaryYear,
                     "تم إنشاء سند صرف الراتب تلقائياً من سجل الرواتب.");
@@ -78,6 +80,53 @@ namespace SchoolSystem.Services
                     payroll.SalaryMonth, payroll.SalaryYear, payroll.NetSalary));
 
             return payrollId;
+        }
+
+        private static void ValidatePayroll(Payroll payroll)
+        {
+            if (payroll == null)
+                throw new ArgumentNullException("payroll");
+
+            if (payroll.TeacherID <= 0)
+                throw new ArgumentException("المعلم غير صحيح.");
+
+            if (payroll.SalaryMonth < 1 || payroll.SalaryMonth > 12)
+                throw new ArgumentException("شهر الراتب يجب أن يكون بين 1 و12.");
+
+            if (payroll.SalaryYear < 2000 || payroll.SalaryYear > 2100)
+                throw new ArgumentException("سنة الراتب غير صحيحة.");
+
+            if (!payroll.PaymentDate.HasValue)
+                throw new ArgumentException("تاريخ الصرف مطلوب.");
+
+            if (payroll.BasicSalary <= 0)
+                throw new ArgumentException("الراتب الأساسي يجب أن يكون أكبر من صفر.");
+
+            if (payroll.Allowances < 0 || payroll.Deductions < 0)
+                throw new ArgumentException("البدلات والخصومات لا يمكن أن تكون سالبة.");
+
+            if (payroll.Deductions > payroll.BasicSalary + payroll.Allowances)
+                throw new ArgumentException("الخصومات لا يمكن أن تتجاوز إجمالي المستحق.");
+
+            string method = string.IsNullOrWhiteSpace(payroll.PaymentMethod)
+                ? "نقداً"
+                : payroll.PaymentMethod.Trim();
+
+            string[] supported = { "نقداً", "حوالة", "بنك", "محفظة إلكترونية" };
+            bool valid = false;
+            foreach (string item in supported)
+            {
+                if (string.Equals(item, method, StringComparison.Ordinal))
+                {
+                    valid = true;
+                    break;
+                }
+            }
+
+            if (!valid)
+                throw new ArgumentException("طريقة الصرف غير صحيحة.");
+
+            payroll.PaymentMethod = method;
         }
 
         public bool UpdatePayroll(Payroll payroll)
