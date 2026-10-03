@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Data.SqlClient;
 using SchoolSystem.DataAccess;
+using SchoolSystem.Helpers;
 using SchoolSystem.Models;
 using SchoolSystem.Security;
 
@@ -172,7 +173,7 @@ namespace SchoolSystem.Services
             if (repository.HasRegistrationFinance(existing.StudentID, existing.AcademicYear))
             {
                 throw new InvalidOperationException(
-                    "لا يمكن حذف طلب تسجيل له سجل مالي مرتبط. استخدم تغيير الحالة إلى "ملغي" بدلاً من الحذف للحفاظ على السجل المالي والتاريخي.");
+                    "لا يمكن حذف طلب تسجيل له سجل مالي مرتبط. استخدم تغيير الحالة إلى \"ملغي\" بدلاً من الحذف للحفاظ على السجل المالي والتاريخي.");
             }
 
             bool deleted = repository.DeleteEnrollment(enrollmentId);
