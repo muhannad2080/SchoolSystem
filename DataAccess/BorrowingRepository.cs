@@ -62,27 +62,52 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 LibrarySchemaInitializer.EnsureBooksSchema(con);
-                string query = @"
-                        IF NOT EXISTS
-                        (
-                            SELECT 1
-                            FROM Books
-                            WHERE BookID = @BookID
-                              AND ISNULL(IsActive, 1) = 1
-                              AND Copies >
-                                  (SELECT COUNT(*) FROM BookBorrowings
-                                   WHERE BookID = @BookID AND Status = N'معار')
-                        )
-                            THROW 50003, N'لا يمكن إنشاء الإعارة: الكتاب غير نشط أو لا توجد نسخ متاحة.', 1;
 
-                        IF (@BorrowerType = N'طالب' AND NOT EXISTS
+                const string query = @"
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Books WITH (UPDLOCK, HOLDLOCK)
+                        WHERE BookID = @BookID
+                          AND ISNULL(IsActive, 1) = 1
+                          AND Copies > ISNULL(
+                              (
+                                  SELECT COUNT(*)
+                                  FROM BookBorrowings WITH (UPDLOCK, HOLDLOCK)
+                                  WHERE BookID = @BookID
+                                    AND Status = N'معار'
+                              ), 0)
+                    )
+                        THROW 50003, N'لا يمكن إنشاء الإعارة: الكتاب غير نشط أو لا توجد نسخ متاحة.', 1;
 
-                        (SELECT 1 FROM Students WHERE StudentID = @BorrowerID AND ISNULL(Status, N'نشط') = N'نشط'))
+                    IF (@BorrowerType = N'طالب' AND NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Students WITH (UPDLOCK, HOLDLOCK)
+                        WHERE StudentID = @BorrowerID
+                          AND ISNULL(Status, N'نشط') = N'نشط'
+                    ))
                         THROW 50004, N'لا يمكن إنشاء إعارة لطالب غير نشط.', 1;
 
                     IF (@BorrowerType = N'معلم' AND NOT EXISTS
-                        (SELECT 1 FROM Teachers WHERE TeacherID = @BorrowerID AND ISNULL(Status, N'نشط') = N'نشط'))
+                    (
+                        SELECT 1
+                        FROM Teachers WITH (UPDLOCK, HOLDLOCK)
+                        WHERE TeacherID = @BorrowerID
+                          AND ISNULL(Status, N'نشط') = N'نشط'
+                    ))
                         THROW 50005, N'لا يمكن إنشاء إعارة لمعلم غير نشط.', 1;
+
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM BookBorrowings WITH (UPDLOCK, HOLDLOCK)
+                        WHERE BookID = @BookID
+                          AND BorrowerType = @BorrowerType
+                          AND BorrowerID = @BorrowerID
+                          AND Status = N'معار'
+                    )
+                        THROW 50006, N'هذا المستعير لديه نفس الكتاب معاراً حالياً.', 1;
 
                     INSERT INTO BookBorrowings
                     (
@@ -95,6 +120,7 @@ namespace SchoolSystem.DataAccess
                         Status,
                         Notes
                     )
+                    OUTPUT INSERTED.BorrowingID
                     VALUES
                     (
                         @BookID,
@@ -105,34 +131,45 @@ namespace SchoolSystem.DataAccess
                         NULL,
                         N'معار',
                         @Notes
-                    )";
+                    );";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-
-                    cmd.Parameters.AddWithValue("@BookID", borrowing.BookID);
-
-                    cmd.Parameters.AddWithValue("@BorrowerType", borrowing.BorrowerType ?? "");
-
-                    cmd.Parameters.AddWithValue("@BorrowerID", borrowing.BorrowerID);
-
-                    cmd.Parameters.AddWithValue("@BorrowDate", borrowing.BorrowDate.Date);
-
-                    cmd.Parameters.AddWithValue("@DueDate", borrowing.DueDate.Date);
-
-
-                    cmd.Parameters.AddWithValue(
-
-                        "@Notes",
+                    cmd.Parameters.Add("@BookID", SqlDbType.Int).Value = borrowing.BookID;
+                    cmd.Parameters.Add("@BorrowerType", SqlDbType.NVarChar, 20).Value =
+                        (object)(borrowing.BorrowerType ?? string.Empty);
+                    cmd.Parameters.Add("@BorrowerID", SqlDbType.Int).Value = borrowing.BorrowerID;
+                    cmd.Parameters.Add("@BorrowDate", SqlDbType.Date).Value = borrowing.BorrowDate.Date;
+                    cmd.Parameters.Add("@DueDate", SqlDbType.Date).Value = borrowing.DueDate.Date;
+                    cmd.Parameters.Add("@Notes", SqlDbType.NVarChar, 1000).Value =
                         string.IsNullOrWhiteSpace(borrowing.Notes)
                             ? (object)DBNull.Value
-                            : borrowing.Notes
-                    );
-
+                            : borrowing.Notes.Trim();
 
                     con.Open();
+                    using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
+                    {
+                        cmd.Transaction = transaction;
 
-                    return cmd.ExecuteNonQuery() > 0;
+                        try
+                        {
+                            object result = cmd.ExecuteScalar();
+                            if (result == null || result == DBNull.Value)
+                            {
+                                transaction.Rollback();
+                                return false;
+                            }
+
+                            borrowing.BorrowingID = Convert.ToInt32(result);
+                            transaction.Commit();
+                            return borrowing.BorrowingID > 0;
+                        }
+                        catch
+                        {
+                            try { transaction.Rollback(); } catch { }
+                            throw;
+                        }
+                    }
                 }
             }
         }
