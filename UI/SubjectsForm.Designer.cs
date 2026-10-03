@@ -192,7 +192,7 @@ namespace SchoolSystem.UI
             this.lblSubjectCode.Name = "lblSubjectCode";
             this.lblSubjectCode.Size = new System.Drawing.Size(124, 35);
             this.lblSubjectCode.TabIndex = 1;
-            this.lblSubjectCode.Text = "كود المادة:";
+            this.lblSubjectCode.Text = "كود المادة (تلقائي):";
             this.lblSubjectCode.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtSubjectCode
@@ -201,7 +201,7 @@ namespace SchoolSystem.UI
             this.txtSubjectCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSubjectCode.Location = new System.Drawing.Point(3, 3);
             this.txtSubjectCode.Name = "txtSubjectCode";
-            this.txtSubjectCode.ReadOnly = false;
+            this.txtSubjectCode.ReadOnly = true;
             this.txtSubjectCode.Size = new System.Drawing.Size(387, 28);
             this.txtSubjectCode.TabIndex = 1;
             // 
