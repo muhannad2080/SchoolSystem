@@ -453,6 +453,19 @@ namespace SchoolSystem.UI
         // تعريف الدالة ExportProfileExcel لتنفيذ العملية المرتبطة بها.
         private void ExportProfileExcel()
         {
+            try
+            {
+                CurrentUser.DemandAction(
+                    "Students",
+                    "ExportExcel",
+                    "ليس لديك صلاحية تصدير ملف الطالب إلى Excel.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("صلاحية التصدير", ex);
+                return;
+            }
+
             if (!EnsureProfileOutput()) return;
             using (SaveFileDialog dialog = new SaveFileDialog())
             {
@@ -476,6 +489,19 @@ namespace SchoolSystem.UI
         // تعريف الدالة ExportProfilePdf لتنفيذ العملية المرتبطة بها.
         private void ExportProfilePdf()
         {
+            try
+            {
+                CurrentUser.DemandAction(
+                    "Students",
+                    "ExportPDF",
+                    "ليس لديك صلاحية تصدير ملف الطالب إلى PDF.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("صلاحية التصدير", ex);
+                return;
+            }
+
             if (!EnsureProfileOutput()) return;
             using (SaveFileDialog dialog = new SaveFileDialog())
             {
@@ -499,6 +525,19 @@ namespace SchoolSystem.UI
         // تعريف الدالة PrintProfilePreview لتنفيذ العملية المرتبطة بها.
         private void PrintProfilePreview()
         {
+            try
+            {
+                CurrentUser.DemandAction(
+                    "Students",
+                    "Print",
+                    "ليس لديك صلاحية طباعة ملف الطالب.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("صلاحية الطباعة", ex);
+                return;
+            }
+
             if (!EnsureProfileOutput()) return;
             // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
             try
