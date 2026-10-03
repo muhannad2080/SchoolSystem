@@ -98,7 +98,8 @@ namespace SchoolSystem.Services
 
                 command.Parameters.Add("@ToAcademicYear", SqlDbType.NVarChar, 20).Value = Normalize(toYear);
 
-                command.Parameters.Add("@CreatedByUserID", SqlDbType.Int).Value = (object)userId ?? DBNull.Value;
+                command.Parameters.Add("@CreatedByUserID", SqlDbType.Int).Value =
+                    (object)(CurrentUser.User?.UserID ?? userId) ?? DBNull.Value;
 
                 using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                 {
@@ -133,7 +134,8 @@ namespace SchoolSystem.Services
 
                 command.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = Normalize(academicYear);
 
-                command.Parameters.Add("@UserID", SqlDbType.Int).Value = (object)userId ?? DBNull.Value;
+                command.Parameters.Add("@UserID", SqlDbType.Int).Value =
+                    (object)(CurrentUser.User?.UserID ?? userId) ?? DBNull.Value;
 
                 connection.Open();
 
@@ -222,7 +224,8 @@ namespace SchoolSystem.Services
 
                 command.Parameters.Add("@ToSection", SqlDbType.NVarChar, 50).Value = toSection.Trim();
 
-                command.Parameters.Add("@ApprovedByUserID", SqlDbType.Int).Value = (object)userId ?? DBNull.Value;
+                command.Parameters.Add("@ApprovedByUserID", SqlDbType.Int).Value =
+                    (object)(CurrentUser.User?.UserID ?? userId) ?? DBNull.Value;
 
                 connection.Open();
 
@@ -275,7 +278,8 @@ namespace SchoolSystem.Services
 
                 command.Parameters.Add("@NextAcademicYear", SqlDbType.NVarChar, 20).Value = string.IsNullOrWhiteSpace(nextAcademicYear) ? (object)DBNull.Value : Normalize(nextAcademicYear);
 
-                command.Parameters.Add("@ClosedByUserID", SqlDbType.Int).Value = (object)userId ?? DBNull.Value;
+                command.Parameters.Add("@ClosedByUserID", SqlDbType.Int).Value =
+                    (object)(CurrentUser.User?.UserID ?? userId) ?? DBNull.Value;
 
                 command.Parameters.Add("@Notes", SqlDbType.NVarChar, 1000).Value = string.IsNullOrWhiteSpace(notes) ? (object)DBNull.Value : notes.Trim();
 
@@ -298,9 +302,25 @@ namespace SchoolSystem.Services
         // تعريف الدالة RequireYear لتنفيذ العملية المرتبطة بها.
         private static void RequireYear(string year)
         {
-            if (string.IsNullOrWhiteSpace(year) || Normalize(year).Length > 20)
+            string value = Normalize(year);
 
+            if (string.IsNullOrWhiteSpace(value) || value.Length > 20)
                 throw new ArgumentException("العام الدراسي غير صالح.");
+
+            string[] parts = value.Split('/');
+            int firstYear;
+            int secondYear;
+
+            if (parts.Length != 2 ||
+                parts[0].Length != 4 ||
+                parts[1].Length != 4 ||
+                !int.TryParse(parts[0], out firstYear) ||
+                !int.TryParse(parts[1], out secondYear) ||
+                secondYear != firstYear + 1)
+            {
+                throw new ArgumentException(
+                    "صيغة العام الدراسي يجب أن تكون متسلسلة مثل 2026/2027 أو 1447-1448.");
+            }
         }
 
         // تعريف الدالة Normalize لتنفيذ العملية المرتبطة بها.
