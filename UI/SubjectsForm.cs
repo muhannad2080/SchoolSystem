@@ -67,7 +67,7 @@ namespace SchoolSystem.UI
             {
                 Cursor = Cursors.WaitCursor;
 
-                ConfigureFixedSubjectsMode();
+                ConfigureSubjectEditingState();
 
 
                 await LoadClassesAsync();
@@ -467,7 +467,7 @@ namespace SchoolSystem.UI
             chkIsActive.Checked = ReadRowBool(row, "IsActive", true);
             txtNotes.Text = ReadRowText(row, "Notes");
 
-            ConfigureFixedSubjectsMode();
+            ConfigureSubjectEditingState();
         }
 
         // تعريف الدالة ReadRowText لتنفيذ العملية المرتبطة بها.
@@ -535,7 +535,7 @@ namespace SchoolSystem.UI
             chkIsActive.Checked = true;
             txtNotes.Clear();
 
-            ConfigureFixedSubjectsMode();
+            ConfigureSubjectEditingState();
 
             txtNotes.Focus();
         }
