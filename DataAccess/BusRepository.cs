@@ -43,32 +43,63 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = @"
-                    INSERT INTO Buses
-                    (
-                        BusNumber,
-                        DriverName,
-                        DriverPhone,
-                        Capacity,
-                        Notes
-                    )
-                    VALUES
-                    (
-                        @BusNumber,
-                        @DriverName,
-                        @DriverPhone,
-                        @Capacity,
-                        @Notes
-                    )";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                con.Open();
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    AddParameters(cmd, bus);
+                    try
+                    {
+                        const string validation = @"
+                            IF EXISTS
+                            (
+                                SELECT 1
+                                FROM dbo.Buses WITH (UPDLOCK, HOLDLOCK)
+                                WHERE LTRIM(RTRIM(BusNumber)) = LTRIM(RTRIM(@BusNumber))
+                            )
+                                THROW 51004, N'رقم الحافلة مستخدم مسبقاً.', 1;";
 
+                        using (SqlCommand check = new SqlCommand(validation, con, transaction))
+                        {
+                            check.Parameters.Add("@BusNumber", SqlDbType.NVarChar, 50).Value = bus.BusNumber.Trim();
+                            check.ExecuteNonQuery();
+                        }
 
-                    con.Open();
+                        const string query = @"
+                            INSERT INTO Buses
+                            (
+                                BusNumber,
+                                DriverName,
+                                DriverPhone,
+                                Capacity,
+                                Notes
+                            )
+                            VALUES
+                            (
+                                @BusNumber,
+                                @DriverName,
+                                @DriverPhone,
+                                @Capacity,
+                                @Notes
+                            );";
 
-                    return cmd.ExecuteNonQuery() > 0;
+                        using (SqlCommand cmd = new SqlCommand(query, con, transaction))
+                        {
+                            AddParameters(cmd, bus);
+                            if (cmd.ExecuteNonQuery() == 0)
+                            {
+                                transaction.Rollback();
+                                return false;
+                            }
+                        }
+
+                        transaction.Commit();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        SchoolSystem.Helpers.ApplicationLogger.LogException("مستودع " + nameof(BusRepository) + ": إضافة حافلة", ex);
+                        throw;
+                    }
                 }
             }
         }
