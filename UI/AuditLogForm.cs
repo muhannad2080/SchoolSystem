@@ -345,13 +345,13 @@ namespace SchoolSystem.UI
                     if (extension == ".pdf")
                     {
                         // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                        CurrentUser.DemandModule("AuditLogs", "ليس لديك صلاحية تصدير سجل الأنشطة إلى PDF.");
+                        CurrentUser.DemandAction("AuditLogs", "ExportPDF", "ليس لديك صلاحية تصدير سجل الأنشطة إلى PDF.");
                     }
 
                     else
                     {
                         // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                        CurrentUser.DemandModule("AuditLogs", "ليس لديك صلاحية تصدير سجل الأنشطة إلى Excel.");
+                        CurrentUser.DemandAction("AuditLogs", "ExportExcel", "ليس لديك صلاحية تصدير سجل الأنشطة إلى Excel.");
                     }
 
                     if (extension == ".pdf")
