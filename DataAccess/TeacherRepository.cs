@@ -62,7 +62,7 @@ namespace SchoolSystem.DataAccess
         }
 
         // تعريف الدالة AddTeacher لتنفيذ العملية المرتبطة بها.
-        public void AddTeacher(Teacher teacher)
+        public int AddTeacher(Teacher teacher)
         {
             const string nextNumberQuery = @"
 SELECT ISNULL(MAX(TRY_CONVERT(INT, RIGHT(EmployeeNumber, 4))), 0) + 1
@@ -74,7 +74,8 @@ WHERE EmployeeNumber LIKE @Prefix + N'%';";
                                     BasicSalary, TransportAllowance, HousingAllowance, Status, Notes, CreatedAt)
                                   VALUES (@EmployeeNumber, @FullName, @Gender, @BirthDate, @BirthPlace, @Nationality,
                                     @NationalID, @Phone, @Email, @Address, @Qualification, @Specialization, @HireDate,
-                                    @BasicSalary, @TransportAllowance, @HousingAllowance, @Status, @Notes, GETDATE())";
+                                    @BasicSalary, @TransportAllowance, @HousingAllowance, @Status, @Notes, GETDATE());
+                                  SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
             using (var conn = new SqlConnection(_connectionString))
             {
@@ -105,10 +106,15 @@ WHERE EmployeeNumber LIKE @Prefix + N'%';";
                         {
                             AddTeacherParameters(insertCommand, teacher);
 
-                            insertCommand.ExecuteNonQuery();
+                            object result = insertCommand.ExecuteScalar();
+                            if (result == null || result == DBNull.Value)
+                                throw new InvalidOperationException("تعذر إنشاء رقم المعلم بعد إضافة السجل.");
+
+                            teacher.TeacherID = Convert.ToInt32(result);
                         }
 
                         transaction.Commit();
+                        return teacher.TeacherID;
                     }
 
                     catch (Exception ex)
@@ -126,7 +132,7 @@ WHERE EmployeeNumber LIKE @Prefix + N'%';";
         public void UpdateTeacher(Teacher teacher)
         {
             const string query = @"UPDATE Teachers SET
-                                    EmployeeNumber = @EmployeeNumber, FullName = @FullName, Gender = @Gender,
+                                    FullName = @FullName, Gender = @Gender,
                                     BirthDate = @BirthDate, BirthPlace = @BirthPlace, Nationality = @Nationality,
                                     NationalID = @NationalID, Phone = @Phone, Email = @Email, Address = @Address,
                                     Qualification = @Qualification, Specialization = @Specialization, HireDate = @HireDate,
