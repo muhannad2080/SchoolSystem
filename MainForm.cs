@@ -682,9 +682,9 @@ namespace SchoolSystem
 
             tsmiTeachersPayroll.Visible =
                 CanOpen(
-                    "Payroll",
-                    "Payroll.View",
-                    PermissionKeys.PayrollManage);
+                    "TeacherContracts",
+                    "TeacherContracts.View",
+                    "TeacherContracts.Manage");
 
             tsmiSubjects.Visible =
                 CanOpen(
@@ -798,6 +798,7 @@ namespace SchoolSystem
                 CanOpen("Teachers") ||
                 CanOpen("StaffAttendance") ||
                 CanOpen("TeacherAttendance") ||
+                CanOpen("TeacherContracts") ||
                 CanOpen("Payroll");
 
             tsmiAcademic.Visible =
@@ -1061,11 +1062,11 @@ namespace SchoolSystem
             EventArgs e)
         {
             LoadUserControl(
-                "Payroll",
-                "ليس لديك صلاحية عرض الرواتب.",
+                "TeacherContracts",
+                "ليس لديك صلاحية عرض عقود المعلمين.",
                 new PayrollForm(),
-                "Payroll.View",
-                PermissionKeys.PayrollManage);
+                "TeacherContracts.View",
+                "TeacherContracts.Manage");
         }
 
         // ================================================================
