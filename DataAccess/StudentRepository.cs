@@ -240,6 +240,8 @@ VALUES
                             student.StudentNumber = nextNumber.ToString("000000");
                         }
 
+                        ValidateUniqueStudentFields(conn, transaction, student, 0);
+
                         using (SqlCommand insertCommand = new SqlCommand(insertQuery, conn, transaction))
                         {
                             AddParameters(insertCommand, student);
@@ -266,7 +268,7 @@ VALUES
         // تعريف الدالة Update لتنفيذ العملية المرتبطة بها.
         public void Update(Student student)
         {
-            string query = @"
+            const string query = @"
 UPDATE Students SET
     FullName = @FullName,
     Gender = @Gender,
@@ -289,16 +291,32 @@ UPDATE Students SET
 WHERE StudentId = @StudentId;";
 
             using (SqlConnection conn = GetConnection())
-            using (SqlCommand cmd = new SqlCommand(query, conn))
             {
-                AddParameters(cmd, student);
-
-                cmd.Parameters.Add("@StudentId", SqlDbType.Int).Value = student.StudentId;
-
-
                 conn.Open();
+                using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    try
+                    {
+                        ValidateUniqueStudentFields(conn, transaction, student, student.StudentId);
 
-                cmd.ExecuteNonQuery();
+                        using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+                        {
+                            AddParameters(cmd, student);
+                            cmd.Parameters.Add("@StudentId", SqlDbType.Int).Value = student.StudentId;
+
+                            if (cmd.ExecuteNonQuery() == 0)
+                                throw new InvalidOperationException("الطالب غير موجود أو تم تعطيله مسبقاً.");
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        ApplicationLogger.LogException("مستودع " + nameof(StudentRepository) + ": تعديل طالب", ex);
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             }
         }
 
@@ -324,6 +342,59 @@ WHERE StudentId = @StudentId
                 if (cmd.ExecuteNonQuery() == 0)
 
                     throw new System.InvalidOperationException("الطالب غير موجود أو تم تعطيله مسبقاً.");
+            }
+        }
+
+        /// <summary>تحقق ذري داخل نفس معاملة الإضافة/التعديل من عدم تكرار الهوية أو هواتف الطالب/ولي الأمر.</summary>
+        private static void ValidateUniqueStudentFields(SqlConnection conn, SqlTransaction transaction, Student student, int exceptStudentId)
+        {
+            const string query = @"
+                IF NULLIF(LTRIM(RTRIM(ISNULL(@NationalId, N''))), N'') IS NOT NULL
+                   AND EXISTS
+                   (
+                       SELECT 1 FROM dbo.Students WITH (UPDLOCK, HOLDLOCK)
+                       WHERE StudentId <> @StudentId
+                         AND ISNULL(Status, N'') <> N'محذوف'
+                         AND LTRIM(RTRIM(ISNULL(NationalId, N''))) = LTRIM(RTRIM(@NationalId))
+                   )
+                    THROW 51301, N'رقم الهوية مستخدم مسبقاً لطالب آخر.', 1;
+
+                IF NULLIF(LTRIM(RTRIM(ISNULL(@StudentPhone, N''))), N'') IS NOT NULL
+                   AND EXISTS
+                   (
+                       SELECT 1 FROM dbo.Students WITH (UPDLOCK, HOLDLOCK)
+                       WHERE StudentId <> @StudentId
+                         AND ISNULL(Status, N'') <> N'محذوف'
+                         AND (
+                             LTRIM(RTRIM(ISNULL(StudentPhone, N''))) = LTRIM(RTRIM(@StudentPhone))
+                             OR LTRIM(RTRIM(ISNULL(GuardianPhone, N''))) = LTRIM(RTRIM(@StudentPhone))
+                         )
+                   )
+                    THROW 51302, N'رقم هاتف الطالب مستخدم مسبقاً.', 1;
+
+                IF NULLIF(LTRIM(RTRIM(ISNULL(@GuardianPhone, N''))), N'') IS NOT NULL
+                   AND EXISTS
+                   (
+                       SELECT 1 FROM dbo.Students WITH (UPDLOCK, HOLDLOCK)
+                       WHERE StudentId <> @StudentId
+                         AND ISNULL(Status, N'') <> N'محذوف'
+                         AND (
+                             LTRIM(RTRIM(ISNULL(StudentPhone, N''))) = LTRIM(RTRIM(@GuardianPhone))
+                             OR LTRIM(RTRIM(ISNULL(GuardianPhone, N''))) = LTRIM(RTRIM(@GuardianPhone))
+                         )
+                   )
+                    THROW 51303, N'رقم هاتف ولي الأمر مستخدم مسبقاً.', 1;";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+            {
+                cmd.Parameters.Add("@StudentId", SqlDbType.Int).Value = exceptStudentId;
+                cmd.Parameters.Add("@NationalId", SqlDbType.NVarChar, 50).Value =
+                    string.IsNullOrWhiteSpace(student.NationalId) ? (object)DBNull.Value : student.NationalId.Trim();
+                cmd.Parameters.Add("@StudentPhone", SqlDbType.NVarChar, 30).Value =
+                    string.IsNullOrWhiteSpace(student.StudentPhone) ? (object)DBNull.Value : student.StudentPhone.Trim();
+                cmd.Parameters.Add("@GuardianPhone", SqlDbType.NVarChar, 30).Value =
+                    string.IsNullOrWhiteSpace(student.GuardianPhone) ? (object)DBNull.Value : student.GuardianPhone.Trim();
+                cmd.ExecuteNonQuery();
             }
         }
 
