@@ -626,17 +626,42 @@ END;";
 
         private static void ApplyInitialSchema(SqlConnection con, string initialFolder)
         {
-            string[] files = Directory.GetFiles(initialFolder, "*.sql")
-                .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase)
-                .ToArray();
-            if (files.Length == 0)
-                throw new FileNotFoundException("لا يوجد ملف مخطط أولي في المجلد: " + initialFolder);
+            string[] files = Directory.Exists(initialFolder)
+                ? Directory.GetFiles(initialFolder, "*.sql")
+                    .OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase)
+                    .ToArray()
+                : new string[0];
 
-            foreach (string file in files)
+            if (files.Length > 0)
             {
-                string script = File.ReadAllText(file);
-                ExecuteScript(con, script);
+                foreach (string file in files)
+                {
+                    string script = ReadSqlScript(file);
+                    ExecuteScript(con, script);
+                }
+
+                return;
             }
+
+            /*
+               بعض الحزم تحتوي فقط على databaseschool.sql ولا تحتوي مجلد initial.
+               قاعدة جديدة يجب ألا تفشل بسبب ذلك؛ نستخدم السكربت الكامل كمصدر المخطط
+               ونزيل مقدمته التي تحتوي CREATE DATABASE/USE قبل التنفيذ على القاعدة الهدف.
+            */
+            string fullSchemaPath = Path.Combine(
+                Path.GetDirectoryName(initialFolder) ?? string.Empty,
+                FullSchemaScriptFileName);
+
+            if (File.Exists(fullSchemaPath))
+            {
+                string fullScript = ReadSqlScript(fullSchemaPath);
+                ExecuteScript(con, StripPreamble(fullScript));
+                return;
+            }
+
+            throw new FileNotFoundException(
+                "لم يتم العثور على مخطط قاعدة البيانات الأولي. ابحث عن مجلد initial أو الملف " +
+                FullSchemaScriptFileName + " داخل مجلد Database.");
         }
 
         private static List<MigrationScript> LoadPendingMigrations(string migrationsFolder, int currentVersion)
