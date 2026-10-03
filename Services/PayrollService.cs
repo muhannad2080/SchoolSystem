@@ -108,6 +108,13 @@ namespace SchoolSystem.Services
             if (payroll.Deductions > payroll.BasicSalary + payroll.Allowances)
                 throw new ArgumentException("الخصومات لا يمكن أن تتجاوز إجمالي المستحق.");
 
+            // الحساب المالي يجب أن يتم داخل طبقة الخدمة قبل إنشاء سند الصرف،
+            // ولا يعتمد على قيمة محسوبة في الواجهة.
+            payroll.NetSalary =
+                payroll.BasicSalary +
+                payroll.Allowances -
+                payroll.Deductions;
+
             string method = string.IsNullOrWhiteSpace(payroll.PaymentMethod)
                 ? "نقداً"
                 : payroll.PaymentMethod.Trim();
