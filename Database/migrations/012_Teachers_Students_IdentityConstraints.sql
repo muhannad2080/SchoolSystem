@@ -44,6 +44,16 @@ IF EXISTS
 )
     THROW 51214, N'توجد أرقام هوية مكررة للطلاب. عالج التكرارات قبل تطبيق Migration 012.', 1;
 
+IF EXISTS
+(
+    SELECT StudentNumber
+    FROM dbo.Students
+    WHERE NULLIF(LTRIM(RTRIM(ISNULL(StudentNumber, N''))), N'') IS NOT NULL
+    GROUP BY StudentNumber
+    HAVING COUNT(*) > 1
+)
+    THROW 51215, N'توجد أرقام طلاب مكررة. عالج التكرارات قبل تطبيق Migration 012.', 1;
+
 /* أرقام الموظفين */
 IF NOT EXISTS
 (
@@ -81,4 +91,17 @@ BEGIN
     CREATE UNIQUE INDEX UX_Students_NationalId
         ON dbo.Students(NationalId)
         WHERE NationalId IS NOT NULL AND NationalId <> N'';
+END;
+
+/* رقم الطالب المولد آلياً */
+IF NOT EXISTS
+(
+    SELECT 1 FROM sys.indexes
+    WHERE object_id = OBJECT_ID(N'dbo.Students')
+      AND name = N'UX_Students_StudentNumber'
+)
+BEGIN
+    CREATE UNIQUE INDEX UX_Students_StudentNumber
+        ON dbo.Students(StudentNumber)
+        WHERE StudentNumber IS NOT NULL AND StudentNumber <> N'';
 END;
