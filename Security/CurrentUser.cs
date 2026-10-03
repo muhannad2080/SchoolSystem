@@ -245,8 +245,7 @@ namespace SchoolSystem.Security
         // تعريف الدالة CanApprove لتنفيذ العملية المرتبطة بها.
         public static bool CanApprove(string module)
         {
-
-            return CanAccessModule(module);
+            return HasActionOrManage(module, "Approve");
         }
 
         // تعريف الدالة DemandAction لتنفيذ العملية المرتبطة بها.
@@ -264,10 +263,30 @@ namespace SchoolSystem.Security
         // تعريف الدالة HasActionOrManage لتنفيذ العملية المرتبطة بها.
         private static bool HasActionOrManage(string module, string action)
         {
-            if (string.IsNullOrWhiteSpace(module) || string.IsNullOrWhiteSpace(action))
+            if (string.IsNullOrWhiteSpace(module) ||
+                string.IsNullOrWhiteSpace(action) ||
+                User == null ||
+                !User.IsActive)
                 return false;
 
-            return CanAccessModule(module);
+            if (IsAdmin())
+                return true;
+
+            string normalizedModule = module.Trim();
+            string normalizedAction = action.Trim();
+
+            HashSet<string> permissions = ParsePermissions(User.Permissions);
+
+            // الصلاحية الإجرائية الصريحة هي المصدر الأساسي:
+            // Module.Add / Module.Edit / Module.Delete / Module.Search / ...
+            string actionKey = normalizedModule + "." + normalizedAction;
+            if (permissions.Contains(actionKey))
+                return true;
+
+            // توافق مع الصلاحية القديمة الشاملة Module.Manage.
+            // امتلاك Module.View وحدها لا يمنح عمليات الإضافة أو التعديل أو الحذف.
+            string legacyManageKey = normalizedModule + ".Manage";
+            return permissions.Contains(legacyManageKey);
         }
 
         // تعريف الدالة DemandPermission لتنفيذ العملية المرتبطة بها.
