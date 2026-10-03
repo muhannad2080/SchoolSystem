@@ -204,18 +204,22 @@ namespace SchoolSystem.UI
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 AuthorizationService.RequireAny("ليس لديك صلاحية تنفيذ الإغلاق السنوي.", PermissionKeys.AnnualClosingManage);
                 string selectedYear = SelectedYear();
-                string nextYear = string.IsNullOrWhiteSpace(txtNextYear.Text) ? string.Empty : SelectedNextYear();
+                string nextYear = SelectedNextYear();
 
-
-                if (MessageBox.Show("سيتم إنشاء نسخة احتياطية ثم إغلاق العام ومنع العمليات المستقبلية عليه. هل تريد المتابعة؟", "تأكيد الإغلاق", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
-
+                if (MessageBox.Show(
+                    "سيتم إنشاء نسخة احتياطية ثم إغلاق العام وتفعيل العام التالي في عملية واحدة. هل تريد المتابعة?",
+                    "تأكيد الإغلاق",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning) != DialogResult.Yes)
                     return;
 
-                service.CloseWithRequiredBackup(selectedYear, nextYear, CurrentUser.User?.UserID, txtNotes.Text);
-                if (!string.IsNullOrWhiteSpace(nextYear))
-                    service.SetActiveAcademicYear(nextYear, CurrentUser.User?.UserID);
+                service.CloseWithRequiredBackup(
+                    selectedYear,
+                    nextYear,
+                    CurrentUser.User?.UserID,
+                    txtNotes.Text);
 
-                lblStatus.Text = "تم إنشاء النسخة الاحتياطية وإغلاق العام وتحديث العام النشط بنجاح.";
+                lblStatus.Text = "تم إنشاء النسخة الاحتياطية وإغلاق العام وتفعيل العام التالي بنجاح.";
                 lblStatus.ForeColor = Color.DarkGreen;
 
                 MessageBox.Show(lblStatus.Text, "الإغلاق السنوي", MessageBoxButtons.OK, MessageBoxIcon.Information);
