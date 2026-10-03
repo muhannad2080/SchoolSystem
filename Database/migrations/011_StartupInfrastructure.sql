@@ -142,84 +142,39 @@ END;
 IF OBJECT_ID(N'dbo.SetActiveAcademicYear', N'P') IS NULL
     EXEC(N'CREATE PROCEDURE dbo.SetActiveAcademicYear AS BEGIN SET NOCOUNT ON; END');
 
-ALTER PROCEDURE dbo.SetActiveAcademicYear
+DECLARE @sql1 NVARCHAR(MAX) = N'ALTER PROCEDURE dbo.SetActiveAcademicYear
     @AcademicYear NVARCHAR(20),
     @UserID INT = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-
-    DECLARE @Year NVARCHAR(20) =
-        REPLACE(LTRIM(RTRIM(ISNULL(@AcademicYear, N''))), N'-', N'/');
-
-    IF @Year = N''
-        THROW 51170, N'العام الدراسي المطلوب غير صالح.', 1;
-
+    DECLARE @Year NVARCHAR(20) = REPLACE(LTRIM(RTRIM(ISNULL(@AcademicYear, N''''))), N''-'', N''/'');
+    IF @Year = N'''' THROW 51170, N''العام الدراسي المطلوب غير صالح.'', 1;
     BEGIN TRANSACTION;
-
-    UPDATE dbo.AcademicYearCurrent
-    SET IsCurrent = 0,
-        UpdatedAt = GETDATE();
-
-    IF EXISTS
-    (
-        SELECT 1
-        FROM dbo.AcademicYearCurrent
-        WHERE REPLACE(LTRIM(RTRIM(AcademicYear)), N'-', N'/') = @Year
-    )
-    BEGIN
-        UPDATE dbo.AcademicYearCurrent
-        SET AcademicYear = @Year,
-            IsCurrent = 1,
-            UpdatedAt = GETDATE()
-        WHERE REPLACE(LTRIM(RTRIM(AcademicYear)), N'-', N'/') = @Year;
-    END
+    UPDATE dbo.AcademicYearCurrent SET IsCurrent = 0, UpdatedAt = GETDATE();
+    IF EXISTS (SELECT 1 FROM dbo.AcademicYearCurrent WHERE REPLACE(LTRIM(RTRIM(AcademicYear)), N''-'', N''/'') = @Year)
+        UPDATE dbo.AcademicYearCurrent SET AcademicYear = @Year, IsCurrent = 1, UpdatedAt = GETDATE()
+        WHERE REPLACE(LTRIM(RTRIM(AcademicYear)), N''-'', N''/'') = @Year;
     ELSE
-    BEGIN
-        INSERT dbo.AcademicYearCurrent
-        (
-            AcademicYear, IsCurrent, Notes, CreatedAt, UpdatedAt
-        )
-        VALUES
-        (
-            @Year, 1, N'العام النشط المحدد من النظام', GETDATE(), GETDATE()
-        );
-    END;
-
-    IF NOT EXISTS
-    (
-        SELECT 1
-        FROM dbo.AcademicYears
-        WHERE REPLACE(LTRIM(RTRIM(AcademicYear)), N'-', N'/') = @Year
-    )
-    BEGIN
-        INSERT dbo.AcademicYears
-        (
-            AcademicYear, StartDate, EndDate, IsActive, CreatedAt
-        )
-        VALUES
-        (
-            @Year, NULL, NULL, 1, GETDATE()
-        );
-    END
+        INSERT dbo.AcademicYearCurrent (AcademicYear, IsCurrent, Notes, CreatedAt, UpdatedAt)
+        VALUES (@Year, 1, N''العام النشط المحدد من النظام'', GETDATE(), GETDATE());
+    IF NOT EXISTS (SELECT 1 FROM dbo.AcademicYears WHERE REPLACE(LTRIM(RTRIM(AcademicYear)), N''-'', N''/'') = @Year)
+        INSERT dbo.AcademicYears (AcademicYear, StartDate, EndDate, IsActive, CreatedAt)
+        VALUES (@Year, NULL, NULL, 1, GETDATE());
     ELSE
-    BEGIN
-        UPDATE dbo.AcademicYears
-        SET IsActive = 1
-        WHERE REPLACE(LTRIM(RTRIM(AcademicYear)), N'-', N'/') = @Year;
-    END;
-
+        UPDATE dbo.AcademicYears SET IsActive = 1
+        WHERE REPLACE(LTRIM(RTRIM(AcademicYear)), N''-'', N''/'') = @Year;
     COMMIT TRANSACTION;
-END;
-
+END;';
+EXEC sp_executesql @sql1;
 /* ============================================================
    4) الإجراء: تسجيل النسخ الاحتياطية
    ============================================================ */
 IF OBJECT_ID(N'dbo.RegisterDatabaseBackup', N'P') IS NULL
     EXEC(N'CREATE PROCEDURE dbo.RegisterDatabaseBackup AS BEGIN SET NOCOUNT ON; END');
 
-ALTER PROCEDURE dbo.RegisterDatabaseBackup
+DECLARE @sql2 NVARCHAR(MAX) = N'ALTER PROCEDURE dbo.RegisterDatabaseBackup
     @BackupFile NVARCHAR(500),
     @BackupType NVARCHAR(50) = NULL,
     @AcademicYear NVARCHAR(20) = NULL,
@@ -228,57 +183,42 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SET XACT_ABORT ON;
-
-    IF NULLIF(LTRIM(RTRIM(ISNULL(@BackupFile, N''))), N'') IS NULL
-        THROW 51171, N'مسار النسخة الاحتياطية مطلوب.', 1;
-
-    INSERT dbo.SchoolSystemBackupHistory
-    (
-        BackupFile,
-        BackupType,
-        AcademicYear,
-        UserID,
-        CreatedAt
-    )
+    IF NULLIF(LTRIM(RTRIM(ISNULL(@BackupFile, N''''))), N'''') IS NULL
+        THROW 51171, N''مسار النسخة الاحتياطية مطلوب.'', 1;
+    INSERT dbo.SchoolSystemBackupHistory (BackupFile, BackupType, AcademicYear, UserID, CreatedAt)
     VALUES
-    (
-        LTRIM(RTRIM(@BackupFile)),
-        NULLIF(LTRIM(RTRIM(ISNULL(@BackupType, N''))), N''),
-        NULLIF(REPLACE(LTRIM(RTRIM(ISNULL(@AcademicYear, N''))), N'-', N'/'), N''),
-        @UserID,
-        GETDATE()
-    );
-END;
-
+    (LTRIM(RTRIM(@BackupFile)),
+     NULLIF(LTRIM(RTRIM(ISNULL(@BackupType, N''''))), N''''),
+     NULLIF(REPLACE(LTRIM(RTRIM(ISNULL(@AcademicYear, N''''))), N''-'', N''/''), N''''),
+     @UserID, GETDATE());
+END;';
+EXEC sp_executesql @sql2;
 /* ============================================================
    5) الإجراء: حالة التشغيل للوحة التحكم
    ============================================================ */
 IF OBJECT_ID(N'dbo.GetDashboardOperationalStatus', N'P') IS NULL
     EXEC(N'CREATE PROCEDURE dbo.GetDashboardOperationalStatus AS BEGIN SET NOCOUNT ON; END');
 
-ALTER PROCEDURE dbo.GetDashboardOperationalStatus
+DECLARE @sql3 NVARCHAR(MAX) = N'ALTER PROCEDURE dbo.GetDashboardOperationalStatus
 AS
 BEGIN
     SET NOCOUNT ON;
-
-    SELECT
-        b.BackupFile AS LastBackupFile,
-        b.CreatedAt AS LastBackupDate,
-        CAST(NULL AS NVARCHAR(20)) AS LastClosingYear,
-        CAST(NULL AS NVARCHAR(100)) AS LastClosingStatus
-    FROM dbo.SchoolSystemBackupHistory b
-    ORDER BY b.BackupID DESC;
-    
-    IF NOT EXISTS (SELECT 1 FROM dbo.SchoolSystemBackupHistory)
-    BEGIN
+    IF EXISTS (SELECT 1 FROM dbo.SchoolSystemBackupHistory)
+        SELECT TOP (1)
+            b.BackupFile AS LastBackupFile,
+            b.CreatedAt AS LastBackupDate,
+            CAST(NULL AS NVARCHAR(20)) AS LastClosingYear,
+            CAST(NULL AS NVARCHAR(100)) AS LastClosingStatus
+        FROM dbo.SchoolSystemBackupHistory b
+        ORDER BY b.BackupID DESC;
+    ELSE
         SELECT
             CAST(NULL AS NVARCHAR(500)) AS LastBackupFile,
             CAST(NULL AS DATETIME) AS LastBackupDate,
             CAST(NULL AS NVARCHAR(20)) AS LastClosingYear,
             CAST(NULL AS NVARCHAR(100)) AS LastClosingStatus;
-    END
-END;
-
+END;';
+EXEC sp_executesql @sql3;
 /* ============================================================
    6) الدالة: العام الدراسي النشط
    ============================================================ */
@@ -288,18 +228,17 @@ IF OBJECT_ID(N'dbo.GetActiveAcademicYear', N'FN') IS NULL
               RETURN N'''';
           END');
 
-ALTER FUNCTION dbo.GetActiveAcademicYear()
+DECLARE @sql4 NVARCHAR(MAX) = N'ALTER FUNCTION dbo.GetActiveAcademicYear()
 RETURNS NVARCHAR(20)
 AS
 BEGIN
     DECLARE @Year NVARCHAR(20);
-
     SELECT TOP (1)
-        @Year = REPLACE(LTRIM(RTRIM(AcademicYear)), N'-', N'/')
+        @Year = REPLACE(LTRIM(RTRIM(AcademicYear)), N''-'', N''/'')
     FROM dbo.AcademicYearCurrent
     WHERE ISNULL(IsCurrent, 1) = 1
-      AND NULLIF(LTRIM(RTRIM(AcademicYear)), N'') IS NOT NULL
+      AND NULLIF(LTRIM(RTRIM(AcademicYear)), N'''') IS NOT NULL
     ORDER BY UpdatedAt DESC, CreatedAt DESC;
-
-    RETURN ISNULL(@Year, N'');
-END;
+    RETURN ISNULL(@Year, N'''');
+END;';
+EXEC sp_executesql @sql4;
