@@ -193,19 +193,31 @@ namespace SchoolSystem.Services
                 con.Open();
                 SetSessionOptions(con);
                 string scriptText = ReadSqlScript(scriptPath);
-                // نقتطع "المقدمة" الرأسية (افتراضية إنشاء القاعدة + USE [SchoolDB]) قبل أول
-                // كائن تصدير. نحذفها نهائياً لأننا متصلون مباشرة بقاعدة البيانات الهدف
-                // (InitialCatalog = database) والتطبيق هو الذي أنشأها بالاسم الصحيح سلفاً.
-                // بهذا يضمن تنفيذ السكربت على القاعدة الصحيحة دائماً دون إنشاء قاعدة خاطئة
-                // أو تنفيذه خطأً على master.
+                // السكربت الكامل يُنفّذ داخل قاعدة البيانات الهدف بعد حذف مقدمته
+                // التي تتضمن CREATE DATABASE / USE.
                 string scriptBody = StripPreamble(scriptText);
                 ExecuteScript(con, scriptBody);
+
+                // تثبيت baseline بعد نجاح إنشاء المخطط الكامل حتى يعرف محرك الترحيل
+                // أن القاعدة بدأت من الإصدار 1 ولا يعيد تنفيذ المخطط عليها.
+                EnsureHistoryTable(con);
+                if (ReadCurrentVersion(con) == 0)
+                    RecordMigration(con, InitialBaselineVersion, "initial-schema-script");
             }
 
-            // بعد إنشاء القاعدة من السكربت لا نطبق أي ترحيلات إضافية؛ السكربت يتضمن
-            // المخطط والبيانات والإجراءات المخزنة كاملة كما هو مطلوب.
-            return "تم إنشاء قاعدة البيانات من السكربت بنجاح.";
-        }
+            // أي migrations مرقّمة موجودة في الحزمة تُطبّق بالطريقة القياسية نفسها.
+            // الدالة Apply لا تستبدل قاعدة موجودة ولا تحذف البيانات.
+            string migrationResult = Apply(
+                server,
+                database,
+                useSqlAuth,
+                sqlUser,
+                sqlPassword,
+                databaseFolderFull);
+
+            if (AppliedInLastRun == 0)
+                return "تم إنشاء قاعدة البيانات من السكربت وتسجيل الـ baseline بنجاح.";
+            return "تم إنشاء قاعدة البيانات وتحديثها بنجاح. " + migrationResult;
 
         /// <summary>
         /// يقرأ نص سكربت SQL كاملاً ويتعامل مع ترميز UTF-16 LE (المنتج من تصدير SQL Server)
