@@ -54,6 +54,7 @@ namespace SchoolSystem.Services
                 { "TeacherContracts", new[] { "ContractID", "TeacherID", "ContractNumber", "ContractType", "ContractStatus", "BasicSalary", "StartDate" } },
                 { "Expenses", new[] { "ExpenseID", "ExpenseNumber", "Amount", "ExpenseDate", "Category" } },
                 { "Grades", new[] { "GradeID", "StudentID", "SubjectID", "ClassID", "AcademicYear", "TermName", "GradeValue", "ResultStatus" } },
+                { "Marks", new[] { "MarkID", "StudentID", "SubjectID", "Mark", "ExamType" } },
                 { "StudentAttendance", new[] { "AttendanceID", "StudentID", "ClassID", "Section", "AcademicYear", "AttendanceDate", "Status" } },
                 { "TeacherAttendance", new[] { "AttendanceID", "TeacherID", "AttendanceDate", "Status" } }
             };
