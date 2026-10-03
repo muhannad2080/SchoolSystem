@@ -820,21 +820,39 @@ namespace SchoolSystem.DataAccess
                           AND FeePlanID IS NULL;
                     END;
 
-                    IF EXISTS
-                    (
-                        SELECT 1
-                        FROM Fees WITH (UPDLOCK, HOLDLOCK)
-                        WHERE StudentID = @StudentID
-                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
-                    )
+                    DECLARE @ExistingFeeID INT = NULL;
+                    DECLARE @ExistingTotalAmount DECIMAL(18,2) = NULL;
+                    DECLARE @ExistingPaidAmount DECIMAL(18,2) = NULL;
+                    DECLARE @ExistingPaymentMethod NVARCHAR(100) = NULL;
+
+                    SELECT TOP 1
+                        @ExistingFeeID = FeeID,
+                        @ExistingTotalAmount = ISNULL(TotalAmount, 0),
+                        @ExistingPaidAmount = ISNULL(PaidAmount, 0),
+                        @ExistingPaymentMethod = PaymentMethod
+                    FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                    WHERE StudentID = @StudentID
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
+                    ORDER BY FeeID;
+
+                    IF @ExistingFeeID IS NOT NULL
                     BEGIN
-                        SELECT TOP 1 FeeID
-                        FROM Fees
-                        WHERE StudentID = @StudentID
-                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
-                        ORDER BY FeeID;
+                        IF ABS(ISNULL(@ExistingTotalAmount, 0) - ISNULL(@TotalAmount, 0)) > 0.01
+                           OR ABS(ISNULL(@ExistingPaidAmount, 0) - ISNULL(@PaidAmount, 0)) > 0.01
+                           OR
+                           (
+                               ISNULL(@PaidAmount, 0) > 0
+                               AND LTRIM(RTRIM(ISNULL(@ExistingPaymentMethod, N''))) <>
+                                   LTRIM(RTRIM(ISNULL(@PaymentMethod, N'')))
+                           )
+                        BEGIN
+                            THROW 51050,
+                                N'يوجد رسم تسجيل مالي سابق للطالب والعام الدراسي بمبالغ أو طريقة دفع مختلفة. عدّل الحركة من شاشة الرسوم بدلاً من إنشاء تسجيل غير متزامن.',
+                                1;
+                        END;
+
+                        SELECT @ExistingFeeID;
                         RETURN;
                     END;
 
