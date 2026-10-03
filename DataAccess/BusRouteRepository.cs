@@ -48,38 +48,74 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = @"
-                    INSERT INTO BusRoutes
-                    (
-                        RouteName,
-                        BusID,
-                        StartPoint,
-                        EndPoint,
-                        DepartureTime,
-                        ArrivalTime,
-                        Fee,
-                        Notes
-                    )
-                    VALUES
-                    (
-                        @RouteName,
-                        @BusID,
-                        @StartPoint,
-                        @EndPoint,
-                        @DepartureTime,
-                        @ArrivalTime,
-                        @Fee,
-                        @Notes
-                    )";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                con.Open();
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    AddParameters(cmd, route);
+                    const string validation = @"
+                        IF NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.Buses WITH (UPDLOCK, HOLDLOCK)
+                            WHERE BusID = @BusID
+                        )
+                            THROW 51010, N'الحافلة المحددة غير موجودة.', 1;
 
+                        IF @DepartureTime IS NOT NULL
+                           AND @ArrivalTime IS NOT NULL
+                           AND @DepartureTime >= @ArrivalTime
+                            THROW 51011, N'وقت المغادرة يجب أن يكون قبل وقت الوصول.', 1;
 
-                    con.Open();
+                        IF EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.BusRoutes WITH (UPDLOCK, HOLDLOCK)
+                            WHERE BusID = @BusID
+                              AND LTRIM(RTRIM(RouteName)) = LTRIM(RTRIM(@RouteName))
+                        )
+                            THROW 51012, N'اسم المسار مستخدم مسبقاً لهذه الحافلة.', 1;";
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    using (SqlCommand check = new SqlCommand(validation, con, transaction))
+                    {
+                        AddParameters(check, route);
+                        check.ExecuteNonQuery();
+                    }
+
+                    const string query = @"
+                        INSERT INTO BusRoutes
+                        (
+                            RouteName,
+                            BusID,
+                            StartPoint,
+                            EndPoint,
+                            DepartureTime,
+                            ArrivalTime,
+                            Fee,
+                            Notes
+                        )
+                        VALUES
+                        (
+                            @RouteName,
+                            @BusID,
+                            @StartPoint,
+                            @EndPoint,
+                            @DepartureTime,
+                            @ArrivalTime,
+                            @Fee,
+                            @Notes
+                        )";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con, transaction))
+                    {
+                        AddParameters(cmd, route);
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
                 }
             }
         }
@@ -89,30 +125,75 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = @"
-                    UPDATE BusRoutes SET
-                        RouteName = @RouteName,
-                        BusID = @BusID,
-                        StartPoint = @StartPoint,
-                        EndPoint = @EndPoint,
-                        DepartureTime = @DepartureTime,
-                        ArrivalTime = @ArrivalTime,
-                        Fee = @Fee,
-                        Notes = @Notes,
-                        UpdatedAt = GETDATE()
-                    WHERE RouteID = @RouteID";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                con.Open();
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    const string validation = @"
+                        IF NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.BusRoutes WITH (UPDLOCK, HOLDLOCK)
+                            WHERE RouteID = @RouteID
+                        )
+                            THROW 51013, N'المسار المحدد غير موجود.', 1;
 
-                    cmd.Parameters.AddWithValue("@RouteID", route.RouteID);
+                        IF NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.Buses WITH (UPDLOCK, HOLDLOCK)
+                            WHERE BusID = @BusID
+                        )
+                            THROW 51014, N'الحافلة المحددة غير موجودة.', 1;
 
-                    AddParameters(cmd, route);
+                        IF @DepartureTime IS NOT NULL
+                           AND @ArrivalTime IS NOT NULL
+                           AND @DepartureTime >= @ArrivalTime
+                            THROW 51015, N'وقت المغادرة يجب أن يكون قبل وقت الوصول.', 1;
 
+                        IF EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.BusRoutes WITH (UPDLOCK, HOLDLOCK)
+                            WHERE BusID = @BusID
+                              AND RouteID <> @RouteID
+                              AND LTRIM(RTRIM(RouteName)) = LTRIM(RTRIM(@RouteName))
+                        )
+                            THROW 51016, N'اسم المسار مستخدم مسبقاً لهذه الحافلة.', 1;";
 
-                    con.Open();
+                    using (SqlCommand check = new SqlCommand(validation, con, transaction))
+                    {
+                        check.Parameters.Add("@RouteID", SqlDbType.Int).Value = route.RouteID;
+                        AddParameters(check, route);
+                        check.ExecuteNonQuery();
+                    }
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    const string query = @"
+                        UPDATE BusRoutes SET
+                            RouteName = @RouteName,
+                            BusID = @BusID,
+                            StartPoint = @StartPoint,
+                            EndPoint = @EndPoint,
+                            DepartureTime = @DepartureTime,
+                            ArrivalTime = @ArrivalTime,
+                            Fee = @Fee,
+                            Notes = @Notes,
+                            UpdatedAt = GETDATE()
+                        WHERE RouteID = @RouteID";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con, transaction))
+                    {
+                        cmd.Parameters.Add("@RouteID", SqlDbType.Int).Value = route.RouteID;
+                        AddParameters(cmd, route);
+
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
                 }
             }
         }
@@ -120,19 +201,51 @@ namespace SchoolSystem.DataAccess
         // تعريف الدالة DeleteRoute لتنفيذ العملية المرتبطة بها.
         public bool DeleteRoute(int routeId)
         {
+            if (routeId <= 0)
+                throw new ArgumentException("رقم المسار غير صحيح.");
+
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = "DELETE FROM BusRoutes WHERE RouteID = @RouteID";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                con.Open();
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    const string validation = @"
+                        IF NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.BusRoutes WITH (UPDLOCK, HOLDLOCK)
+                            WHERE RouteID = @RouteID
+                        )
+                            THROW 51017, N'المسار المحدد غير موجود.', 1;
 
-                    cmd.Parameters.AddWithValue("@RouteID", routeId);
+                        IF EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.StudentTransportAssignments WITH (UPDLOCK, HOLDLOCK)
+                            WHERE RouteID = @RouteID
+                              AND IsActive = 1
+                        )
+                            THROW 51018, N'لا يمكن حذف المسار لأنه مرتبط بطلاب نشطين في النقل. ألغِ توزيعات الطلاب أولاً.', 1;";
 
+                    using (SqlCommand check = new SqlCommand(validation, con, transaction))
+                    {
+                        check.Parameters.Add("@RouteID", SqlDbType.Int).Value = routeId;
+                        check.ExecuteNonQuery();
+                    }
 
-                    con.Open();
+                    using (SqlCommand delete = new SqlCommand(
+                        "DELETE FROM dbo.BusRoutes WHERE RouteID = @RouteID;", con, transaction))
+                    {
+                        delete.Parameters.Add("@RouteID", SqlDbType.Int).Value = routeId;
+                        if (delete.ExecuteNonQuery() == 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    transaction.Commit();
+                    return true;
                 }
             }
         }
