@@ -108,8 +108,8 @@ namespace SchoolSystem.DataAccess
                 conn.Open();
                 using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    if (string.IsNullOrWhiteSpace(subject.SubjectCode))
-                        subject.SubjectCode = GenerateNextSubjectCode(conn, transaction);
+                    // كود المادة يولّده النظام دائمًا داخل المعاملة ولا يعتمد على إدخال الواجهة.
+                    subject.SubjectCode = GenerateNextSubjectCode(conn, transaction);
 
                     ValidateSubjectReferences(conn, transaction, subject);
                     EnsureNoDuplicateSubject(conn, transaction, subject, 0);
