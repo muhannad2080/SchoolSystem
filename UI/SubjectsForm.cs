@@ -90,15 +90,15 @@ namespace SchoolSystem.UI
         private void ConfigureSubjectEditingState()
         {
             txtSubjectID.ReadOnly = true;
-            txtSubjectCode.ReadOnly = false;
+            txtSubjectCode.ReadOnly = true;
             txtSubjectName.ReadOnly = false;
             cmbClass.Enabled = true;
 
             txtSubjectID.BackColor = UIHelper.DisabledSurfaceColor;
-            txtSubjectCode.BackColor = System.Drawing.Color.White;
+            txtSubjectCode.BackColor = UIHelper.DisabledSurfaceColor;
             txtSubjectName.BackColor = System.Drawing.Color.White;
             txtSubjectID.ForeColor = UIHelper.MutedTextColor;
-            txtSubjectCode.ForeColor = System.Drawing.Color.Black;
+            txtSubjectCode.ForeColor = UIHelper.MutedTextColor;
             txtSubjectName.ForeColor = System.Drawing.Color.Black;
 
             btnAdd.Text = selectedSubjectId > 0 ? "إضافة جديدة" : "إضافة مادة";
@@ -222,7 +222,7 @@ namespace SchoolSystem.UI
             Subject subject = new Subject();
 
             subject.SubjectID = selectedSubjectId;
-            subject.SubjectCode = txtSubjectCode.Text.Trim();
+            subject.SubjectCode = string.IsNullOrWhiteSpace(txtSubjectCode.Text) ? null : txtSubjectCode.Text.Trim();
             subject.SubjectName = txtSubjectName.Text.Trim();
 
             int classId = 0;
@@ -265,23 +265,7 @@ namespace SchoolSystem.UI
         // تعريف الدالة ValidateSubjectInputs لتنفيذ العملية المرتبطة بها.
         private bool ValidateSubjectInputs()
         {
-            if (string.IsNullOrWhiteSpace(txtSubjectCode.Text) || txtSubjectCode.Text.Trim().Length < 2 || txtSubjectCode.Text.Trim().Length > 30)
-            {
-                ShowWarning("كود المادة يجب أن يكون بين حرفين و30 حرفاً.");
-                txtSubjectCode.Focus();
-                return false;
-            }
-
-            foreach (char character in txtSubjectCode.Text.Trim())
-            {
-                if (!(char.IsLetterOrDigit(character) || character == '_' || character == '-'))
-                {
-                    ShowWarning("كود المادة يجب أن يحتوي على حروف أو أرقام أو (_) أو (-) فقط.");
-                    txtSubjectCode.Focus();
-                    return false;
-                }
-            }
-
+            // كود المادة يُولد تلقائياً في طبقة الخدمة/المستودع ولا يُدخل يدوياً.
             if (string.IsNullOrWhiteSpace(txtSubjectName.Text) || txtSubjectName.Text.Trim().Length < 2 || txtSubjectName.Text.Trim().Length > 100)
             {
                 ShowWarning("اسم المادة يجب أن يكون بين حرفين و100 حرف.");
