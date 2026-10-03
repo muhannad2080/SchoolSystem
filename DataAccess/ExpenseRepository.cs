@@ -126,19 +126,80 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                const string query = @"
-                    DELETE FROM Expenses
-                    WHERE ExpenseID = @ExpenseID;";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                con.Open();
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    const string validation = @"
+                        IF NOT EXISTS
+                        (
+                            SELECT 1 FROM dbo.Expenses WITH (UPDLOCK, HOLDLOCK)
+                            WHERE ExpenseID = @ExpenseID
+                        )
+                            THROW 51501, N'المصروف المحدد غير موجود.', 1;
 
-                    cmd.Parameters.AddWithValue("@ExpenseID", expenseId);
+                        IF EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.Vouchers WITH (UPDLOCK, HOLDLOCK)
+                            WHERE ReferenceType = N'مصروفات'
+                              AND ReferenceID = @ExpenseID
+                        )
+                            THROW 51502, N'لا يمكن حذف المصروف لأنه مرتبط بسندات مالية. صحح المصروف أو نفّذ التسوية/العكس المالي بدلاً من حذف السجل.', 1;";
 
+                    using (SqlCommand check = new SqlCommand(validation, con, transaction))
+                    {
+                        check.Parameters.Add("@ExpenseID", SqlDbType.Int).Value = expenseId;
+                        check.ExecuteNonQuery();
+                    }
 
-                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(
+                        "DELETE FROM dbo.Expenses WHERE ExpenseID = @ExpenseID;", con, transaction))
+                    {
+                        cmd.Parameters.Add("@ExpenseID", SqlDbType.Int).Value = expenseId;
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    transaction.Commit();
+                    return true;
+                }
+            }
+        }
+
+        public Expense GetExpenseById(int expenseId)
+        {
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT ExpenseID, ExpenseNumber, Amount, ExpenseDate, Category,
+                       PayeeName, PaymentMethod, Description, Notes, CreatedAt, UpdatedAt
+                FROM dbo.Expenses
+                WHERE ExpenseID = @ExpenseID;", con))
+            {
+                cmd.Parameters.Add("@ExpenseID", SqlDbType.Int).Value = expenseId;
+                con.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read())
+                        return null;
+
+                    return new Expense
+                    {
+                        ExpenseID = Convert.ToInt32(reader["ExpenseID"]),
+                        ExpenseNumber = Convert.ToString(reader["ExpenseNumber"]),
+                        Amount = Convert.ToDecimal(reader["Amount"]),
+                        ExpenseDate = Convert.ToDateTime(reader["ExpenseDate"]),
+                        Category = Convert.ToString(reader["Category"]),
+                        PayeeName = reader["PayeeName"] == DBNull.Value ? null : Convert.ToString(reader["PayeeName"]),
+                        PaymentMethod = reader["PaymentMethod"] == DBNull.Value ? null : Convert.ToString(reader["PaymentMethod"]),
+                        Description = Convert.ToString(reader["Description"]),
+                        Notes = reader["Notes"] == DBNull.Value ? null : Convert.ToString(reader["Notes"]),
+                        CreatedAt = reader["CreatedAt"] == DBNull.Value ? DateTime.MinValue : Convert.ToDateTime(reader["CreatedAt"]),
+                        UpdatedAt = reader["UpdatedAt"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["UpdatedAt"])
+                    };
                 }
             }
         }
