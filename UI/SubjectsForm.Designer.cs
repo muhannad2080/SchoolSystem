@@ -89,7 +89,7 @@ namespace SchoolSystem.UI
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(1100, 60);
             this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "إدارة المواد الدراسية الثابتة";
+            this.lblTitle.Text = "إدارة المواد الدراسية";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // mainContainer
@@ -201,7 +201,7 @@ namespace SchoolSystem.UI
             this.txtSubjectCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSubjectCode.Location = new System.Drawing.Point(3, 3);
             this.txtSubjectCode.Name = "txtSubjectCode";
-            this.txtSubjectCode.ReadOnly = true;
+            this.txtSubjectCode.ReadOnly = false;
             this.txtSubjectCode.Size = new System.Drawing.Size(387, 28);
             this.txtSubjectCode.TabIndex = 1;
             // 
@@ -221,7 +221,7 @@ namespace SchoolSystem.UI
             this.txtSubjectName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSubjectName.Location = new System.Drawing.Point(526, 38);
             this.txtSubjectName.Name = "txtSubjectName";
-            this.txtSubjectName.ReadOnly = true;
+            this.txtSubjectName.ReadOnly = false;
             this.txtSubjectName.Size = new System.Drawing.Size(387, 28);
             this.txtSubjectName.TabIndex = 2;
             // 
@@ -392,7 +392,7 @@ namespace SchoolSystem.UI
             // btnDelete
             // 
             this.btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(163)))), ((int)(((byte)(175)))));
-            this.btnDelete.Enabled = false;
+            this.btnDelete.Enabled = true;
             this.btnDelete.FlatAppearance.BorderSize = 0;
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDelete.ForeColor = System.Drawing.Color.White;
@@ -400,7 +400,7 @@ namespace SchoolSystem.UI
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(110, 36);
             this.btnDelete.TabIndex = 2;
-            this.btnDelete.Text = "حذف معطل";
+            this.btnDelete.Text = "حذف المادة";
             this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
@@ -428,7 +428,7 @@ namespace SchoolSystem.UI
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(140, 36);
             this.btnAdd.TabIndex = 4;
-            this.btnAdd.Text = "تثبيت المواد";
+            this.btnAdd.Text = "إضافة مادة";
             this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
