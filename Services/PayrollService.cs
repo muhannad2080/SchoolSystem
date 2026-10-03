@@ -140,8 +140,12 @@ namespace SchoolSystem.Services
         {
             CurrentUser.DemandAction("Payroll", "Edit", "ليس لديك صلاحية تعديل الرواتب.");
 
+            ValidateEditablePayroll(payroll);
+
             if (PayrollExists(payroll.TeacherID, payroll.SalaryMonth, payroll.SalaryYear, payroll.PayrollID))
-                throw new InvalidOperationException("تم صرف راتب هذا المعلم لهذا الشهر مسبقاً.");
+                throw new InvalidOperationException("هناك سجل راتب آخر لنفس المعلم في نفس الشهر والسنة.");
+
+            payroll.NetSalary = payroll.BasicSalary + payroll.Allowances - payroll.Deductions;
 
             bool updated = repository.UpdatePayroll(payroll);
 
@@ -152,6 +156,36 @@ namespace SchoolSystem.Services
                         payroll.SalaryMonth, payroll.SalaryYear, payroll.NetSalary));
 
             return updated;
+        }
+
+        private static void ValidateEditablePayroll(Payroll payroll)
+        {
+            if (payroll == null)
+                throw new ArgumentNullException("payroll");
+
+            if (payroll.PayrollID <= 0)
+                throw new ArgumentException("رقم سجل الراتب غير صحيح.");
+
+            if (payroll.TeacherID <= 0)
+                throw new ArgumentException("المعلم غير صحيح.");
+
+            if (payroll.SalaryMonth < 1 || payroll.SalaryMonth > 12)
+                throw new ArgumentException("شهر الراتب يجب أن يكون بين 1 و12.");
+
+            if (payroll.SalaryYear < 2000 || payroll.SalaryYear > 2100)
+                throw new ArgumentException("سنة الراتب غير صحيحة.");
+
+            if (payroll.BasicSalary <= 0)
+                throw new ArgumentException("الراتب الأساسي يجب أن يكون أكبر من صفر.");
+
+            if (payroll.Allowances < 0 || payroll.Deductions < 0)
+                throw new ArgumentException("البدلات والخصومات لا يمكن أن تكون سالبة.");
+
+            if (payroll.Deductions > payroll.BasicSalary + payroll.Allowances)
+                throw new ArgumentException("الخصومات لا يمكن أن تتجاوز إجمالي المستحق.");
+
+            if (payroll.PaymentDate.HasValue && payroll.PaymentDate.Value.Date > DateTime.Today)
+                throw new ArgumentException("تاريخ الصرف لا يمكن أن يكون في المستقبل.");
         }
 
         public bool DeletePayroll(int payrollId)
