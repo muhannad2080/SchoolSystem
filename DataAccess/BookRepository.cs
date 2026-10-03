@@ -91,7 +91,30 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 LibrarySchemaInitializer.EnsureBooksSchema(con);
-                string query = @"
+                con.Open();
+
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    if (!string.IsNullOrWhiteSpace(book.ISBN))
+                    {
+                        const string duplicateQuery = @"
+                            IF EXISTS
+                            (
+                                SELECT 1
+                                FROM dbo.Books WITH (UPDLOCK, HOLDLOCK)
+                                WHERE REPLACE(REPLACE(LTRIM(RTRIM(ISNULL(ISBN, N''))), N'-', N''), N' ', N'')
+                                      = REPLACE(REPLACE(LTRIM(RTRIM(@ISBN)), N'-', N''), N' ', N'')
+                            )
+                                THROW 51304, N'رقم ISBN مستخدم مسبقاً لكتاب آخر.', 1;";
+
+                        using (SqlCommand duplicate = new SqlCommand(duplicateQuery, con, transaction))
+                        {
+                            duplicate.Parameters.Add("@ISBN", SqlDbType.NVarChar, 30).Value = book.ISBN.Trim();
+                            duplicate.ExecuteNonQuery();
+                        }
+                    }
+
+                    string query = @"
                     INSERT INTO Books
                     (
                         Title,
@@ -125,13 +148,15 @@ namespace SchoolSystem.DataAccess
                     AddParameters(cmd, book);
 
 
-                    con.Open();
-
                     object result = cmd.ExecuteScalar();
                     if (result == null || result == DBNull.Value)
+                    {
+                        transaction.Rollback();
                         return false;
+                    }
 
                     book.BookID = Convert.ToInt32(result);
+                    transaction.Commit();
                     return book.BookID > 0;
                 }
             }
@@ -157,6 +182,17 @@ namespace SchoolSystem.DataAccess
                         )
                             THROW 51301, N'الكتاب المحدد غير موجود.', 1;
 
+                        IF NULLIF(LTRIM(RTRIM(@ISBN)), N'') IS NOT NULL
+                           AND EXISTS
+                           (
+                               SELECT 1
+                               FROM dbo.Books WITH (UPDLOCK, HOLDLOCK)
+                               WHERE BookID <> @BookID
+                                 AND REPLACE(REPLACE(LTRIM(RTRIM(ISNULL(ISBN, N''))), N'-', N''), N' ', N'')
+                                     = REPLACE(REPLACE(LTRIM(RTRIM(@ISBN)), N'-', N''), N' ', N'')
+                           )
+                            THROW 51305, N'رقم ISBN مستخدم مسبقاً لكتاب آخر.', 1;
+
                         DECLARE @Borrowed INT =
                         (
                             SELECT COUNT(*)
@@ -171,6 +207,8 @@ namespace SchoolSystem.DataAccess
                     using (SqlCommand validation = new SqlCommand(validationQuery, con, transaction))
                     {
                         validation.Parameters.Add("@BookID", SqlDbType.Int).Value = book.BookID;
+                        validation.Parameters.Add("@ISBN", SqlDbType.NVarChar, 30).Value =
+                            string.IsNullOrWhiteSpace(book.ISBN) ? (object)DBNull.Value : book.ISBN.Trim();
                         validation.Parameters.Add("@Copies", SqlDbType.Int).Value = book.Copies;
                         validation.ExecuteNonQuery();
                     }
