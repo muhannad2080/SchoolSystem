@@ -304,6 +304,9 @@ namespace SchoolSystem.UI
             cmbStatus.Items.Add("صرف");
             cmbStatus.Items.Add("مصروف");
             cmbStatus.Items.Add("غير مصروف");
+            cmbStatus.Items.Add("معار");
+            cmbStatus.Items.Add("مسترجع");
+            cmbStatus.Items.Add("متأخر");
 
             if (cmbStatus.Items.Count > 0)
                 cmbStatus.SelectedIndex = 0;
@@ -1292,6 +1295,15 @@ namespace SchoolSystem.UI
                     break;
 
                 case "تقرير المستخدمين والصلاحيات":
+                    lblSearch.Text = "بحث:";
+                    break;
+
+                case "تقرير المواد الدراسية":
+                case "تقرير الطلاب":
+                case "تقرير حضور الطلاب":
+                case "تقرير المكتبة والإعارات":
+                case "تقرير النقل المدرسي":
+                case "تقرير المصروفات":
                     lblSearch.Text = "بحث:";
                     break;
 
