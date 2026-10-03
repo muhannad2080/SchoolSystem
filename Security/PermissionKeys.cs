@@ -40,6 +40,8 @@ namespace SchoolSystem.Security
 
         public const string ClassesManage = "Classes.Manage";
 
+        public const string SectionsManage = "Sections.Manage";
+
         public const string TimetableManage = "Timetable.Manage";
 
         public const string AttendanceManage = "Attendance.Manage";
@@ -119,7 +121,7 @@ namespace SchoolSystem.Security
             "Students", "Enrollment", "ClassAssignment", "Teachers", "TeacherAttendance",
             "StaffAttendance", "TeacherContracts", "Payroll", "Subjects", "Classes", "Rooms",
             "Timetable", "Grades", "Attendance", "Fees", "FeePlans", "Vouchers", "Expenses",
-            "Transport", "Library", "Reports", "Dashboard", "AuditLogs", "Settings", "AnnualClosing",
+            "Transport", "Library", "Sections", "Reports", "Dashboard", "AuditLogs", "Settings", "AnnualClosing",
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             "Users", "Roles", "Permissions"
 
@@ -230,7 +232,7 @@ namespace SchoolSystem.Security
             var values = new List<string>
             {
                 DashboardView, StudentsView, StudentsManage, EnrollmentManage, ClassAssignmentView,
-                ClassAssignmentManage, TeachersManage, StaffAttendanceManage, PayrollManage, SubjectsManage, ClassesManage,
+                ClassAssignmentManage, TeachersManage, StaffAttendanceManage, PayrollManage, SubjectsManage, ClassesManage, SectionsManage,
                 TimetableManage, AttendanceManage, GradesManage, FeesManage, VouchersManage,
                 ExpensesManage, LibraryManage, TransportManage, ReportsView, UsersManage, AnnualClosingView, AnnualClosingManage, AnnualClosingApprove,
                 AuditLogsView, SettingsManage, UsersView, UsersAdd, UsersEdit, UsersDelete,
@@ -323,6 +325,8 @@ namespace SchoolSystem.Security
 
                 case ClassesManage: return "إدارة الصفوف والفصول";
 
+                case SectionsManage: return "إدارة الشعب الدراسية";
+
                 case TimetableManage: return "إدارة الجداول الدراسية";
 
                 case AttendanceManage: return "إدارة حضور الطلاب";
@@ -400,6 +404,8 @@ namespace SchoolSystem.Security
                 case "Subjects": return "المواد";
 
                 case "Classes": return "الفصول الدراسية";
+
+                case "Sections": return "الشعب الدراسية";
 
                 case "Rooms": return "القاعات";
 
@@ -718,6 +724,7 @@ namespace SchoolSystem.Security
                         .Concat(Grant("TeacherContracts", "View", "Add", "Edit", "Delete", "Search"))
                         .Concat(Grant("Subjects", "View", "Add", "Edit", "Delete"))
                         .Concat(Grant("Classes", "View", "Add", "Edit", "Delete"))
+                        .Concat(Grant("Sections", "View", "Add", "Edit", "Delete", "Search"))
                         .Concat(Grant("Rooms", "View", "Add", "Edit"))
                         .Concat(Grant("Timetable", "View", "Add", "Edit", "Delete", "Print"))
                         .Concat(Grant("Attendance", "View", "Add", "Edit", "Delete", "Print"))
