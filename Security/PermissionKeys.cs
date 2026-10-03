@@ -730,6 +730,7 @@ namespace SchoolSystem.Security
                         .Concat(Grant("Attendance", "View", "Add", "Edit", "Delete", "Print"))
                         .Concat(Grant("Grades", "View", "Add", "Edit", "Delete", "Approve", "Print"))
                         .Concat(Grant("Reports", "View", "Print", "ExportExcel", "ExportCsv", "ExportPDF"))
+                        .Concat(Grant("AnnualClosing", "View", "Manage", "Approve"))
                         .Concat(Grant("AuditLogs", "View")));
 
                 case "مدير المدرسة":
