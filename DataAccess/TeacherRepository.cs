@@ -104,6 +104,8 @@ WHERE EmployeeNumber LIKE @Prefix + N'%';";
                             }
                         }
 
+                        ValidateUniqueTeacherFields(conn, transaction, teacher, 0);
+
                         using (var insertCommand = new SqlCommand(insertQuery, conn, transaction))
                         {
                             AddTeacherParameters(insertCommand, teacher);
@@ -143,16 +145,32 @@ WHERE EmployeeNumber LIKE @Prefix + N'%';";
                                   WHERE TeacherID = @TeacherID";
 
             using (var conn = new SqlConnection(_connectionString))
-            using (var cmd = new SqlCommand(query, conn))
             {
-
-                cmd.Parameters.AddWithValue("@TeacherID", teacher.TeacherID);
-
-                AddTeacherParameters(cmd, teacher);
-
                 conn.Open();
+                using (var transaction = conn.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    try
+                    {
+                        ValidateUniqueTeacherFields(conn, transaction, teacher, teacher.TeacherID);
 
-                cmd.ExecuteNonQuery();
+                        using (var cmd = new SqlCommand(query, conn, transaction))
+                        {
+                            cmd.Parameters.Add("@TeacherID", SqlDbType.Int).Value = teacher.TeacherID;
+                            AddTeacherParameters(cmd, teacher);
+
+                            if (cmd.ExecuteNonQuery() == 0)
+                                throw new InvalidOperationException("المعلم غير موجود أو تم تعطيله مسبقاً.");
+                        }
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        ApplicationLogger.LogException("مستودع " + nameof(TeacherRepository) + ": تعديل معلم", ex);
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
             }
         }
 
@@ -221,6 +239,41 @@ WHERE TeacherID = @TeacherID
                 var result = cmd.ExecuteScalar();
 
                 return Convert.ToInt32(result);
+            }
+        }
+
+        /// <summary>تحقق ذري من عدم تكرار الهوية أو البريد داخل معاملة الإضافة/التعديل.</summary>
+        private static void ValidateUniqueTeacherFields(SqlConnection conn, SqlTransaction transaction, Teacher teacher, int exceptTeacherId)
+        {
+            const string query = @"
+                IF NULLIF(LTRIM(RTRIM(ISNULL(@NationalID, N''))), N'') IS NOT NULL
+                   AND EXISTS
+                   (
+                       SELECT 1 FROM dbo.Teachers WITH (UPDLOCK, HOLDLOCK)
+                       WHERE TeacherID <> @TeacherID
+                         AND ISNULL(Status, N'') <> N'محذوف'
+                         AND LTRIM(RTRIM(ISNULL(NationalID, N''))) = LTRIM(RTRIM(@NationalID))
+                   )
+                    THROW 51311, N'رقم الهوية مستخدم مسبقاً لمعلم آخر.', 1;
+
+                IF NULLIF(LTRIM(RTRIM(ISNULL(@Email, N''))), N'') IS NOT NULL
+                   AND EXISTS
+                   (
+                       SELECT 1 FROM dbo.Teachers WITH (UPDLOCK, HOLDLOCK)
+                       WHERE TeacherID <> @TeacherID
+                         AND ISNULL(Status, N'') <> N'محذوف'
+                         AND LOWER(LTRIM(RTRIM(ISNULL(Email, N'')))) = LOWER(LTRIM(RTRIM(@Email)))
+                   )
+                    THROW 51312, N'البريد الإلكتروني مستخدم مسبقاً لمعلم آخر.', 1;";
+
+            using (SqlCommand cmd = new SqlCommand(query, conn, transaction))
+            {
+                cmd.Parameters.Add("@TeacherID", SqlDbType.Int).Value = exceptTeacherId;
+                cmd.Parameters.Add("@NationalID", SqlDbType.NVarChar, 50).Value =
+                    string.IsNullOrWhiteSpace(teacher.NationalID) ? (object)DBNull.Value : teacher.NationalID.Trim();
+                cmd.Parameters.Add("@Email", SqlDbType.NVarChar, 150).Value =
+                    string.IsNullOrWhiteSpace(teacher.Email) ? (object)DBNull.Value : teacher.Email.Trim();
+                cmd.ExecuteNonQuery();
             }
         }
 
