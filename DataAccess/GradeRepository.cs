@@ -174,12 +174,47 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        // تعريف الدالة GradeExists لتنفيذ العملية المرتبطة بها.
+        public bool GradeExists(int studentId, int subjectId, int classId, string section, string academicYear, string termName)
+        {
+            if (studentId <= 0 || subjectId <= 0 || classId <= 0)
+                return false;
+
+            const string existsQuery = @"
+                SELECT COUNT(*)
+                FROM Grades
+                WHERE StudentID = @StudentID
+                  AND SubjectID = @SubjectID
+                  AND ClassID = @ClassID
+                  AND LTRIM(RTRIM(ISNULL(Section, N''))) = LTRIM(RTRIM(ISNULL(@Section, N'')))
+                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                  AND LTRIM(RTRIM(ISNULL(TermName, N''))) = LTRIM(RTRIM(ISNULL(@TermName, N'')));";
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(existsQuery, conn))
+            {
+                cmd.Parameters.Add("@StudentID", SqlDbType.Int).Value = studentId;
+                cmd.Parameters.Add("@SubjectID", SqlDbType.Int).Value = subjectId;
+                cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = classId;
+                cmd.Parameters.Add("@Section", SqlDbType.NVarChar, 100).Value = (section ?? string.Empty).Trim();
+                cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = (academicYear ?? string.Empty).Trim().Replace('-', '/');
+                cmd.Parameters.Add("@TermName", SqlDbType.NVarChar, 100).Value = (termName ?? string.Empty).Trim();
+
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
         // تعريف الدالة SaveGrade لتنفيذ العملية المرتبطة بها.
         public bool SaveGrade(StudentGrade grade)
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+                    BEGIN TRANSACTION;
+
                     IF NOT EXISTS
                     (
                         SELECT 1
@@ -219,22 +254,22 @@ namespace SchoolSystem.DataAccess
                     )
                         THROW 50006, N'لا يمكن حفظ الدرجة؛ الطالب غير موزع في الصف والشعبة والعام المحدد.', 1;
 
-                    IF EXISTS
-                    (
-                        SELECT 1
-                        FROM Grades
-                        WHERE StudentID = @StudentID
-                          AND SubjectID = @SubjectID
-                          AND ClassID = @ClassID
-                          AND LTRIM(RTRIM(ISNULL(Section, N''))) = LTRIM(RTRIM(ISNULL(@Section, N'')))
-                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND TermName = @TermName
-                    )
+                    DECLARE @GradeID INT;
+
+                    SELECT TOP 1 @GradeID = GradeID
+                    FROM Grades WITH (UPDLOCK, HOLDLOCK)
+                    WHERE StudentID = @StudentID
+                      AND SubjectID = @SubjectID
+                      AND ClassID = @ClassID
+                      AND LTRIM(RTRIM(ISNULL(Section, N''))) = LTRIM(RTRIM(ISNULL(@Section, N'')))
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND LTRIM(RTRIM(ISNULL(TermName, N''))) = LTRIM(RTRIM(ISNULL(@TermName, N'')))
+                    ORDER BY GradeID;
+
+                    IF @GradeID IS NOT NULL
                     BEGIN
                         UPDATE Grades
-                            SET
-                            ClassID = @ClassID,
-                            Section = @Section,
+                        SET
                             Quiz1 = @Quiz1,
                             Quiz2 = @Quiz2,
                             CourseWork = @CourseWork,
@@ -244,64 +279,40 @@ namespace SchoolSystem.DataAccess
                             ResultStatus = @ResultStatus,
                             Notes = @Notes,
                             UpdatedAt = GETDATE()
-                        WHERE StudentID = @StudentID
-                          AND SubjectID = @SubjectID
-                          AND ClassID = @ClassID
-                          AND LTRIM(RTRIM(ISNULL(Section, N''))) = LTRIM(RTRIM(ISNULL(@Section, N'')))
-                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND TermName = @TermName
+                        WHERE GradeID = @GradeID;
                     END
                     ELSE
                     BEGIN
                         INSERT INTO Grades
                         (
-                            StudentID,
-                            SubjectID,
-                            ClassID,
-                            Section,
-                            AcademicYear,
-                            TermName,
-                            Quiz1,
-                            Quiz2,
-                            CourseWork,
-                            FinalExam,
-                            GradeValue,
-                            GradeLetter,
-                            ResultStatus,
-                            Notes,
-                            CreatedAt,
-                            UpdatedAt
+                            StudentID, SubjectID, ClassID, Section, AcademicYear, TermName,
+                            Quiz1, Quiz2, CourseWork, FinalExam, GradeValue, GradeLetter,
+                            ResultStatus, Notes, CreatedAt, UpdatedAt
                         )
                         VALUES
                         (
-                            @StudentID,
-                            @SubjectID,
-                            @ClassID,
-                            @Section,
-                            @AcademicYear,
-                            @TermName,
-                            @Quiz1,
-                            @Quiz2,
-                            @CourseWork,
-                            @FinalExam,
-                            @Total,
-                            @GradeLetter,
-                            @ResultStatus,
-                            @Notes,
-                            GETDATE(),
-                            GETDATE()
-                        )
-                    END";
+                            @StudentID, @SubjectID, @ClassID, @Section, @AcademicYear, @TermName,
+                            @Quiz1, @Quiz2, @CourseWork, @FinalExam, @Total, @GradeLetter,
+                            @ResultStatus, @Notes, GETDATE(), GETDATE()
+                        );
 
-                // إنهاء كتلة أو معاملة قاعدة البيانات الحالية.
+                        SET @GradeID = CONVERT(INT, SCOPE_IDENTITY());
+                    END;
+
+                    SELECT @GradeID;
+                    COMMIT TRANSACTION;";
+
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     AddParameters(cmd, grade);
-
-
                     conn.Open();
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result == null || result == DBNull.Value)
+                        return false;
+
+                    grade.GradeID = Convert.ToInt32(result);
+                    return grade.GradeID > 0;
                 }
             }
         }
