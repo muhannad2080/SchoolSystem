@@ -36,6 +36,9 @@ namespace SchoolSystem.Models
         /// <summary>طريقة الصرف المرتبطة بسند الصرف التلقائي؛ لا تُخزّن في جدول Payroll نفسه.</summary>
         public string PaymentMethod { get; set; }
 
+        /// <summary>رقم سند الصرف التلقائي المرتبط بالراتب؛ للعرض فقط.</summary>
+        public string VoucherNumber { get; set; }
+
         public string Notes { get; set; }
 
         public DateTime CreatedAt { get; set; }
