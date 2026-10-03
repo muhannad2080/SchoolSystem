@@ -1298,7 +1298,6 @@ namespace SchoolSystem.UI
                     break;
 
                 case "تقرير المواد الدراسية":
-                case "تقرير الطلاب":
                 case "تقرير حضور الطلاب":
                 case "تقرير المكتبة والإعارات":
                 case "تقرير النقل المدرسي":
@@ -1344,18 +1343,5 @@ namespace SchoolSystem.UI
                 MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
         }
 
-        // تعريف الدالة ShowError لتنفيذ العملية المرتبطة بها.
-        private void ShowError(string message)
-        {
-
-            MessageBox.Show(
-
-                message,
-                "خطأ",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
-        }
     }
 }
