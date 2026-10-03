@@ -186,6 +186,9 @@ namespace SchoolSystem.Services
         // تعريف الدالة SetEnrollmentStatus لتنفيذ العملية المرتبطة بها.
         public bool SetEnrollmentStatus(int enrollmentId, string newStatus, string performedBy)
         {
+            CurrentUser.DemandAny("ليس لديك صلاحية تغيير حالة التسجيل.",
+                "Enrollment.Edit", "Enrollment.Approve", PermissionKeys.EnrollmentManage);
+
             if (enrollmentId <= 0)
 
                 throw new ArgumentException("رقم طلب التسجيل غير صحيح.");
@@ -193,7 +196,7 @@ namespace SchoolSystem.Services
 
             if (!IsValidEnrollmentStatus(newStatus))
 
-                throw new ArgumentException($"حالة الطلب غير válida. القيم المسموح بها: {string.Join(", ", ValidEnrollmentStatuses)}.");
+                throw new ArgumentException($"حالة الطلب غير صحيحة. القيم المسموح بها: {string.Join(", ", ValidEnrollmentStatuses)}.");
 
 
             using (SqlConnection connection = DbConnection.GetConnection())
