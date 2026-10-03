@@ -38,6 +38,7 @@ namespace SchoolSystem.Services
             "Students", "StudentClasses", "Classes", "SchoolSections", "Users", "Roles",
             "RolePermissions", "UserRoles", "Permissions", "Fees",
             "FeePlans", "Vouchers", "AcademicYears", "Teachers", "Marks",
+            "StudentAttendance", "TeacherAttendance",
             "Payroll", "TeacherContracts", "Expenses"
         };
 
@@ -51,7 +52,9 @@ namespace SchoolSystem.Services
                 { "SchoolSections", new[] { "SectionID", "ClassID", "SectionName", "AcademicYear" } },
                 { "Payroll", new[] { "PayrollID", "TeacherID", "SalaryMonth", "SalaryYear", "BasicSalary", "Allowances", "Deductions", "NetSalary", "PaymentDate" } },
                 { "TeacherContracts", new[] { "ContractID", "TeacherID", "ContractNumber", "ContractType", "ContractStatus", "BasicSalary", "StartDate" } },
-                { "Expenses", new[] { "ExpenseID", "ExpenseNumber", "Amount", "ExpenseDate", "Category" } }
+                { "Expenses", new[] { "ExpenseID", "ExpenseNumber", "Amount", "ExpenseDate", "Category" } },
+                { "StudentAttendance", new[] { "AttendanceID", "StudentID", "ClassID", "Section", "AcademicYear", "AttendanceDate", "Status" } },
+                { "TeacherAttendance", new[] { "AttendanceID", "TeacherID", "AttendanceDate", "Status" } }
             };
 
         public static HealthCheckResult Check(string server, string database,
