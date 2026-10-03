@@ -13,6 +13,12 @@ SET XACT_ABORT ON;
 IF OBJECT_ID(N'dbo.SchoolTimetable', N'U') IS NULL
     THROW 51140, N'جدول SchoolTimetable غير موجود؛ لا يمكن تطبيق Migration 008.', 1;
 
+/* Empty room names are stored as NULL so they do not consume a room slot. */
+UPDATE dbo.SchoolTimetable
+SET RoomName = NULL
+WHERE RoomName IS NOT NULL
+  AND NULLIF(LTRIM(RTRIM(RoomName)), N'') IS NULL;
+
 IF EXISTS
 (
     SELECT ClassID,
