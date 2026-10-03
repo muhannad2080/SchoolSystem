@@ -87,8 +87,12 @@ namespace SchoolSystem
             {
                 ApplicationLogger.LogException("فشل تجهيز قاعدة البيانات", ex);
 
+                string detail = SafeExceptionMessage(ex);
+                string logHint = "سجل الأخطاء: " + ApplicationLogger.LogFilePath;
+
                 MessageBox.Show(
-                    "لا يمكن تشغيل النظام لأن قاعدة البيانات غير جاهزة أو غير قابلة للاتصال.\n\n" + ex.Message,
+                    "لا يمكن تشغيل النظام لأن قاعدة البيانات غير جاهزة أو غير قابلة للاتصال.\n\n" +
+                    detail + "\n\n" + logHint,
                     "قاعدة البيانات غير جاهزة",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -129,7 +133,7 @@ namespace SchoolSystem
                 {
                     State = state,
                     Message = BuildMasterFailureMessage(state, server, masterFailure),
-                    ShowSetupForm = state == StartupState.ServerUnavailable
+                    ShowSetupForm = true
                 };
             }
 
@@ -150,19 +154,34 @@ namespace SchoolSystem
                 {
                     State = ClassifyDatabaseFailure(databaseFailure),
                     Message = BuildDatabaseFailureMessage(database, databaseFailure),
-                    ShowSetupForm = false
+                    ShowSetupForm = true
                 };
             }
 
-            TryApplyDatabaseMigrations(server, database, useSql, sqlUser, sqlPassword);
-            HealthCheckResult health = DatabaseHealthCheckService.Check(server, database, useSql, sqlUser, sqlPassword);
-            if (!health.StructuralHealthy)
+            string migrationFailure = null;
+            try
             {
+                TryApplyDatabaseMigrations(server, database, useSql, sqlUser, sqlPassword);
+            }
+            catch (Exception ex)
+            {
+                migrationFailure = SafeExceptionMessage(ex);
+                ApplicationLogger.LogException("فشل الترحيل قبل فحص صحة قاعدة البيانات", ex);
+            }
+
+            HealthCheckResult health = DatabaseHealthCheckService.Check(server, database, useSql, sqlUser, sqlPassword);
+            if (!health.StructuralHealthy || !string.IsNullOrWhiteSpace(migrationFailure))
+            {
+                string details = health.Summarize();
+                if (!string.IsNullOrWhiteSpace(migrationFailure))
+                    details = "فشل تحديث قاعدة البيانات تلقائياً: " + migrationFailure + "\n\n" + details;
+
                 return new StartupCheckResult
                 {
                     State = StartupState.SchemaInvalid,
-                    Message = "قاعدة البيانات موجودة ولكن تحتاج إلى إصلاح/ترقية.\n\n" + health.Summarize(),
-                    ShowSetupForm = false
+                    Message = "قاعدة البيانات موجودة ولكنها لم تكتمل تهيئتها أو تحديثها.\n\n" + details +
+                              "\n\nيمكنك فتح إعداد قاعدة البيانات لتصحيح الخادم/المصادقة ثم إعادة المحاولة.",
+                    ShowSetupForm = true
                 };
             }
 
