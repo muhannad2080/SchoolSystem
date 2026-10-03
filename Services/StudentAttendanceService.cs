@@ -78,9 +78,26 @@ namespace SchoolSystem.Services
         // تعريف الدالة SaveAttendance لتنفيذ العملية المرتبطة بها.
         public bool SaveAttendance(StudentAttendance item)
         {
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            CurrentUser.DemandAction("Attendance", "Edit", "ليس لديك صلاحية حفظ أو تعديل الحضور.");
             Validate(item);
+
+            bool exists = repository.AttendanceExists(
+                item.StudentID,
+                item.AttendanceDate.Date);
+
+            if (exists)
+            {
+                CurrentUser.DemandAction(
+                    "Attendance",
+                    "Edit",
+                    "ليس لديك صلاحية تعديل سجل الحضور.");
+            }
+            else
+            {
+                CurrentUser.DemandAction(
+                    "Attendance",
+                    "Add",
+                    "ليس لديك صلاحية إضافة سجل الحضور.");
+            }
             bool saved = repository.SaveAttendance(item);
             if (saved)
             {
@@ -121,6 +138,9 @@ namespace SchoolSystem.Services
 
                 throw new ArgumentException("العام الدراسي مطلوب.");
 
+
+            item.AcademicYear = item.AcademicYear.Trim().Replace('-', '/');
+            item.Section = item.Section.Trim();
 
             if (!IsValidAcademicYear(item.AcademicYear))
 
