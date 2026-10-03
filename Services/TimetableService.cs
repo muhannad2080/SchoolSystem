@@ -203,10 +203,28 @@ namespace SchoolSystem.Services
                 throw new ArgumentException("يجب اختيار الفصل الدراسي.");
 
 
-            if (string.IsNullOrWhiteSpace(item.DayName))
+            item.AcademicYear = item.AcademicYear.Trim().Replace('-', '/');
+            item.Section = item.Section.Trim();
+            item.TermName = item.TermName.Trim();
+            item.DayName = item.DayName.Trim();
+            item.RoomName = item.RoomName == null ? null : item.RoomName.Trim();
+            item.Notes = item.Notes == null ? null : item.Notes.Trim();
 
+            if (string.IsNullOrWhiteSpace(item.DayName))
                 throw new ArgumentException("يجب اختيار اليوم.");
 
+            string[] allowedDays = { "السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس" };
+            bool validDay = false;
+            foreach (string day in allowedDays)
+            {
+                if (string.Equals(item.DayName, day, StringComparison.OrdinalIgnoreCase))
+                {
+                    validDay = true;
+                    break;
+                }
+            }
+            if (!validDay)
+                throw new ArgumentException("اليوم الدراسي المحدد غير صالح.");
 
             if (item.PeriodNo <= 0 || item.PeriodNo > 20)
 
