@@ -259,7 +259,7 @@ namespace SchoolSystem.UI
             cmbReportType.Items.Add("تقرير القبول والتسجيل");
             cmbReportType.Items.Add("تقرير توزيع الفصول");
             cmbReportType.Items.Add("تقرير حضور المعلمين");
-            cmbReportType.Items.Add("تقرير العقود والرواتب");
+            cmbReportType.Items.Add("تقرير الرواتب");
             cmbReportType.Items.Add("تقرير المستخدمين والصلاحيات");
             cmbReportType.Items.Add("تقرير الرسوم");
             cmbReportType.Items.Add("تقرير الدرجات");
@@ -297,6 +297,8 @@ namespace SchoolSystem.UI
             cmbStatus.Items.Add("غير نشط");
             cmbStatus.Items.Add("قبض");
             cmbStatus.Items.Add("صرف");
+            cmbStatus.Items.Add("مصروف");
+            cmbStatus.Items.Add("غير مصروف");
 
             if (cmbStatus.Items.Count > 0)
                 cmbStatus.SelectedIndex = 0;
@@ -1280,7 +1282,7 @@ namespace SchoolSystem.UI
 
                 case "تقرير المعلمين":
                 case "تقرير حضور المعلمين":
-                case "تقرير العقود والرواتب":
+                case "تقرير الرواتب":
                     lblSearch.Text = "بحث:";
                     break;
 
