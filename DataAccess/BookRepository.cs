@@ -50,6 +50,41 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        // تعريف الدالة GetActiveBooks لتنفيذ العملية المرتبطة بها.
+        public DataTable GetActiveBooks()
+        {
+            using (SqlConnection con = DbConnection.GetConnection())
+            {
+                LibrarySchemaInitializer.EnsureBooksSchema(con);
+                const string query = @"
+                    SELECT
+                        b.BookID,
+                        b.Title,
+                        b.Copies - ISNULL((
+                            SELECT COUNT(*)
+                            FROM BookBorrowings br
+                            WHERE br.BookID = b.BookID
+                              AND br.Status = N'معار'
+                        ), 0) AS AvailableCopies
+                    FROM Books b
+                    WHERE ISNULL(b.IsActive, 1) = 1
+                      AND b.Copies > ISNULL((
+                          SELECT COUNT(*)
+                          FROM BookBorrowings br
+                          WHERE br.BookID = b.BookID
+                            AND br.Status = N'معار'
+                      ), 0)
+                    ORDER BY b.Title;";
+
+                using (SqlDataAdapter da = new SqlDataAdapter(query, con))
+                {
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    return dt;
+                }
+            }
+        }
+
         // تعريف الدالة AddBook لتنفيذ العملية المرتبطة بها.
         public bool AddBook(Book book)
         {
@@ -138,20 +173,16 @@ namespace SchoolSystem.DataAccess
             {
                 LibrarySchemaInitializer.EnsureBooksSchema(con);
                 const string query = @"
-                    IF EXISTS (SELECT 1 FROM BookBorrowings WHERE BookID = @BookID)
-                        THROW 51002, N'لا يمكن حذف الكتاب لأنه مرتبط بسجلات إعارة. عطّل الكتاب بدلاً من حذفه.', 1;
-
-                    DELETE FROM Books
-                    WHERE BookID = @BookID;";
+                    UPDATE Books
+                    SET IsActive = 0,
+                        UpdatedAt = GETDATE()
+                    WHERE BookID = @BookID
+                      AND ISNULL(IsActive, 1) = 1;";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-
-                    cmd.Parameters.AddWithValue("@BookID", bookId);
-
-
+                    cmd.Parameters.Add("@BookID", SqlDbType.Int).Value = bookId;
                     con.Open();
-
                     return cmd.ExecuteNonQuery() > 0;
                 }
             }
