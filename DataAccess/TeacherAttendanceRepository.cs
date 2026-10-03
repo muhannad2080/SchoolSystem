@@ -52,8 +52,18 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    SET NOCOUNT ON;
                     SET XACT_ABORT ON;
                     BEGIN TRANSACTION;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Teachers
+                        WHERE TeacherID = @TeacherID
+                          AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 51110, N'لا يمكن تسجيل حضور لمعلم غير موجود أو غير نشط.', 1;
 
                     IF EXISTS
                     (
@@ -113,6 +123,27 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1 FROM Teachers
+                        WHERE TeacherID = @TeacherID
+                          AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 51110, N'لا يمكن ربط الحضور بمعلم غير موجود أو غير نشط.', 1;
+
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM TeacherAttendance
+                        WHERE TeacherID = @TeacherID
+                          AND AttendanceDate = @AttendanceDate
+                          AND AttendanceID <> @AttendanceID
+                    )
+                        THROW 51112, N'يوجد سجل حضور آخر لهذا المعلم في التاريخ نفسه.', 1;
+
                     UPDATE TeacherAttendance
                     SET
                         TeacherID = @TeacherID,
