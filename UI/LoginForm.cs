@@ -71,7 +71,7 @@ namespace SchoolSystem.UI
             }
 
             ShowError(
-                "تعذر تهيئة بيانات الدخول. تحقق من اتصال قاعدة البيانات وتأكد من تنفيذ Databass\\Migration_Step1.sql ثم حاول مرة أخرى.",
+                "تعذر تهيئة بيانات الدخول. تحقق من اتصال قاعدة البيانات وتأكد من تنفيذ محرك الترحيل المدمج ثم حاول مرة أخرى.",
                 "تهيئة النظام");
         }
 
@@ -329,7 +329,7 @@ namespace SchoolSystem.UI
                 message.Contains("There is already an object named"))
             {
                 return
-                    "قاعدة البيانات غير محدثة مع نسخة النظام الحالية. نفّذ ملف Databass\\Migration_Step1.sql على قاعدة SchoolDB ثم أعد تشغيل البرنامج.";
+                    "قاعدة البيانات غير محدثة مع نسخة النظام الحالية. نفّذ ملف محرك الترحيل المدمج على قاعدة SchoolDB ثم أعد تشغيل البرنامج.";
             }
 
             if (message.Contains("SchoolDBConnection") ||
