@@ -36,8 +36,8 @@ namespace SchoolSystem.Services
         private static readonly string[] RequiredTables =
         {
             "Students", "StudentClasses", "Classes", "SchoolSections", "Users", "Roles",
-            "RolePermissions", "UserRoles", "Permissions", "Fees", "StudentFees",
-            "FeePlans", "Vouchers", "Receipts", "AcademicYears", "Teachers", "Marks"
+            "RolePermissions", "UserRoles", "Permissions", "Fees",
+            "FeePlans", "Vouchers", "AcademicYears", "Teachers", "Marks"
         };
 
         private static readonly Dictionary<string, string[]> RequiredColumns =
