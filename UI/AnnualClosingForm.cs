@@ -183,7 +183,7 @@ namespace SchoolSystem.UI
 
                     return;
 
-                service.ApproveMigration(migrationId, classId, txtTargetSection.Text, null);
+                service.ApproveMigration(migrationId, classId, txtTargetSection.Text, CurrentUser.User?.UserID);
                 lblStatus.Text = "تم اعتماد ترحيل الطالب وإنشاء توزيعه في العام الجديد بنجاح.";
                 lblStatus.ForeColor = Color.DarkGreen;
                 grid.DataSource = service.GetMigrationReport(SelectedYear(), SelectedNextYear());
@@ -237,7 +237,7 @@ namespace SchoolSystem.UI
             {
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 AuthorizationService.RequireAny("ليس لديك صلاحية تخطيط الترحيل.", PermissionKeys.AnnualClosingManage);
-                DataTable table = service.PlanMigration(SelectedYear(), SelectedNextYear(), null);
+                DataTable table = service.PlanMigration(SelectedYear(), SelectedNextYear(), CurrentUser.User?.UserID);
                 grid.DataSource = table;
                 lblStatus.Text = "تم إنشاء خطة ترحيل قابلة للمراجعة. لم يتم إنشاء توزيع جديد تلقائياً.";
                 lblStatus.ForeColor = Color.DarkGreen;
