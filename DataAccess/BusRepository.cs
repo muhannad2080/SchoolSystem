@@ -78,27 +78,62 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = @"
-                    UPDATE Buses SET
-                        BusNumber = @BusNumber,
-                        DriverName = @DriverName,
-                        DriverPhone = @DriverPhone,
-                        Capacity = @Capacity,
-                        Notes = @Notes,
-                        UpdatedAt = GETDATE()
-                    WHERE BusID = @BusID";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                con.Open();
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    const string validation = @"
+                        IF NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.Buses WITH (UPDLOCK, HOLDLOCK)
+                            WHERE BusID = @BusID
+                        )
+                            THROW 51002, N'الحافلة المحددة غير موجودة.', 1;
 
-                    cmd.Parameters.AddWithValue("@BusID", bus.BusID);
+                        IF EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.BusRoutes r WITH (UPDLOCK, HOLDLOCK)
+                            INNER JOIN dbo.StudentTransportAssignments a WITH (UPDLOCK, HOLDLOCK)
+                                ON a.RouteID = r.RouteID
+                               AND a.IsActive = 1
+                            WHERE r.BusID = @BusID
+                            GROUP BY r.BusID
+                            HAVING COUNT(*) > @Capacity
+                        )
+                            THROW 51003, N'لا يمكن تقليل سعة الحافلة إلى أقل من عدد الطلاب المسجلين عليها حالياً.', 1;";
 
-                    AddParameters(cmd, bus);
+                    using (SqlCommand check = new SqlCommand(validation, con, transaction))
+                    {
+                        check.Parameters.Add("@BusID", SqlDbType.Int).Value = bus.BusID;
+                        check.Parameters.Add("@Capacity", SqlDbType.Int).Value = bus.Capacity;
+                        check.ExecuteNonQuery();
+                    }
 
+                    const string query = @"
+                        UPDATE Buses SET
+                            BusNumber = @BusNumber,
+                            DriverName = @DriverName,
+                            DriverPhone = @DriverPhone,
+                            Capacity = @Capacity,
+                            Notes = @Notes,
+                            UpdatedAt = GETDATE()
+                        WHERE BusID = @BusID";
 
-                    con.Open();
+                    using (SqlCommand cmd = new SqlCommand(query, con, transaction))
+                    {
+                        cmd.Parameters.Add("@BusID", SqlDbType.Int).Value = bus.BusID;
+                        AddParameters(cmd, bus);
 
-                    return cmd.ExecuteNonQuery() > 0;
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
                 }
             }
         }
