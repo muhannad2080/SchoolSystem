@@ -62,6 +62,7 @@ namespace SchoolSystem.Services
         // تعريف الدالة Verify لتنفيذ العملية المرتبطة بها.
         public DataTable Verify(string academicYear)
         {
+            CurrentUser.DemandAction("AnnualClosing", "View", "ليس لديك صلاحية فحص الإغلاق السنوي.");
             RequireYear(academicYear);
             using (SqlConnection connection = DbConnection.GetConnection())
             using (SqlCommand command = new SqlCommand("dbo.VerifyAnnualClosing", connection))
@@ -84,6 +85,8 @@ namespace SchoolSystem.Services
         // تعريف الدالة PlanMigration لتنفيذ العملية المرتبطة بها.
         public DataTable PlanMigration(string fromYear, string toYear, int? userId)
         {
+            CurrentUser.DemandAny("ليس لديك صلاحية تخطيط الترحيل.",
+                PermissionKeys.AnnualClosingManage);
             RequireDifferentYears(fromYear, toYear);
             using (SqlConnection connection = DbConnection.GetConnection())
             using (SqlCommand command = new SqlCommand("dbo.PlanStudentYearMigration", connection))
@@ -119,6 +122,8 @@ namespace SchoolSystem.Services
         // تعريف الدالة SetActiveAcademicYear لتنفيذ العملية المرتبطة بها.
         public void SetActiveAcademicYear(string academicYear, int? userId)
         {
+            CurrentUser.DemandAny("ليس لديك صلاحية تغيير العام الدراسي النشط.",
+                PermissionKeys.AnnualClosingManage);
             RequireYear(academicYear);
             using (SqlConnection connection = DbConnection.GetConnection())
             using (SqlCommand command = new SqlCommand("dbo.SetActiveAcademicYear", connection))
@@ -140,6 +145,8 @@ namespace SchoolSystem.Services
         // تعريف الدالة CreatePreClosingBackup لتنفيذ العملية المرتبطة بها.
         public string CreatePreClosingBackup(string academicYear, int? userId)
         {
+            CurrentUser.DemandAny("ليس لديك صلاحية إنشاء نسخة احتياطية قبل الإغلاق.",
+                PermissionKeys.AnnualClosingManage);
             RequireYear(academicYear);
 
             ApplicationSettingsData settings = ApplicationSettingsService.Load();
@@ -170,6 +177,7 @@ namespace SchoolSystem.Services
         // تعريف الدالة GetMigrationReport لتنفيذ العملية المرتبطة بها.
         public DataTable GetMigrationReport(string fromYear, string toYear)
         {
+            CurrentUser.DemandAction("AnnualClosing", "View", "ليس لديك صلاحية عرض تقرير الترحيل.");
             RequireDifferentYears(fromYear, toYear);
             using (SqlConnection connection = DbConnection.GetConnection())
             using (SqlCommand command = new SqlCommand("dbo.GetStudentMigrationReport", connection))
@@ -194,6 +202,10 @@ namespace SchoolSystem.Services
         // تعريف الدالة ApproveMigration لتنفيذ العملية المرتبطة بها.
         public void ApproveMigration(int migrationId, int toClassId, string toSection, int? userId)
         {
+            CurrentUser.DemandAny("ليس لديك صلاحية اعتماد الترحيل.",
+                PermissionKeys.AnnualClosingApprove,
+                PermissionKeys.AnnualClosingManage);
+
             if (migrationId <= 0 || toClassId <= 0 || string.IsNullOrWhiteSpace(toSection))
 
                 throw new ArgumentException("يجب تحديد سجل الترحيل والصف والشعبة الجديدة.");
@@ -222,6 +234,7 @@ namespace SchoolSystem.Services
         // تعريف الدالة CloseWithRequiredBackup لتنفيذ العملية المرتبطة بها.
         public void CloseWithRequiredBackup(string academicYear, string nextAcademicYear, int? userId, string notes)
         {
+            CurrentUser.DemandAction("AnnualClosing", "Manage", "ليس لديك صلاحية تنفيذ الإغلاق السنوي.");
             string file = CreatePreClosingBackup(academicYear, userId);
             // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
             try
@@ -246,6 +259,7 @@ namespace SchoolSystem.Services
         // تعريف الدالة Close لتنفيذ العملية المرتبطة بها.
         public void Close(string academicYear, string nextAcademicYear, int? userId, string notes)
         {
+            CurrentUser.DemandAction("AnnualClosing", "Manage", "ليس لديك صلاحية تنفيذ الإغلاق السنوي.");
             RequireYear(academicYear);
             if (!string.IsNullOrWhiteSpace(nextAcademicYear) && Normalize(academicYear) == Normalize(nextAcademicYear))
 
