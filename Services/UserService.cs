@@ -456,16 +456,15 @@ namespace SchoolSystem.Services
 
             // يحدد مسؤول النشر كلمة المرور الأولية خارج الكود قبل أول تشغيل.
             // تجهيز قيمة كلمة المرور لمسار الحماية والحماية.
-            string initialPassword = Environment.GetEnvironmentVariable("SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD");
-            bool usingDefaultPassword = false;
+            // كلمة مرور المدير الأول يجب أن تأتي من خارج الكود.
+            // لا توجد كلمة مرور افتراضية ثابتة داخل التطبيق.
+            string initialPassword = Environment.GetEnvironmentVariable(
+                "SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD");
 
-            // تجهيز قيمة كلمة المرور لمسار الحماية والحماية.
             if (!IsValidInitialPassword(initialPassword))
             {
-                // إذا لم تُحدَّد كلمة مرور آمنة عبر متغير البيئة فإننا نستخدم
-                // كلمة مرور افتراضية مؤقتة موثقة، ويُجبَر المدير على تغييرها عند أول دخول.
-                initialPassword = "Admin@2026";
-                usingDefaultPassword = true;
+                throw new InvalidOperationException(
+                    "SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD يجب أن يحتوي على 10 أحرف على الأقل، مع حرف ورقم، قبل إنشاء مدير النظام الأول.");
             }
 
             // تمرير قيمة كلمة المرور إلى مسار الحماية والحماية.
@@ -484,9 +483,8 @@ namespace SchoolSystem.Services
             // تمرير قيمة كلمة المرور إلى مسار الحماية والحماية.
             };
 
-            // تمرير قيمة كلمة المرور إلى مسار الحماية والحماية.
             ApplicationLogger.Log("Security",
-                "جاري إنشاء مدير النظام الأول بحساب admin وكلمة مرور مؤقتة.");
+                "جاري إنشاء مدير النظام الأول بحساب admin وكلمة مرور مأخوذة من متغير البيئة.");
             try
             {
                 AddUser(admin, initialPassword);
@@ -494,16 +492,8 @@ namespace SchoolSystem.Services
                 // إجبار المدير الأول على تغيير كلمة المرور عند أول دخول بغض النظر عن دوره.
                 userRepository.SetMustChangePassword(admin.UserID, true);
 
-                if (usingDefaultPassword)
-                {
-                    ApplicationLogger.Log("Security",
-                        "أنشئ مدير النظام الأول بنجاح (UserID=" + admin.UserID + ") بكلمة مرور افتراضية مؤقتة. يجب تغييرها عند أول دخول.");
-                }
-                else
-                {
-                    ApplicationLogger.Log("Security",
-                        "أنشئ مدير النظام الأول بنجاح (UserID=" + admin.UserID + ") بكلمة مرور من متغير البيئة.");
-                }
+                ApplicationLogger.Log("Security",
+                    "أنشئ مدير النظام الأول بنجاح (UserID=" + admin.UserID + ") بكلمة مرور من متغير البيئة.");
             }
             catch (Exception ex)
             {
