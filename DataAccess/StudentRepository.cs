@@ -163,12 +163,14 @@ SELECT
     ISNULL(s.AcademicYear, N'') AS AcademicYear
 FROM Students s
 LEFT JOIN Classes c ON c.ClassID = s.ClassID
-WHERE
+WHERE s.Status <> N'محذوف'
+  AND (
     ISNULL(s.FullName, N'') LIKE @Keyword
     OR ISNULL(s.StudentNumber, N'') LIKE @Keyword
     OR ISNULL(s.NationalId, N'') LIKE @Keyword
     OR ISNULL(s.StudentPhone, N'') LIKE @Keyword
     OR ISNULL(s.GuardianPhone, N'') LIKE @Keyword
+  )
 ORDER BY s.StudentId DESC;";
 
             using (SqlConnection conn = GetConnection())
