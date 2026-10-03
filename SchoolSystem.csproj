@@ -504,18 +504,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="Databass\Migration_MissingApplicationTables.sql" />
-    <None Include="Databass\Migration_OperationalTables.sql" />
-    <None Include="Databass\Migration_RBAC_Hardening.sql" />
-    <None Include="Databass\Migration_RuntimeRepair.sql" />
-    <None Include="Databass\Migration_SeedAcademicCatalog.sql" />
-    <None Include="Databass\Migration_RepairStudentAssignmentMirror.sql" />
-    <None Include="Databass\Migration_Step1.sql" />
-    <None Include="Databass\FIX_RBAC_FINAL.sql" />
-    <None Include="Databass\FIX_RBAC_SourceOfTruth.sql" />
-    <None Include="Databass\FIX_RBAC_SCREEN_LEVEL.sql" />
-    <None Include="Databass\Patch_CompleteMissingObjects_2026-08-29.sql" />
-    <None Include="Databass\SchoolDB_Master.sql" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Welcome\welcome_hero.png">
@@ -524,9 +512,12 @@
     <Content Include="Assets\Brand\SchoolSystem.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <!-- <Content Include="Database\initial\001_InitialSchema.sql">
+    <Content Include="Database\initial\**\*.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content> -->
+    </Content>
+    <Content Include="Database\migrations\**\*.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Database\databaseschool.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
