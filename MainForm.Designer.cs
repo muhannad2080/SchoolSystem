@@ -270,7 +270,7 @@ namespace SchoolSystem
             this.tsmiFinancialPayroll.Name = "tsmiFinancialPayroll";
             this.tsmiFinancialPayroll.Size = new System.Drawing.Size(216, 26);
             this.tsmiFinancialPayroll.Text = "الرواتب";
-            this.tsmiFinancialPayroll.Click += new System.EventHandler(this.tsmiTeachersPayroll_Click);
+            this.tsmiFinancialPayroll.Click += new System.EventHandler(this.tsmiFinancialPayroll_Click);
             // 
             // tsmiServices
             // 
