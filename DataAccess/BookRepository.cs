@@ -143,10 +143,9 @@ namespace SchoolSystem.DataAccess
                         @Notes
                     )";
 
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlCommand cmd = new SqlCommand(query, con, transaction))
                 {
                     AddParameters(cmd, book);
-
 
                     object result = cmd.ExecuteScalar();
                     if (result == null || result == DBNull.Value)
