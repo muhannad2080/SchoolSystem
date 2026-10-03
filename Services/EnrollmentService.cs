@@ -60,15 +60,36 @@ namespace SchoolSystem.Services
                 throw new Exception("هذا الطالب مسجل بالفعل في هذا العام الدراسي.");
 
             bool added = repository.AddEnrollment(enrollment);
-            if (added)
+            if (!added)
+                return false;
+
+            try
             {
+                SynchronizeRegistrationFinance(enrollment);
+
                 auditLogService.Record("إنشاء", "Enrollment", enrollment.EnrollmentID.ToString(),
                     "إضافة طلب تسجيل للطالب رقم " + enrollment.StudentID);
-                SynchronizeRegistrationFinance(enrollment);
+
+                return true;
             }
+            catch (Exception ex)
+            {
+                // لا نترك طلب تسجيل بدون معالجته مالياً عند فشل إنشاء الرسم/السند.
+                try
+                {
+                    repository.DeleteEnrollment(enrollment.EnrollmentID);
+                }
+                catch (Exception rollbackEx)
+                {
+                    ApplicationLogger.LogException(
+                        "EnrollmentService: rollback failed after finance synchronization error",
+                        rollbackEx);
+                }
 
-
-            return added;
+                throw new InvalidOperationException(
+                    "فشلت مزامنة رسوم التسجيل؛ تم التراجع عن إضافة طلب التسجيل.",
+                    ex);
+            }
         }
 
         // تعريف الدالة UpdateEnrollment لتنفيذ العملية المرتبطة بها.
@@ -85,16 +106,55 @@ namespace SchoolSystem.Services
 
                 throw new Exception("لا يمكن تعديل التسجيل: الطالب لديه تسجيل آخر فعال في هذا العام الدراسي.");
 
-            bool updated = repository.UpdateEnrollment(enrollment);
-            if (updated)
+            Enrollment existing = repository.GetEnrollmentById(enrollment.EnrollmentID);
+            if (existing == null)
+                throw new ArgumentException("طلب التسجيل المحدد غير موجود.");
+
+            bool oldHasFinance = repository.HasRegistrationFinance(
+                existing.StudentID,
+                existing.AcademicYear);
+
+            bool newHasFinance = repository.HasRegistrationFinance(
+                enrollment.StudentID,
+                enrollment.AcademicYear);
+
+            if ((oldHasFinance || newHasFinance) && HasFinancialLinkChanges(existing, enrollment))
             {
-                auditLogService.Record("تعديل", "Enrollment", enrollment.EnrollmentID.ToString(),
-                    "تعديل طلب تسجيل الطالب رقم " + enrollment.StudentID);
-                SynchronizeRegistrationFinance(enrollment);
+                throw new InvalidOperationException(
+                    "لا يمكن تعديل بيانات الطالب أو الصف أو بيانات رسوم التسجيل بعد إنشاء السجل المالي المرتبط. استخدم شاشة الرسوم لتعديل الحركة المالية.");
             }
 
+            bool updated = repository.UpdateEnrollment(enrollment);
+            if (!updated)
+                return false;
 
-            return updated;
+            try
+            {
+                SynchronizeRegistrationFinance(enrollment);
+
+                auditLogService.Record("تعديل", "Enrollment", enrollment.EnrollmentID.ToString(),
+                    "تعديل طلب تسجيل الطالب رقم " + enrollment.StudentID);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // استعادة التسجيل الأصلي إذا فشلت المزامنة المالية.
+                try
+                {
+                    repository.UpdateEnrollment(existing);
+                }
+                catch (Exception rollbackEx)
+                {
+                    ApplicationLogger.LogException(
+                        "EnrollmentService: enrollment restore failed after finance synchronization error",
+                        rollbackEx);
+                }
+
+                throw new InvalidOperationException(
+                    "فشلت مزامنة رسوم التسجيل؛ تم استعادة بيانات طلب التسجيل السابقة.",
+                    ex);
+            }
         }
 
         // تعريف الدالة DeleteEnrollment لتنفيذ العملية المرتبطة بها.
@@ -105,10 +165,19 @@ namespace SchoolSystem.Services
 
                 throw new ArgumentException("رقم طلب التسجيل غير صحيح.");
 
+            Enrollment existing = repository.GetEnrollmentById(enrollmentId);
+            if (existing == null)
+                return false;
+
+            if (repository.HasRegistrationFinance(existing.StudentID, existing.AcademicYear))
+            {
+                throw new InvalidOperationException(
+                    "لا يمكن حذف طلب تسجيل له سجل مالي مرتبط. استخدم تغيير الحالة إلى "ملغي" بدلاً من الحذف للحفاظ على السجل المالي والتاريخي.");
+            }
+
             bool deleted = repository.DeleteEnrollment(enrollmentId);
             if (deleted)
                 auditLogService.Record("حذف", "Enrollment", enrollmentId.ToString(), "حذف طلب تسجيل.");
-
 
             return deleted;
         }
@@ -119,13 +188,7 @@ namespace SchoolSystem.Services
             if (enrollment == null)
                 return;
 
-            bool accepted = string.Equals(enrollment.Status, "مقبول", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(enrollment.Status, "Accepted", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(enrollment.Status, "Approved", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(enrollment.Status, "نشط", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(enrollment.Status, "Active", StringComparison.OrdinalIgnoreCase);
-
-            if (enrollment.RegistrationFee <= 0 && !accepted)
+            if (enrollment.RegistrationFee <= 0)
                 return;
 
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
@@ -181,6 +244,37 @@ namespace SchoolSystem.Services
         {
             if (string.IsNullOrWhiteSpace(status)) return false;
             return ValidEnrollmentStatuses.Any(s => string.Equals(s, status.Trim(), StringComparison.OrdinalIgnoreCase));
+        }
+
+        // تعريف الدالة HasFinancialLinkChanges لتنفيذ العملية المرتبطة بها.
+        private static bool HasFinancialLinkChanges(Enrollment existing, Enrollment updated)
+        {
+            if (existing == null || updated == null)
+                return true;
+
+            return existing.StudentID != updated.StudentID
+                || existing.ClassID != updated.ClassID
+                || !string.Equals(
+                    NormalizeAcademicYear(existing.AcademicYear),
+                    NormalizeAcademicYear(updated.AcademicYear),
+                    StringComparison.OrdinalIgnoreCase)
+                || existing.RegistrationFee != updated.RegistrationFee
+                || existing.PaidAmount != updated.PaidAmount
+                || !string.Equals(
+                    NormalizeText(existing.PaymentMethod),
+                    NormalizeText(updated.PaymentMethod),
+                    StringComparison.OrdinalIgnoreCase)
+                || existing.ApplicationDate.Date != updated.ApplicationDate.Date;
+        }
+
+        private static string NormalizeAcademicYear(string value)
+        {
+            return (value ?? string.Empty).Trim().Replace('-', '/');
+        }
+
+        private static string NormalizeText(string value)
+        {
+            return (value ?? string.Empty).Trim();
         }
 
         // تعريف الدالة SetEnrollmentStatus لتنفيذ العملية المرتبطة بها.
