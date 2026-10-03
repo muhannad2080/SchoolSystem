@@ -43,7 +43,7 @@ namespace SchoolSystem.Services
         {
             "Students", "StudentClasses", "Classes", "SchoolSections", "Users",
             "Roles", "RolePermissions", "UserRoles", "Permissions",
-            "Fees", "FeePlans", "Vouchers", "StudentAttendance", "TeacherAttendance",
+            "Fees", "FeePlans", "Vouchers", "Grades", "StudentAttendance", "TeacherAttendance",
             "Payroll", "TeacherContracts", "Expenses"
         };
 
