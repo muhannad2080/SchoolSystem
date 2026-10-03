@@ -269,19 +269,27 @@ namespace SchoolSystem.Services
 
                 throw new ArgumentException("لا يمكن أن يكون العام التالي مطابقاً للعام المراد إغلاقه.");
 
+            string normalizedNextYear = Normalize(nextAcademicYear);
+
+            if (string.IsNullOrWhiteSpace(normalizedNextYear))
+            {
+                throw new ArgumentException("العام الدراسي التالي مطلوب لإتمام الإغلاق السنوي.");
+            }
+
             using (SqlConnection connection = DbConnection.GetConnection())
-            using (SqlCommand command = new SqlCommand("dbo.CloseAcademicYear", connection))
+            using (SqlCommand command = new SqlCommand("dbo.CloseAndActivateAcademicYear", connection))
             {
                 command.CommandType = CommandType.StoredProcedure;
 
                 command.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = Normalize(academicYear);
 
-                command.Parameters.Add("@NextAcademicYear", SqlDbType.NVarChar, 20).Value = string.IsNullOrWhiteSpace(nextAcademicYear) ? (object)DBNull.Value : Normalize(nextAcademicYear);
+                command.Parameters.Add("@NextAcademicYear", SqlDbType.NVarChar, 20).Value = normalizedNextYear;
 
                 command.Parameters.Add("@ClosedByUserID", SqlDbType.Int).Value =
                     (object)(CurrentUser.User?.UserID ?? userId) ?? DBNull.Value;
 
-                command.Parameters.Add("@Notes", SqlDbType.NVarChar, 1000).Value = string.IsNullOrWhiteSpace(notes) ? (object)DBNull.Value : notes.Trim();
+                command.Parameters.Add("@Notes", SqlDbType.NVarChar, 1000).Value =
+                    string.IsNullOrWhiteSpace(notes) ? (object)DBNull.Value : notes.Trim();
 
                 connection.Open();
 
