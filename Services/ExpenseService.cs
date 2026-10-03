@@ -96,22 +96,20 @@ namespace SchoolSystem.Services
 
             ValidateExpense(expense);
 
-            decimal oldAmount = expenseRepository.GetExpenseAmountById(expense.ExpenseID);
-            decimal difference = expense.Amount - oldAmount;
+            Expense previous = expenseRepository.GetExpenseById(expense.ExpenseID);
+            if (previous == null)
+                throw new InvalidOperationException("المصروف المحدد غير موجود.");
 
+            decimal difference = expense.Amount - previous.Amount;
             bool updated = expenseRepository.UpdateExpense(expense);
 
-            if (updated)
-            {
-                auditLogService.Record("تعديل", "Expense", expense.ExpenseID.ToString(),
-                    string.Format("المبلغ الجديد: {0}، الفئة: {1}، الفرق: {2}", expense.Amount, expense.Category, difference));
-            }
+            if (!updated)
+                return false;
 
-            if (updated && difference != 0)
+            try
             {
                 if (difference > 0)
                 {
-
                     voucherService.CreatePaymentVoucherForExpense(
                         difference,
                         expense.ExpenseDate,
@@ -123,12 +121,8 @@ namespace SchoolSystem.Services
                         forceNew: true
                     );
                 }
-
-                else
+                else if (difference < 0)
                 {
-
-
-
                     voucherService.CreateReceiptVoucherForExpenseAdjustment(
                         Math.Abs(difference),
                         expense.ExpenseDate,
@@ -139,9 +133,17 @@ namespace SchoolSystem.Services
                         "تم إنشاء سند قبض تسوية تلقائياً بسبب تخفيض مبلغ المصروف.");
                 }
             }
+            catch
+            {
+                // لا نترك سجل المصروف في قيمة جديدة إذا فشل إنشاء سند التسوية.
+                expenseRepository.UpdateExpense(previous);
+                throw;
+            }
 
+            auditLogService.Record("تعديل", "Expense", expense.ExpenseID.ToString(),
+                string.Format("المبلغ الجديد: {0}، الفئة: {1}، الفرق: {2}", expense.Amount, expense.Category, difference));
 
-            return updated;
+            return true;
         }
 
         // تعريف الدالة DeleteExpense لتنفيذ العملية المرتبطة بها.
