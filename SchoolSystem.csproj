@@ -162,6 +162,12 @@
     <Compile Include="Helpers\MenuRenderer.cs" />
     <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="Helpers\AcademicYearHelper.cs" />
+    <Compile Include="UI\PayrollRecordsForm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\PayrollRecordsForm.Designer.cs">
+      <DependentUpon>PayrollRecordsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
