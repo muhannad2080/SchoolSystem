@@ -58,5 +58,6 @@ BEGIN
             ClassID,
             SectionAcademicYearNormalized,
             SectionNameNormalized
-        );
+        )
+        WHERE NULLIF(SectionNameNormalized, N'') IS NOT NULL;
 END;
