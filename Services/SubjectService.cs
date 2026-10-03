@@ -46,6 +46,10 @@ namespace SchoolSystem.Services
         public int AddSubject(Subject subject)
         {
             CurrentUser.DemandAction("Subjects", "Add", "ليس لديك صلاحية إضافة المواد.");
+            if (subject == null)
+                throw new ArgumentException("بيانات المادة غير صحيحة.");
+
+            // الكود يُولّد تلقائياً داخل المعاملة في المستودع، ولا يُطلب من المستخدم إدخاله.
             ValidateSubject(subject, false);
 
             int subjectId = repository.AddSubject(subject);
@@ -137,13 +141,19 @@ namespace SchoolSystem.Services
             if (requireId && subject.SubjectID <= 0)
                 throw new ArgumentException("اختر مادة صحيحة.");
 
-            if (string.IsNullOrWhiteSpace(subject.SubjectCode) || subject.SubjectCode.Trim().Length < 2 || subject.SubjectCode.Trim().Length > 30)
-                throw new ArgumentException("كود المادة يجب أن يكون بين حرفين و30 حرفاً.");
+            if (requireId && (string.IsNullOrWhiteSpace(subject.SubjectCode) || subject.SubjectCode.Trim().Length < 2 || subject.SubjectCode.Trim().Length > 30))
+                throw new ArgumentException("كود المادة غير صالح.");
 
-            foreach (char character in subject.SubjectCode.Trim())
+            if (!requireId && !string.IsNullOrWhiteSpace(subject.SubjectCode) && subject.SubjectCode.Trim().Length > 30)
+                throw new ArgumentException("كود المادة المولد لا يمكن أن يتجاوز 30 حرفاً.");
+
+            if (!string.IsNullOrWhiteSpace(subject.SubjectCode))
             {
-                if (!(char.IsLetterOrDigit(character) || character == '_' || character == '-'))
-                    throw new ArgumentException("كود المادة يجب أن يحتوي على حروف أو أرقام أو (_) أو (-) فقط.");
+                foreach (char character in subject.SubjectCode.Trim())
+                {
+                    if (!(char.IsLetterOrDigit(character) || character == '_' || character == '-'))
+                        throw new ArgumentException("كود المادة يجب أن يحتوي على حروف أو أرقام أو (_) أو (-) فقط.");
+                }
             }
 
             if (string.IsNullOrWhiteSpace(subject.SubjectName) || subject.SubjectName.Trim().Length < 2 || subject.SubjectName.Trim().Length > 100)
@@ -167,7 +177,7 @@ namespace SchoolSystem.Services
             if (subject.Notes != null && subject.Notes.Trim().Length > 1000)
                 throw new ArgumentException("الملاحظات لا يمكن أن تتجاوز 1000 حرف.");
 
-            subject.SubjectCode = subject.SubjectCode.Trim();
+            subject.SubjectCode = string.IsNullOrWhiteSpace(subject.SubjectCode) ? null : subject.SubjectCode.Trim();
             subject.SubjectName = subject.SubjectName.Trim();
             subject.Notes = string.IsNullOrWhiteSpace(subject.Notes) ? null : subject.Notes.Trim();
         }
