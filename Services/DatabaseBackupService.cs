@@ -32,8 +32,28 @@ namespace SchoolSystem.Services
         // تعريف الدالة Backup لتنفيذ العملية المرتبطة بها.
         public string Backup(string serverInstance, string databaseName, string backupDirectory)
         {
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            CurrentUser.DemandAny("ليس لديك صلاحية إنشاء نسخة احتياطية لقاعدة البيانات.", PermissionKeys.SettingsEdit, PermissionKeys.SettingsManage);
+            return Backup(serverInstance, databaseName, backupDirectory, false);
+        }
+
+        /// <summary>
+        /// إنشاء نسخة احتياطية من قاعدة البيانات.
+        /// عند استدعائه كجزء من الإغلاق السنوي، تكفي صلاحية الإغلاق السنوي بالإضافة إلى
+        /// صلاحيات النسخ الاحتياطي الاعتيادية، مع بقاء التحقق من الصلاحيات إلزاميًا.
+        /// </summary>
+        public string Backup(string serverInstance, string databaseName, string backupDirectory, bool forAnnualClosing)
+        {
+            if (forAnnualClosing)
+                CurrentUser.DemandAny(
+                    "ليس لديك صلاحية إنشاء نسخة احتياطية ضمن الإغلاق السنوي.",
+                    PermissionKeys.AnnualClosingManage,
+                    PermissionKeys.SettingsEdit,
+                    PermissionKeys.SettingsManage);
+            else
+                CurrentUser.DemandAny(
+                    "ليس لديك صلاحية إنشاء نسخة احتياطية لقاعدة البيانات.",
+                    PermissionKeys.SettingsEdit,
+                    PermissionKeys.SettingsManage);
+
             ValidateInputs(serverInstance, databaseName);
             string directory = EnsureBackupDirectory(backupDirectory);
 
