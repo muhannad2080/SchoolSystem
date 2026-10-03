@@ -124,8 +124,11 @@ namespace SchoolSystem.UI
         // تعريف الدالة GenerateNewEmployeeNumber لتنفيذ العملية المرتبطة بها.
         private void GenerateNewEmployeeNumber()
         {
-
+            // الرقم الوظيفي يُولّد تلقائياً داخل معاملة الإضافة.
             txtEmployeeNumber.Clear();
+            txtEmployeeNumber.ReadOnly = true;
+            txtEmployeeNumber.BackColor = UIHelper.DisabledSurfaceColor;
+            txtEmployeeNumber.ForeColor = UIHelper.MutedTextColor;
         }
 
         // تعريف الدالة TeachersForm_Load لتنفيذ العملية المرتبطة بها.
@@ -250,17 +253,7 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            string employeeNumber = txtEmployeeNumber.Text.Trim();
-            if (string.IsNullOrEmpty(employeeNumber) ||
-                !UIHelper.IsValidPositiveInteger(employeeNumber, out _) ||
-                employeeNumber.Length < 4 ||
-                employeeNumber.Length > 20)
-            {
-                UIHelper.FocusAndWarn(txtEmployeeNumber, "الرقم الوظيفي مطلوب ويجب أن يتكون من أرقام (طول من 4 إلى 20).");
-
-                return false;
-            }
-
+            // الرقم الوظيفي لا يُدخل يدوياً؛ يتم توليده تلقائياً عند الإضافة.
             var minBirthDate = DateTime.Today.AddYears(-65);
             var maxBirthDate = DateTime.Today.AddYears(-22);
             if (dtpBirthDate.Value < minBirthDate || dtpBirthDate.Value > maxBirthDate)
