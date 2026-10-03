@@ -288,6 +288,7 @@ WHERE TeacherID = @TeacherID AND SalaryMonth = @Month AND SalaryYear = @Year";
                 NetSalary = GetDecimal(reader, "NetSalary"),
                 PaymentDate = GetNullableDate(reader, "PaymentDate"),
                 PaymentMethod = GetString(reader, "PaymentMethod"),
+                VoucherNumber = GetString(reader, "VoucherNumber"),
                 Notes = GetString(reader, "Notes"),
                 CreatedAt = GetDate(reader, "CreatedAt")
             };
@@ -358,7 +359,7 @@ WHERE TeacherID = @TeacherID AND SalaryMonth = @Month AND SalaryYear = @Year";
                 row["NetSalary"] = p.NetSalary;
                 row["PaymentDate"] = (object)p.PaymentDate ?? DBNull.Value;
                 row["PaymentMethod"] = p.PaymentMethod ?? "";
-                row["VoucherNumber"] = DBNull.Value;
+                row["VoucherNumber"] = p.VoucherNumber ?? "";
                 row["Notes"] = p.Notes ?? "";
                 row["CreatedAt"] = p.CreatedAt;
                 table.Rows.Add(row);
