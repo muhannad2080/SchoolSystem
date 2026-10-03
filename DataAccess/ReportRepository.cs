@@ -198,6 +198,20 @@ namespace SchoolSystem.DataAccess
             if (request.ReportType == "تقرير الحركة المالية")
                 return GetFinancialMovementReport(request);
 
+            if (request.ReportType == "تقرير حضور الطلاب")
+                return GetStudentAttendanceReport(request);
+
+            if (request.ReportType == "تقرير المواد الدراسية")
+                return GetSubjectsReport(request);
+
+            if (request.ReportType == "تقرير المكتبة والإعارات")
+                return GetLibraryReport(request);
+
+            if (request.ReportType == "تقرير النقل المدرسي")
+                return GetTransportReport(request);
+
+            if (request.ReportType == "تقرير المصروفات")
+                return GetExpensesReport(request);
 
             return CreateMessageTable("نوع التقرير غير معروف.");
         }
