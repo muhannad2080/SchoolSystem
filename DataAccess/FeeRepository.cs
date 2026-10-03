@@ -528,12 +528,19 @@ namespace SchoolSystem.DataAccess
                             using (SqlCommand numberCommand = new SqlCommand(
                                 "UPDATE Vouchers SET VoucherNumber = @VoucherNumber WHERE VoucherID = @VoucherID", con, transaction))
                             {
-
                                 numberCommand.Parameters.AddWithValue("@VoucherNumber", voucherNumber);
-
                                 numberCommand.Parameters.AddWithValue("@VoucherID", generatedVoucherId);
-
                                 numberCommand.ExecuteNonQuery();
+                            }
+
+                            // رقم الإيصال في سجل الرسوم مرجع عرض، ومصدره authoritative
+                            // هو رقم سند القبض المنشأ في Vouchers ضمن نفس المعاملة.
+                            using (SqlCommand receiptCommand = new SqlCommand(
+                                "UPDATE Fees SET ReceiptNumber = @VoucherNumber WHERE FeeID = @FeeID", con, transaction))
+                            {
+                                receiptCommand.Parameters.AddWithValue("@VoucherNumber", voucherNumber);
+                                receiptCommand.Parameters.AddWithValue("@FeeID", feeId);
+                                receiptCommand.ExecuteNonQuery();
                             }
                         }
 
