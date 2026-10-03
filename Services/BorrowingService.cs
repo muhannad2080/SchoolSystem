@@ -73,10 +73,12 @@ namespace SchoolSystem.Services
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             CurrentUser.DemandAction("Library", "Edit", "ليس لديك صلاحية إرجاع الكتب.");
             if (borrowingId <= 0)
-
                 throw new Exception("رقم الإعارة غير صحيح.");
 
-            bool returned = borrowingRepository.ReturnBook(borrowingId, returnDate);
+            if (returnDate.Date > DateTime.Today)
+                throw new Exception("تاريخ الاسترجاع لا يمكن أن يكون في المستقبل.");
+
+            bool returned = borrowingRepository.ReturnBook(borrowingId, returnDate.Date);
             if (returned)
                 auditLogService.Record("إرجاع", "BookBorrowing", borrowingId.ToString(), "إرجاع كتاب معار.");
 
