@@ -153,6 +153,30 @@ WHERE PayrollID = @PayrollID AND PaymentDate IS NULL", conn))
         }
 
         /// <summary>يمنع حذف راتب مصروف أو مرتبط بسند صرف.</summary>
+        /// <summary>
+        /// تراجع داخلي عن إدخال راتب جديد إذا فشل إنشاء السند التلقائي.
+        /// يختلف عن الحذف العادي لأنه يعمل قبل اكتمال العملية المالية.
+        /// </summary>
+        public bool RollbackPayrollCreation(int payrollId)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+DELETE FROM dbo.Payroll
+WHERE PayrollID = @PayrollID
+  AND NOT EXISTS
+  (
+      SELECT 1
+      FROM dbo.Vouchers
+      WHERE ReferenceType = N'رواتب'
+        AND ReferenceID = @PayrollID
+  );", conn))
+            {
+                cmd.Parameters.Add("@PayrollID", SqlDbType.Int).Value = payrollId;
+                conn.Open();
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
         public bool DeletePayroll(int payrollId)
         {
             using (SqlConnection conn = DbConnection.GetConnection())
