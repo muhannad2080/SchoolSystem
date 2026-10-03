@@ -105,6 +105,7 @@ namespace SchoolSystem.DataAccess
                         ShelfLocation,
                         Notes
                     )
+                    OUTPUT INSERTED.BookID
                     VALUES
                     (
                         @Title,
@@ -126,42 +127,82 @@ namespace SchoolSystem.DataAccess
 
                     con.Open();
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result == null || result == DBNull.Value)
+                        return false;
+
+                    book.BookID = Convert.ToInt32(result);
+                    return book.BookID > 0;
                 }
             }
         }
 
+        // تعريف الدالة UpdateBook لتنفيذ العملية المرتبطة بها.
         // تعريف الدالة UpdateBook لتنفيذ العملية المرتبطة بها.
         public bool UpdateBook(Book book)
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 LibrarySchemaInitializer.EnsureBooksSchema(con);
-                string query = @"
-                    UPDATE Books SET
-                        Title = @Title,
-                        Author = @Author,
-                        ISBN = @ISBN,
-                        Category = @Category,
-                        Publisher = @Publisher,
-                        PublicationYear = @PublicationYear,
-                        Copies = @Copies,
-                        ShelfLocation = @ShelfLocation,
-                        Notes = @Notes,
-                        UpdatedAt = GETDATE()
-                    WHERE BookID = @BookID";
+                con.Open();
 
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    const string validationQuery = @"
+                        IF NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.Books WITH (UPDLOCK, HOLDLOCK)
+                            WHERE BookID = @BookID
+                        )
+                            THROW 51301, N'الكتاب المحدد غير موجود.', 1;
 
-                    cmd.Parameters.AddWithValue("@BookID", book.BookID);
+                        DECLARE @Borrowed INT =
+                        (
+                            SELECT COUNT(*)
+                            FROM dbo.BookBorrowings WITH (UPDLOCK, HOLDLOCK)
+                            WHERE BookID = @BookID
+                              AND Status = N'معار'
+                        );
 
-                    AddParameters(cmd, book);
+                        IF @Copies < @Borrowed
+                            THROW 51302, N'عدد النسخ الجديدة لا يمكن أن يكون أقل من عدد النسخ المعارة حالياً.', 1;";
 
+                    using (SqlCommand validation = new SqlCommand(validationQuery, con, transaction))
+                    {
+                        validation.Parameters.Add("@BookID", SqlDbType.Int).Value = book.BookID;
+                        validation.Parameters.Add("@Copies", SqlDbType.Int).Value = book.Copies;
+                        validation.ExecuteNonQuery();
+                    }
 
-                    con.Open();
+                    const string query = @"
+                        UPDATE Books SET
+                            Title = @Title,
+                            Author = @Author,
+                            ISBN = @ISBN,
+                            Category = @Category,
+                            Publisher = @Publisher,
+                            PublicationYear = @PublicationYear,
+                            Copies = @Copies,
+                            ShelfLocation = @ShelfLocation,
+                            Notes = @Notes,
+                            UpdatedAt = GETDATE()
+                        WHERE BookID = @BookID";
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    using (SqlCommand cmd = new SqlCommand(query, con, transaction))
+                    {
+                        cmd.Parameters.Add("@BookID", SqlDbType.Int).Value = book.BookID;
+                        AddParameters(cmd, book);
+
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
                 }
             }
         }
@@ -172,23 +213,49 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 LibrarySchemaInitializer.EnsureBooksSchema(con);
-                const string query = @"
-                    UPDATE Books
-                    SET IsActive = 0,
-                        UpdatedAt = GETDATE()
-                    WHERE BookID = @BookID
-                      AND ISNULL(IsActive, 1) = 1;";
+                con.Open();
 
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    cmd.Parameters.Add("@BookID", SqlDbType.Int).Value = bookId;
-                    con.Open();
-                    return cmd.ExecuteNonQuery() > 0;
+                    const string validationQuery = @"
+                        IF EXISTS
+                        (
+                            SELECT 1
+                            FROM dbo.BookBorrowings WITH (UPDLOCK, HOLDLOCK)
+                            WHERE BookID = @BookID
+                              AND Status = N'معار'
+                        )
+                            THROW 51303, N'لا يمكن تعطيل الكتاب لأن هناك نسخاً منه معارة حالياً. أعد الكتب أولاً.', 1;";
+
+                    using (SqlCommand validation = new SqlCommand(validationQuery, con, transaction))
+                    {
+                        validation.Parameters.Add("@BookID", SqlDbType.Int).Value = bookId;
+                        validation.ExecuteNonQuery();
+                    }
+
+                    const string query = @"
+                        UPDATE Books
+                        SET IsActive = 0,
+                            UpdatedAt = GETDATE()
+                        WHERE BookID = @BookID
+                          AND ISNULL(IsActive, 1) = 1;";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con, transaction))
+                    {
+                        cmd.Parameters.Add("@BookID", SqlDbType.Int).Value = bookId;
+                        if (cmd.ExecuteNonQuery() == 0)
+                        {
+                            transaction.Rollback();
+                            return false;
+                        }
+                    }
+
+                    transaction.Commit();
+                    return true;
                 }
             }
         }
 
-        // تعريف الدالة GetAvailableCopies لتنفيذ العملية المرتبطة بها.
         public int GetAvailableCopies(int bookId)
         {
             using (SqlConnection con = DbConnection.GetConnection())
