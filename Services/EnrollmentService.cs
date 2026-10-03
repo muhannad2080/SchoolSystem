@@ -391,7 +391,7 @@ namespace SchoolSystem.Services
 
             if (!IsValidEnrollmentStatus(enrollment.Status))
 
-                throw new ArgumentException($"حالة الطلب غير válida. القيم المسموح بها: جديد, قيد المراجعة, مقبول, مرفوض, ملغي.");
+                throw new ArgumentException($"حالة الطلب غير صحيحة. القيم المسموح بها: جديد, قيد المراجعة, مقبول, مرفوض, ملغي.");
 
 
             if (enrollment.RegistrationFee < 0 || enrollment.PaidAmount < 0)
