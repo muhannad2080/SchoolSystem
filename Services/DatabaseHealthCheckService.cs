@@ -37,7 +37,8 @@ namespace SchoolSystem.Services
         {
             "Students", "StudentClasses", "Classes", "SchoolSections", "Users", "Roles",
             "RolePermissions", "UserRoles", "Permissions", "Fees",
-            "FeePlans", "Vouchers", "AcademicYears", "Teachers", "Marks"
+            "FeePlans", "Vouchers", "AcademicYears", "Teachers", "Marks",
+            "Payroll", "TeacherContracts", "Expenses"
         };
 
         private static readonly Dictionary<string, string[]> RequiredColumns =
@@ -47,7 +48,10 @@ namespace SchoolSystem.Services
                 { "Students", new[] { "StudentID", "FullName", "NationalId", "Gender", "BirthDate" } },
                 { "Classes", new[] { "ClassID", "ClassName", "StageID" } },
                 { "Fees", new[] { "FeeID", "StudentID", "TotalAmount", "PaidAmount", "DueDate" } },
-                { "SchoolSections", new[] { "SectionID", "ClassID", "SectionName", "AcademicYear" } }
+                { "SchoolSections", new[] { "SectionID", "ClassID", "SectionName", "AcademicYear" } },
+                { "Payroll", new[] { "PayrollID", "TeacherID", "SalaryMonth", "SalaryYear", "BasicSalary", "Allowances", "Deductions", "NetSalary", "PaymentDate" } },
+                { "TeacherContracts", new[] { "ContractID", "TeacherID", "ContractNumber", "ContractType", "ContractStatus", "BasicSalary", "StartDate" } },
+                { "Expenses", new[] { "ExpenseID", "ExpenseNumber", "Amount", "ExpenseDate", "Category" } }
             };
 
         public static HealthCheckResult Check(string server, string database,
