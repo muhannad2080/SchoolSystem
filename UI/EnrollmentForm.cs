@@ -286,6 +286,19 @@ namespace SchoolSystem.UI
         private void PreviewSelectedEnrollment(
             bool receipt)
         {
+            try
+            {
+                CurrentUser.DemandAction(
+                    "Enrollment",
+                    "Print",
+                    "ليس لديك صلاحية معاينة وطباعة بيانات التسجيل.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("صلاحية الطباعة", ex);
+                return;
+            }
+
             if (!CanPrintSelectedEnrollment())
                 return;
 
@@ -324,6 +337,21 @@ namespace SchoolSystem.UI
             bool receipt,
             bool pdf)
         {
+            try
+            {
+                CurrentUser.DemandAction(
+                    "Enrollment",
+                    pdf ? "ExportPDF" : "ExportExcel",
+                    pdf
+                        ? "ليس لديك صلاحية تصدير التسجيل إلى PDF."
+                        : "ليس لديك صلاحية تصدير التسجيل إلى Excel.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("صلاحية التصدير", ex);
+                return;
+            }
+
             if (!CanPrintSelectedEnrollment())
                 return;
 
