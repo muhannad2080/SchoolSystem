@@ -61,6 +61,10 @@ namespace SchoolSystem.DataAccess
                     LEFT JOIN StudentAttendance a
                         ON a.StudentID = s.StudentID
                         AND a.AttendanceDate = @AttendanceDate
+                        AND a.ClassID = @ClassID
+                        AND ISNULL(a.Section, N'') = ISNULL(@Section, N'')
+                        AND REPLACE(ISNULL(a.AcademicYear, N''), N'-', N'/') =
+                            REPLACE(@AcademicYear, N'-', N'/')
                     WHERE s.ClassID = @ClassID
                       AND ISNULL(s.Section, N'') = @Section
                       AND REPLACE(ISNULL(s.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
@@ -91,6 +95,29 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        // تعريف الدالة AttendanceExists لتنفيذ العملية المرتبطة بها.
+        public bool AttendanceExists(int studentId, DateTime attendanceDate)
+        {
+            if (studentId <= 0)
+                return false;
+
+            const string query = @"
+                SELECT COUNT(*)
+                FROM StudentAttendance
+                WHERE StudentID = @StudentID
+                  AND AttendanceDate = @AttendanceDate;";
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.Add("@StudentID", SqlDbType.Int).Value = studentId;
+                cmd.Parameters.Add("@AttendanceDate", SqlDbType.DateTime).Value = attendanceDate.Date;
+
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
         // تعريف الدالة SaveAttendance لتنفيذ العملية المرتبطة بها.
         public bool SaveAttendance(StudentAttendance item)
         {
@@ -108,6 +135,19 @@ namespace SchoolSystem.DataAccess
                           AND ISNULL(Status, N'نشط') = N'نشط'
                     )
                         THROW 50001, N'لا يمكن تسجيل حضور لطالب غير نشط.', 1;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM Students
+                        WHERE StudentID = @StudentID
+                          AND ISNULL(ClassID, 0) = @ClassID
+                          AND ISNULL(Section, N'') = ISNULL(@Section, N'')
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                              REPLACE(@AcademicYear, N'-', N'/')
+                          AND ISNULL(Status, N'نشط') = N'نشط'
+                    )
+                        THROW 50002, N'بيانات الصف أو الشعبة أو العام الدراسي لا تطابق بيانات الطالب.', 1;
 
                     IF EXISTS
                     (
