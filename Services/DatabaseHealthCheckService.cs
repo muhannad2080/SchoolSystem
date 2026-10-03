@@ -39,7 +39,8 @@ namespace SchoolSystem.Services
             "RolePermissions", "UserRoles", "Permissions", "Fees",
             "FeePlans", "Vouchers", "AcademicYears", "Teachers", "Marks",
             "Grades", "StudentAttendance", "TeacherAttendance",
-            "Payroll", "TeacherContracts", "Expenses"
+            "Payroll", "TeacherContracts", "Expenses",
+            "AcademicYearCurrent", "AnnualClosings", "AnnualMigrationLog", "DatabaseBackupHistory"
         };
 
         private static readonly Dictionary<string, string[]> RequiredColumns =
@@ -208,7 +209,9 @@ namespace SchoolSystem.Services
 
         private static readonly string[] RequiredProcedures =
         {
-            "SetActiveAcademicYear", "RegisterDatabaseBackup", "GetDashboardOperationalStatus"
+            "SetActiveAcademicYear", "RegisterDatabaseBackup", "GetDashboardOperationalStatus",
+            "VerifyAnnualClosing", "PlanStudentYearMigration", "ApproveStudentYearMigration",
+            "GetStudentMigrationReport", "CloseAcademicYear", "CloseAndActivateAcademicYear"
         };
 
         private static bool CheckProcedures(SqlConnection con, HealthCheckResult result)
