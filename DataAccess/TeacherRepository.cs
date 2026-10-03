@@ -44,7 +44,9 @@ namespace SchoolSystem.DataAccess
                                   FROM Teachers";
 
             if (!string.IsNullOrWhiteSpace(requiredStatus))
-                query += " WHERE ISNULL(Status, N'نشط') = @Status";
+                query += " WHERE ISNULL(Status, N'نشط') = @Status AND ISNULL(Status, N'') <> N'محذوف'";
+            else
+                query += " WHERE ISNULL(Status, N'') <> N'محذوف'";
 
             query += " ORDER BY TeacherID DESC";
 
