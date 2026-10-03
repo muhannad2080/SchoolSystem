@@ -306,7 +306,6 @@ namespace SchoolSystem.UI
             cmbStatus.Items.Add("غير مصروف");
             cmbStatus.Items.Add("معار");
             cmbStatus.Items.Add("مسترجع");
-            cmbStatus.Items.Add("متأخر");
 
             if (cmbStatus.Items.Count > 0)
                 cmbStatus.SelectedIndex = 0;
