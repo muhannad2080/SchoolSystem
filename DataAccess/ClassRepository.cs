@@ -97,6 +97,20 @@ namespace SchoolSystem.DataAccess
 
                 using (SqlTransaction transaction = conn.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    if (item.StageID.HasValue)
+                    {
+                        const string stageQuery = @"
+                            SELECT COUNT(1)
+                            FROM Stages
+                            WHERE StageID = @StageID AND ISNULL(IsActive, 1) = 1";
+                        using (SqlCommand stageCommand = new SqlCommand(stageQuery, conn, transaction))
+                        {
+                            stageCommand.Parameters.Add("@StageID", SqlDbType.Int).Value = item.StageID.Value;
+                            if (Convert.ToInt32(stageCommand.ExecuteScalar()) == 0)
+                                throw new InvalidOperationException("المرحلة المحددة غير موجودة أو غير نشطة.");
+                        }
+                    }
+
                     const string duplicateQuery = @"
                         SELECT COUNT(1)
                         FROM Classes
