@@ -49,7 +49,8 @@ namespace SchoolSystem.Services
             if (subject == null)
                 throw new ArgumentException("بيانات المادة غير صحيحة.");
 
-            // الكود يُولّد تلقائياً داخل المعاملة في المستودع، ولا يُطلب من المستخدم إدخاله.
+            // الكود يُولّد تلقائياً داخل المعاملة في المستودع، ولا يُسمح بإدخال كود يدوي.
+            subject.SubjectCode = null;
             ValidateSubject(subject, false);
 
             int subjectId = repository.AddSubject(subject);
