@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Models;
 using SchoolSystem.Helpers;
+using SchoolSystem.Security;
 
 
 namespace SchoolSystem.Services
