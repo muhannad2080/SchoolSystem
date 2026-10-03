@@ -313,9 +313,11 @@ namespace SchoolSystem.Security
 
                 case TeachersManage: return "إدارة المعلمين";
 
+                case "TeacherContracts.Manage": return "إدارة عقود المعلمين";
+
                 case StaffAttendanceManage: return "إدارة حضور الموظفين";
 
-                case PayrollManage: return "إدارة الرواتب والعقود";
+                case PayrollManage: return "إدارة الرواتب";
 
                 case SubjectsManage: return "إدارة المواد";
 
@@ -713,6 +715,7 @@ namespace SchoolSystem.Security
                         .Concat(Grant("Enrollment", "View", "Add", "Edit", "Delete", "Search", "Print"))
                         .Concat(Grant("ClassAssignment", "View", "Add", "Edit", "Delete", "Search"))
                         .Concat(Grant("Teachers", "View", "Add", "Edit", "Delete", "Search"))
+                        .Concat(Grant("TeacherContracts", "View", "Add", "Edit", "Delete", "Search"))
                         .Concat(Grant("Subjects", "View", "Add", "Edit", "Delete"))
                         .Concat(Grant("Classes", "View", "Add", "Edit", "Delete"))
                         .Concat(Grant("Rooms", "View", "Add", "Edit"))
