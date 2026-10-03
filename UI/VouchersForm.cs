@@ -305,6 +305,19 @@ namespace SchoolSystem.UI
         // تعريف الدالة PreviewSelectedVoucher لتنفيذ العملية المرتبطة بها.
         private void PreviewSelectedVoucher()
         {
+            try
+            {
+                CurrentUser.DemandAction(
+                    "Vouchers",
+                    "Print",
+                    "ليس لديك صلاحية معاينة السندات.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("صلاحية الطباعة", ex);
+                return;
+            }
+
             if (!TryGetSelectedVoucherForOutput(
                     out voucherToPrint))
             {
@@ -341,6 +354,19 @@ namespace SchoolSystem.UI
         // تعريف الدالة PrintSelectedVoucher لتنفيذ العملية المرتبطة بها.
         private void PrintSelectedVoucher()
         {
+            try
+            {
+                CurrentUser.DemandAction(
+                    "Vouchers",
+                    "Print",
+                    "ليس لديك صلاحية طباعة السندات.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("صلاحية الطباعة", ex);
+                return;
+            }
+
             if (!TryGetSelectedVoucherForOutput(
                     out voucherToPrint))
             {
@@ -749,6 +775,19 @@ namespace SchoolSystem.UI
         // تعريف الدالة ExportSelectedVoucherPdf لتنفيذ العملية المرتبطة بها.
         private void ExportSelectedVoucherPdf()
         {
+            try
+            {
+                CurrentUser.DemandAction(
+                    "Vouchers",
+                    "ExportPDF",
+                    "ليس لديك صلاحية تصدير السندات إلى PDF.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("صلاحية التصدير", ex);
+                return;
+            }
+
             if (!TryGetSelectedVoucherForOutput(
                     out voucherToPrint))
             {
@@ -911,6 +950,19 @@ namespace SchoolSystem.UI
         // تعريف الدالة ExportVisibleVouchersExcel لتنفيذ العملية المرتبطة بها.
         private void ExportVisibleVouchersExcel()
         {
+            try
+            {
+                CurrentUser.DemandAction(
+                    "Vouchers",
+                    "ExportExcel",
+                    "ليس لديك صلاحية تصدير السندات إلى Excel.");
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("صلاحية التصدير", ex);
+                return;
+            }
+
             if (dataGridViewVouchers.Rows.Count == 0)
             {
                 UIHelper.ShowWarning(
