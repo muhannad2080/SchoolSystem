@@ -288,7 +288,6 @@ namespace SchoolSystem.UI
                     updated.ServerInstance + " وقاعدة " + updated.DatabaseName + ".");
 
                 string databaseFolder = ResolveDatabaseFolder();
-                string backupFile = FindBackupFile(databaseFolder);
                 string migrationResult;
 
                 if (databaseExists)
@@ -302,26 +301,44 @@ namespace SchoolSystem.UI
                         ApplicationSettingsService.GetSqlPassword(updated),
                         databaseFolder);
                 }
-                else if (!string.IsNullOrWhiteSpace(backupFile))
-                {
-                    migrationResult = DatabaseMigrationService.Apply(
-                        updated.ServerInstance,
-                        updated.DatabaseName,
-                        updated.UseSqlAuthentication,
-                        updated.SqlUser,
-                        ApplicationSettingsService.GetSqlPassword(updated),
-                        databaseFolder);
-                }
                 else
                 {
-                    migrationResult = DatabaseMigrationService.CreateFromSqlScript(
-                        updated.ServerInstance,
-                        updated.DatabaseName,
-                        updated.UseSqlAuthentication,
-                        updated.SqlUser,
-                        ApplicationSettingsService.GetSqlPassword(updated),
+                    /*
+                       عند التثبيت الأول نفضّل databaseschool.sql لأنه يمثل المخطط الكامل
+                       الموجود مع الإصدار الحالي من البرنامج. النسخة .bak قد تكون أقدم من
+                       آخر الترحيلات وبالتالي قد تنتج قاعدة ناقصة. نستخدم النسخة الاحتياطية
+                       فقط إذا لم يوجد السكربت الكامل.
+                    */
+                    string fullSchemaPath = Path.Combine(
                         databaseFolder,
-                        replaceExisting: false);
+                        DatabaseMigrationService.FullSchemaScriptFileName);
+
+                    if (File.Exists(fullSchemaPath))
+                    {
+                        migrationResult = DatabaseMigrationService.CreateFromSqlScript(
+                            updated.ServerInstance,
+                            updated.DatabaseName,
+                            updated.UseSqlAuthentication,
+                            updated.SqlUser,
+                            ApplicationSettingsService.GetSqlPassword(updated),
+                            databaseFolder,
+                            replaceExisting: false);
+                    }
+                    else if (!string.IsNullOrWhiteSpace(FindBackupFile(databaseFolder)))
+                    {
+                        migrationResult = DatabaseMigrationService.Apply(
+                            updated.ServerInstance,
+                            updated.DatabaseName,
+                            updated.UseSqlAuthentication,
+                            updated.SqlUser,
+                            ApplicationSettingsService.GetSqlPassword(updated),
+                            databaseFolder);
+                    }
+                    else
+                    {
+                        throw new FileNotFoundException(
+                            "لم يتم العثور على مخطط قاعدة البيانات أو نسخة احتياطية قابلة للاستعادة داخل مجلد Database.");
+                    }
                 }
 
                 ApplicationLogger.Log("DatabaseMigration", migrationResult);
