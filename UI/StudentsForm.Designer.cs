@@ -114,7 +114,7 @@
             this.lblStudentNumber.Name = "lblStudentNumber";
             this.lblStudentNumber.Size = new System.Drawing.Size(96, 21);
             this.lblStudentNumber.TabIndex = 0;
-            this.lblStudentNumber.Text = "رقم الطالب";
+            this.lblStudentNumber.Text = "رقم الطالب (تلقائي)";
             this.lblStudentNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtStudentNumber
@@ -134,7 +134,7 @@
             this.lblFullName.Name = "lblFullName";
             this.lblFullName.Size = new System.Drawing.Size(96, 21);
             this.lblFullName.TabIndex = 2;
-            this.lblFullName.Text = "الاسم الرباعي";
+            this.lblFullName.Text = "اسم الطالب *";
             this.lblFullName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // txtFullName
@@ -154,7 +154,7 @@
             this.lblGender.Name = "lblGender";
             this.lblGender.Size = new System.Drawing.Size(96, 21);
             this.lblGender.TabIndex = 4;
-            this.lblGender.Text = "الجنس";
+            this.lblGender.Text = "الجنس *";
             this.lblGender.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // cmbGender
@@ -176,7 +176,7 @@
             this.lblBirthDate.Name = "lblBirthDate";
             this.lblBirthDate.Size = new System.Drawing.Size(96, 21);
             this.lblBirthDate.TabIndex = 6;
-            this.lblBirthDate.Text = "تاريخ الميلاد";
+            this.lblBirthDate.Text = "تاريخ الميلاد *";
             this.lblBirthDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // dtpBirthDate
@@ -186,6 +186,7 @@
             this.dtpBirthDate.Location = new System.Drawing.Point(3, 76);
             this.dtpBirthDate.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
             this.dtpBirthDate.Name = "dtpBirthDate";
+            this.dtpBirthDate.ShowCheckBox = true;
             this.dtpBirthDate.Size = new System.Drawing.Size(380, 26);
             this.dtpBirthDate.TabIndex = 7;
             // 
@@ -277,7 +278,7 @@
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(96, 21);
             this.lblStatus.TabIndex = 16;
-            this.lblStatus.Text = "الحالة";
+            this.lblStatus.Text = "الحالة *";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // cmbStatus
@@ -460,47 +461,46 @@
             this.gbStudent.Size = new System.Drawing.Size(502, 249);
             this.gbStudent.TabIndex = 3;
             this.gbStudent.TabStop = false;
-            this.gbStudent.Text = "بيانات الطالب";
+            this.gbStudent.Text = "البيانات الأساسية للطالب";
             // 
             // tlpStudent
             // 
-            this.tlpStudent.ColumnCount = 2;
-            this.tlpStudent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tlpStudent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 386F));
+            this.tlpStudent.ColumnCount = 4;
+            this.tlpStudent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tlpStudent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tlpStudent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tlpStudent.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tlpStudent.Controls.Add(this.lblStudentNumber, 0, 0);
             this.tlpStudent.Controls.Add(this.txtStudentNumber, 1, 0);
+            this.tlpStudent.Controls.Add(this.lblGender, 2, 0);
+            this.tlpStudent.Controls.Add(this.cmbGender, 3, 0);
             this.tlpStudent.Controls.Add(this.lblFullName, 0, 1);
             this.tlpStudent.Controls.Add(this.txtFullName, 1, 1);
-            this.tlpStudent.Controls.Add(this.lblGender, 0, 2);
-            this.tlpStudent.Controls.Add(this.cmbGender, 1, 2);
-            this.tlpStudent.Controls.Add(this.lblBirthDate, 0, 3);
-            this.tlpStudent.Controls.Add(this.dtpBirthDate, 1, 3);
-            this.tlpStudent.Controls.Add(this.lblBirthPlace, 0, 4);
-            this.tlpStudent.Controls.Add(this.txtBirthPlace, 1, 4);
-            this.tlpStudent.Controls.Add(this.lblNationality, 0, 5);
-            this.tlpStudent.Controls.Add(this.txtNationality, 1, 5);
-            this.tlpStudent.Controls.Add(this.lblNationalId, 0, 6);
-            this.tlpStudent.Controls.Add(this.txtNationalId, 1, 6);
-            this.tlpStudent.Controls.Add(this.lblPhone, 0, 7);
-            this.tlpStudent.Controls.Add(this.txtPhone, 1, 7);
-            this.tlpStudent.Controls.Add(this.lblStatus, 0, 8);
-            this.tlpStudent.Controls.Add(this.cmbStatus, 1, 8);
+            this.tlpStudent.SetColumnSpan(this.txtFullName, 3);
+            this.tlpStudent.Controls.Add(this.lblBirthDate, 0, 2);
+            this.tlpStudent.Controls.Add(this.dtpBirthDate, 1, 2);
+            this.tlpStudent.Controls.Add(this.lblBirthPlace, 2, 2);
+            this.tlpStudent.Controls.Add(this.txtBirthPlace, 3, 2);
+            this.tlpStudent.Controls.Add(this.lblNationality, 0, 3);
+            this.tlpStudent.Controls.Add(this.txtNationality, 1, 3);
+            this.tlpStudent.Controls.Add(this.lblNationalId, 2, 3);
+            this.tlpStudent.Controls.Add(this.txtNationalId, 3, 3);
+            this.tlpStudent.Controls.Add(this.lblPhone, 0, 4);
+            this.tlpStudent.Controls.Add(this.txtPhone, 1, 4);
+            this.tlpStudent.Controls.Add(this.lblStatus, 2, 4);
+            this.tlpStudent.Controls.Add(this.cmbStatus, 3, 4);
             this.tlpStudent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpStudent.Location = new System.Drawing.Point(8, 39);
             this.tlpStudent.Margin = new System.Windows.Forms.Padding(0);
             this.tlpStudent.Name = "tlpStudent";
             this.tlpStudent.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.tlpStudent.RowCount = 9;
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpStudent.Size = new System.Drawing.Size(486, 205);
+            this.tlpStudent.RowCount = 5;
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tlpStudent.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tlpStudent.Size = new System.Drawing.Size(486, 161);
             this.tlpStudent.TabIndex = 0;
             // 
             // gbGuardian
@@ -515,34 +515,35 @@
             this.gbGuardian.Size = new System.Drawing.Size(502, 150);
             this.gbGuardian.TabIndex = 2;
             this.gbGuardian.TabStop = false;
-            this.gbGuardian.Text = "ولي الأمر";
+            this.gbGuardian.Text = "بيانات ولي الأمر";
             // 
             // tlpGuardian
             // 
-            this.tlpGuardian.ColumnCount = 2;
-            this.tlpGuardian.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));
-            this.tlpGuardian.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 386F));
+            this.tlpGuardian.ColumnCount = 4;
+            this.tlpGuardian.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tlpGuardian.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            this.tlpGuardian.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.tlpGuardian.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tlpGuardian.Controls.Add(this.lblGuardianName, 0, 0);
             this.tlpGuardian.Controls.Add(this.txtGuardianName, 1, 0);
+            this.tlpGuardian.SetColumnSpan(this.txtGuardianName, 3);
             this.tlpGuardian.Controls.Add(this.lblGuardianRelation, 0, 1);
             this.tlpGuardian.Controls.Add(this.txtGuardianRelation, 1, 1);
-            this.tlpGuardian.Controls.Add(this.lblGuardianPhone, 0, 2);
-            this.tlpGuardian.Controls.Add(this.txtGuardianPhone, 1, 2);
-            this.tlpGuardian.Controls.Add(this.lblGuardianEmail, 0, 3);
-            this.tlpGuardian.Controls.Add(this.txtGuardianEmail, 1, 3);
-            this.tlpGuardian.Controls.Add(this.lblGuardianJob, 0, 4);
-            this.tlpGuardian.Controls.Add(this.txtGuardianJob, 1, 4);
+            this.tlpGuardian.Controls.Add(this.lblGuardianPhone, 2, 1);
+            this.tlpGuardian.Controls.Add(this.txtGuardianPhone, 3, 1);
+            this.tlpGuardian.Controls.Add(this.lblGuardianEmail, 0, 2);
+            this.tlpGuardian.Controls.Add(this.txtGuardianEmail, 1, 2);
+            this.tlpGuardian.Controls.Add(this.lblGuardianJob, 2, 2);
+            this.tlpGuardian.Controls.Add(this.txtGuardianJob, 3, 2);
             this.tlpGuardian.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpGuardian.Location = new System.Drawing.Point(8, 39);
             this.tlpGuardian.Margin = new System.Windows.Forms.Padding(0);
             this.tlpGuardian.Name = "tlpGuardian";
             this.tlpGuardian.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.tlpGuardian.RowCount = 5;
-            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tlpGuardian.RowCount = 3;
+            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.3333F));
+            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.3333F));
+            this.tlpGuardian.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.3334F));
             this.tlpGuardian.Size = new System.Drawing.Size(486, 106);
             this.tlpGuardian.TabIndex = 0;
             // 
@@ -558,7 +559,7 @@
             this.gbAddress.Size = new System.Drawing.Size(356, 145);
             this.gbAddress.TabIndex = 1;
             this.gbAddress.TabStop = false;
-            this.gbAddress.Text = "العنوان";
+            this.gbAddress.Text = "السكن والعنوان";
             // 
             // tlpAddress
             // 
@@ -597,25 +598,25 @@
             this.gbPhoto.Size = new System.Drawing.Size(141, 145);
             this.gbPhoto.TabIndex = 0;
             this.gbPhoto.TabStop = false;
-            this.gbPhoto.Text = "الصورة";
+            this.gbPhoto.Text = "الصورة الشخصية";
             // 
             // picStudent
             // 
             this.picStudent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.picStudent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.picStudent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picStudent.Location = new System.Drawing.Point(34, 20);
+            this.picStudent.Location = new System.Drawing.Point(20, 25);
             this.picStudent.Name = "picStudent";
-            this.picStudent.Size = new System.Drawing.Size(76, 76);
+            this.picStudent.Size = new System.Drawing.Size(100, 100);
             this.picStudent.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picStudent.TabIndex = 0;
             this.picStudent.TabStop = false;
             // 
             // btnChooseImage
             // 
-            this.btnChooseImage.Location = new System.Drawing.Point(72, 104);
+            this.btnChooseImage.Location = new System.Drawing.Point(72, 130);
             this.btnChooseImage.Name = "btnChooseImage";
-            this.btnChooseImage.Size = new System.Drawing.Size(60, 34);
+            this.btnChooseImage.Size = new System.Drawing.Size(58, 34);
             this.btnChooseImage.TabIndex = 1;
             this.btnChooseImage.Text = "اختيار";
             this.btnChooseImage.UseVisualStyleBackColor = true;
@@ -623,11 +624,11 @@
             // 
             // btnRemoveImage
             // 
-            this.btnRemoveImage.Location = new System.Drawing.Point(11, 104);
+            this.btnRemoveImage.Location = new System.Drawing.Point(10, 130);
             this.btnRemoveImage.Name = "btnRemoveImage";
-            this.btnRemoveImage.Size = new System.Drawing.Size(55, 34);
+            this.btnRemoveImage.Size = new System.Drawing.Size(58, 34);
             this.btnRemoveImage.TabIndex = 2;
-            this.btnRemoveImage.Text = "حذف";
+            this.btnRemoveImage.Text = "إزالة";
             this.btnRemoveImage.UseVisualStyleBackColor = true;
             this.btnRemoveImage.Click += new System.EventHandler(this.btnRemoveImage_Click);
             // 
@@ -643,9 +644,9 @@
             this.layoutRight.Margin = new System.Windows.Forms.Padding(0);
             this.layoutRight.Name = "layoutRight";
             this.layoutRight.RowCount = 3;
-            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 46F));
-            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 28F));
-            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 26F));
+            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 37F));
+            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 27F));
+            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 36F));
             this.layoutRight.Size = new System.Drawing.Size(502, 554);
             this.layoutRight.TabIndex = 0;
             // 
@@ -685,8 +686,7 @@
             this.dgvStudents.Name = "dgvStudents";
             this.dgvStudents.ReadOnly = true;
             this.dgvStudents.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.dgvStudents.RowHeadersWidth = 40;
-            this.dgvStudents.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.dgvStudents.RowHeadersVisible = false;
             this.dgvStudents.RowTemplate.Height = 34;
             this.dgvStudents.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvStudents.Size = new System.Drawing.Size(652, 554);
@@ -794,9 +794,9 @@
             this.btnSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnSearch.Location = new System.Drawing.Point(918, 13);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(94, 40);
+            this.btnSearch.Size = new System.Drawing.Size(110, 40);
             this.btnSearch.TabIndex = 3;
-            this.btnSearch.Text = "بحث";
+            this.btnSearch.Text = "مسح الفلاتر";
             this.btnSearch.UseVisualStyleBackColor = true;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
@@ -807,7 +807,7 @@
             this.btnReload.Name = "btnReload";
             this.btnReload.Size = new System.Drawing.Size(160, 40);
             this.btnReload.TabIndex = 4;
-            this.btnReload.Text = "تحديث";
+            this.btnReload.Text = "تحديث البيانات";
             this.btnReload.UseVisualStyleBackColor = true;
             this.btnReload.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
@@ -863,7 +863,7 @@
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(125, 38);
             this.btnPrint.TabIndex = 2;
-            this.btnPrint.Text = "طباعة القائمة";
+            this.btnPrint.Text = "طباعة بطاقة الطالب";
             this.btnPrint.UseVisualStyleBackColor = true;
             this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
             // 
@@ -887,6 +887,7 @@
             this.btnRefresh.TabIndex = 4;
             this.btnRefresh.Text = "تحديث القائمة";
             this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Visible = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // btnCancel
@@ -896,7 +897,7 @@
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(120, 38);
             this.btnCancel.TabIndex = 5;
-            this.btnCancel.Text = "إلغاء التعديل";
+            this.btnCancel.Text = "إلغاء";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
@@ -907,7 +908,7 @@
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(110, 38);
             this.btnDelete.TabIndex = 6;
-            this.btnDelete.Text = "حذف الطالب";
+            this.btnDelete.Text = "أرشفة الطالب";
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
@@ -955,6 +956,7 @@
             this.Controls.Add(this.pnlButtons);
             this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MinimumSize = new System.Drawing.Size(1050, 650);
+            this.CancelButton = this.btnCancel;
             this.Name = "StudentsForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.RightToLeftLayout = true;
