@@ -450,15 +450,9 @@ namespace SchoolSystem.UI
                     return;
                 }
 
-                DialogResult answer = MessageBox.Show(
+                if (!UIHelper.ShowConfirmation(
                     "لن يتم السماح بالحذف إذا كانت الشعبة مرتبطة بطلاب أو حضور أو درجات أو جدول. هل تريد المتابعة؟",
-                    "تأكيد الحذف",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button2,
-                    MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
-
-                if (answer != DialogResult.Yes)
+                    "تأكيد الحذف"))
                     return;
 
                 bool deleted = await Task.Run(() => sectionService.DeleteSection(selectedSectionId));
