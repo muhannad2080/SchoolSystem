@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace SchoolSystem.UiSmokeTests
@@ -29,6 +30,7 @@ namespace SchoolSystem.UiSmokeTests
 
             int passed = 0;
             int failed = 0;
+            int manual = 0;
 
             Console.WriteLine("SchoolSystem UI Smoke Test");
             Console.WriteLine("Screens discovered: " + screenTypes.Count);
@@ -63,6 +65,7 @@ namespace SchoolSystem.UiSmokeTests
                 {
                     if (string.Equals(type.Name, "LoginForm", StringComparison.Ordinal))
                     {
+                        manual++;
                         Console.WriteLine("[MANUAL] " + type.Name + " - requires configured database during startup.");
                         continue;
                     }
@@ -95,7 +98,8 @@ namespace SchoolSystem.UiSmokeTests
 
             Console.WriteLine(
                 "RESULT: Passed=" + passed +
-                ", Failed=" + failed);
+                ", Failed=" + failed +
+                ", Manual=" + manual);
 
             return failed == 0 ? 0 : 1;
         }
