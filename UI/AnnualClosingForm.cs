@@ -179,7 +179,7 @@ namespace SchoolSystem.UI
                     throw new InvalidOperationException("أدخل رقم الصف الجديد واسم الشعبة الجديدة.");
 
 
-                if (MessageBox.Show("سيتم إنشاء توزيع الطالب في العام الجديد وتسجيل العملية. هل تريد المتابعة؟", "تأكيد اعتماد الترحيل", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                if (!UIHelper.ShowConfirmation("سيتم إنشاء توزيع الطالب في العام الجديد وتسجيل العملية. هل تريد المتابعة؟", "تأكيد اعتماد الترحيل"))
 
                     return;
 
@@ -206,11 +206,9 @@ namespace SchoolSystem.UI
                 string selectedYear = SelectedYear();
                 string nextYear = SelectedNextYear();
 
-                if (MessageBox.Show(
-                    "سيتم إنشاء نسخة احتياطية ثم إغلاق العام وتفعيل العام التالي في عملية واحدة. هل تريد المتابعة?",
-                    "تأكيد الإغلاق",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning) != DialogResult.Yes)
+                if (!UIHelper.ShowConfirmation(
+                    "سيتم إنشاء نسخة احتياطية ثم إغلاق العام وتفعيل العام التالي في عملية واحدة. هل تريد المتابعة؟",
+                    "تأكيد الإغلاق"))
                     return;
 
                 service.CloseWithRequiredBackup(
@@ -222,7 +220,7 @@ namespace SchoolSystem.UI
                 lblStatus.Text = "تم إنشاء النسخة الاحتياطية وإغلاق العام وتفعيل العام التالي بنجاح.";
                 lblStatus.ForeColor = Color.DarkGreen;
 
-                MessageBox.Show(lblStatus.Text, "الإغلاق السنوي", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UIHelper.ShowInfo(lblStatus.Text);
 
                 LoadYears();
             }
