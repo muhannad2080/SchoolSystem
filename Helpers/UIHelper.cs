@@ -987,7 +987,7 @@ namespace SchoolSystem.Helpers
                 return;
             }
 
-            if (text.Contains("تحديث") || text.Contains("إلغاء") || text.Contains("إغلاق"))
+            if (text.Contains("تحديث") || text.Contains("إلغاء") || text.Contains("إغلاق") || text.Contains("مسح") || text.Contains("إزالة"))
             {
                 StyleButton(btn, NeutralColor);
 
