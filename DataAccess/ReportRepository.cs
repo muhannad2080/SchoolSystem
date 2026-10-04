@@ -1539,6 +1539,27 @@ namespace SchoolSystem.DataAccess
         }
 
         // تعريف الدالة TableExists لتنفيذ العملية المرتبطة بها.
+        private bool IsComputedColumn(string tableName, string columnName)
+        {
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT COUNT(1)
+                FROM sys.columns c
+                INNER JOIN sys.tables t ON t.object_id = c.object_id
+                INNER JOIN sys.schemas sc ON sc.schema_id = t.schema_id
+                WHERE sc.name = N'dbo'
+                  AND t.name = @TableName
+                  AND c.name = @ColumnName
+                  AND c.is_computed = 1;", conn))
+            {
+                cmd.Parameters.Add("@TableName", SqlDbType.NVarChar, 128).Value = tableName ?? string.Empty;
+                cmd.Parameters.Add("@ColumnName", SqlDbType.NVarChar, 128).Value = columnName ?? string.Empty;
+
+                conn.Open();
+                return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            }
+        }
+
         private bool TableExists(string tableName)
         {
             using (SqlConnection conn = DbConnection.GetConnection())
