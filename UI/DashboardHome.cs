@@ -32,6 +32,7 @@ namespace SchoolSystem.UI
             UIHelper.StyleButton(btnRefreshDashboard, UIHelper.InfoColor);
 
             ConfigureDashboardVisuals();
+            ConfigureArabicDashboardLayout();
 
             btnRefreshDashboard.Click += async (sender, e) => await ReloadDashboardAsync();
             panelCards.Resize += (sender, e) => ResizeDashboardCards();
@@ -40,6 +41,72 @@ namespace SchoolSystem.UI
             Disposed += DashboardHome_Disposed;
 
             ResizeDashboardCards();
+        }
+
+        /// <summary>
+        /// يوحّد اتجاه النصوص وتسميات لوحة التحكم لتكون عربية وواضحة ومتناسقة.
+        /// </summary>
+        private void ConfigureArabicDashboardLayout()
+        {
+            RightToLeft = RightToLeft.Yes;
+
+            lblDashboardTitle.Text = "لوحة التحكم";
+            lblDashboardSubtitle.Text = "ملخص حي لمؤشرات المدرسة وحالتها التشغيلية";
+            btnRefreshDashboard.Text = "تحديث البيانات";
+
+            lblStudentsTitle.Text = "إجمالي الطلاب";
+            lblTeachersTitle.Text = "المعلمون";
+            lblSubjectsTitle.Text = "المواد الدراسية";
+            lblClassesTitle.Text = "الفصول الدراسية";
+            lblFeesTitle.Text = "إجمالي الرسوم المتبقية";
+
+            lblAlertsTitle.Text = "المتابعة والتنبيهات";
+            lblChartTitle.Text = "توزيع الطلاب حسب الفصل";
+
+            Control[] arabicControls =
+            {
+                panelHeader, tlpHeader, pnlTitle, pnlMeta,
+                tableLayoutMain, tableLayoutLower, panelAlerts,
+                panelChart, panelChartBody
+            };
+
+            foreach (Control control in arabicControls)
+            {
+                if (control != null)
+                    control.RightToLeft = RightToLeft.Yes;
+            }
+
+            Label[] arabicLabels =
+            {
+                lblDashboardTitle, lblDashboardSubtitle, lblWelcome,
+                lblActiveAcademicYear, lblCurrentDateTime, lblLastUpdated,
+                lblStudentsTitle, lblTeachersTitle, lblSubjectsTitle,
+                lblClassesTitle, lblFeesTitle, lblAlertsTitle,
+                lblPendingFees, lblTodayAbsence, lblOperationalStatus,
+                lblChartTitle
+            };
+
+            foreach (Label label in arabicLabels)
+            {
+                label.RightToLeft = RightToLeft.Yes;
+                label.TextAlign = ContentAlignment.MiddleRight;
+            }
+
+            Label[] numericLabels =
+            {
+                lblStudentsValue, lblTeachersValue,
+                lblSubjectsValue, lblClassesValue, lblFeesValue
+            };
+
+            foreach (Label label in numericLabels)
+            {
+                label.RightToLeft = RightToLeft.No;
+                label.TextAlign = ContentAlignment.MiddleRight;
+            }
+
+            lblOperationalStatus.AutoEllipsis = false;
+            panelChartBody.BackColor = UIHelper.SurfaceColor;
+            panelChartBody.AutoScroll = true;
         }
 
         private void ConfigureDashboardVisuals()
