@@ -51,8 +51,10 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
 
-            // التصميم والتنسيق مسؤولية FeesForm.Designer.cs فقط.
-            // لا يتم فرض Theme أو Style هنا.
+            UIHelper.ApplyStyle(this);
+            Dock = DockStyle.Fill;
+
+            // التحقق والسلوك الخاصان بشاشة الرسوم.
 
             // تطبيق قواعد التحقق من الحقول (فلترة الأحرف، أقصى طول، والتحقق عند
             // المغادرة) دون تغيير تنسيق المصمم لهذه الشاشة.
