@@ -35,7 +35,7 @@ namespace SchoolSystem.UI
 
             btnRefreshDashboard.Click += async (sender, e) => await ReloadDashboardAsync();
             panelCards.Resize += (sender, e) => ResizeDashboardCards();
-            panelChartBody.Resize += (sender, e) => RenderChart();
+            panelChartBody.Resize += (sender, e) => { if (studentsPerClassTable != null) RenderChart(); };
             Load += DashboardHome_Load;
             Disposed += DashboardHome_Disposed;
 
@@ -479,7 +479,7 @@ namespace SchoolSystem.UI
 
             Panel bar = new Panel
             {
-                Dock = DockStyle.Left,
+                Dock = DockStyle.Right,
                 BackColor = UIHelper.InfoColor,
                 Width = Math.Max(
                     4,
