@@ -1461,6 +1461,12 @@ namespace SchoolSystem.DataAccess
                 if (query.Contains("@AcademicYear"))
                     cmd.Parameters.AddWithValue("@AcademicYear", request.AcademicYear.Trim());
 
+                if (query.Contains("@IsActive"))
+                {
+                    bool isActive = string.Equals(request.Status, "نشط", StringComparison.OrdinalIgnoreCase);
+                    cmd.Parameters.Add("@IsActive", SqlDbType.Bit).Value = isActive;
+                }
+
 
                 if (query.Contains("@ClassID") && request.ClassID.HasValue)
                     cmd.Parameters.AddWithValue("@ClassID", request.ClassID.Value);
