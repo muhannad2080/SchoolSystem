@@ -96,7 +96,7 @@
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.White;
-            this.lblTitle.Text = "مسير الرواتب وسجلات الصرف";
+            this.lblTitle.Text = "إدارة الرواتب الشهرية";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblTitle.Name = "lblTitle";
 
@@ -112,7 +112,7 @@
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 
             this.groupBoxPayroll.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBoxPayroll.Text = "بيانات الراتب الشهري";
+            this.groupBoxPayroll.Text = "بيانات الراتب الشهري وسند الصرف";
             this.groupBoxPayroll.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.groupBoxPayroll.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.groupBoxPayroll.Padding = new System.Windows.Forms.Padding(10);
