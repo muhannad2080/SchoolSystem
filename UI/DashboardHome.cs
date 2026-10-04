@@ -22,6 +22,9 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
 
+            UIHelper.ApplyStyle(this);
+            Dock = DockStyle.Fill;
+
             // لا يتم تطبيق أي Theme أو Style هنا حتى لا يتعارض
             // مع التصميم المعرفة خصائصه في ملف Designer.
 
