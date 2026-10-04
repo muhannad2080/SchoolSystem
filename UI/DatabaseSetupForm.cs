@@ -23,6 +23,7 @@ namespace SchoolSystem.UI
         public DatabaseSetupForm()
         {
             InitializeComponent();
+            UIHelper.ApplyStyle(this);
             LoadCurrentSettings();
             ApplyAuthState(true);
             WireFieldChanged();
