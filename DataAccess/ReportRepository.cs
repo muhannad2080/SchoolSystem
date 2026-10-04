@@ -281,58 +281,81 @@ namespace SchoolSystem.DataAccess
                 return CreateMessageTable("جدول الطلاب Students غير موجود.");
 
             /*
-             * تقرير الطلاب يعتمد على الحالة الحالية المخزنة في Students.
-             * StudentClassRepository يحدّث ClassID/Section/AcademicYear في Students
-             * بعد أي توزيع أو نقل، لذلك لا نحتاج إلى CTE يعتمد على StudentClasses هنا.
-             * كما أن المقارنة تُحوّل القيم صراحة إلى NVARCHAR لمنع اختلاف نوع العمود
-             * بين قواعد البيانات القديمة والجديدة.
+             * بعض قواعد SchoolDB القديمة قد تحتوي على أعمدة محسوبة أو اختلافات
+             * varchar/nvarchar. يتم فحص الأعمدة أولاً واختيار أعمدة آمنة فقط حتى
+             * لا يفشل تقرير الطلاب بسبب تعريف قديم غير متوافق في قاعدة محلية.
              */
+            bool hasStudentNumber = ColumnExists("Students", "StudentNumber") && !IsComputedColumn("Students", "StudentNumber");
+            bool hasGender = ColumnExists("Students", "Gender") && !IsComputedColumn("Students", "Gender");
+            bool hasBirthDate = ColumnExists("Students", "BirthDate") && !IsComputedColumn("Students", "BirthDate");
+            bool hasSection = ColumnExists("Students", "Section") && !IsComputedColumn("Students", "Section");
+            bool hasAcademicYear = ColumnExists("Students", "AcademicYear") && !IsComputedColumn("Students", "AcademicYear");
+            bool hasStudentPhone = ColumnExists("Students", "StudentPhone") && !IsComputedColumn("Students", "StudentPhone");
+            bool hasGuardianName = ColumnExists("Students", "GuardianName") && !IsComputedColumn("Students", "GuardianName");
+            bool hasGuardianPhone = ColumnExists("Students", "GuardianPhone") && !IsComputedColumn("Students", "GuardianPhone");
+            bool hasStatus = ColumnExists("Students", "Status") && !IsComputedColumn("Students", "Status");
+            bool hasCreatedAt = ColumnExists("Students", "CreatedAt") && !IsComputedColumn("Students", "CreatedAt");
+            bool hasClassId = ColumnExists("Students", "ClassID") && !IsComputedColumn("Students", "ClassID");
+
+            bool hasClassName = TableExists("Classes")
+                && ColumnExists("Classes", "ClassName")
+                && !IsComputedColumn("Classes", "ClassName")
+                && ColumnExists("Classes", "ClassID");
+
+            string academicYearExpression = hasAcademicYear
+                ? "CONVERT(nvarchar(20), s.AcademicYear)"
+                : "CONVERT(nvarchar(20), NULL)";
+
+            string classExpression = hasClassName
+                ? "CONVERT(nvarchar(100), c.ClassName)"
+                : "CONVERT(nvarchar(100), NULL)";
+
             string query = @"
                 SELECT
-                    s.StudentID AS [رقم الطالب],
-                    s.StudentNumber AS [الرقم الأكاديمي],
-                    s.FullName AS [اسم الطالب],
-                    s.Gender AS [الجنس],
-                    s.BirthDate AS [تاريخ الميلاد],
-                    c.ClassName AS [الصف],
-                    LTRIM(RTRIM(ISNULL(CONVERT(nvarchar(100), s.Section), N''))) AS [الشعبة],
-                    LTRIM(RTRIM(ISNULL(CONVERT(nvarchar(20), s.AcademicYear), N''))) AS [العام الدراسي],
-                    s.StudentPhone AS [هاتف الطالب],
-                    s.GuardianName AS [ولي الأمر],
-                    s.GuardianPhone AS [هاتف الولي],
-                    s.Status AS [الحالة],
-                    s.CreatedAt AS [تاريخ الإضافة]
-                FROM dbo.Students s
-                LEFT JOIN dbo.Classes c ON c.ClassID = s.ClassID
-                WHERE
-                    (
-                        ISNULL(LTRIM(RTRIM(CONVERT(nvarchar(20), @AcademicYear))), N'') = N''
-                        OR
-                        REPLACE(
-                            LTRIM(RTRIM(ISNULL(CONVERT(nvarchar(20), s.AcademicYear), N''))),
-                            N'-',
-                            N'/'
-                        ) =
-                        REPLACE(
-                            LTRIM(RTRIM(CONVERT(nvarchar(20), @AcademicYear))),
-                            N'-',
-                            N'/'
-                        )
-                    )";
+                    CONVERT(int, s.StudentID) AS [رقم الطالب],
+                    " + (hasStudentNumber ? "CONVERT(nvarchar(30), s.StudentNumber)" : "CONVERT(nvarchar(30), NULL)") + @" AS [الرقم الأكاديمي],
+                    CONVERT(nvarchar(200), s.FullName) AS [اسم الطالب],
+                    " + (hasGender ? "CONVERT(nvarchar(20), s.Gender)" : "CONVERT(nvarchar(20), NULL)") + @" AS [الجنس],
+                    " + (hasBirthDate ? "CONVERT(date, s.BirthDate)" : "CONVERT(date, NULL)") + @" AS [تاريخ الميلاد],
+                    " + classExpression + @" AS [الصف],
+                    " + (hasSection ? "CONVERT(nvarchar(100), s.Section)" : "CONVERT(nvarchar(100), NULL)") + @" AS [الشعبة],
+                    " + academicYearExpression + @" AS [العام الدراسي],
+                    " + (hasStudentPhone ? "CONVERT(nvarchar(30), s.StudentPhone)" : "CONVERT(nvarchar(30), NULL)") + @" AS [هاتف الطالب],
+                    " + (hasGuardianName ? "CONVERT(nvarchar(200), s.GuardianName)" : "CONVERT(nvarchar(200), NULL)") + @" AS [ولي الأمر],
+                    " + (hasGuardianPhone ? "CONVERT(nvarchar(30), s.GuardianPhone)" : "CONVERT(nvarchar(30), NULL)") + @" AS [هاتف الولي],
+                    " + (hasStatus ? "CONVERT(nvarchar(30), s.Status)" : "CONVERT(nvarchar(30), NULL)") + @" AS [الحالة],
+                    " + (hasCreatedAt ? "CONVERT(datetime, s.CreatedAt)" : "CONVERT(datetime, NULL)") + @" AS [تاريخ الإضافة]
+                FROM dbo.Students AS s
+                " + (hasClassName ? "LEFT JOIN dbo.Classes AS c ON CONVERT(int, c.ClassID) = CONVERT(int, s.ClassID)" : "") + @"
+                WHERE 1 = 1";
 
-            if (request.ClassID.HasValue)
-                query += " AND ISNULL(s.ClassID, 0) = @ClassID";
+            if (hasAcademicYear && !string.IsNullOrWhiteSpace(request.AcademicYear))
+                query += " AND REPLACE(CONVERT(nvarchar(20), s.AcademicYear), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
 
-            if (!string.IsNullOrWhiteSpace(request.Section))
-                query += " AND LTRIM(RTRIM(ISNULL(CONVERT(nvarchar(100), s.Section), N''))) = LTRIM(RTRIM(@Section))";
+            if (hasClassId && request.ClassID.HasValue)
+                query += " AND CONVERT(int, s.ClassID) = @ClassID";
 
-            if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
-                query += " AND LTRIM(RTRIM(ISNULL(CONVERT(nvarchar(30), s.Status), N''))) = LTRIM(RTRIM(@Status))";
+            if (hasSection && !string.IsNullOrWhiteSpace(request.Section))
+                query += " AND CONVERT(nvarchar(100), s.Section) = @Section";
+
+            if (hasStatus && !string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
+                query += " AND CONVERT(nvarchar(30), s.Status) = @Status";
 
             if (!string.IsNullOrWhiteSpace(request.SearchText))
-                query += " AND (s.FullName LIKE @Search OR s.StudentNumber LIKE @Search OR s.GuardianPhone LIKE @Search)";
+            {
+                string[] searchFields =
+                {
+                    "CONVERT(nvarchar(200), s.FullName)",
+                    hasStudentNumber ? "CONVERT(nvarchar(30), s.StudentNumber)" : null,
+                    hasGuardianPhone ? "CONVERT(nvarchar(30), s.GuardianPhone)" : null
+                };
 
-            query += " ORDER BY s.FullName";
+                searchFields = searchFields.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+                if (searchFields.Length > 0)
+                    query += " AND (" + string.Join(" LIKE @Search OR ", searchFields) + " LIKE @Search)";
+            }
+
+            query += " ORDER BY CONVERT(nvarchar(200), s.FullName)";
 
             return ExecuteQuery(query, request);
         }
