@@ -27,12 +27,6 @@ namespace SchoolSystem.UI
             btnLogin.BackColor = UIHelper.AccentColor;
             btnLogin.ForeColor = System.Drawing.Color.White;
 
-            // حالة التركيز تُظهر للمستخدم الحقل النشط بدون تغيير منطق المصادقة.
-            txtUserName.Enter += Input_Enter;
-            txtUserName.Leave += Input_Leave;
-            txtPassword.Enter += Input_Enter;
-            txtPassword.Leave += Input_Leave;
-
             lblStatus.Text = "الحالة: جاهز لتسجيل الدخول";
 
             // ============================================================
@@ -391,14 +385,23 @@ namespace SchoolSystem.UI
         // تعريف الدالة btnExit_Click لتنفيذ العملية المرتبطة بها.
         private void btnExit_Click(object sender, EventArgs e)
         {
-            if (UIHelper.ShowConfirmation(
+            if (!UIHelper.ShowConfirmation(
                 "هل تريد إغلاق نظام إدارة المدرسة؟",
                 "تأكيد الإغلاق"))
             {
-                ApplicationLogger.LogUsage("شاشة الدخول", "إغلاق النظام", "المستخدم اختار إغلاق التطبيق");
-                AppShouldExit = true;
-                Application.Exit();
+                return;
             }
+
+            ApplicationLogger.LogUsage(
+                "شاشة الدخول",
+                "إغلاق النظام",
+                "المستخدم اختار إغلاق التطبيق");
+
+            // هذه النافذة تُعرض بواسطة ShowDialog؛ لا نغلق MessageLoop من هنا.
+            // نعيد نتيجة واضحة إلى Program.cs، وهو المسؤول عن إنهاء التطبيق بأمان.
+            AppShouldExit = true;
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         // تعريف الدالة ShowWarning لتنفيذ العملية المرتبطة بها.
