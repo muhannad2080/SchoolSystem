@@ -94,6 +94,9 @@ namespace SchoolSystem.UI
 
             ConfigureFieldConstraints();
             ConfigureTooltips();
+            splitContainerMain.Panel1MinSize = 400;
+            splitContainerMain.Panel2MinSize = 500;
+            Resize += StudentsForm_Resize;
             SetFormMode(FormMode.View);
 
             // لا يوجد هنا أي:
@@ -102,6 +105,32 @@ namespace SchoolSystem.UI
             // StyleTextBox(...)
             // StyleComboBox(...)
             // StyleDataGridView(...)
+        }
+
+        private void StudentsForm_Resize(object sender, EventArgs e)
+        {
+            if (splitContainerMain == null ||
+                splitContainerMain.ClientSize.Width <= 0)
+                return;
+
+            int desiredDistance =
+                (int)(splitContainerMain.ClientSize.Width * 0.52);
+
+            int minimumDistance =
+                splitContainerMain.Panel1MinSize;
+
+            int maximumDistance =
+                splitContainerMain.ClientSize.Width -
+                splitContainerMain.Panel2MinSize -
+                splitContainerMain.SplitterWidth;
+
+            if (maximumDistance < minimumDistance)
+                return;
+
+            splitContainerMain.SplitterDistance =
+                Math.Max(
+                    minimumDistance,
+                    Math.Min(desiredDistance, maximumDistance));
         }
 
         // ================================================================
