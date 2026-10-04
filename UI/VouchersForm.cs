@@ -44,6 +44,9 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
 
+            UIHelper.ApplyStyle(this);
+            Dock = DockStyle.Fill;
+
             // ============================================================
             // تمت إزالة جميع أوامر التصميم والتنسيق من هنا.
             // التصميم مسؤول عنه VouchersForm.Designer.cs فقط.
