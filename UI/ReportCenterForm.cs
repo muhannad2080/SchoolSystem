@@ -366,6 +366,31 @@ namespace SchoolSystem.UI
                 return;
 
             await LoadSectionsAsync();
+            ScheduleAutomaticReportLoad();
+        }
+
+        private async void cmbSection_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (isLoadingFilters)
+                return;
+
+            ScheduleAutomaticReportLoad();
+        }
+
+        private void cmbStatus_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (isLoadingFilters)
+                return;
+
+            ScheduleAutomaticReportLoad();
+        }
+
+        private void reportFilter_ValueChanged(object sender, EventArgs e)
+        {
+            if (isLoadingFilters)
+                return;
+
+            ScheduleAutomaticReportLoad();
         }
 
         // تعريف الدالة txtAcademicYear_SelectedIndexChanged لتنفيذ العملية المرتبطة بها.
@@ -375,6 +400,7 @@ namespace SchoolSystem.UI
                 return;
 
             await LoadSectionsAsync();
+            ScheduleAutomaticReportLoad();
         }
 
         // تعريف الدالة LoadTermsAsync لتنفيذ العملية المرتبطة بها.
