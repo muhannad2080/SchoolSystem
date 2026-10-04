@@ -225,7 +225,7 @@ namespace SchoolSystem.UI
             if (cmbGender.SelectedIndex < 0)
             {
 
-                MessageBox.Show("يرجى اختيار الجنس", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("يرجى اختيار الجنس");
 
                 cmbGender.Focus();
 
@@ -240,7 +240,7 @@ namespace SchoolSystem.UI
             if (cmbStatus.SelectedIndex < 0)
             {
 
-                MessageBox.Show("يرجى اختيار الحالة الوظيفية", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("يرجى اختيار الحالة الوظيفية");
 
                 cmbStatus.Focus();
 
@@ -259,7 +259,7 @@ namespace SchoolSystem.UI
             if (dtpBirthDate.Value < minBirthDate || dtpBirthDate.Value > maxBirthDate)
             {
 
-                MessageBox.Show("يجب أن يكون عمر المعلم بين 22 و 65 سنة.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("يجب أن يكون عمر المعلم بين 22 و 65 سنة.");
 
                 dtpBirthDate.Focus();
 
@@ -270,7 +270,7 @@ namespace SchoolSystem.UI
             if (dtpHireDate.Value < minHireDate)
             {
 
-                MessageBox.Show("تاريخ التعيين يجب أن يكون بعد بلوغ سن 22 سنة على الأقل.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("تاريخ التعيين يجب أن يكون بعد بلوغ سن 22 سنة على الأقل.");
 
                 dtpHireDate.Focus();
 
@@ -311,7 +311,7 @@ namespace SchoolSystem.UI
                     if (!idUnique)
                     {
 
-                        MessageBox.Show("الرقم الوطني موجود مسبقاً لموظف آخر.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        UIHelper.ShowWarning("الرقم الوطني موجود مسبقاً لموظف آخر.");
 
                         txtNationalID.Focus();
 
@@ -325,7 +325,7 @@ namespace SchoolSystem.UI
                     if (!emailUnique)
                     {
 
-                        MessageBox.Show("البريد الإلكتروني موجود مسبقاً لموظف آخر.", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        UIHelper.ShowWarning("البريد الإلكتروني موجود مسبقاً لموظف آخر.");
 
                         txtEmail.Focus();
 
@@ -383,7 +383,7 @@ namespace SchoolSystem.UI
 
                 await Task.Run(() => _teacherService.AddTeacher(teacher));
 
-                MessageBox.Show("تمت الإضافة بنجاح", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UIHelper.ShowInfo("تمت الإضافة بنجاح");
                 ApplicationLogger.LogUsage("شاشة المعلمين", "إضافة معلم", "تمت إضافة المعلم بنجاح");
 
                 await LoadDataAsync();
@@ -404,7 +404,7 @@ namespace SchoolSystem.UI
             if (_selectedTeacherId == 0)
             {
 
-                MessageBox.Show("اختر معلماً أولاً", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("اختر معلماً أولاً");
 
                 return;
             }
@@ -416,7 +416,7 @@ namespace SchoolSystem.UI
 
                 await Task.Run(() => _teacherService.UpdateTeacher(teacher));
 
-                MessageBox.Show("تم التعديل بنجاح", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UIHelper.ShowInfo("تم التعديل بنجاح");
                 ApplicationLogger.LogUsage("شاشة المعلمين", "تعديل معلم", "تم تعديل بيانات المعلم بنجاح");
 
                 await LoadDataAsync();
@@ -436,7 +436,7 @@ namespace SchoolSystem.UI
             if (_selectedTeacherId == 0)
             {
 
-                MessageBox.Show("اختر معلماً أولاً", "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                UIHelper.ShowWarning("اختر معلماً أولاً");
 
                 return;
             }
@@ -449,7 +449,7 @@ namespace SchoolSystem.UI
 
                     await Task.Run(() => _teacherService.DeleteTeacher(_selectedTeacherId));
 
-                    MessageBox.Show("تم الحذف بنجاح", "نجاح", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    UIHelper.ShowInfo("تم الحذف بنجاح");
                     ApplicationLogger.LogUsage("شاشة المعلمين", "حذف معلم", "تم حذف المعلم بنجاح");
 
                     await LoadDataAsync();
