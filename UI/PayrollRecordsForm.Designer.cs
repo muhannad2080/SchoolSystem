@@ -96,7 +96,7 @@
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.White;
-            this.lblTitle.Text = "إدارة الرواتب الشهرية";
+            this.lblTitle.Text = "تسجيل وصرف الرواتب الشهرية";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblTitle.Name = "lblTitle";
 
@@ -112,7 +112,7 @@
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 
             this.groupBoxPayroll.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBoxPayroll.Text = "بيانات الراتب الشهري وسند الصرف";
+            this.groupBoxPayroll.Text = "بيانات الراتب الشهري وسند الصرف المالي";
             this.groupBoxPayroll.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.groupBoxPayroll.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.groupBoxPayroll.Padding = new System.Windows.Forms.Padding(10);
@@ -247,8 +247,8 @@
             this.panelButtons.Controls.Add(this.btnRefresh);
             this.panelButtons.Controls.Add(this.btnClear);
 
-            this.btnAdd.Text = "تسجيل وصرف الراتب";
-            this.btnAdd.Width = 180;
+            this.btnAdd.Text = "تسجيل الراتب وإنشاء سند الصرف";
+            this.btnAdd.Width = 230;
             this.btnAdd.Height = 38;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
 
@@ -267,7 +267,7 @@
             this.panelSearch.Controls.Add(this.lblSearch);
 
             this.lblSearch.Dock = System.Windows.Forms.DockStyle.Right;
-            this.lblSearch.Text = "بحث في سجلات الرواتب";
+            this.lblSearch.Text = "بحث في سجلات الرواتب:";
             this.lblSearch.Width = 190;
             this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblSearch.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
