@@ -809,12 +809,11 @@ namespace SchoolSystem.UI.Students
             }
 
 
-            DialogResult result = MessageBox.Show(
-
+            bool result = UIHelper.ShowConfirmation(
                 "هل تريد نقل " + ids.Count + " طالب إلى شعبة " + targetSection + "؟",
-                "تأكيد النقل", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
-            if (result != DialogResult.Yes)
+                "تأكيد النقل");
+
+            if (!result)
                 return;
 
             // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
