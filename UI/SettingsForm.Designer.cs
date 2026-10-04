@@ -378,12 +378,12 @@ namespace SchoolSystem.UI
             this.emailGroup.Controls.Add(this.emailTable);
             this.emailGroup.Dock = System.Windows.Forms.DockStyle.Top;
             this.emailGroup.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.emailGroup.Location = new System.Drawing.Point(18, 1084);
+            this.emailGroup.Location = new System.Drawing.Point(18, 1225);
             this.emailGroup.Margin = new System.Windows.Forms.Padding(0, 12, 0, 0);
             this.emailGroup.Name = "emailGroup";
             this.emailGroup.Padding = new System.Windows.Forms.Padding(12, 24, 12, 12);
             this.emailGroup.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.emailGroup.Size = new System.Drawing.Size(1242, 260);
+            this.emailGroup.Size = new System.Drawing.Size(1242, 275);
             this.emailGroup.TabIndex = 0;
             this.emailGroup.TabStop = false;
             this.emailGroup.Text = "البريد الإلكتروني والتنبيهات";
@@ -538,7 +538,7 @@ namespace SchoolSystem.UI
             this.generalGroup.Controls.Add(this.generalTable);
             this.generalGroup.Dock = System.Windows.Forms.DockStyle.Top;
             this.generalGroup.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.generalGroup.Location = new System.Drawing.Point(18, 864);
+            this.generalGroup.Location = new System.Drawing.Point(18, 993);
             this.generalGroup.Margin = new System.Windows.Forms.Padding(0, 12, 0, 0);
             this.generalGroup.Name = "generalGroup";
             this.generalGroup.Padding = new System.Windows.Forms.Padding(12, 24, 12, 12);
@@ -739,12 +739,12 @@ namespace SchoolSystem.UI
             this.systemGroup.Controls.Add(this.systemStatusLabel);
             this.systemGroup.Dock = System.Windows.Forms.DockStyle.Top;
             this.systemGroup.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.systemGroup.Location = new System.Drawing.Point(18, 564);
+            this.systemGroup.Location = new System.Drawing.Point(18, 584);
             this.systemGroup.Margin = new System.Windows.Forms.Padding(0, 12, 0, 0);
             this.systemGroup.Name = "systemGroup";
             this.systemGroup.Padding = new System.Windows.Forms.Padding(12, 24, 12, 12);
             this.systemGroup.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.systemGroup.Size = new System.Drawing.Size(1242, 380);
+            this.systemGroup.Size = new System.Drawing.Size(1242, 409);
             this.systemGroup.TabIndex = 2;
             this.systemGroup.TabStop = false;
             this.systemGroup.Text = "الاتصال والنسخ الاحتياطي والاستعادة";
@@ -1059,7 +1059,7 @@ namespace SchoolSystem.UI
             this.logoGroup.Controls.Add(this.logoPreviewPanel);
             this.logoGroup.Dock = System.Windows.Forms.DockStyle.Top;
             this.logoGroup.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            this.logoGroup.Location = new System.Drawing.Point(18, 374);
+            this.logoGroup.Location = new System.Drawing.Point(18, 394);
             this.logoGroup.Margin = new System.Windows.Forms.Padding(0, 12, 0, 0);
             this.logoGroup.Name = "logoGroup";
             this.logoGroup.Padding = new System.Windows.Forms.Padding(12, 24, 12, 10);
@@ -1149,7 +1149,7 @@ namespace SchoolSystem.UI
             this.schoolDataGroup.Name = "schoolDataGroup";
             this.schoolDataGroup.Padding = new System.Windows.Forms.Padding(12, 24, 12, 12);
             this.schoolDataGroup.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.schoolDataGroup.Size = new System.Drawing.Size(1242, 360);
+            this.schoolDataGroup.Size = new System.Drawing.Size(1242, 380);
             this.schoolDataGroup.TabIndex = 4;
             this.schoolDataGroup.TabStop = false;
             this.schoolDataGroup.Text = "بيانات المدرسة";
