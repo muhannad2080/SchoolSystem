@@ -360,15 +360,9 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            DialogResult confirmation = MessageBox.Show(
-                "هل تريد حذف المادة المحددة؟\\n\\nإذا كانت المادة مرتبطة بدرجات أو جدول أو مقرر دراسي فسيمنع النظام الحذف حفاظاً على البيانات.",
-                "تأكيد حذف المادة",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button2,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
-
-            if (confirmation != DialogResult.Yes)
+            if (!UIHelper.ShowConfirmation(
+                "هل تريد حذف المادة المحددة؟\n\nإذا كانت المادة مرتبطة بدرجات أو جدول أو مقرر دراسي فسيمنع النظام الحذف حفاظاً على البيانات.",
+                "تأكيد حذف المادة"))
                 return;
 
             try
