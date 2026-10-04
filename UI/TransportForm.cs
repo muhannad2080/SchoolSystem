@@ -59,6 +59,8 @@ namespace SchoolSystem.UI
 
             InitializeComponent();
 
+            ConfigureStudentTransportTab();
+
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
             Dock = DockStyle.Fill;
