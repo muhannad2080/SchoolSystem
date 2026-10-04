@@ -538,7 +538,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Welcome\welcome_hero.png">
+    <Content Include="Assets\Welcome\welcome_hero.png"
+              Condition="Exists('Assets\Welcome\welcome_hero.png')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Assets\Brand\SchoolSystem.ico">
@@ -553,7 +554,8 @@
     <Content Include="Database\databaseschool.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Database\SchoolDB_14480309_230530.bak">
+    <Content Include="Database\SchoolDB_14480309_230530.bak"
+              Condition="Exists('Database\SchoolDB_14480309_230530.bak')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <!-- <Content Include="Database\SchoolDB_Schema.sql">
