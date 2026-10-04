@@ -122,13 +122,13 @@ namespace SchoolSystem.UI
 
             cmbStatus.SelectedIndexChanged += cmbStatus_SelectedIndexChanged;
 
-            dtpFromDate.ValueChanged -= dtpFromDate_ValueChanged;
+            dtpFromDate.ValueChanged -= reportFilter_ValueChanged;
 
-            dtpFromDate.ValueChanged += dtpFromDate_ValueChanged;
+            dtpFromDate.ValueChanged += reportFilter_ValueChanged;
 
-            dtpToDate.ValueChanged -= dtpToDate_ValueChanged;
+            dtpToDate.ValueChanged -= reportFilter_ValueChanged;
 
-            dtpToDate.ValueChanged += dtpToDate_ValueChanged;
+            dtpToDate.ValueChanged += reportFilter_ValueChanged;
 
             btnExportExcel.Click -= btnExportExcel_Click;
 
@@ -154,7 +154,7 @@ namespace SchoolSystem.UI
         }
 
         // تعريف الدالة cmbTerm_SelectedIndexChanged لتنفيذ العملية المرتبطة بها.
-        private async void cmbTerm_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbTerm_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (isLoadingFilters || !IsHandleCreated || cmbReportType.SelectedIndex < 0)
                 return;
@@ -403,7 +403,7 @@ namespace SchoolSystem.UI
 
         private void reportFilter_ValueChanged(object sender, EventArgs e)
         {
-            if (isLoadingFilters)
+            if (isLoadingFilters || !IsHandleCreated || cmbReportType.SelectedIndex < 0)
                 return;
 
             ScheduleAutomaticReportLoad();
