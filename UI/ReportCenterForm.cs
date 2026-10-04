@@ -114,6 +114,22 @@ namespace SchoolSystem.UI
 
             cmbTerm.SelectedIndexChanged += cmbTerm_SelectedIndexChanged;
 
+            cmbSection.SelectedIndexChanged -= cmbSection_SelectedIndexChanged;
+
+            cmbSection.SelectedIndexChanged += cmbSection_SelectedIndexChanged;
+
+            cmbStatus.SelectedIndexChanged -= cmbStatus_SelectedIndexChanged;
+
+            cmbStatus.SelectedIndexChanged += cmbStatus_SelectedIndexChanged;
+
+            dtpFromDate.ValueChanged -= dtpFromDate_ValueChanged;
+
+            dtpFromDate.ValueChanged += dtpFromDate_ValueChanged;
+
+            dtpToDate.ValueChanged -= dtpToDate_ValueChanged;
+
+            dtpToDate.ValueChanged += dtpToDate_ValueChanged;
+
             btnExportExcel.Click -= btnExportExcel_Click;
 
             btnExportExcel.Click += btnExportExcel_Click;
@@ -143,10 +159,7 @@ namespace SchoolSystem.UI
             if (isLoadingFilters || !IsHandleCreated || cmbReportType.SelectedIndex < 0)
                 return;
 
-            if (cmbReportType.Text != "كشف نتائج الفصل")
-                return;
-
-            await LoadReportAsync(false);
+            ScheduleAutomaticReportLoad();
         }
 
         // تعريف الدالة cmbReportType_SelectedIndexChanged لتنفيذ العملية المرتبطة بها.
@@ -196,6 +209,9 @@ namespace SchoolSystem.UI
         // تعريف الدالة ScheduleAutomaticReportLoad لتنفيذ العملية المرتبطة بها.
         private void ScheduleAutomaticReportLoad()
         {
+            if (isLoadingFilters || !IsHandleCreated || cmbReportType.SelectedIndex < 0)
+                return;
+
             studentSearchTimer.Stop();
 
             if (cmbReportType.Text == "كشف درجات طالب" && string.IsNullOrWhiteSpace(txtSearch.Text))
