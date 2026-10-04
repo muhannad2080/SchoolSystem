@@ -33,6 +33,30 @@ namespace SchoolSystem.UiSmokeTests
             Console.WriteLine("SchoolSystem UI Smoke Test");
             Console.WriteLine("Screens discovered: " + screenTypes.Count);
 
+            try
+            {
+                using (SchoolSystem.MainForm mainForm = new SchoolSystem.MainForm())
+                {
+                    if (mainForm.IsDisposed)
+                        throw new ObjectDisposedException("MainForm");
+                }
+
+                passed++;
+                Console.WriteLine("[PASS] MainForm");
+            }
+            catch (Exception ex)
+            {
+                failed++;
+                Exception root = ex;
+                while (root.InnerException != null)
+                    root = root.InnerException;
+
+                Console.WriteLine(
+                    "[FAIL] MainForm: " +
+                    root.GetType().Name + " - " +
+                    root.Message);
+            }
+
             foreach (Type type in screenTypes)
             {
                 try
