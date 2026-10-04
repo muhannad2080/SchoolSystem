@@ -169,6 +169,73 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        // يعيد العقد الساري الفعلي للموظف في تاريخ اليوم، لاستخدامه كمصدر افتراضي للراتب الشهري.
+        public TeacherContract GetActiveContract(int teacherId)
+        {
+            if (teacherId <= 0)
+                return null;
+
+            using (SqlConnection conn = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+SELECT TOP (1)
+    ContractID,
+    TeacherID,
+    ContractNumber,
+    ContractType,
+    ContractStatus,
+    BasicSalary,
+    HousingAllowance,
+    TransportAllowance,
+    OtherAllowances,
+    Deductions,
+    TotalSalary,
+    NetSalary,
+    StartDate,
+    EndDate,
+    PaymentMethod,
+    Notes,
+    CreatedAt,
+    UpdatedAt
+FROM dbo.TeacherContracts
+WHERE TeacherID = @TeacherID
+  AND ContractStatus = N'ساري'
+  AND StartDate <= CAST(GETDATE() AS DATE)
+  AND (EndDate IS NULL OR EndDate >= CAST(GETDATE() AS DATE))
+ORDER BY StartDate DESC, ContractID DESC;", conn))
+            {
+                cmd.Parameters.Add("@TeacherID", SqlDbType.Int).Value = teacherId;
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (!reader.Read())
+                        return null;
+
+                    return new TeacherContract
+                    {
+                        ContractID = Convert.ToInt32(reader["ContractID"]),
+                        TeacherID = Convert.ToInt32(reader["TeacherID"]),
+                        ContractNumber = Convert.ToString(reader["ContractNumber"]),
+                        ContractType = Convert.ToString(reader["ContractType"]),
+                        ContractStatus = Convert.ToString(reader["ContractStatus"]),
+                        BasicSalary = reader["BasicSalary"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["BasicSalary"]),
+                        HousingAllowance = reader["HousingAllowance"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["HousingAllowance"]),
+                        TransportAllowance = reader["TransportAllowance"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["TransportAllowance"]),
+                        OtherAllowances = reader["OtherAllowances"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["OtherAllowances"]),
+                        Deductions = reader["Deductions"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["Deductions"]),
+                        TotalSalary = reader["TotalSalary"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["TotalSalary"]),
+                        NetSalary = reader["NetSalary"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["NetSalary"]),
+                        StartDate = Convert.ToDateTime(reader["StartDate"]),
+                        EndDate = reader["EndDate"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["EndDate"]),
+                        PaymentMethod = reader["PaymentMethod"] == DBNull.Value ? string.Empty : Convert.ToString(reader["PaymentMethod"]),
+                        Notes = reader["Notes"] == DBNull.Value ? string.Empty : Convert.ToString(reader["Notes"]),
+                        CreatedAt = Convert.ToDateTime(reader["CreatedAt"]),
+                        UpdatedAt = reader["UpdatedAt"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(reader["UpdatedAt"])
+                    };
+                }
+            }
+        }
+
         // تعريف الدالة HasActiveContract لتنفيذ العملية المرتبطة بها.
         public bool HasActiveContract(int teacherId)
         {
