@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -87,6 +88,22 @@ namespace SchoolSystem.UiSmokeTests
             int passed = 0;
             int failed = 0;
             int manual = 0;
+
+            string pdfAssemblyPath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "iTextSharp.LGPLv2.Core.dll");
+
+            if (File.Exists(pdfAssemblyPath))
+            {
+                passed++;
+                Console.WriteLine("[PASS] PDF dependency: iTextSharp.LGPLv2.Core.dll");
+            }
+            else
+            {
+                failed++;
+                Console.WriteLine(
+                    "[FAIL] PDF dependency: iTextSharp.LGPLv2.Core.dll is missing from output.");
+            }
 
             Console.WriteLine("SchoolSystem UI Smoke Test");
             Console.WriteLine("Screens discovered: " + screenTypes.Count);
