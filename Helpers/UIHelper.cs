@@ -596,10 +596,48 @@ namespace SchoolSystem.Helpers
         // تعريف الدالة TryParseDecimal لتنفيذ العملية المرتبطة بها.
         public static bool TryParseDecimal(string value, out decimal number)
         {
+            number = 0m;
 
-            return decimal.TryParse((value ?? string.Empty).Trim(),
+            string text = (value ?? string.Empty).Trim();
+            if (text.Length == 0)
+                return false;
+
+            if (decimal.TryParse(
+                text,
                 System.Globalization.NumberStyles.Number,
                 System.Globalization.CultureInfo.CurrentCulture,
+                out number))
+                return true;
+
+            char[] chars = text.ToCharArray();
+            for (int i = 0; i < chars.Length; i++)
+            {
+                char c = chars[i];
+
+                if (c >= '٠' && c <= '٩')
+                    chars[i] = (char)('0' + (c - '٠'));
+                else if (c >= '۰' && c <= '۹')
+                    chars[i] = (char)('0' + (c - '۰'));
+                else if (c == '٫')
+                    chars[i] = '.';
+                else if (c == '٬')
+                    chars[i] = ',';
+            }
+
+            string normalized = new string(chars);
+
+            if (decimal.TryParse(
+                normalized,
+                System.Globalization.NumberStyles.Number,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out number))
+                return true;
+
+            string compact = normalized.Replace(",", string.Empty);
+            return decimal.TryParse(
+                compact,
+                System.Globalization.NumberStyles.Number,
+                System.Globalization.CultureInfo.InvariantCulture,
                 out number);
         }
 
