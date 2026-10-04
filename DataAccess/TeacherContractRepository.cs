@@ -56,8 +56,10 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
+                // TotalSalary وNetSalary أعمدة محسوبة في قاعدة البيانات.
+                // لا تُذكر في INSERT نهائياً؛ SQL Server يحسبهما من الحقول الأساسية والبدلات والخصومات.
                 string query = @"
-                    INSERT INTO TeacherContracts
+                    INSERT INTO dbo.TeacherContracts
                     (
                         TeacherID,
                         ContractNumber,
@@ -74,6 +76,7 @@ namespace SchoolSystem.DataAccess
                         Notes,
                         CreatedAt
                     )
+                    OUTPUT INSERTED.ContractID
                     VALUES
                     (
                         @TeacherID,
@@ -99,7 +102,13 @@ namespace SchoolSystem.DataAccess
 
                     conn.Open();
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    object result = cmd.ExecuteScalar();
+                    if (result == null || result == DBNull.Value)
+                        return false;
+
+                    // حفظ المعرّف المولد في النموذج حتى يمكن تسجيل العملية بدقة.
+                    contract.ContractID = Convert.ToInt32(result);
+                    return contract.ContractID > 0;
                 }
             }
         }
