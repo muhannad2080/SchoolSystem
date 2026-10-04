@@ -20,6 +20,7 @@ namespace SchoolSystem.UI
 
         private DataTable allPayrolls;
         private bool suppressTeacherChange;
+        private bool isBusy;
         private int activeContractId;
 
         public PayrollRecordsForm()
@@ -66,6 +67,8 @@ namespace SchoolSystem.UI
             txtDeductions.KeyPress += NumericTextBox_KeyPress;
             txtSearch.TextChanged += txtSearch_TextChanged;
             cmbTeacher.SelectedIndexChanged += cmbTeacher_SelectedIndexChanged;
+            cmbMonth.SelectedIndexChanged += cmbMonth_SelectedIndexChanged;
+            txtSalaryYear.ValueChanged += txtSalaryYear_ValueChanged;
             dataGridViewPayrolls.DataBindingComplete += (s, e) => FormatGridColumns();
         }
 
@@ -143,7 +146,7 @@ namespace SchoolSystem.UI
 
         private async void cmbTeacher_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (suppressTeacherChange || busy || IsDisposed || Disposing)
+            if (suppressTeacherChange || isBusy || IsDisposed || Disposing)
                 return;
 
             await LoadActiveContractAsync(true);
@@ -192,7 +195,7 @@ namespace SchoolSystem.UI
                     cmbPaymentMethod.SelectedIndex = paymentMethodIndex;
 
                 SalaryField_TextChanged(this, EventArgs.Empty);
-                SetAddState(true);
+                await RefreshEntryStateAsync();
             }
             catch (Exception ex)
             {
@@ -213,12 +216,78 @@ namespace SchoolSystem.UI
             txtNetSalary.Text = "0";
         }
 
-        private void SetAddState(bool hasActiveContract)
+        private void SetAddState(bool canAdd, string reason = null)
         {
-            btnAdd.Enabled = hasActiveContract && !busy;
-            btnAdd.Text = hasActiveContract
+            btnAdd.Enabled = canAdd && !isBusy;
+            btnAdd.Text = canAdd
                 ? "تسجيل الراتب وإنشاء سند الصرف"
-                : "لا يوجد عقد ساري";
+                : (string.IsNullOrWhiteSpace(reason) ? "غير متاح" : reason);
+        }
+
+        private async void cmbMonth_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            await RefreshEntryStateAsync();
+        }
+
+        private async void txtSalaryYear_ValueChanged(object sender, EventArgs e)
+        {
+            await RefreshEntryStateAsync();
+        }
+
+        private bool IsFutureSalaryPeriod(int month, int year)
+        {
+            return year > DateTime.Today.Year ||
+                (year == DateTime.Today.Year && month > DateTime.Today.Month);
+        }
+
+        private async Task RefreshEntryStateAsync()
+        {
+            if (suppressTeacherChange || isBusy || IsDisposed || Disposing)
+                return;
+
+            if (!int.TryParse(cmbTeacher.SelectedValue == null ? "" : cmbTeacher.SelectedValue.ToString(), out int teacherId) ||
+                teacherId <= 0)
+            {
+                SetAddState(false, "اختر معلماً");
+                return;
+            }
+
+            int month = GetSelectedMonth();
+            int year = Convert.ToInt32(txtSalaryYear.Value);
+
+            if (month < 1 || month > 12 || year < 2000 || year > 2100)
+            {
+                SetAddState(false, "فترة غير صحيحة");
+                return;
+            }
+
+            if (IsFutureSalaryPeriod(month, year))
+            {
+                SetAddState(false, "الفترة المستقبلية غير مسموحة");
+                return;
+            }
+
+            if (activeContractId <= 0)
+            {
+                SetAddState(false, "لا يوجد عقد ساري");
+                return;
+            }
+
+            try
+            {
+                bool exists = await Task.Run(
+                    () => payrollService.PayrollExists(teacherId, month, year));
+
+                if (exists)
+                    SetAddState(false, "الراتب مسجل لهذه الفترة");
+                else
+                    SetAddState(true);
+            }
+            catch (Exception ex)
+            {
+                SetAddState(false, "تعذر التحقق من الفترة");
+                ApplicationLogger.LogException("واجهة الرواتب الشهرية: التحقق من سجل الفترة", ex);
+            }
         }
 
         private async Task LoadPayrollsAsync()
@@ -362,6 +431,12 @@ namespace SchoolSystem.UI
             int month = GetSelectedMonth();
             int year = Convert.ToInt32(txtSalaryYear.Value);
 
+            if (IsFutureSalaryPeriod(month, year))
+            {
+                UIHelper.ShowWarning("لا يمكن تسجيل راتب لفترة شهرية مستقبلية.");
+                return;
+            }
+
             decimal basic = ParseMoney(txtBasicSalary.Text);
             decimal allowances = ParseMoney(txtAllowances.Text);
             decimal deductions = ParseMoney(txtDeductions.Text);
@@ -445,16 +520,17 @@ namespace SchoolSystem.UI
             e.Handled = true;
         }
 
-        private void SetBusy(bool busy)
+        private void SetBusy(bool value)
         {
-            btnRefresh.Enabled = !busy;
-            btnClear.Enabled = !busy;
-            btnAdd.Enabled = !busy && activeContractId > 0;
+            isBusy = value;
+            btnRefresh.Enabled = !value;
+            btnClear.Enabled = !value;
+            btnAdd.Enabled = !value && activeContractId > 0;
             if (activeContractId > 0)
                 btnAdd.Text = "تسجيل الراتب وإنشاء سند الصرف";
             else
                 btnAdd.Text = "لا يوجد عقد ساري";
-            UseWaitCursor = busy;
+            UseWaitCursor = value;
         }
     }
 }
