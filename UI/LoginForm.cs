@@ -25,6 +25,14 @@ namespace SchoolSystem.UI
             btnLogin.BackColor = UIHelper.AccentColor;
             btnLogin.ForeColor = System.Drawing.Color.White;
 
+            // حالة التركيز تُظهر للمستخدم الحقل النشط بدون تغيير منطق المصادقة.
+            txtUserName.Enter += Input_Enter;
+            txtUserName.Leave += Input_Leave;
+            txtPassword.Enter += Input_Enter;
+            txtPassword.Leave += Input_Leave;
+
+            lblStatus.Text = "الحالة: جاهز لتسجيل الدخول";
+
             // ============================================================
             // ملاحظة:
             // تم إزالة جميع أوامر التنسيق والتصميم من هنا حتى يكون
@@ -87,6 +95,9 @@ namespace SchoolSystem.UI
                 txtUserName.Text = "";
                 txtUserName.ForeColor = UIHelper.TextColor;
             }
+
+            pnlUser.BackColor = Color.FromArgb(240, 253, 250);
+            txtUserName.BackColor = Color.FromArgb(240, 253, 250);
         }
 
         // تعريف الدالة txtUserName_Leave لتنفيذ العملية المرتبطة بها.
@@ -97,6 +108,9 @@ namespace SchoolSystem.UI
                 txtUserName.Text = "اسم المستخدم";
                 txtUserName.ForeColor = UIHelper.TextDisabledColor;
             }
+
+            pnlUser.BackColor = UIHelper.BackgroundColor;
+            txtUserName.BackColor = UIHelper.BackgroundColor;
         }
 
         // تعريف الدالة txtPassword_Enter لتنفيذ العملية المرتبطة بها.
@@ -113,6 +127,9 @@ namespace SchoolSystem.UI
                 // تجهيز قيمة كلمة المرور لمسار التحقق والحماية.
                 txtPassword.PasswordChar = '●';
             }
+
+            pnlPassword.BackColor = Color.FromArgb(240, 253, 250);
+            txtPassword.BackColor = Color.FromArgb(240, 253, 250);
         }
 
         // تعريف الدالة txtPassword_Leave لتنفيذ العملية المرتبطة بها.
@@ -129,6 +146,27 @@ namespace SchoolSystem.UI
                 // تجهيز قيمة كلمة المرور لمسار التحقق والحماية.
                 txtPassword.PasswordChar = '\0';
             }
+
+            pnlPassword.BackColor = UIHelper.BackgroundColor;
+            txtPassword.BackColor = UIHelper.BackgroundColor;
+        }
+
+        private void Input_Enter(object sender, EventArgs e)
+        {
+            Control input = sender as Control;
+            if (input == null)
+                return;
+
+            input.BackColor = Color.FromArgb(240, 253, 250);
+        }
+
+        private void Input_Leave(object sender, EventArgs e)
+        {
+            Control input = sender as Control;
+            if (input == null)
+                return;
+
+            input.BackColor = UIHelper.BackgroundColor;
         }
 
         // تعريف الدالة NormalizeDigits لتنفيذ العملية المرتبطة بها.
@@ -177,6 +215,8 @@ namespace SchoolSystem.UI
                 btnExit.Enabled = false;
                 UseWaitCursor = true;
                 btnLogin.Text = "جارٍ التحقق...";
+                lblStatus.Text = "الحالة: جارٍ التحقق من بيانات الدخول...";
+                lblStatus.ForeColor = UIHelper.InfoColor;
 
                 Refresh();
 
@@ -184,6 +224,8 @@ namespace SchoolSystem.UI
                 User authenticatedUser = userService.Authenticate(userName, password);
 
                 ApplicationLogger.LogUsage("شاشة الدخول", "تسجيل دخول", "المستخدم '" + userName + "' نجح في تسجيل الدخول");
+                lblStatus.Text = "الحالة: تم التحقق، جاري فتح النظام...";
+                lblStatus.ForeColor = UIHelper.SuccessColor;
 
                 // تمرير قيمة كلمة المرور إلى مسار التحقق.
                 if (authenticatedUser.MustChangePassword)
@@ -211,6 +253,8 @@ namespace SchoolSystem.UI
                 ApplicationLogger.LogException("تسجيل الدخول في شاشة الدخول", ex);
                 ShowLoginFailure(ex);
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
+                lblStatus.Text = "الحالة: تعذر تسجيل الدخول";
+                lblStatus.ForeColor = UIHelper.DangerColor;
 
                 // تمرير قيمة كلمة المرور إلى مسار التحقق والحماية.
                 txtPassword.Clear();
