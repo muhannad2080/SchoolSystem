@@ -82,8 +82,8 @@ namespace SchoolSystem.UI
             this.panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelHeader.Location = new System.Drawing.Point(0, 0);
             this.panelHeader.Name = "panelHeader";
-            this.panelHeader.Padding = new System.Windows.Forms.Padding(18, 12, 18, 12);
-            this.panelHeader.Size = new System.Drawing.Size(1100, 116);
+            this.panelHeader.Padding = new System.Windows.Forms.Padding(18, 10, 18, 10);
+            this.panelHeader.Size = new System.Drawing.Size(1100, 124);
             this.panelHeader.TabIndex = 0;
             // 
             // tlpHeader
@@ -91,17 +91,17 @@ namespace SchoolSystem.UI
             this.tlpHeader.ColumnCount = 3;
             this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 265F));
-            this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 155F));
+            this.tlpHeader.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 165F));
             this.tlpHeader.Controls.Add(this.pnlTitle, 0, 0);
             this.tlpHeader.Controls.Add(this.pnlMeta, 1, 0);
             this.tlpHeader.Controls.Add(this.btnRefreshDashboard, 2, 0);
             this.tlpHeader.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpHeader.Location = new System.Drawing.Point(18, 12);
+            this.tlpHeader.Location = new System.Drawing.Point(18, 10);
             this.tlpHeader.Name = "tlpHeader";
             this.tlpHeader.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tlpHeader.RowCount = 1;
             this.tlpHeader.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpHeader.Size = new System.Drawing.Size(1064, 92);
+            this.tlpHeader.Size = new System.Drawing.Size(1064, 96);
             this.tlpHeader.TabIndex = 0;
             // 
             // pnlTitle
@@ -217,15 +217,15 @@ namespace SchoolSystem.UI
             // 
             this.btnRefreshDashboard.AccessibleDescription = "إعادة تحميل مؤشرات لوحة التحكم والبيانات الحالية";
             this.btnRefreshDashboard.AccessibleName = "تحديث بيانات لوحة التحكم";
-            this.btnRefreshDashboard.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.btnRefreshDashboard.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnRefreshDashboard.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnRefreshDashboard.FlatAppearance.BorderSize = 0;
             this.btnRefreshDashboard.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefreshDashboard.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
-            this.btnRefreshDashboard.Location = new System.Drawing.Point(10, 24);
-            this.btnRefreshDashboard.MinimumSize = new System.Drawing.Size(135, 44);
+            this.btnRefreshDashboard.Margin = new System.Windows.Forms.Padding(8, 10, 8, 10);
+            this.btnRefreshDashboard.MinimumSize = new System.Drawing.Size(145, 44);
             this.btnRefreshDashboard.Name = "btnRefreshDashboard";
-            this.btnRefreshDashboard.Size = new System.Drawing.Size(135, 44);
+            this.btnRefreshDashboard.Padding = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.btnRefreshDashboard.TabIndex = 2;
             this.btnRefreshDashboard.Text = "تحديث البيانات";
             this.btnRefreshDashboard.UseVisualStyleBackColor = false;
@@ -237,13 +237,13 @@ namespace SchoolSystem.UI
             this.tableLayoutMain.Controls.Add(this.panelCards, 0, 0);
             this.tableLayoutMain.Controls.Add(this.tableLayoutLower, 0, 1);
             this.tableLayoutMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutMain.Location = new System.Drawing.Point(0, 116);
+            this.tableLayoutMain.Location = new System.Drawing.Point(0, 124);
             this.tableLayoutMain.Name = "tableLayoutMain";
             this.tableLayoutMain.Padding = new System.Windows.Forms.Padding(14, 12, 14, 14);
             this.tableLayoutMain.RowCount = 2;
             this.tableLayoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 132F));
             this.tableLayoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutMain.Size = new System.Drawing.Size(1100, 544);
+            this.tableLayoutMain.Size = new System.Drawing.Size(1100, 536);
             this.tableLayoutMain.TabIndex = 1;
             // 
             // panelCards
