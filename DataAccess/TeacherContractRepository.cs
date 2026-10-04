@@ -274,8 +274,8 @@ namespace SchoolSystem.DataAccess
 
             cmd.Parameters.AddWithValue("@Deductions", contract.Deductions);
 
-            // TotalSalary وNetSalary أعمدة محسوبة في dbo.TeacherContracts،
-            // لذلك لا تُرسل ضمن INSERT/UPDATE.
+            // TotalSalary وNetSalary أعمدة محسوبة في dbo.TeacherContracts؛
+            // لا تُرسل ضمن INSERT/UPDATE إطلاقاً حتى لا ينتج SQL error 271.
 
             cmd.Parameters.AddWithValue("@StartDate", contract.StartDate.Date);
 
