@@ -21,6 +21,8 @@ namespace SchoolSystem.UI
 
         private void InitializeComponent()
         {
+            // Initialize the WinForms component container before creating component-bound controls.
+            this.components = new System.ComponentModel.Container();
             this.panelBackground = new System.Windows.Forms.Panel();
             this.layoutRoot = new System.Windows.Forms.TableLayoutPanel();
             this.panelBrand = new System.Windows.Forms.Panel();
