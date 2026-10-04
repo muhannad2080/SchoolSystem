@@ -326,10 +326,6 @@ namespace SchoolSystem.DataAccess
                            REPLACE(@AcademicYear, N''-'', N''/'')
                     )";
 
-            if (!string.IsNullOrWhiteSpace(request.AcademicYear))
-                query += " AND REPLACE(ISNULL(s.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
-
-
             if (request.ClassID.HasValue)
                 query += " AND ISNULL(ya.ClassID, 0) = @ClassID";
 
