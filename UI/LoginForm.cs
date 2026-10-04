@@ -274,15 +274,9 @@ namespace SchoolSystem.UI
         // تعريف الدالة btnExit_Click لتنفيذ العملية المرتبطة بها.
         private void btnExit_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show(
+            if (UIHelper.ShowConfirmation(
                 "هل تريد إغلاق نظام إدارة المدرسة؟",
-                "تأكيد الإغلاق",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
-
-            if (result == DialogResult.Yes)
+                "تأكيد الإغلاق"))
             {
                 ApplicationLogger.LogUsage("شاشة الدخول", "إغلاق النظام", "المستخدم اختار إغلاق التطبيق");
                 AppShouldExit = true;
