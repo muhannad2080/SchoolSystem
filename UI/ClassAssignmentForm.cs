@@ -754,12 +754,11 @@ namespace SchoolSystem.UI.Students
             }
 
 
-            DialogResult result = MessageBox.Show(
-
+            bool result = UIHelper.ShowConfirmation(
                 "هل تريد إزالة توزيع " + ids.Count + " طالب؟",
-                "تأكيد الإزالة الجماعية", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button2, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
-            if (result != DialogResult.Yes)
+                "تأكيد الإزالة الجماعية");
+
+            if (!result)
                 return;
 
             // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
