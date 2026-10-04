@@ -2249,13 +2249,11 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            DialogResult result =
-                if (!UIHelper.ShowConfirmation(
-                    "سيتم أرشفة الطالب وإخفاؤه من قائمة الطلاب. لن يُحذف السجل من قاعدة البيانات أو السجلات المرتبطة به. هل تريد المتابعة؟",
-                    "تأكيد أرشفة الطالب"))
-                    return;
+            bool confirmed = UIHelper.ShowConfirmation(
+                "سيتم أرشفة الطالب وإخفاؤه من قائمة الطلاب. لن يُحذف السجل من قاعدة البيانات أو السجلات المرتبطة به. هل تريد المتابعة؟",
+                "تأكيد أرشفة الطالب");
 
-            if (result != DialogResult.Yes)
+            if (!confirmed)
                 return;
 
             try
