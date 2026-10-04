@@ -1,5 +1,9 @@
 name: Build SchoolSystem
 
+concurrency:
+  group: school-system-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     branches:
