@@ -769,7 +769,7 @@ namespace SchoolSystem.UI
             editor.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
             editor.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
 
-            txtTransportAcademicYear = new TextBox { Text = "2026/2027", Dock = DockStyle.Fill };
+            txtTransportAcademicYear = new TextBox { Dock = DockStyle.Fill };
             cmbTransportStudent = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Fill };
             cmbTransportRoute = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Dock = DockStyle.Fill };
             txtPickupPoint = new TextBox { Dock = DockStyle.Fill, MaxLength = 200 };
