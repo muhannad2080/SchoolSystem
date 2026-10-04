@@ -527,7 +527,7 @@ namespace SchoolSystem.UI
             btnClear.Enabled = !value;
             btnAdd.Enabled = !value && activeContractId > 0;
             if (activeContractId > 0)
-                btnAdd.Text = "تسجيل الراتب وإنشاء سند الصرف";
+                btnAdd.Text = "تسجيل وصرف الراتب";
             else
                 btnAdd.Text = "لا يوجد عقد ساري";
             UseWaitCursor = value;
