@@ -1307,11 +1307,10 @@ namespace SchoolSystem
             object sender,
             EventArgs e)
         {
-            DialogResult result =
+            bool confirmed =
                 UIHelper.ShowConfirmation("هل تريد تسجيل الخروج؟", "تسجيل الخروج");
 
-            if (result !=
-                DialogResult.Yes)
+            if (!confirmed)
             {
                 return;
             }
