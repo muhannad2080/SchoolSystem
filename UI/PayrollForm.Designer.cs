@@ -102,7 +102,7 @@ namespace SchoolSystem.UI
             this.lblTitle.Name = "lblTitle";
             this.lblTitle.Size = new System.Drawing.Size(1100, 58);
             this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "العقود والرواتب";
+            this.lblTitle.Text = "إدارة العقود الوظيفية";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // mainContainer
@@ -152,7 +152,7 @@ namespace SchoolSystem.UI
             this.groupBoxContract.Size = new System.Drawing.Size(1070, 259);
             this.groupBoxContract.TabIndex = 0;
             this.groupBoxContract.TabStop = false;
-            this.groupBoxContract.Text = "بيانات العقد والراتب";
+            this.groupBoxContract.Text = "بيانات العقد الوظيفي والراتب المتفق عليه";
             // 
             // tableLayoutFields
             // 
@@ -644,7 +644,7 @@ namespace SchoolSystem.UI
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(148, 42);
             this.btnAdd.TabIndex = 15;
-            this.btnAdd.Text = "إضافة سجل راتب";
+            this.btnAdd.Text = "إضافة عقد";
             this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
@@ -663,7 +663,7 @@ namespace SchoolSystem.UI
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(155, 42);
             this.btnUpdate.TabIndex = 16;
-            this.btnUpdate.Text = "تعديل سجل الراتب";
+            this.btnUpdate.Text = "تعديل العقد";
             this.btnUpdate.UseVisualStyleBackColor = false;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
             // 
@@ -682,7 +682,7 @@ namespace SchoolSystem.UI
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(151, 42);
             this.btnDelete.TabIndex = 17;
-            this.btnDelete.Text = "حذف سجل الراتب";
+            this.btnDelete.Text = "حذف العقد";
             this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
@@ -739,7 +739,7 @@ namespace SchoolSystem.UI
             this.lblSearch.Name = "lblSearch";
             this.lblSearch.Size = new System.Drawing.Size(120, 28);
             this.lblSearch.TabIndex = 0;
-            this.lblSearch.Text = "بحث سريع:";
+            this.lblSearch.Text = "بحث عن عقد:";
             this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // dataGridViewContracts
