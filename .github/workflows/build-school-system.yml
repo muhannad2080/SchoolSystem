@@ -34,4 +34,4 @@ jobs:
         run: msbuild .\Tests\UiSmokeTests\SchoolSystem.UiSmokeTests.csproj /m /p:Configuration=Release /p:Platform=AnyCPU
 
       - name: Run UI smoke tests
-        run: .\Tests\UiSmokeTests\bin\Release\SchoolSystem.UiSmokeTests.exe
+        run: .\bin\Release\SchoolSystem.UiSmokeTests.exe
