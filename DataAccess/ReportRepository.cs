@@ -350,9 +350,15 @@ namespace SchoolSystem.DataAccess
                     hasGuardianPhone ? "CONVERT(nvarchar(30), s.GuardianPhone)" : null
                 };
 
-                searchFields = searchFields.Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
-                if (searchFields.Length > 0)
-                    query += " AND (" + string.Join(" LIKE @Search OR ", searchFields) + " LIKE @Search)";
+                List<string> validSearchFields = new List<string>();
+                foreach (string field in searchFields)
+                {
+                    if (!string.IsNullOrWhiteSpace(field))
+                        validSearchFields.Add(field);
+                }
+
+                if (validSearchFields.Count > 0)
+                    query += " AND (" + string.Join(" LIKE @Search OR ", validSearchFields) + " LIKE @Search)";
             }
 
             query += " ORDER BY CONVERT(nvarchar(200), s.FullName)";
