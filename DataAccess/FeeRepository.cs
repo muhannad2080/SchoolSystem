@@ -801,14 +801,14 @@ namespace SchoolSystem.DataAccess
                         INNER JOIN FeePlans fp ON fp.ClassID = e.ClassID
                         WHERE e.StudentID = @StudentID
                           AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
                           AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                           AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) IN (N'رسوم تسجيل', N'رسوم التسجيل', N'التسجيل', N'Registration Fee')
                     ) x
                     ORDER BY x.FeePlanID;
 
-                    IF @ResolvedFeePlanID IS NULL
-                        THROW 51049, N'لا توجد خطة رسوم تسجيل مطابقة لصف الطالب في العام الدراسي المحدد.', 1;
+                    /* FeePlanID اختياري في جدول Fees.
+                       رسوم التسجيل يمكن تسجيلها كبند مستقل إذا لم تُعرّف خطة صفية
+                       لهذا الصف/العام، مع إبقاء الربط بخطة الرسوم عندما تكون موجودة. */
 
                     IF @ResolvedFeePlanID IS NOT NULL
                     BEGIN
