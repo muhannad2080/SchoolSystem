@@ -95,7 +95,7 @@ namespace SchoolSystem.UI
                 UIHelper.StyleButton(btnApplyRolePreset, UIHelper.AccentColor);
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 UIHelper.StyleButton(btnReloadPermissions, UIHelper.NeutralColor);
-                UIHelper.StyleButton(btnCloseForm, UIHelper.DangerColor);
+                UIHelper.StyleButton(btnCloseForm, UIHelper.NeutralColor);
             }
             UIHelper.StyleTextBox(txtFullName);
             UIHelper.StyleTextBox(txtUserName);
