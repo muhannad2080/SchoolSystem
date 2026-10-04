@@ -1106,17 +1106,12 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            DialogResult result =
-                MessageBox.Show(
+            bool result =
+                UIHelper.ShowConfirmation(
                     "هل تريد حذف درجة الطالب المحددة؟",
-                    "تأكيد الحذف",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button2,
-                    MessageBoxOptions.RightAlign |
-                    MessageBoxOptions.RtlReading);
+                    "تأكيد الحذف");
 
-            if (result != DialogResult.Yes)
+            if (!result)
                 return;
 
             try
