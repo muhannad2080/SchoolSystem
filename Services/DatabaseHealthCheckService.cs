@@ -40,7 +40,10 @@ namespace SchoolSystem.Services
             "FeePlans", "Vouchers", "AcademicYears", "Teachers", "Marks",
             "Grades", "StudentAttendance", "TeacherAttendance",
             "Payroll", "TeacherContracts", "Expenses",
-            "AcademicYearCurrent", "AnnualClosings", "AnnualMigrationLog", "DatabaseBackupHistory"
+            "AcademicYearCurrent", "AnnualClosings", "AnnualMigrationLog", "DatabaseBackupHistory",
+            "AcademicTerms", "Stages", "Subjects", "ClassSubjects", "ClassSubjectTerms",
+            "Enrollments", "SchoolTimetable", "Books", "BookBorrowings", "Buses", "BusRoutes",
+            "Rooms", "AuditLogs"
         };
 
         private static readonly Dictionary<string, string[]> RequiredColumns =
