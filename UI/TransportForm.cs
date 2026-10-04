@@ -69,8 +69,6 @@ namespace SchoolSystem.UI
 
             tabControl.SelectedIndexChanged += TabControl_SelectedIndexChanged;
 
-            ConfigureStudentTransportTab();
-
             // تقييد حقل رقم الحافلة: أحرف وأرقام وشرطات فقط.
             txtBusNumber.MaxLength = 30;
             txtBusNumber.KeyPress -= BusNumber_KeyPress;
