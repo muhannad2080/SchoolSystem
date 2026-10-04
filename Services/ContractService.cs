@@ -225,6 +225,17 @@ namespace SchoolSystem.Services
 
                 throw new ArgumentException("تاريخ نهاية العقد يجب أن يكون بعد تاريخ البداية.");
 
+            if (contract.ContractStatus == "ساري" &&
+                contract.StartDate.Date > DateTime.Today)
+
+                throw new ArgumentException("لا يمكن جعل العقد ساريًا قبل تاريخ بداية العقد.");
+
+            if (contract.ContractStatus == "ساري" &&
+                contract.EndDate.HasValue &&
+                contract.EndDate.Value.Date < DateTime.Today)
+
+                throw new ArgumentException("العقد الساري لا يمكن أن تكون نهاية سريانه قد مضت.");
+
 
             if (string.IsNullOrWhiteSpace(contract.PaymentMethod))
 
