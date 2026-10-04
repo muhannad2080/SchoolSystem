@@ -1203,16 +1203,14 @@ namespace SchoolSystem.UI
         private void ShowInfo(string message)
         {
 
-            MessageBox.Show(message, "معلومة", MessageBoxButtons.OK, MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowInfo(message);
         }
 
         // تعريف الدالة ShowWarning لتنفيذ العملية المرتبطة بها.
         private void ShowWarning(string message)
         {
 
-            MessageBox.Show(message, "تنبيه", MessageBoxButtons.OK, MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowWarning(message);
         }
 
     }
