@@ -148,7 +148,6 @@ UPDATE dbo.Payroll SET
     BasicSalary = @BasicSalary,
     Allowances = @Allowances,
     Deductions = @Deductions,
-    NetSalary = @BasicSalary + @Allowances - @Deductions,
     PaymentDate = @PaymentDate,
     Notes = @Notes
 WHERE PayrollID = @PayrollID AND PaymentDate IS NULL", conn))
