@@ -248,17 +248,17 @@
             this.panelButtons.Controls.Add(this.btnClear);
 
             this.btnAdd.Text = "تسجيل وصرف الراتب";
-            this.btnAdd.Width = 150;
+            this.btnAdd.Width = 180;
             this.btnAdd.Height = 38;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
 
             this.btnRefresh.Text = "تحديث السجلات";
-            this.btnRefresh.Width = 110;
+            this.btnRefresh.Width = 140;
             this.btnRefresh.Height = 38;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
 
             this.btnClear.Text = "تفريغ الحقول";
-            this.btnClear.Width = 110;
+            this.btnClear.Width = 125;
             this.btnClear.Height = 38;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
 
@@ -268,8 +268,8 @@
 
             this.lblSearch.Dock = System.Windows.Forms.DockStyle.Right;
             this.lblSearch.Text = "بحث في سجلات الرواتب";
-            this.lblSearch.Width = 70;
-            this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblSearch.Width = 190;
+            this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblSearch.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
 
             this.txtSearch.Dock = System.Windows.Forms.DockStyle.Fill;
