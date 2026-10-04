@@ -508,14 +508,7 @@ namespace SchoolSystem
                 return true;
             }
 
-            MessageBox.Show(
-                message,
-                "صلاحية غير كافية",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign |
-                MessageBoxOptions.RtlReading);
+            UIHelper.ShowWarning(message);
 
             return false;
         }
@@ -526,14 +519,7 @@ namespace SchoolSystem
             if (Has(permission))
                 return true;
 
-            MessageBox.Show(
-                "ليس لديك صلاحية للوصول إلى هذه الشاشة.",
-                "صلاحية غير كافية",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign |
-                MessageBoxOptions.RtlReading);
+            UIHelper.ShowWarning("ليس لديك صلاحية للوصول إلى هذه الشاشة.");
 
             return false;
         }
@@ -544,14 +530,7 @@ namespace SchoolSystem
             if (HasAny(permissions))
                 return true;
 
-            MessageBox.Show(
-                "ليس لديك صلاحية للوصول إلى هذه الشاشة.",
-                "صلاحية غير كافية",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign |
-                MessageBoxOptions.RtlReading);
+            UIHelper.ShowWarning("ليس لديك صلاحية للوصول إلى هذه الشاشة.");
 
             return false;
         }
@@ -1329,14 +1308,7 @@ namespace SchoolSystem
             EventArgs e)
         {
             DialogResult result =
-                MessageBox.Show(
-                    "هل تريد تسجيل الخروج؟",
-                    "تسجيل الخروج",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button2,
-                    MessageBoxOptions.RightAlign |
-                    MessageBoxOptions.RtlReading);
+                UIHelper.ShowConfirmation("هل تريد تسجيل الخروج؟", "تسجيل الخروج");
 
             if (result !=
                 DialogResult.Yes)
