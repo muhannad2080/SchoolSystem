@@ -14,6 +14,7 @@ namespace SchoolSystem.Services
     {
         private readonly PayrollRepository repository = new PayrollRepository();
         private readonly VoucherService voucherService = new VoucherService();
+        private readonly TeacherContractRepository contractRepository = new TeacherContractRepository();
         private readonly AuditLogService auditLogService = new AuditLogService();
 
         public DataTable GetAllPayrolls()
@@ -46,6 +47,10 @@ namespace SchoolSystem.Services
             CurrentUser.DemandAction("Payroll", "Add", "ليس لديك صلاحية إضافة الرواتب.");
 
             ValidatePayroll(payroll);
+
+            // لا يصرف راتب شهري لموظف لا يملك عقداً سارياً في تاريخ الصرف.
+            if (!contractRepository.HasActiveContract(payroll.TeacherID))
+                throw new InvalidOperationException("لا يمكن تسجيل الراتب: لا يوجد عقد وظيفي ساري للموظف المحدد.");
 
             if (PayrollExists(payroll.TeacherID, payroll.SalaryMonth, payroll.SalaryYear))
                 throw new InvalidOperationException("هناك راتب مسجل لنفس المعلم في نفس الشهر والسنة.");
