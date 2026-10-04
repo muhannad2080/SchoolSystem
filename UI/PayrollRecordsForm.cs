@@ -48,6 +48,7 @@ namespace SchoolSystem.UI
             txtAllowances.MaxLength = 40;
             txtDeductions.MaxLength = 40;
             txtNotes.MaxLength = 1000;
+            dtpPaymentDate.MaxDate = DateTime.Today;
 
             txtBasicSalary.TextChanged += SalaryField_TextChanged;
             txtAllowances.TextChanged += SalaryField_TextChanged;
