@@ -106,6 +106,17 @@ namespace SchoolSystem.Services
             return deleted;
         }
 
+        // العقد الساري المستخدم كمصدر افتراضي للراتب الشهري.
+        public TeacherContract GetActiveContractForTeacher(int teacherId)
+        {
+            CurrentUser.DemandAction("TeacherContracts", "View", "ليس لديك صلاحية عرض عقود الموظفين.");
+
+            if (teacherId <= 0)
+                return null;
+
+            return repository.GetActiveContract(teacherId);
+        }
+
         // تعريف الدالة HasActiveContract لتنفيذ العملية المرتبطة بها.
         public bool HasActiveContract(int teacherId)
         {
