@@ -13,12 +13,13 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\bin\Release\</OutputPath>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AppConfig>..\..\App.config</AppConfig>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -36,15 +37,4 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="CopyApplicationDependencies" AfterTargets="Build">
-    <ItemGroup>
-      <ApplicationOutputFiles Include="..\..\bin\$(Configuration)\*.dll" />
-      <ApplicationOutputFiles Include="..\..\bin\$(Configuration)\*.config" />
-      <ApplicationOutputFiles Include="..\..\bin\$(Configuration)\*.exe" />
-    </ItemGroup>
-    <Copy SourceFiles="@(ApplicationOutputFiles)"
-          DestinationFolder="$(TargetDir)"
-          SkipUnchangedFiles="true"
-          Condition="Exists('..\..\bin\$(Configuration)')" />
-  </Target>
-</Project>
+/Project>
