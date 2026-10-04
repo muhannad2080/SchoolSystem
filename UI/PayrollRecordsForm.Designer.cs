@@ -96,7 +96,7 @@
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.White;
-            this.lblTitle.Text = "سجلات الرواتب";
+            this.lblTitle.Text = "مسير الرواتب وسجلات الصرف";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblTitle.Name = "lblTitle";
 
@@ -112,7 +112,7 @@
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 
             this.groupBoxPayroll.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBoxPayroll.Text = "بيانات الراتب";
+            this.groupBoxPayroll.Text = "بيانات الراتب الشهري";
             this.groupBoxPayroll.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.groupBoxPayroll.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.groupBoxPayroll.Padding = new System.Windows.Forms.Padding(10);
@@ -247,17 +247,17 @@
             this.panelButtons.Controls.Add(this.btnRefresh);
             this.panelButtons.Controls.Add(this.btnClear);
 
-            this.btnAdd.Text = "تسجيل الراتب";
+            this.btnAdd.Text = "تسجيل وصرف الراتب";
             this.btnAdd.Width = 150;
             this.btnAdd.Height = 38;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
 
-            this.btnRefresh.Text = "تحديث";
+            this.btnRefresh.Text = "تحديث السجلات";
             this.btnRefresh.Width = 110;
             this.btnRefresh.Height = 38;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
 
-            this.btnClear.Text = "تفريغ";
+            this.btnClear.Text = "تفريغ الحقول";
             this.btnClear.Width = 110;
             this.btnClear.Height = 38;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
@@ -267,7 +267,7 @@
             this.panelSearch.Controls.Add(this.lblSearch);
 
             this.lblSearch.Dock = System.Windows.Forms.DockStyle.Right;
-            this.lblSearch.Text = "بحث";
+            this.lblSearch.Text = "بحث في سجلات الرواتب";
             this.lblSearch.Width = 70;
             this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblSearch.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
