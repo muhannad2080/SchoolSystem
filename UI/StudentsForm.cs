@@ -42,6 +42,8 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
 
+            UIHelper.ApplyStyle(this);
+
             // ------------------------------------------------------------
             // خصائص مرتبطة بالسلوك فقط.
             // لا يوجد هنا أي Styling أو تغيير Layout.
