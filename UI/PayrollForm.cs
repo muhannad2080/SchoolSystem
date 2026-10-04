@@ -701,7 +701,9 @@ namespace SchoolSystem.UI
             if (char.IsDigit(e.KeyChar))
                 return;
 
-            if (e.KeyChar == '.' && txt != null && !txt.Text.Contains("."))
+            if ((e.KeyChar == '.' || e.KeyChar == ',' || e.KeyChar == '٫' || e.KeyChar == '٬') &&
+                txt != null &&
+                txt.Text.IndexOfAny(new[] { '.', ',', '٫', '٬' }) < 0)
                 return;
 
             e.Handled = true;
