@@ -48,7 +48,7 @@ namespace SchoolSystem.UI
 
         private void InitializeComponent()
         {
-            BackColor = Color.FromArgb(240, 243, 247);
+            BackColor = UIHelper.BackgroundColor;
             RightToLeft = RightToLeft.Yes;
             Font = new Font("Tahoma", 9.5F);
             Padding = new Padding(12);
@@ -61,7 +61,7 @@ namespace SchoolSystem.UI
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Tahoma", 15F, FontStyle.Bold),
                 ForeColor = Color.White,
-                BackColor = Color.FromArgb(31, 41, 55)
+                BackColor = UIHelper.PrimaryColor
             };
 
             TableLayoutPanel fields = new TableLayoutPanel
@@ -179,7 +179,7 @@ namespace SchoolSystem.UI
             {
                 Dock = DockStyle.Bottom,
                 Height = 28,
-                BackColor = Color.FromArgb(240, 243, 247)
+                BackColor = UIHelper.BackgroundColor
             };
             lblCount = new Label
             {
