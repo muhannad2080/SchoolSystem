@@ -316,7 +316,7 @@ namespace SchoolSystem.DataAccess
                     " + (hasStudentNumber ? "CONVERT(nvarchar(30), s.StudentNumber)" : "CONVERT(nvarchar(30), NULL)") + @" AS [الرقم الأكاديمي],
                     CONVERT(nvarchar(200), s.FullName) AS [اسم الطالب],
                     " + (hasGender ? "CONVERT(nvarchar(20), s.Gender)" : "CONVERT(nvarchar(20), NULL)") + @" AS [الجنس],
-                    " + (hasBirthDate ? "CONVERT(date, s.BirthDate)" : "CONVERT(date, NULL)") + @" AS [تاريخ الميلاد],
+                    " + (hasBirthDate ? "TRY_CONVERT(date, s.BirthDate)" : "CONVERT(date, NULL)") + @" AS [تاريخ الميلاد],
                     " + classExpression + @" AS [الصف],
                     " + (hasSection ? "CONVERT(nvarchar(100), s.Section)" : "CONVERT(nvarchar(100), NULL)") + @" AS [الشعبة],
                     " + academicYearExpression + @" AS [العام الدراسي],
@@ -324,16 +324,16 @@ namespace SchoolSystem.DataAccess
                     " + (hasGuardianName ? "CONVERT(nvarchar(200), s.GuardianName)" : "CONVERT(nvarchar(200), NULL)") + @" AS [ولي الأمر],
                     " + (hasGuardianPhone ? "CONVERT(nvarchar(30), s.GuardianPhone)" : "CONVERT(nvarchar(30), NULL)") + @" AS [هاتف الولي],
                     " + (hasStatus ? "CONVERT(nvarchar(30), s.Status)" : "CONVERT(nvarchar(30), NULL)") + @" AS [الحالة],
-                    " + (hasCreatedAt ? "CONVERT(datetime, s.CreatedAt)" : "CONVERT(datetime, NULL)") + @" AS [تاريخ الإضافة]
+                    " + (hasCreatedAt ? "TRY_CONVERT(datetime, s.CreatedAt)" : "CONVERT(datetime, NULL)") + @" AS [تاريخ الإضافة]
                 FROM dbo.Students AS s
-                " + (hasClassName ? "LEFT JOIN dbo.Classes AS c ON CONVERT(int, c.ClassID) = CONVERT(int, s.ClassID)" : "") + @"
+                " + (hasClassName ? "LEFT JOIN dbo.Classes AS c ON TRY_CONVERT(int, c.ClassID) = TRY_CONVERT(int, s.ClassID)" : "") + @"
                 WHERE 1 = 1";
 
             if (hasAcademicYear && !string.IsNullOrWhiteSpace(request.AcademicYear))
                 query += " AND REPLACE(CONVERT(nvarchar(20), s.AcademicYear), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')";
 
             if (hasClassId && request.ClassID.HasValue)
-                query += " AND CONVERT(int, s.ClassID) = @ClassID";
+                query += " AND TRY_CONVERT(int, s.ClassID) = @ClassID";
 
             if (hasSection && !string.IsNullOrWhiteSpace(request.Section))
                 query += " AND CONVERT(nvarchar(100), s.Section) = @Section";
