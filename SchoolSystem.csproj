@@ -564,8 +564,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 
-  <Target Name="EnsurePdfDependencyCopied" AfterTargets="Build"
-          Condition="Exists('$(MSBuildProjectDirectory)\packages\iTextSharp.LGPLv2.Core.3.8.1\lib\net462\iTextSharp.LGPLv2.Core.dll')">
+  <Target Name="EnsurePdfDependencyCopied" AfterTargets="Build">
+    <Error
+      Condition="!Exists('$(MSBuildProjectDirectory)\packages\iTextSharp.LGPLv2.Core.3.8.1\lib\net462\iTextSharp.LGPLv2.Core.dll')"
+      Text="iTextSharp.LGPLv2.Core 3.8.1 is missing. Run NuGet restore before building SchoolSystem." />
     <Copy
       SourceFiles="$(MSBuildProjectDirectory)\packages\iTextSharp.LGPLv2.Core.3.8.1\lib\net462\iTextSharp.LGPLv2.Core.dll"
       DestinationFolder="$(TargetDir)"
