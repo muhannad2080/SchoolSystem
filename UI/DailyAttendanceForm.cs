@@ -528,7 +528,7 @@ namespace SchoolSystem.UI
         // تعريف الدالة btnMarkAllAbsent_Click لتنفيذ العملية المرتبطة بها.
         private void btnMarkAllAbsent_Click(object sender, EventArgs e)
         {
-            ApplyBulkStatus("غائب", "بعذر");
+            ApplyBulkStatus("غائب", "غير محدد");
         }
 
         // تعريف الدالة btnMarkAllLate_Click لتنفيذ العملية المرتبطة بها.
