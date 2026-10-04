@@ -232,6 +232,7 @@ namespace SchoolSystem.UiSmokeTests
 
             Console.WriteLine("SchoolSystem UI Smoke Test");
             Console.WriteLine("Screens discovered: " + screenTypes.Count);
+            Console.WriteLine("UI audit: constructor + layout + source event wiring");
 
             try
             {
