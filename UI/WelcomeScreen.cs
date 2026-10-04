@@ -123,8 +123,7 @@ namespace SchoolSystem.UI
                 return true;
 
 
-            MessageBox.Show(message, "صلاحية غير كافية", MessageBoxButtons.OK, MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowWarning(message);
 
             return false;
         }
@@ -173,8 +172,7 @@ namespace SchoolSystem.UI
             }
 
 
-            MessageBox.Show("ليس لديك صلاحية عرض الوحدة المالية.", "صلاحية غير كافية", MessageBoxButtons.OK, MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button1, MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+            UIHelper.ShowWarning("ليس لديك صلاحية عرض الوحدة المالية.");
         }
 
         // تعريف الدالة btnAttendance_Click لتنفيذ العملية المرتبطة بها.
