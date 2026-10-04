@@ -702,16 +702,11 @@ namespace SchoolSystem.UI.Students
             }
 
 
-            DialogResult result = MessageBox.Show(
-
+            bool result = UIHelper.ShowConfirmation(
                 "هل تريد إزالة الطالب من هذا التوزيع؟",
-                "تأكيد الإزالة",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2,
-                MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                "تأكيد الإزالة");
 
-            if (result != DialogResult.Yes)
+            if (!result)
                 return;
 
             // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
