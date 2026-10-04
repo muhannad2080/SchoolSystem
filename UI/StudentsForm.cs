@@ -28,6 +28,12 @@ namespace SchoolSystem.UI
 
         private bool _isSaving;
 
+        private enum FormMode { View, Add, Edit }
+        private FormMode _formMode = FormMode.View;
+        private Student _editingSnapshot;
+        private List<Student> _filteredStudents = new List<Student>();
+        private readonly ToolTip _toolTip = new ToolTip();
+
         // ================================================================
         // CONSTRUCTOR
         // ================================================================
@@ -86,6 +92,10 @@ namespace SchoolSystem.UI
             _studentCardPrintDocument.PrintPage +=
                 StudentCardPrintDocument_PrintPage;
 
+            ConfigureFieldConstraints();
+            ConfigureTooltips();
+            SetFormMode(FormMode.View);
+
             // لا يوجد هنا أي:
             // UIHelper.ApplyStyle(...)
             // UIHelper.StyleButton(...)
@@ -98,14 +108,176 @@ namespace SchoolSystem.UI
         // STUDENT PROFILE
         // ================================================================
 
-        private void ConfigureStudentProfileButton()
+        private void ConfigureFieldConstraints()
         {
-            // تم إلغاء Styling الزر هنا عمدًا.
-            //
-            // زر btnStudentProfile يأخذ تصميمه بالكامل من
-            // StudentsForm.Designer.cs.
-            //
-            // لا يوجد تغيير في الحجم أو الموضع أو الاتجاه أو Dock أو Anchor.
+            txtStudentNumber.ReadOnly = true;
+
+            txtFullName.MaxLength = 200;
+            txtBirthPlace.MaxLength = 100;
+            txtNationality.MaxLength = 100;
+            txtNationalId.MaxLength = 20;
+            txtPhone.MaxLength = 30;
+            txtGuardianName.MaxLength = 200;
+            txtGuardianRelation.MaxLength = 50;
+            txtGuardianPhone.MaxLength = 30;
+            txtGuardianEmail.MaxLength = 150;
+            txtGuardianJob.MaxLength = 100;
+            txtGovernorate.MaxLength = 100;
+            txtDistrict.MaxLength = 100;
+            txtAddress.MaxLength = 300;
+
+            txtStudentNumber.TextAlign = HorizontalAlignment.Center;
+            txtNationalId.RightToLeft = RightToLeft.No;
+            txtNationalId.TextAlign = HorizontalAlignment.Left;
+            txtPhone.RightToLeft = RightToLeft.No;
+            txtPhone.TextAlign = HorizontalAlignment.Left;
+            txtGuardianPhone.RightToLeft = RightToLeft.No;
+            txtGuardianPhone.TextAlign = HorizontalAlignment.Left;
+            txtGuardianEmail.RightToLeft = RightToLeft.No;
+            txtGuardianEmail.TextAlign = HorizontalAlignment.Left;
+
+            cmbGender.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbStatus.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbFilterClass.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbFilterStatus.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            dtpBirthDate.MaxDate = DateTime.Today;
+            dtpBirthDate.ShowCheckBox = true;
+        }
+
+        private void ConfigureTooltips()
+        {
+            _toolTip.SetToolTip(txtStudentNumber, "يتم توليد رقم الطالب تلقائيًا عند الحفظ.");
+            _toolTip.SetToolTip(txtNationalId, "رقم الهوية يُدخل يدويًا ويجب أن يكون فريدًا.");
+            _toolTip.SetToolTip(txtSearch, "ابحث بالاسم أو الرقم أو الهوية أو الهاتف أو بيانات ولي الأمر.");
+            _toolTip.SetToolTip(cmbFilterClass, "تصفية الطلاب حسب الصف الحالي.");
+            _toolTip.SetToolTip(cmbFilterStatus, "تصفية الطلاب حسب الحالة.");
+            _toolTip.SetToolTip(btnUpdate, "ينقل الطالب المحدد إلى وضع التعديل.");
+            _toolTip.SetToolTip(btnDelete, "أرشفة الطالب وإخفاؤه من القائمة دون حذف سجله.");
+        }
+
+        private void SetFormMode(FormMode mode)
+        {
+            _formMode = mode;
+
+            bool isAdd = mode == FormMode.Add;
+            bool isEdit = mode == FormMode.Edit;
+            bool hasSelection = _selectedStudentId > 0;
+
+            bool canAdd = CurrentUser.CanAdd("Students");
+            bool canEdit = CurrentUser.CanEdit("Students");
+            bool canDelete = CurrentUser.CanDelete("Students");
+            bool canPrint = CurrentUser.CanPrint("Students");
+            bool canExport = CurrentUser.CanExport("Students");
+            bool canSearch = CurrentUser.CanSearch("Students");
+
+            bool editable = (isAdd && canAdd) || (isEdit && canEdit);
+
+            foreach (Control control in new Control[]
+            {
+                txtFullName, cmbGender, dtpBirthDate, txtBirthPlace,
+                txtNationality, txtNationalId, txtPhone, cmbStatus,
+                txtGuardianName, txtGuardianRelation, txtGuardianPhone,
+                txtGuardianEmail, txtGuardianJob, txtGovernorate,
+                txtDistrict, txtAddress
+            })
+            {
+                TextBox textBox = control as TextBox;
+                if (textBox != null)
+                    textBox.ReadOnly = !editable;
+
+                ComboBox comboBox = control as ComboBox;
+                if (comboBox != null)
+                    comboBox.Enabled = editable;
+
+                DateTimePicker datePicker = control as DateTimePicker;
+                if (datePicker != null)
+                    datePicker.Enabled = editable;
+            }
+
+            txtStudentNumber.ReadOnly = true;
+            btnChooseImage.Enabled = editable;
+            btnRemoveImage.Enabled = editable;
+            dgvStudents.Enabled = mode == FormMode.View;
+
+            btnStudentProfile.Enabled =
+                mode == FormMode.View && hasSelection &&
+                CurrentUser.CanView("Students");
+
+            btnPrint.Enabled =
+                mode == FormMode.View && hasSelection && canPrint;
+
+            btnExportExcel.Enabled =
+                mode == FormMode.View && _filteredStudents.Count > 0 && canExport;
+
+            btnDelete.Enabled =
+                mode == FormMode.View && hasSelection && canDelete;
+
+            btnUpdate.Enabled =
+                mode == FormMode.View && hasSelection && canEdit;
+
+            btnAdd.Enabled = canAdd;
+            btnSave.Enabled = editable;
+            btnCancel.Enabled = isAdd || isEdit;
+
+            btnSearch.Enabled = canSearch;
+            txtSearch.Enabled = canSearch;
+            cmbFilterClass.Enabled = canSearch;
+            cmbFilterStatus.Enabled = canSearch;
+
+            if (isAdd)
+                btnSave.Text = "حفظ الطالب";
+            else if (isEdit)
+                btnSave.Text = "حفظ التعديلات";
+            else
+                btnSave.Text = "حفظ الطالب";
+
+            btnUpdate.Text = "تعديل البيانات";
+        }
+
+        private Student CloneStudent(Student source)
+        {
+            if (source == null)
+                return null;
+
+            return new Student
+            {
+                StudentId = source.StudentId,
+                StudentNumber = source.StudentNumber,
+                FullName = source.FullName,
+                Gender = source.Gender,
+                BirthDate = source.BirthDate,
+                BirthPlace = source.BirthPlace,
+                Nationality = source.Nationality,
+                NationalId = source.NationalId,
+                StudentPhone = source.StudentPhone,
+                Status = source.Status,
+                GuardianName = source.GuardianName,
+                GuardianRelation = source.GuardianRelation,
+                GuardianPhone = source.GuardianPhone,
+                GuardianEmail = source.GuardianEmail,
+                GuardianJob = source.GuardianJob,
+                Governorate = source.Governorate,
+                District = source.District,
+                Address = source.Address,
+                Photo = source.Photo == null ? null : (byte[])source.Photo.Clone(),
+                CurrentClassName = source.CurrentClassName,
+                CurrentSection = source.CurrentSection,
+                AcademicYear = source.AcademicYear,
+                CreatedAt = source.CreatedAt,
+                UpdatedAt = source.UpdatedAt
+            };
+        }
+
+        private Exception ValidationError(Control control, string message)
+        {
+            if (control != null)
+            {
+                errorProvider1.SetError(control, message);
+                control.Focus();
+            }
+
+            return new ArgumentException(message);
         }
 
         // ================================================================
@@ -125,6 +297,8 @@ namespace SchoolSystem.UI
             ClearForm();
 
             LoadStudents();
+
+            SetFormMode(FormMode.View);
         }
 
         // ================================================================
@@ -239,6 +413,9 @@ namespace SchoolSystem.UI
             object sender,
             EventArgs e)
         {
+            if (_formMode != FormMode.View)
+                return;
+
             Student student =
                 GetSelectedStudentFromGrid();
 
@@ -897,8 +1074,8 @@ namespace SchoolSystem.UI
                     "ExportExcel",
                     "ليس لديك صلاحية تصدير بيانات الطلاب إلى Excel.");
 
-                if (_currentStudents == null ||
-                    _currentStudents.Count == 0)
+                if (_filteredStudents == null ||
+                    _filteredStudents.Count == 0)
                 {
                     UIHelper.ShowWarning(
                         "لا توجد بيانات لتصديرها.");
@@ -946,7 +1123,7 @@ namespace SchoolSystem.UI
                         "الحالة");
 
                     foreach (Student s
-                             in _currentStudents)
+                             in _filteredStudents)
                     {
                         exportTable.Rows.Add(
                             s.StudentNumber ??
@@ -972,7 +1149,7 @@ namespace SchoolSystem.UI
                         exportTable,
                         sfd.FileName,
                         "بيانات الطلاب",
-                        "إجمالي الطلاب: " +
+                        "النتائج المصدّرة: " +
                         exportTable.Rows.Count);
 
                     UIHelper.ShowInfo(
@@ -995,7 +1172,18 @@ namespace SchoolSystem.UI
             object sender,
             EventArgs e)
         {
+            errorProvider1.Clear();
+
+            if (_formMode == FormMode.Edit &&
+                _editingSnapshot != null)
+            {
+                FillForm(_editingSnapshot);
+                SetFormMode(FormMode.View);
+                return;
+            }
+
             ClearForm();
+            SetFormMode(FormMode.View);
         }
 
         // ================================================================
@@ -1014,9 +1202,29 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            btnSave_Click(
-                sender,
-                e);
+            if (!CurrentUser.CanEdit("Students"))
+            {
+                UIHelper.ShowWarning(
+                    "ليس لديك صلاحية تعديل بيانات الطلاب.");
+
+                return;
+            }
+
+            Student selected =
+                _currentStudents.FirstOrDefault(
+                    s => s.StudentId == _selectedStudentId);
+
+            if (selected == null)
+            {
+                UIHelper.ShowWarning(
+                    "تعذر تحميل الطالب المحدد للتعديل.");
+
+                return;
+            }
+
+            _editingSnapshot = CloneStudent(selected);
+            SetFormMode(FormMode.Edit);
+            txtFullName.Focus();
         }
 
         // ================================================================
@@ -1140,68 +1348,64 @@ namespace SchoolSystem.UI
 
         private void ApplyFilters()
         {
-            var filtered =
+            IEnumerable<Student> filtered =
                 _currentStudents.AsEnumerable();
 
             string search =
                 txtSearch.Text.Trim();
 
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrWhiteSpace(search))
             {
+                string[] terms =
+                    search.Split(
+                        new[] { ' ' },
+                        StringSplitOptions.RemoveEmptyEntries);
+
                 filtered =
-                    filtered.Where(s =>
-                        (s.FullName != null &&
-                         s.FullName.Contains(search))
-
-                        ||
-
-                        (s.StudentNumber != null &&
-                         s.StudentNumber.Contains(search))
-
-                        ||
-
-                        (s.NationalId != null &&
-                         s.NationalId.Contains(search))
-
-                        ||
-
-                        (s.StudentPhone != null &&
-                         s.StudentPhone.Contains(search))
-
-                        ||
-
-                        (s.GuardianName != null &&
-                         s.GuardianName.Contains(search))
-
-                        ||
-
-                        (s.GuardianPhone != null &&
-                         s.GuardianPhone.Contains(search)));
+                    filtered.Where(
+                        student =>
+                            terms.All(
+                                term =>
+                                    ContainsStudentText(student.FullName, term) ||
+                                    ContainsStudentText(student.StudentNumber, term) ||
+                                    ContainsStudentText(student.NationalId, term) ||
+                                    ContainsStudentText(student.StudentPhone, term) ||
+                                    ContainsStudentText(student.GuardianName, term) ||
+                                    ContainsStudentText(student.GuardianPhone, term) ||
+                                    ContainsStudentText(student.CurrentClassName, term) ||
+                                    ContainsStudentText(student.CurrentSection, term) ||
+                                    ContainsStudentText(student.AcademicYear, term)));
             }
 
             if (cmbFilterStatus.SelectedIndex > 0)
             {
-                filtered =
-                    filtered.Where(
-                        s => s.Status ==
-                             cmbFilterStatus.Text);
+                filtered = filtered.Where(
+                    s => string.Equals(
+                        s.Status,
+                        cmbFilterStatus.Text,
+                        StringComparison.OrdinalIgnoreCase));
             }
 
             if (cmbFilterClass.SelectedIndex > 0 &&
-                !string.IsNullOrWhiteSpace(
-                    cmbFilterClass.Text))
+                !string.IsNullOrWhiteSpace(cmbFilterClass.Text))
             {
-                filtered =
-                    filtered.Where(
-                        s =>
-                            string.Equals(
-                                s.CurrentClassName,
-                                cmbFilterClass.Text,
-                                StringComparison.OrdinalIgnoreCase));
+                filtered = filtered.Where(
+                    s => string.Equals(
+                        s.CurrentClassName,
+                        cmbFilterClass.Text,
+                        StringComparison.OrdinalIgnoreCase));
             }
 
-            BindGrid(
-                filtered.ToList());
+            BindGrid(filtered.ToList());
+        }
+
+        private static bool ContainsStudentText(
+            string value,
+            string term)
+        {
+            return !string.IsNullOrEmpty(value) &&
+                   !string.IsNullOrEmpty(term) &&
+                   value.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         // ================================================================
@@ -1211,6 +1415,11 @@ namespace SchoolSystem.UI
         private void BindGrid(
             List<Student> students)
         {
+            _filteredStudents =
+                students == null
+                    ? new List<Student>()
+                    : students.ToList();
+
             dgvStudents.DataSource =
                 students.Select(s => new
                 {
@@ -1269,7 +1478,12 @@ namespace SchoolSystem.UI
                 "الحالة";
 
             lblCount.Text =
-                $"عدد الطلاب: {students.Count}";
+                students.Count == _currentStudents.Count
+                    ? $"إجمالي الطلاب: {students.Count}"
+                    : $"النتائج: {students.Count} من إجمالي {_currentStudents.Count}";
+
+            if (_formMode == FormMode.View)
+                SetFormMode(FormMode.View);
         }
 
         // ================================================================
@@ -1283,50 +1497,60 @@ namespace SchoolSystem.UI
             if (_isSaving)
                 return;
 
-            _isSaving = true;
+            if (_formMode != FormMode.Add &&
+                _formMode != FormMode.Edit)
+            {
+                UIHelper.ShowWarning(
+                    "استخدم «إضافة طالب» لإنشاء سجل جديد أو «تعديل البيانات» لتعديل السجل المحدد.");
+                return;
+            }
 
+            if (_formMode == FormMode.Add &&
+                !CurrentUser.CanAdd("Students"))
+            {
+                UIHelper.ShowWarning("ليس لديك صلاحية إضافة الطلاب.");
+                return;
+            }
+
+            if (_formMode == FormMode.Edit &&
+                !CurrentUser.CanEdit("Students"))
+            {
+                UIHelper.ShowWarning("ليس لديك صلاحية تعديل الطلاب.");
+                return;
+            }
+
+            _isSaving = true;
             btnSave.Enabled = false;
 
             try
             {
-                Student student =
-                    GetStudentFromForm();
+                errorProvider1.Clear();
 
-                if (_selectedStudentId == 0)
-                {
-                    _studentService.Add(
-                        student);
-                }
+                Student student = GetStudentFromForm();
+                bool isAdd = _formMode == FormMode.Add;
+
+                if (isAdd)
+                    _studentService.Add(student);
                 else
-                {
-                    _studentService.Update(
-                        student);
-                }
+                    _studentService.Update(student);
 
                 UIHelper.ShowInfo(
-                    string.IsNullOrWhiteSpace(
-                        student.StudentNumber)
-
-                        ? "تم حفظ بيانات الطالب بنجاح."
-
-                        : "تم حفظ بيانات الطالب بنجاح. رقم الطالب المولد: " +
-                          student.StudentNumber);
+                    isAdd
+                        ? "تمت إضافة الطالب بنجاح. تم تثبيت رقم الطالب تلقائيًا عند الحفظ."
+                        : "تم حفظ تعديلات الطالب بنجاح.");
 
                 LoadStudents();
-
                 ClearForm();
+                SetFormMode(FormMode.View);
             }
             catch (Exception ex)
             {
-                UIHelper.ShowException(
-                    "العملية المطلوبة",
-                    ex);
+                UIHelper.ShowException("العملية المطلوبة", ex);
             }
             finally
             {
                 _isSaving = false;
-
-                btnSave.Enabled = true;
+                SetFormMode(_formMode);
             }
         }
 
@@ -1336,29 +1560,53 @@ namespace SchoolSystem.UI
 
         private Student GetStudentFromForm()
         {
+            errorProvider1.Clear();
+
             string fullName =
                 txtFullName.Text.Trim();
 
             if (!UIHelper.IsValidArabicOrLatinName(
                     fullName))
             {
-                throw new Exception(
+                throw ValidationError(
+                    txtFullName,
                     "اسم الطالب مطلوب ويجب أن يحتوي على أحرف فقط وبطول مناسب.");
+            }
+
+            string[] nameParts =
+                fullName.Split(
+                    new[] { ' ' },
+                    StringSplitOptions.RemoveEmptyEntries);
+
+            if (nameParts.Length < 4)
+            {
+                throw ValidationError(
+                    txtFullName,
+                    "يرجى إدخال الاسم الرباعي للطالب (أربعة أجزاء على الأقل).");
             }
 
             if (cmbGender.SelectedIndex < 0 ||
                 string.IsNullOrWhiteSpace(
                     cmbGender.Text))
             {
-                throw new Exception(
+                throw ValidationError(
+                    cmbGender,
                     "يرجى اختيار جنس الطالب.");
+            }
+
+            if (!dtpBirthDate.Checked)
+            {
+                throw ValidationError(
+                    dtpBirthDate,
+                    "تاريخ الميلاد مطلوب. فعّل خانة التاريخ ثم اختر تاريخ الميلاد.");
             }
 
             if (cmbStatus.SelectedIndex < 0 ||
                 string.IsNullOrWhiteSpace(
                     cmbStatus.Text))
             {
-                throw new Exception(
+                throw ValidationError(
+                    cmbStatus,
                     "يرجى اختيار حالة الطالب.");
             }
 
@@ -1432,10 +1680,11 @@ namespace SchoolSystem.UI
                     "البريد الإلكتروني لولي الأمر غير صحيح.");
             }
 
-            if (dtpBirthDate.Value >
+            if (dtpBirthDate.Value.Date >
                 DateTime.Today)
             {
-                throw new Exception(
+                throw ValidationError(
+                    dtpBirthDate,
                     "تاريخ الميلاد لا يمكن أن يكون في المستقبل.");
             }
 
@@ -1479,7 +1728,9 @@ namespace SchoolSystem.UI
                     cmbGender.Text,
 
                 BirthDate =
-                    dtpBirthDate.Value,
+                    dtpBirthDate.Checked
+                        ? dtpBirthDate.Value.Date
+                        : (DateTime?)null,
 
                 BirthPlace =
                     txtBirthPlace.Text.Trim(),
@@ -1532,13 +1783,12 @@ namespace SchoolSystem.UI
         private void ClearForm()
         {
             _selectedStudentId = 0;
-
             _selectedPhoto = null;
+            _editingSnapshot = null;
+            errorProvider1.Clear();
 
             txtStudentNumber.Text =
-                "جاري تجهيز الرقم...";
-
-            TryPreviewNextStudentNumber();
+                "يُولّد تلقائيًا عند الحفظ";
 
             txtFullName.Clear();
             txtBirthPlace.Clear();
@@ -1566,8 +1816,8 @@ namespace SchoolSystem.UI
 
             cmbStatus.SelectedIndex = 0;
 
-            dtpBirthDate.Value =
-                DateTime.Today.AddYears(-6);
+            dtpBirthDate.Value = DateTime.Today;
+            dtpBirthDate.Checked = false;
         }
 
         // ================================================================
@@ -1576,31 +1826,9 @@ namespace SchoolSystem.UI
 
         private void TryPreviewNextStudentNumber()
         {
-            if (_studentService == null ||
-                _selectedStudentId != 0)
-            {
-                return;
-            }
-
-            try
-            {
-                string nextNumber =
-                    _studentService.GenerateNextStudentNumber();
-
-                txtStudentNumber.Text =
-                    string.IsNullOrWhiteSpace(
-                        nextNumber)
-
-                        ? "يُولّد تلقائياً عند الحفظ"
-
-                        : nextNumber;
-            }
-            catch (Exception ex)
-            {
-                ApplicationLogger.LogException("شاشة الطلاب: معاينة رقم الطالب التالي", ex);
-                txtStudentNumber.Text =
-                    "يُولّد تلقائياً عند الحفظ";
-            }
+            // الرقم النهائي يُولَّد ويُثبَّت داخل معاملة الحفظ في المستودع.
+            txtStudentNumber.Text =
+                "يُولّد تلقائيًا عند الحفظ";
         }
 
         // ================================================================
@@ -1622,6 +1850,9 @@ namespace SchoolSystem.UI
             object sender,
             EventArgs e)
         {
+            txtSearch.Clear();
+            cmbFilterClass.SelectedIndex = 0;
+            cmbFilterStatus.SelectedIndex = 0;
             ApplyFilters();
         }
 
@@ -1655,8 +1886,15 @@ namespace SchoolSystem.UI
             object sender,
             EventArgs e)
         {
-            ClearForm();
+            if (!CurrentUser.CanAdd("Students"))
+            {
+                UIHelper.ShowWarning(
+                    "ليس لديك صلاحية إضافة الطلاب.");
+                return;
+            }
 
+            ClearForm();
+            SetFormMode(FormMode.Add);
             txtFullName.Focus();
         }
 
@@ -1688,6 +1926,9 @@ namespace SchoolSystem.UI
             object sender,
             DataGridViewCellEventArgs e)
         {
+            if (_formMode != FormMode.View)
+                return;
+
             if (e.RowIndex < 0 ||
                 e.RowIndex >= dgvStudents.Rows.Count)
             {
@@ -1732,8 +1973,14 @@ namespace SchoolSystem.UI
         private void FillForm(
             Student s)
         {
+            if (s == null)
+                return;
+
             _selectedStudentId =
                 s.StudentId;
+
+            _editingSnapshot =
+                CloneStudent(s);
 
             _selectedPhoto =
                 s.Photo == null
@@ -1764,14 +2011,17 @@ namespace SchoolSystem.UI
             cmbStatus.Text =
                 s.Status ?? "";
 
-            dtpBirthDate.Value =
-                s.BirthDate.HasValue &&
-                s.BirthDate.Value <=
-                DateTime.Today
-
-                    ? s.BirthDate.Value
-
-                    : DateTime.Today.AddYears(-6);
+            if (s.BirthDate.HasValue &&
+                s.BirthDate.Value.Date <= DateTime.Today)
+            {
+                dtpBirthDate.Value = s.BirthDate.Value.Date;
+                dtpBirthDate.Checked = true;
+            }
+            else
+            {
+                dtpBirthDate.Value = DateTime.Today;
+                dtpBirthDate.Checked = false;
+            }
 
             txtGuardianName.Text =
                 s.GuardianName ?? "";
@@ -1830,10 +2080,17 @@ namespace SchoolSystem.UI
             if (_selectedStudentId == 0)
                 return;
 
+            if (!CurrentUser.CanDelete("Students"))
+            {
+                UIHelper.ShowWarning(
+                    "ليس لديك صلاحية أرشفة الطلاب.");
+                return;
+            }
+
             DialogResult result =
                 MessageBox.Show(
-                    "هل أنت متأكد من حذف هذا الطالب؟",
-                    "تأكيد الحذف",
+                    "سيتم أرشفة الطالب وإخفاؤه من قائمة الطلاب. لن يُحذف السجل من قاعدة البيانات أو السجلات المرتبطة به. هل تريد المتابعة؟",
+                    "تأكيد أرشفة الطالب",
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning,
                     MessageBoxDefaultButton.Button2,
@@ -1845,12 +2102,14 @@ namespace SchoolSystem.UI
 
             try
             {
-                _studentService.Delete(
-                    _selectedStudentId);
+                _studentService.Delete(_selectedStudentId);
+
+                UIHelper.ShowInfo(
+                    "تمت أرشفة الطالب وإخفاؤه من القائمة.");
 
                 LoadStudents();
-
                 ClearForm();
+                SetFormMode(FormMode.View);
             }
             catch (Exception ex)
             {
@@ -1859,5 +2118,6 @@ namespace SchoolSystem.UI
                     ex);
             }
         }
+
     }
 }
