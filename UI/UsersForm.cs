@@ -951,16 +951,11 @@ namespace SchoolSystem.UI
                 }
 
 
-                DialogResult result = MessageBox.Show(
-
+                bool result = UIHelper.ShowConfirmation(
                     "هل تريد حذف هذا المستخدم؟",
-                    "تأكيد الحذف",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button2,
-                    MessageBoxOptions.RightAlign | MessageBoxOptions.RtlReading);
+                    "تأكيد الحذف");
 
-                if (result != DialogResult.Yes)
+                if (!result)
                     return;
 
 
