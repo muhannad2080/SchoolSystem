@@ -21,6 +21,10 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
 
+            // توحيد اللون الرئيسي مع هوية النظام مع الإبقاء على تخطيط شاشة الدخول المخصص.
+            btnLogin.BackColor = UIHelper.AccentColor;
+            btnLogin.ForeColor = System.Drawing.Color.White;
+
             // ============================================================
             // ملاحظة:
             // تم إزالة جميع أوامر التنسيق والتصميم من هنا حتى يكون
