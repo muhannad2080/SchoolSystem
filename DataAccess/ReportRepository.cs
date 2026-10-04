@@ -281,6 +281,22 @@ namespace SchoolSystem.DataAccess
                 return CreateMessageTable("جدول الطلاب Students غير موجود.");
 
             string query = @"
+                WITH YearAssignment AS
+                (
+                    SELECT
+                        sc.StudentID,
+                        sc.ClassID,
+                        sc.Section,
+                        sc.AcademicYear,
+                        ROW_NUMBER() OVER
+                        (
+                            PARTITION BY sc.StudentID
+                            ORDER BY sc.AssignedDate DESC, sc.StudentClassID DESC
+                        ) AS AssignmentRank
+                    FROM dbo.StudentClasses sc
+                    WHERE REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') =
+                          REPLACE(@AcademicYear, N'-', N'/')
+                )
                 SELECT
                     s.StudentID AS [رقم الطالب],
                     s.StudentNumber AS [الرقم الأكاديمي],
@@ -288,15 +304,21 @@ namespace SchoolSystem.DataAccess
                     s.Gender AS [الجنس],
                     s.BirthDate AS [تاريخ الميلاد],
                     c.ClassName AS [الصف],
-                    s.Section AS [الشعبة],
-                    s.AcademicYear AS [العام الدراسي],
+                    ya.Section AS [الشعبة],
+                    CASE
+                        WHEN ya.StudentID IS NOT NULL THEN ya.AcademicYear
+                        ELSE @AcademicYear
+                    END AS [العام الدراسي],
                     s.StudentPhone AS [هاتف الطالب],
                     s.GuardianName AS [ولي الأمر],
                     s.GuardianPhone AS [هاتف الولي],
                     s.Status AS [الحالة],
                     s.CreatedAt AS [تاريخ الإضافة]
                 FROM Students s
-                LEFT JOIN Classes c ON s.ClassID = c.ClassID
+                LEFT JOIN YearAssignment ya
+                    ON ya.StudentID = s.StudentID
+                   AND ya.AssignmentRank = 1
+                LEFT JOIN Classes c ON ya.ClassID = c.ClassID
                 WHERE 1 = 1";
 
             if (!string.IsNullOrWhiteSpace(request.AcademicYear))
@@ -304,11 +326,11 @@ namespace SchoolSystem.DataAccess
 
 
             if (request.ClassID.HasValue)
-                query += " AND s.ClassID = @ClassID";
+                query += " AND ISNULL(ya.ClassID, 0) = @ClassID";
 
 
             if (!string.IsNullOrWhiteSpace(request.Section))
-                query += " AND ISNULL(s.Section, '') = @Section";
+                query += " AND ISNULL(ya.Section, N'') = @Section";
 
 
             if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
