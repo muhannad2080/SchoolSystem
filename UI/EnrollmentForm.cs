@@ -65,6 +65,8 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
 
+            UIHelper.ApplyStyle(this);
+
             // ------------------------------------------------------------
             // Behavior-only settings.
             // No visual styling or layout manipulation is performed here.
