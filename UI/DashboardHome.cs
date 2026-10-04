@@ -22,10 +22,15 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
 
-            UIHelper.ApplyStyle(this);
+            UIHelper.ApplyKryptonTheme();
+            UIHelper.ApplyResponsiveLayout(this);
+            UIHelper.ApplyFieldValidation(this);
+            UIHelper.StyleButton(
+                btnRefreshDashboard,
+                UIHelper.InfoColor);
             Dock = DockStyle.Fill;
 
-            // لا يتم تطبيق أي Theme أو Style هنا حتى لا يتعارض
+            // بطاقات لوحة التحكم والرسم والتنبيهات لها هوية عرض خاصة بها.
             // مع التصميم المعرفة خصائصه في ملف Designer.
 
             btnRefreshDashboard.Click += async (sender, e) => await ReloadDashboardAsync();
