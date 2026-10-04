@@ -2250,14 +2250,10 @@ namespace SchoolSystem.UI
             }
 
             DialogResult result =
-                MessageBox.Show(
+                if (!UIHelper.ShowConfirmation(
                     "سيتم أرشفة الطالب وإخفاؤه من قائمة الطلاب. لن يُحذف السجل من قاعدة البيانات أو السجلات المرتبطة به. هل تريد المتابعة؟",
-                    "تأكيد أرشفة الطالب",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button2,
-                    MessageBoxOptions.RightAlign |
-                    MessageBoxOptions.RtlReading);
+                    "تأكيد أرشفة الطالب"))
+                    return;
 
             if (result != DialogResult.Yes)
                 return;
