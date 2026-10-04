@@ -1445,40 +1445,19 @@ namespace SchoolSystem.UI
         // عرض رسالة معلومات للمستخدم باستخدام إعدادات الرسائل العربية في النظام.
         private void ShowInfo(string message)
         {
-            MessageBox.Show(
-                message,
-                "معلومة",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign |
-                MessageBoxOptions.RtlReading);
+            UIHelper.ShowInfo(message);
         }
 
         // عرض رسالة تحذيرية للمستخدم باستخدام إعدادات الرسائل العربية في النظام.
         private void ShowWarning(string message)
         {
-            MessageBox.Show(
-                message,
-                "تنبيه",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign |
-                MessageBoxOptions.RtlReading);
+            UIHelper.ShowWarning(message);
         }
 
         // عرض رسالة خطأ للمستخدم باستخدام إعدادات الرسائل العربية في النظام.
         private void ShowError(string message)
         {
-            MessageBox.Show(
-                message,
-                "خطأ",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error,
-                MessageBoxDefaultButton.Button1,
-                MessageBoxOptions.RightAlign |
-                MessageBoxOptions.RtlReading);
+            UIHelper.ShowError(message);
         }
     }
 }
