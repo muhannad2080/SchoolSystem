@@ -441,7 +441,7 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            if (MessageBox.Show("هل أنت متأكد من الحذف؟", "تأكيد", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if (UIHelper.ShowConfirmation("هل أنت متأكد من حذف المعلم المحدد؟", "تأكيد الحذف"))
             {
                 // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
                 try
