@@ -332,7 +332,9 @@ namespace SchoolSystem.UI
             if (char.IsControl(e.KeyChar) || char.IsDigit(e.KeyChar))
                 return;
 
-            if (e.KeyChar == '.' && textBox != null && !textBox.Text.Contains("."))
+            if ((e.KeyChar == '.' || e.KeyChar == ',' || e.KeyChar == '٫' || e.KeyChar == '٬') &&
+                textBox != null &&
+                textBox.Text.IndexOfAny(new[] { '.', ',', '٫', '٬' }) < 0)
                 return;
 
             e.Handled = true;
