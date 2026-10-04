@@ -508,14 +508,11 @@ namespace SchoolSystem.UI
                 }
 
 
-                DialogResult confirm = MessageBox.Show(
-
+                bool confirm = UIHelper.ShowConfirmation(
                     "هل تريد حذف الكتاب المحدد؟",
-                    "تأكيد الحذف",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+                    "تأكيد الحذف");
 
-                if (confirm != DialogResult.Yes)
+                if (!confirm)
                     return;
 
 
