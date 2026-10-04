@@ -61,7 +61,7 @@ namespace SchoolSystem.UiSmokeTests
             string projectRoot = Path.GetFullPath(
                 Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", ".."));
 
-            List<string> sourceFiles = Directory
+            List<string> codeFiles = Directory
                 .GetFiles(projectRoot, "*.cs", SearchOption.AllDirectories)
                 .Where(path =>
                     path.IndexOf(Path.DirectorySeparatorChar + "UI" + Path.DirectorySeparatorChar,
@@ -69,23 +69,26 @@ namespace SchoolSystem.UiSmokeTests
                     string.Equals(
                         Path.GetFileName(path),
                         "MainForm.cs",
-                        StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(
-                        Path.GetFileName(path),
-                        "MainForm.Designer.cs",
                         StringComparison.OrdinalIgnoreCase))
                 .Where(path =>
                     path.IndexOf(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar,
                         StringComparison.OrdinalIgnoreCase) < 0 &&
                     path.IndexOf(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar,
-                        StringComparison.OrdinalIgnoreCase) < 0)
+                        StringComparison.OrdinalIgnoreCase) < 0 &&
+                    !Path.GetFileName(path).EndsWith(".Designer.cs", StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
             int checkedHandlers = 0;
 
-            foreach (string sourcePath in sourceFiles)
+            foreach (string sourcePath in codeFiles)
             {
                 string source = File.ReadAllText(sourcePath);
+                string designerPath = Path.Combine(
+                    Path.GetDirectoryName(sourcePath),
+                    Path.GetFileNameWithoutExtension(sourcePath) + ".Designer.cs");
+
+                if (File.Exists(designerPath))
+                    source += Environment.NewLine + File.ReadAllText(designerPath);
 
                 MatchCollection handlers = Regex.Matches(
                     source,
@@ -236,6 +239,8 @@ namespace SchoolSystem.UiSmokeTests
                 {
                     if (mainForm.IsDisposed)
                         throw new ObjectDisposedException("MainForm");
+
+                    ValidateLayout(mainForm);
                 }
 
                 passed++;
