@@ -99,6 +99,9 @@ namespace SchoolSystem.Services
             if (!payroll.PaymentDate.HasValue)
                 throw new ArgumentException("تاريخ الصرف مطلوب.");
 
+            if (payroll.PaymentDate.Value.Date > DateTime.Today)
+                throw new ArgumentException("تاريخ الصرف لا يمكن أن يكون في المستقبل.");
+
             if (payroll.BasicSalary <= 0)
                 throw new ArgumentException("الراتب الأساسي يجب أن يكون أكبر من صفر.");
 
