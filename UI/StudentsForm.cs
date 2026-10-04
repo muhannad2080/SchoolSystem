@@ -168,7 +168,10 @@ namespace SchoolSystem.UI
             bool canEdit = CurrentUser.CanEdit("Students");
             bool canDelete = CurrentUser.CanDelete("Students");
             bool canPrint = CurrentUser.CanPrint("Students");
-            bool canExport = CurrentUser.CanExport("Students");
+            bool canExport =
+                CurrentUser.HasAny(
+                    "Students.ExportExcel",
+                    "Students.Manage");
             bool canSearch = CurrentUser.CanSearch("Students");
 
             bool editable = (isAdd && canAdd) || (isEdit && canEdit);
@@ -486,6 +489,9 @@ namespace SchoolSystem.UI
             object sender,
             EventArgs e)
         {
+            if (!ConfirmDiscardChanges())
+                return;
+
             if (Parent != null)
             {
                 Parent.Controls.Remove(this);
@@ -1420,6 +1426,14 @@ namespace SchoolSystem.UI
                     ? new List<Student>()
                     : students.ToList();
 
+            if (_selectedStudentId > 0 &&
+                !_filteredStudents.Any(
+                    s => s.StudentId == _selectedStudentId))
+            {
+                _selectedStudentId = 0;
+                _editingSnapshot = null;
+            }
+
             dgvStudents.DataSource =
                 students.Select(s => new
                 {
@@ -1878,6 +1892,120 @@ namespace SchoolSystem.UI
             ApplyFilters();
         }
 
+        private bool ConfirmDiscardChanges()
+        {
+            if (!HasUnsavedChanges())
+                return true;
+
+            return UIHelper.ShowConfirmation(
+                "لديك تغييرات غير محفوظة. هل تريد تجاهلها والمتابعة؟",
+                "تغييرات غير محفوظة");
+        }
+
+        private bool HasUnsavedChanges()
+        {
+            if (_formMode == FormMode.View)
+                return false;
+
+            if (_formMode == FormMode.Add)
+            {
+                return !string.IsNullOrWhiteSpace(txtFullName.Text) ||
+                       cmbGender.SelectedIndex >= 0 ||
+                       dtpBirthDate.Checked ||
+                       !string.IsNullOrWhiteSpace(txtBirthPlace.Text) ||
+                       !string.IsNullOrWhiteSpace(txtNationality.Text) ||
+                       !string.IsNullOrWhiteSpace(txtNationalId.Text) ||
+                       !string.IsNullOrWhiteSpace(txtPhone.Text) ||
+                       !string.IsNullOrWhiteSpace(txtGuardianName.Text) ||
+                       !string.IsNullOrWhiteSpace(txtGuardianRelation.Text) ||
+                       !string.IsNullOrWhiteSpace(txtGuardianPhone.Text) ||
+                       !string.IsNullOrWhiteSpace(txtGuardianEmail.Text) ||
+                       !string.IsNullOrWhiteSpace(txtGuardianJob.Text) ||
+                       !string.IsNullOrWhiteSpace(txtGovernorate.Text) ||
+                       !string.IsNullOrWhiteSpace(txtDistrict.Text) ||
+                       !string.IsNullOrWhiteSpace(txtAddress.Text) ||
+                       _selectedPhoto != null &&
+                       _selectedPhoto.Length > 0;
+            }
+
+            if (_editingSnapshot == null)
+                return true;
+
+            Student current = GetCurrentFormSnapshot();
+
+            return !StudentsEqual(current, _editingSnapshot);
+        }
+
+        private Student GetCurrentFormSnapshot()
+        {
+            return new Student
+            {
+                StudentId = _selectedStudentId,
+                FullName = txtFullName.Text.Trim(),
+                Gender = cmbGender.Text.Trim(),
+                BirthDate = dtpBirthDate.Checked
+                    ? dtpBirthDate.Value.Date
+                    : (DateTime?)null,
+                BirthPlace = txtBirthPlace.Text.Trim(),
+                Nationality = txtNationality.Text.Trim(),
+                NationalId = txtNationalId.Text.Trim(),
+                StudentPhone = txtPhone.Text.Trim(),
+                Status = cmbStatus.Text.Trim(),
+                GuardianName = txtGuardianName.Text.Trim(),
+                GuardianRelation = txtGuardianRelation.Text.Trim(),
+                GuardianPhone = txtGuardianPhone.Text.Trim(),
+                GuardianEmail = txtGuardianEmail.Text.Trim(),
+                GuardianJob = txtGuardianJob.Text.Trim(),
+                Governorate = txtGovernorate.Text.Trim(),
+                District = txtDistrict.Text.Trim(),
+                Address = txtAddress.Text.Trim(),
+                Photo = _selectedPhoto == null
+                    ? null
+                    : (byte[])_selectedPhoto.Clone()
+            };
+        }
+
+        private static bool StudentsEqual(Student left, Student right)
+        {
+            if (left == null || right == null)
+                return left == right;
+
+            return string.Equals(left.FullName, right.FullName, StringComparison.Ordinal) &&
+                   string.Equals(left.Gender, right.Gender, StringComparison.Ordinal) &&
+                   Nullable.Equals(left.BirthDate, right.BirthDate) &&
+                   string.Equals(left.BirthPlace, right.BirthPlace, StringComparison.Ordinal) &&
+                   string.Equals(left.Nationality, right.Nationality, StringComparison.Ordinal) &&
+                   string.Equals(left.NationalId, right.NationalId, StringComparison.Ordinal) &&
+                   string.Equals(left.StudentPhone, right.StudentPhone, StringComparison.Ordinal) &&
+                   string.Equals(left.Status, right.Status, StringComparison.Ordinal) &&
+                   string.Equals(left.GuardianName, right.GuardianName, StringComparison.Ordinal) &&
+                   string.Equals(left.GuardianRelation, right.GuardianRelation, StringComparison.Ordinal) &&
+                   string.Equals(left.GuardianPhone, right.GuardianPhone, StringComparison.Ordinal) &&
+                   string.Equals(left.GuardianEmail, right.GuardianEmail, StringComparison.Ordinal) &&
+                   string.Equals(left.GuardianJob, right.GuardianJob, StringComparison.Ordinal) &&
+                   string.Equals(left.Governorate, right.Governorate, StringComparison.Ordinal) &&
+                   string.Equals(left.District, right.District, StringComparison.Ordinal) &&
+                   string.Equals(left.Address, right.Address, StringComparison.Ordinal) &&
+                   PhotosEqual(left.Photo, right.Photo);
+        }
+
+        private static bool PhotosEqual(byte[] left, byte[] right)
+        {
+            if (ReferenceEquals(left, right))
+                return true;
+
+            if (left == null || right == null || left.Length != right.Length)
+                return false;
+
+            for (int i = 0; i < left.Length; i++)
+            {
+                if (left[i] != right[i])
+                    return false;
+            }
+
+            return true;
+        }
+
         // ================================================================
         // ADD
         // ================================================================
@@ -1892,6 +2020,9 @@ namespace SchoolSystem.UI
                     "ليس لديك صلاحية إضافة الطلاب.");
                 return;
             }
+
+            if (!ConfirmDiscardChanges())
+                return;
 
             ClearForm();
             SetFormMode(FormMode.Add);
