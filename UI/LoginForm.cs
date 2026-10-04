@@ -21,6 +21,8 @@ namespace SchoolSystem.UI
         {
             InitializeComponent();
 
+            ConfigureLoginExperience();
+
             // توحيد اللون الرئيسي مع هوية النظام مع الإبقاء على تخطيط شاشة الدخول المخصص.
             btnLogin.BackColor = UIHelper.AccentColor;
             btnLogin.ForeColor = System.Drawing.Color.White;
@@ -66,6 +68,77 @@ namespace SchoolSystem.UI
                 txtUserName.Focus();
                 txtUserName.SelectAll();
             };
+        }
+
+        /// <summary>
+        /// يضبط الهوية البصرية العربية لشاشة الدخول ويضيف تذييل المطورين.
+        /// لا يغيّر مسار المصادقة أو الصلاحيات أو التعامل مع قاعدة البيانات.
+        /// </summary>
+        private void ConfigureLoginExperience()
+        {
+            DoubleBuffered = true;
+            RightToLeft = RightToLeft.Yes;
+            RightToLeftLayout = true;
+            FormBorderStyle = FormBorderStyle.None;
+            BackColor = UIHelper.BackgroundColor;
+
+            lblBrandName.Text = "نظام إدارة المدرسة";
+            lblBrandTagline.Text = "منصة مدرسية موحّدة لإدارة الطلاب والمعلمين والحضور والرسوم والعمليات اليومية";
+            lblFeatureTitle.Text = "إدارة مدرسية واضحة ومتكاملة";
+            lblFeature1.Text = "✓  بيانات مترابطة وسهلة الوصول";
+            lblFeature2.Text = "✓  متابعة أكاديمية ومالية في واجهة واحدة";
+            lblFeature3.Text = "✓  صلاحيات مستخدمين وسجل للعمليات";
+            lblBrandFooter.Text = "بوابة تشغيل يومية لإدارة المدرسة";
+
+            lblWelcome.Text = "مرحبًا بك";
+            lblTitle.Text = "تسجيل الدخول إلى النظام";
+            lblSubtitle.Text = "أدخل بيانات حسابك المصرّح له بالوصول إلى نظام إدارة المدرسة";
+
+            lblUserLabel.Text = "اسم المستخدم";
+            lblPasswordLabel.Text = "كلمة المرور";
+            txtUserName.TextAlign = HorizontalAlignment.Right;
+            txtPassword.TextAlign = HorizontalAlignment.Right;
+
+            btnLogin.Text = "تسجيل الدخول";
+            btnClear.Text = "مسح الحقول";
+            btnExit.Text = "خروج";
+            btnTogglePassword.Text = "إظهار";
+
+            lblStatus.TextAlign = ContentAlignment.MiddleRight;
+            lblFooter.Text = "الوصول إلى النظام متاح للحسابات المصرح لها فقط";
+            lblFooter.TextAlign = ContentAlignment.MiddleRight;
+
+            Label developerFooter = new Label
+            {
+                Name = "lblDevelopers",
+                Dock = DockStyle.Bottom,
+                Height = 46,
+                AutoSize = false,
+                BackColor = Color.Transparent,
+                ForeColor = UIHelper.MutedTextColor,
+                Font = new Font(UIHelper.FontFamily, 8F, FontStyle.Regular),
+                RightToLeft = RightToLeft.Yes,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Text = "المطورون: المهندس مهند علي علي علي سعد • عبدالرحمن سعد علي سعد • سامي الحاج",
+                Padding = new Padding(8, 4, 8, 8),
+                Margin = new Padding(0)
+            };
+
+            panelLoginArea.Controls.Add(developerFooter);
+            developerFooter.BringToFront();
+
+            toolTip.SetToolTip(developerFooter, "فريق تطوير نظام إدارة المدرسة");
+
+            // توحيد اتجاه النصوص داخل الحاويات العربية.
+            foreach (Control control in new Control[]
+            {
+                panelBrand, brandLayout, brandTop, brandFeatureLayout,
+                panelLoginArea, loginAreaLayout, loginCard, cardLayout,
+                pnlUser, pnlPassword, pnlLogin, bottomActions
+            })
+            {
+                control.RightToLeft = RightToLeft.Yes;
+            }
         }
 
         // تعريف الدالة ShowInitializationError لتنفيذ العملية المرتبطة بها.
