@@ -959,7 +959,7 @@ namespace SchoolSystem.Helpers
             NormalizeButtonCaption(btn);
             string text = (btn.Text ?? string.Empty).Trim();
 
-            if (text.Contains("حذف"))
+            if (text.Contains("حذف") || text.Contains("أرشفة"))
             {
                 StyleButton(btn, DangerColor);
 
