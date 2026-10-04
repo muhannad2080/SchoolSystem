@@ -36,4 +36,15 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="CopyApplicationDependencies" AfterTargets="Build">
+    <ItemGroup>
+      <ApplicationOutputFiles Include="..\..\bin\$(Configuration)\*.dll" />
+      <ApplicationOutputFiles Include="..\..\bin\$(Configuration)\*.config" />
+      <ApplicationOutputFiles Include="..\..\bin\$(Configuration)\*.exe" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ApplicationOutputFiles)"
+          DestinationFolder="$(TargetDir)"
+          SkipUnchangedFiles="true"
+          Condition="Exists('..\..\bin\$(Configuration)')" />
+  </Target>
 </Project>
