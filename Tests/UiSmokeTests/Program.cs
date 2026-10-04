@@ -24,7 +24,10 @@ namespace SchoolSystem.UiSmokeTests
                         !type.IsAbstract &&
                         type.IsPublic &&
                         baseControlType.IsAssignableFrom(type) &&
-                        type.Namespace == "SchoolSystem.UI")
+                        type.Namespace != null &&
+                        type.Namespace.StartsWith(
+                            "SchoolSystem.UI",
+                            StringComparison.Ordinal))
                     .OrderBy(type => type.Name)
                     .ToList();
 
