@@ -1653,17 +1653,12 @@ string receiptNumber =
                     return;
                 }
 
-                DialogResult confirm =
-                    MessageBox.Show(
+                bool confirm =
+                    UIHelper.ShowConfirmation(
                         "هل أنت متأكد من حذف سجل الرسوم المحدد؟",
-                        "تأكيد الحذف",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Warning,
-                        MessageBoxDefaultButton.Button2,
-                        MessageBoxOptions.RightAlign |
-                        MessageBoxOptions.RtlReading);
+                        "تأكيد الحذف");
 
-                if (confirm != DialogResult.Yes)
+                if (!confirm)
                     return;
 
                 bool result =
