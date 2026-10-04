@@ -1528,7 +1528,9 @@ namespace SchoolSystem.DataAccess
 
                     catch (Exception ex)
                     {
-                        ApplicationLogger.LogException("مستودع " + nameof(ReportRepository) + ": تنفيذ التقرير", ex);
+                        ApplicationLogger.LogException(
+                            "مستودع " + nameof(ReportRepository) + ": تنفيذ التقرير\nSQL:\n" + query,
+                            ex);
                         throw;
                     }
 
