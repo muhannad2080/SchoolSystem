@@ -280,23 +280,14 @@ namespace SchoolSystem.DataAccess
             if (!TableExists("Students"))
                 return CreateMessageTable("جدول الطلاب Students غير موجود.");
 
+            /*
+             * تقرير الطلاب يعتمد على الحالة الحالية المخزنة في Students.
+             * StudentClassRepository يحدّث ClassID/Section/AcademicYear في Students
+             * بعد أي توزيع أو نقل، لذلك لا نحتاج إلى CTE يعتمد على StudentClasses هنا.
+             * كما أن المقارنة تُحوّل القيم صراحة إلى NVARCHAR لمنع اختلاف نوع العمود
+             * بين قواعد البيانات القديمة والجديدة.
+             */
             string query = @"
-                WITH YearAssignment AS
-                (
-                    SELECT
-                        sc.StudentID,
-                        sc.ClassID,
-                        sc.Section,
-                        sc.AcademicYear,
-                        ROW_NUMBER() OVER
-                        (
-                            PARTITION BY sc.StudentID
-                            ORDER BY sc.AssignedDate DESC, sc.StudentClassID DESC
-                        ) AS AssignmentRank
-                    FROM dbo.StudentClasses sc
-                    WHERE REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') =
-                          REPLACE(@AcademicYear, N'-', N'/')
-                )
                 SELECT
                     s.StudentID AS [رقم الطالب],
                     s.StudentNumber AS [الرقم الأكاديمي],
@@ -304,51 +295,48 @@ namespace SchoolSystem.DataAccess
                     s.Gender AS [الجنس],
                     s.BirthDate AS [تاريخ الميلاد],
                     c.ClassName AS [الصف],
-                    ya.Section AS [الشعبة],
-                    CASE
-                        WHEN ya.StudentID IS NOT NULL THEN ya.AcademicYear
-                        ELSE @AcademicYear
-                    END AS [العام الدراسي],
+                    LTRIM(RTRIM(ISNULL(CONVERT(nvarchar(100), s.Section), N''))) AS [الشعبة],
+                    LTRIM(RTRIM(ISNULL(CONVERT(nvarchar(20), s.AcademicYear), N''))) AS [العام الدراسي],
                     s.StudentPhone AS [هاتف الطالب],
                     s.GuardianName AS [ولي الأمر],
                     s.GuardianPhone AS [هاتف الولي],
                     s.Status AS [الحالة],
                     s.CreatedAt AS [تاريخ الإضافة]
-                FROM Students s
-                LEFT JOIN YearAssignment ya
-                    ON ya.StudentID = s.StudentID
-                   AND ya.AssignmentRank = 1
-                LEFT JOIN Classes c ON ya.ClassID = c.ClassID
+                FROM dbo.Students s
+                LEFT JOIN dbo.Classes c ON c.ClassID = s.ClassID
                 WHERE
                     (
-                        ya.StudentID IS NOT NULL
-                        OR REPLACE(ISNULL(s.AcademicYear, N''''), N''-'', N''/'') =
-                           REPLACE(@AcademicYear, N''-'', N''/'')
+                        ISNULL(LTRIM(RTRIM(CONVERT(nvarchar(20), @AcademicYear))), N'') = N''
+                        OR
+                        REPLACE(
+                            LTRIM(RTRIM(ISNULL(CONVERT(nvarchar(20), s.AcademicYear), N''))),
+                            N'-',
+                            N'/'
+                        ) =
+                        REPLACE(
+                            LTRIM(RTRIM(CONVERT(nvarchar(20), @AcademicYear))),
+                            N'-',
+                            N'/'
+                        )
                     )";
 
             if (request.ClassID.HasValue)
-                query += " AND ISNULL(ya.ClassID, 0) = @ClassID";
-
+                query += " AND ISNULL(s.ClassID, 0) = @ClassID";
 
             if (!string.IsNullOrWhiteSpace(request.Section))
-                query += " AND ISNULL(ya.Section, N'') = @Section";
-
+                query += " AND LTRIM(RTRIM(ISNULL(CONVERT(nvarchar(100), s.Section), N''))) = LTRIM(RTRIM(@Section))";
 
             if (!string.IsNullOrWhiteSpace(request.Status) && request.Status != "الكل")
-                query += " AND ISNULL(s.Status, '') = @Status";
-
+                query += " AND LTRIM(RTRIM(ISNULL(CONVERT(nvarchar(30), s.Status), N''))) = LTRIM(RTRIM(@Status))";
 
             if (!string.IsNullOrWhiteSpace(request.SearchText))
                 query += " AND (s.FullName LIKE @Search OR s.StudentNumber LIKE @Search OR s.GuardianPhone LIKE @Search)";
 
-
             query += " ORDER BY s.FullName";
-
 
             return ExecuteQuery(query, request);
         }
 
-        // تعريف الدالة GetTeachersReport لتنفيذ العملية المرتبطة بها.
         private DataTable GetTeachersReport(ReportRequest request)
         {
             if (!TableExists("Teachers"))
