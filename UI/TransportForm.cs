@@ -466,14 +466,9 @@ namespace SchoolSystem.UI
                 }
 
 
-                DialogResult confirm = MessageBox.Show(
-
+                if (!UIHelper.ShowConfirmation(
                     "هل تريد حذف الحافلة المحددة؟\nإذا كانت الحافلة مرتبطة بمسارات قد يظهر خطأ لوجود ارتباطات.",
-                    "تأكيد الحذف",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (confirm != DialogResult.Yes)
+                    "تأكيد الحذف"))
                     return;
 
 
@@ -584,7 +579,7 @@ namespace SchoolSystem.UI
             if (string.IsNullOrWhiteSpace(txtRouteName.Text))
             {
 
-                MessageBox.Show("أدخل اسم المسار.");
+                UIHelper.ShowWarning("أدخل اسم المسار.");
 
                 txtRouteName.Focus();
 
@@ -594,7 +589,7 @@ namespace SchoolSystem.UI
             if (cmbBus.SelectedValue == null || cmbBus.Items.Count == 0)
             {
 
-                MessageBox.Show("اختر الحافلة.");
+                UIHelper.ShowWarning("اختر الحافلة.");
 
                 cmbBus.Focus();
 
@@ -604,7 +599,7 @@ namespace SchoolSystem.UI
             if (string.IsNullOrWhiteSpace(txtStartPoint.Text) || string.IsNullOrWhiteSpace(txtEndPoint.Text))
             {
 
-                MessageBox.Show("أدخل نقطة البداية ونقطة النهاية.");
+                UIHelper.ShowWarning("أدخل نقطة البداية ونقطة النهاية.");
 
                 txtStartPoint.Focus();
 
@@ -614,7 +609,7 @@ namespace SchoolSystem.UI
             if (dtpArrival.Value.TimeOfDay <= dtpDeparture.Value.TimeOfDay)
             {
 
-                MessageBox.Show("وقت الوصول يجب أن يكون بعد وقت الانطلاق.");
+                UIHelper.ShowWarning("وقت الوصول يجب أن يكون بعد وقت الانطلاق.");
 
                 dtpArrival.Focus();
 
@@ -626,7 +621,7 @@ namespace SchoolSystem.UI
                 (!UIHelper.TryParseDecimal(txtFee.Text, out fee) || fee < 0))
             {
 
-                MessageBox.Show("أدخل رسوم نقل رقمية غير سالبة.");
+                UIHelper.ShowWarning("أدخل رسوم نقل رقمية غير سالبة.");
 
                 txtFee.Focus();
 
@@ -637,7 +632,7 @@ namespace SchoolSystem.UI
                 txtEndPoint.Text.Trim().Length > 200 || txtRouteNotes.Text.Trim().Length > 1000)
             {
 
-                MessageBox.Show("تجاوز أحد حقول المسار الحد المسموح به.");
+                UIHelper.ShowWarning("تجاوز أحد حقول المسار الحد المسموح به.");
 
                 return false;
             }
@@ -987,8 +982,9 @@ namespace SchoolSystem.UI
                     return;
                 }
 
-                if (MessageBox.Show("سيتم إلغاء توزيع النقل للطالب المحدد. هل تريد المتابعة؟",
-                    "تأكيد الإلغاء", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                if (!UIHelper.ShowConfirmation(
+                    "سيتم إلغاء توزيع النقل للطالب المحدد. هل تريد المتابعة؟",
+                    "تأكيد الإلغاء"))
                     return;
 
                 bool deleted = await Task.Run(() => studentTransportService.Delete(selectedTransportAssignmentId));
@@ -1073,7 +1069,7 @@ namespace SchoolSystem.UI
                 await Task.Run(() => routeService.AddRoute(route));
 
 
-                MessageBox.Show("تمت إضافة المسار بنجاح.");
+                UIHelper.ShowInfo("تمت إضافة المسار بنجاح.");
                 ApplicationLogger.LogUsage("شاشة النقل", "إضافة مسار", "تمت إضافة المسار بنجاح");
 
 
@@ -1100,7 +1096,7 @@ namespace SchoolSystem.UI
                 if (selectedRouteId == 0)
                 {
 
-                    MessageBox.Show("اختر المسار من الجدول أولاً.");
+                    UIHelper.ShowWarning("اختر المسار من الجدول أولاً.");
 
                     return;
                 }
@@ -1114,7 +1110,7 @@ namespace SchoolSystem.UI
                 bool result = await Task.Run(() => routeService.UpdateRoute(route));
 
 
-                MessageBox.Show(result ? "تم تعديل المسار بنجاح." : "لم يتم تعديل المسار.");
+                UIHelper.ShowInfo(result ? "تم تعديل المسار بنجاح." : "لم يتم تعديل المسار.");
                 if (result) ApplicationLogger.LogUsage("شاشة النقل", "تعديل مسار", "تم تعديل المسار بنجاح");
 
 
@@ -1138,27 +1134,22 @@ namespace SchoolSystem.UI
                 if (selectedRouteId == 0)
                 {
 
-                    MessageBox.Show("اختر المسار من الجدول أولاً.");
+                    UIHelper.ShowWarning("اختر المسار من الجدول أولاً.");
 
                     return;
                 }
 
 
-                DialogResult confirm = MessageBox.Show(
-
+                if (!UIHelper.ShowConfirmation(
                     "هل تريد حذف المسار المحدد؟",
-                    "تأكيد الحذف",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (confirm != DialogResult.Yes)
+                    "تأكيد الحذف"))
                     return;
 
 
                 bool result = await Task.Run(() => routeService.DeleteRoute(selectedRouteId));
 
 
-                MessageBox.Show(result ? "تم حذف المسار." : "لم يتم حذف المسار.");
+                UIHelper.ShowInfo(result ? "تم حذف المسار." : "لم يتم حذف المسار.");
                 if (result) ApplicationLogger.LogUsage("شاشة النقل", "حذف مسار", "تم حذف المسار بنجاح");
 
 
