@@ -87,8 +87,6 @@ namespace SchoolSystem.DataAccess
                         @TransportAllowance,
                         @OtherAllowances,
                         @Deductions,
-                        @TotalSalary,
-                        @NetSalary,
                         @StartDate,
                         @EndDate,
                         @PaymentMethod,
@@ -271,9 +269,8 @@ namespace SchoolSystem.DataAccess
 
             cmd.Parameters.AddWithValue("@Deductions", contract.Deductions);
 
-            cmd.Parameters.AddWithValue("@TotalSalary", contract.TotalSalary);
-
-            cmd.Parameters.AddWithValue("@NetSalary", contract.NetSalary);
+            // TotalSalary وNetSalary أعمدة محسوبة في dbo.TeacherContracts،
+            // لذلك لا تُرسل ضمن INSERT/UPDATE.
 
             cmd.Parameters.AddWithValue("@StartDate", contract.StartDate.Date);
 
