@@ -103,9 +103,7 @@ namespace SchoolSystem.UI
             dtpApplicationDate.ValueChanged +=
                 dtpApplicationDate_ValueChanged;
 
-            txtSearch.TextChanged +=
-                (sender, e) => btnSearch_Click(sender, e);
-
+            // البحث يتم عند الضغط على «بحث» أو Enter لتجنب تكرار تنفيذ البحث مع كل حرف.
             // ------------------------------------------------------------
             // Services
             // ------------------------------------------------------------
