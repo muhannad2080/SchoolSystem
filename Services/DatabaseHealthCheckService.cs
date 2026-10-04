@@ -113,6 +113,7 @@ namespace SchoolSystem.Services
                     structural &= CheckTables(con, result);
                     structural &= CheckColumns(con, result);
                     structural &= CheckProcedures(con, result);
+                    structural &= CheckFunctions(con, result);
                     structural &= RunBasicQuery(con, result);
                     CheckSeed(con, result);
                 }
@@ -214,6 +215,11 @@ namespace SchoolSystem.Services
             "GetStudentMigrationReport", "CloseAcademicYear", "CloseAndActivateAcademicYear"
         };
 
+        private static readonly string[] RequiredFunctions =
+        {
+            "GetActiveAcademicYear"
+        };
+
         private static bool CheckProcedures(SqlConnection con, HealthCheckResult result)
         {
             bool ok = true;
@@ -234,6 +240,39 @@ namespace SchoolSystem.Services
                     result.Issues.Add("إجراء مخزّن مفقود: " + proc);
                     ok = false;
                 }
+            return ok;
+        }
+
+        private static bool CheckFunctions(SqlConnection con, HealthCheckResult result)
+        {
+            bool ok = true;
+            HashSet<string> present = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(
+                    "SELECT name FROM sys.objects WHERE schema_id = SCHEMA_ID(N'dbo') AND type IN ('FN', 'IF', 'TF');", con))
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                        present.Add(reader.GetString(0));
+                }
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("خدمة " + nameof(DatabaseHealthCheckService) + ": فحص الدوال الأساسية", ex);
+                return false;
+            }
+
+            foreach (string functionName in RequiredFunctions)
+            {
+                if (!present.Contains(functionName))
+                {
+                    result.Issues.Add("دالة مفقودة: " + functionName);
+                    ok = false;
+                }
+            }
+
             return ok;
         }
 
