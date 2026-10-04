@@ -22,6 +22,7 @@ namespace SchoolSystem.UI
         private bool suppressTeacherChange;
         private bool isBusy;
         private int activeContractId;
+        private int entryStateVersion;
 
         public PayrollRecordsForm()
         {
@@ -154,6 +155,7 @@ namespace SchoolSystem.UI
 
         private async Task LoadActiveContractAsync(bool showWarning)
         {
+            int stateVersion = ++entryStateVersion;
             activeContractId = 0;
 
             if (cmbTeacher.SelectedValue == null ||
@@ -171,10 +173,13 @@ namespace SchoolSystem.UI
                 TeacherContract contract = await Task.Run(
                     () => contractService.GetActiveContractForTeacher(teacherId));
 
+                if (stateVersion != entryStateVersion || isBusy || IsDisposed || Disposing)
+                    return;
+
                 if (contract == null)
                 {
                     ClearSalaryFields();
-                    SetAddState(false);
+                    SetAddState(false, "لا يوجد عقد ساري");
 
                     if (showWarning)
                         UIHelper.ShowWarning("لا يوجد عقد وظيفي سارٍ لهذا الموظف في تاريخ اليوم؛ لا يمكن تسجيل راتب شهري.");
@@ -242,6 +247,8 @@ namespace SchoolSystem.UI
 
         private async Task RefreshEntryStateAsync()
         {
+            int stateVersion = ++entryStateVersion;
+
             if (suppressTeacherChange || isBusy || IsDisposed || Disposing)
                 return;
 
@@ -277,6 +284,9 @@ namespace SchoolSystem.UI
             {
                 bool exists = await Task.Run(
                     () => payrollService.PayrollExists(teacherId, month, year));
+
+                if (stateVersion != entryStateVersion || isBusy || IsDisposed || Disposing)
+                    return;
 
                 if (exists)
                     SetAddState(false, "الراتب مسجل لهذه الفترة");
@@ -522,6 +532,7 @@ namespace SchoolSystem.UI
 
         private void SetBusy(bool value)
         {
+            ++entryStateVersion;
             isBusy = value;
             btnRefresh.Enabled = !value;
             btnClear.Enabled = !value;
