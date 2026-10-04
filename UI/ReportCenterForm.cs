@@ -816,7 +816,10 @@ namespace SchoolSystem.UI
 
 
             if (dt.Columns.Contains("القبض") || dt.Columns.Contains("الصرف"))
-                summary += " | صافي الحركة: " + net.ToString("N2");
+            {
+                decimal netMovement = receipts - payments;
+                summary += " | صافي الحركة: " + netMovement.ToString("N2");
+            }
 
             if (academicAverage > 0)
                 summary += " | متوسط الفصل: " + academicAverage.ToString("N2");
