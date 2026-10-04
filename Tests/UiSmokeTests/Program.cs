@@ -89,6 +89,25 @@ namespace SchoolSystem.UiSmokeTests
             int failed = 0;
             int manual = 0;
 
+            try
+            {
+                Assembly.Load("iTextSharp.LGPLv2.Core, Version=3.8.1.0, Culture=neutral, PublicKeyToken=51d712e21b66ad36");
+                passed++;
+                Console.WriteLine("[PASS] PDF runtime dependency");
+            }
+            catch (Exception ex)
+            {
+                failed++;
+                Exception root = ex;
+                while (root.InnerException != null)
+                    root = root.InnerException;
+
+                Console.WriteLine(
+                    "[FAIL] PDF runtime dependency: " +
+                    root.GetType().Name + " - " +
+                    root.Message);
+            }
+
             string pdfAssemblyPath = Path.Combine(
                 AppDomain.CurrentDomain.BaseDirectory,
                 "iTextSharp.LGPLv2.Core.dll");
