@@ -8,6 +8,10 @@ using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
 {
+    /// <summary>
+    /// واجهة تسجيل وصرف الرواتب الشهرية.
+    /// تسجل الراتب الفعلي للشهر وتُنشئ سند الصرف المالي المرتبط به تلقائياً.
+    /// </summary>
     public partial class PayrollRecordsForm : UserControl
     {
         private readonly PayrollService payrollService = new PayrollService();
