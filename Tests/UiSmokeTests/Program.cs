@@ -9,6 +9,59 @@ namespace SchoolSystem.UiSmokeTests
     internal static class Program
     {
         [STAThread]
+        private static void ValidatePayrollScreens(Control control)
+        {
+            if (control is SchoolSystem.UI.PayrollForm)
+            {
+                AssertControlText(control, "lblTitle", "إدارة العقود الوظيفية");
+                AssertControlText(control, "groupBoxContract", "بيانات العقد الوظيفي والراتب المتفق عليه");
+                AssertControlText(control, "btnAdd", "إضافة عقد");
+                AssertControlText(control, "btnUpdate", "تعديل العقد");
+                AssertControlText(control, "btnDelete", "حذف العقد");
+                AssertControlText(control, "btnClear", "تفريغ الحقول");
+                AssertControlText(control, "lblSearch", "بحث عن عقد:");
+            }
+            else if (control is SchoolSystem.UI.PayrollRecordsForm)
+            {
+                AssertControlText(control, "lblTitle", "مسير الرواتب وسجلات الصرف");
+                AssertControlText(control, "groupBoxPayroll", "بيانات الراتب الشهري");
+                AssertControlText(control, "btnAdd", "تسجيل وصرف الراتب");
+                AssertControlText(control, "btnRefresh", "تحديث السجلات");
+                AssertControlText(control, "btnClear", "تفريغ الحقول");
+                AssertControlText(control, "lblSearch", "بحث في سجلات الرواتب");
+
+                DateTimePicker paymentDate =
+                    GetPrivateControl<DateTimePicker>(control, "dtpPaymentDate");
+                if (paymentDate.MaxDate.Date > DateTime.Today)
+                    throw new InvalidOperationException("تاريخ صرف الراتب يسمح بتاريخ مستقبلي.");
+            }
+        }
+
+        private static void AssertControlText(Control root, string fieldName, string expected)
+        {
+            Control control = GetPrivateControl<Control>(root, fieldName);
+            if (!string.Equals(control.Text, expected, StringComparison.Ordinal))
+                throw new InvalidOperationException(
+                    fieldName + " expected '" + expected + "' but was '" + control.Text + "'.");
+        }
+
+        private static T GetPrivateControl<T>(Control root, string fieldName)
+            where T : class
+        {
+            FieldInfo field = root.GetType().GetField(
+                fieldName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (field == null)
+                throw new MissingFieldException(root.GetType().FullName, fieldName);
+
+            T value = field.GetValue(root) as T;
+            if (value == null)
+                throw new InvalidOperationException("Field " + fieldName + " is not the expected control type.");
+
+            return value;
+        }
+
         private static int Main()
         {
             Application.EnableVisualStyles();
@@ -80,6 +133,8 @@ namespace SchoolSystem.UiSmokeTests
 
                         if (control.IsDisposed)
                             throw new ObjectDisposedException(type.Name);
+
+                        ValidatePayrollScreens(control);
                     }
 
                     passed++;
