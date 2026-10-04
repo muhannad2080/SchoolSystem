@@ -91,7 +91,7 @@ namespace SchoolSystem.UI
 
             catch (Exception ex)
             {
-                UIHelper.ShowException("تحميل بيانات الرواتب", ex);
+                UIHelper.ShowException("تحميل شاشة العقود الوظيفية", ex);
             }
         }
 
@@ -193,7 +193,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                UIHelper.ShowException("تحميل عقود الرواتب", ex);
+                UIHelper.ShowException("تحميل العقود الوظيفية", ex);
             }
         }
 
@@ -379,7 +379,7 @@ namespace SchoolSystem.UI
         private string GenerateContractNumber()
         {
 
-            return "CON-" + DateTime.Now.ToString("yyyyMMddHHmmss");
+            return "CON-" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
         }
 
         // تعريف الدالة GetContractFromInputs لتنفيذ العملية المرتبطة بها.
@@ -544,7 +544,7 @@ namespace SchoolSystem.UI
                 row["NetSalary"] == DBNull.Value ? "0" : row["NetSalary"].ToString();
 
             if (row["StartDate"] != DBNull.Value && DateTime.TryParse(row["StartDate"].ToString(), out DateTime startDate))
-                dtpStartDate.Value = startDate <= DateTime.Today ? startDate : DateTime.Today;
+                dtpStartDate.Value = startDate;
 
             if (row["EndDate"] != DBNull.Value && DateTime.TryParse(row["EndDate"].ToString(), out DateTime endDate))
             {
@@ -596,7 +596,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                UIHelper.ShowException("إضافة سجل الرواتب", ex);
+                UIHelper.ShowException("إضافة العقد الوظيفي", ex);
             }
         }
 
@@ -635,7 +635,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                UIHelper.ShowException("تعديل سجل الرواتب", ex);
+                UIHelper.ShowException("تعديل العقد الوظيفي", ex);
             }
         }
 
@@ -680,7 +680,7 @@ namespace SchoolSystem.UI
             catch (Exception ex)
             {
                 Cursor = Cursors.Default;
-                UIHelper.ShowException("حذف سجل الرواتب", ex);
+                UIHelper.ShowException("حذف العقد الوظيفي", ex);
             }
         }
 
