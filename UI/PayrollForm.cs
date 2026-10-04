@@ -650,14 +650,11 @@ namespace SchoolSystem.UI
             }
 
 
-            DialogResult result = MessageBox.Show(
-
+            bool result = UIHelper.ShowConfirmation(
                 "هل تريد حذف هذا العقد؟",
-                "تأكيد الحذف",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
+                "تأكيد الحذف");
 
-            if (result != DialogResult.Yes)
+            if (!result)
                 return;
 
             // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
