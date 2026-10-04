@@ -1235,14 +1235,8 @@ namespace SchoolSystem.UI
                     txtEnrollmentID.Text) ||
                 txtEnrollmentID.Text == "جديد")
             {
-                MessageBox.Show(
-                    "رجاءً حدد طلبًا قبل الطباعة.",
-                    "تنبيه",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning,
-                    MessageBoxDefaultButton.Button1,
-                    MessageBoxOptions.RightAlign |
-                    MessageBoxOptions.RtlReading);
+                UIHelper.ShowWarning(
+                    "رجاءً حدد طلبًا قبل الطباعة.");
 
                 return false;
             }
