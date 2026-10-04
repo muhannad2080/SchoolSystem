@@ -401,7 +401,10 @@ namespace SchoolSystem.DataAccess
                     s.GuardianPhone AS [هاتف الولي],
                     e.RegistrationFee AS [رسوم التسجيل],
                     e.PaidAmount AS [المدفوع],
-                    (ISNULL(e.RegistrationFee, 0) - ISNULL(e.PaidAmount, 0)) AS [المتبقي],
+                    (
+                        ISNULL(TRY_CONVERT(decimal(18,2), e.RegistrationFee), 0)
+                        - ISNULL(TRY_CONVERT(decimal(18,2), e.PaidAmount), 0)
+                    ) AS [المتبقي],
                     e.PaymentMethod AS [طريقة الدفع],
                     e.ReceiptNo AS [رقم السند]
                 FROM Enrollments e
@@ -887,7 +890,8 @@ namespace SchoolSystem.DataAccess
                         ELSE br.Status
                     END AS [الحالة],
                     b.Copies AS [إجمالي النسخ],
-                    b.Copies - ISNULL((SELECT COUNT(*) FROM BookBorrowings x WHERE x.BookID = b.BookID AND x.Status = N'معار'), 0) AS [النسخ المتاحة],
+                    ISNULL(TRY_CONVERT(int, b.Copies), 0)
+                    - ISNULL((SELECT COUNT(*) FROM BookBorrowings x WHERE x.BookID = b.BookID AND x.Status = N'معار'), 0) AS [النسخ المتاحة],
                     br.Notes AS [ملاحظات]
                 FROM BookBorrowings br
                 INNER JOIN Books b ON b.BookID = br.BookID
