@@ -426,7 +426,7 @@ namespace SchoolSystem.UI
         private void RestoreButton_Click(object sender, EventArgs e)
         {
 
-            if (MessageBox.Show("استعادة قاعدة البيانات قد تستبدل البيانات الحالية. هل تريد المتابعة؟", "تأكيد الاستعادة", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+            if (!UIHelper.ShowConfirmation("استعادة قاعدة البيانات قد تستبدل البيانات الحالية. هل تريد المتابعة؟", "تأكيد الاستعادة"))
 
                 return;
             // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
