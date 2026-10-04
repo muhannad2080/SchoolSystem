@@ -1153,12 +1153,9 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            if (MessageBox.Show(
-                    "هل أنت متأكد من حذف هذا الطلب؟",
-                    "تأكيد",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question)
-                == DialogResult.Yes)
+            if (UIHelper.ShowConfirmation(
+                    "هل أنت متأكد من حذف طلب التسجيل المحدد؟",
+                    "تأكيد الحذف"))
             {
                 try
                 {
