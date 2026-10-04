@@ -253,6 +253,7 @@ ORDER BY StartDate DESC, ContractID DESC;", conn))
                     FROM TeacherContracts
                     WHERE TeacherID = @TeacherID
                       AND ContractStatus = N'ساري'
+                      AND StartDate <= CAST(GETDATE() AS DATE)
                       AND (EndDate IS NULL OR EndDate >= CAST(GETDATE() AS DATE))";
 
                 if (excludedContractId > 0)
