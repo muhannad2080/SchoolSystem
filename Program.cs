@@ -102,11 +102,15 @@ namespace SchoolSystem
 
             using (LoginForm loginForm = new LoginForm())
             {
-                if (loginForm.ShowDialog() == DialogResult.OK)
-                {
+                DialogResult loginResult = loginForm.ShowDialog();
 
+                // زر "خروج" يعيد Cancel + AppShouldExit بدون العبث برسالة التطبيق.
+                // أما إغلاق/إلغاء شاشة الدخول لأي سبب آخر فلا يفتح MainForm.
+                if (loginForm.AppShouldExit)
+                    return;
+
+                if (loginResult == DialogResult.OK)
                     Application.Run(new MainForm());
-                }
             }
         }
 
