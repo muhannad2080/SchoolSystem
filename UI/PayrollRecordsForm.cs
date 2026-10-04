@@ -16,8 +16,11 @@ namespace SchoolSystem.UI
     {
         private readonly PayrollService payrollService = new PayrollService();
         private readonly TeacherService teacherService = new TeacherService();
+        private readonly ContractService contractService = new ContractService();
 
         private DataTable allPayrolls;
+        private bool suppressTeacherChange;
+        private int activeContractId;
 
         public PayrollRecordsForm()
         {
@@ -62,6 +65,7 @@ namespace SchoolSystem.UI
             txtAllowances.KeyPress += NumericTextBox_KeyPress;
             txtDeductions.KeyPress += NumericTextBox_KeyPress;
             txtSearch.TextChanged += txtSearch_TextChanged;
+            cmbTeacher.SelectedIndexChanged += cmbTeacher_SelectedIndexChanged;
             dataGridViewPayrolls.DataBindingComplete += (s, e) => FormatGridColumns();
         }
 
@@ -111,20 +115,110 @@ namespace SchoolSystem.UI
 
         private async Task LoadTeachersAsync()
         {
-            DataTable teachers = await Task.Run(() => teacherService.GetActiveTeachers());
-            cmbTeacher.DataSource = teachers;
+            suppressTeacherChange = true;
+            try
+            {
+                DataTable teachers = await Task.Run(() => teacherService.GetActiveTeachers());
+                cmbTeacher.DataSource = teachers;
 
-            if (teachers.Columns.Contains("TeacherName"))
-                cmbTeacher.DisplayMember = "TeacherName";
-            else if (teachers.Columns.Contains("FullName"))
-                cmbTeacher.DisplayMember = "FullName";
-            else if (teachers.Columns.Count > 1)
-                cmbTeacher.DisplayMember = teachers.Columns[1].ColumnName;
+                if (teachers.Columns.Contains("TeacherName"))
+                    cmbTeacher.DisplayMember = "TeacherName";
+                else if (teachers.Columns.Contains("FullName"))
+                    cmbTeacher.DisplayMember = "FullName";
+                else if (teachers.Columns.Count > 1)
+                    cmbTeacher.DisplayMember = teachers.Columns[1].ColumnName;
 
-            cmbTeacher.ValueMember = "TeacherID";
+                cmbTeacher.ValueMember = "TeacherID";
 
-            if (cmbTeacher.Items.Count > 0)
-                cmbTeacher.SelectedIndex = 0;
+                if (cmbTeacher.Items.Count > 0)
+                    cmbTeacher.SelectedIndex = 0;
+            }
+            finally
+            {
+                suppressTeacherChange = false;
+            }
+
+            await LoadActiveContractAsync(false);
+        }
+
+        private async void cmbTeacher_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (suppressTeacherChange || busy || IsDisposed || Disposing)
+                return;
+
+            await LoadActiveContractAsync(true);
+        }
+
+        private async Task LoadActiveContractAsync(bool showWarning)
+        {
+            activeContractId = 0;
+
+            if (cmbTeacher.SelectedValue == null ||
+                cmbTeacher.SelectedValue is DataRowView ||
+                !int.TryParse(cmbTeacher.SelectedValue.ToString(), out int teacherId) ||
+                teacherId <= 0)
+            {
+                ClearSalaryFields();
+                SetAddState(false);
+                return;
+            }
+
+            try
+            {
+                TeacherContract contract = await Task.Run(
+                    () => contractService.GetActiveContractForTeacher(teacherId));
+
+                if (contract == null)
+                {
+                    ClearSalaryFields();
+                    SetAddState(false);
+
+                    if (showWarning)
+                        UIHelper.ShowWarning("لا يوجد عقد وظيفي سارٍ لهذا الموظف في تاريخ اليوم؛ لا يمكن تسجيل راتب شهري.");
+                    return;
+                }
+
+                activeContractId = contract.ContractID;
+                txtBasicSalary.Text = contract.BasicSalary.ToString("0.##");
+                txtAllowances.Text =
+                    (contract.HousingAllowance +
+                     contract.TransportAllowance +
+                     contract.OtherAllowances).ToString("0.##");
+                txtDeductions.Text = "0";
+
+                int paymentMethodIndex = cmbPaymentMethod.FindStringExact(
+                    (contract.PaymentMethod ?? string.Empty).Trim());
+                if (paymentMethodIndex >= 0)
+                    cmbPaymentMethod.SelectedIndex = paymentMethodIndex;
+
+                SalaryField_TextChanged(this, EventArgs.Empty);
+                SetAddState(true);
+            }
+            catch (Exception ex)
+            {
+                ClearSalaryFields();
+                SetAddState(false);
+                if (showWarning)
+                    UIHelper.ShowException("تحميل العقد الساري", ex);
+                else
+                    ApplicationLogger.LogException("واجهة الرواتب الشهرية: تحميل العقد الساري", ex);
+            }
+        }
+
+        private void ClearSalaryFields()
+        {
+            txtBasicSalary.Text = "0";
+            txtAllowances.Text = "0";
+            txtDeductions.Text = "0";
+            txtNetSalary.Text = "0";
+        }
+
+        private void SetAddState(bool hasActiveContract)
+        {
+            btnAdd.Enabled = hasActiveContract && !busy;
+            btnAdd.Text = hasActiveContract
+                ? "تسجيل الراتب وإنشاء سند الصرف"
+                : "لا يوجد عقد ساري";
         }
 
         private async Task LoadPayrollsAsync()
@@ -225,23 +319,30 @@ namespace SchoolSystem.UI
 
         private void ClearInputs()
         {
-            if (cmbTeacher.Items.Count > 0)
-                cmbTeacher.SelectedIndex = 0;
+            suppressTeacherChange = true;
+            try
+            {
+                if (cmbTeacher.Items.Count > 0)
+                    cmbTeacher.SelectedIndex = 0;
 
-            if (cmbMonth.Items.Count > 0)
-                cmbMonth.SelectedIndex = DateTime.Today.Month - 1;
+                if (cmbMonth.Items.Count > 0)
+                    cmbMonth.SelectedIndex = DateTime.Today.Month - 1;
 
-            txtSalaryYear.Value = DateTime.Today.Year;
-            txtBasicSalary.Text = "0";
-            txtAllowances.Text = "0";
-            txtDeductions.Text = "0";
-            txtNetSalary.Text = "0";
-            dtpPaymentDate.Value = DateTime.Today;
+                txtSalaryYear.Value = DateTime.Today.Year;
+                ClearSalaryFields();
+                dtpPaymentDate.Value = DateTime.Today;
 
-            if (cmbPaymentMethod.Items.Count > 0)
-                cmbPaymentMethod.SelectedIndex = 0;
+                if (cmbPaymentMethod.Items.Count > 0)
+                    cmbPaymentMethod.SelectedIndex = 0;
 
-            txtNotes.Clear();
+                txtNotes.Clear();
+            }
+            finally
+            {
+                suppressTeacherChange = false;
+            }
+
+            _ = LoadActiveContractAsync(false);
         }
 
         private int GetSelectedMonth()
@@ -346,9 +447,13 @@ namespace SchoolSystem.UI
 
         private void SetBusy(bool busy)
         {
-            btnAdd.Enabled = !busy;
             btnRefresh.Enabled = !busy;
             btnClear.Enabled = !busy;
+            btnAdd.Enabled = !busy && activeContractId > 0;
+            if (activeContractId > 0)
+                btnAdd.Text = "تسجيل الراتب وإنشاء سند الصرف";
+            else
+                btnAdd.Text = "لا يوجد عقد ساري";
             UseWaitCursor = busy;
         }
     }
