@@ -12,6 +12,10 @@ using SchoolSystem.Services;
 namespace SchoolSystem.UI
 {
 
+    /// <summary>
+    /// واجهة إدارة العقود الوظيفية فقط.
+    /// الراتب المعروض هنا هو الراتب المتفق عليه في العقد، وليس حركة صرف راتب شهرية.
+    /// </summary>
     public partial class PayrollForm : UserControl
     {
         // تعريف الدالة ContractService لتنفيذ العملية المرتبطة بها.
