@@ -22,19 +22,66 @@ namespace SchoolSystem.DataAccess
 
             using (SqlConnection connection = DbConnection.GetConnection())
             {
-
                 connection.Open();
+
                 student.CurrentClassName = LoadClassName(connection, studentId);
+
+                DataTable attendance = TryLoadOptionalSection(
+                    "الحضور والغياب",
+                    () => LoadAttendance(connection, studentId));
+
+                DataTable marks = TryLoadOptionalSection(
+                    "الدرجات الأكاديمية",
+                    () => LoadMarks(connection, studentId));
+
+                DataTable fees = includeFinancials
+                    ? TryLoadOptionalSection(
+                        "الرسوم والمدفوعات",
+                        () => LoadFees(connection, studentId))
+                    : new DataTable();
 
                 return new StudentProfile
                 {
                     Student = student,
-                    Attendance = LoadAttendance(connection, studentId),
-                    Marks = LoadMarks(connection, studentId),
-                    Fees = includeFinancials ? LoadFees(connection, studentId) : new DataTable(),
+                    Attendance = attendance,
+                    Marks = marks,
+                    Fees = fees,
                     CanViewFinancials = includeFinancials
-
                 };
+            }
+        }
+
+        /// <summary>
+        /// يعزل أخطاء الجداول الثانوية عن بيانات الطالب الأساسية.
+        /// إذا كان مخطط قاعدة البيانات أقدم أو كان أحد الجداول غير متاح،
+        /// يستمر ملف الطالب في الفتح وتظهر ملاحظة داخل القسم المتعذر تحميله.
+        /// </summary>
+        private static DataTable TryLoadOptionalSection(
+            string sectionName,
+            Func<DataTable> loader)
+        {
+            try
+            {
+                DataTable table = loader();
+
+                return table ?? new DataTable();
+            }
+            catch (Exception ex)
+            {
+                SchoolSystem.Helpers.ApplicationLogger.LogException(
+                    "شاشة ملف الطالب: تحميل " + sectionName,
+                    ex);
+
+                DataTable fallback = new DataTable();
+                fallback.Columns.Add(
+                    "ملاحظة",
+                    typeof(string));
+
+                fallback.Rows.Add(
+                    "تعذر تحميل " + sectionName +
+                    ". تم فتح ملف الطالب بالبيانات الأساسية.");
+
+                return fallback;
             }
         }
 
