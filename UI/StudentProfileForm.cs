@@ -29,6 +29,7 @@ namespace SchoolSystem.UI
         {
 
             InitializeComponent();
+            ConfigureProfileUiLayout();
 
             ApplyArabicRtlLayout();
             UIHelper.ApplyStyle(this);
@@ -48,6 +49,7 @@ namespace SchoolSystem.UI
             this.studentId = studentId;
 
             InitializeComponent();
+            ConfigureProfileUiLayout();
 
             ApplyArabicRtlLayout();
             UIHelper.ApplyStyle(this);
@@ -56,6 +58,97 @@ namespace SchoolSystem.UI
             ConfigureGrid(dgvFees);
             ConfigureOutputButtons();
             Load += StudentProfileForm_Load;
+        }
+
+        private void ConfigureProfileUiLayout()
+        {
+            ConfigureHeaderButton(btnBack, "رجوع", 92);
+            ConfigureHeaderButton(btnRefresh, "تحديث", 92);
+            ConfigureHeaderButton(btnPrintProfile, "طباعة الملف", 140);
+            ConfigureHeaderButton(btnExportProfilePdf, "تصدير PDF", 138);
+            ConfigureHeaderButton(btnExportProfileExcel, "تصدير Excel", 148);
+
+            ConfigureSummaryCard(lblIdentity, "بيانات الطالب", false);
+            ConfigureSummaryCard(lblContact, "بيانات التواصل", false);
+            ConfigureSummaryCard(lblClassStatus, "الدراسة والحالة", false);
+            ConfigureSummaryCard(lblAttendanceSummary, "الحضور والانتظام", true);
+            ConfigureSummaryCard(lblAcademicSummary, "الأداء الأكاديمي", true);
+            ConfigureSummaryCard(lblFinancialSummary, "الوضع المالي", true);
+
+            ConfigureTabPage(attendanceTab, dgvAttendance, "الحضور والغياب");
+            ConfigureTabPage(marksTab, dgvMarks, "الدرجات الأكاديمية");
+            ConfigureTabPage(feesTab, dgvFees, "الرسوم والمدفوعات");
+        }
+
+        private static void ConfigureHeaderButton(Button button, string text, int width)
+        {
+            if (button == null)
+                return;
+
+            button.BackColor = UIHelper.AccentColor;
+            button.FlatAppearance.BorderSize = 0;
+            button.FlatStyle = FlatStyle.Flat;
+            button.Font = new Font(UIHelper.FontFamily, 9.5F, FontStyle.Bold);
+            button.ForeColor = Color.White;
+            button.Margin = new Padding(4, 0, 4, 0);
+            button.MinimumSize = new Size(width, 40);
+            button.Padding = new Padding(8, 0, 8, 0);
+            button.RightToLeft = RightToLeft.Yes;
+            button.Size = new Size(width, 40);
+            button.TabIndex = 0;
+            button.Text = text;
+            button.UseVisualStyleBackColor = false;
+        }
+
+        private static void ConfigureSummaryCard(Label label, string fallbackText, bool compact)
+        {
+            if (label == null)
+                return;
+
+            label.BackColor = UIHelper.SurfaceColor;
+            label.BorderStyle = BorderStyle.FixedSingle;
+            label.Dock = DockStyle.Fill;
+            label.Font = new Font(
+                UIHelper.FontFamily,
+                compact ? 9.5F : 10F,
+                FontStyle.Bold);
+            label.ForeColor = UIHelper.TextColor;
+            label.Margin = new Padding(5);
+            label.Padding = new Padding(12, 8, 12, 8);
+            label.RightToLeft = RightToLeft.Yes;
+            label.Text = fallbackText;
+            label.TextAlign = ContentAlignment.MiddleRight;
+            label.AutoEllipsis = false;
+        }
+
+        private static void ConfigureTabPage(TabPage tab, DataGridView grid, string text)
+        {
+            if (tab == null || grid == null)
+                return;
+
+            tab.BackColor = UIHelper.SurfaceColor;
+            tab.Margin = new Padding(0);
+            tab.Padding = new Padding(10);
+            tab.RightToLeft = RightToLeft.Yes;
+            tab.Text = text;
+            tab.UseVisualStyleBackColor = false;
+
+            grid.AllowUserToAddRows = false;
+            grid.AllowUserToDeleteRows = false;
+            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            grid.BackgroundColor = Color.White;
+            grid.BorderStyle = BorderStyle.None;
+            grid.ColumnHeadersHeight = 42;
+            grid.Dock = DockStyle.Fill;
+            grid.Margin = new Padding(0);
+            grid.MultiSelect = false;
+            grid.ReadOnly = true;
+            grid.RightToLeft = RightToLeft.Yes;
+            grid.RowHeadersVisible = false;
+            grid.RowHeadersWidth = 1;
+            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grid.ScrollBars = ScrollBars.Both;
         }
 
         // تعريف الدالة ApplyArabicRtlLayout لتنفيذ العملية المرتبطة بها.
