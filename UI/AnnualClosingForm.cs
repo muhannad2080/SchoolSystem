@@ -100,9 +100,12 @@ namespace SchoolSystem.UI
 
                 throw new InvalidOperationException("صيغة العام الدراسي التالي غير صحيحة (مثال: 2025/2026).");
 
-            if (string.Equals(SelectedYear(), nextYear, StringComparison.OrdinalIgnoreCase))
-
+            if (string.Equals(selectedYear, nextYear, StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("يجب أن يكون العام التالي مختلفاً عن العام المراد إغلاقه.");
+
+            string suggestedNextYear = GetSuggestedNextYear(selectedYear);
+            if (!string.Equals(nextYear, suggestedNextYear, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("العام الدراسي التالي يجب أن يكون: " + suggestedNextYear + ".");
 
             return nextYear;
         }
