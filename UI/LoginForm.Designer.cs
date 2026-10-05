@@ -63,6 +63,7 @@ namespace SchoolSystem.UI
             this.sepBottom = new System.Windows.Forms.Panel();
             this.lblFooter = new System.Windows.Forms.Label();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.lblDevelopers = new System.Windows.Forms.Label();
             this.panelBackground.SuspendLayout();
             this.layoutRoot.SuspendLayout();
             this.panelBrand.SuspendLayout();
@@ -286,6 +287,7 @@ namespace SchoolSystem.UI
             // 
             this.panelLoginArea.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
             this.panelLoginArea.Controls.Add(this.loginAreaLayout);
+            this.panelLoginArea.Controls.Add(this.lblDevelopers);
             this.panelLoginArea.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelLoginArea.Location = new System.Drawing.Point(481, 0);
             this.panelLoginArea.Margin = new System.Windows.Forms.Padding(0);
@@ -679,6 +681,22 @@ namespace SchoolSystem.UI
             this.lblFooter.Text = "الوصول إلى النظام متاح للحسابات المصرح لها فقط";
             this.lblFooter.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // lblDevelopers
+            // 
+            this.lblDevelopers.BackColor = System.Drawing.Color.Transparent;
+            this.lblDevelopers.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lblDevelopers.Font = new System.Drawing.Font("Tahoma", 8F, System.Drawing.FontStyle.Regular);
+            this.lblDevelopers.ForeColor = System.Drawing.Color.FromArgb(100, 116, 139);
+            this.lblDevelopers.Location = new System.Drawing.Point(28, 654);
+            this.lblDevelopers.Margin = new System.Windows.Forms.Padding(0);
+            this.lblDevelopers.Name = "lblDevelopers";
+            this.lblDevelopers.Padding = new System.Windows.Forms.Padding(8, 2, 8, 4);
+            this.lblDevelopers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblDevelopers.Size = new System.Drawing.Size(583, 38);
+            this.lblDevelopers.TabIndex = 1;
+            this.lblDevelopers.Text = "المطورون: المهندس مهند علي علي علي سعد • عبدالرحمن سعد علي سعد • سامي الحاج";
+            this.lblDevelopers.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // toolTip
             // 
             this.toolTip.AutoPopDelay = 5000;
@@ -775,6 +793,7 @@ namespace SchoolSystem.UI
         private Panel sepTop;
         private Panel sepBottom;
         private Label lblFooter;
+        private Label lblDevelopers;
         private ToolTip toolTip;
     }
 }
