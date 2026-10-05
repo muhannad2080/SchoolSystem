@@ -23,7 +23,8 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             UIHelper.ApplyStyle(this);
-            if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
+            cmbYear.SelectedIndexChanged += cmbYear_SelectedIndexChanged;
+            if (LicenseManager.UsageMode != LicenseUsageMode.Designtime
                 LoadYears();
         }
 
@@ -83,10 +84,13 @@ namespace SchoolSystem.UI
         // تعريف الدالة SelectedNextYear لتنفيذ العملية المرتبطة بها.
         private string SelectedNextYear()
         {
+            string selectedYear = SelectedYear();
             string nextYear = txtNextYear.Text == null ? string.Empty : txtNextYear.Text.Trim();
             if (string.IsNullOrWhiteSpace(nextYear))
-
-                throw new InvalidOperationException("أدخل العام الدراسي التالي قبل التخطيط أو الإغلاق.");
+            {
+                nextYear = GetSuggestedNextYear(selectedYear);
+                txtNextYear.Text = nextYear;
+            }
 
             if (nextYear.Length > 20)
 
