@@ -357,12 +357,22 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            MainForm.Instance.LoadUserControl(
-                "Students",
-                "ليس لديك صلاحية عرض ملف الطالب.",
-                new StudentProfileForm(_selectedStudentId),
-                PermissionKeys.StudentsView,
-                PermissionKeys.StudentsManage);
+            try
+            {
+                CurrentUser.DemandAny(
+                    "ليس لديك صلاحية عرض ملفات الطلاب.",
+                    PermissionKeys.StudentsView,
+                    PermissionKeys.StudentsManage);
+
+                StudentProfileForm profileForm =
+                    new StudentProfileForm(_selectedStudentId);
+
+                MainForm.Instance.LoadUserControl(profileForm);
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("فتح ملف الطالب", ex);
+            }
         }
 
         // ================================================================
