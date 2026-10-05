@@ -538,11 +538,12 @@ namespace SchoolSystem.UI
                 this.cardFees);
 
             // cardStudents
-            ConfigureCardDesigner(
-                this.cardStudents,
-                "cardStudents",
-                190,
-                122);
+            this.cardStudents.BackColor = System.Drawing.Color.White;
+            this.cardStudents.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.cardStudents.Margin = new System.Windows.Forms.Padding(6);
+            this.cardStudents.Name = "cardStudents";
+            this.cardStudents.Size = new System.Drawing.Size(190, 122);
+            this.cardStudents.TabIndex = 0;
 
             this.cardStudents.Controls.Add(
                 this.lblStudentsValue);
@@ -553,26 +554,43 @@ namespace SchoolSystem.UI
             this.cardStudents.Controls.Add(
                 this.cardStudentsBar);
 
-            ConfigureCardBarDesigner(
-                this.cardStudentsBar,
-                "cardStudentsBar");
+            this.cardStudentsBar.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.cardStudentsBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cardStudentsBar.Name = "cardStudentsBar";
+            this.cardStudentsBar.Size = new System.Drawing.Size(190, 5);
+            this.cardStudentsBar.TabIndex = 0;
 
-            ConfigureCardTitleDesigner(
-                this.lblStudentsTitle,
-                "lblStudentsTitle",
-                "إجمالي الطلاب");
+            this.lblStudentsTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblStudentsTitle.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblStudentsTitle.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.lblStudentsTitle.Location = new System.Drawing.Point(0, 5);
+            this.lblStudentsTitle.Name = "lblStudentsTitle";
+            this.lblStudentsTitle.Padding = new System.Windows.Forms.Padding(8, 8, 8, 2);
+            this.lblStudentsTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblStudentsTitle.Size = new System.Drawing.Size(190, 36);
+            this.lblStudentsTitle.TabIndex = 1;
+            this.lblStudentsTitle.Text = "إجمالي الطلاب";
+            this.lblStudentsTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
-            ConfigureCardValueDesigner(
-                this.lblStudentsValue,
-                "lblStudentsValue",
-                "0");
+            this.lblStudentsValue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblStudentsValue.Font = new System.Drawing.Font("Tahoma", 22F, System.Drawing.FontStyle.Bold);
+            this.lblStudentsValue.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.lblStudentsValue.Location = new System.Drawing.Point(0, 41);
+            this.lblStudentsValue.Name = "lblStudentsValue";
+            this.lblStudentsValue.Padding = new System.Windows.Forms.Padding(8, 0, 8, 8);
+            this.lblStudentsValue.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblStudentsValue.Size = new System.Drawing.Size(190, 81);
+            this.lblStudentsValue.TabIndex = 2;
+            this.lblStudentsValue.Text = "0";
+            this.lblStudentsValue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // cardTeachers
-            ConfigureCardDesigner(
-                this.cardTeachers,
-                "cardTeachers",
-                190,
-                122);
+            this.cardTeachers.BackColor = System.Drawing.Color.White;
+            this.cardTeachers.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.cardTeachers.Margin = new System.Windows.Forms.Padding(6);
+            this.cardTeachers.Name = "cardTeachers";
+            this.cardTeachers.Size = new System.Drawing.Size(190, 122);
+            this.cardTeachers.TabIndex = 0;
 
             this.cardTeachers.Controls.Add(
                 this.lblTeachersValue);
@@ -583,26 +601,43 @@ namespace SchoolSystem.UI
             this.cardTeachers.Controls.Add(
                 this.cardTeachersBar);
 
-            ConfigureCardBarDesigner(
-                this.cardTeachersBar,
-                "cardTeachersBar");
+            this.cardTeachersBar.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
+            this.cardTeachersBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cardTeachersBar.Name = "cardTeachersBar";
+            this.cardTeachersBar.Size = new System.Drawing.Size(190, 5);
+            this.cardTeachersBar.TabIndex = 0;
 
-            ConfigureCardTitleDesigner(
-                this.lblTeachersTitle,
-                "lblTeachersTitle",
-                "المعلمون");
+            this.lblTeachersTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTeachersTitle.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblTeachersTitle.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.lblTeachersTitle.Location = new System.Drawing.Point(0, 5);
+            this.lblTeachersTitle.Name = "lblTeachersTitle";
+            this.lblTeachersTitle.Padding = new System.Windows.Forms.Padding(8, 8, 8, 2);
+            this.lblTeachersTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblTeachersTitle.Size = new System.Drawing.Size(190, 36);
+            this.lblTeachersTitle.TabIndex = 1;
+            this.lblTeachersTitle.Text = "المعلمون";
+            this.lblTeachersTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
-            ConfigureCardValueDesigner(
-                this.lblTeachersValue,
-                "lblTeachersValue",
-                "0");
+            this.lblTeachersValue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblTeachersValue.Font = new System.Drawing.Font("Tahoma", 22F, System.Drawing.FontStyle.Bold);
+            this.lblTeachersValue.ForeColor = System.Drawing.Color.FromArgb(22, 163, 74);
+            this.lblTeachersValue.Location = new System.Drawing.Point(0, 41);
+            this.lblTeachersValue.Name = "lblTeachersValue";
+            this.lblTeachersValue.Padding = new System.Windows.Forms.Padding(8, 0, 8, 8);
+            this.lblTeachersValue.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblTeachersValue.Size = new System.Drawing.Size(190, 81);
+            this.lblTeachersValue.TabIndex = 2;
+            this.lblTeachersValue.Text = "0";
+            this.lblTeachersValue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // cardSubjects
-            ConfigureCardDesigner(
-                this.cardSubjects,
-                "cardSubjects",
-                190,
-                122);
+            this.cardSubjects.BackColor = System.Drawing.Color.White;
+            this.cardSubjects.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.cardSubjects.Margin = new System.Windows.Forms.Padding(6);
+            this.cardSubjects.Name = "cardSubjects";
+            this.cardSubjects.Size = new System.Drawing.Size(190, 122);
+            this.cardSubjects.TabIndex = 0;
 
             this.cardSubjects.Controls.Add(
                 this.lblSubjectsValue);
@@ -613,26 +648,43 @@ namespace SchoolSystem.UI
             this.cardSubjects.Controls.Add(
                 this.cardSubjectsBar);
 
-            ConfigureCardBarDesigner(
-                this.cardSubjectsBar,
-                "cardSubjectsBar");
+            this.cardSubjectsBar.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
+            this.cardSubjectsBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cardSubjectsBar.Name = "cardSubjectsBar";
+            this.cardSubjectsBar.Size = new System.Drawing.Size(190, 5);
+            this.cardSubjectsBar.TabIndex = 0;
 
-            ConfigureCardTitleDesigner(
-                this.lblSubjectsTitle,
-                "lblSubjectsTitle",
-                "المواد الدراسية");
+            this.lblSubjectsTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblSubjectsTitle.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblSubjectsTitle.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.lblSubjectsTitle.Location = new System.Drawing.Point(0, 5);
+            this.lblSubjectsTitle.Name = "lblSubjectsTitle";
+            this.lblSubjectsTitle.Padding = new System.Windows.Forms.Padding(8, 8, 8, 2);
+            this.lblSubjectsTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblSubjectsTitle.Size = new System.Drawing.Size(190, 36);
+            this.lblSubjectsTitle.TabIndex = 1;
+            this.lblSubjectsTitle.Text = "المواد الدراسية";
+            this.lblSubjectsTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
-            ConfigureCardValueDesigner(
-                this.lblSubjectsValue,
-                "lblSubjectsValue",
-                "0");
+            this.lblSubjectsValue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblSubjectsValue.Font = new System.Drawing.Font("Tahoma", 22F, System.Drawing.FontStyle.Bold);
+            this.lblSubjectsValue.ForeColor = System.Drawing.Color.FromArgb(15, 118, 110);
+            this.lblSubjectsValue.Location = new System.Drawing.Point(0, 41);
+            this.lblSubjectsValue.Name = "lblSubjectsValue";
+            this.lblSubjectsValue.Padding = new System.Windows.Forms.Padding(8, 0, 8, 8);
+            this.lblSubjectsValue.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblSubjectsValue.Size = new System.Drawing.Size(190, 81);
+            this.lblSubjectsValue.TabIndex = 2;
+            this.lblSubjectsValue.Text = "0";
+            this.lblSubjectsValue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // cardClasses
-            ConfigureCardDesigner(
-                this.cardClasses,
-                "cardClasses",
-                190,
-                122);
+            this.cardClasses.BackColor = System.Drawing.Color.White;
+            this.cardClasses.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.cardClasses.Margin = new System.Windows.Forms.Padding(6);
+            this.cardClasses.Name = "cardClasses";
+            this.cardClasses.Size = new System.Drawing.Size(190, 122);
+            this.cardClasses.TabIndex = 0;
 
             this.cardClasses.Controls.Add(
                 this.lblClassesValue);
@@ -643,26 +695,43 @@ namespace SchoolSystem.UI
             this.cardClasses.Controls.Add(
                 this.cardClassesBar);
 
-            ConfigureCardBarDesigner(
-                this.cardClassesBar,
-                "cardClassesBar");
+            this.cardClassesBar.BackColor = System.Drawing.Color.FromArgb(217, 119, 6);
+            this.cardClassesBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cardClassesBar.Name = "cardClassesBar";
+            this.cardClassesBar.Size = new System.Drawing.Size(190, 5);
+            this.cardClassesBar.TabIndex = 0;
 
-            ConfigureCardTitleDesigner(
-                this.lblClassesTitle,
-                "lblClassesTitle",
-                "الفصول الدراسية");
+            this.lblClassesTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblClassesTitle.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblClassesTitle.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.lblClassesTitle.Location = new System.Drawing.Point(0, 5);
+            this.lblClassesTitle.Name = "lblClassesTitle";
+            this.lblClassesTitle.Padding = new System.Windows.Forms.Padding(8, 8, 8, 2);
+            this.lblClassesTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblClassesTitle.Size = new System.Drawing.Size(190, 36);
+            this.lblClassesTitle.TabIndex = 1;
+            this.lblClassesTitle.Text = "الفصول الدراسية";
+            this.lblClassesTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
-            ConfigureCardValueDesigner(
-                this.lblClassesValue,
-                "lblClassesValue",
-                "0");
+            this.lblClassesValue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblClassesValue.Font = new System.Drawing.Font("Tahoma", 22F, System.Drawing.FontStyle.Bold);
+            this.lblClassesValue.ForeColor = System.Drawing.Color.FromArgb(217, 119, 6);
+            this.lblClassesValue.Location = new System.Drawing.Point(0, 41);
+            this.lblClassesValue.Name = "lblClassesValue";
+            this.lblClassesValue.Padding = new System.Windows.Forms.Padding(8, 0, 8, 8);
+            this.lblClassesValue.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblClassesValue.Size = new System.Drawing.Size(190, 81);
+            this.lblClassesValue.TabIndex = 2;
+            this.lblClassesValue.Text = "0";
+            this.lblClassesValue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // cardFees
-            ConfigureCardDesigner(
-                this.cardFees,
-                "cardFees",
-                190,
-                122);
+            this.cardFees.BackColor = System.Drawing.Color.White;
+            this.cardFees.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.cardFees.Margin = new System.Windows.Forms.Padding(6);
+            this.cardFees.Name = "cardFees";
+            this.cardFees.Size = new System.Drawing.Size(190, 122);
+            this.cardFees.TabIndex = 0;
 
             this.cardFees.Controls.Add(
                 this.lblFeesValue);
@@ -673,19 +742,35 @@ namespace SchoolSystem.UI
             this.cardFees.Controls.Add(
                 this.cardFeesBar);
 
-            ConfigureCardBarDesigner(
-                this.cardFeesBar,
-                "cardFeesBar");
+            this.cardFeesBar.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
+            this.cardFeesBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cardFeesBar.Name = "cardFeesBar";
+            this.cardFeesBar.Size = new System.Drawing.Size(190, 5);
+            this.cardFeesBar.TabIndex = 0;
 
-            ConfigureCardTitleDesigner(
-                this.lblFeesTitle,
-                "lblFeesTitle",
-                "إجمالي الرسوم المتبقية");
+            this.lblFeesTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblFeesTitle.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblFeesTitle.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.lblFeesTitle.Location = new System.Drawing.Point(0, 5);
+            this.lblFeesTitle.Name = "lblFeesTitle";
+            this.lblFeesTitle.Padding = new System.Windows.Forms.Padding(8, 8, 8, 2);
+            this.lblFeesTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblFeesTitle.Size = new System.Drawing.Size(190, 36);
+            this.lblFeesTitle.TabIndex = 1;
+            this.lblFeesTitle.Text = "إجمالي الرسوم المتبقية";
+            this.lblFeesTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
-            ConfigureCardValueDesigner(
-                this.lblFeesValue,
-                "lblFeesValue",
-                "0");
+            this.lblFeesValue.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblFeesValue.Font = new System.Drawing.Font("Tahoma", 22F, System.Drawing.FontStyle.Bold);
+            this.lblFeesValue.ForeColor = System.Drawing.Color.FromArgb(198, 40, 40);
+            this.lblFeesValue.Location = new System.Drawing.Point(0, 41);
+            this.lblFeesValue.Name = "lblFeesValue";
+            this.lblFeesValue.Padding = new System.Windows.Forms.Padding(8, 0, 8, 8);
+            this.lblFeesValue.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.lblFeesValue.Size = new System.Drawing.Size(190, 81);
+            this.lblFeesValue.TabIndex = 2;
+            this.lblFeesValue.Text = "0";
+            this.lblFeesValue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             this.lblFeesValue.Font =
                 new System.Drawing.Font(
@@ -822,22 +907,46 @@ namespace SchoolSystem.UI
                 System.Drawing.ContentAlignment.MiddleRight;
 
             // lblPendingFees
-            ConfigureStatusLabelDesigner(
-                this.lblPendingFees,
-                "lblPendingFees",
-                "بنود الرسوم غير المسددة: جاري التحميل...",
-                1);
+            this.lblPendingFees.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblPendingFees.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.lblPendingFees.ForeColor = System.Drawing.Color.FromArgb(198, 40, 40);
+            this.lblPendingFees.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
+            this.lblPendingFees.Name = "lblPendingFees";
+            this.lblPendingFees.Padding = new System.Windows.Forms.Padding(10, 8, 10, 8);
+            this.lblPendingFees.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblPendingFees.Size = new System.Drawing.Size(338, 54);
+            this.lblPendingFees.TabIndex = 1;
+            this.lblPendingFees.Text = "بنود الرسوم غير المسددة: جاري التحميل...";
+            this.lblPendingFees.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblPendingFees.AutoEllipsis = true;
 
             // lblTodayAbsence
-            ConfigureStatusLabelDesigner(
-                this.lblTodayAbsence,
-                "lblTodayAbsence",
-                "غياب اليوم: جاري التحميل...",
-                2);
+            this.lblTodayAbsence.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblTodayAbsence.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.lblTodayAbsence.ForeColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.lblTodayAbsence.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
+            this.lblTodayAbsence.Name = "lblTodayAbsence";
+            this.lblTodayAbsence.Padding = new System.Windows.Forms.Padding(10, 8, 10, 8);
+            this.lblTodayAbsence.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblTodayAbsence.Size = new System.Drawing.Size(338, 54);
+            this.lblTodayAbsence.TabIndex = 2;
+            this.lblTodayAbsence.Text = "غياب اليوم: جاري التحميل...";
+            this.lblTodayAbsence.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblTodayAbsence.AutoEllipsis = true;
 
             // lblOperationalStatus
-            ConfigureOperationalLabelDesigner(
-                this.lblOperationalStatus);
+            this.lblOperationalStatus.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblOperationalStatus.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.lblOperationalStatus.ForeColor = System.Drawing.Color.FromArgb(22, 163, 74);
+            this.lblOperationalStatus.Margin = new System.Windows.Forms.Padding(0, 8, 0, 0);
+            this.lblOperationalStatus.Name = "lblOperationalStatus";
+            this.lblOperationalStatus.Padding = new System.Windows.Forms.Padding(10, 10, 10, 10);
+            this.lblOperationalStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblOperationalStatus.Size = new System.Drawing.Size(338, 196);
+            this.lblOperationalStatus.TabIndex = 3;
+            this.lblOperationalStatus.Text = "حالة التشغيل: جاري التحميل...";
+            this.lblOperationalStatus.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.lblOperationalStatus.AutoEllipsis = false;
 
             // panelChart
             this.panelChart.BorderStyle =
@@ -986,205 +1095,6 @@ namespace SchoolSystem.UI
             this.panelAlerts.ResumeLayout(false);
             this.panelChart.ResumeLayout(false);
             this.ResumeLayout(false);
-        }
-
-        private static void ConfigureCardDesigner(
-            System.Windows.Forms.Panel card,
-            string name,
-            int width,
-            int height)
-        {
-            card.Margin =
-                new System.Windows.Forms.Padding(6);
-
-            card.Name = name;
-
-            card.Size =
-                new System.Drawing.Size(
-                    width,
-                    height);
-
-            card.TabIndex = 0;
-        }
-
-        private static void ConfigureCardBarDesigner(
-            System.Windows.Forms.Panel bar,
-            string name)
-        {
-            bar.Dock =
-                System.Windows.Forms.DockStyle.Top;
-
-            bar.Name = name;
-
-            bar.Size =
-                new System.Drawing.Size(190, 5);
-
-            bar.TabIndex = 0;
-        }
-
-        private static void ConfigureCardTitleDesigner(
-            System.Windows.Forms.Label label,
-            string name,
-            string text)
-        {
-            label.Dock =
-                System.Windows.Forms.DockStyle.Top;
-
-            label.Font =
-                new System.Drawing.Font(
-                    "Tahoma",
-                    9.5F,
-                    System.Drawing.FontStyle.Bold);
-
-            label.Location =
-                new System.Drawing.Point(0, 5);
-
-            label.Name = name;
-
-            label.Padding =
-                new System.Windows.Forms.Padding(
-                    8, 8, 8, 2);
-
-            label.RightToLeft =
-                System.Windows.Forms.RightToLeft.Yes;
-
-            label.Size =
-                new System.Drawing.Size(
-                    190,
-                    36);
-
-            label.TabIndex = 1;
-
-            label.Text = text;
-
-            label.TextAlign =
-                System.Drawing.ContentAlignment.MiddleCenter;
-        }
-
-        private static void ConfigureCardValueDesigner(
-            System.Windows.Forms.Label label,
-            string name,
-            string text)
-        {
-            label.Dock =
-                System.Windows.Forms.DockStyle.Fill;
-
-            label.Font =
-                new System.Drawing.Font(
-                    "Tahoma",
-                    22F,
-                    System.Drawing.FontStyle.Bold);
-
-            label.Location =
-                new System.Drawing.Point(
-                    0,
-                    41);
-
-            label.Name = name;
-
-            label.Padding =
-                new System.Windows.Forms.Padding(
-                    8, 0, 8, 8);
-
-            label.RightToLeft =
-                System.Windows.Forms.RightToLeft.No;
-
-            label.Size =
-                new System.Drawing.Size(
-                    190,
-                    81);
-
-            label.TabIndex = 2;
-
-            label.Text = text;
-
-            label.TextAlign =
-                System.Drawing.ContentAlignment.MiddleCenter;
-        }
-
-        private static void ConfigureStatusLabelDesigner(
-            System.Windows.Forms.Label label,
-            string name,
-            string text,
-            int row)
-        {
-            label.Dock =
-                System.Windows.Forms.DockStyle.Top;
-
-            label.Font =
-                new System.Drawing.Font(
-                    "Tahoma",
-                    9F,
-                    System.Drawing.FontStyle.Bold);
-
-            label.Margin =
-                new System.Windows.Forms.Padding(
-                    0, 8, 0, 0);
-
-            label.Name = name;
-
-            label.Padding =
-                new System.Windows.Forms.Padding(
-                    10, 8, 10, 8);
-
-            label.RightToLeft =
-                System.Windows.Forms.RightToLeft.Yes;
-
-            label.Size =
-                new System.Drawing.Size(
-                    338,
-                    54);
-
-            label.TabIndex = row;
-
-            label.Text = text;
-
-            label.TextAlign =
-                System.Drawing.ContentAlignment.MiddleRight;
-
-            label.AutoEllipsis = true;
-        }
-
-        private static void ConfigureOperationalLabelDesigner(
-            System.Windows.Forms.Label label)
-        {
-            label.Dock =
-                System.Windows.Forms.DockStyle.Fill;
-
-            label.Font =
-                new System.Drawing.Font(
-                    "Tahoma",
-                    9F,
-                    System.Drawing.FontStyle.Bold);
-
-            label.Margin =
-                new System.Windows.Forms.Padding(
-                    0, 8, 0, 0);
-
-            label.Name =
-                "lblOperationalStatus";
-
-            label.Padding =
-                new System.Windows.Forms.Padding(
-                    10, 10, 10, 10);
-
-            label.RightToLeft =
-                System.Windows.Forms.RightToLeft.Yes;
-
-            label.Size =
-                new System.Drawing.Size(
-                    338,
-                    196);
-
-            label.TabIndex = 3;
-
-            label.Text =
-                "حالة التشغيل: جاري التحميل...";
-
-            label.TextAlign =
-                System.Drawing.ContentAlignment.TopRight;
-
-            label.AutoEllipsis = true;
         }
 
         #endregion
