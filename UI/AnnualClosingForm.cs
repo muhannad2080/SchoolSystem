@@ -24,7 +24,7 @@ namespace SchoolSystem.UI
 
             UIHelper.ApplyStyle(this);
             cmbYear.SelectedIndexChanged += cmbYear_SelectedIndexChanged;
-            if (LicenseManager.UsageMode != LicenseUsageMode.Designtime
+            if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
                 LoadYears();
         }
 
