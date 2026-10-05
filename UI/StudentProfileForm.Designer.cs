@@ -151,11 +151,6 @@ namespace SchoolSystem.UI
             this.headerActionsPanel.TabIndex = 1;
             this.headerActionsPanel.WrapContents = false;
 
-            ConfigureHeaderButton(this.btnBack, "رجوع", 92);
-            ConfigureHeaderButton(this.btnRefresh, "تحديث", 92);
-            ConfigureHeaderButton(this.btnPrintProfile, "طباعة الملف", 140);
-            ConfigureHeaderButton(this.btnExportProfilePdf, "تصدير PDF", 138);
-            ConfigureHeaderButton(this.btnExportProfileExcel, "تصدير Excel", 148);
 
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
@@ -185,12 +180,6 @@ namespace SchoolSystem.UI
             this.summaryTable.Size = new System.Drawing.Size(1100, 226);
             this.summaryTable.TabIndex = 1;
 
-            ConfigureSummaryCard(this.lblIdentity, "بيانات الطالب");
-            ConfigureSummaryCard(this.lblContact, "بيانات التواصل");
-            ConfigureSummaryCard(this.lblClassStatus, "الدراسة والحالة");
-            ConfigureSummaryCard(this.lblAttendanceSummary, "الحضور والانتظام", true);
-            ConfigureSummaryCard(this.lblAcademicSummary, "الأداء الأكاديمي", true);
-            ConfigureSummaryCard(this.lblFinancialSummary, "الوضع المالي", true);
 
             // التبويبات والجداول: تملأ المساحة المتبقية بالكامل.
             this.tabs.Controls.Add(this.attendanceTab);
@@ -209,9 +198,6 @@ namespace SchoolSystem.UI
             this.tabs.Size = new System.Drawing.Size(1100, 396);
             this.tabs.TabIndex = 0;
 
-            ConfigureTabPage(this.attendanceTab, this.dgvAttendance, "الحضور والغياب");
-            ConfigureTabPage(this.marksTab, this.dgvMarks, "الدرجات الأكاديمية");
-            ConfigureTabPage(this.feesTab, this.dgvFees, "الرسوم والمدفوعات");
 
             this.BackColor = SchoolSystem.Helpers.UIHelper.BackgroundColor;
             this.Controls.Add(this.tabs);
@@ -240,79 +226,5 @@ namespace SchoolSystem.UI
             this.ResumeLayout(false);
         }
 
-        private void ConfigureHeaderButton(System.Windows.Forms.Button button, string text, int width)
-        {
-            button.BackColor = SchoolSystem.Helpers.UIHelper.AccentColor;
-            button.FlatAppearance.BorderSize = 0;
-            button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            button.Font = new System.Drawing.Font(SchoolSystem.Helpers.UIHelper.FontFamily, 9.5F, System.Drawing.FontStyle.Bold);
-            button.ForeColor = System.Drawing.Color.White;
-            button.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            button.MinimumSize = new System.Drawing.Size(width, 40);
-            button.Name = button.Name;
-            button.Padding = new System.Windows.Forms.Padding(8, 0, 8, 0);
-            button.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            button.Size = new System.Drawing.Size(width, 40);
-            button.TabIndex = 0;
-            button.Text = text;
-            button.UseVisualStyleBackColor = false;
-        }
-
-        private void ConfigureSummaryCard(System.Windows.Forms.Label label, string fallbackText, bool compact = false)
-        {
-            label.BackColor = SchoolSystem.Helpers.UIHelper.SurfaceColor;
-            label.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            label.Dock = System.Windows.Forms.DockStyle.Fill;
-            label.Font = new System.Drawing.Font(
-                SchoolSystem.Helpers.UIHelper.FontFamily,
-                compact ? 9.5F : 10F,
-                System.Drawing.FontStyle.Bold);
-            label.ForeColor = SchoolSystem.Helpers.UIHelper.TextColor;
-            label.Margin = new System.Windows.Forms.Padding(5);
-            label.Name = label.Name;
-            label.Padding = new System.Windows.Forms.Padding(12, 8, 12, 8);
-            label.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            label.Text = fallbackText;
-            label.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            label.AutoEllipsis = true;
-        }
-
-        private void ConfigureTabPage(
-            System.Windows.Forms.TabPage tab,
-            System.Windows.Forms.DataGridView grid,
-            string text)
-        {
-            tab.BackColor = SchoolSystem.Helpers.UIHelper.SurfaceColor;
-            tab.Controls.Add(grid);
-            tab.Location = new System.Drawing.Point(4, 42);
-            tab.Margin = new System.Windows.Forms.Padding(0);
-            tab.Name = tab.Name;
-            tab.Padding = new System.Windows.Forms.Padding(10);
-            tab.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            tab.Size = new System.Drawing.Size(1092, 350);
-            tab.TabIndex = 0;
-            tab.Text = text;
-            tab.UseVisualStyleBackColor = false;
-
-            grid.AllowUserToAddRows = false;
-            grid.AllowUserToDeleteRows = false;
-            grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            grid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.None;
-            grid.BackgroundColor = System.Drawing.Color.White;
-            grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            grid.ColumnHeadersHeight = 42;
-            grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            grid.Location = new System.Drawing.Point(10, 10);
-            grid.Margin = new System.Windows.Forms.Padding(0);
-            grid.MultiSelect = false;
-            grid.Name = grid.Name;
-            grid.ReadOnly = true;
-            grid.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            grid.RowHeadersVisible = false;
-            grid.RowHeadersWidth = 1;
-            grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            grid.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            grid.TabIndex = 0;
-        }
     }
 }
