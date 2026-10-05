@@ -342,12 +342,12 @@ namespace SchoolSystem.UI
             this.loginCard.BackColor = Color.White;
             this.loginCard.BorderStyle = BorderStyle.FixedSingle;
             this.loginCard.Controls.Add(this.cardLayout);
-            this.loginCard.Location = new Point(46, 63);
+            this.loginCard.Location = new Point(46, 78);
             this.loginCard.Margin = new Padding(0);
             this.loginCard.Name = "loginCard";
             this.loginCard.Padding = new Padding(30, 24, 30, 20);
             this.loginCard.RightToLeft = RightToLeft.Yes;
-            this.loginCard.Size = new Size(460, 590);
+            this.loginCard.Size = new Size(460, 560);
             this.loginCard.TabIndex = 1;
 
             // cardLayout
@@ -707,6 +707,7 @@ namespace SchoolSystem.UI
             this.lblDevelopers.Name = "lblDevelopers";
             this.lblDevelopers.RightToLeft = RightToLeft.Yes;
             this.lblDevelopers.Size = new Size(392, 40);
+            this.lblDevelopers.AutoSize = false;
             this.lblDevelopers.TabIndex = 13;
             this.lblDevelopers.Text = "المطورون\r\nالمهندس مهند علي علي علي سعد • عبد الرحمن سعد علي سعد • سامي الحاج";
             this.lblDevelopers.TextAlign = ContentAlignment.MiddleCenter;
@@ -734,7 +735,7 @@ namespace SchoolSystem.UI
             this.FormBorderStyle = FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MinimumSize = new Size(900, 640);
+            this.MinimumSize = new Size(960, 680);
             this.Name = "LoginForm";
             this.RightToLeft = RightToLeft.Yes;
             this.RightToLeftLayout = false;
