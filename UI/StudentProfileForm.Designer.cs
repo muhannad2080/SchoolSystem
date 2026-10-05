@@ -182,6 +182,12 @@ namespace SchoolSystem.UI
 
 
             // التبويبات والجداول: تملأ المساحة المتبقية بالكامل.
+            // يجب إضافة كل DataGridView إلى الصفحة التابعة له؛ بدون ذلك تكون الجداول
+            // موجودة في الكود فقط وغير مرئية للمستخدم.
+            this.attendanceTab.Controls.Add(this.dgvAttendance);
+            this.marksTab.Controls.Add(this.dgvMarks);
+            this.feesTab.Controls.Add(this.dgvFees);
+
             this.tabs.Controls.Add(this.attendanceTab);
             this.tabs.Controls.Add(this.marksTab);
             this.tabs.Controls.Add(this.feesTab);
