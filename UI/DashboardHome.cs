@@ -314,7 +314,7 @@ namespace SchoolSystem.UI
             object sender,
             EventArgs e)
         {
-            ReloadDashboardAsync();
+            _ = ReloadDashboardAsync();
 
             dashboardAutoRefreshTimer =
                 new Timer
