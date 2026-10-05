@@ -107,6 +107,32 @@ namespace SchoolSystem.UI
             return nextYear;
         }
 
+        private static string GetSuggestedNextYear(string academicYear)
+        {
+            string value = (academicYear ?? string.Empty).Trim().Replace('-', '/');
+            string[] parts = value.Split('/');
+            int startYear;
+            int endYear;
+            if (parts.Length != 2 || !int.TryParse(parts[0], out startYear) || !int.TryParse(parts[1], out endYear) || endYear != startYear + 1)
+                throw new InvalidOperationException("العام الدراسي المحدد غير صالح أو غير متسلسل.");
+
+            return endYear.ToString() + "/" + (endYear + 1).ToString();
+        }
+
+        private void cmbYear_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbYear.SelectedItem == null)
+                return;
+
+            try
+            {
+                txtNextYear.Text = GetSuggestedNextYear(cmbYear.SelectedItem.ToString());
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("اقتراح العام الدراسي التالي", ex);
+            }
+        }
         // تعريف الدالة VerifyClick لتنفيذ العملية المرتبطة بها.
         private void VerifyClick(object sender, EventArgs e)
         {
