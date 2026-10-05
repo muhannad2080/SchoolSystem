@@ -68,7 +68,7 @@ namespace SchoolSystem.DataAccess
             }
             catch (Exception ex)
             {
-                ApplicationLogger.LogException(
+                SchoolSystem.Helpers.ApplicationLogger.LogException(
                     "شاشة ملف الطالب: تحميل " + sectionName,
                     ex);
 
