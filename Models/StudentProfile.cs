@@ -11,7 +11,7 @@ namespace SchoolSystem.Models
 
         public DataTable Attendance { get; set; }
 
-        public DataTable Marks { get; set; }
+        public DataTable Grades { get; set; }
 
         public DataTable Fees { get; set; }
 
