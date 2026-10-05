@@ -116,6 +116,36 @@ namespace SchoolSystem.UiSmokeTests
             Console.WriteLine("[PASS] Source event wiring: " + checkedHandlers + " handlers checked");
         }
 
+        private static void ValidateStudentProfile(Control control)
+        {
+            if (!(control is SchoolSystem.UI.StudentProfileForm))
+                return;
+
+            TabControl tabs = GetPrivateControl<TabControl>(control, "tabs");
+            DataGridView attendance = GetPrivateControl<DataGridView>(control, "dgvAttendance");
+            DataGridView grades = GetPrivateControl<DataGridView>(control, "dgvMarks");
+            DataGridView fees = GetPrivateControl<DataGridView>(control, "dgvFees");
+            TabPage attendanceTab = GetPrivateControl<TabPage>(control, "attendanceTab");
+            TabPage marksTab = GetPrivateControl<TabPage>(control, "marksTab");
+            TabPage feesTab = GetPrivateControl<TabPage>(control, "feesTab");
+
+            if (attendance.Parent != attendanceTab)
+                throw new InvalidOperationException("StudentProfile attendance grid is not hosted by attendanceTab.");
+            if (grades.Parent != marksTab)
+                throw new InvalidOperationException("StudentProfile academic grid is not hosted by marksTab.");
+            if (fees.Parent != feesTab)
+                throw new InvalidOperationException("StudentProfile fees grid is not hosted by feesTab.");
+
+            if (!attendance.Visible || !grades.Visible || !fees.Visible)
+                throw new InvalidOperationException("StudentProfile data grids must be visible after construction.");
+
+            if (attendance.Dock != DockStyle.Fill || grades.Dock != DockStyle.Fill || fees.Dock != DockStyle.Fill)
+                throw new InvalidOperationException("StudentProfile data grids must fill their tab pages.");
+
+            if (tabs.TabPages.Count < 3)
+                throw new InvalidOperationException("StudentProfile must expose attendance, academic grades, and fees tabs.");
+        }
+
         private static void ValidatePayrollScreens(Control control)
         {
             if (control is SchoolSystem.UI.PayrollForm)
@@ -292,6 +322,7 @@ namespace SchoolSystem.UiSmokeTests
 
                         ValidateLayout(control);
                         ValidatePayrollScreens(control);
+                        ValidateStudentProfile(control);
                     }
 
                     passed++;
