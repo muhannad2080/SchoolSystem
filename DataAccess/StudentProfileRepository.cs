@@ -30,9 +30,9 @@ namespace SchoolSystem.DataAccess
                     "الحضور والغياب",
                     () => LoadAttendance(connection, studentId));
 
-                DataTable marks = TryLoadOptionalSection(
+                DataTable grades = TryLoadOptionalSection(
                     "الدرجات الأكاديمية",
-                    () => LoadMarks(connection, studentId));
+                    () => LoadGrades(connection, studentId));
 
                 DataTable fees = includeFinancials
                     ? TryLoadOptionalSection(
@@ -44,7 +44,7 @@ namespace SchoolSystem.DataAccess
                 {
                     Student = student,
                     Attendance = attendance,
-                    Marks = marks,
+                    Grades = grades,
                     Fees = fees,
                     CanViewFinancials = includeFinancials
                 };
@@ -121,19 +121,27 @@ namespace SchoolSystem.DataAccess
             return ExecuteTable(connection, query, studentId);
         }
 
-        // تعريف الدالة LoadMarks لتنفيذ العملية المرتبطة بها.
-        private DataTable LoadMarks(SqlConnection connection, int studentId)
+        // الدرجات الأكاديمية تُقرأ من جدول Grades، وهو المصدر الذي تستخدمه شاشة إدخال الدرجات الحالية.
+        private DataTable LoadGrades(SqlConnection connection, int studentId)
         {
             const string query = @"
                 SELECT
                     ISNULL(sub.SubjectName, N'غير محدد') AS SubjectName,
-                    ISNULL(m.ExamType, N'عام') AS ExamType,
-                    m.Mark AS MarkValue,
-                    m.CreatedAt
-                FROM Marks m
-                LEFT JOIN Subjects sub ON m.SubjectID = sub.SubjectID
-                WHERE m.StudentID = @StudentID
-                ORDER BY m.CreatedAt DESC, SubjectName;";
+                    ISNULL(g.TermName, N'غير محدد') AS TermName,
+                    ISNULL(g.Quiz1, 0) AS Quiz1,
+                    ISNULL(g.Quiz2, 0) AS Quiz2,
+                    ISNULL(g.CourseWork, 0) AS CourseWork,
+                    ISNULL(g.FinalExam, 0) AS FinalExam,
+                    ISNULL(g.GradeValue, 0) AS Total,
+                    ISNULL(g.GradeLetter, N'') AS GradeLetter,
+                    ISNULL(g.ResultStatus, N'') AS ResultStatus,
+                    ISNULL(g.Notes, N'') AS Notes,
+                    g.CreatedAt,
+                    g.UpdatedAt
+                FROM Grades g
+                LEFT JOIN Subjects sub ON g.SubjectID = sub.SubjectID
+                WHERE g.StudentID = @StudentID
+                ORDER BY ISNULL(g.UpdatedAt, g.CreatedAt) DESC, SubjectName;";
 
             return ExecuteTable(connection, query, studentId);
         }
@@ -152,6 +160,8 @@ namespace SchoolSystem.DataAccess
                     RemainingAmount,
                     DueDate,
                     PaymentDate,
+                    ISNULL(PaymentMethod, N'') AS PaymentMethod,
+                    ISNULL(ReceiptNumber, N'') AS ReceiptNumber,
                     ISNULL(Status, N'') AS Status
                 FROM Fees
                 WHERE StudentID = @StudentID
