@@ -694,7 +694,7 @@ namespace SchoolSystem.UI
             this.lblDevelopers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblDevelopers.Size = new System.Drawing.Size(583, 38);
             this.lblDevelopers.TabIndex = 1;
-            this.lblDevelopers.Text = "المطورون: المهندس مهند علي علي علي سعد • عبدالرحمن سعد علي سعد • سامي الحاج";
+            this.lblDevelopers.Text = "المطورون: المهندس مهند علي علي علي سعد • عبد الرحمن سعد علي سعد • سامي الحاج";
             this.lblDevelopers.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // toolTip
