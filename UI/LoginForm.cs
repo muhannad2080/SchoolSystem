@@ -14,8 +14,11 @@ namespace SchoolSystem.UI
         // تعريف الدالة UserService لتنفيذ العملية المرتبطة بها.
         private readonly UserService userService = new UserService();
 
-        // يُضبط على true فقط عندما يختار المستخدم صراحةً إنهاء النظام عبر زر "خروج".
+        // يُضبط فقط بعد تأكيد المستخدم الإغلاق أو بعد نجاح تسجيل الدخول.
         public bool AppShouldExit { get; private set; }
+
+        // يمنع FormClosing من إعادة سؤال المستخدم بعد اتخاذ قرار إغلاق صحيح.
+        private bool _allowClose;
 
         // تعريف الدالة LoginForm لتنفيذ العملية المرتبطة بها.
         public LoginForm()
@@ -56,6 +59,9 @@ namespace SchoolSystem.UI
 
             this.AcceptButton = btnLogin;
             this.CancelButton = btnExit;
+
+            // اعتراض كل طرق إغلاق شاشة الدخول: زر الخروج، زر X المخصص، وAlt+F4.
+            FormClosing += LoginForm_FormClosing;
 
             // تقييد أطوال حقول الدخول.
             txtUserName.MaxLength = 100;
@@ -243,9 +249,8 @@ namespace SchoolSystem.UI
         {
             string userName = NormalizeDigits(txtUserName.Text).Trim();
 
-            // لا نستخدم Trim لكلمة المرور؛ المسافات قد تكون جزءاً صحيحاً من كلمة المرور.
-            // تجهيز قيمة كلمة المرور لمسار التحقق والحماية.
-            string password = NormalizeDigits(txtPassword.Text);
+            // كلمة المرور يجب أن تُرسل كما أدخلها المستخدم؛ لا نغيّر الأحرف أو الأرقام أو المسافات.
+            string password = txtPassword.Text;
 
             // تمرير قيمة كلمة المرور إلى مسار الحماية المناسب.
             if (string.IsNullOrWhiteSpace(userName) ||
@@ -294,6 +299,7 @@ namespace SchoolSystem.UI
                 }
 
                 DialogResult = DialogResult.OK;
+                _allowClose = true;
 
                 Close();
             }
@@ -368,6 +374,17 @@ namespace SchoolSystem.UI
         // تعريف الدالة btnExit_Click لتنفيذ العملية المرتبطة بها.
         private void btnExit_Click(object sender, EventArgs e)
         {
+            RequestCloseApplication();
+        }
+
+        // زر X المخصص في شاشة الدخول يستخدم مسار الإغلاق نفسه حتى لا تختلف النتيجة.
+        private void btnWindowClose_Click(object sender, EventArgs e)
+        {
+            RequestCloseApplication();
+        }
+
+        private void RequestCloseApplication()
+        {
             if (!UIHelper.ShowConfirmation(
                 "هل تريد إغلاق نظام إدارة المدرسة؟",
                 "تأكيد الإغلاق"))
@@ -380,11 +397,34 @@ namespace SchoolSystem.UI
                 "إغلاق النظام",
                 "المستخدم اختار إغلاق التطبيق");
 
-            // هذه النافذة تُعرض بواسطة ShowDialog؛ لا نغلق MessageLoop من هنا.
-            // نعيد نتيجة واضحة إلى Program.cs، وهو المسؤول عن إنهاء التطبيق بأمان.
             AppShouldExit = true;
             DialogResult = DialogResult.Cancel;
+            _allowClose = true;
             Close();
+        }
+
+        // يمنع الإغلاق غير المؤكد من زر X أو Alt+F4.
+        private void LoginForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_allowClose)
+                return;
+
+            if (!UIHelper.ShowConfirmation(
+                "هل تريد إغلاق نظام إدارة المدرسة؟",
+                "تأكيد الإغلاق"))
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            ApplicationLogger.LogUsage(
+                "شاشة الدخول",
+                "إغلاق النظام",
+                "المستخدم أغلق نافذة الدخول بعد تأكيد الإغلاق");
+
+            AppShouldExit = true;
+            DialogResult = DialogResult.Cancel;
+            _allowClose = true;
         }
 
         // تعريف الدالة ShowWarning لتنفيذ العملية المرتبطة بها.
