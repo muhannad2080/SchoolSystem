@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using SchoolSystem.Models;
@@ -38,16 +39,19 @@ namespace SchoolSystem.UI
             // أو الأحداث أو معالجة الأخطاء.
             // ============================================================
 
-            // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
-            try
+            // لا تُنفذ تهيئة قاعدة البيانات أثناء فتح WinForms Designer.
+            if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
             {
-                userService.EnsureDefaultAdmin();
-            }
-            catch (Exception ex)
-            {
-                ApplicationLogger.LogException("تهيئة مدير النظام في شاشة الدخول", ex);
-                ShowInitializationError(ex);
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                try
+                {
+                    userService.EnsureDefaultAdmin();
+                }
+                catch (Exception ex)
+                {
+                    ApplicationLogger.LogException("تهيئة مدير النظام في شاشة الدخول", ex);
+                    ShowInitializationError(ex);
+                    System.Diagnostics.Debug.WriteLine(ex.ToString());
+                }
             }
 
             this.AcceptButton = btnLogin;
@@ -101,27 +105,6 @@ namespace SchoolSystem.UI
             lblStatus.TextAlign = ContentAlignment.MiddleRight;
             lblFooter.Text = "الوصول إلى النظام متاح للحسابات المصرح لها فقط";
             lblFooter.TextAlign = ContentAlignment.MiddleRight;
-
-            Label developerFooter = new Label
-            {
-                Name = "lblDevelopers",
-                Dock = DockStyle.Bottom,
-                Height = 46,
-                AutoSize = false,
-                BackColor = Color.Transparent,
-                ForeColor = UIHelper.MutedTextColor,
-                Font = new Font(UIHelper.FontFamily, 8F, FontStyle.Regular),
-                RightToLeft = RightToLeft.Yes,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Text = "المطورون: المهندس مهند علي علي علي سعد • عبدالرحمن سعد علي سعد • سامي الحاج",
-                Padding = new Padding(8, 4, 8, 8),
-                Margin = new Padding(0)
-            };
-
-            panelLoginArea.Controls.Add(developerFooter);
-            developerFooter.BringToFront();
-
-            toolTip.SetToolTip(developerFooter, "فريق تطوير نظام إدارة المدرسة");
 
             // توحيد اتجاه النصوص داخل الحاويات العربية.
             foreach (Control control in new Control[]
