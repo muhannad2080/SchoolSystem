@@ -230,7 +230,7 @@ namespace SchoolSystem.UI
             BindStudentPhoto(student.Photo);
 
             dgvAttendance.DataSource = profile.Attendance;
-            dgvMarks.DataSource = profile.Marks;
+            dgvMarks.DataSource = profile.Grades;
             dgvFees.DataSource = profile.Fees;
             if (profile.CanViewFinancials)
             {
@@ -314,8 +314,8 @@ namespace SchoolSystem.UI
         // تعريف الدالة BindAcademicSummary لتنفيذ العملية المرتبطة بها.
         private void BindAcademicSummary()
         {
-            int count = profile.Marks == null ? 0 : profile.Marks.Rows.Count;
-            decimal average = Average(profile.Marks, "MarkValue");
+            int count = profile.Grades == null ? 0 : profile.Grades.Rows.Count;
+            decimal average = Average(profile.Grades, "Total");
             lblAcademicSummary.Text = "الأداء الأكاديمي\r\nعدد الدرجات: " + count + "\r\nالمتوسط العام: " + average.ToString("N2");
         }
 
@@ -368,15 +368,28 @@ namespace SchoolSystem.UI
             FormatDate(dgvAttendance, "AttendanceDate");
         }
 
-        // تعريف الدالة FormatMarksGrid لتنفيذ العملية المرتبطة بها.
+        // تنسيق الدرجات الأكاديمية من جدول Grades.
         private void FormatMarksGrid()
         {
             SetHeader(dgvMarks, "SubjectName", "المادة");
-            SetHeader(dgvMarks, "ExamType", "نوع الاختبار");
-            SetHeader(dgvMarks, "MarkValue", "الدرجة");
+            SetHeader(dgvMarks, "TermName", "الفصل الدراسي");
+            SetHeader(dgvMarks, "Quiz1", "اختبار 1");
+            SetHeader(dgvMarks, "Quiz2", "اختبار 2");
+            SetHeader(dgvMarks, "CourseWork", "أعمال الفصل");
+            SetHeader(dgvMarks, "FinalExam", "الاختبار النهائي");
+            SetHeader(dgvMarks, "Total", "المجموع");
+            SetHeader(dgvMarks, "GradeLetter", "التقدير");
+            SetHeader(dgvMarks, "ResultStatus", "النتيجة");
+            SetHeader(dgvMarks, "Notes", "ملاحظات");
             SetHeader(dgvMarks, "CreatedAt", "تاريخ الإدخال");
+            SetHeader(dgvMarks, "UpdatedAt", "آخر تعديل");
+            FormatNumber(dgvMarks, "Quiz1");
+            FormatNumber(dgvMarks, "Quiz2");
+            FormatNumber(dgvMarks, "CourseWork");
+            FormatNumber(dgvMarks, "FinalExam");
+            FormatNumber(dgvMarks, "Total");
             FormatDate(dgvMarks, "CreatedAt");
-            FormatNumber(dgvMarks, "MarkValue");
+            FormatDate(dgvMarks, "UpdatedAt");
         }
 
         // تعريف الدالة FormatFeesGrid لتنفيذ العملية المرتبطة بها.
@@ -391,6 +404,8 @@ namespace SchoolSystem.UI
             SetHeader(dgvFees, "RemainingAmount", "المتبقي");
             SetHeader(dgvFees, "DueDate", "الاستحقاق");
             SetHeader(dgvFees, "PaymentDate", "الدفع");
+            SetHeader(dgvFees, "PaymentMethod", "طريقة الدفع");
+            SetHeader(dgvFees, "ReceiptNumber", "رقم الإيصال");
             SetHeader(dgvFees, "Status", "الحالة");
             FormatDate(dgvFees, "DueDate");
             FormatDate(dgvFees, "PaymentDate");
