@@ -1,42 +1,50 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Helpers;
-using SchoolSystem.Security;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
 {
     /// <summary>
-    /// لوحة التحكم الرئيسية للنظام.
-    /// تعرض مؤشرات حقيقية من قاعدة البيانات وتعيد ترتيب العرض
-    /// تلقائيًا عند تغير حجم المساحة المتاحة.
+    /// لوحة التحكم الرئيسية.
+    /// هذه الواجهة تعرض محتوى لوحة التحكم فقط؛
+    /// رأس النظام واسم المستخدم والتاريخ والوقت مسؤول عنها MainForm.
+    /// جميع المؤشرات تُحمّل تلقائيًا من قاعدة البيانات عند فتح الواجهة،
+    /// ثم تُحدّث دوريًا دون زر يدوي.
     /// </summary>
     public partial class DashboardHome : UserControl
     {
-        private readonly DashboardService dashboardService = new DashboardService();
+        private readonly DashboardService dashboardService =
+            new DashboardService();
 
         private DataTable studentsPerClassTable;
-        private Timer dashboardClockTimer;
+        private Timer dashboardAutoRefreshTimer;
         private bool isDashboardLoading;
 
         public DashboardHome()
         {
             InitializeComponent();
 
+            RightToLeft = RightToLeft.Yes;
+            BackColor = UIHelper.BackgroundColor;
+
             UIHelper.ApplyKryptonTheme();
             UIHelper.ApplyResponsiveLayout(this);
             UIHelper.ApplyFieldValidation(this);
-            UIHelper.StyleButton(btnRefreshDashboard, UIHelper.InfoColor);
 
             ConfigureDashboardVisuals();
             ConfigureArabicDashboardLayout();
 
-            btnRefreshDashboard.Click += async (sender, e) => await ReloadDashboardAsync();
             panelCards.Resize += (sender, e) => ResizeDashboardCards();
-            panelChartBody.Resize += (sender, e) => { if (studentsPerClassTable != null) RenderChart(); };
+            panelChartBody.Resize += (sender, e) =>
+            {
+                if (studentsPerClassTable != null)
+                    RenderChart();
+            };
+
             Load += DashboardHome_Load;
             Disposed += DashboardHome_Disposed;
 
@@ -44,15 +52,17 @@ namespace SchoolSystem.UI
         }
 
         /// <summary>
-        /// يوحّد اتجاه النصوص وتسميات لوحة التحكم لتكون عربية وواضحة ومتناسقة.
+        /// توحيد النصوص واتجاه العرض داخل لوحة التحكم.
         /// </summary>
         private void ConfigureArabicDashboardLayout()
         {
-            RightToLeft = RightToLeft.Yes;
-
             lblDashboardTitle.Text = "لوحة التحكم";
-            lblDashboardSubtitle.Text = "ملخص حي لمؤشرات المدرسة وحالتها التشغيلية";
-            btnRefreshDashboard.Text = "تحديث البيانات";
+            lblDashboardSubtitle.Text =
+                "ملخص حي لمؤشرات المدرسة وحالتها التشغيلية";
+            lblActiveAcademicYear.Text =
+                "العام الدراسي: جاري التحميل...";
+            lblLastUpdated.Text =
+                "آخر تحديث تلقائي: جاري التحميل...";
 
             lblStudentsTitle.Text = "إجمالي الطلاب";
             lblTeachersTitle.Text = "المعلمون";
@@ -65,9 +75,14 @@ namespace SchoolSystem.UI
 
             Control[] arabicControls =
             {
-                panelHeader, tlpHeader, pnlTitle, pnlMeta,
-                tableLayoutMain, tableLayoutLower, panelAlerts,
-                panelChart, panelChartBody
+                panelSummary,
+                tableLayoutSummary,
+                tableLayoutMain,
+                panelCards,
+                tableLayoutLower,
+                panelAlerts,
+                panelChart,
+                panelChartBody
             };
 
             foreach (Control control in arabicControls)
@@ -78,31 +93,60 @@ namespace SchoolSystem.UI
 
             Label[] arabicLabels =
             {
-                lblDashboardTitle, lblDashboardSubtitle, lblWelcome,
-                lblActiveAcademicYear, lblCurrentDateTime, lblLastUpdated,
-                lblStudentsTitle, lblTeachersTitle, lblSubjectsTitle,
-                lblClassesTitle, lblFeesTitle, lblAlertsTitle,
-                lblPendingFees, lblTodayAbsence, lblOperationalStatus,
+                lblDashboardTitle,
+                lblDashboardSubtitle,
+                lblActiveAcademicYear,
+                lblLastUpdated,
+                lblStudentsTitle,
+                lblTeachersTitle,
+                lblSubjectsTitle,
+                lblClassesTitle,
+                lblFeesTitle,
+                lblAlertsTitle,
+                lblPendingFees,
+                lblTodayAbsence,
+                lblOperationalStatus,
                 lblChartTitle
             };
 
             foreach (Label label in arabicLabels)
             {
+                if (label == null)
+                    continue;
+
                 label.RightToLeft = RightToLeft.Yes;
                 label.TextAlign = ContentAlignment.MiddleRight;
             }
 
             Label[] numericLabels =
             {
-                lblStudentsValue, lblTeachersValue,
-                lblSubjectsValue, lblClassesValue, lblFeesValue
+                lblStudentsValue,
+                lblTeachersValue,
+                lblSubjectsValue,
+                lblClassesValue,
+                lblFeesValue
             };
 
             foreach (Label label in numericLabels)
             {
+                if (label == null)
+                    continue;
+
                 label.RightToLeft = RightToLeft.No;
-                label.TextAlign = ContentAlignment.MiddleRight;
+                label.TextAlign = ContentAlignment.MiddleCenter;
             }
+
+            lblDashboardTitle.TextAlign =
+                ContentAlignment.MiddleRight;
+
+            lblDashboardSubtitle.TextAlign =
+                ContentAlignment.MiddleRight;
+
+            lblActiveAcademicYear.TextAlign =
+                ContentAlignment.MiddleLeft;
+
+            lblLastUpdated.TextAlign =
+                ContentAlignment.MiddleLeft;
 
             lblOperationalStatus.AutoEllipsis = false;
             panelChartBody.BackColor = UIHelper.SurfaceColor;
@@ -113,18 +157,19 @@ namespace SchoolSystem.UI
         {
             BackColor = UIHelper.BackgroundColor;
 
-            panelHeader.BackColor = UIHelper.PrimaryDarkColor;
+            panelSummary.BackColor = UIHelper.SurfaceColor;
 
-            lblDashboardTitle.ForeColor = Color.White;
-            lblDashboardSubtitle.ForeColor = UIHelper.PrimaryLightColor;
-            lblWelcome.ForeColor = UIHelper.PrimaryLightColor;
+            lblDashboardTitle.ForeColor =
+                UIHelper.TextPrimaryColor;
 
-            lblActiveAcademicYear.ForeColor = Color.White;
-            lblCurrentDateTime.ForeColor = UIHelper.PrimaryLightColor;
-            lblLastUpdated.ForeColor = UIHelper.PrimaryLightColor;
+            lblDashboardSubtitle.ForeColor =
+                UIHelper.TextSecondaryColor;
 
-            UIHelper.StyleButton(btnRefreshDashboard, UIHelper.AccentColor);
-            btnRefreshDashboard.ForeColor = Color.White;
+            lblActiveAcademicYear.ForeColor =
+                UIHelper.PrimaryColor;
+
+            lblLastUpdated.ForeColor =
+                UIHelper.MutedTextColor;
 
             ConfigureCard(
                 cardStudents,
@@ -161,12 +206,20 @@ namespace SchoolSystem.UI
                 lblFeesValue,
                 UIHelper.DangerColor);
 
-            panelChart.BackColor = UIHelper.SurfaceColor;
-            panelAlerts.BackColor = UIHelper.SurfaceColor;
+            panelChart.BackColor =
+                UIHelper.SurfaceColor;
 
-            lblChartTitle.ForeColor = UIHelper.TextPrimaryColor;
-            lblAlertsTitle.ForeColor = UIHelper.TextPrimaryColor;
-            lblAlertsTitle.BackColor = UIHelper.SurfaceSecondaryColor;
+            panelAlerts.BackColor =
+                UIHelper.SurfaceColor;
+
+            lblChartTitle.ForeColor =
+                UIHelper.TextPrimaryColor;
+
+            lblAlertsTitle.ForeColor =
+                UIHelper.TextPrimaryColor;
+
+            lblAlertsTitle.BackColor =
+                UIHelper.SurfaceSecondaryColor;
 
             StyleStatusLabel(
                 lblPendingFees,
@@ -191,13 +244,20 @@ namespace SchoolSystem.UI
             Label value,
             Color accent)
         {
-            card.BackColor = UIHelper.SurfaceColor;
-            card.BorderStyle = BorderStyle.FixedSingle;
+            card.BackColor =
+                UIHelper.SurfaceColor;
 
-            accentBar.BackColor = accent;
+            card.BorderStyle =
+                BorderStyle.FixedSingle;
 
-            title.ForeColor = UIHelper.TextSecondaryColor;
-            value.ForeColor = accent;
+            accentBar.BackColor =
+                accent;
+
+            title.ForeColor =
+                UIHelper.TextSecondaryColor;
+
+            value.ForeColor =
+                accent;
         }
 
         private static void StyleStatusLabel(
@@ -212,22 +272,30 @@ namespace SchoolSystem.UI
 
         private void ResizeDashboardCards()
         {
-            if (panelCards == null || panelCards.IsDisposed)
+            if (panelCards == null ||
+                panelCards.IsDisposed)
+            {
                 return;
+            }
 
-            int width = Math.Max(320, panelCards.ClientSize.Width - 4);
+            int width =
+                Math.Max(320, panelCards.ClientSize.Width - 4);
 
             int columns =
-                width >= 960
+                width >= 1050
                     ? 5
-                    : width >= 700
+                    : width >= 730
                         ? 3
                         : 2;
 
-            int horizontalMargins = columns * 12;
-            int cardWidth = Math.Max(
-                150,
-                (width - horizontalMargins) / columns);
+            int horizontalMargins =
+                columns * 12;
+
+            int cardWidth =
+                Math.Max(
+                    150,
+                    (width - horizontalMargins) /
+                    columns);
 
             Control[] cards =
             {
@@ -242,68 +310,52 @@ namespace SchoolSystem.UI
                 card.Width = cardWidth;
         }
 
-        private void DashboardHome_Load(object sender, EventArgs e)
+        private void DashboardHome_Load(
+            object sender,
+            EventArgs e)
         {
-            UpdateHeaderContext();
+            ReloadDashboardAsync();
 
-            dashboardClockTimer = new Timer
-            {
-                Interval = 30000
-            };
+            dashboardAutoRefreshTimer =
+                new Timer
+                {
+                    Interval = 60000
+                };
 
-            dashboardClockTimer.Tick += (timerSender, timerEventArgs) =>
-            {
-                UpdateHeaderContext();
-            };
+            dashboardAutoRefreshTimer.Tick +=
+                async (timerSender, timerEventArgs) =>
+                {
+                    await ReloadDashboardAsync();
+                };
 
-            dashboardClockTimer.Start();
-
-            _ = ReloadDashboardAsync();
+            dashboardAutoRefreshTimer.Start();
         }
 
-        private void DashboardHome_Disposed(object sender, EventArgs e)
+        private void DashboardHome_Disposed(
+            object sender,
+            EventArgs e)
         {
-            if (dashboardClockTimer == null)
+            if (dashboardAutoRefreshTimer == null)
                 return;
 
-            dashboardClockTimer.Stop();
-            dashboardClockTimer.Dispose();
-            dashboardClockTimer = null;
-        }
-
-        private void UpdateHeaderContext()
-        {
-            string displayName = "المستخدم";
-
-            if (CurrentUser.User != null)
-            {
-                displayName = CurrentUser.User.FullName;
-
-                if (string.IsNullOrWhiteSpace(displayName))
-                    displayName = CurrentUser.User.UserName;
-            }
-
-            if (string.IsNullOrWhiteSpace(displayName))
-                displayName = "المستخدم";
-
-            lblWelcome.Text = "مرحبًا، " + displayName;
-            lblCurrentDateTime.Text =
-                "التاريخ والوقت: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+            dashboardAutoRefreshTimer.Stop();
+            dashboardAutoRefreshTimer.Dispose();
+            dashboardAutoRefreshTimer = null;
         }
 
         private async Task ReloadDashboardAsync()
         {
-            if (isDashboardLoading)
+            if (isDashboardLoading ||
+                IsDisposed ||
+                Disposing)
+            {
                 return;
+            }
 
             isDashboardLoading = true;
 
             try
             {
-                btnRefreshDashboard.Enabled = false;
-                btnRefreshDashboard.Text = "جاري التحديث...";
-                Cursor = Cursors.WaitCursor;
-
                 await Task.WhenAll(
                     LoadActiveYearAsync(),
                     LoadStatisticsAsync(),
@@ -311,35 +363,38 @@ namespace SchoolSystem.UI
                     LoadAlertsAsync());
 
                 lblLastUpdated.Text =
-                    "آخر تحديث: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+                    "آخر تحديث تلقائي: " +
+                    DateTime.Now.ToString("yyyy/MM/dd HH:mm");
             }
             catch (Exception ex)
             {
-                UIHelper.ShowException("تعذر تحديث لوحة التحكم", ex);
+                ApplicationLogger.LogException(
+                    "تحديث لوحة التحكم",
+                    ex);
 
                 lblLastUpdated.Text =
-                    "آخر تحديث: تعذر الاكتمال";
+                    "آخر تحديث تلقائي: تعذر اكتمال التحميل";
             }
             finally
             {
-                Cursor = Cursors.Default;
-                btnRefreshDashboard.Text = "تحديث البيانات";
-                btnRefreshDashboard.Enabled = true;
                 isDashboardLoading = false;
             }
         }
 
         private async Task LoadActiveYearAsync()
         {
-            string year = await RunSafeQueryAsync(
-                () => new AnnualClosingService().GetActiveAcademicYear(),
-                "تحميل العام الدراسي النشط للوحة التحكم",
-                string.Empty);
+            string year =
+                await RunSafeQueryAsync(
+                    () => new AnnualClosingService()
+                        .GetActiveAcademicYear(),
+                    "تحميل العام الدراسي للوحة التحكم",
+                    string.Empty);
 
             lblActiveAcademicYear.Text =
                 string.IsNullOrWhiteSpace(year)
                     ? "العام الدراسي: غير محدد"
-                    : "العام الدراسي: " + year.Trim().Replace('-', '/');
+                    : "العام الدراسي: " +
+                      year.Trim().Replace('-', '/');
         }
 
         private async Task LoadStatisticsAsync()
@@ -350,30 +405,35 @@ namespace SchoolSystem.UI
             lblClassesValue.Text = "--";
             lblFeesValue.Text = "--";
 
-            Task<int> studentsTask = RunSafeQueryAsync(
-                () => dashboardService.GetStudentCount(),
-                "تحميل عدد الطلاب للوحة التحكم",
-                0);
+            Task<int> studentsTask =
+                RunSafeQueryAsync(
+                    () => dashboardService.GetStudentCount(),
+                    "تحميل عدد الطلاب للوحة التحكم",
+                    0);
 
-            Task<int> teachersTask = RunSafeQueryAsync(
-                () => dashboardService.GetTeacherCount(),
-                "تحميل عدد المعلمين للوحة التحكم",
-                0);
+            Task<int> teachersTask =
+                RunSafeQueryAsync(
+                    () => dashboardService.GetTeacherCount(),
+                    "تحميل عدد المعلمين للوحة التحكم",
+                    0);
 
-            Task<int> subjectsTask = RunSafeQueryAsync(
-                () => dashboardService.GetSubjectCount(),
-                "تحميل عدد المواد للوحة التحكم",
-                0);
+            Task<int> subjectsTask =
+                RunSafeQueryAsync(
+                    () => dashboardService.GetSubjectCount(),
+                    "تحميل عدد المواد للوحة التحكم",
+                    0);
 
-            Task<int> classesTask = RunSafeQueryAsync(
-                () => dashboardService.GetClassCount(),
-                "تحميل عدد الفصول للوحة التحكم",
-                0);
+            Task<int> classesTask =
+                RunSafeQueryAsync(
+                    () => dashboardService.GetClassCount(),
+                    "تحميل عدد الفصول للوحة التحكم",
+                    0);
 
-            Task<decimal> feesTask = RunSafeQueryAsync(
-                () => dashboardService.GetPendingFeesTotal(),
-                "تحميل إجمالي الرسوم المتبقية للوحة التحكم",
-                0m);
+            Task<decimal> feesTask =
+                RunSafeQueryAsync(
+                    () => dashboardService.GetPendingFeesTotal(),
+                    "تحميل إجمالي الرسوم المتبقية للوحة التحكم",
+                    0m);
 
             await Task.WhenAll(
                 studentsTask,
@@ -382,19 +442,29 @@ namespace SchoolSystem.UI
                 classesTask,
                 feesTask);
 
-            lblStudentsValue.Text = studentsTask.Result.ToString("N0");
-            lblTeachersValue.Text = teachersTask.Result.ToString("N0");
-            lblSubjectsValue.Text = subjectsTask.Result.ToString("N0");
-            lblClassesValue.Text = classesTask.Result.ToString("N0");
-            lblFeesValue.Text = feesTask.Result.ToString("N2");
+            lblStudentsValue.Text =
+                studentsTask.Result.ToString("N0");
+
+            lblTeachersValue.Text =
+                teachersTask.Result.ToString("N0");
+
+            lblSubjectsValue.Text =
+                subjectsTask.Result.ToString("N0");
+
+            lblClassesValue.Text =
+                classesTask.Result.ToString("N0");
+
+            lblFeesValue.Text =
+                feesTask.Result.ToString("N2");
         }
 
         private async Task LoadChartAsync()
         {
-            DataTable table = await RunSafeQueryAsync(
-                () => dashboardService.GetStudentsPerClass(),
-                "تحميل توزيع الطلاب حسب الفصل للوحة التحكم",
-                null);
+            DataTable table =
+                await RunSafeQueryAsync(
+                    () => dashboardService.GetStudentsPerClass(),
+                    "تحميل توزيع الطلاب حسب الفصل للوحة التحكم",
+                    null);
 
             studentsPerClassTable = table;
             RenderChart();
@@ -402,16 +472,23 @@ namespace SchoolSystem.UI
 
         private void RenderChart()
         {
-            if (panelChartBody == null || panelChartBody.IsDisposed)
+            if (panelChartBody == null ||
+                panelChartBody.IsDisposed)
+            {
                 return;
+            }
 
             panelChartBody.SuspendLayout();
 
             try
             {
-                for (int i = panelChartBody.Controls.Count - 1; i >= 0; i--)
+                for (int i = panelChartBody.Controls.Count - 1;
+                     i >= 0;
+                     i--)
                 {
-                    Control existing = panelChartBody.Controls[i];
+                    Control existing =
+                        panelChartBody.Controls[i];
+
                     panelChartBody.Controls.RemoveAt(i);
                     existing.Dispose();
                 }
@@ -419,52 +496,68 @@ namespace SchoolSystem.UI
                 if (studentsPerClassTable == null ||
                     studentsPerClassTable.Rows.Count == 0)
                 {
-                    Label noData = CreateChartMessage("لا توجد بيانات فعلية للعرض في المخطط.");
-                    panelChartBody.Controls.Add(noData);
+                    panelChartBody.Controls.Add(
+                        CreateChartMessage(
+                            "لا توجد بيانات فعلية للعرض في المخطط."));
+
                     return;
                 }
 
                 long maxCount = 1;
 
-                foreach (DataRow row in studentsPerClassTable.Rows)
+                foreach (DataRow row
+                         in studentsPerClassTable.Rows)
                 {
-                    long count = row["StudentCount"] == DBNull.Value
-                        ? 0
-                        : Convert.ToInt64(row["StudentCount"]);
+                    long count =
+                        row["StudentCount"] ==
+                        DBNull.Value
+                            ? 0
+                            : Convert.ToInt64(
+                                row["StudentCount"]);
 
                     if (count > maxCount)
                         maxCount = count;
                 }
 
-                FlowLayoutPanel rows = new FlowLayoutPanel
+                FlowLayoutPanel rows =
+                    new FlowLayoutPanel
+                    {
+                        Dock = DockStyle.Top,
+                        AutoSize = true,
+                        WrapContents = false,
+                        FlowDirection =
+                            FlowDirection.TopDown,
+                        RightToLeft = RightToLeft.Yes,
+                        Padding = new Padding(0),
+                        Margin = new Padding(0),
+                        Width =
+                            Math.Max(
+                                240,
+                                panelChartBody.ClientSize.Width - 28)
+                    };
+
+                foreach (DataRow row
+                         in studentsPerClassTable.Rows)
                 {
-                    Dock = DockStyle.Top,
-                    AutoSize = true,
-                    WrapContents = false,
-                    FlowDirection = FlowDirection.TopDown,
-                    RightToLeft = RightToLeft.Yes,
-                    Padding = new Padding(0),
-                    Margin = new Padding(0),
-                    Width = Math.Max(240, panelChartBody.ClientSize.Width - 28)
-                };
+                    string className =
+                        row["ClassName"] ==
+                        DBNull.Value
+                            ? "غير مسمى"
+                            : row["ClassName"].ToString();
 
-                foreach (DataRow row in studentsPerClassTable.Rows)
-                {
-                    string className = row["ClassName"] == DBNull.Value
-                        ? "غير مسمى"
-                        : row["ClassName"].ToString();
+                    int count =
+                        row["StudentCount"] ==
+                        DBNull.Value
+                            ? 0
+                            : Convert.ToInt32(
+                                row["StudentCount"]);
 
-                    int count = row["StudentCount"] == DBNull.Value
-                        ? 0
-                        : Convert.ToInt32(row["StudentCount"]);
-
-                    TableLayoutPanel chartRow = CreateChartRow(
-                        className,
-                        count,
-                        maxCount,
-                        rows.Width);
-
-                    rows.Controls.Add(chartRow);
+                    rows.Controls.Add(
+                        CreateChartRow(
+                            className,
+                            count,
+                            maxCount,
+                            rows.Width));
                 }
 
                 panelChartBody.Controls.Add(rows);
@@ -475,7 +568,8 @@ namespace SchoolSystem.UI
             }
         }
 
-        private static Label CreateChartMessage(string message)
+        private static Label CreateChartMessage(
+            string message)
         {
             return new Label
             {
@@ -485,7 +579,11 @@ namespace SchoolSystem.UI
                 TextAlign = ContentAlignment.MiddleCenter,
                 RightToLeft = RightToLeft.Yes,
                 ForeColor = UIHelper.MutedTextColor,
-                Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold)
+                Font =
+                    new Font(
+                        UIHelper.FontFamily,
+                        UIHelper.BodyFontSize,
+                        FontStyle.Bold)
             };
         }
 
@@ -495,66 +593,102 @@ namespace SchoolSystem.UI
             long maxCount,
             int availableWidth)
         {
-            TableLayoutPanel row = new TableLayoutPanel
-            {
-                ColumnCount = 3,
-                RowCount = 1,
-                Width = Math.Max(240, availableWidth),
-                Height = 42,
-                Margin = new Padding(0, 0, 0, 6),
-                Padding = new Padding(0),
-                RightToLeft = RightToLeft.Yes
-            };
+            TableLayoutPanel row =
+                new TableLayoutPanel
+                {
+                    ColumnCount = 3,
+                    RowCount = 1,
+                    Width = Math.Max(240, availableWidth),
+                    Height = 42,
+                    Margin = new Padding(0, 0, 0, 6),
+                    Padding = new Padding(0),
+                    RightToLeft = RightToLeft.Yes
+                };
 
             row.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Percent, 29F));
+                new ColumnStyle(
+                    SizeType.Percent,
+                    29F));
 
             row.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Percent, 56F));
+                new ColumnStyle(
+                    SizeType.Percent,
+                    56F));
 
             row.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Percent, 15F));
+                new ColumnStyle(
+                    SizeType.Percent,
+                    15F));
 
-            Label classLabel = new Label
-            {
-                Text = className,
-                Dock = DockStyle.Fill,
-                AutoEllipsis = true,
-                TextAlign = ContentAlignment.MiddleRight,
-                RightToLeft = RightToLeft.Yes,
-                ForeColor = UIHelper.TextSecondaryColor,
-                Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold),
-                Padding = new Padding(0, 0, 8, 0)
-            };
+            Label classLabel =
+                new Label
+                {
+                    Text = className,
+                    Dock = DockStyle.Fill,
+                    AutoEllipsis = true,
+                    TextAlign =
+                        ContentAlignment.MiddleRight,
+                    RightToLeft =
+                        RightToLeft.Yes,
+                    ForeColor =
+                        UIHelper.TextSecondaryColor,
+                    Font =
+                        new Font(
+                            UIHelper.FontFamily,
+                            UIHelper.BodyFontSize,
+                            FontStyle.Bold),
+                    Padding =
+                        new Padding(0, 0, 8, 0)
+                };
 
-            Label countLabel = new Label
-            {
-                Text = count.ToString("N0"),
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleCenter,
-                RightToLeft = RightToLeft.No,
-                ForeColor = UIHelper.TextPrimaryColor,
-                Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize, FontStyle.Bold)
-            };
+            Label countLabel =
+                new Label
+                {
+                    Text =
+                        count.ToString("N0"),
+                    Dock = DockStyle.Fill,
+                    TextAlign =
+                        ContentAlignment.MiddleCenter,
+                    RightToLeft =
+                        RightToLeft.No,
+                    ForeColor =
+                        UIHelper.TextPrimaryColor,
+                    Font =
+                        new Font(
+                            UIHelper.FontFamily,
+                            UIHelper.BodyFontSize,
+                            FontStyle.Bold)
+                };
 
-            Panel track = new Panel
-            {
-                Dock = DockStyle.Fill,
-                Margin = new Padding(8, 9, 8, 9),
-                BackColor = UIHelper.SurfaceSecondaryColor
-            };
+            Panel track =
+                new Panel
+                {
+                    Dock = DockStyle.Fill,
+                    Margin =
+                        new Padding(8, 9, 8, 9),
+                    BackColor =
+                        UIHelper.SurfaceSecondaryColor
+                };
 
-            Panel bar = new Panel
-            {
-                Dock = DockStyle.Right,
-                BackColor = UIHelper.InfoColor,
-                Width = Math.Max(
-                    4,
-                    (int)Math.Round(
-                        (double)count /
-                        Math.Max(1, maxCount) *
-                        Math.Max(8, (availableWidth * 0.56) - 16)))
-            };
+            Panel bar =
+                new Panel
+                {
+                    Dock = DockStyle.Right,
+                    BackColor =
+                        UIHelper.InfoColor,
+                    Width =
+                        Math.Max(
+                            4,
+                            (int)Math.Round(
+                                (double)count /
+                                Math.Max(
+                                    1,
+                                    maxCount) *
+                                Math.Max(
+                                    8,
+                                    (availableWidth *
+                                     0.56) - 16)))
+                };
 
             track.Controls.Add(bar);
             row.Controls.Add(classLabel, 0, 0);
@@ -566,24 +700,32 @@ namespace SchoolSystem.UI
 
         private async Task LoadAlertsAsync()
         {
-            lblPendingFees.Text = "بنود الرسوم غير المسددة: جاري التحميل...";
-            lblTodayAbsence.Text = "غياب اليوم: جاري التحميل...";
-            lblOperationalStatus.Text = "حالة التشغيل: جاري التحميل...";
+            lblPendingFees.Text =
+                "بنود الرسوم غير المسددة: جاري التحميل...";
 
-            Task<int> pendingFeesTask = RunSafeQueryAsync(
-                () => dashboardService.GetPendingFeesCount(),
-                "تحميل عدد بنود الرسوم المتبقية للوحة التحكم",
-                0);
+            lblTodayAbsence.Text =
+                "غياب اليوم: جاري التحميل...";
 
-            Task<int> absenceTask = RunSafeQueryAsync(
-                () => dashboardService.GetTodayAbsenceCount(),
-                "تحميل غياب اليوم للوحة التحكم",
-                0);
+            lblOperationalStatus.Text =
+                "حالة التشغيل: جاري التحميل...";
 
-            Task<DataTable> operationalTask = RunSafeQueryAsync(
-                () => dashboardService.GetOperationalStatus(),
-                "تحميل حالة التشغيل للوحة التحكم",
-                null);
+            Task<int> pendingFeesTask =
+                RunSafeQueryAsync(
+                    () => dashboardService.GetPendingFeesCount(),
+                    "تحميل عدد بنود الرسوم المتبقية للوحة التحكم",
+                    0);
+
+            Task<int> absenceTask =
+                RunSafeQueryAsync(
+                    () => dashboardService.GetTodayAbsenceCount(),
+                    "تحميل غياب اليوم للوحة التحكم",
+                    0);
+
+            Task<DataTable> operationalTask =
+                RunSafeQueryAsync(
+                    () => dashboardService.GetOperationalStatus(),
+                    "تحميل حالة التشغيل للوحة التحكم",
+                    null);
 
             await Task.WhenAll(
                 pendingFeesTask,
@@ -591,53 +733,69 @@ namespace SchoolSystem.UI
                 operationalTask);
 
             lblPendingFees.Text =
-                "بنود الرسوم غير المسددة: " + pendingFeesTask.Result.ToString("N0");
+                "بنود الرسوم غير المسددة: " +
+                pendingFeesTask.Result.ToString("N0");
 
             lblTodayAbsence.Text =
-                "غياب اليوم: " + absenceTask.Result.ToString("N0") + " طالب";
+                "غياب اليوم: " +
+                absenceTask.Result.ToString("N0") +
+                " طالب";
 
-            RenderOperationalStatus(operationalTask.Result);
+            RenderOperationalStatus(
+                operationalTask.Result);
         }
 
-        private void RenderOperationalStatus(DataTable table)
+        private void RenderOperationalStatus(
+            DataTable table)
         {
-            if (table == null || table.Rows.Count == 0)
+            if (table == null ||
+                table.Rows.Count == 0)
             {
                 lblOperationalStatus.Text =
-                    "حالة التشغيل:" + Environment.NewLine +
+                    "حالة التشغيل:" +
+                    Environment.NewLine +
                     "لا توجد بيانات تشغيلية متاحة حاليًا.";
 
                 return;
             }
 
-            DataRow row = table.Rows[0];
+            DataRow row =
+                table.Rows[0];
 
             string backupFile =
-                row["LastBackupFile"] == DBNull.Value
+                row["LastBackupFile"] ==
+                DBNull.Value
                     ? string.Empty
                     : row["LastBackupFile"].ToString();
 
             string backupDate =
-                row["LastBackupDate"] == DBNull.Value
+                row["LastBackupDate"] ==
+                DBNull.Value
                     ? "غير متوفر"
                     : Convert
-                        .ToDateTime(row["LastBackupDate"])
-                        .ToString("yyyy/MM/dd HH:mm");
+                        .ToDateTime(
+                            row["LastBackupDate"])
+                        .ToString(
+                            "yyyy/MM/dd HH:mm");
 
             string closingYear =
-                row["LastClosingYear"] == DBNull.Value
+                row["LastClosingYear"] ==
+                DBNull.Value
                     ? "غير متوفر"
                     : row["LastClosingYear"].ToString();
 
             string closingStatus =
-                row["LastClosingStatus"] == DBNull.Value
+                row["LastClosingStatus"] ==
+                DBNull.Value
                     ? "غير متوفر"
                     : row["LastClosingStatus"].ToString();
 
             lblOperationalStatus.Text =
-                "حالة التشغيل:" + Environment.NewLine +
+                "حالة التشغيل:" +
+                Environment.NewLine +
                 "آخر نسخة احتياطية: " +
-                (string.IsNullOrWhiteSpace(backupFile)
+                (string.IsNullOrWhiteSpace(
+                    backupFile)
                     ? "غير متوفرة"
                     : backupDate) +
                 Environment.NewLine +
@@ -658,7 +816,10 @@ namespace SchoolSystem.UI
             }
             catch (Exception ex)
             {
-                ApplicationLogger.LogException(context, ex);
+                ApplicationLogger.LogException(
+                    context,
+                    ex);
+
                 return fallback;
             }
         }
