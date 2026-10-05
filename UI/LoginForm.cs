@@ -109,8 +109,15 @@ namespace SchoolSystem.UI
             btnTogglePassword.Text = "إظهار";
 
             lblStatus.TextAlign = ContentAlignment.MiddleRight;
-            lblFooter.Text = "الوصول إلى النظام متاح للحسابات المصرح لها فقط";
+            lblFooter.Text = "الوصول إلى النظام متاح للحسابات المصرّح لها فقط";
             lblFooter.TextAlign = ContentAlignment.MiddleRight;
+
+            lblDevelopers.Text =
+                "المطورون\r\nالمهندس مهند علي علي علي سعد • عبد الرحمن سعد علي سعد • سامي الحاج";
+            lblDevelopers.TextAlign = ContentAlignment.MiddleCenter;
+
+            btnWindowClose.Text = "×";
+            btnWindowClose.RightToLeft = RightToLeft.No;
 
             // توحيد اتجاه النصوص داخل الحاويات العربية.
             foreach (Control control in new Control[]
