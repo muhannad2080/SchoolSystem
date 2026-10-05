@@ -146,7 +146,9 @@ namespace SchoolSystem.UI
             grid.ReadOnly = true;
             grid.RightToLeft = RightToLeft.Yes;
             grid.RowHeadersVisible = false;
-            grid.RowHeadersWidth = 1;
+            // WinForms enforces a minimum RowHeadersWidth of 4 even when row headers are hidden.
+            // Keep a valid value to prevent an exception while the profile grid is initialized.
+            grid.RowHeadersWidth = 4;
             grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             grid.ScrollBars = ScrollBars.Both;
         }
