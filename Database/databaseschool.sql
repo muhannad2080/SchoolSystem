@@ -1528,7 +1528,6 @@ GO
 SET IDENTITY_INSERT [dbo].[SchemaMigrations] ON 
 
 INSERT [dbo].[SchemaMigrations] ([Id], [Version], [Name], [AppliedAtUtc], [Success]) VALUES (1, 1, N'baseline-adopted-existing-schema', CAST(N'2026-08-31T15:41:47.757' AS DateTime), 1)
-INSERT [dbo].[SchemaMigrations] ([Id], [Version], [Name], [AppliedAtUtc], [Success]) VALUES (2, 2, N'Example', CAST(N'2026-08-31T15:41:47.827' AS DateTime), 1)
 INSERT [dbo].[SchemaMigrations] ([Id], [Version], [Name], [AppliedAtUtc], [Success]) VALUES (3, 3, N'EnsureAcademicReference', CAST(N'2026-08-31T15:41:47.900' AS DateTime), 1)
 SET IDENTITY_INSERT [dbo].[SchemaMigrations] OFF
 GO
