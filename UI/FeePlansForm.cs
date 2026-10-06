@@ -755,8 +755,6 @@ namespace SchoolSystem.UI
                     plan.AcademicYear,
                     plan.FeeType);
                 DataRefreshNotifier.Notify("All", this);
-                DataRefreshNotifier.Notify("All", this);
-                DataRefreshNotifier.Notify("All", this);
             }
 
             catch (Exception ex)
@@ -888,8 +886,6 @@ namespace SchoolSystem.UI
                     plan.FeeType);
 
                 DataRefreshNotifier.Notify("All", this);
-                DataRefreshNotifier.Notify("All", this);
-                DataRefreshNotifier.Notify("All", this);
             }
             catch (Exception ex)
             {
@@ -1007,8 +1003,6 @@ namespace SchoolSystem.UI
 
 
                 await LoadFeePlansAsync();
-                DataRefreshNotifier.Notify("All", this);
-                DataRefreshNotifier.Notify("All", this);
                 DataRefreshNotifier.Notify("All", this);
                 ClearInputs();
             }
