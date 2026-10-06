@@ -64,6 +64,10 @@ namespace SchoolSystem.UI
 
             txtSearch.TextChanged += (sender, e) => ApplyFilter();
 
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             cmbStudent.SelectedIndexChanged += async (sender, e) =>
                 await ApplySelectedFeePlanAsync();
 
@@ -74,6 +78,27 @@ namespace SchoolSystem.UI
                 await ApplySelectedFeePlanAsync();
 
             Load += FeesForm_Load;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                (!DataRefreshNotifier.IsRelated(e, "Fees") &&
+                 !DataRefreshNotifier.IsRelated(e, "Vouchers") &&
+                 !DataRefreshNotifier.IsRelated(e, "Enrollment")))
+            {
+                return;
+            }
+
+            await LoadFeesAsync();
+
+            if (DataRefreshNotifier.IsRelated(e, "Enrollment"))
+            {
+                await ApplySelectedFeePlanAsync();
+            }
         }
 
         // ============================================================
@@ -93,6 +118,9 @@ namespace SchoolSystem.UI
                 await LoadStudentsAsync();
 
                 await LoadFeesAsync();
+
+                DataRefreshNotifier.Notify("Fees", this);
+                DataRefreshNotifier.Notify("Vouchers", this);
 
                 ClearInputs();
 
@@ -1680,6 +1708,9 @@ string receiptNumber =
                         refundedRemaining.ToString("N2"));
 
                     await LoadFeesAsync();
+
+                    DataRefreshNotifier.Notify("Fees", this);
+                    DataRefreshNotifier.Notify("Vouchers", this);
 
                     ClearInputs();
 
