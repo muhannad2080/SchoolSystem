@@ -1,15 +1,16 @@
 /*
-    SchoolSystem - One-time production data reset
+    SchoolSystem - Production data reset
     ----------------------------------------------
     This script removes operational/test data while KEEPING reference/setup data:
       - Academic years/current academic-year history
       - Academic terms
-      - Stages/classes (academic structure required by subjects)
-      - Subjects and class-subject mappings
+      - Subjects
+      - Academic years/terms
+      - Rooms
       - Rooms
       - Users, roles, permissions and their assignments
       - School settings
-      - Library books are also cleared; this reset keeps only the explicitly requested reference data.
+      - School settings
 
     Cleared:
       Students/profiles/enrollments/distribution/attendance/grades/marks/transport assignments
@@ -70,6 +71,20 @@ BEGIN TRY
 
     IF OBJECT_ID(N'dbo.Expenses', N'U') IS NOT NULL DELETE FROM dbo.Expenses;
 
+    /* ================================================================
+       1.5) Academic operational/master data to be re-entered dynamically
+       ================================================================ */
+    IF OBJECT_ID(N'dbo.ClassSubjectTerms', N'U') IS NOT NULL DELETE FROM dbo.ClassSubjectTerms;
+    IF OBJECT_ID(N'dbo.ClassSubjects', N'U') IS NOT NULL DELETE FROM dbo.ClassSubjects;
+
+    IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
+        UPDATE dbo.Subjects
+        SET ClassID = NULL,
+            UpdatedAt = GETDATE();
+
+    IF OBJECT_ID(N'dbo.Classes', N'U') IS NOT NULL DELETE FROM dbo.Classes;
+    IF OBJECT_ID(N'dbo.Stages', N'U') IS NOT NULL DELETE FROM dbo.Stages;
+
     IF OBJECT_ID(N'dbo.AnnualMigrationLog', N'U') IS NOT NULL DELETE FROM dbo.AnnualMigrationLog;
     IF OBJECT_ID(N'dbo.AnnualClosings', N'U') IS NOT NULL DELETE FROM dbo.AnnualClosings;
     IF OBJECT_ID(N'dbo.DatabaseBackupHistory', N'U') IS NOT NULL DELETE FROM dbo.DatabaseBackupHistory;
@@ -123,7 +138,11 @@ BEGIN TRY
         (N'Buses'),
         (N'BusRoutes'),
         (N'StudentTransport'),
-        (N'StudentTransportAssignments')
+        (N'StudentTransportAssignments'),
+        (N'ClassSubjectTerms'),
+        (N'ClassSubjects'),
+        (N'Classes'),
+        (N'Stages')
     ) v(TableName);
 
     OPEN identity_cursor;
@@ -163,15 +182,40 @@ BEGIN TRY
 
     SELECT @RemainingOperational =
           ISNULL((SELECT COUNT_BIG(*) FROM dbo.Students), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentProfiles), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Teachers), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.TeacherContracts), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Enrollments), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentClasses), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentAttendance), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.TeacherAttendance), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StaffAttendance), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Grades), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Marks), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.SchoolTimetable), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Timetables), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Fees), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentFees), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.FeePlans), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.VoucherLines), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Vouchers), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Receipts), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Payroll), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.TeacherContracts), 0);
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Expenses), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.BookBorrowings), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Books), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Buses), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.BusRoutes), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentTransport), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentTransportAssignments), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.ClassSubjectTerms), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.ClassSubjects), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.SchoolSections), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Classes), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Stages), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AnnualMigrationLog), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AnnualClosings), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.DatabaseBackupHistory), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AuditLogs), 0);
 
     IF @RemainingOperational <> 0
         THROW 52001, N'فشل تنظيف البيانات التشغيلية بالكامل.', 1;
@@ -187,6 +231,27 @@ BEGIN TRY
     IF OBJECT_ID(N'dbo.Users', N'U') IS NOT NULL
        AND NOT EXISTS (SELECT 1 FROM dbo.Users)
         THROW 52004, N'لم يبقَ مستخدمون. تم إيقاف العملية لحماية الدخول والصلاحيات.', 1;
+
+    IF OBJECT_ID(N'dbo.Roles', N'U') IS NOT NULL
+       AND NOT EXISTS (SELECT 1 FROM dbo.Roles)
+        THROW 52006, N'لم تبقَ الأدوار والصلاحيات الأساسية.', 1;
+
+    IF OBJECT_ID(N'dbo.AcademicYears', N'U') IS NOT NULL
+       AND NOT EXISTS (SELECT 1 FROM dbo.AcademicYears)
+        THROW 52007, N'لم تبقَ السنوات الدراسية المرجعية.', 1;
+
+    IF OBJECT_ID(N'dbo.AcademicTerms', N'U') IS NOT NULL
+       AND NOT EXISTS (SELECT 1 FROM dbo.AcademicTerms)
+        THROW 52008, N'لم تبقَ الفصول الدراسية المرجعية.', 1;
+
+    IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
+       AND EXISTS
+       (
+           SELECT 1
+           FROM dbo.Subjects
+           WHERE ClassID IS NOT NULL
+       )
+        THROW 52009, N'بقي ربط قديم لمادة بصف تم تنظيفه. تم إيقاف العملية.', 1;
 
     IF OBJECT_ID(N'dbo.Permissions', N'U') IS NOT NULL
        AND NOT EXISTS (SELECT 1 FROM dbo.Permissions)
@@ -230,5 +295,14 @@ UNION ALL SELECT 'Permissions', COUNT_BIG(*) FROM dbo.Permissions
 UNION ALL SELECT 'RolePermissions', COUNT_BIG(*) FROM dbo.RolePermissions
 UNION ALL SELECT 'UserRoles', COUNT_BIG(*) FROM dbo.UserRoles
 UNION ALL SELECT 'UserPermissions', COUNT_BIG(*) FROM dbo.UserPermissions
+UNION ALL SELECT 'AcademicYearCurrent', COUNT_BIG(*) FROM dbo.AcademicYearCurrent
+UNION ALL SELECT 'Stages', COUNT_BIG(*) FROM dbo.Stages
+UNION ALL SELECT 'Classes', COUNT_BIG(*) FROM dbo.Classes
+UNION ALL SELECT 'ClassSubjects', COUNT_BIG(*) FROM dbo.ClassSubjects
+UNION ALL SELECT 'ClassSubjectTerms', COUNT_BIG(*) FROM dbo.ClassSubjectTerms
+UNION ALL SELECT 'SchoolSections', COUNT_BIG(*) FROM dbo.SchoolSections
+UNION ALL SELECT 'AuditLogs', COUNT_BIG(*) FROM dbo.AuditLogs
+UNION ALL SELECT 'AnnualClosings', COUNT_BIG(*) FROM dbo.AnnualClosings
+UNION ALL SELECT 'DatabaseBackupHistory', COUNT_BIG(*) FROM dbo.DatabaseBackupHistory
 ORDER BY TableName;
 GO
