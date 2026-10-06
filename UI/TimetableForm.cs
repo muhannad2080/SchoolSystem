@@ -68,11 +68,12 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            if (!(DataRefreshNotifier.IsRelated(e, "Teachers")
+            if (!DataRefreshNotifier.IsRelated(e, "Teachers")
                 && !DataRefreshNotifier.IsRelated(e, "Classes")
                 && !DataRefreshNotifier.IsRelated(e, "Sections")
-                && !DataRefreshNotifier.IsRelated(e, "Subjects") ))
+                && !DataRefreshNotifier.IsRelated(e, "Subjects"))
                 return;
+
 
             try
             {
