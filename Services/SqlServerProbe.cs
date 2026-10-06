@@ -44,7 +44,7 @@ namespace SchoolSystem.Services
             "Students", "StudentClasses", "Classes", "SchoolSections", "Users",
             "Roles", "RolePermissions", "UserRoles", "Permissions",
             "Fees", "FeePlans", "Vouchers", "Grades", "StudentAttendance", "TeacherAttendance",
-            "Payroll", "TeacherContracts", "Expenses"
+            "Payroll", "TeacherContracts", "Expenses", "FeeTypes"
         };
 
         public static ProbeResult Probe(string server, string database,
@@ -182,7 +182,7 @@ SELECT t.name FROM sys.tables t
 WHERE t.schema_id = SCHEMA_ID(N'dbo')
   AND t.name IN ('Students','StudentClasses','Classes','SchoolSections','Users',
                  'Roles','RolePermissions','UserRoles','Permissions',
-                 'Fees','StudentFees','FeePlans','Vouchers','Receipts');";
+                 'Fees','StudentFees','FeePlans','Vouchers','Receipts','FeeTypes');";
                     HashSet<string> present = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                     using (SqlCommand cmd = new SqlCommand(tableQuery, con))
                     using (SqlDataReader r = cmd.ExecuteReader())
