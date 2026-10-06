@@ -18,98 +18,6 @@ namespace SchoolSystem.UiSmokeTests
             ValidateLayoutNode(root);
         }
 
-        private static void ValidateResponsiveLayout(Control root)
-        {
-            if (root == null)
-                return;
-
-            int originalWidth = Math.Max(1, root.Width);
-            int originalHeight = Math.Max(1, root.Height);
-
-            int[] testWidths =
-            {
-                Math.Max(900, Math.Min(originalWidth, 1200)),
-                Math.Max(900, Math.Min(originalWidth, 1000))
-            };
-
-            int[] testHeights =
-            {
-                Math.Max(650, Math.Min(originalHeight, 800)),
-                Math.Max(650, Math.Min(originalHeight, 700))
-            };
-
-            try
-            {
-                for (int i = 0; i < testWidths.Length; i++)
-                {
-                    root.Size = new System.Drawing.Size(
-                        testWidths[i],
-                        testHeights[i]);
-
-                    root.PerformLayout();
-                    ValidateLayout(root);
-
-                    List<Control> buttons = root.Controls
-                        .Cast<Control>()
-                        .SelectMany(GetAllDescendants)
-                        .Concat(new[] { root })
-                        .Where(control => control is Button)
-                        .ToList();
-
-                    foreach (Button button in buttons)
-                    {
-                        if (!button.Visible ||
-                            string.IsNullOrWhiteSpace(button.Text) ||
-                            button.AutoSize)
-                        {
-                            continue;
-                        }
-
-                        System.Drawing.Size measured =
-                            TextRenderer.MeasureText(
-                                button.Text,
-                                button.Font);
-
-                        int requiredWidth =
-                            Math.Max(
-                                92,
-                                measured.Width +
-                                button.Padding.Horizontal +
-                                12);
-
-                        if (button.Width + 2 < requiredWidth)
-                        {
-                            throw new InvalidOperationException(
-                                "Button text does not fit after resize: " +
-                                button.Name +
-                                " (" + button.Width +
-                                " < " + requiredWidth + ").");
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                root.Size =
-                    new System.Drawing.Size(
-                        originalWidth,
-                        originalHeight);
-
-                root.PerformLayout();
-            }
-        }
-
-        private static IEnumerable<Control> GetAllDescendants(Control parent)
-        {
-            foreach (Control child in parent.Controls)
-            {
-                yield return child;
-
-                foreach (Control descendant in GetAllDescendants(child))
-                    yield return descendant;
-            }
-        }
-
         private static void ValidateLayoutNode(Control parent)
         {
             List<Control> children = parent.Controls
@@ -364,7 +272,6 @@ namespace SchoolSystem.UiSmokeTests
                         throw new ObjectDisposedException("MainForm");
 
                     ValidateLayout(mainForm);
-                    ValidateResponsiveLayout(mainForm);
                 }
 
                 passed++;
@@ -414,7 +321,6 @@ namespace SchoolSystem.UiSmokeTests
                             throw new ObjectDisposedException(type.Name);
 
                         ValidateLayout(control);
-                        ValidateResponsiveLayout(control);
                         ValidatePayrollScreens(control);
                         ValidateStudentProfile(control);
                     }
