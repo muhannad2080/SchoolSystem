@@ -1084,17 +1084,6 @@ CREATE TABLE [dbo].[Vouchers](
 GO
 INSERT [dbo].[AcademicYearCurrent] ([AcademicYear], [StartDate], [EndDate], [IsCurrent], [Notes], [CreatedAt], [UpdatedAt]) VALUES (N'2026/2027', NULL, NULL, 1, N'عام دراسي текущий', CAST(N'2026-08-22T21:48:02.173' AS DateTime), CAST(N'2026-08-22T22:56:41.077' AS DateTime))
 GO
-SET IDENTITY_INSERT [dbo].[Classes] ON 
-
-INSERT [dbo].[Classes] ([ClassID], [ClassName], [ClassCode], [StageName], [GradeOrder], [IsActive], [Notes], [CreatedAt], [UpdatedAt], [StageID]) VALUES (1, N'الأول الثانوي', N'SEC-01', N'المرحلة الثانوية', 10, 1, N'بيانات أولية للكتالوج الأكاديمي - يمكن تعديلها من شاشة إدارة الفصول.', CAST(N'2026-08-14T19:01:15.363' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime), NULL)
-INSERT [dbo].[Classes] ([ClassID], [ClassName], [ClassCode], [StageName], [GradeOrder], [IsActive], [Notes], [CreatedAt], [UpdatedAt], [StageID]) VALUES (2, N'الثاني الثانوي', N'SEC-02', N'المرحلة الثانوية', 11, 1, N'بيانات أولية للكتالوج الأكاديمي - يمكن تعديلها من شاشة إدارة الفصول.', CAST(N'2026-08-14T19:01:15.363' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime), NULL)
-INSERT [dbo].[Classes] ([ClassID], [ClassName], [ClassCode], [StageName], [GradeOrder], [IsActive], [Notes], [CreatedAt], [UpdatedAt], [StageID]) VALUES (3, N'الثالث الثانوي', N'SEC-03', N'المرحلة الثانوية', 12, 1, N'بيانات أولية للكتالوج الأكاديمي - يمكن تعديلها من شاشة إدارة الفصول.', CAST(N'2026-08-14T19:01:15.363' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime), NULL)
-INSERT [dbo].[Classes] ([ClassID], [ClassName], [ClassCode], [StageName], [GradeOrder], [IsActive], [Notes], [CreatedAt], [UpdatedAt], [StageID]) VALUES (4, N'الأول الإعدادي', N'PREP-01', N'المرحلة الإعدادية', 1, 1, NULL, CAST(N'2026-08-17T22:00:22.097' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime), NULL)
-INSERT [dbo].[Classes] ([ClassID], [ClassName], [ClassCode], [StageName], [GradeOrder], [IsActive], [Notes], [CreatedAt], [UpdatedAt], [StageID]) VALUES (5, N'الثاني الإعدادي', N'PREP-02', N'المرحلة الإعدادية', 2, 1, N'بيانات أولية للكتالوج الأكاديمي - يمكن تعديلها من شاشة إدارة الفصول.', CAST(N'2026-08-17T23:09:56.840' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime), NULL)
-INSERT [dbo].[Classes] ([ClassID], [ClassName], [ClassCode], [StageName], [GradeOrder], [IsActive], [Notes], [CreatedAt], [UpdatedAt], [StageID]) VALUES (6, N'الثالث الإعدادي', N'PREP-03', N'المرحلة الإعدادية', 3, 1, N'بيانات أولية للكتالوج الأكاديمي - يمكن تعديلها من شاشة إدارة الفصول.', CAST(N'2026-08-17T23:09:56.840' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime), NULL)
-INSERT [dbo].[Classes] ([ClassID], [ClassName], [ClassCode], [StageName], [GradeOrder], [IsActive], [Notes], [CreatedAt], [UpdatedAt], [StageID]) VALUES (7, N'الأول الإعدادي', N'CLS-007', N'التعليم الأساسي', 1, 1, NULL, CAST(N'2026-08-22T17:54:50.470' AS DateTime), CAST(N'2026-08-22T17:54:50.477' AS DateTime), NULL)
-SET IDENTITY_INSERT [dbo].[Classes] OFF
-GO
 SET IDENTITY_INSERT [dbo].[Permissions] ON 
 
 INSERT [dbo].[Permissions] ([PermissionID], [PermissionKey], [DisplayName], [ModuleName], [ActionName], [IsActive], [CreatedAt]) VALUES (1, N'Dashboard.View', N'Dashboard - View', N'Dashboard', N'View', 1, CAST(N'2026-08-17T20:16:00.0000000' AS DateTime2))
@@ -1542,76 +1531,6 @@ INSERT [dbo].[SchemaMigrations] ([Id], [Version], [Name], [AppliedAtUtc], [Succe
 INSERT [dbo].[SchemaMigrations] ([Id], [Version], [Name], [AppliedAtUtc], [Success]) VALUES (2, 2, N'Example', CAST(N'2026-08-31T15:41:47.827' AS DateTime), 1)
 INSERT [dbo].[SchemaMigrations] ([Id], [Version], [Name], [AppliedAtUtc], [Success]) VALUES (3, 3, N'EnsureAcademicReference', CAST(N'2026-08-31T15:41:47.900' AS DateTime), 1)
 SET IDENTITY_INSERT [dbo].[SchemaMigrations] OFF
-GO
-SET IDENTITY_INSERT [dbo].[Subjects] ON 
-
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (1, N'اللغة العربية', N'SEC-01-AR', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (2, N'اللغة الإنجليزية', N'SEC-01-EN', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (3, N'الرياضيات', N'SEC-01-MA', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (4, N'الفيزياء', N'SEC-01-PH', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (5, N'الكيمياء', N'SEC-01-CH', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (6, N'الأحياء', N'SEC-01-BI', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (7, N'التربية الإسلامية', N'SEC-01-IS', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (8, N'الدراسات الاجتماعية', N'SEC-01-SO', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (9, N'الحاسب الآلي وتقنية المعلومات', N'SEC-01-CO', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (10, N'المهارات الحياتية', N'SEC-01-LI', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (11, N'التربية البدنية والصحية', N'SEC-01-PE', 1, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (12, N'اللغة العربية', N'SEC-02-AR', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (13, N'اللغة الإنجليزية', N'SEC-02-EN', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (14, N'الرياضيات', N'SEC-02-MA', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (15, N'الفيزياء', N'SEC-02-PH', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (16, N'الكيمياء', N'SEC-02-CH', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (17, N'الأحياء', N'SEC-02-BI', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (18, N'التربية الإسلامية', N'SEC-02-IS', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (19, N'الدراسات الاجتماعية', N'SEC-02-SO', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (20, N'الحاسب الآلي وتقنية المعلومات', N'SEC-02-CO', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (21, N'المهارات الحياتية', N'SEC-02-LI', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (22, N'التربية البدنية والصحية', N'SEC-02-PE', 2, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (23, N'اللغة العربية', N'SEC-03-AR', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (24, N'اللغة الإنجليزية', N'SEC-03-EN', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (25, N'الرياضيات', N'SEC-03-MA', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (26, N'الفيزياء', N'SEC-03-PH', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (27, N'الكيمياء', N'SEC-03-CH', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (28, N'الأحياء', N'SEC-03-BI', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (29, N'التربية الإسلامية', N'SEC-03-IS', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (30, N'الدراسات الاجتماعية', N'SEC-03-SO', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (31, N'الحاسب الآلي وتقنية المعلومات', N'SEC-03-CO', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (32, N'المهارات الحياتية', N'SEC-03-LI', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (33, N'التربية البدنية والصحية', N'SEC-03-PE', 3, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الثانوي', CAST(N'2026-08-14T19:01:15.383' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (34, N'اللغة العربية', N'PREP-01-AR', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (35, N'اللغة الإنجليزية', N'PREP-01-EN', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (36, N'الرياضيات', N'PREP-01-MA', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (37, N'الفيزياء', N'PREP-01-PH', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (38, N'الكيمياء', N'PREP-01-CH', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (39, N'الأحياء', N'PREP-01-BI', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (40, N'التربية الإسلامية', N'PREP-01-IS', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (41, N'الدراسات الاجتماعية', N'PREP-01-SO', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (42, N'الحاسب الآلي وتقنية المعلومات', N'PREP-01-CO', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (43, N'المهارات الحياتية', N'PREP-01-LI', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (44, N'التربية البدنية والصحية', N'PREP-01-PE', 4, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الأول الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (45, N'اللغة العربية', N'PREP-02-AR', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (46, N'اللغة الإنجليزية', N'PREP-02-EN', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (47, N'الرياضيات', N'PREP-02-MA', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (48, N'الفيزياء', N'PREP-02-PH', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (49, N'الكيمياء', N'PREP-02-CH', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (50, N'الأحياء', N'PREP-02-BI', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (51, N'التربية الإسلامية', N'PREP-02-IS', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (52, N'الدراسات الاجتماعية', N'PREP-02-SO', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (53, N'الحاسب الآلي وتقنية المعلومات', N'PREP-02-CO', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (54, N'المهارات الحياتية', N'PREP-02-LI', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (55, N'التربية البدنية والصحية', N'PREP-02-PE', 5, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثاني الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (56, N'اللغة العربية', N'PREP-03-AR', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (57, N'اللغة الإنجليزية', N'PREP-03-EN', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (58, N'الرياضيات', N'PREP-03-MA', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (59, N'الفيزياء', N'PREP-03-PH', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (60, N'الكيمياء', N'PREP-03-CH', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (61, N'الأحياء', N'PREP-03-BI', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (62, N'التربية الإسلامية', N'PREP-03-IS', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (63, N'الدراسات الاجتماعية', N'PREP-03-SO', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (64, N'الحاسب الآلي وتقنية المعلومات', N'PREP-03-CO', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (65, N'المهارات الحياتية', N'PREP-03-LI', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-INSERT [dbo].[Subjects] ([SubjectID], [SubjectName], [SubjectCode], [ClassID], [MaxDegree], [PassDegree], [IsActive], [Notes], [CreatedAt], [UpdatedAt]) VALUES (66, N'التربية البدنية والصحية', N'PREP-03-PE', 6, CAST(100.00 AS Decimal(10, 2)), CAST(50.00 AS Decimal(10, 2)), 1, N'مادة أولية مرتبطة بالصف الثالث الإعدادي', CAST(N'2026-08-17T23:09:56.860' AS DateTime), CAST(N'2026-08-17T23:21:29.020' AS DateTime))
-SET IDENTITY_INSERT [dbo].[Subjects] OFF
 GO
 SET IDENTITY_INSERT [dbo].[UserPermissions] ON 
 
@@ -2532,10 +2451,16 @@ END;
 GO
 
 /*
-   Operational data seeding — merged from SchoolDB_OperationalData.sql
-   Add-only reference/operational seeding. No UPDATE, DELETE, TRUNCATE or MERGE.
-   Academic year 2025/2026 removed — only 2026/2027 active year included.
-   Demo data section removed.
+   Production reference seeding
+   ----------------------------
+   Only reference/setup data is seeded here:
+     - active academic year and academic terms
+     - global subject catalog (not tied to a class)
+     - school settings
+     - users, roles and permissions
+
+   Classes, sections, fee plans, students, teachers and all operational
+   transactions are intentionally NOT seeded. They are entered from the UI.
 */
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
@@ -2545,126 +2470,101 @@ BEGIN TRY
     BEGIN TRANSACTION;
 
     INSERT dbo.AcademicYears (AcademicYear, StartDate, EndDate, IsActive)
-    SELECT v.AcademicYear, v.StartDate, v.EndDate, v.IsActive
-    FROM (VALUES
-        (N'2026/2027', CONVERT(date,'2026-09-01'), CONVERT(date,'2027-06-30'), CAST(1 AS bit))
-    ) v(AcademicYear, StartDate, EndDate, IsActive)
-    WHERE NOT EXISTS (SELECT 1 FROM dbo.AcademicYears y WHERE y.AcademicYear = v.AcademicYear);
-
-    INSERT dbo.Stages (StageCode, StageName, StageOrder, IsActive)
-    SELECT v.StageCode, v.StageName, v.StageOrder, 1
-    FROM (VALUES
-        (N'BASIC', N'المرحلة الأساسية', 1),
-        (N'PREP', N'المرحلة الإعدادية', 2),
-        (N'SEC', N'المرحلة الثانوية', 3)
-    ) v(StageCode, StageName, StageOrder)
-    WHERE NOT EXISTS (SELECT 1 FROM dbo.Stages s WHERE s.StageCode = v.StageCode);
+    SELECT N'2026/2027',
+           CONVERT(date, '2026-09-01'),
+           CONVERT(date, '2027-06-30'),
+           CAST(1 AS bit)
+    WHERE NOT EXISTS
+    (
+        SELECT 1
+        FROM dbo.AcademicYears
+        WHERE REPLACE(AcademicYear, N'-', N'/') = N'2026/2027'
+    );
 
     INSERT dbo.AcademicTerms (TermCode, TermName, TermOrder, IsActive)
-    SELECT v.TermCode, v.TermName, v.TermOrder, 1
-    FROM (VALUES
-        (N'TERM-1', N'الفصل الدراسي الأول', 1),
-        (N'TERM-2', N'الفصل الدراسي الثاني', 2)
+    SELECT v.TermCode, v.TermName, v.TermOrder, CAST(1 AS bit)
+    FROM
+    (
+        VALUES
+            (N'TERM-1', N'الفصل الدراسي الأول', 1),
+            (N'TERM-2', N'الفصل الدراسي الثاني', 2)
     ) v(TermCode, TermName, TermOrder)
-    WHERE NOT EXISTS (SELECT 1 FROM dbo.AcademicTerms t WHERE t.TermCode = v.TermCode);
+    WHERE NOT EXISTS
+    (
+        SELECT 1
+        FROM dbo.AcademicTerms t
+        WHERE t.TermCode = v.TermCode
+    );
 
-    INSERT dbo.Classes (ClassCode, ClassName, StageName, StageID, GradeOrder, IsActive, Notes)
-    SELECT v.ClassCode, v.ClassName, s.StageName, s.StageID, v.GradeOrder, 1, N'صف مرجعي أساسي للنظام'
-    FROM (VALUES
-        (N'BASIC-01',N'الأول الأساسي',1,N'BASIC'),
-        (N'BASIC-02',N'الثاني الأساسي',2,N'BASIC'),
-        (N'BASIC-03',N'الثالث الأساسي',3,N'BASIC'),
-        (N'BASIC-04',N'الرابع الأساسي',4,N'BASIC'),
-        (N'BASIC-05',N'الخامس الأساسي',5,N'BASIC'),
-        (N'BASIC-06',N'السادس الأساسي',6,N'BASIC'),
-        (N'PREP-01',N'الأول الإعدادي',7,N'PREP'),
-        (N'PREP-02',N'الثاني الإعدادي',8,N'PREP'),
-        (N'PREP-03',N'الثالث الإعدادي',9,N'PREP'),
-        (N'SEC-01',N'الأول الثانوي',10,N'SEC'),
-        (N'SEC-02',N'الثاني الثانوي',11,N'SEC'),
-        (N'SEC-03',N'الثالث الثانوي',12,N'SEC')
-    ) v(ClassCode, ClassName, GradeOrder, StageCode)
-    INNER JOIN dbo.Stages s ON s.StageCode = v.StageCode
-    WHERE NOT EXISTS (SELECT 1 FROM dbo.Classes c WHERE c.ClassCode = v.ClassCode OR c.ClassName = v.ClassName);
+    /* كتالوج مواد عام؛ الربط بالصف يتم لاحقًا من واجهة إدارة المواد. */
+    INSERT dbo.Subjects
+    (
+        SubjectName,
+        SubjectCode,
+        ClassID,
+        MaxDegree,
+        PassDegree,
+        IsActive,
+        Notes,
+        CreatedAt
+    )
+    SELECT v.SubjectName,
+           N'MAT-' +
+           RIGHT(
+               N'000000' +
+               CONVERT(
+                   NVARCHAR(6),
+                   ROW_NUMBER() OVER (ORDER BY v.SubjectCode)),
+               6),
+           NULL,
+           CAST(100 AS decimal(10,2)),
+           CAST(50 AS decimal(10,2)),
+           CAST(1 AS bit),
+           N'مادة مرجعية عامة؛ يتم ربطها بالصف من الواجهة.',
+           GETDATE()
+    FROM
+    (
+        VALUES
+            (N'AR',  N'اللغة العربية'),
+            (N'EN',  N'اللغة الإنجليزية'),
+            (N'MA',  N'الرياضيات'),
+            (N'IS',  N'التربية الإسلامية'),
+            (N'QUR', N'القرآن الكريم'),
+            (N'SCI', N'العلوم'),
+            (N'SOC', N'الدراسات الاجتماعية'),
+            (N'CS',  N'الحاسوب وتقنية المعلومات'),
+            (N'PH',  N'الفيزياء'),
+            (N'CH',  N'الكيمياء'),
+            (N'BI',  N'الأحياء'),
+            (N'HIS', N'التاريخ'),
+            (N'GEO', N'الجغرافيا'),
+            (N'PE',  N'التربية البدنية والصحية'),
+            (N'ART', N'التربية الفنية')
+    ) v(SubjectCode, SubjectName)
+    WHERE NOT EXISTS
+    (
+        SELECT 1
+        FROM dbo.Subjects s
+        WHERE LTRIM(RTRIM(s.SubjectName)) = v.SubjectName
+          AND s.ClassID IS NULL
+    );
 
-    COMMIT TRANSACTION;
-END TRY
-BEGIN CATCH
-    IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
-    THROW;
-END CATCH;
-GO
-
-
-BEGIN TRY
-    BEGIN TRANSACTION;
-    DECLARE @SubjectRows TABLE (Suffix NVARCHAR(10) NOT NULL, SubjectName NVARCHAR(100) NOT NULL, StageCode NVARCHAR(30) NOT NULL);
-    INSERT @SubjectRows(Suffix, SubjectName, StageCode)
-    VALUES
-      (N'QUR',N'القرآن الكريم',N'BASIC'),(N'ISL',N'التربية الإسلامية',N'BASIC'),
-      (N'AR',N'اللغة العربية',N'BASIC'),(N'MA',N'الرياضيات',N'BASIC'),(N'SCI',N'العلوم',N'BASIC'),
-      (N'SOC',N'التربية الاجتماعية',N'BASIC'),(N'EN',N'اللغة الإنجليزية',N'BASIC'),
-      (N'CS',N'الحاسوب',N'BASIC'),(N'ART',N'التربية الفنية',N'BASIC'),(N'PE',N'التربية البدنية',N'BASIC'),
-      (N'QUR',N'القرآن الكريم',N'PREP'),(N'ISL',N'التربية الإسلامية',N'PREP'),
-      (N'AR',N'اللغة العربية',N'PREP'),(N'MA',N'الرياضيات',N'PREP'),(N'SCI',N'العلوم',N'PREP'),
-      (N'SOC',N'الدراسات الاجتماعية',N'PREP'),(N'EN',N'اللغة الإنجليزية',N'PREP'),
-      (N'CS',N'الحاسوب',N'PREP'),(N'ART',N'التربية الفنية',N'PREP'),(N'PE',N'التربية البدنية',N'PREP'),
-      (N'ISL',N'التربية الإسلامية',N'SEC'),(N'AR',N'اللغة العربية',N'SEC'),
-      (N'EN',N'اللغة الإنجليزية',N'SEC'),(N'MA',N'الرياضيات',N'SEC'),(N'PH',N'الفيزياء',N'SEC'),
-      (N'CH',N'الكيمياء',N'SEC'),(N'BI',N'الأحياء',N'SEC'),(N'HIS',N'التاريخ',N'SEC'),
-      (N'GEO',N'الجغرافيا',N'SEC'),(N'CS',N'الحاسوب',N'SEC'),(N'PE',N'التربية البدنية',N'SEC');
-
-    INSERT dbo.Subjects (SubjectCode, SubjectName, ClassID, MaxDegree, PassDegree, IsActive, Notes)
-    SELECT c.ClassCode + N'-' + x.Suffix, x.SubjectName, c.ClassID, 100, 50, 1, N'مادة مرجعية مرتبطة بالصف'
-    FROM dbo.Classes c
-    INNER JOIN dbo.Stages st ON st.StageID = c.StageID
-    INNER JOIN @SubjectRows x ON x.StageCode = st.StageCode
-    WHERE c.IsActive = 1
-      AND NOT EXISTS
-      (
-          SELECT 1 FROM dbo.Subjects s
-          WHERE s.ClassID = c.ClassID AND (s.SubjectCode = c.ClassCode + N'-' + x.Suffix OR s.SubjectName = x.SubjectName)
-      );
-
-    INSERT dbo.ClassSubjects (ClassID, SubjectID)
-    SELECT s.ClassID, s.SubjectID
-    FROM dbo.Subjects s
-    WHERE s.ClassID IS NOT NULL AND ISNULL(s.IsActive, 1) = 1
-      AND NOT EXISTS (SELECT 1 FROM dbo.ClassSubjects cs WHERE cs.ClassID = s.ClassID AND cs.SubjectID = s.SubjectID);
-
-    INSERT dbo.ClassSubjectTerms (ClassSubjectID, TermID, IsActive)
-    SELECT cs.ClassSubjectID, t.TermID, 1
-    FROM dbo.ClassSubjects cs
-    CROSS JOIN dbo.AcademicTerms t
-    WHERE ISNULL(cs.IsActive, 1) = 1 AND ISNULL(t.IsActive, 1) = 1
-      AND NOT EXISTS (SELECT 1 FROM dbo.ClassSubjectTerms cst WHERE cst.ClassSubjectID = cs.ClassSubjectID AND cst.TermID = t.TermID);
+    INSERT dbo.SchoolSettings (SchoolSettingsID, SchoolNameAr, SchoolNameEn)
+    SELECT 1, N'اسم المدرسة', N'School Name'
+    WHERE NOT EXISTS
+    (
+        SELECT 1
+        FROM dbo.SchoolSettings
+        WHERE SchoolSettingsID = 1
+    );
 
     COMMIT TRANSACTION;
 END TRY
 BEGIN CATCH
-    IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+    IF XACT_STATE() <> 0
+        ROLLBACK TRANSACTION;
     THROW;
 END CATCH;
-GO
-
-
-INSERT dbo.SchoolSections (ClassID, SectionName, AcademicYear, IsActive, Capacity, AllowedGender)
-SELECT c.ClassID, v.SectionName, y.AcademicYear, 1, 30, N'مختلط'
-FROM dbo.Classes c
-CROSS JOIN dbo.AcademicYears y
-CROSS JOIN (VALUES (N'Section A'), (N'Section B'), (N'Section C'), (N'Section D')) v(SectionName)
-WHERE c.IsActive = 1 AND y.IsActive = 1
-  AND NOT EXISTS
-  (
-      SELECT 1 FROM dbo.SchoolSections ss
-      WHERE ss.ClassID = c.ClassID AND ss.AcademicYear = y.AcademicYear AND ss.SectionName = v.SectionName
-  );
-GO
-
-
-INSERT dbo.SchoolSettings (SchoolSettingsID, SchoolNameAr, SchoolNameEn)
-SELECT 1, N'اسم المدرسة', N'School Name'
-WHERE NOT EXISTS (SELECT 1 FROM dbo.SchoolSettings WHERE SchoolSettingsID = 1);
 GO
 
 /* ======================================================================
@@ -2725,75 +2625,4 @@ WHERE r.RoleName = N'مدير النظام'
 GO
 
 
-/* ======================================================================
-   Standard Fee Plans — active academic year only (2026/2027)
-   ====================================================================== */
 
-DECLARE @AcademicYear NVARCHAR(20);
-
-SELECT TOP (1) @AcademicYear = AcademicYear
-FROM dbo.AcademicYears
-WHERE ISNULL(IsActive, 1) = 1
-ORDER BY StartDate DESC, AcademicYearID DESC;
-
-IF NULLIF(LTRIM(RTRIM(@AcademicYear)), N'') IS NULL
-    THROW 52404, N'لا يوجد عام دراسي نشط لإنشاء خطط الرسوم.', 1;
-
-DECLARE @Plans TABLE
-(
-    FeeType NVARCHAR(100) NOT NULL,
-    Amount DECIMAL(18,2) NOT NULL,
-    IsRequired BIT NOT NULL,
-    Notes NVARCHAR(500) NULL
-);
-
-INSERT @Plans(FeeType, Amount, IsRequired, Notes)
-VALUES
-    (N'رسوم تسجيل',       10000,  1, N'رسوم تسجيل الطالب للعام الدراسي'),
-    (N'رسوم دراسية',      120000,  1, N'الرسوم الدراسية الأساسية للصف'),
-    (N'رسوم كتب',          15000,  1, N'الكتب والمقررات الدراسية'),
-    (N'رسوم زي مدرسي',     25000,  0, N'الزي المدرسي'),
-    (N'رسوم مواصلات',      30000,  0, N'خدمة النقل المدرسي'),
-    (N'رسوم امتحانات',     10000,  1, N'رسوم الاختبارات والتقييم'),
-    (N'رسوم أنشطة',         5000,  0, N'الأنشطة المدرسية'),
-    (N'أخرى',               1000,  0, N'رسوم إضافية عند الحاجة');
-
-BEGIN TRY
-    BEGIN TRANSACTION;
-
-    INSERT dbo.FeePlans
-    (
-        AcademicYear, ClassID, FeeType, Amount, DueDate, IsRequired, Notes
-    )
-    SELECT
-        @AcademicYear,
-        c.ClassID,
-        p.FeeType,
-        p.Amount,
-        DATEADD(DAY, 30, CAST(GETDATE() AS DATE)),
-        p.IsRequired,
-        p.Notes
-    FROM dbo.Classes c
-    CROSS JOIN @Plans p
-    WHERE ISNULL(c.IsActive, 1) = 1
-      AND NOT EXISTS
-      (
-          SELECT 1
-          FROM dbo.FeePlans fp WITH (UPDLOCK, HOLDLOCK)
-          WHERE REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-            AND fp.ClassID = c.ClassID
-            AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) = p.FeeType
-      );
-
-    COMMIT TRANSACTION;
-END TRY
-BEGIN CATCH
-    IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
-    THROW;
-END CATCH;
-
-PRINT N'تمت إضافة خطط الرسوم القياسية للعام الدراسي النشط (2026/2027) دون تكرار.';
-GO
-
-PRINT N'SchoolDB operational data seeding completed. Existing rows were not updated or deleted.';
-GO
