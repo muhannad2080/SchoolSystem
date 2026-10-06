@@ -73,7 +73,9 @@ namespace SchoolSystem.UI.Students
                 IsDisposed ||
                 (!DataRefreshNotifier.IsRelated(e, "Enrollment") &&
                  !DataRefreshNotifier.IsRelated(e, "ClassAssignment") &&
-                 !DataRefreshNotifier.IsRelated(e, "Students")))
+                 !DataRefreshNotifier.IsRelated(e, "Students") &&
+                 !DataRefreshNotifier.IsRelated(e, "Classes") &&
+                 !DataRefreshNotifier.IsRelated(e, "Sections")))
             {
                 return;
             }
