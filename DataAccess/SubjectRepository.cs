@@ -74,13 +74,16 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection conn = DbConnection.GetConnection())
             {
                 string query = @"
-                    SELECT
-                        SubjectID,
-                        SubjectName
-                    FROM Subjects
-                    WHERE IsActive = 1
-                      AND (ClassID = @ClassID OR ClassID IS NULL)
-                    ORDER BY SubjectName";
+                    SELECT DISTINCT
+                        s.SubjectID,
+                        s.SubjectName
+                    FROM dbo.Subjects s
+                    INNER JOIN dbo.ClassSubjects cs
+                        ON cs.SubjectID = s.SubjectID
+                       AND cs.ClassID = @ClassID
+                       AND ISNULL(cs.IsActive, 1) = 1
+                    WHERE ISNULL(s.IsActive, 1) = 1
+                    ORDER BY s.SubjectName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -134,6 +137,13 @@ namespace SchoolSystem.DataAccess
                         subjectId = Convert.ToInt32(cmd.ExecuteScalar());
                     }
 
+                    /* الربط الأكاديمي الفعلي للصف يتم عبر ClassSubjects/Terms. */
+                    EnsureClassSubjectMapping(
+                        conn,
+                        transaction,
+                        subjectId,
+                        subject.ClassID);
+
                     transaction.Commit();
                     subject.SubjectID = subjectId;
                     return subjectId;
@@ -173,6 +183,13 @@ namespace SchoolSystem.DataAccess
                             return false;
                         }
                     }
+
+                    /* عند تخصيص الصف من شاشة المواد، أنشئ/أكمل الربط الأكاديمي. */
+                    EnsureClassSubjectMapping(
+                        conn,
+                        transaction,
+                        subject.SubjectID,
+                        subject.ClassID);
 
                     transaction.Commit();
                     return true;
@@ -336,6 +353,93 @@ namespace SchoolSystem.DataAccess
             cmd.Parameters.Add("@IsActive", SqlDbType.Bit).Value = subject.IsActive;
             cmd.Parameters.Add("@Notes", SqlDbType.NVarChar, 1000).Value =
                 string.IsNullOrWhiteSpace(subject.Notes) ? (object)DBNull.Value : subject.Notes.Trim();
+        }
+
+        /// <summary>
+        /// يضمن وجود الربط الفعلي بين المادة والصف ثم يربطها بالفصول
+        /// الدراسية النشطة عبر ClassSubjectTerms.
+        /// </summary>
+        private void EnsureClassSubjectMapping(
+            SqlConnection conn,
+            SqlTransaction transaction,
+            int subjectId,
+            int? classId)
+        {
+            if (!classId.HasValue || classId.Value <= 0)
+                return;
+
+            const string ensureLinkSql = @"
+                IF NOT EXISTS
+                (
+                    SELECT 1
+                    FROM dbo.ClassSubjects WITH (UPDLOCK, HOLDLOCK)
+                    WHERE ClassID = @ClassID
+                      AND SubjectID = @SubjectID
+                )
+                BEGIN
+                    INSERT dbo.ClassSubjects
+                    (
+                        ClassID,
+                        SubjectID,
+                        IsActive,
+                        CreatedAt
+                    )
+                    VALUES
+                    (
+                        @ClassID,
+                        @SubjectID,
+                        1,
+                        SYSUTCDATETIME()
+                    );
+                END
+                ELSE
+                BEGIN
+                    UPDATE dbo.ClassSubjects
+                    SET IsActive = 1
+                    WHERE ClassID = @ClassID
+                      AND SubjectID = @SubjectID;
+                END;";
+
+            using (SqlCommand cmd = new SqlCommand(ensureLinkSql, conn, transaction))
+            {
+                cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = classId.Value;
+                cmd.Parameters.Add("@SubjectID", SqlDbType.Int).Value = subjectId;
+                cmd.ExecuteNonQuery();
+            }
+
+            const string ensureTermsSql = @"
+                INSERT dbo.ClassSubjectTerms
+                (
+                    ClassSubjectID,
+                    TermID,
+                    IsActive,
+                    CreatedAt
+                )
+                SELECT
+                    cs.ClassSubjectID,
+                    t.TermID,
+                    1,
+                    SYSUTCDATETIME()
+                FROM dbo.ClassSubjects cs
+                CROSS JOIN dbo.AcademicTerms t
+                WHERE cs.ClassID = @ClassID
+                  AND cs.SubjectID = @SubjectID
+                  AND ISNULL(cs.IsActive, 1) = 1
+                  AND ISNULL(t.IsActive, 1) = 1
+                  AND NOT EXISTS
+                  (
+                      SELECT 1
+                      FROM dbo.ClassSubjectTerms cst
+                      WHERE cst.ClassSubjectID = cs.ClassSubjectID
+                        AND cst.TermID = t.TermID
+                  );";
+
+            using (SqlCommand cmd = new SqlCommand(ensureTermsSql, conn, transaction))
+            {
+                cmd.Parameters.Add("@ClassID", SqlDbType.Int).Value = classId.Value;
+                cmd.Parameters.Add("@SubjectID", SqlDbType.Int).Value = subjectId;
+                cmd.ExecuteNonQuery();
+            }
         }
 
         // تعريف الدالة GetSubjectCount لتنفيذ العملية المرتبطة بها.
