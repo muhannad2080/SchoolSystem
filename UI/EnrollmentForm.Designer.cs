@@ -14,6 +14,7 @@ namespace SchoolSystem.UI
 
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.lblEnrollmentID = new System.Windows.Forms.Label();
             this.txtEnrollmentID = new System.Windows.Forms.TextBox();
             this.lblStudentID = new System.Windows.Forms.Label();
@@ -309,8 +310,6 @@ namespace SchoolSystem.UI
             this.dtpApplicationDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dtpApplicationDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpApplicationDate.CustomFormat = "dd/MM/yyyy";
-            this.dtpApplicationDate.MinDate = new System.DateTime(1900, 1, 1);
-            this.dtpApplicationDate.MaxDate = System.DateTime.Today;
             this.dtpApplicationDate.Margin = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.dtpApplicationDate.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.dtpApplicationDate.RightToLeftLayout = true;
