@@ -1555,6 +1555,19 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        private bool IsTotalFeeType(string feeType)
+        {
+            string value = (feeType ?? string.Empty).Trim();
+
+            return value == "الرسوم الكلية" ||
+                   value == "رسوم كلية" ||
+                   value == "الرسوم الكليه" ||
+                   value == "رسوم كليه" ||
+                   value.Equals(
+                       "Total Fee",
+                       StringComparison.OrdinalIgnoreCase);
+        }
+
         // تعريف الدالة AddParameters لتنفيذ العملية المرتبطة بها.
         private void AddParameters(SqlCommand cmd, FeePlan plan)
         {
