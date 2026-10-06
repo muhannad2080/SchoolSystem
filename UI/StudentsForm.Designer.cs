@@ -813,7 +813,7 @@
             // 
             // pnlButtons
             // 
-            this.pnlButtons.AutoScroll = true;
+            this.pnlButtons.AutoScroll = false;
             this.pnlButtons.BackColor = System.Drawing.Color.White;
             this.pnlButtons.Controls.Add(this.btnClose);
             this.pnlButtons.Controls.Add(this.btnStudentProfile);
@@ -826,12 +826,12 @@
             this.pnlButtons.Controls.Add(this.btnSave);
             this.pnlButtons.Controls.Add(this.btnAdd);
             this.pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
             this.pnlButtons.Location = new System.Drawing.Point(0, 640);
             this.pnlButtons.Name = "pnlButtons";
-            this.pnlButtons.Padding = new System.Windows.Forms.Padding(10, 8, 10, 8);
-            this.pnlButtons.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.pnlButtons.Size = new System.Drawing.Size(1200, 110);
+            this.pnlButtons.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
+            this.pnlButtons.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.pnlButtons.Size = new System.Drawing.Size(1200, 62);
             this.pnlButtons.TabIndex = 1;
             // 
             // btnClose
@@ -841,7 +841,7 @@
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(112, 38);
             this.btnClose.TabIndex = 0;
-            this.btnClose.Text = "إغلاق النافذة";
+            this.btnClose.Text = "إغلاق";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
@@ -863,7 +863,7 @@
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(125, 38);
             this.btnPrint.TabIndex = 2;
-            this.btnPrint.Text = "طباعة بطاقة الطالب";
+            this.btnPrint.Text = "طباعة البطاقة";
             this.btnPrint.UseVisualStyleBackColor = true;
             this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
             // 
@@ -874,7 +874,7 @@
             this.btnExportExcel.Name = "btnExportExcel";
             this.btnExportExcel.Size = new System.Drawing.Size(145, 38);
             this.btnExportExcel.TabIndex = 3;
-            this.btnExportExcel.Text = "تصدير إلى Excel";
+            this.btnExportExcel.Text = "تصدير Excel";
             this.btnExportExcel.UseVisualStyleBackColor = true;
             this.btnExportExcel.Click += new System.EventHandler(this.btnExportExcel_Click);
             // 
@@ -887,7 +887,7 @@
             this.btnRefresh.TabIndex = 4;
             this.btnRefresh.Text = "تحديث القائمة";
             this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Visible = false;
+            this.btnRefresh.Visible = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // btnCancel
@@ -919,7 +919,7 @@
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(125, 38);
             this.btnUpdate.TabIndex = 7;
-            this.btnUpdate.Text = "تعديل البيانات";
+            this.btnUpdate.Text = "تعديل";
             this.btnUpdate.UseVisualStyleBackColor = true;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
             // 
@@ -930,7 +930,7 @@
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(120, 38);
             this.btnSave.TabIndex = 8;
-            this.btnSave.Text = "حفظ البيانات";
+            this.btnSave.Text = "حفظ";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
@@ -986,6 +986,11 @@
             this.pnlSearch.ResumeLayout(false);
             this.pnlSearch.PerformLayout();
             this.pnlButtons.ResumeLayout(false);
+
+            // Apply the same visual theme used at runtime so the WinForms designer
+            // preview matches the running screen.
+            this.ConfigureDesignPreviewTheme();
+
             this.ResumeLayout(false);
 
         }
