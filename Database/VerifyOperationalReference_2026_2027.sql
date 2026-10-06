@@ -73,6 +73,7 @@ UNION ALL SELECT N'SchoolSections', COUNT(*) AS RecordCount FROM dbo.SchoolSecti
 UNION ALL SELECT N'FeeTypes', COUNT(*) AS RecordCount FROM dbo.FeeTypes
 UNION ALL SELECT N'Students', COUNT(*) AS RecordCount FROM dbo.Students
 UNION ALL SELECT N'Teachers', COUNT(*) AS RecordCount FROM dbo.Teachers
+UNION ALL SELECT N'FeePlans', COUNT(*) AS RecordCount FROM dbo.FeePlans
 UNION ALL SELECT N'Fees', COUNT(*) AS RecordCount FROM dbo.Fees
 UNION ALL SELECT N'Vouchers', COUNT(*) AS RecordCount FROM dbo.Vouchers
 UNION ALL SELECT N'StudentFees', COUNT(*) AS RecordCount FROM dbo.StudentFees
