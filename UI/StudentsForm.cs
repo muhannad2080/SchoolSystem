@@ -497,9 +497,9 @@ namespace SchoolSystem.UI
                 return;
 
             int contentWidth = gbPhoto.ClientSize.Width;
-            int buttonWidth = 72;
+            int buttonWidth = 60;
             int buttonHeight = 30;
-            int gap = 6;
+            int gap = 4;
 
             picStudent.Size = new Size(96, 96);
             picStudent.Anchor = AnchorStyles.None;
@@ -509,6 +509,26 @@ namespace SchoolSystem.UI
 
             btnChooseImage.Size = new Size(buttonWidth, buttonHeight);
             btnRemoveImage.Size = new Size(buttonWidth, buttonHeight);
+
+            foreach (Button button in new[] { btnChooseImage, btnRemoveImage })
+            {
+                button.AutoSize = false;
+                button.Font = new Font(
+                    UIHelper.FontFamily,
+                    8.5F,
+                    FontStyle.Bold);
+                button.TextAlign = ContentAlignment.MiddleCenter;
+                button.Padding = new Padding(2, 0, 2, 0);
+                button.UseCompatibleTextRendering = true;
+                button.RightToLeft = RightToLeft.Yes;
+                button.UseVisualStyleBackColor = false;
+                UIHelper.StyleActionButton(button);
+                button.Font = new Font(
+                    UIHelper.FontFamily,
+                    8.5F,
+                    FontStyle.Bold);
+                button.Padding = new Padding(2, 0, 2, 0);
+            }
 
             int buttonsWidth = buttonWidth * 2 + gap;
             int startX = Math.Max(4, (contentWidth - buttonsWidth) / 2);
