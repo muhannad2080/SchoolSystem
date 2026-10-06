@@ -65,6 +65,8 @@ namespace SchoolSystem.UI
                 !DataRefreshNotifier.IsRelated(e, "All"))
                 return;
 
+            await LoadAcademicYearsAsync();
+            await LoadFeeTypesAsync();
             await LoadClassesAsync();
             await LoadFeePlansAsync();
         }
