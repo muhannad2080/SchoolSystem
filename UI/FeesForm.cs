@@ -102,12 +102,11 @@ namespace SchoolSystem.UI
                 return;
             }
 
+            await LoadAcademicYearsAsync();
+            await LoadFeeTypesAsync();
+            await LoadStudentsAsync();
             await LoadFeesAsync();
-
-            if (DataRefreshNotifier.IsRelated(e, "Enrollment"))
-            {
-                await ApplySelectedFeePlanAsync();
-            }
+            await ApplySelectedFeePlanAsync();
         }
 
         // ============================================================
