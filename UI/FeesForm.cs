@@ -92,7 +92,10 @@ namespace SchoolSystem.UI
                 IsDisposed ||
                 (!DataRefreshNotifier.IsRelated(e, "Fees") &&
                  !DataRefreshNotifier.IsRelated(e, "Vouchers") &&
-                 !DataRefreshNotifier.IsRelated(e, "Enrollment")))
+                 !DataRefreshNotifier.IsRelated(e, "Enrollment") &&
+                 !DataRefreshNotifier.IsRelated(e, "Classes") &&
+                 !DataRefreshNotifier.IsRelated(e, "Sections") &&
+                 !DataRefreshNotifier.IsRelated(e, "FeePlans")))
             {
                 return;
             }
