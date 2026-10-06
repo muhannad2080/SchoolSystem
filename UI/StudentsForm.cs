@@ -85,6 +85,7 @@ namespace SchoolSystem.UI
 
         private void ConfigureProfessionalLayout()
         {
+            MinimumSize = new Size(1000, 700);
             pnlSearch.Height = 66;
             pnlSearch.Padding = new Padding(10, 8, 10, 8);
             pnlSearch.BackColor = UIHelper.SurfaceColor;
@@ -449,6 +450,9 @@ namespace SchoolSystem.UI
                 Math.Max(
                     minimumDistance,
                     Math.Min(desiredDistance, maximumDistance));
+
+            ResizeActionButtons();
+            LayoutPhotoControls();
         }
 
         // ================================================================
