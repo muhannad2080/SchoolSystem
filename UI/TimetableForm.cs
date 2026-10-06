@@ -38,6 +38,10 @@ namespace SchoolSystem.UI
             ApplyCustomStyles();
             Dock = DockStyle.Fill;
 
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             Load += TimetableForm_Load;
 
             cmbClass.SelectedIndexChanged += cmbClass_SelectedIndexChanged;
@@ -51,6 +55,44 @@ namespace SchoolSystem.UI
 
             // تقييد حقل الملاحظات بحد أقصى للطول.
             txtNotes.MaxLength = 500;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                isLoading)
+            {
+                return;
+            }
+
+            if (!(DataRefreshNotifier.IsRelated(e, "Teachers")
+                && !DataRefreshNotifier.IsRelated(e, "Classes")
+                && !DataRefreshNotifier.IsRelated(e, "Sections")
+                && !DataRefreshNotifier.IsRelated(e, "Subjects") ))
+                return;
+
+            try
+            {
+                isLoading = true;
+                await LoadClassesAsync();
+                await LoadSectionsAsync();
+                await LoadTeachersAsync();
+                await LoadSubjectsForClassAsync();
+                await LoadTimetableAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "TimetableForm: التحديث التلقائي",
+                    ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
         }
 
         // تعريف الدالة Room_KeyPress للسماح بحروف وأرقام ومسافات وشرطات فقط.
