@@ -365,8 +365,29 @@ namespace SchoolSystem.UI.Students
                 if (row.Table.Columns.Contains("StudentName") && row["StudentName"] != DBNull.Value)
                     name = row["StudentName"].ToString();
 
+                int enrolledClassId = 0;
+                if (row.Table.Columns.Contains("EnrolledClassID") && row["EnrolledClassID"] != DBNull.Value)
+                    int.TryParse(row["EnrolledClassID"].ToString(), out enrolledClassId);
+
+                string enrolledClassName = string.Empty;
+                if (row.Table.Columns.Contains("EnrolledClassName") && row["EnrolledClassName"] != DBNull.Value)
+                    enrolledClassName = row["EnrolledClassName"].ToString().Trim();
+
+                string enrolledSection = string.Empty;
+                if (row.Table.Columns.Contains("EnrolledSection") && row["EnrolledSection"] != DBNull.Value)
+                    enrolledSection = row["EnrolledSection"].ToString().Trim();
+
                 if (id > 0)
-                    listBoxUnassigned.Items.Add(new StudentListItem(id, number, name));
+                {
+                    listBoxUnassigned.Items.Add(
+                        new StudentListItem(
+                            id,
+                            number,
+                            name,
+                            enrolledClassId,
+                            enrolledClassName,
+                            enrolledSection));
+                }
             }
 
             lblUnassigned.Text = "الطلاب غير الموزعين: " + listBoxUnassigned.Items.Count;
@@ -595,18 +616,69 @@ namespace SchoolSystem.UI.Students
             {
                 Cursor = Cursors.WaitCursor;
 
+                List<StudentListItem> selectedStudents = new List<StudentListItem>();
+
+                foreach (object item in listBoxUnassigned.CheckedItems)
+                {
+                    StudentListItem student = item as StudentListItem;
+                    if (student != null)
+                        selectedStudents.Add(student);
+                }
+
+                if (selectedStudents.Count == 0)
+                {
+                    ShowWarning("حدد طالباً واحداً على الأقل للتوزيع.");
+                    return;
+                }
+
+                int registeredClassId = selectedStudents[0].EnrolledClassID;
+                if (registeredClassId <= 0)
+                {
+                    ShowWarning("لا يمكن تحديد الصف المسجل لأحد الطلاب. حدّث بيانات التسجيل ثم أعد التحميل.");
+                    return;
+                }
+
+                foreach (StudentListItem student in selectedStudents)
+                {
+                    if (student.EnrolledClassID != registeredClassId)
+                    {
+                        ShowWarning(
+                            "الطلاب المحددون ليسوا من الصف المسجل نفسه. حدّد طلاباً من نفس الصف لإتمام التوزيع دفعة واحدة.");
+                        return;
+                    }
+                }
+
+                // الصف في التوزيع يُؤخذ من التسجيل المقبول، ولا يعتمد على الصف المتروك
+                // محدداً سابقاً في الواجهة.
+                string preferredSection = cmbSection.Text == null
+                    ? string.Empty
+                    : cmbSection.Text.Trim();
+
+                if (GetSelectedClassId() != registeredClassId)
+                {
+                    cmbClass.SelectedValue = registeredClassId;
+                    await LoadSectionsAsync();
+                }
+
+                if (!cmbSection.Enabled || cmbSection.Items.Count == 0)
+                {
+                    ShowWarning("لا توجد شعب فعالة للصف المسجل في العام الدراسي المحدد.");
+                    return;
+                }
+
+                if (!string.IsNullOrWhiteSpace(preferredSection) &&
+                    cmbSection.Items.Contains(preferredSection))
+                {
+                    cmbSection.SelectedItem = preferredSection;
+                }
+
                 string section = cmbSection.Text.Trim();
 
                 int successCount = 0;
                 int failedCount = 0;
 
-                foreach (object item in listBoxUnassigned.CheckedItems)
+                foreach (StudentListItem student in selectedStudents)
                 {
-                    StudentListItem student = item as StudentListItem;
-
-                    if (student == null)
-                        continue;
-
                     // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
                     try
                     {
@@ -882,31 +954,44 @@ namespace SchoolSystem.UI.Students
 
         private class StudentListItem
         {
-
             public int StudentID { get; set; }
-
 
             public string StudentNumber { get; set; }
 
-
             public string StudentName { get; set; }
 
-            // تعريف الدالة StudentListItem لتنفيذ العملية المرتبطة بها.
-            public StudentListItem(int studentID, string studentNumber, string studentName)
+            public int EnrolledClassID { get; set; }
+
+            public string EnrolledClassName { get; set; }
+
+            public string EnrolledSection { get; set; }
+
+            public StudentListItem(
+                int studentID,
+                string studentNumber,
+                string studentName,
+                int enrolledClassId,
+                string enrolledClassName,
+                string enrolledSection)
             {
                 StudentID = studentID;
                 StudentNumber = studentNumber;
                 StudentName = studentName;
+                EnrolledClassID = enrolledClassId;
+                EnrolledClassName = enrolledClassName ?? string.Empty;
+                EnrolledSection = enrolledSection ?? string.Empty;
             }
 
-            // تعريف الدالة ToString لتنفيذ العملية المرتبطة بها.
             public override string ToString()
             {
-                if (string.IsNullOrWhiteSpace(StudentNumber))
-                    return StudentName;
+                string student = string.IsNullOrWhiteSpace(StudentNumber)
+                    ? StudentName
+                    : StudentNumber + " - " + StudentName;
 
+                if (string.IsNullOrWhiteSpace(EnrolledClassName))
+                    return student;
 
-                return StudentNumber + " - " + StudentName;
+                return EnrolledClassName + " | " + student;
             }
         }
     }
