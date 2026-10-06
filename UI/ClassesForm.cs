@@ -457,7 +457,7 @@ namespace SchoolSystem.UI
 
                 await LoadClassesAsync();
                 await LoadNameDropdownsAsync();
-                DataRefreshNotifier.Notify("Classes", this);
+                DataRefreshNotifier.Notify("All", this);
                 ClearClassFields();
             }
 
@@ -490,7 +490,7 @@ namespace SchoolSystem.UI
                     ShowInfo("تم تعديل بيانات الفصل بنجاح.");
 
                     await LoadClassesAsync();
-                    DataRefreshNotifier.Notify("Classes", this);
+                    DataRefreshNotifier.Notify("All", this);
                     ClearClassFields();
                 }
 
