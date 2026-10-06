@@ -126,9 +126,14 @@ namespace SchoolSystem.UI.Students
             cmbTransferSection.Items.Clear();
             cmbTransferSection.Enabled = false;
 
-            DateTime today = DateTime.Today;
-            int year = today.Month >= 8 ? today.Year : today.Year - 1;
-            txtAcademicYear.Text = year + "/" + (year + 1);
+            string dbYear =
+                SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
+
+            if (string.IsNullOrWhiteSpace(dbYear))
+                throw new InvalidOperationException(
+                    "لا يوجد عام دراسي نشط في قاعدة البيانات. عيّن العام الدراسي من البيانات الأكاديمية أولًا.");
+
+            txtAcademicYear.Text = dbYear;
 
             lblStatus.Text = "جاهز";
             lblRecordCount.Text = "عدد الطلاب: 0";
