@@ -72,17 +72,16 @@ namespace SchoolSystem.UI
             dtpDate.Value = DateTime.Today;
 
 
-            string dbYear = SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
-            if (!string.IsNullOrWhiteSpace(dbYear))
+            string dbYear =
+                SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
+
+            if (string.IsNullOrWhiteSpace(dbYear))
             {
-                txtAcademicYear.Text = dbYear;
+                throw new InvalidOperationException(
+                    "لا يوجد عام دراسي نشط في قاعدة البيانات.");
             }
 
-            else
-            {
-                int year = DateTime.Now.Year;
-                txtAcademicYear.Text = year + "/" + (year + 1);
-            }
+            txtAcademicYear.Text = dbYear;
 
             cmbSection.DataSource = null;
             cmbSection.Items.Clear();
