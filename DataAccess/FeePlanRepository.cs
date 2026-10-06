@@ -866,6 +866,57 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        private decimal GetMaxPaidAmountForPlan(
+            SqlConnection con,
+            SqlTransaction transaction,
+            int feePlanId)
+        {
+            const string sql = @"
+                SELECT ISNULL(MAX(PaidAmount), 0)
+                FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                WHERE FeePlanID = @FeePlanID;";
+
+            using (SqlCommand command =
+                new SqlCommand(sql, con, transaction))
+            {
+                command.Parameters.AddWithValue(
+                    "@FeePlanID",
+                    feePlanId);
+
+                object value = command.ExecuteScalar();
+
+                return value == null || value == DBNull.Value
+                    ? 0m
+                    : Convert.ToDecimal(value);
+            }
+        }
+
+        private void EnsurePlanAmountCoversPaid(
+            SqlConnection con,
+            SqlTransaction transaction,
+            int feePlanId,
+            decimal newAmount,
+            string feeType)
+        {
+            decimal maxPaid =
+                GetMaxPaidAmountForPlan(
+                    con,
+                    transaction,
+                    feePlanId);
+
+            if (newAmount + 0.01m < maxPaid)
+            {
+                throw new InvalidOperationException(
+                    "لا يمكن تخفيض " +
+                    (feeType ?? "الرسوم") +
+                    " إلى " +
+                    newAmount.ToString("N2") +
+                    " ريال لأن هناك طالبًا سبق أن دفع " +
+                    maxPaid.ToString("N2") +
+                    " ريال لهذا البند.");
+            }
+        }
+
         private int EnsureTotalPlan(
             SqlConnection con,
             SqlTransaction transaction,
