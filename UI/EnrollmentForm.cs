@@ -50,6 +50,8 @@ namespace SchoolSystem.UI
 
         private bool isSaving;
 
+        private bool isFinancialEditLocked;
+
         // ================================================================
         // PRINTING
         // ================================================================
@@ -1212,6 +1214,8 @@ namespace SchoolSystem.UI
                     ex);
             }
 
+            isFinancialEditLocked = hasFinance;
+
             if (!hasFinance)
                 return;
 
@@ -1868,9 +1872,9 @@ namespace SchoolSystem.UI
 
             await LoadSectionsAsync();
 
-            // أثناء تعديل سجل مرتبط بحركة مالية، لا نعيد حساب الرسم
-            // ولا نغير المبلغ التاريخي؛ تغيير الصف سيُزامن التوزيع فقط.
-            if (!isEditMode)
+            // عند تعديل سجل عادي، تتغير خطة رسوم التسجيل مع الصف.
+            // عند وجود حركة مالية، نحافظ على المبلغ التاريخي ولا نعيد حسابه.
+            if (!isFinancialEditLocked)
             {
                 await LoadRegistrationFeePlanAsync(false);
             }
@@ -2856,6 +2860,8 @@ namespace SchoolSystem.UI
             txtPreviousClass.Clear();
 
             txtTransferReason.Clear();
+
+            isFinancialEditLocked = false;
 
             txtRegistrationFee.Clear();
 
