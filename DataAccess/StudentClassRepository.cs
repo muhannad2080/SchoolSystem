@@ -15,23 +15,42 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = @"
+                const string query = @"
                     SELECT
                         s.StudentID,
                         s.StudentNumber,
                         s.FullName AS StudentName,
                         s.Gender,
-                        s.StudentPhone AS Phone
+                        s.StudentPhone AS Phone,
+                        e.EnrollmentID,
+                        e.ClassID AS EnrolledClassID,
+                        c.ClassName AS EnrolledClassName,
+                        LTRIM(RTRIM(ISNULL(e.Section, N''))) AS EnrolledSection
                     FROM Students s
+                    INNER JOIN
+                    (
+                        SELECT
+                            e1.EnrollmentID,
+                            e1.StudentID,
+                            e1.ClassID,
+                            e1.Section,
+                            e1.AcademicYear,
+                            ROW_NUMBER() OVER
+                            (
+                                PARTITION BY e1.StudentID, REPLACE(e1.AcademicYear, N'/', N'-')
+                                ORDER BY e1.EnrollmentID DESC
+                            ) AS rn
+                        FROM Enrollments e1
+                        WHERE REPLACE(e1.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
+                          AND LTRIM(RTRIM(ISNULL(e1.Status, N''))) IN (N'مقبول', N'Accepted')
+                    ) e
+                        ON e.StudentID = s.StudentID
+                       AND e.rn = 1
+                    LEFT JOIN Classes c
+                        ON c.ClassID = e.ClassID
                     WHERE ISNULL(s.Status, N'نشط') = N'نشط'
-                      AND EXISTS
-                      (
-                          SELECT 1
-                          FROM Enrollments e
-                          WHERE e.StudentID = s.StudentID
-                            AND REPLACE(e.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
-                            AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted')
-                      )
+                      AND e.ClassID IS NOT NULL
+                      AND e.ClassID > 0
                       AND NOT EXISTS
                       (
                           SELECT 1
@@ -39,20 +58,19 @@ namespace SchoolSystem.DataAccess
                           WHERE sc.StudentID = s.StudentID
                             AND REPLACE(sc.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
                       )
-                    ORDER BY s.FullName";
+                    ORDER BY
+                        c.ClassName,
+                        s.FullName;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-
-                    cmd.Parameters.AddWithValue("@AcademicYear", (academicYear ?? string.Empty).Trim().Replace('-', '/'));
-
+                    cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value =
+                        (academicYear ?? string.Empty).Trim().Replace('-', '/');
 
                     using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
                     {
                         DataTable dt = new DataTable();
-
                         adapter.Fill(dt);
-
                         return dt;
                     }
                 }
