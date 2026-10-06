@@ -636,6 +636,41 @@ namespace SchoolSystem.UI
 
             FormatDate("DueDate");
             FormatDate("PaymentDate");
+
+            ConfigureFeeColumn("StudentName", 175, 150);
+            ConfigureFeeColumn("AcademicYear", 100, 90);
+            ConfigureFeeColumn("ClassName", 105, 95);
+            ConfigureFeeColumn("Section", 95, 85);
+            ConfigureFeeColumn("FeeType", 125, 105);
+            ConfigureFeeColumn("TotalAmount", 95, 85);
+            ConfigureFeeColumn("DiscountAmount", 85, 75);
+            ConfigureFeeColumn("NetAmount", 95, 85);
+            ConfigureFeeColumn("PaidAmount", 95, 85);
+            ConfigureFeeColumn("RemainingAmount", 105, 90);
+            ConfigureFeeColumn("DueDate", 100, 90);
+            ConfigureFeeColumn("PaymentDate", 105, 90);
+            ConfigureFeeColumn("PaymentMethod", 105, 90);
+            ConfigureFeeColumn("ReceiptNumber", 115, 100);
+            ConfigureFeeColumn("Status", 100, 90);
+        }
+
+        private void ConfigureFeeColumn(
+            string columnName,
+            int width,
+            int minimumWidth)
+        {
+            if (!dataGridViewFees.Columns.Contains(columnName))
+                return;
+
+            DataGridViewColumn column =
+                dataGridViewFees.Columns[columnName];
+
+            column.AutoSizeMode =
+                DataGridViewAutoSizeColumnMode.Fill;
+            column.FillWeight = Math.Max(1, width);
+            column.MinimumWidth = minimumWidth;
+            column.SortMode =
+                DataGridViewColumnSortMode.Automatic;
         }
 
         private void HideColumn(string columnName)
