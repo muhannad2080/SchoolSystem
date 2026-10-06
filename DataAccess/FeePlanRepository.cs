@@ -639,8 +639,8 @@ namespace SchoolSystem.DataAccess
                               AND ClassID = @ClassID
                               AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
                                   REPLACE(@AcademicYear, N'-', N'/')
-                              AND LTRIM(RTRIM(ISNULL(FeeType, N''))) NOT IN
-                                  (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');";
+                              AND LTRIM(RTRIM(ISNULL(FeeType, N''))) =
+                                  LTRIM(RTRIM(@FeeType));";
 
                         using (SqlCommand updateChild =
                             new SqlCommand(
@@ -1036,6 +1036,92 @@ namespace SchoolSystem.DataAccess
                         : notes);
 
                 command.ExecuteNonQuery();
+
+                /* مزامنة الطلاب الحاليين في الصف: إذا أُنشئت الخطة قبل قبول/توزيع الطالب،
+                   ننشئ له بند الرسوم غير المسدد تلقائيًا. الرسوم الكلية تبقى خطة مرجعية. */
+                const string syncStudentsSql = @"
+                    DECLARE @ClassID INT;
+                    DECLARE @AcademicYear NVARCHAR(100);
+                    DECLARE @FeeType NVARCHAR(100);
+
+                    SELECT
+                        @ClassID = ClassID,
+                        @AcademicYear = AcademicYear,
+                        @FeeType = LTRIM(RTRIM(FeeType))
+                    FROM FeePlans
+                    WHERE FeePlanID = @FeePlanID;
+
+                    IF LTRIM(RTRIM(ISNULL(@FeeType, N''))) NOT IN
+                    (
+                        N'الرسوم الكلية',
+                        N'رسوم كلية',
+                        N'الرسوم الكليه',
+                        N'رسوم كليه',
+                        N'Total Fee'
+                    )
+                    BEGIN
+                        ;WITH CurrentStudents AS
+                        (
+                            SELECT DISTINCT e.StudentID
+                            FROM Enrollments e
+                            WHERE e.ClassID = @ClassID
+                              AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') =
+                                  REPLACE(@AcademicYear, N'-', N'/')
+                              AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN
+                                  (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
+
+                            UNION
+
+                            SELECT DISTINCT sc.StudentID
+                            FROM StudentClasses sc
+                            WHERE sc.ClassID = @ClassID
+                              AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') =
+                                  REPLACE(@AcademicYear, N'-', N'/')
+                        )
+                        INSERT INTO Fees
+                        (
+                            StudentID,
+                            FeePlanID,
+                            AcademicYear,
+                            FeeType,
+                            TotalAmount,
+                            DiscountAmount,
+                            NetAmount,
+                            PaidAmount,
+                            RemainingAmount,
+                            DueDate,
+                            PaymentDate,
+                            PaymentMethod,
+                            ReceiptNumber,
+                            Status,
+                            Notes
+                        )
+                        SELECT
+                            cs.StudentID,
+                            fp.FeePlanID,
+                            fp.AcademicYear,
+                            fp.FeeType,
+                            fp.Amount,
+                            0,
+                            fp.Amount,
+                            0,
+                            fp.Amount,
+                            fp.DueDate,
+                            NULL,
+                            NULL,
+                            NULL,
+                            N'غير مسدد',
+                            fp.Notes
+                        FROM CurrentStudents cs
+                        INNER JOIN FeePlans fp ON fp.FeePlanID = @FeePlanID
+                        WHERE NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM Fees existing
+                            WHERE existing.StudentID = cs.StudentID
+                              AND existing.FeePlanID = @FeePlanID
+                        );
+                    END
             }
         }
 
