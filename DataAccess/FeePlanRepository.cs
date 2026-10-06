@@ -487,6 +487,65 @@ namespace SchoolSystem.DataAccess
         }
 
         // تعريف الدالة DistributeTotalFee لتنفيذ العملية المرتبطة بها.
+        private int EnsureStudentFeesForPlan(
+            SqlConnection con,
+            SqlTransaction transaction,
+            int feePlanId,
+            int classId,
+            string academicYear,
+            string feeType,
+            decimal amount,
+            DateTime dueDate,
+            string notes)
+        {
+            const string sql = @"
+                INSERT INTO Fees
+                (
+                    StudentID, FeePlanID, AcademicYear, FeeType,
+                    TotalAmount, DiscountAmount, NetAmount, PaidAmount,
+                    RemainingAmount, DueDate, PaymentDate, PaymentMethod,
+                    ReceiptNumber, Status, Notes
+                )
+                SELECT DISTINCT
+                    source.StudentID,
+                    @FeePlanID, @AcademicYear, @FeeType,
+                    @Amount, 0, @Amount, 0, @Amount, @DueDate,
+                    NULL, NULL, NULL, N'غير مسدد', @Notes
+                FROM
+                (
+                    SELECT sc.StudentID
+                    FROM StudentClasses sc
+                    INNER JOIN Enrollments e ON e.StudentID = sc.StudentID
+                       AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                       AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
+                    WHERE sc.ClassID = @ClassID
+                      AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                    UNION
+                    SELECT e.StudentID
+                    FROM Enrollments e
+                    WHERE e.ClassID = @ClassID
+                      AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
+                ) source
+                WHERE NOT EXISTS
+                (
+                    SELECT 1 FROM Fees f
+                    WHERE f.StudentID = source.StudentID
+                      AND f.FeePlanID = @FeePlanID
+                );";
+
+            using (SqlCommand command = new SqlCommand(sql, con, transaction))
+            {
+                command.Parameters.AddWithValue("@FeePlanID", feePlanId);
+                command.Parameters.AddWithValue("@ClassID", classId);
+                command.Parameters.AddWithValue("@AcademicYear", (academicYear ?? string.Empty).Trim().Replace("-", "/"));
+                command.Parameters.AddWithValue("@FeeType", (feeType ?? string.Empty).Trim());
+                command.Parameters.AddWithValue("@Amount", amount);
+                command.Parameters.AddWithValue("@DueDate", dueDate.Date);
+                command.Parameters.AddWithValue("@Notes", string.IsNullOrWhiteSpace(notes) ? (object)DBNull.Value : notes);
+                return command.ExecuteNonQuery();
+            }
+        }
         public int DistributeTotalFee(FeePlan plan)
         {
             using (SqlConnection con = DbConnection.GetConnection())
