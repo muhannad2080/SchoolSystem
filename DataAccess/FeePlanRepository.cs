@@ -367,6 +367,117 @@ namespace SchoolSystem.DataAccess
 
                         int affected = cmd.ExecuteNonQuery();
 
+                        /* أي بند فرعي جديد يرفع/يخفض إجمالي رسوم الصف والعام نفسه
+                           ليظل مجموع البنود مساويًا للكلي. */
+                        if (affected > 0 &&
+                            !IsTotalFeeType(plan.FeeType))
+                        {
+                            const string syncTotalSql = @"
+                                DECLARE @TotalAmount DECIMAL(18,2);
+
+                                SELECT @TotalAmount =
+                                    ISNULL(SUM(Amount), 0)
+                                FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
+                                WHERE ClassID = @ClassID
+                                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                                      REPLACE(@AcademicYear, N'-', N'/')
+                                  AND LTRIM(RTRIM(ISNULL(FeeType, N''))) NOT IN
+                                      (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');
+
+                                IF EXISTS
+                                (
+                                    SELECT 1
+                                    FROM FeePlans
+                                    WHERE ClassID = @ClassID
+                                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                                          REPLACE(@AcademicYear, N'-', N'/')
+                                      AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
+                                          (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                                )
+                                BEGIN
+                                    UPDATE FeePlans
+                                    SET Amount = @TotalAmount,
+                                        DueDate = @DueDate,
+                                        UpdatedAt = GETDATE()
+                                    WHERE ClassID = @ClassID
+                                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                                          REPLACE(@AcademicYear, N'-', N'/')
+                                      AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
+                                          (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');
+
+                                    UPDATE f
+                                    SET TotalAmount = @TotalAmount,
+                                        NetAmount =
+                                            CASE
+                                                WHEN ISNULL(f.DiscountAmount, 0) > @TotalAmount
+                                                    THEN 0
+                                                ELSE @TotalAmount - ISNULL(f.DiscountAmount, 0)
+                                            END,
+                                        RemainingAmount =
+                                            CASE
+                                                WHEN ISNULL(f.DiscountAmount, 0) > @TotalAmount
+                                                    THEN 0
+                                                ELSE @TotalAmount - ISNULL(f.DiscountAmount, 0) - ISNULL(f.PaidAmount, 0)
+                                            END,
+                                        UpdatedAt = GETDATE()
+                                    FROM Fees f
+                                    INNER JOIN FeePlans fp ON fp.FeePlanID = f.FeePlanID
+                                    WHERE fp.ClassID = @ClassID
+                                      AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') =
+                                          REPLACE(@AcademicYear, N'-', N'/')
+                                      AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) IN
+                                          (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                                      AND ISNULL(f.PaidAmount, 0) = 0;
+                                END
+                                ELSE
+                                BEGIN
+                                    INSERT INTO FeePlans
+                                    (
+                                        AcademicYear,
+                                        ClassID,
+                                        FeeType,
+                                        Amount,
+                                        DueDate,
+                                        IsRequired,
+                                        Notes
+                                    )
+                                    VALUES
+                                    (
+                                        @AcademicYear,
+                                        @ClassID,
+                                        N'الرسوم الكلية',
+                                        @TotalAmount,
+                                        @DueDate,
+                                        1,
+                                        @Notes
+                                    );
+                                END";
+
+                            using (SqlCommand syncTotal =
+                                new SqlCommand(
+                                    syncTotalSql,
+                                    con,
+                                    transaction))
+                            {
+                                syncTotal.Parameters.AddWithValue(
+                                    "@ClassID",
+                                    plan.ClassID);
+                                syncTotal.Parameters.AddWithValue(
+                                    "@AcademicYear",
+                                    plan.AcademicYear ?? string.Empty);
+                                syncTotal.Parameters.AddWithValue(
+                                    "@DueDate",
+                                    plan.DueDate.Date);
+                                syncTotal.Parameters.AddWithValue(
+                                    "@Notes",
+                                    string.IsNullOrWhiteSpace(plan.Notes)
+                                        ? (object)DBNull.Value
+                                        : plan.Notes);
+
+                                syncTotal.ExecuteNonQuery();
+                            }
+                        }
+
                         transaction.Commit();
 
                         return affected > 0;
@@ -1023,6 +1134,19 @@ namespace SchoolSystem.DataAccess
                     return cmd.ExecuteNonQuery() > 0;
                 }
             }
+        }
+
+        private bool IsTotalFeeType(string feeType)
+        {
+            string value = (feeType ?? string.Empty).Trim();
+
+            return value == "الرسوم الكلية" ||
+                   value == "رسوم كلية" ||
+                   value == "الرسوم الكليه" ||
+                   value == "رسوم كليه" ||
+                   value.Equals(
+                       "Total Fee",
+                       StringComparison.OrdinalIgnoreCase);
         }
 
         // تعريف الدالة AddParameters لتنفيذ العملية المرتبطة بها.
