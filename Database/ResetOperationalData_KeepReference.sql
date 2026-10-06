@@ -153,9 +153,9 @@ BEGIN TRY
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        SET @sql = N'DBCC CHECKIDENT (' +
-                   QUOTENAME(@schema) + N'.' + QUOTENAME(@table) +
-                   N', RESEED, 0) WITH NO_INFOMSGS;';
+        SET @sql = N'DBCC CHECKIDENT (''' +
+                   REPLACE(QUOTENAME(@schema) + N'.' + QUOTENAME(@table), N'''', N'''''') +
+                   N''', RESEED, 0) WITH NO_INFOMSGS;';
         EXEC sys.sp_executesql @sql;
 
         FETCH NEXT FROM identity_cursor INTO @schema, @table;
