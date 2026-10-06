@@ -955,7 +955,7 @@
             this.Controls.Add(this.pnlSearch);
             this.Controls.Add(this.pnlButtons);
             this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MinimumSize = new System.Drawing.Size(1050, 650);
+            this.MinimumSize = new System.Drawing.Size(1000, 700);
             this.CancelButton = this.btnCancel;
             this.Name = "StudentsForm";
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -1248,23 +1248,104 @@
             this.btnSave.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
 
-            foreach (System.Windows.Forms.Button button in new System.Windows.Forms.Button[]
-            {
-                this.btnSearch, this.btnReload, this.btnClose, this.btnStudentProfile,
-                this.btnPrint, this.btnExportExcel, this.btnRefresh, this.btnCancel,
-                this.btnDelete, this.btnUpdate, this.btnSave, this.btnAdd,
-                this.btnChooseImage, this.btnRemoveImage
-            })
-            {
-                button.ForeColor = System.Drawing.Color.White;
-                button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-                button.FlatAppearance.BorderSize = 0;
-                button.UseVisualStyleBackColor = false;
-                button.UseCompatibleTextRendering = true;
-                button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-                button.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            }
-
+            this.btnSearch.ForeColor = System.Drawing.Color.White;
+            this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSearch.FlatAppearance.BorderSize = 0;
+            this.btnSearch.UseVisualStyleBackColor = false;
+            this.btnSearch.UseCompatibleTextRendering = true;
+            this.btnSearch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnSearch.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnReload.ForeColor = System.Drawing.Color.White;
+            this.btnReload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReload.FlatAppearance.BorderSize = 0;
+            this.btnReload.UseVisualStyleBackColor = false;
+            this.btnReload.UseCompatibleTextRendering = true;
+            this.btnReload.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnReload.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnClose.ForeColor = System.Drawing.Color.White;
+            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClose.FlatAppearance.BorderSize = 0;
+            this.btnClose.UseVisualStyleBackColor = false;
+            this.btnClose.UseCompatibleTextRendering = true;
+            this.btnClose.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnClose.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStudentProfile.ForeColor = System.Drawing.Color.White;
+            this.btnStudentProfile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStudentProfile.FlatAppearance.BorderSize = 0;
+            this.btnStudentProfile.UseVisualStyleBackColor = false;
+            this.btnStudentProfile.UseCompatibleTextRendering = true;
+            this.btnStudentProfile.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnStudentProfile.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPrint.ForeColor = System.Drawing.Color.White;
+            this.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPrint.FlatAppearance.BorderSize = 0;
+            this.btnPrint.UseVisualStyleBackColor = false;
+            this.btnPrint.UseCompatibleTextRendering = true;
+            this.btnPrint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnPrint.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExportExcel.ForeColor = System.Drawing.Color.White;
+            this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExportExcel.FlatAppearance.BorderSize = 0;
+            this.btnExportExcel.UseVisualStyleBackColor = false;
+            this.btnExportExcel.UseCompatibleTextRendering = true;
+            this.btnExportExcel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportExcel.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefresh.ForeColor = System.Drawing.Color.White;
+            this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefresh.FlatAppearance.BorderSize = 0;
+            this.btnRefresh.UseVisualStyleBackColor = false;
+            this.btnRefresh.UseCompatibleTextRendering = true;
+            this.btnRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnRefresh.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCancel.ForeColor = System.Drawing.Color.White;
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCancel.FlatAppearance.BorderSize = 0;
+            this.btnCancel.UseVisualStyleBackColor = false;
+            this.btnCancel.UseCompatibleTextRendering = true;
+            this.btnCancel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnCancel.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDelete.ForeColor = System.Drawing.Color.White;
+            this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDelete.FlatAppearance.BorderSize = 0;
+            this.btnDelete.UseVisualStyleBackColor = false;
+            this.btnDelete.UseCompatibleTextRendering = true;
+            this.btnDelete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnUpdate.ForeColor = System.Drawing.Color.White;
+            this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUpdate.FlatAppearance.BorderSize = 0;
+            this.btnUpdate.UseVisualStyleBackColor = false;
+            this.btnUpdate.UseCompatibleTextRendering = true;
+            this.btnUpdate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSave.ForeColor = System.Drawing.Color.White;
+            this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSave.FlatAppearance.BorderSize = 0;
+            this.btnSave.UseVisualStyleBackColor = false;
+            this.btnSave.UseCompatibleTextRendering = true;
+            this.btnSave.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnSave.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAdd.ForeColor = System.Drawing.Color.White;
+            this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAdd.FlatAppearance.BorderSize = 0;
+            this.btnAdd.UseVisualStyleBackColor = false;
+            this.btnAdd.UseCompatibleTextRendering = true;
+            this.btnAdd.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnChooseImage.ForeColor = System.Drawing.Color.White;
+            this.btnChooseImage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnChooseImage.FlatAppearance.BorderSize = 0;
+            this.btnChooseImage.UseVisualStyleBackColor = false;
+            this.btnChooseImage.UseCompatibleTextRendering = true;
+            this.btnChooseImage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnChooseImage.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRemoveImage.ForeColor = System.Drawing.Color.White;
+            this.btnRemoveImage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRemoveImage.FlatAppearance.BorderSize = 0;
+            this.btnRemoveImage.UseVisualStyleBackColor = false;
+            this.btnRemoveImage.UseCompatibleTextRendering = true;
+            this.btnRemoveImage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnRemoveImage.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRefresh.Visible = true;
             this.Load += new System.EventHandler(this.StudentsForm_Load);
             this.gbStudent.ResumeLayout(false);
