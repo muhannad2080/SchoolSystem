@@ -16,7 +16,6 @@
       RolePermissions
       UserRoles
       UserPermissions
-      SchoolSettings
       SchemaMigrations
 
     يمسح:
@@ -27,7 +26,7 @@
       الحافلات وخطوط النقل
       الجدول الدراسي
       الإغلاقات والترحيل وسجل التدقيق وسجل النسخ الاحتياطية
-      وأي جدول dbo آخر غير موجود في قائمة الاحتفاظ.
+      وإعدادات المدرسة التشغيلية، وأي جدول dbo آخر غير موجود في قائمة الاحتفاظ.
 
     ملاحظة:
       هذا السكربت لا يحتوي على GO حتى يعمل أيضًا عبر ADO.NET وأدوات
@@ -69,7 +68,6 @@ BEGIN TRY
         (N'dbo', N'RolePermissions'),
         (N'dbo', N'UserRoles'),
         (N'dbo', N'UserPermissions'),
-        (N'dbo', N'SchoolSettings'),
         (N'dbo', N'SchemaMigrations');
 
     /* احفظ تعريف المواد فقط، وافصل أي ClassID قديم قبل حذف الصفوف. */
