@@ -33,6 +33,10 @@ namespace SchoolSystem.UI
             this.cmbFeeType = new System.Windows.Forms.ComboBox();
             this.lblAmount = new System.Windows.Forms.Label();
             this.txtAmount = new System.Windows.Forms.TextBox();
+            this.lblTotalFeeAmount = new System.Windows.Forms.Label();
+            this.txtTotalFeeAmount = new System.Windows.Forms.TextBox();
+            this.lblPlanNumber = new System.Windows.Forms.Label();
+            this.txtPlanNumber = new System.Windows.Forms.TextBox();
             this.lblDueDate = new System.Windows.Forms.Label();
             this.dtpDueDate = new System.Windows.Forms.DateTimePicker();
             this.lblIsRequired = new System.Windows.Forms.Label();
@@ -89,7 +93,7 @@ namespace SchoolSystem.UI
             this.panelFields.Location = new System.Drawing.Point(0, 55);
             this.panelFields.Name = "panelFields";
             this.panelFields.Padding = new System.Windows.Forms.Padding(15);
-            this.panelFields.Size = new System.Drawing.Size(1100, 185);
+            this.panelFields.Size = new System.Drawing.Size(1100, 223);
             this.panelFields.TabIndex = 4;
             // 
             // tableFields
@@ -107,21 +111,26 @@ namespace SchoolSystem.UI
             this.tableFields.Controls.Add(this.cmbFeeType, 1, 1);
             this.tableFields.Controls.Add(this.lblAmount, 2, 1);
             this.tableFields.Controls.Add(this.txtAmount, 3, 1);
-            this.tableFields.Controls.Add(this.lblDueDate, 0, 2);
-            this.tableFields.Controls.Add(this.dtpDueDate, 1, 2);
-            this.tableFields.Controls.Add(this.lblIsRequired, 2, 2);
-            this.tableFields.Controls.Add(this.chkIsRequired, 3, 2);
-            this.tableFields.Controls.Add(this.lblNotes, 0, 3);
-            this.tableFields.Controls.Add(this.txtNotes, 1, 3);
+            this.tableFields.Controls.Add(this.lblTotalFeeAmount, 0, 2);
+            this.tableFields.Controls.Add(this.txtTotalFeeAmount, 1, 2);
+            this.tableFields.Controls.Add(this.lblPlanNumber, 2, 2);
+            this.tableFields.Controls.Add(this.txtPlanNumber, 3, 2);
+            this.tableFields.Controls.Add(this.lblDueDate, 0, 3);
+            this.tableFields.Controls.Add(this.dtpDueDate, 1, 3);
+            this.tableFields.Controls.Add(this.lblIsRequired, 2, 3);
+            this.tableFields.Controls.Add(this.chkIsRequired, 3, 3);
+            this.tableFields.Controls.Add(this.lblNotes, 0, 4);
+            this.tableFields.Controls.Add(this.txtNotes, 1, 4);
             this.tableFields.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableFields.Location = new System.Drawing.Point(15, 15);
             this.tableFields.Name = "tableFields";
-            this.tableFields.RowCount = 4;
+            this.tableFields.RowCount = 5;
             this.tableFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
             this.tableFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
             this.tableFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
             this.tableFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
-            this.tableFields.Size = new System.Drawing.Size(1070, 155);
+            this.tableFields.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 38F));
+            this.tableFields.Size = new System.Drawing.Size(1070, 193);
             this.tableFields.TabIndex = 0;
             // 
             // lblAcademicYear
@@ -207,11 +216,60 @@ namespace SchoolSystem.UI
             this.txtAmount.TabIndex = 7;
             this.txtAmount.Text = "0";
             // 
+            // lblTotalFeeAmount
+            // 
+            this.lblTotalFeeAmount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblTotalFeeAmount.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.lblTotalFeeAmount.Location = new System.Drawing.Point(948, 76);
+            this.lblTotalFeeAmount.Name = "lblTotalFeeAmount";
+            this.lblTotalFeeAmount.Size = new System.Drawing.Size(119, 38);
+            this.lblTotalFeeAmount.TabIndex = 8;
+            this.lblTotalFeeAmount.Text = "الرسوم الكلية:";
+            this.lblTotalFeeAmount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtTotalFeeAmount
+            // 
+            this.txtTotalFeeAmount.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.txtTotalFeeAmount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtTotalFeeAmount.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.txtTotalFeeAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
+            this.txtTotalFeeAmount.Location = new System.Drawing.Point(538, 79);
+            this.txtTotalFeeAmount.Name = "txtTotalFeeAmount";
+            this.txtTotalFeeAmount.ReadOnly = true;
+            this.txtTotalFeeAmount.Size = new System.Drawing.Size(404, 27);
+            this.txtTotalFeeAmount.TabIndex = 9;
+            this.txtTotalFeeAmount.Text = "0.00";
+            this.txtTotalFeeAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // lblPlanNumber
+            // 
+            this.lblPlanNumber.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblPlanNumber.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.lblPlanNumber.Location = new System.Drawing.Point(413, 76);
+            this.lblPlanNumber.Name = "lblPlanNumber";
+            this.lblPlanNumber.Size = new System.Drawing.Size(119, 38);
+            this.lblPlanNumber.TabIndex = 10;
+            this.lblPlanNumber.Text = "رقم الخطة:";
+            this.lblPlanNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtPlanNumber
+            // 
+            this.txtPlanNumber.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.txtPlanNumber.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtPlanNumber.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtPlanNumber.Location = new System.Drawing.Point(3, 79);
+            this.txtPlanNumber.Name = "txtPlanNumber";
+            this.txtPlanNumber.ReadOnly = true;
+            this.txtPlanNumber.Size = new System.Drawing.Size(404, 27);
+            this.txtPlanNumber.TabIndex = 11;
+            this.txtPlanNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // 
             // lblDueDate
             // 
             this.lblDueDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblDueDate.Font = new System.Drawing.Font("Tahoma", 9.5F);
-            this.lblDueDate.Location = new System.Drawing.Point(948, 76);
+            this.lblDueDate.Location = new System.Drawing.Point(948, 114);
             this.lblDueDate.Name = "lblDueDate";
             this.lblDueDate.Size = new System.Drawing.Size(119, 38);
             this.lblDueDate.TabIndex = 8;
@@ -224,7 +282,7 @@ namespace SchoolSystem.UI
             this.dtpDueDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dtpDueDate.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.dtpDueDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpDueDate.Location = new System.Drawing.Point(538, 79);
+            this.dtpDueDate.Location = new System.Drawing.Point(538, 117);
             this.dtpDueDate.Name = "dtpDueDate";
             this.dtpDueDate.Size = new System.Drawing.Size(404, 27);
             this.dtpDueDate.TabIndex = 9;
@@ -233,7 +291,7 @@ namespace SchoolSystem.UI
             // 
             this.lblIsRequired.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblIsRequired.Font = new System.Drawing.Font("Tahoma", 9.5F);
-            this.lblIsRequired.Location = new System.Drawing.Point(413, 76);
+            this.lblIsRequired.Location = new System.Drawing.Point(413, 114);
             this.lblIsRequired.Name = "lblIsRequired";
             this.lblIsRequired.Size = new System.Drawing.Size(119, 38);
             this.lblIsRequired.TabIndex = 10;
@@ -246,7 +304,7 @@ namespace SchoolSystem.UI
             this.chkIsRequired.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkIsRequired.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chkIsRequired.Font = new System.Drawing.Font("Tahoma", 9.5F);
-            this.chkIsRequired.Location = new System.Drawing.Point(3, 79);
+            this.chkIsRequired.Location = new System.Drawing.Point(3, 117);
             this.chkIsRequired.Name = "chkIsRequired";
             this.chkIsRequired.Size = new System.Drawing.Size(404, 32);
             this.chkIsRequired.TabIndex = 11;
@@ -257,7 +315,7 @@ namespace SchoolSystem.UI
             // 
             this.lblNotes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblNotes.Font = new System.Drawing.Font("Tahoma", 9.5F);
-            this.lblNotes.Location = new System.Drawing.Point(948, 114);
+            this.lblNotes.Location = new System.Drawing.Point(948, 152);
             this.lblNotes.Name = "lblNotes";
             this.lblNotes.Size = new System.Drawing.Size(119, 41);
             this.lblNotes.TabIndex = 12;
@@ -269,7 +327,7 @@ namespace SchoolSystem.UI
             this.tableFields.SetColumnSpan(this.txtNotes, 3);
             this.txtNotes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtNotes.Font = new System.Drawing.Font("Tahoma", 9.5F);
-            this.txtNotes.Location = new System.Drawing.Point(3, 117);
+            this.txtNotes.Location = new System.Drawing.Point(3, 155);
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(939, 27);
             this.txtNotes.TabIndex = 13;
@@ -284,7 +342,7 @@ namespace SchoolSystem.UI
             this.panelButtons.Controls.Add(this.btnClear);
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.panelButtons.Location = new System.Drawing.Point(0, 240);
+            this.panelButtons.Location = new System.Drawing.Point(0, 278);
             this.panelButtons.Name = "panelButtons";
             this.panelButtons.Padding = new System.Windows.Forms.Padding(12, 7, 12, 7);
             this.panelButtons.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -374,7 +432,7 @@ namespace SchoolSystem.UI
             this.panelSearch.Controls.Add(this.lblSearch);
             this.panelSearch.Controls.Add(this.txtSearch);
             this.panelSearch.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelSearch.Location = new System.Drawing.Point(0, 298);
+            this.panelSearch.Location = new System.Drawing.Point(0, 336);
             this.panelSearch.Name = "panelSearch";
             this.panelSearch.Size = new System.Drawing.Size(1100, 45);
             this.panelSearch.TabIndex = 2;
@@ -413,7 +471,7 @@ namespace SchoolSystem.UI
             this.dataGridViewFeePlans.ColumnHeadersHeight = 38;
             this.dataGridViewFeePlans.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewFeePlans.EnableHeadersVisualStyles = false;
-            this.dataGridViewFeePlans.Location = new System.Drawing.Point(0, 343);
+            this.dataGridViewFeePlans.Location = new System.Drawing.Point(0, 381);
             this.dataGridViewFeePlans.MultiSelect = false;
             this.dataGridViewFeePlans.Name = "dataGridViewFeePlans";
             this.dataGridViewFeePlans.ReadOnly = true;
@@ -505,6 +563,14 @@ namespace SchoolSystem.UI
         private System.Windows.Forms.Label lblAmount;
 
         private System.Windows.Forms.TextBox txtAmount;
+
+        private System.Windows.Forms.Label lblTotalFeeAmount;
+
+        private System.Windows.Forms.TextBox txtTotalFeeAmount;
+
+        private System.Windows.Forms.Label lblPlanNumber;
+
+        private System.Windows.Forms.TextBox txtPlanNumber;
 
 
         private System.Windows.Forms.Label lblDueDate;
