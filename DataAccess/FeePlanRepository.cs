@@ -126,15 +126,32 @@ namespace SchoolSystem.DataAccess
                     FROM FeePlans fp
                     INNER JOIN Classes c ON c.ClassID = fp.ClassID
                     WHERE fp.ClassID = @ClassID
-                      AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                      AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) IN (N'رسوم تسجيل', N'رسوم التسجيل', N'Registration Fee')
+                      AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') =
+                          REPLACE(@AcademicYear, N'-', N'/')
+                      AND
+                      (
+                          LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) IN
+                          (
+                              N'رسوم تسجيل',
+                              N'رسوم التسجيل',
+                              N'Registration Fee'
+                          )
+                          OR LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) LIKE N'%تسجيل%'
+                      )
                       AND EXISTS
                       (
                           SELECT 1
                           FROM Students s
                           WHERE s.StudentID = @StudentID
                       )
-                    ORDER BY fp.FeePlanID";
+                    ORDER BY
+                        CASE
+                            WHEN LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) = N'رسوم تسجيل' THEN 0
+                            WHEN LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) = N'رسوم التسجيل' THEN 1
+                            WHEN LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) = N'Registration Fee' THEN 2
+                            ELSE 3
+                        END,
+                        fp.FeePlanID";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
