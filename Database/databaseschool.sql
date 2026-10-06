@@ -17,7 +17,6 @@ AS
 BEGIN
     DECLARE @result NVARCHAR(20);
     SELECT TOP 1 @result = AcademicYear FROM dbo.AcademicYearCurrent WHERE IsCurrent = 1;
-    IF @result IS NULL SET @result = N'2026/2027'; -- fallback
     RETURN @result;
 END;
 
