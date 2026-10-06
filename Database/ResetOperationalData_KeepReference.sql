@@ -4,7 +4,7 @@
     This script removes operational/test data while KEEPING reference/setup data:
       - Academic years/current academic-year history
       - Academic terms
-      - Stages/classes/sections
+      - Stages/classes (academic structure required by subjects)
       - Subjects and class-subject mappings
       - Rooms
       - Users, roles, permissions and their assignments
@@ -57,6 +57,7 @@ BEGIN TRY
     IF OBJECT_ID(N'dbo.Fees', N'U') IS NOT NULL DELETE FROM dbo.Fees;
     IF OBJECT_ID(N'dbo.StudentFees', N'U') IS NOT NULL DELETE FROM dbo.StudentFees;
     IF OBJECT_ID(N'dbo.FeePlans', N'U') IS NOT NULL DELETE FROM dbo.FeePlans;
+    IF OBJECT_ID(N'dbo.SchoolSections', N'U') IS NOT NULL DELETE FROM dbo.SchoolSections;
 
     IF OBJECT_ID(N'dbo.StudentTransport', N'U') IS NOT NULL DELETE FROM dbo.StudentTransport;
     IF OBJECT_ID(N'dbo.StudentTransportAssignments', N'U') IS NOT NULL DELETE FROM dbo.StudentTransportAssignments;
@@ -113,6 +114,7 @@ BEGIN TRY
         (N'Fees'),
         (N'StudentFees'),
         (N'FeePlans'),
+        (N'SchoolSections'),
         (N'Vouchers'),
         (N'Receipts'),
         (N'Expenses'),
