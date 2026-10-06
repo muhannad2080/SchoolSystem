@@ -398,6 +398,7 @@ namespace SchoolSystem.DataAccess
                                     UPDATE FeePlans
                                     SET Amount = @TotalAmount,
                                         DueDate = @DueDate,
+                                        Notes = @Notes,
                                         UpdatedAt = GETDATE()
                                     WHERE ClassID = @ClassID
                                       AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
@@ -431,6 +432,8 @@ namespace SchoolSystem.DataAccess
                                 END
                                 ELSE
                                 BEGIN
+                                    DECLARE @CreatedTotalPlanID INT;
+
                                     INSERT INTO FeePlans
                                     (
                                         AcademicYear,
@@ -451,6 +454,54 @@ namespace SchoolSystem.DataAccess
                                         1,
                                         @Notes
                                     );
+
+                                    SET @CreatedTotalPlanID = CONVERT(INT, SCOPE_IDENTITY());
+
+                                    INSERT INTO Fees
+                                    (
+                                        StudentID, FeePlanID, AcademicYear, FeeType,
+                                        TotalAmount, DiscountAmount, NetAmount,
+                                        PaidAmount, RemainingAmount, DueDate,
+                                        PaymentDate, PaymentMethod, ReceiptNumber,
+                                        Status, Notes
+                                    )
+                                    SELECT DISTINCT
+                                        source.StudentID,
+                                        @CreatedTotalPlanID,
+                                        @AcademicYear,
+                                        N'الرسوم الكلية',
+                                        @TotalAmount,
+                                        0,
+                                        @TotalAmount,
+                                        0,
+                                        @TotalAmount,
+                                        @DueDate,
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        N'غير مسدد',
+                                        @Notes
+                                    FROM
+                                    (
+                                        SELECT sc.StudentID
+                                        FROM StudentClasses sc
+                                        INNER JOIN Enrollments e ON e.StudentID = sc.StudentID
+                                           AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') =
+                                               REPLACE(@AcademicYear, N'-', N'/')
+                                           AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN
+                                               (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
+                                        WHERE sc.ClassID = @ClassID
+                                          AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') =
+                                              REPLACE(@AcademicYear, N'-', N'/')
+                                        UNION
+                                        SELECT e.StudentID
+                                        FROM Enrollments e
+                                        WHERE e.ClassID = @ClassID
+                                          AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') =
+                                              REPLACE(@AcademicYear, N'-', N'/')
+                                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN
+                                              (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
+                                    ) source;
                                 END";
 
                             using (SqlCommand syncTotal =
@@ -645,12 +696,34 @@ namespace SchoolSystem.DataAccess
                                 amount,
                                 plan.DueDate,
                                 plan.Notes);
+
+                            EnsureStudentFeesForPlan(
+                                con,
+                                transaction,
+                                child.Item1,
+                                plan.ClassID,
+                                plan.AcademicYear,
+                                child.Item2,
+                                amount,
+                                plan.DueDate,
+                                plan.Notes);
                         }
 
                         UpdatePlanAmountAndUnpaidFees(
                             con,
                             transaction,
                             totalPlanId,
+                            plan.Amount,
+                            plan.DueDate,
+                            plan.Notes);
+
+                        EnsureStudentFeesForPlan(
+                            con,
+                            transaction,
+                            totalPlanId,
+                            plan.ClassID,
+                            plan.AcademicYear,
+                            "الرسوم الكلية",
                             plan.Amount,
                             plan.DueDate,
                             plan.Notes);
