@@ -928,9 +928,9 @@ namespace SchoolSystem.UI.Students
 
                     await LoadDataAsync();
 
-                    DataRefreshNotifier.Notify("ClassAssignment", this);
-                    DataRefreshNotifier.Notify("Students", this);
-                    DataRefreshNotifier.Notify("Fees", this);
+                    DataRefreshNotifier.Notify("All", this);
+                    DataRefreshNotifier.Notify("All", this);
+                    DataRefreshNotifier.Notify("All", this);
                 }
                 else
                 {
@@ -996,9 +996,9 @@ namespace SchoolSystem.UI.Students
 
                 await LoadDataAsync();
 
-                DataRefreshNotifier.Notify("ClassAssignment", this);
-                DataRefreshNotifier.Notify("Students", this);
-                DataRefreshNotifier.Notify("Fees", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
             }
             catch (Exception ex)
             {
@@ -1135,9 +1135,9 @@ namespace SchoolSystem.UI.Students
 
                 await LoadDataAsync();
 
-                DataRefreshNotifier.Notify("ClassAssignment", this);
-                DataRefreshNotifier.Notify("Students", this);
-                DataRefreshNotifier.Notify("Fees", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
             }
             catch (Exception ex)
             {
