@@ -743,6 +743,7 @@ namespace SchoolSystem.UI
                     plan.FeeType);
                 DataRefreshNotifier.Notify("FeePlans", this);
                 DataRefreshNotifier.Notify("Fees", this);
+                DataRefreshNotifier.Notify("Enrollment", this);
             }
 
             catch (Exception ex)
@@ -994,6 +995,8 @@ namespace SchoolSystem.UI
 
                 await LoadFeePlansAsync();
                 DataRefreshNotifier.Notify("FeePlans", this);
+                DataRefreshNotifier.Notify("Fees", this);
+                DataRefreshNotifier.Notify("Enrollment", this);
                 ClearInputs();
             }
 
