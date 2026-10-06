@@ -8,12 +8,16 @@ namespace SchoolSystem.Helpers
 
         public static void Notify(string scope, object source = null)
         {
-            if (string.IsNullOrWhiteSpace(scope))
-                scope = "All";
+            // أي تغيير ناجح في بيانات النظام يجب أن ينعكس على الواجهات المفتوحة.
+            // الاحتفاظ بالـscope كتشخيص فقط، مع إرسال حدث عالمي واحد لتجنب اختلاف
+            // قوائم الاعتماد بين الشاشات.
+            string normalizedScope = string.IsNullOrWhiteSpace(scope)
+                ? "All"
+                : scope.Trim();
 
             DataChanged?.Invoke(
                 source,
-                new DataRefreshEventArgs(scope.Trim()));
+                new DataRefreshEventArgs("All", normalizedScope));
         }
 
         public static bool IsRelated(DataRefreshEventArgs eventArgs, string scope)
@@ -28,11 +32,13 @@ namespace SchoolSystem.Helpers
 
     public sealed class DataRefreshEventArgs : EventArgs
     {
-        public DataRefreshEventArgs(string scope)
+        public DataRefreshEventArgs(string scope, string originScope = null)
         {
-            Scope = scope;
+            Scope = string.IsNullOrWhiteSpace(scope) ? "All" : scope.Trim();
+            OriginScope = string.IsNullOrWhiteSpace(originScope) ? Scope : originScope.Trim();
         }
 
         public string Scope { get; private set; }
+        public string OriginScope { get; private set; }
     }
 }
