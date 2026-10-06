@@ -380,222 +380,551 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                const string selectSql = @"
-                    SELECT FeePlanID, Amount
-                    FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
-                    WHERE ClassID = @ClassID
-                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                      AND LTRIM(RTRIM(ISNULL(FeeType, N''))) NOT IN (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                    ORDER BY FeePlanID;";
-
-
                 con.Open();
 
-                using (SqlTransaction transaction = con.BeginTransaction(IsolationLevel.Serializable))
+                using (SqlTransaction transaction =
+                    con.BeginTransaction(IsolationLevel.Serializable))
                 {
-                    var plans = new List<Tuple<int, decimal>>();
-                    using (SqlCommand select = new SqlCommand(selectSql, con, transaction))
+                    try
                     {
+                        int totalPlanId = EnsureTotalPlan(
+                            con,
+                            transaction,
+                            plan);
 
-                        select.Parameters.AddWithValue("@ClassID", plan.ClassID);
+                        List<Tuple<int, string, decimal>> childPlans =
+                            LoadChildPlans(
+                                con,
+                                transaction,
+                                plan.ClassID,
+                                plan.AcademicYear);
 
-                        select.Parameters.AddWithValue("@AcademicYear", plan.AcademicYear ?? string.Empty);
-
-                        using (SqlDataReader reader = select.ExecuteReader())
+                        string[] defaultTypes =
                         {
-
-                            while (reader.Read())
-                            {
-                                decimal amount = reader["Amount"] == DBNull.Value ? 0m : Convert.ToDecimal(reader["Amount"]);
-                                if (amount > 0m)
-                                    plans.Add(Tuple.Create(Convert.ToInt32(reader["FeePlanID"]), amount));
-                            }
-                        }
-                    }
-
-                    if (plans.Count == 0)
-                    {
-                        const string insertTotalPlanSql = @"
-                            IF NOT EXISTS
-                            (
-                                SELECT 1 FROM FeePlans
-                                WHERE ClassID = @ClassID
-                                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                                  AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                            )
-                            BEGIN
-                                INSERT INTO FeePlans (AcademicYear, ClassID, FeeType, Amount, DueDate, IsRequired, Notes)
-                                VALUES (@AcademicYear, @ClassID, N'الرسوم الكلية', @Amount, @DueDate, 1, @Notes);
-                            END";
-
-                        using (SqlCommand insert = new SqlCommand(insertTotalPlanSql, con, transaction))
-                        {
-                            insert.Parameters.AddWithValue("@ClassID", plan.ClassID);
-                            insert.Parameters.AddWithValue("@AcademicYear", plan.AcademicYear ?? string.Empty);
-                            insert.Parameters.AddWithValue("@Amount", plan.Amount);
-                            insert.Parameters.AddWithValue("@DueDate", plan.DueDate.Date);
-                            insert.Parameters.AddWithValue("@Notes", string.IsNullOrWhiteSpace(plan.Notes) ? (object)DBNull.Value : plan.Notes);
-                            insert.ExecuteNonQuery();
-                        }
-
-                        string[] childTypes = new[]
-                        {
-                            "رسوم دراسية", "رسوم كتب", "رسوم زي مدرسي",
-                            "رسوم مواصلات", "رسوم امتحانات", "رسوم أنشطة", "رسوم تسجيل"
+                            "رسوم تسجيل",
+                            "رسوم دراسية",
+                            "رسوم كتب",
+                            "رسوم زي مدرسي",
+                            "رسوم مواصلات",
+                            "رسوم امتحانات",
+                            "رسوم أنشطة",
+                            "أخرى"
                         };
 
-                        // أوزان منطقية تقريبية تعكس الأهمية النسبية لكل نوع.
-                        decimal[] weights = new[]
+                        if (childPlans.Count == 0)
                         {
-                            40m, 12m, 8m, 8m, 12m, 5m, 15m
-                        };
-
-                        decimal weightSum = 0m;
-                        for (int i = 0; i < weights.Length; i++)
-                            weightSum += weights[i];
-
-                        decimal childAllocated = 0m;
-                        int created = 0;
-
-                        for (int i = 0; i < childTypes.Length; i++)
-                        {
-                            string feeType = childTypes[i];
-                            decimal amt = i == childTypes.Length - 1
-                                ? plan.Amount - childAllocated
-                                : Math.Round(plan.Amount * weights[i] / weightSum, 2, MidpointRounding.AwayFromZero);
-                            if (amt < 0m) amt = 0m;
-                            childAllocated += amt;
-
-                            const string insertChildSql = @"
-                                IF NOT EXISTS
-                                (
-                                    SELECT 1 FROM FeePlans
-                                    WHERE ClassID = @ClassID
-                                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                                      AND FeeType = @FeeType
-                                )
-                                BEGIN
-                                    INSERT INTO FeePlans (AcademicYear, ClassID, FeeType, Amount, DueDate, IsRequired, Notes)
-                                    VALUES (@AcademicYear, @ClassID, @FeeType, @Amount, @DueDate, 1, @Notes);
-                                    SELECT 1;
-                                END
-                                ELSE
-                                    SELECT 0;";
-
-                            using (SqlCommand insertChild = new SqlCommand(insertChildSql, con, transaction))
-                            {
-                                insertChild.Parameters.AddWithValue("@ClassID", plan.ClassID);
-                                insertChild.Parameters.AddWithValue("@AcademicYear", plan.AcademicYear ?? string.Empty);
-                                insertChild.Parameters.AddWithValue("@FeeType", feeType);
-                                insertChild.Parameters.AddWithValue("@Amount", amt);
-                                insertChild.Parameters.AddWithValue("@DueDate", plan.DueDate.Date);
-                                insertChild.Parameters.AddWithValue("@Notes", string.IsNullOrWhiteSpace(plan.Notes) ? (object)DBNull.Value : plan.Notes);
-                                object r = insertChild.ExecuteScalar();
-                                if (r != null && r != DBNull.Value && Convert.ToInt32(r) == 1)
-                                    created++;
-                            }
+                            childPlans =
+                                CreateDefaultChildPlans(
+                                    con,
+                                    transaction,
+                                    plan,
+                                    defaultTypes);
                         }
+
+                        if (childPlans.Count == 0)
+                            throw new InvalidOperationException(
+                                "لا توجد أنواع رسوم فرعية قابلة للتوزيع للصف والعام المحددين.");
+
+                        decimal oldChildTotal = 0m;
+
+                        foreach (Tuple<int, string, decimal> child in childPlans)
+                            oldChildTotal += Math.Max(0m, child.Item3);
+
+                        decimal[] weights =
+                            GetDefaultDistributionWeights(
+                                childPlans.Count);
+
+                        decimal weightTotal = 0m;
+
+                        foreach (decimal weight in weights)
+                            weightTotal += weight;
+
+                        if (weightTotal <= 0m)
+                            throw new InvalidOperationException(
+                                "تعذر تحديد أوزان توزيع الرسوم.");
+
+                        decimal allocated = 0m;
+
+                        for (int i = 0; i < childPlans.Count; i++)
+                        {
+                            Tuple<int, string, decimal> child =
+                                childPlans[i];
+
+                            decimal ratio =
+                                oldChildTotal > 0m
+                                    ? Math.Max(0m, child.Item3) / oldChildTotal
+                                    : weights[i] / weightTotal;
+
+                            decimal amount =
+                                i == childPlans.Count - 1
+                                    ? plan.Amount - allocated
+                                    : Math.Round(
+                                        plan.Amount * ratio,
+                                        2,
+                                        MidpointRounding.AwayFromZero);
+
+                            if (amount < 0m)
+                                amount = 0m;
+
+                            allocated += amount;
+
+                            UpdatePlanAmountAndUnpaidFees(
+                                con,
+                                transaction,
+                                child.Item1,
+                                amount,
+                                plan.DueDate,
+                                plan.Notes);
+                        }
+
+                        UpdatePlanAmountAndUnpaidFees(
+                            con,
+                            transaction,
+                            totalPlanId,
+                            plan.Amount,
+                            plan.DueDate,
+                            plan.Notes);
 
                         transaction.Commit();
-                        return created;
+                        return childPlans.Count;
                     }
-
-                    const string paidSql = @"
-                        SELECT COUNT(1)
-                        FROM Fees f
-                        INNER JOIN FeePlans fp ON fp.FeePlanID = f.FeePlanID
-                        WHERE fp.FeePlanID = @FeePlanID AND ISNULL(f.PaidAmount, 0) > 0;";
-
-                    decimal baseTotal = 0m;
-
-                    for (int i = 0; i < plans.Count; i++)
-                        baseTotal += plans[i].Item2;
-
-
-                    if (baseTotal <= 0m)
-
-                        throw new InvalidOperationException("لا يمكن توزيع المبلغ لأن أنواع الرسوم الموجودة لا تحتوي على مبالغ.");
-
-                    decimal allocated = 0m;
-
-                    for (int i = 0; i < plans.Count; i++)
+                    catch
                     {
-                        int feePlanId = plans[i].Item1;
-                        using (SqlCommand paid = new SqlCommand(paidSql, con, transaction))
-                        {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
 
-                            paid.Parameters.AddWithValue("@FeePlanID", feePlanId);
+        // تحديث الرسوم الكلية ثم توزيعها على بنود الصف نفسه فقط.
+        public int UpdateTotalFeePlanAndDistribute(FeePlan plan)
+        {
+            return DistributeTotalFee(plan);
+        }
 
-                            if (Convert.ToInt32(paid.ExecuteScalar()) > 0)
+        // تعديل بند فرعي ثم إعادة احتساب الرسوم الكلية من مجموع البنود.
+        public bool UpdateChildFeePlanAndRecalculateTotal(FeePlan plan)
+        {
+            if (plan == null || plan.FeePlanID <= 0)
+                throw new ArgumentException("خطة الرسوم غير صالحة.", "plan");
 
-                                throw new InvalidOperationException("لا يمكن إعادة توزيع رسوم الصف لأن أحد أنواع الرسوم يحتوي على سداد سابق.");
-                        }
+            using (SqlConnection con = DbConnection.GetConnection())
+            {
+                con.Open();
 
-                        decimal newAmount = i == plans.Count - 1
-                            ? plan.Amount - allocated
-                            : Math.Round(plan.Amount * plans[i].Item2 / baseTotal, 2, MidpointRounding.AwayFromZero);
-                        if (newAmount < 0m)
-                            newAmount = 0m;
-                        allocated += newAmount;
-
-                        const string updateSql = @"
+                using (SqlTransaction transaction =
+                    con.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    try
+                    {
+                        const string updateChildSql = @"
                             UPDATE FeePlans
                             SET Amount = @Amount,
                                 DueDate = @DueDate,
+                                IsRequired = @IsRequired,
                                 Notes = @Notes
-                            WHERE FeePlanID = @FeePlanID;
+                            WHERE FeePlanID = @FeePlanID
+                              AND ClassID = @ClassID
+                              AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                                  REPLACE(@AcademicYear, N'-', N'/')
+                              AND LTRIM(RTRIM(ISNULL(FeeType, N''))) NOT IN
+                                  (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');";
 
-                            UPDATE f SET
-                                TotalAmount = @Amount,
-                                NetAmount = CASE WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0 ELSE @Amount - ISNULL(f.DiscountAmount, 0) END,
-                                RemainingAmount = CASE WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0 ELSE @Amount - ISNULL(f.DiscountAmount, 0) - ISNULL(f.PaidAmount, 0) END,
-                                DueDate = @DueDate,
-                                UpdatedAt = GETDATE()
-                            FROM Fees f
-                            WHERE f.FeePlanID = @FeePlanID AND ISNULL(f.PaidAmount, 0) = 0;";
-
-                        using (SqlCommand update = new SqlCommand(updateSql, con, transaction))
+                        using (SqlCommand updateChild =
+                            new SqlCommand(
+                                updateChildSql,
+                                con,
+                                transaction))
                         {
+                            AddParameters(updateChild, plan);
+                            updateChild.Parameters.AddWithValue(
+                                "@FeePlanID",
+                                plan.FeePlanID);
 
-                            update.Parameters.AddWithValue("@FeePlanID", feePlanId);
-
-                            update.Parameters.AddWithValue("@Amount", newAmount);
-
-                            update.Parameters.AddWithValue("@DueDate", plan.DueDate.Date);
-
-                            update.Parameters.AddWithValue("@Notes", string.IsNullOrWhiteSpace(plan.Notes) ? (object)DBNull.Value : plan.Notes);
-
-                            update.ExecuteNonQuery();
+                            if (updateChild.ExecuteNonQuery() == 0)
+                                return false;
                         }
+
+                        UpdatePlanAmountAndUnpaidFees(
+                            con,
+                            transaction,
+                            plan.FeePlanID,
+                            plan.Amount,
+                            plan.DueDate,
+                            plan.Notes);
+
+                        List<Tuple<int, string, decimal>> childPlans =
+                            LoadChildPlans(
+                                con,
+                                transaction,
+                                plan.ClassID,
+                                plan.AcademicYear);
+
+                        decimal totalAmount = 0m;
+
+                        foreach (Tuple<int, string, decimal> child in childPlans)
+                            totalAmount += Math.Max(0m, child.Item3);
+
+                        int totalPlanId =
+                            EnsureTotalPlan(
+                                con,
+                                transaction,
+                                new FeePlan
+                                {
+                                    AcademicYear = plan.AcademicYear,
+                                    ClassID = plan.ClassID,
+                                    FeeType = "الرسوم الكلية",
+                                    Amount = totalAmount,
+                                    DueDate = plan.DueDate,
+                                    IsRequired = true,
+                                    Notes = plan.Notes
+                                });
+
+                        UpdatePlanAmountAndUnpaidFees(
+                            con,
+                            transaction,
+                            totalPlanId,
+                            totalAmount,
+                            plan.DueDate,
+                            plan.Notes);
+
+                        transaction.Commit();
+                        return true;
                     }
-
-                    const string insertTotalSql = @"
-                        IF NOT EXISTS
-                        (
-                            SELECT 1 FROM FeePlans
-                            WHERE ClassID = @ClassID
-                              AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                              AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                        )
-                        BEGIN
-                            INSERT INTO FeePlans (AcademicYear, ClassID, FeeType, Amount, DueDate, IsRequired, Notes)
-                            VALUES (@AcademicYear, @ClassID, N'الرسوم الكلية', @Amount, @DueDate, 1, @Notes);
-                        END";
-
-                    using (SqlCommand insertTotal = new SqlCommand(insertTotalSql, con, transaction))
+                    catch
                     {
-                        insertTotal.Parameters.AddWithValue("@ClassID", plan.ClassID);
-                        insertTotal.Parameters.AddWithValue("@AcademicYear", plan.AcademicYear ?? string.Empty);
-                        insertTotal.Parameters.AddWithValue("@Amount", plan.Amount);
-                        insertTotal.Parameters.AddWithValue("@DueDate", plan.DueDate.Date);
-                        insertTotal.Parameters.AddWithValue("@Notes", string.IsNullOrWhiteSpace(plan.Notes) ? (object)DBNull.Value : plan.Notes);
-                        insertTotal.ExecuteNonQuery();
+                        transaction.Rollback();
+                        throw;
                     }
-
-                    transaction.Commit();
-
-                    return plans.Count;
                 }
+            }
+        }
+
+        private int EnsureTotalPlan(
+            SqlConnection con,
+            SqlTransaction transaction,
+            FeePlan plan)
+        {
+            const string findSql = @"
+                SELECT TOP (1) FeePlanID
+                FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
+                WHERE ClassID = @ClassID
+                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                      REPLACE(@AcademicYear, N'-', N'/')
+                  AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
+                      (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                ORDER BY CASE
+                    WHEN LTRIM(RTRIM(ISNULL(FeeType, N''))) = N'الرسوم الكلية' THEN 0
+                    WHEN LTRIM(RTRIM(ISNULL(FeeType, N''))) = N'رسوم كلية' THEN 1
+                    ELSE 2
+                END, FeePlanID;";
+
+            int existingId = 0;
+
+            using (SqlCommand find =
+                new SqlCommand(
+                    findSql,
+                    con,
+                    transaction))
+            {
+                find.Parameters.AddWithValue("@ClassID", plan.ClassID);
+                find.Parameters.AddWithValue(
+                    "@AcademicYear",
+                    (plan.AcademicYear ?? string.Empty).Trim());
+
+                object value = find.ExecuteScalar();
+
+                if (value != null && value != DBNull.Value)
+                    existingId = Convert.ToInt32(value);
+            }
+
+            if (existingId > 0)
+            {
+                const string updateSql = @"
+                    UPDATE FeePlans
+                    SET FeeType = N'الرسوم الكلية',
+                        Amount = @Amount,
+                        DueDate = @DueDate,
+                        IsRequired = @IsRequired,
+                        Notes = @Notes
+                    WHERE FeePlanID = @FeePlanID;";
+
+                using (SqlCommand update =
+                    new SqlCommand(
+                        updateSql,
+                        con,
+                        transaction))
+                {
+                    update.Parameters.AddWithValue("@FeePlanID", existingId);
+                    update.Parameters.AddWithValue("@Amount", plan.Amount);
+                    update.Parameters.AddWithValue("@DueDate", plan.DueDate.Date);
+                    update.Parameters.AddWithValue("@IsRequired", plan.IsRequired);
+                    update.Parameters.AddWithValue(
+                        "@Notes",
+                        string.IsNullOrWhiteSpace(plan.Notes)
+                            ? (object)DBNull.Value
+                            : plan.Notes);
+
+                    update.ExecuteNonQuery();
+                }
+
+                return existingId;
+            }
+
+            const string insertSql = @"
+                INSERT INTO FeePlans
+                (
+                    AcademicYear,
+                    ClassID,
+                    FeeType,
+                    Amount,
+                    DueDate,
+                    IsRequired,
+                    Notes
+                )
+                VALUES
+                (
+                    @AcademicYear,
+                    @ClassID,
+                    N'الرسوم الكلية',
+                    @Amount,
+                    @DueDate,
+                    @IsRequired,
+                    @Notes
+                );
+
+                SELECT CONVERT(INT, SCOPE_IDENTITY());";
+
+            using (SqlCommand insert =
+                new SqlCommand(
+                    insertSql,
+                    con,
+                    transaction))
+            {
+                insert.Parameters.AddWithValue(
+                    "@AcademicYear",
+                    (plan.AcademicYear ?? string.Empty).Trim());
+                insert.Parameters.AddWithValue("@ClassID", plan.ClassID);
+                insert.Parameters.AddWithValue("@Amount", plan.Amount);
+                insert.Parameters.AddWithValue("@DueDate", plan.DueDate.Date);
+                insert.Parameters.AddWithValue("@IsRequired", plan.IsRequired);
+                insert.Parameters.AddWithValue(
+                    "@Notes",
+                    string.IsNullOrWhiteSpace(plan.Notes)
+                        ? (object)DBNull.Value
+                        : plan.Notes);
+
+                return Convert.ToInt32(insert.ExecuteScalar());
+            }
+        }
+
+        private List<Tuple<int, string, decimal>> LoadChildPlans(
+            SqlConnection con,
+            SqlTransaction transaction,
+            int classId,
+            string academicYear)
+        {
+            const string sql = @"
+                SELECT
+                    FeePlanID,
+                    LTRIM(RTRIM(FeeType)) AS FeeType,
+                    ISNULL(Amount, 0) AS Amount
+                FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
+                WHERE ClassID = @ClassID
+                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                      REPLACE(@AcademicYear, N'-', N'/')
+                  AND NULLIF(LTRIM(RTRIM(FeeType)), N'') IS NOT NULL
+                  AND LTRIM(RTRIM(FeeType)) NOT IN
+                      (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                ORDER BY
+                    CASE LTRIM(RTRIM(FeeType))
+                        WHEN N'رسوم تسجيل' THEN 1
+                        WHEN N'رسوم دراسية' THEN 2
+                        WHEN N'رسوم كتب' THEN 3
+                        WHEN N'رسوم زي مدرسي' THEN 4
+                        WHEN N'رسوم مواصلات' THEN 5
+                        WHEN N'رسوم امتحانات' THEN 6
+                        WHEN N'رسوم أنشطة' THEN 7
+                        WHEN N'أخرى' THEN 8
+                        ELSE 99
+                    END,
+                    FeePlanID;";
+
+            var result = new List<Tuple<int, string, decimal>>();
+
+            using (SqlCommand command =
+                new SqlCommand(
+                    sql,
+                    con,
+                    transaction))
+            {
+                command.Parameters.AddWithValue("@ClassID", classId);
+                command.Parameters.AddWithValue(
+                    "@AcademicYear",
+                    (academicYear ?? string.Empty).Trim());
+
+                using (SqlDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(
+                            Tuple.Create(
+                                Convert.ToInt32(reader["FeePlanID"]),
+                                Convert.ToString(reader["FeeType"]),
+                                reader["Amount"] == DBNull.Value
+                                    ? 0m
+                                    : Convert.ToDecimal(reader["Amount"])));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private List<Tuple<int, string, decimal>> CreateDefaultChildPlans(
+            SqlConnection con,
+            SqlTransaction transaction,
+            FeePlan plan,
+            string[] types)
+        {
+            decimal[] weights =
+            {
+                15m, 40m, 10m, 8m, 8m, 10m, 4m, 5m
+            };
+
+            var created = new List<Tuple<int, string, decimal>>();
+
+            for (int i = 0; i < types.Length; i++)
+            {
+                const string sql = @"
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
+                        WHERE ClassID = @ClassID
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                              REPLACE(@AcademicYear, N'-', N'/')
+                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = @FeeType
+                    )
+                    BEGIN
+                        INSERT INTO FeePlans
+                        (
+                            AcademicYear,
+                            ClassID,
+                            FeeType,
+                            Amount,
+                            DueDate,
+                            IsRequired,
+                            Notes
+                        )
+                        VALUES
+                        (
+                            @AcademicYear,
+                            @ClassID,
+                            @FeeType,
+                            0,
+                            @DueDate,
+                            1,
+                            @Notes
+                        );
+                    END";
+
+                using (SqlCommand command =
+                    new SqlCommand(
+                        sql,
+                        con,
+                        transaction))
+                {
+                    command.Parameters.AddWithValue(
+                        "@AcademicYear",
+                        (plan.AcademicYear ?? string.Empty).Trim());
+                    command.Parameters.AddWithValue("@ClassID", plan.ClassID);
+                    command.Parameters.AddWithValue("@FeeType", types[i]);
+                    command.Parameters.AddWithValue("@DueDate", plan.DueDate.Date);
+                    command.Parameters.AddWithValue(
+                        "@Notes",
+                        string.IsNullOrWhiteSpace(plan.Notes)
+                            ? (object)DBNull.Value
+                            : plan.Notes);
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            return LoadChildPlans(
+                con,
+                transaction,
+                plan.ClassID,
+                plan.AcademicYear);
+        }
+
+        private decimal[] GetDefaultDistributionWeights(int count)
+        {
+            decimal[] defaults =
+            {
+                15m, 40m, 10m, 8m, 8m, 10m, 4m, 5m
+            };
+
+            if (count == defaults.Length)
+                return defaults;
+
+            decimal[] result = new decimal[count];
+
+            for (int i = 0; i < count; i++)
+                result[i] = 1m;
+
+            return result;
+        }
+
+        private void UpdatePlanAmountAndUnpaidFees(
+            SqlConnection con,
+            SqlTransaction transaction,
+            int feePlanId,
+            decimal amount,
+            DateTime dueDate,
+            string notes)
+        {
+            const string sql = @"
+                UPDATE FeePlans
+                SET Amount = @Amount,
+                    DueDate = @DueDate,
+                    Notes = @Notes
+                WHERE FeePlanID = @FeePlanID;
+
+                UPDATE f
+                SET TotalAmount = @Amount,
+                    NetAmount =
+                        CASE
+                            WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
+                            ELSE @Amount - ISNULL(f.DiscountAmount, 0)
+                        END,
+                    RemainingAmount =
+                        CASE
+                            WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
+                            ELSE @Amount - ISNULL(f.DiscountAmount, 0) - ISNULL(f.PaidAmount, 0)
+                        END,
+                    DueDate = @DueDate,
+                    UpdatedAt = GETDATE()
+                FROM Fees f
+                WHERE f.FeePlanID = @FeePlanID
+                  AND ISNULL(f.PaidAmount, 0) = 0;";
+
+            using (SqlCommand command =
+                new SqlCommand(
+                    sql,
+                    con,
+                    transaction))
+            {
+                command.Parameters.AddWithValue("@FeePlanID", feePlanId);
+                command.Parameters.AddWithValue("@Amount", amount);
+                command.Parameters.AddWithValue("@DueDate", dueDate.Date);
+                command.Parameters.AddWithValue(
+                    "@Notes",
+                    string.IsNullOrWhiteSpace(notes)
+                        ? (object)DBNull.Value
+                        : notes);
+
+                command.ExecuteNonQuery();
             }
         }
 
