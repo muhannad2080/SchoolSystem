@@ -83,6 +83,185 @@ namespace SchoolSystem.UI
             SetFormMode(FormMode.View);
         }
 
+        private void ConfigureDesignPreviewTheme()
+        {
+            BackColor = UIHelper.BackgroundColor;
+            ForeColor = UIHelper.TextColor;
+            Font = new Font(UIHelper.FontFamily, UIHelper.BodyFontSize);
+            RightToLeft = RightToLeft.Yes;
+            RightToLeftLayout = true;
+
+            foreach (Panel panel in new[] { pnlRight, pnlSearch, pnlButtons })
+                panel.BackColor = UIHelper.SurfaceColor;
+
+            pnlRight.BackColor = UIHelper.BackgroundColor;
+            pnlSearch.BackColor = UIHelper.SurfaceColor;
+            pnlButtons.BackColor = UIHelper.SurfaceColor;
+
+            foreach (GroupBox groupBox in new[] { gbStudent, gbGuardian, gbAddress, gbPhoto })
+            {
+                groupBox.BackColor = UIHelper.SurfaceColor;
+                groupBox.ForeColor = UIHelper.TextColor;
+                groupBox.Font = new Font(
+                    UIHelper.FontFamily,
+                    UIHelper.SectionFontSize,
+                    FontStyle.Bold);
+            }
+
+            foreach (Label label in new Label[]
+            {
+                lblStudentNumber, lblFullName, lblGender, lblBirthDate,
+                lblBirthPlace, lblNationality, lblNationalId, lblPhone,
+                lblStatus, lblGuardianName, lblGuardianRelation,
+                lblGuardianPhone, lblGuardianEmail, lblGuardianJob,
+                lblGovernorate, lblDistrict, lblAddress, lblCount
+            })
+            {
+                label.ForeColor = UIHelper.TextColor;
+                label.Font = new Font(
+                    UIHelper.FontFamily,
+                    UIHelper.BodyFontSize,
+                    FontStyle.Bold);
+            }
+
+            foreach (TextBox textBox in new TextBox[]
+            {
+                txtStudentNumber, txtFullName, txtBirthPlace, txtNationality,
+                txtNationalId, txtPhone, txtGuardianName, txtGuardianRelation,
+                txtGuardianPhone, txtGuardianEmail, txtGuardianJob,
+                txtGovernorate, txtDistrict, txtAddress, txtSearch
+            })
+            {
+                textBox.BackColor = UIHelper.SurfaceColor;
+                textBox.ForeColor = UIHelper.TextColor;
+                textBox.BorderStyle = BorderStyle.FixedSingle;
+                textBox.Font = new Font(
+                    UIHelper.FontFamily,
+                    UIHelper.BodyFontSize);
+            }
+
+            foreach (ComboBox comboBox in new ComboBox[]
+            {
+                cmbGender, cmbStatus, cmbFilterClass, cmbFilterStatus
+            })
+            {
+                comboBox.BackColor = UIHelper.SurfaceColor;
+                comboBox.ForeColor = UIHelper.TextColor;
+                comboBox.Font = new Font(
+                    UIHelper.FontFamily,
+                    UIHelper.BodyFontSize);
+            }
+
+            dtpBirthDate.BackColor = UIHelper.SurfaceColor;
+            dtpBirthDate.ForeColor = UIHelper.TextColor;
+            dtpBirthDate.Font = new Font(
+                UIHelper.FontFamily,
+                UIHelper.BodyFontSize);
+            dtpBirthDate.CalendarFont = new Font(
+                UIHelper.FontFamily,
+                UIHelper.BodyFontSize);
+
+            dgvStudents.BackgroundColor = UIHelper.SurfaceColor;
+            dgvStudents.GridColor = UIHelper.BorderColor;
+            dgvStudents.EnableHeadersVisualStyles = false;
+            dgvStudents.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+            dgvStudents.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            dgvStudents.ColumnHeadersDefaultCellStyle.Font = new Font(
+                UIHelper.FontFamily,
+                UIHelper.BodyFontSize,
+                FontStyle.Bold);
+            dgvStudents.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+            dgvStudents.DefaultCellStyle.BackColor = UIHelper.SurfaceColor;
+            dgvStudents.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+            dgvStudents.DefaultCellStyle.SelectionBackColor =
+                Color.FromArgb(219, 234, 254);
+            dgvStudents.DefaultCellStyle.SelectionForeColor = UIHelper.TextColor;
+            dgvStudents.DefaultCellStyle.Font = new Font(
+                UIHelper.FontFamily,
+                UIHelper.BodyFontSize);
+            dgvStudents.AlternatingRowsDefaultCellStyle.BackColor =
+                UIHelper.AlternateRowColor;
+            dgvStudents.ColumnHeadersHeight = 42;
+            dgvStudents.RowTemplate.Height = 36;
+
+            ConfigurePreviewButton(
+                btnSearch,
+                UIHelper.InfoColor,
+                "مسح الفلاتر",
+                9.25F,
+                118);
+            ConfigurePreviewButton(
+                btnReload,
+                UIHelper.NeutralColor,
+                "تحديث البيانات",
+                9.25F,
+                136);
+
+            ConfigurePreviewButton(
+                btnClose, UIHelper.NeutralColor, "إغلاق", 9.5F, 105);
+            ConfigurePreviewButton(
+                btnStudentProfile, UIHelper.AccentColor, "ملف الطالب", 9.5F, 105);
+            ConfigurePreviewButton(
+                btnPrint, UIHelper.AccentColor, "طباعة البطاقة", 9.5F, 105);
+            ConfigurePreviewButton(
+                btnExportExcel, UIHelper.ExportColor, "تصدير Excel", 9.5F, 110);
+            ConfigurePreviewButton(
+                btnRefresh, UIHelper.NeutralColor, "تحديث القائمة", 9.5F, 105);
+            ConfigurePreviewButton(
+                btnCancel, UIHelper.NeutralColor, "إلغاء", 9.5F, 105);
+            ConfigurePreviewButton(
+                btnDelete, UIHelper.DangerColor, "أرشفة", 9.5F, 105);
+            ConfigurePreviewButton(
+                btnUpdate, UIHelper.AccentColor, "تعديل", 9.5F, 105);
+            ConfigurePreviewButton(
+                btnSave, UIHelper.SuccessColor, "حفظ", 9.5F, 105);
+            ConfigurePreviewButton(
+                btnAdd, UIHelper.SuccessColor, "إضافة طالب", 9.5F, 105);
+
+            btnChooseImage.BackColor = UIHelper.NeutralColor;
+            btnChooseImage.ForeColor = Color.White;
+            btnRemoveImage.BackColor = UIHelper.NeutralColor;
+            btnRemoveImage.ForeColor = Color.White;
+
+            pnlButtons.FlowDirection = FlowDirection.LeftToRight;
+            pnlButtons.WrapContents = false;
+            pnlButtons.AutoScroll = false;
+            pnlButtons.Padding = new Padding(8);
+            pnlButtons.RightToLeft = RightToLeft.No;
+            btnRefresh.Visible = true;
+        }
+
+        private static void ConfigurePreviewButton(
+            Button button,
+            Color backColor,
+            string text,
+            float fontSize,
+            int width)
+        {
+            button.Visible = true;
+            button.AutoSize = false;
+            button.Size = new Size(width, 40);
+            button.Margin = new Padding(3, 0, 3, 0);
+            button.Text = text;
+            button.Font = new Font(
+                UIHelper.FontFamily,
+                fontSize,
+                FontStyle.Bold);
+            button.ForeColor = Color.White;
+            button.BackColor = backColor;
+            button.FlatStyle = FlatStyle.Flat;
+            button.FlatAppearance.BorderSize = 0;
+            button.FlatAppearance.MouseOverBackColor = backColor;
+            button.FlatAppearance.MouseDownBackColor = backColor;
+            button.TextAlign = ContentAlignment.MiddleCenter;
+            button.Padding = new Padding(3, 0, 3, 0);
+            button.UseCompatibleTextRendering = true;
+            button.UseVisualStyleBackColor = false;
+            button.RightToLeft = RightToLeft.Yes;
+            button.Cursor = Cursors.Hand;
+        }
+
         private void ConfigureProfessionalLayout()
         {
             MinimumSize = new Size(1000, 700);
@@ -172,6 +351,7 @@ namespace SchoolSystem.UI
                 btnStudentProfile,
                 btnPrint,
                 btnExportExcel,
+                btnRefresh,
                 btnCancel,
                 btnDelete,
                 btnUpdate,
@@ -179,7 +359,7 @@ namespace SchoolSystem.UI
                 btnAdd
             };
 
-            btnRefresh.Visible = false;
+            btnRefresh.Visible = true;
 
             foreach (Button button in actionButtons)
             {
@@ -200,6 +380,7 @@ namespace SchoolSystem.UI
             btnStudentProfile.Text = "ملف الطالب";
             btnPrint.Text = "طباعة البطاقة";
             btnExportExcel.Text = "تصدير Excel";
+            btnRefresh.Text = "تحديث القائمة";
             btnCancel.Text = "إلغاء";
             btnDelete.Text = "أرشفة";
             btnUpdate.Text = "تعديل";
@@ -627,6 +808,7 @@ namespace SchoolSystem.UI
             _toolTip.SetToolTip(cmbFilterStatus, "تصفية الطلاب حسب الحالة.");
             _toolTip.SetToolTip(btnUpdate, "ينقل الطالب المحدد إلى وضع التعديل.");
             _toolTip.SetToolTip(btnDelete, "أرشفة الطالب وإخفاؤه من القائمة دون حذف سجله.");
+            _toolTip.SetToolTip(btnRefresh, "يعيد تحميل قائمة الطلاب من قاعدة البيانات.");
             _toolTip.SetToolTip(btnSearch, "يمسح البحث والفلاتر ويعرض جميع الطلاب.");
             _toolTip.SetToolTip(btnReload, "يعيد تحميل بيانات الطلاب من قاعدة البيانات.");
         }
@@ -697,6 +879,7 @@ namespace SchoolSystem.UI
             btnAdd.Enabled = canAdd;
             btnSave.Enabled = editable;
             btnCancel.Enabled = isAdd || isEdit;
+            btnRefresh.Enabled = mode == FormMode.View;
 
             btnSearch.Enabled = canSearch;
             txtSearch.Enabled = canSearch;
