@@ -573,6 +573,15 @@ namespace SchoolSystem.UI
                 FeePlan plan = GetPlanFromInputs();
                 int affectedPlans;
 
+                if (selectedFeePlanId > 0 &&
+                    !IsTotalFeeType(plan.FeeType))
+                {
+                    UIHelper.ShowWarning(
+                        "هذا النوع من الرسوم موجود مسبقًا لنفس الصف والعام. استخدم «تعديل» لتغيير المبلغ.");
+
+                    return;
+                }
+
                 if (IsTotalFeeType(plan.FeeType))
                 {
                     affectedPlans =
