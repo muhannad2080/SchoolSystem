@@ -33,6 +33,10 @@ namespace SchoolSystem.UI
             ApplyCustomStyles();
             InitializeEvents();
             PopulateComboBoxes();
+
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
             ConfigureDataGridViewStyling();
             GenerateNewEmployeeNumber();
 
@@ -98,6 +102,20 @@ namespace SchoolSystem.UI
             txtSearch.TextChanged += txtSearch_TextChanged;
 
             dataGridViewTeachers.CellClick += dataGridViewTeachers_CellClick;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                !DataRefreshNotifier.IsRelated(e, "Teachers") ||
+                IsDisposed)
+            {
+                return;
+            }
+
+            await LoadDataAsync();
         }
 
         // تعريف الدالة PopulateComboBoxes لتنفيذ العملية المرتبطة بها.
@@ -472,6 +490,7 @@ namespace SchoolSystem.UI
 
                 await LoadDataAsync();
                 ClearInputs();
+                DataRefreshNotifier.Notify("Teachers", this);
             }
 
             catch (Exception ex)
