@@ -79,6 +79,11 @@ BEGIN TRY
 
     IF OBJECT_ID(N'dbo.Expenses', N'U') IS NOT NULL DELETE FROM dbo.Expenses;
 
+    /* تقارير/Exports محفوظة كبيانات تشغيلية إن وُجدت في نسخة مخصصة من القاعدة. */
+    IF OBJECT_ID(N'dbo.ReportHistory', N'U') IS NOT NULL DELETE FROM dbo.ReportHistory;
+    IF OBJECT_ID(N'dbo.GeneratedReports', N'U') IS NOT NULL DELETE FROM dbo.GeneratedReports;
+    IF OBJECT_ID(N'dbo.ReportRuns', N'U') IS NOT NULL DELETE FROM dbo.ReportRuns;
+
     /* ================================================================
        1.5) Academic operational/master data to be re-entered dynamically
        ================================================================ */
@@ -184,7 +189,7 @@ BEGIN TRY
     /* ================================================================
        5) Verification:
           Operational records must be zero.
-          Reference records must still exist.
+          Preserved records are never deleted or reset.
        ================================================================ */
     DECLARE @RemainingOperational BIGINT = 0;
 
@@ -223,18 +228,13 @@ BEGIN TRY
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AnnualMigrationLog), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AnnualClosings), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.DatabaseBackupHistory), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AuditLogs), 0);
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AuditLogs), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.ReportHistory), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.GeneratedReports), 0)
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.ReportRuns), 0);
 
     IF @RemainingOperational <> 0
         THROW 52001, N'فشل تنظيف البيانات التشغيلية بالكامل.', 1;
-
-    IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.Subjects)
-        THROW 52002, N'لم تبقَ المواد الدراسية المرجعية كما هو متوقع.', 1;
-
-    IF OBJECT_ID(N'dbo.Rooms', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.Rooms)
-        THROW 52003, N'لم تبقَ القاعات المرجعية كما هو متوقع.', 1;
 
     IF OBJECT_ID(N'dbo.Users', N'U') IS NOT NULL
        AND NOT EXISTS (SELECT 1 FROM dbo.Users)
@@ -243,14 +243,6 @@ BEGIN TRY
     IF OBJECT_ID(N'dbo.Roles', N'U') IS NOT NULL
        AND NOT EXISTS (SELECT 1 FROM dbo.Roles)
         THROW 52006, N'لم تبقَ الأدوار والصلاحيات الأساسية.', 1;
-
-    IF OBJECT_ID(N'dbo.AcademicYears', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.AcademicYears)
-        THROW 52007, N'لم تبقَ السنوات الدراسية المرجعية.', 1;
-
-    IF OBJECT_ID(N'dbo.AcademicTerms', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.AcademicTerms)
-        THROW 52008, N'لم تبقَ الفصول الدراسية المرجعية.', 1;
 
     IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
        AND EXISTS
