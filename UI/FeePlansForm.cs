@@ -30,6 +30,11 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
+
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             Load += FeePlansForm_Load;
 
 
@@ -41,6 +46,22 @@ namespace SchoolSystem.UI
             cmbAcademicYear.SelectedIndexChanged += FeePlanFilter_Changed;
 
             cmbAcademicYear.TextChanged += FeePlanFilter_Changed;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "FeePlans") &&
+                !DataRefreshNotifier.IsRelated(e, "Classes"))
+                return;
+
+            await LoadClassesAsync();
+            await LoadFeePlansAsync();
         }
 
         // تعريف الدالة FeePlansForm_Load لتنفيذ العملية المرتبطة بها.
@@ -430,6 +451,7 @@ namespace SchoolSystem.UI
 
 
                 await LoadFeePlansAsync();
+                DataRefreshNotifier.Notify("FeePlans", this);
                 ClearInputs();
             }
 
@@ -481,6 +503,7 @@ namespace SchoolSystem.UI
 
 
                 await LoadFeePlansAsync();
+                DataRefreshNotifier.Notify("FeePlans", this);
                 ClearInputs();
             }
 
@@ -526,6 +549,7 @@ namespace SchoolSystem.UI
 
 
                 await LoadFeePlansAsync();
+                DataRefreshNotifier.Notify("FeePlans", this);
                 ClearInputs();
             }
 
