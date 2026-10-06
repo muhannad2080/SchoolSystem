@@ -33,6 +33,15 @@ namespace SchoolSystem.Services
             return userRepository.GetAllUsers();
         }
 
+        /// <summary>
+        /// مصدر الأدوار الوحيد لشاشة المستخدمين: جدول Roles في قاعدة البيانات.
+        /// </summary>
+        public DataTable GetActiveRoles()
+        {
+            CurrentUser.DemandAction("Users", "View", "ليس لديك صلاحية عرض أدوار المستخدمين.");
+            return userRepository.GetActiveRoles();
+        }
+
         // تعريف الدالة AddUser لتنفيذ العملية المرتبطة بها.
         public bool AddUser(User user, string password)
         {
