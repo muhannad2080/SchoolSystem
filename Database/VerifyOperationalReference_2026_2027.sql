@@ -58,7 +58,7 @@ GROUP BY c.GradeOrder, c.ClassName, t.TermOrder, t.TermName
 ORDER BY c.GradeOrder, t.TermOrder;
 
 SELECT
-    N'Users' AS TableName, COUNT(*) AS RowCount FROM dbo.Users
+    N'Users' AS TableName, COUNT(*) AS RecordCount FROM dbo.Users
 UNION ALL SELECT N'Roles', COUNT(*) AS RecordCount FROM dbo.Roles
 UNION ALL SELECT N'Permissions', COUNT(*) AS RecordCount FROM dbo.Permissions
 UNION ALL SELECT N'Rooms', COUNT(*) AS RecordCount FROM dbo.Rooms
@@ -70,6 +70,7 @@ UNION ALL SELECT N'Subjects', COUNT(*) AS RecordCount FROM dbo.Subjects
 UNION ALL SELECT N'ClassSubjects', COUNT(*) AS RecordCount FROM dbo.ClassSubjects
 UNION ALL SELECT N'ClassSubjectTerms', COUNT(*) AS RecordCount FROM dbo.ClassSubjectTerms
 UNION ALL SELECT N'SchoolSections', COUNT(*) AS RecordCount FROM dbo.SchoolSections
+UNION ALL SELECT N'FeeTypes', COUNT(*) AS RecordCount FROM dbo.FeeTypes
 UNION ALL SELECT N'Students', COUNT(*) AS RecordCount FROM dbo.Students
 UNION ALL SELECT N'Teachers', COUNT(*) AS RecordCount FROM dbo.Teachers
 UNION ALL SELECT N'Fees', COUNT(*) AS RecordCount FROM dbo.Fees
