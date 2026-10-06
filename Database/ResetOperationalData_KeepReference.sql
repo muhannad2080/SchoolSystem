@@ -1,11 +1,10 @@
 /*
     SchoolSystem - Production data reset
     ====================================
-    الهدف:
-      تنظيف قاعدة SchoolDB من كل البيانات التشغيلية/التجريبية مع الاحتفاظ
-      فقط بالبيانات المرجعية/الإعدادية التي طلبها المستخدم.
+    هذا السكربت يمسح كل البيانات التشغيلية/التجريبية ويُبقي فقط
+    بيانات المرجع المطلوبة للنظام.
 
-    الجداول المحتفظ بها:
+    يحتفظ بـ:
       Subjects
       AcademicYears
       AcademicTerms
@@ -20,31 +19,32 @@
       SchoolSettings
       SchemaMigrations
 
-    كل جدول dbo آخر يُعتبر تشغيليًا ويُفرغ بالكامل.
-    بذلك تُحذف:
-      الطلاب وملفاتهم وتسجيلاتهم وتوزيعهم وحضورهم ودرجاتهم ونقلهم،
-      المعلمون وعقودهم ورواتبهم وحضورهم،
-      الرسوم وخطط الرسوم والسندات والإيصالات،
-      المصروفات والمكتبة والحافلات والجدول الدراسي،
-      الإغلاقات السنوية وسجلات الترحيل والتدقيق ونسخ قاعدة البيانات
-      وأي جدول تشغيلي جديد أُضيف لاحقًا.
+    يمسح:
+      الطلاب وتسجيلاتهم وتوزيعهم ورسومهم ودرجاتهم وحضورهم ونقلهم
+      المعلمين وعقودهم ورواتبهم وحضورهم
+      خطط الرسوم والسندات والإيصالات والمصروفات
+      المكتبة والكتب والإعارات
+      الحافلات وخطوط النقل
+      الجدول الدراسي
+      الإغلاقات والترحيل وسجل التدقيق وسجل النسخ الاحتياطية
+      وأي جدول dbo آخر غير موجود في قائمة الاحتفاظ.
 
-    مهم:
-      1) خذ نسخة احتياطية قبل التنفيذ.
-      2) هذا السكربت لا يُنفَّذ تلقائيًا عند تشغيل البرنامج.
-      3) ملفات PDF/Excel/CSV التي تم تصديرها سابقًا خارج SQL Server
-         يجب حذفها من مجلدات التصدير يدويًا.
+    ملاحظة:
+      هذا السكربت لا يحتوي على GO حتى يعمل أيضًا عبر ADO.NET وأدوات
+      تنفيذ SQL التي لا تفهم GO.
+      لا تُدخل بيانات اختبارية إلى القاعدة.
 */
 
-IF DB_ID(N'SchoolDB') IS NULL
-    THROW 52000, N'قاعدة البيانات SchoolDB غير موجودة.', 1;
-GO
-
-USE [SchoolDB];
-GO
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
-GO
+
+IF DB_ID(N'SchoolDB') IS NULL
+BEGIN
+    RAISERROR(N'قاعدة البيانات SchoolDB غير موجودة.', 16, 1);
+    RETURN;
+END;
+
+USE [SchoolDB];
 
 BEGIN TRY
     BEGIN TRANSACTION;
@@ -72,23 +72,23 @@ BEGIN TRY
         (N'dbo', N'SchoolSettings'),
         (N'dbo', N'SchemaMigrations');
 
-    /* فك أي ربط قديم للمواد بصفوف سيتم حذفها.
-       المواد نفسها تبقى مرجعية، لكن لا يجوز أن تحتفظ بمعرّف صف محذوف. */
+    /* احفظ تعريف المواد فقط، وافصل أي ClassID قديم قبل حذف الصفوف. */
     IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
        AND COL_LENGTH(N'dbo.Subjects', N'ClassID') IS NOT NULL
     BEGIN
         UPDATE dbo.Subjects
-        SET ClassID = NULL;
-    END
+        SET ClassID = NULL
+        WHERE ClassID IS NOT NULL;
+    END;
 
     DECLARE @sql NVARCHAR(MAX);
     DECLARE @schema SYSNAME;
     DECLARE @table SYSNAME;
 
-    /* تعطيل FK داخل جداول المستخدم مؤقتًا لضمان تنظيف شامل. */
+    /* تعطيل قيود المستخدم مؤقتًا حتى يتم مسح كل البيانات التشغيلية. */
     DECLARE fk_disable_cursor CURSOR LOCAL FAST_FORWARD FOR
         SELECT SCHEMA_NAME(t.schema_id), t.name
-        FROM sys.tables t
+        FROM sys.tables AS t
         WHERE t.is_ms_shipped = 0;
 
     OPEN fk_disable_cursor;
@@ -102,20 +102,20 @@ BEGIN TRY
         EXEC sys.sp_executesql @sql;
 
         FETCH NEXT FROM fk_disable_cursor INTO @schema, @table;
-    END
+    END;
 
     CLOSE fk_disable_cursor;
     DEALLOCATE fk_disable_cursor;
 
-    /* تفريغ كل الجداول غير المحتفظ بها. */
+    /* امسح كل جدول غير موجود في قائمة الاحتفاظ. */
     DECLARE clear_cursor CURSOR LOCAL FAST_FORWARD FOR
         SELECT SCHEMA_NAME(t.schema_id), t.name
-        FROM sys.tables t
+        FROM sys.tables AS t
         WHERE t.is_ms_shipped = 0
           AND NOT EXISTS
           (
               SELECT 1
-              FROM @Keep k
+              FROM @Keep AS k
               WHERE k.SchemaName = SCHEMA_NAME(t.schema_id)
                 AND k.TableName = t.name
           );
@@ -130,22 +130,22 @@ BEGIN TRY
         EXEC sys.sp_executesql @sql;
 
         FETCH NEXT FROM clear_cursor INTO @schema, @table;
-    END
+    END;
 
     CLOSE clear_cursor;
     DEALLOCATE clear_cursor;
 
-    /* تصفير الهوية لكل جدول تم تنظيفه فقط. */
+    /* إعادة ترقيم جداول التشغيل من الصفر. */
     DECLARE identity_cursor CURSOR LOCAL FAST_FORWARD FOR
         SELECT SCHEMA_NAME(t.schema_id), t.name
-        FROM sys.tables t
-        INNER JOIN sys.identity_columns ic
+        FROM sys.tables AS t
+        INNER JOIN sys.identity_columns AS ic
             ON ic.object_id = t.object_id
         WHERE t.is_ms_shipped = 0
           AND NOT EXISTS
           (
               SELECT 1
-              FROM @Keep k
+              FROM @Keep AS k
               WHERE k.SchemaName = SCHEMA_NAME(t.schema_id)
                 AND k.TableName = t.name
           );
@@ -161,15 +161,15 @@ BEGIN TRY
         EXEC sys.sp_executesql @sql;
 
         FETCH NEXT FROM identity_cursor INTO @schema, @table;
-    END
+    END;
 
     CLOSE identity_cursor;
     DEALLOCATE identity_cursor;
 
-    /* إعادة تفعيل FK والتحقق منها. */
+    /* إعادة تفعيل القيود وفحصها فعليًا. */
     DECLARE fk_enable_cursor CURSOR LOCAL FAST_FORWARD FOR
         SELECT SCHEMA_NAME(t.schema_id), t.name
-        FROM sys.tables t
+        FROM sys.tables AS t
         WHERE t.is_ms_shipped = 0;
 
     OPEN fk_enable_cursor;
@@ -183,22 +183,23 @@ BEGIN TRY
         EXEC sys.sp_executesql @sql;
 
         FETCH NEXT FROM fk_enable_cursor INTO @schema, @table;
-    END
+    END;
 
     CLOSE fk_enable_cursor;
     DEALLOCATE fk_enable_cursor;
 
-    /* تحقق صارم: لا توجد أي صفوف في جدول غير محتفظ به. */
+    /* تحقق نهائي: كل الجداول التشغيلية يجب أن تكون فارغة. */
     DECLARE @RemainingOperational BIGINT = 0;
+    DECLARE @CountOut BIGINT;
 
     DECLARE verify_cursor CURSOR LOCAL FAST_FORWARD FOR
         SELECT SCHEMA_NAME(t.schema_id), t.name
-        FROM sys.tables t
+        FROM sys.tables AS t
         WHERE t.is_ms_shipped = 0
           AND NOT EXISTS
           (
               SELECT 1
-              FROM @Keep k
+              FROM @Keep AS k
               WHERE k.SchemaName = SCHEMA_NAME(t.schema_id)
                 AND k.TableName = t.name
           );
@@ -208,49 +209,74 @@ BEGIN TRY
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        SET @sql = N'SELECT @CountOut = COUNT_BIG(*) FROM ' +
-                   QUOTENAME(@schema) + N'.' + QUOTENAME(@table) + N';';
+        SET @CountOut = 0;
 
-        DECLARE @CountOut BIGINT = 0;
+        SET @sql = N'SELECT @p = COUNT_BIG(*) FROM ' +
+                   QUOTENAME(@schema) + N'.' + QUOTENAME(@table) + N';';
 
         EXEC sys.sp_executesql
             @sql,
-            N'@CountOut BIGINT OUTPUT',
-            @CountOut = @CountOut OUTPUT;
+            N'@p BIGINT OUTPUT',
+            @p = @CountOut OUTPUT;
 
-        SET @RemainingOperational += ISNULL(@CountOut, 0);
+        SET @RemainingOperational = @RemainingOperational + ISNULL(@CountOut, 0);
 
         FETCH NEXT FROM verify_cursor INTO @schema, @table;
-    END
+    END;
 
     CLOSE verify_cursor;
     DEALLOCATE verify_cursor;
 
     IF @RemainingOperational <> 0
-        THROW 52001, N'فشل تنظيف البيانات التشغيلية بالكامل.', 1;
+    BEGIN
+        RAISERROR(N'فشل تنظيف البيانات التشغيلية بالكامل.', 16, 1);
+    END;
 
-    /* تحقق من المرجعيات التي يجب أن تبقى. */
-    IF NOT EXISTS (SELECT 1 FROM dbo.Users)
-        THROW 52004, N'لم يبقَ أي مستخدم بعد التنظيف؛ تم إيقاف العملية حمايةً للدخول.', 1;
+    /* حماية حساب الدخول والصلاحيات والمرجع الأكاديمي. */
+    IF OBJECT_ID(N'dbo.Users', N'U') IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.Users)
+        RAISERROR(N'لم يبقَ أي مستخدم بعد التنظيف؛ تم إيقاف العملية حمايةً للدخول.', 16, 1);
 
-    IF NOT EXISTS (SELECT 1 FROM dbo.Roles)
-        THROW 52006, N'لم تبقَ الأدوار بعد التنظيف؛ تم إيقاف العملية حمايةً للصلاحيات.', 1;
+    IF OBJECT_ID(N'dbo.Roles', N'U') IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.Roles)
+        RAISERROR(N'لم تبقَ الأدوار بعد التنظيف؛ تم إيقاف العملية حمايةً للصلاحيات.', 16, 1);
 
-    IF NOT EXISTS (SELECT 1 FROM dbo.Permissions)
-        THROW 52005, N'لم تبقَ الصلاحيات بعد التنظيف؛ تم إيقاف العملية حمايةً لنظام الوصول.', 1;
+    IF OBJECT_ID(N'dbo.Permissions', N'U') IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.Permissions)
+        RAISERROR(N'لم تبقَ الصلاحيات بعد التنظيف؛ تم إيقاف العملية حمايةً لنظام الوصول.', 16, 1);
 
-    IF NOT EXISTS (SELECT 1 FROM dbo.AcademicYears)
-        THROW 52007, N'لم تبقَ السنوات الدراسية المرجعية.', 1;
+    IF OBJECT_ID(N'dbo.AcademicYears', N'U') IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.AcademicYears)
+        RAISERROR(N'لم تبقَ السنوات الدراسية المرجعية.', 16, 1);
 
-    IF NOT EXISTS (SELECT 1 FROM dbo.AcademicTerms)
-        THROW 52008, N'لم تبقَ الفصول الدراسية المرجعية.', 1;
+    IF OBJECT_ID(N'dbo.AcademicTerms', N'U') IS NULL OR NOT EXISTS (SELECT 1 FROM dbo.AcademicTerms)
+        RAISERROR(N'لم تبقَ الفصول الدراسية المرجعية.', 16, 1);
 
-    /* أي علاقة قديمة للمادة بالصف يجب أن تكون قد زالت مع تنظيف الصفوف. */
     IF COL_LENGTH(N'dbo.Subjects', N'ClassID') IS NOT NULL
        AND EXISTS (SELECT 1 FROM dbo.Subjects WHERE ClassID IS NOT NULL)
-        THROW 52009, N'بقي ربط قديم بين مادة وصف بعد التنظيف.', 1;
+        RAISERROR(N'بقي ربط قديم بين مادة وصف بعد التنظيف.', 16, 1);
 
     COMMIT TRANSACTION;
+
+    /* تقرير تأكيد نهائي. */
+    DECLARE @ReportSql NVARCHAR(MAX) = N'';
+
+    SELECT @ReportSql = @ReportSql +
+        CASE WHEN @ReportSql = N'' THEN N'' ELSE N' UNION ALL ' END +
+        N'SELECT N''' + REPLACE(t.name,'''','''''') +
+        N''' AS TableName, COUNT_BIG(*) AS RemainingRows FROM ' +
+        QUOTENAME(SCHEMA_NAME(t.schema_id)) + N'.' + QUOTENAME(t.name)
+    FROM sys.tables AS t
+    WHERE t.is_ms_shipped = 0
+      AND EXISTS
+      (
+          SELECT 1
+          FROM @Keep AS k
+          WHERE k.SchemaName = SCHEMA_NAME(t.schema_id)
+            AND k.TableName = t.name
+      );
+
+    IF @ReportSql <> N''
+    BEGIN
+        SET @ReportSql = @ReportSql + N' ORDER BY TableName;';
+        EXEC sys.sp_executesql @ReportSql;
+    END;
 END TRY
 BEGIN CATCH
     IF CURSOR_STATUS('local', 'fk_disable_cursor') >= 0
@@ -288,38 +314,3 @@ BEGIN CATCH
 
     THROW;
 END CATCH;
-GO
-
-/* تقرير نهائي ديناميكي: يعرض فقط الجداول المرجعية الموجودة فعلياً في القاعدة. */
-DECLARE @ReportSql NVARCHAR(MAX) = N'';
-
-SELECT @ReportSql = @ReportSql +
-    CASE WHEN @ReportSql = N'' THEN N'' ELSE N' UNION ALL ' END +
-    N'SELECT N''' + REPLACE(t.name,'''','''''') + N''' AS TableName, COUNT_BIG(*) AS RemainingRows FROM ' +
-    QUOTENAME(SCHEMA_NAME(t.schema_id)) + N'.' + QUOTENAME(t.name)
-FROM sys.tables t
-WHERE t.is_ms_shipped = 0
-  AND t.name IN
-  (
-      N'Subjects',
-      N'AcademicYears',
-      N'AcademicTerms',
-      N'AcademicYearCurrent',
-      N'Rooms',
-      N'Users',
-      N'Roles',
-      N'Permissions',
-      N'RolePermissions',
-      N'UserRoles',
-      N'UserPermissions',
-      N'SchoolSettings',
-      N'SchemaMigrations'
-  )
-ORDER BY t.name;
-
-IF @ReportSql <> N''
-BEGIN
-    SET @ReportSql = @ReportSql + N' ORDER BY TableName;';
-    EXEC sp_executesql @ReportSql;
-END;
-GO
