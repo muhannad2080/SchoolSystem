@@ -74,19 +74,19 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 const string query = @"
-                    SELECT DISTINCT
-                        LTRIM(RTRIM(FeeType)) AS FeeType
-                    FROM FeePlans
-                    WHERE NULLIF(LTRIM(RTRIM(FeeType)), N'') IS NOT NULL
-                    ORDER BY LTRIM(RTRIM(FeeType));";
+                    SELECT
+                        FeeTypeID,
+                        LTRIM(RTRIM(FeeTypeName)) AS FeeType
+                    FROM dbo.FeeTypes
+                    WHERE ISNULL(IsActive, 1) = 1
+                      AND NULLIF(LTRIM(RTRIM(FeeTypeName)), N'') IS NOT NULL
+                    ORDER BY SortOrder, FeeTypeID;";
 
                 using (SqlDataAdapter da =
                     new SqlDataAdapter(query, con))
                 {
                     DataTable dt = new DataTable();
-
                     da.Fill(dt);
-
                     return dt;
                 }
             }
@@ -243,6 +243,42 @@ namespace SchoolSystem.DataAccess
                           AND FeeType = @FeeType
                     )
                         THROW 51020, N'توجد خطة رسوم مكررة لنفس العام والصف ونوع الرسوم.', 1;
+
+                    IF NULLIF(LTRIM(RTRIM(@FeeType)), N'') IS NULL
+                        THROW 51021, N'نوع الرسوم لا يمكن أن يكون فارغًا.', 1;
+
+                    IF NOT EXISTS
+                    (
+                        SELECT 1
+                        FROM dbo.FeeTypes WITH (UPDLOCK, HOLDLOCK)
+                        WHERE LTRIM(RTRIM(FeeTypeName)) = LTRIM(RTRIM(@FeeType))
+                    )
+                    BEGIN
+                        INSERT INTO dbo.FeeTypes
+                        (
+                            FeeTypeCode,
+                            FeeTypeName,
+                            IsTotal,
+                            IsRequiredDefault,
+                            DistributionWeight,
+                            SortOrder,
+                            IsActive,
+                            Notes,
+                            CreatedAt
+                        )
+                        VALUES
+                        (
+                            N'CUSTOM-' + RIGHT(REPLACE(CONVERT(NVARCHAR(36), NEWID()), N'-', N''), 20),
+                            LTRIM(RTRIM(@FeeType)),
+                            0,
+                            @IsRequired,
+                            1,
+                            1000,
+                            1,
+                            N'نوع رسوم أضيف من شاشة خطط الرسوم',
+                            SYSUTCDATETIME()
+                        );
+                    END;
 
                     INSERT INTO FeePlans
                     (
@@ -598,26 +634,13 @@ namespace SchoolSystem.DataAccess
                                 plan.ClassID,
                                 plan.AcademicYear);
 
-                        string[] defaultTypes =
-                        {
-                            "رسوم تسجيل",
-                            "رسوم دراسية",
-                            "رسوم كتب",
-                            "رسوم زي مدرسي",
-                            "رسوم مواصلات",
-                            "رسوم امتحانات",
-                            "رسوم أنشطة",
-                            "أخرى"
-                        };
-
                         if (childPlans.Count == 0)
                         {
                             childPlans =
                                 CreateDefaultChildPlans(
                                     con,
                                     transaction,
-                                    plan,
-                                    defaultTypes);
+                                    plan);
                         }
 
                         if (childPlans.Count == 0)
@@ -631,7 +654,9 @@ namespace SchoolSystem.DataAccess
 
                         decimal[] weights =
                             GetDefaultDistributionWeights(
-                                childPlans.Count);
+                                con,
+                                transaction,
+                                childPlans);
 
                         decimal weightTotal = 0m;
 
@@ -1069,19 +1094,14 @@ namespace SchoolSystem.DataAccess
                   AND NULLIF(LTRIM(RTRIM(FeeType)), N'') IS NOT NULL
                   AND LTRIM(RTRIM(FeeType)) NOT IN
                       (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                LEFT JOIN dbo.FeeTypes ft
+                    ON LTRIM(RTRIM(ft.FeeTypeName)) = LTRIM(RTRIM(fp.FeeType))
                 ORDER BY
-                    CASE LTRIM(RTRIM(FeeType))
-                        WHEN N'رسوم تسجيل' THEN 1
-                        WHEN N'رسوم دراسية' THEN 2
-                        WHEN N'رسوم كتب' THEN 3
-                        WHEN N'رسوم زي مدرسي' THEN 4
-                        WHEN N'رسوم مواصلات' THEN 5
-                        WHEN N'رسوم امتحانات' THEN 6
-                        WHEN N'رسوم أنشطة' THEN 7
-                        WHEN N'أخرى' THEN 8
-                        ELSE 99
+                    CASE
+                        WHEN ft.SortOrder IS NULL THEN 100000
+                        ELSE ft.SortOrder
                     END,
-                    FeePlanID;";
+                    fp.FeePlanID;";
 
             var result = new List<Tuple<int, string, decimal>>();
 
@@ -1117,19 +1137,41 @@ namespace SchoolSystem.DataAccess
         private List<Tuple<int, string, decimal>> CreateDefaultChildPlans(
             SqlConnection con,
             SqlTransaction transaction,
-            FeePlan plan,
-            string[] types)
+            FeePlan plan)
         {
-            decimal[] weights =
-            {
-                15m, 40m, 10m, 8m, 8m, 10m, 4m, 5m
-            };
+            var definitions = new List<Tuple<string, decimal, bool>>();
 
-            var created = new List<Tuple<int, string, decimal>>();
+            const string definitionSql = @"
+                SELECT
+                    LTRIM(RTRIM(FeeTypeName)) AS FeeTypeName,
+                    ISNULL(DistributionWeight, 1) AS DistributionWeight,
+                    ISNULL(IsRequiredDefault, 1) AS IsRequiredDefault
+                FROM dbo.FeeTypes WITH (UPDLOCK, HOLDLOCK)
+                WHERE ISNULL(IsActive, 1) = 1
+                  AND ISNULL(IsTotal, 0) = 0
+                  AND NULLIF(LTRIM(RTRIM(FeeTypeName)), N'') IS NOT NULL
+                ORDER BY SortOrder, FeeTypeID;";
 
-            for (int i = 0; i < types.Length; i++)
+            using (SqlCommand definitionCommand =
+                new SqlCommand(definitionSql, con, transaction))
+            using (SqlDataReader reader = definitionCommand.ExecuteReader())
             {
-                const string sql = @"
+                while (reader.Read())
+                {
+                    definitions.Add(
+                        Tuple.Create(
+                            Convert.ToString(reader["FeeTypeName"]),
+                            reader["DistributionWeight"] == DBNull.Value
+                                ? 1m
+                                : Convert.ToDecimal(reader["DistributionWeight"]),
+                            reader["IsRequiredDefault"] == DBNull.Value ||
+                            Convert.ToBoolean(reader["IsRequiredDefault"])));
+                }
+            }
+
+            foreach (Tuple<string, decimal, bool> definition in definitions)
+            {
+                const string insertSql = @"
                     IF NOT EXISTS
                     (
                         SELECT 1
@@ -1137,7 +1179,8 @@ namespace SchoolSystem.DataAccess
                         WHERE ClassID = @ClassID
                           AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
                               REPLACE(@AcademicYear, N'-', N'/')
-                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = @FeeType
+                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) =
+                              @FeeType
                     )
                     BEGIN
                         INSERT INTO FeePlans
@@ -1157,23 +1200,21 @@ namespace SchoolSystem.DataAccess
                             @FeeType,
                             0,
                             @DueDate,
-                            1,
+                            @IsRequired,
                             @Notes
                         );
-                    END";
+                    END;";
 
                 using (SqlCommand command =
-                    new SqlCommand(
-                        sql,
-                        con,
-                        transaction))
+                    new SqlCommand(insertSql, con, transaction))
                 {
                     command.Parameters.AddWithValue(
                         "@AcademicYear",
                         (plan.AcademicYear ?? string.Empty).Trim());
                     command.Parameters.AddWithValue("@ClassID", plan.ClassID);
-                    command.Parameters.AddWithValue("@FeeType", types[i]);
+                    command.Parameters.AddWithValue("@FeeType", definition.Item1);
                     command.Parameters.AddWithValue("@DueDate", plan.DueDate.Date);
+                    command.Parameters.AddWithValue("@IsRequired", definition.Item3);
                     command.Parameters.AddWithValue(
                         "@Notes",
                         string.IsNullOrWhiteSpace(plan.Notes)
@@ -1190,20 +1231,54 @@ namespace SchoolSystem.DataAccess
                 plan.AcademicYear);
         }
 
-        private decimal[] GetDefaultDistributionWeights(int count)
+        private decimal[] GetDefaultDistributionWeights(
+            SqlConnection con,
+            SqlTransaction transaction,
+            List<Tuple<int, string, decimal>> childPlans)
         {
-            decimal[] defaults =
+            var weightByType =
+                new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+
+            const string sql = @"
+                SELECT
+                    LTRIM(RTRIM(FeeTypeName)) AS FeeTypeName,
+                    ISNULL(DistributionWeight, 1) AS DistributionWeight
+                FROM dbo.FeeTypes
+                WHERE ISNULL(IsActive, 1) = 1;";
+
+            using (SqlCommand command = new SqlCommand(sql, con, transaction))
+            using (SqlDataReader reader = command.ExecuteReader())
             {
-                15m, 40m, 10m, 8m, 8m, 10m, 4m, 5m
-            };
+                while (reader.Read())
+                {
+                    string feeType =
+                        Convert.ToString(reader["FeeTypeName"]).Trim();
 
-            if (count == defaults.Length)
-                return defaults;
+                    if (string.IsNullOrWhiteSpace(feeType))
+                        continue;
 
-            decimal[] result = new decimal[count];
+                    decimal weight =
+                        reader["DistributionWeight"] == DBNull.Value
+                            ? 1m
+                            : Convert.ToDecimal(reader["DistributionWeight"]);
 
-            for (int i = 0; i < count; i++)
-                result[i] = 1m;
+                    weightByType[feeType] = Math.Max(0m, weight);
+                }
+            }
+
+            decimal[] result = new decimal[childPlans.Count];
+
+            for (int i = 0; i < childPlans.Count; i++)
+            {
+                string feeType =
+                    (childPlans[i].Item2 ?? string.Empty).Trim();
+
+                decimal weight;
+                if (!weightByType.TryGetValue(feeType, out weight))
+                    weight = 1m;
+
+                result[i] = Math.Max(0m, weight);
+            }
 
             return result;
         }
