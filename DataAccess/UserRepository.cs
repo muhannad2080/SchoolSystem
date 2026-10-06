@@ -54,12 +54,12 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             using (SqlDataAdapter da = new SqlDataAdapter(@"
-                SELECT RoleID, RoleName, IsSystem, IsActive
+                SELECT RoleID, RoleName, IsSystemRole, IsActive
                 FROM dbo.Roles
                 WHERE ISNULL(IsActive, 1) = 1
                   AND NULLIF(LTRIM(RTRIM(RoleName)), N'') IS NOT NULL
                 ORDER BY
-                    CASE WHEN ISNULL(IsSystem, 0) = 1 THEN 0 ELSE 1 END,
+                    CASE WHEN ISNULL(IsSystemRole, 0) = 1 THEN 0 ELSE 1 END,
                     RoleName ASC;", con))
             {
                 DataTable dt = new DataTable();
