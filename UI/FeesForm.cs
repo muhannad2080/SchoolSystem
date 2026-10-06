@@ -303,28 +303,20 @@ namespace SchoolSystem.UI
 
             cmbAcademicYear.Items.Clear();
 
-            string dbYear =
-                SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
-
-            if (!string.IsNullOrWhiteSpace(dbYear))
+            try
             {
-                cmbAcademicYear.Items.Add(dbYear);
-                cmbAcademicYear.SelectedIndex = 0;
+                string dbYear =
+                    SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
+
+                if (!string.IsNullOrWhiteSpace(dbYear))
+                {
+                    cmbAcademicYear.Items.Add(dbYear);
+                    cmbAcademicYear.SelectedIndex = 0;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                int year = DateTime.Today.Year;
-
-                cmbAcademicYear.Items.Add(
-                    (year - 1) + " / " + year);
-
-                cmbAcademicYear.Items.Add(
-                    year + " / " + (year + 1));
-
-                cmbAcademicYear.Items.Add(
-                    (year + 1) + " / " + (year + 2));
-
-                cmbAcademicYear.SelectedIndex = 1;
+                UIHelper.ShowException("تحميل العام الدراسي من قاعدة البيانات", ex);
             }
         }
 
@@ -348,14 +340,8 @@ namespace SchoolSystem.UI
                     cmbFeeType.Items.Add(feeType.Trim());
             }
 
-            if (cmbFeeType.Items.Count == 0)
-                cmbFeeType.Items.Add("رسوم دراسية");
-
-            int academicIndex =
-                cmbFeeType.FindStringExact("رسوم دراسية");
-
-            cmbFeeType.SelectedIndex =
-                academicIndex >= 0 ? academicIndex : 0;
+            // لا نعرض أي نوع رسوم غير موجود في قاعدة البيانات.
+            // الحقل قابل للكتابة لإدخال نوع جديد عند إنشاء خطة/رسوم فعلية.
         }
 
         // ============================================================
