@@ -59,32 +59,32 @@ ORDER BY c.GradeOrder, t.TermOrder;
 
 SELECT
     N'Users' AS TableName, COUNT(*) AS RowCount FROM dbo.Users
-UNION ALL SELECT N'Roles', COUNT(*) FROM dbo.Roles
-UNION ALL SELECT N'Permissions', COUNT(*) FROM dbo.Permissions
-UNION ALL SELECT N'Rooms', COUNT(*) FROM dbo.Rooms
-UNION ALL SELECT N'AcademicYears', COUNT(*) FROM dbo.AcademicYears
-UNION ALL SELECT N'AcademicTerms', COUNT(*) FROM dbo.AcademicTerms
-UNION ALL SELECT N'Stages', COUNT(*) FROM dbo.Stages
-UNION ALL SELECT N'Classes', COUNT(*) FROM dbo.Classes
-UNION ALL SELECT N'Subjects', COUNT(*) FROM dbo.Subjects
-UNION ALL SELECT N'ClassSubjects', COUNT(*) FROM dbo.ClassSubjects
-UNION ALL SELECT N'ClassSubjectTerms', COUNT(*) FROM dbo.ClassSubjectTerms
-UNION ALL SELECT N'SchoolSections', COUNT(*) FROM dbo.SchoolSections
-UNION ALL SELECT N'Students', COUNT(*) FROM dbo.Students
-UNION ALL SELECT N'Teachers', COUNT(*) FROM dbo.Teachers
-UNION ALL SELECT N'Fees', COUNT(*) FROM dbo.Fees
-UNION ALL SELECT N'Vouchers', COUNT(*) FROM dbo.Vouchers
-UNION ALL SELECT N'StudentFees', COUNT(*) FROM dbo.StudentFees
-UNION ALL SELECT N'Payroll', COUNT(*) FROM dbo.Payroll
-UNION ALL SELECT N'TeacherContracts', COUNT(*) FROM dbo.TeacherContracts
-UNION ALL SELECT N'Grades', COUNT(*) FROM dbo.Grades
-UNION ALL SELECT N'Marks', COUNT(*) FROM dbo.Marks
-UNION ALL SELECT N'StudentAttendance', COUNT(*) FROM dbo.StudentAttendance
-UNION ALL SELECT N'TeacherAttendance', COUNT(*) FROM dbo.TeacherAttendance
-UNION ALL SELECT N'Expenses', COUNT(*) FROM dbo.Expenses
-UNION ALL SELECT N'Enrollments', COUNT(*) FROM dbo.Enrollments
-UNION ALL SELECT N'SchoolTimetable', COUNT(*) FROM dbo.SchoolTimetable
-UNION ALL SELECT N'AnnualClosings', COUNT(*) FROM dbo.AnnualClosings
-UNION ALL SELECT N'AnnualMigrationLog', COUNT(*) FROM dbo.AnnualMigrationLog
-UNION ALL SELECT N'AuditLogs', COUNT(*) FROM dbo.AuditLogs
+UNION ALL SELECT N'Roles', COUNT(*) AS RecordCount FROM dbo.Roles
+UNION ALL SELECT N'Permissions', COUNT(*) AS RecordCount FROM dbo.Permissions
+UNION ALL SELECT N'Rooms', COUNT(*) AS RecordCount FROM dbo.Rooms
+UNION ALL SELECT N'AcademicYears', COUNT(*) AS RecordCount FROM dbo.AcademicYears
+UNION ALL SELECT N'AcademicTerms', COUNT(*) AS RecordCount FROM dbo.AcademicTerms
+UNION ALL SELECT N'Stages', COUNT(*) AS RecordCount FROM dbo.Stages
+UNION ALL SELECT N'Classes', COUNT(*) AS RecordCount FROM dbo.Classes
+UNION ALL SELECT N'Subjects', COUNT(*) AS RecordCount FROM dbo.Subjects
+UNION ALL SELECT N'ClassSubjects', COUNT(*) AS RecordCount FROM dbo.ClassSubjects
+UNION ALL SELECT N'ClassSubjectTerms', COUNT(*) AS RecordCount FROM dbo.ClassSubjectTerms
+UNION ALL SELECT N'SchoolSections', COUNT(*) AS RecordCount FROM dbo.SchoolSections
+UNION ALL SELECT N'Students', COUNT(*) AS RecordCount FROM dbo.Students
+UNION ALL SELECT N'Teachers', COUNT(*) AS RecordCount FROM dbo.Teachers
+UNION ALL SELECT N'Fees', COUNT(*) AS RecordCount FROM dbo.Fees
+UNION ALL SELECT N'Vouchers', COUNT(*) AS RecordCount FROM dbo.Vouchers
+UNION ALL SELECT N'StudentFees', COUNT(*) AS RecordCount FROM dbo.StudentFees
+UNION ALL SELECT N'Payroll', COUNT(*) AS RecordCount FROM dbo.Payroll
+UNION ALL SELECT N'TeacherContracts', COUNT(*) AS RecordCount FROM dbo.TeacherContracts
+UNION ALL SELECT N'Grades', COUNT(*) AS RecordCount FROM dbo.Grades
+UNION ALL SELECT N'Marks', COUNT(*) AS RecordCount FROM dbo.Marks
+UNION ALL SELECT N'StudentAttendance', COUNT(*) AS RecordCount FROM dbo.StudentAttendance
+UNION ALL SELECT N'TeacherAttendance', COUNT(*) AS RecordCount FROM dbo.TeacherAttendance
+UNION ALL SELECT N'Expenses', COUNT(*) AS RecordCount FROM dbo.Expenses
+UNION ALL SELECT N'Enrollments', COUNT(*) AS RecordCount FROM dbo.Enrollments
+UNION ALL SELECT N'SchoolTimetable', COUNT(*) AS RecordCount FROM dbo.SchoolTimetable
+UNION ALL SELECT N'AnnualClosings', COUNT(*) AS RecordCount FROM dbo.AnnualClosings
+UNION ALL SELECT N'AnnualMigrationLog', COUNT(*) AS RecordCount FROM dbo.AnnualMigrationLog
+UNION ALL SELECT N'AuditLogs', COUNT(*) AS RecordCount FROM dbo.AuditLogs
 ORDER BY TableName;
