@@ -118,6 +118,71 @@ namespace SchoolSystem.Services
             return affected;
         }
 
+        // تحديث الرسوم الكلية وإعادة توزيعها على أنواع الرسوم في الصف نفسه.
+        public int UpdateTotalFeePlanAndDistribute(FeePlan plan)
+        {
+            CurrentUser.DemandAction(
+                "FeePlans",
+                "Edit",
+                "ليس لديك صلاحية تعديل الرسوم الكلية وتوزيعها.");
+
+            Validate(plan);
+
+            if (!IsTotalFeeType(plan.FeeType))
+                throw new Exception("عملية التوزيع تتطلب اختيار الرسوم الكلية.");
+
+            int affected =
+                feePlanRepository.UpdateTotalFeePlanAndDistribute(plan);
+
+            auditLogService.Record(
+                "تعديل وتوزيع الرسوم الكلية",
+                "FeePlan",
+                plan.ClassID.ToString(),
+                "تم تحديث الرسوم الكلية للصف " +
+                plan.ClassID +
+                " والعام " +
+                plan.AcademicYear +
+                " بمبلغ " +
+                plan.Amount.ToString("N2"));
+
+            return affected;
+        }
+
+        // تعديل نوع رسوم فرعي ثم جعل الرسوم الكلية مساوية لمجموع بنود الصف.
+        public bool UpdateChildFeePlanAndRecalculateTotal(FeePlan plan)
+        {
+            CurrentUser.DemandAction(
+                "FeePlans",
+                "Edit",
+                "ليس لديك صلاحية تعديل أنواع الرسوم.");
+
+            if (plan == null || plan.FeePlanID <= 0)
+                throw new Exception("رقم خطة الرسوم غير صحيح.");
+
+            Validate(plan);
+
+            if (IsTotalFeeType(plan.FeeType))
+                throw new Exception("استخدم تعديل الرسوم الكلية لتعديل الرسوم الكلية.");
+
+            bool updated =
+                feePlanRepository.UpdateChildFeePlanAndRecalculateTotal(plan);
+
+            if (updated)
+            {
+                auditLogService.Record(
+                    "تعديل نوع رسوم وتحديث الإجمالي",
+                    "FeePlan",
+                    plan.FeePlanID.ToString(),
+                    "تم تعديل " +
+                    plan.FeeType +
+                    " للصف " +
+                    plan.ClassID +
+                    " وإعادة احتساب الرسوم الكلية.");
+            }
+
+            return updated;
+        }
+
         // تعريف الدالة IsTotalFeeType لتنفيذ العملية المرتبطة بها.
         private bool IsTotalFeeType(string feeType)
         {
