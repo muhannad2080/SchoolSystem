@@ -1215,10 +1215,10 @@ namespace SchoolSystem.UI
             if (!hasFinance)
                 return;
 
-            // هذه الحقول مرتبطة بالمفتاح المالي أو بالحركة المالية نفسها.
-            // لا نسمح بتعديلها من شاشة التسجيل بعد إنشاء الحركة.
+            // الطالب والعام وهوية الحركة المالية تبقى ثابتة بعد إنشاء الحركة.
+            // الصف والشعبة مسموحان بالتعديل لأن الحفظ سيزامنهما تلقائياً
+            // مع سجل التوزيع المرتبط إن كان موجوداً.
             cmbStudentID.Enabled = false;
-            cmbClassID.Enabled = false;
             txtAcademicYear.Enabled = false;
 
             txtRegistrationFee.Enabled = false;
@@ -1226,8 +1226,11 @@ namespace SchoolSystem.UI
             cmbPaymentMethod.Enabled = false;
             txtReceiptNo.Enabled = false;
 
+            cmbClassID.Enabled = true;
+            txtSection.Enabled = true;
+
             lblStatus.Text =
-                "السجل مرتبط بحركة مالية؛ بيانات الرسوم والسداد والطالب والصف والعام الدراسي مقفلة للتعديل من هذه الشاشة.";
+                "السجل مرتبط بحركة مالية؛ الرسوم والسداد والطالب والعام الدراسي مقفلة، وتعديل الصف أو الشعبة سيُزامن تلقائياً مع التوزيع.";
 
             errorProvider1.SetError(
                 txtRegistrationFee,
@@ -1865,7 +1868,12 @@ namespace SchoolSystem.UI
 
             await LoadSectionsAsync();
 
-            await LoadRegistrationFeePlanAsync(false);
+            // أثناء تعديل سجل مرتبط بحركة مالية، لا نعيد حساب الرسم
+            // ولا نغير المبلغ التاريخي؛ تغيير الصف سيُزامن التوزيع فقط.
+            if (!isEditMode)
+            {
+                await LoadRegistrationFeePlanAsync(false);
+            }
         }
 
         // ================================================================
