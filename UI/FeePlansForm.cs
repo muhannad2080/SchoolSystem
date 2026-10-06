@@ -739,9 +739,9 @@ namespace SchoolSystem.UI
                     plan.ClassID,
                     plan.AcademicYear,
                     plan.FeeType);
-                DataRefreshNotifier.Notify("FeePlans", this);
-                DataRefreshNotifier.Notify("Fees", this);
-                DataRefreshNotifier.Notify("Enrollment", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
             }
 
             catch (Exception ex)
@@ -872,9 +872,9 @@ namespace SchoolSystem.UI
                     plan.AcademicYear,
                     plan.FeeType);
 
-                DataRefreshNotifier.Notify("FeePlans", this);
-                DataRefreshNotifier.Notify("Fees", this);
-                DataRefreshNotifier.Notify("Enrollment", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
             }
             catch (Exception ex)
             {
@@ -992,9 +992,9 @@ namespace SchoolSystem.UI
 
 
                 await LoadFeePlansAsync();
-                DataRefreshNotifier.Notify("FeePlans", this);
-                DataRefreshNotifier.Notify("Fees", this);
-                DataRefreshNotifier.Notify("Enrollment", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
                 ClearInputs();
             }
 
