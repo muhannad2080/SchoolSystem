@@ -100,7 +100,8 @@ namespace SchoolSystem.UI
 
             if (!DataRefreshNotifier.IsRelated(e, "Students") &&
                 !DataRefreshNotifier.IsRelated(e, "Enrollment") &&
-                !DataRefreshNotifier.IsRelated(e, "ClassAssignment"))
+                !DataRefreshNotifier.IsRelated(e, "ClassAssignment") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
             {
                 return;
             }
