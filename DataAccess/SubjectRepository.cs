@@ -20,16 +20,64 @@ namespace SchoolSystem.DataAccess
                         s.SubjectCode,
                         s.SubjectName,
                         s.ClassID,
-                        c.ClassName,
+                        COALESCE(
+                            STUFF(
+                                (
+                                    SELECT N'، ' + c2.ClassName
+                                    FROM dbo.ClassSubjects cs2
+                                    INNER JOIN dbo.Classes c2 ON c2.ClassID = cs2.ClassID
+                                    WHERE cs2.SubjectID = s.SubjectID
+                                      AND ISNULL(cs2.IsActive, 1) = 1
+                                      AND ISNULL(c2.IsActive, 1) = 1
+                                    ORDER BY c2.GradeOrder, c2.ClassID
+                                    FOR XML PATH(N'')
+                                ),
+                                1,
+                                2,
+                                N''
+                            ),
+                            CASE WHEN c.ClassID IS NULL THEN N'كل الصفوف' ELSE c.ClassName END
+                        ) AS ClassName,
+                        COALESCE(
+                            s.ClassID,
+                            (
+                                SELECT TOP 1 cs3.ClassID
+                                FROM dbo.ClassSubjects cs3
+                                INNER JOIN dbo.Classes c3 ON c3.ClassID = cs3.ClassID
+                                WHERE cs3.SubjectID = s.SubjectID
+                                  AND ISNULL(cs3.IsActive, 1) = 1
+                                  AND ISNULL(c3.IsActive, 1) = 1
+                                ORDER BY c3.GradeOrder, c3.ClassID
+                            )
+                        ) AS DefaultClassID,
+                        N'|' +
+                        ISNULL(
+                            STUFF(
+                                (
+                                    SELECT N'|' + CONVERT(nvarchar(20), cs4.ClassID)
+                                    FROM dbo.ClassSubjects cs4
+                                    INNER JOIN dbo.Classes c4 ON c4.ClassID = cs4.ClassID
+                                    WHERE cs4.SubjectID = s.SubjectID
+                                      AND ISNULL(cs4.IsActive, 1) = 1
+                                      AND ISNULL(c4.IsActive, 1) = 1
+                                    ORDER BY c4.GradeOrder, c4.ClassID
+                                    FOR XML PATH(N'')
+                                ),
+                                1,
+                                1,
+                                N''
+                            ),
+                            N''
+                        ) + N'|' AS MappedClassIDs,
                         s.MaxDegree,
                         s.PassDegree,
                         s.IsActive,
                         s.Notes,
                         s.CreatedAt,
                         s.UpdatedAt
-                    FROM Subjects s
-                    LEFT JOIN Classes c ON s.ClassID = c.ClassID
-                    ORDER BY c.ClassID, s.SubjectName";
+                    FROM dbo.Subjects s
+                    LEFT JOIN dbo.Classes c ON s.ClassID = c.ClassID
+                    ORDER BY s.SubjectName";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
