@@ -119,9 +119,6 @@ namespace SchoolSystem.UI
 
                 await LoadFeesAsync();
 
-                DataRefreshNotifier.Notify("Fees", this);
-                DataRefreshNotifier.Notify("Vouchers", this);
-
                 ClearInputs();
 
                 await ApplySelectedFeePlanAsync();
@@ -1422,6 +1419,8 @@ string academicYear = cmbAcademicYear.Text.Trim();
                     " رسوم للطالب.");
 
                 await LoadFeesAsync();
+
+                DataRefreshNotifier.Notify("Fees", this);
             }
             catch (System.Data.SqlClient.SqlException ex)
                 when (ex.Number == 51040)
@@ -1489,6 +1488,9 @@ string academicYear = cmbAcademicYear.Text.Trim();
                     "تمت إضافة الرسوم بنجاح.");
 
                 await LoadFeesAsync();
+
+                DataRefreshNotifier.Notify("Fees", this);
+                DataRefreshNotifier.Notify("Vouchers", this);
 
                 ClearInputs();
             }
@@ -1579,6 +1581,12 @@ string academicYear = cmbAcademicYear.Text.Trim();
                 }
 
                 await LoadFeesAsync();
+
+                if (result)
+                {
+                    DataRefreshNotifier.Notify("Fees", this);
+                    DataRefreshNotifier.Notify("Vouchers", this);
+                }
 
                 ClearInputs();
             }
@@ -1758,6 +1766,9 @@ string receiptNumber =
 
                 await LoadFeesAsync();
 
+                DataRefreshNotifier.Notify("Fees", this);
+                DataRefreshNotifier.Notify("Vouchers", this);
+
                 ClearInputs();
             }
             catch (Exception ex)
@@ -1824,6 +1835,12 @@ string receiptNumber =
                 }
 
                 await LoadFeesAsync();
+
+                if (result)
+                {
+                    DataRefreshNotifier.Notify("Fees", this);
+                    DataRefreshNotifier.Notify("Vouchers", this);
+                }
 
                 ClearInputs();
             }
