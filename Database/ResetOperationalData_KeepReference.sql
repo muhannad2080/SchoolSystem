@@ -72,6 +72,15 @@ BEGIN TRY
         (N'dbo', N'SchoolSettings'),
         (N'dbo', N'SchemaMigrations');
 
+    /* فك أي ربط قديم للمواد بصفوف سيتم حذفها.
+       المواد نفسها تبقى مرجعية، لكن لا يجوز أن تحتفظ بمعرّف صف محذوف. */
+    IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
+       AND COL_LENGTH(N'dbo.Subjects', N'ClassID') IS NOT NULL
+    BEGIN
+        UPDATE dbo.Subjects
+        SET ClassID = NULL;
+    END
+
     DECLARE @sql NVARCHAR(MAX);
     DECLARE @schema SYSNAME;
     DECLARE @table SYSNAME;
