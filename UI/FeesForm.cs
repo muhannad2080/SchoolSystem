@@ -21,6 +21,7 @@ namespace SchoolSystem.UI
         private readonly StudentService studentService = new StudentService();
         private readonly VoucherService voucherService = new VoucherService();
         private readonly FeePlanService feePlanService = new FeePlanService();
+        private readonly AcademicReferenceRepository academicReferenceRepository = new AcademicReferenceRepository();
 
         // ============================================================
         // STATE
@@ -121,6 +122,7 @@ namespace SchoolSystem.UI
 
                 InitializeLookups();
 
+                await LoadAcademicYearsAsync();
                 await LoadFeeTypesAsync();
 
                 await LoadStudentsAsync();
@@ -258,7 +260,6 @@ namespace SchoolSystem.UI
             cmbFeeType.Items.Clear();
 
             cmbStatus.Items.Clear();
-
             cmbStatus.Items.AddRange(new object[]
             {
                 "غير مسدد",
@@ -269,11 +270,9 @@ namespace SchoolSystem.UI
                 "معفى",
                 "رصيد دائن"
             });
-
             cmbStatus.SelectedIndex = 0;
 
             cmbFilterStatus.Items.Clear();
-
             cmbFilterStatus.Items.AddRange(new object[]
             {
                 "كل الحالات",
@@ -285,11 +284,9 @@ namespace SchoolSystem.UI
                 "معفى",
                 "رصيد دائن"
             });
-
             cmbFilterStatus.SelectedIndex = 0;
 
             cmbPaymentMethod.Items.Clear();
-
             cmbPaymentMethod.Items.AddRange(new object[]
             {
                 "نقداً",
@@ -298,26 +295,34 @@ namespace SchoolSystem.UI
                 "محفظة إلكترونية",
                 "أخرى"
             });
-
             cmbPaymentMethod.SelectedIndex = 0;
 
             cmbAcademicYear.Items.Clear();
+        }
 
-            try
-            {
-                string dbYear =
-                    SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
+        private async Task LoadAcademicYearsAsync()
+        {
+            DataTable years = await Task.Run(() => academicReferenceRepository.GetAcademicYears());
+            string current = SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
 
-                if (!string.IsNullOrWhiteSpace(dbYear))
-                {
-                    cmbAcademicYear.Items.Add(dbYear);
-                    cmbAcademicYear.SelectedIndex = 0;
-                }
-            }
-            catch (Exception ex)
+            cmbAcademicYear.Items.Clear();
+
+            foreach (DataRow row in years.Rows)
             {
-                UIHelper.ShowException("تحميل العام الدراسي من قاعدة البيانات", ex);
+                string year = Convert.ToString(row["AcademicYear"]).Trim();
+                if (!string.IsNullOrWhiteSpace(year) && !cmbAcademicYear.Items.Contains(year))
+                    cmbAcademicYear.Items.Add(year);
             }
+
+            if (cmbAcademicYear.Items.Count == 0)
+            {
+                cmbAcademicYear.SelectedIndex = -1;
+                cmbAcademicYear.Text = string.Empty;
+                return;
+            }
+
+            int currentIndex = cmbAcademicYear.Items.IndexOf(current);
+            cmbAcademicYear.SelectedIndex = currentIndex >= 0 ? currentIndex : 0;
         }
 
         // ============================================================
