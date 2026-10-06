@@ -49,7 +49,6 @@ namespace SchoolSystem.UI
 
             cmbAcademicYear.TextChanged += FeePlanFilter_Changed;
 
-            txtAmount.TextChanged += txtAmount_TextChanged;
         }
 
         private async void DataRefreshNotifier_DataChanged(
@@ -214,6 +213,7 @@ namespace SchoolSystem.UI
             lblRecordCount.Text = "عدد السجلات: " + dv.Count;
 
             FormatGrid();
+            UpdateSelectedPlanSummary();
         }
 
         // تعريف الدالة EscapeFilter لتنفيذ العملية المرتبطة بها.
@@ -283,14 +283,6 @@ namespace SchoolSystem.UI
                 ApplyFilter();
                 UpdateSelectedPlanSummary();
             }
-        }
-
-        private void txtAmount_TextChanged(object sender, EventArgs e)
-        {
-            if (isLoading)
-                return;
-
-            UpdateSelectedPlanSummary();
         }
 
         private void UpdateSelectedPlanSummary()
@@ -506,6 +498,10 @@ namespace SchoolSystem.UI
             txtPlanNumber.Clear();
             txtTotalFeeAmount.Text = "0.00 ريال";
 
+            cmbAcademicYear.Enabled = true;
+            cmbClass.Enabled = true;
+            cmbFeeType.Enabled = true;
+
             if (cmbAcademicYear.Items.Count > 0)
                 cmbAcademicYear.SelectedIndex = Math.Min(1, cmbAcademicYear.Items.Count - 1);
 
@@ -558,6 +554,10 @@ namespace SchoolSystem.UI
 
             txtPlanNumber.Text =
                 selectedFeePlanId.ToString();
+
+            cmbAcademicYear.Enabled = false;
+            cmbClass.Enabled = false;
+            cmbFeeType.Enabled = false;
 
             dtpDueDate.Value = Convert.ToDateTime(row["DueDate"]);
 
