@@ -72,6 +72,11 @@ namespace SchoolSystem.UI
             UIHelper.StyleComboBox(cmbPaymentMethod);
             lblRecordCount.ForeColor = UIHelper.MutedTextColor;
 
+            // القيم المحسوبة لا تُحرر يدويًا؛ مصدرها هو مكونات الراتب التي يدخلها المستخدم.
+            txtTotal.ReadOnly = true;
+            txtTotal.TabStop = false;
+            txtNetSalary.ReadOnly = true;
+            txtNetSalary.TabStop = false;
             txtTotal.BackColor = UIHelper.SurfaceElevatedColor;
             txtNetSalary.BackColor = UIHelper.SurfaceElevatedColor;
         }
