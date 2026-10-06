@@ -131,14 +131,12 @@ namespace SchoolSystem.UI
                     cmbFeeType.Items.Add(feeType.Trim());
             }
 
-            if (cmbFeeType.FindStringExact("الرسوم الكلية") < 0)
-                cmbFeeType.Items.Insert(0, "الرسوم الكلية");
+            // القائمة ديناميكية بالكامل: الأنواع المعروضة مصدرها قاعدة البيانات.
+            // عند تنظيف القاعدة يمكن إدخال نوع رسوم جديد يدويًا.
+            cmbFeeType.DropDownStyle = ComboBoxStyle.DropDown;
 
-            if (cmbFeeType.FindStringExact("رسوم دراسية") < 0)
-                cmbFeeType.Items.Add("رسوم دراسية");
-
-            int academicIndex = cmbFeeType.FindStringExact("رسوم دراسية");
-            cmbFeeType.SelectedIndex = academicIndex >= 0 ? academicIndex : 0;
+            if (cmbFeeType.Items.Count > 0)
+                cmbFeeType.SelectedIndex = 0;
         }
 
         // تعريف الدالة LoadClassesAsync لتنفيذ العملية المرتبطة بها.
