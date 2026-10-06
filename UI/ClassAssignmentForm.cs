@@ -687,14 +687,26 @@ namespace SchoolSystem.UI.Students
                     : cmbSection.Text.Trim();
 
                 // الصف المعتمد للتوزيع يُؤخذ دائماً من التسجيل المقبول.
-                if (GetSelectedClassId() != registeredClassId)
+                bool classChanged = GetSelectedClassId() != registeredClassId;
+                bool previousLoadingState = isLoading;
+
+                try
                 {
-                    cmbClass.SelectedValue = registeredClassId;
-                    await LoadSectionsAsync();
+                    isLoading = true;
+
+                    if (classChanged)
+                        cmbClass.SelectedValue = registeredClassId;
+
+                    if (classChanged ||
+                        !cmbSection.Enabled ||
+                        cmbSection.Items.Count == 0)
+                    {
+                        await LoadSectionsAsync();
+                    }
                 }
-                else if (!cmbSection.Enabled || cmbSection.Items.Count == 0)
+                finally
                 {
-                    await LoadSectionsAsync();
+                    isLoading = previousLoadingState;
                 }
 
                 if (!cmbSection.Enabled || cmbSection.Items.Count == 0)
