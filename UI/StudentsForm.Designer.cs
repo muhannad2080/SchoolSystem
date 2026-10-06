@@ -963,8 +963,8 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "إدارة الطلاب";
 
-            // Design-time theme: keep the WinForms designer visually identical
-            // to the runtime theme without calling custom methods from InitializeComponent.
+            // Design-time theme: these are direct properties so the WinForms designer
+            // can deserialize InitializeComponent without custom method invocations.
             this.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
             this.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1004,43 +1004,232 @@
             this.lblCount.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.lblCount.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
-            foreach (System.Windows.Forms.Label label in new System.Windows.Forms.Label[]
-            {
-                this.lblStudentNumber, this.lblFullName, this.lblGender, this.lblBirthDate,
-                this.lblBirthPlace, this.lblNationality, this.lblNationalId, this.lblPhone,
-                this.lblStatus, this.lblGuardianName, this.lblGuardianRelation,
-                this.lblGuardianPhone, this.lblGuardianEmail, this.lblGuardianJob,
-                this.lblGovernorate, this.lblDistrict, this.lblAddress
-            })
-            {
-                label.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-                label.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            }
+            this.lblStudentNumber.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblStudentNumber.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFullName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblFullName.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGender.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblGender.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBirthDate.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblBirthDate.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBirthPlace.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblBirthPlace.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblNationality.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblNationality.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblNationalId.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblNationalId.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPhone.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblPhone.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblStatus.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGuardianName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblGuardianName.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGuardianRelation.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblGuardianRelation.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGuardianPhone.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblGuardianPhone.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGuardianEmail.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblGuardianEmail.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGuardianJob.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblGuardianJob.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGovernorate.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblGovernorate.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDistrict.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblDistrict.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblAddress.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblAddress.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
-            foreach (System.Windows.Forms.TextBox textBox in new System.Windows.Forms.TextBox[]
-            {
-                this.txtStudentNumber, this.txtFullName, this.txtBirthPlace, this.txtNationality,
-                this.txtNationalId, this.txtPhone, this.txtGuardianName, this.txtGuardianRelation,
-                this.txtGuardianPhone, this.txtGuardianEmail, this.txtGuardianJob,
-                this.txtGovernorate, this.txtDistrict, this.txtAddress, this.txtSearch
-            })
-            {
-                textBox.BackColor = System.Drawing.Color.White;
-                textBox.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-                textBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-                textBox.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            }
+            this.txtStudentNumber.BackColor = System.Drawing.Color.White;
+            this.txtStudentNumber.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtStudentNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtStudentNumber.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFullName.BackColor = System.Drawing.Color.White;
+            this.txtFullName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtFullName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFullName.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtBirthPlace.BackColor = System.Drawing.Color.White;
+            this.txtBirthPlace.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtBirthPlace.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtBirthPlace.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtNationality.BackColor = System.Drawing.Color.White;
+            this.txtNationality.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNationality.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNationality.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtNationalId.BackColor = System.Drawing.Color.White;
+            this.txtNationalId.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNationalId.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNationalId.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtPhone.BackColor = System.Drawing.Color.White;
+            this.txtPhone.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtPhone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPhone.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtGuardianName.BackColor = System.Drawing.Color.White;
+            this.txtGuardianName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGuardianName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGuardianName.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtGuardianRelation.BackColor = System.Drawing.Color.White;
+            this.txtGuardianRelation.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGuardianRelation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGuardianRelation.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtGuardianPhone.BackColor = System.Drawing.Color.White;
+            this.txtGuardianPhone.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGuardianPhone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGuardianPhone.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtGuardianEmail.BackColor = System.Drawing.Color.White;
+            this.txtGuardianEmail.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGuardianEmail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGuardianEmail.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtGuardianJob.BackColor = System.Drawing.Color.White;
+            this.txtGuardianJob.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGuardianJob.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGuardianJob.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtGovernorate.BackColor = System.Drawing.Color.White;
+            this.txtGovernorate.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGovernorate.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGovernorate.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDistrict.BackColor = System.Drawing.Color.White;
+            this.txtDistrict.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtDistrict.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtDistrict.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtAddress.BackColor = System.Drawing.Color.White;
+            this.txtAddress.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtAddress.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSearch.BackColor = System.Drawing.Color.White;
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
-            foreach (System.Windows.Forms.ComboBox comboBox in new System.Windows.Forms.ComboBox[]
-            {
-                this.cmbGender, this.cmbStatus, this.cmbFilterClass, this.cmbFilterStatus
-            })
-            {
-                comboBox.BackColor = System.Drawing.Color.White;
-                comboBox.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-                comboBox.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            }
+            this.cmbGender.BackColor = System.Drawing.Color.White;
+            this.cmbGender.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbGender.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbStatus.BackColor = System.Drawing.Color.White;
+            this.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbStatus.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbFilterClass.BackColor = System.Drawing.Color.White;
+            this.cmbFilterClass.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbFilterClass.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cmbFilterStatus.BackColor = System.Drawing.Color.White;
+            this.cmbFilterStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbFilterStatus.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dtpBirthDate.BackColor = System.Drawing.Color.White;
+            this.dtpBirthDate.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dtpBirthDate.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 
+            this.btnSearch.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.btnReload.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnClose.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnStudentProfile.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
+            this.btnPrint.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
+            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
+            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnCancel.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
+            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
+            this.btnSave.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
+            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
+            this.btnChooseImage.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnRemoveImage.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+
+            this.btnSearch.ForeColor = System.Drawing.Color.White;
+            this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSearch.FlatAppearance.BorderSize = 0;
+            this.btnSearch.UseVisualStyleBackColor = false;
+            this.btnSearch.UseCompatibleTextRendering = true;
+            this.btnSearch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnSearch.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnReload.ForeColor = System.Drawing.Color.White;
+            this.btnReload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReload.FlatAppearance.BorderSize = 0;
+            this.btnReload.UseVisualStyleBackColor = false;
+            this.btnReload.UseCompatibleTextRendering = true;
+            this.btnReload.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnReload.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnClose.ForeColor = System.Drawing.Color.White;
+            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClose.FlatAppearance.BorderSize = 0;
+            this.btnClose.UseVisualStyleBackColor = false;
+            this.btnClose.UseCompatibleTextRendering = true;
+            this.btnClose.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnClose.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnStudentProfile.ForeColor = System.Drawing.Color.White;
+            this.btnStudentProfile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStudentProfile.FlatAppearance.BorderSize = 0;
+            this.btnStudentProfile.UseVisualStyleBackColor = false;
+            this.btnStudentProfile.UseCompatibleTextRendering = true;
+            this.btnStudentProfile.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnStudentProfile.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnPrint.ForeColor = System.Drawing.Color.White;
+            this.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnPrint.FlatAppearance.BorderSize = 0;
+            this.btnPrint.UseVisualStyleBackColor = false;
+            this.btnPrint.UseCompatibleTextRendering = true;
+            this.btnPrint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnPrint.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExportExcel.ForeColor = System.Drawing.Color.White;
+            this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExportExcel.FlatAppearance.BorderSize = 0;
+            this.btnExportExcel.UseVisualStyleBackColor = false;
+            this.btnExportExcel.UseCompatibleTextRendering = true;
+            this.btnExportExcel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportExcel.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefresh.ForeColor = System.Drawing.Color.White;
+            this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRefresh.FlatAppearance.BorderSize = 0;
+            this.btnRefresh.UseVisualStyleBackColor = false;
+            this.btnRefresh.UseCompatibleTextRendering = true;
+            this.btnRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnRefresh.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCancel.ForeColor = System.Drawing.Color.White;
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCancel.FlatAppearance.BorderSize = 0;
+            this.btnCancel.UseVisualStyleBackColor = false;
+            this.btnCancel.UseCompatibleTextRendering = true;
+            this.btnCancel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnCancel.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDelete.ForeColor = System.Drawing.Color.White;
+            this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDelete.FlatAppearance.BorderSize = 0;
+            this.btnDelete.UseVisualStyleBackColor = false;
+            this.btnDelete.UseCompatibleTextRendering = true;
+            this.btnDelete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnUpdate.ForeColor = System.Drawing.Color.White;
+            this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUpdate.FlatAppearance.BorderSize = 0;
+            this.btnUpdate.UseVisualStyleBackColor = false;
+            this.btnUpdate.UseCompatibleTextRendering = true;
+            this.btnUpdate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSave.ForeColor = System.Drawing.Color.White;
+            this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSave.FlatAppearance.BorderSize = 0;
+            this.btnSave.UseVisualStyleBackColor = false;
+            this.btnSave.UseCompatibleTextRendering = true;
+            this.btnSave.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnSave.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnAdd.ForeColor = System.Drawing.Color.White;
+            this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAdd.FlatAppearance.BorderSize = 0;
+            this.btnAdd.UseVisualStyleBackColor = false;
+            this.btnAdd.UseCompatibleTextRendering = true;
+            this.btnAdd.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnChooseImage.ForeColor = System.Drawing.Color.White;
+            this.btnChooseImage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnChooseImage.FlatAppearance.BorderSize = 0;
+            this.btnChooseImage.UseVisualStyleBackColor = false;
+            this.btnChooseImage.UseCompatibleTextRendering = true;
+            this.btnChooseImage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnChooseImage.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRemoveImage.ForeColor = System.Drawing.Color.White;
+            this.btnRemoveImage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRemoveImage.FlatAppearance.BorderSize = 0;
+            this.btnRemoveImage.UseVisualStyleBackColor = false;
+            this.btnRemoveImage.UseCompatibleTextRendering = true;
+            this.btnRemoveImage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnRemoveImage.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRefresh.Visible = true;
             this.dtpBirthDate.BackColor = System.Drawing.Color.White;
             this.dtpBirthDate.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.dtpBirthDate.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
