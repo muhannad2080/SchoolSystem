@@ -139,7 +139,12 @@ namespace SchoolSystem.Services
 
             try
             {
-                SynchronizeRegistrationFinance(enrollment);
+                // عند وجود حركة مالية مرتبطة، تصبح الوحدة المالية هي المصدر
+                // المسؤول عن الرسوم والسداد؛ لذلك لا نعيد مزامنة المالية هنا.
+                if (!oldHasFinance)
+                {
+                    SynchronizeRegistrationFinance(enrollment);
+                }
 
                 auditLogService.Record("تعديل", "Enrollment", enrollment.EnrollmentID.ToString(),
                     "تعديل طلب تسجيل الطالب رقم " + enrollment.StudentID);
