@@ -35,10 +35,37 @@ namespace SchoolSystem.UI
             Dock = DockStyle.Fill;
 
             Load += SubjectsForm_Load;
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
 
             txtSearch.TextChanged += txtSearch_TextChanged;
 
             cmbClass.SelectedIndexChanged += cmbClass_SelectedIndexChanged;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) || IsDisposed || Disposing)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Subjects") &&
+                !DataRefreshNotifier.IsRelated(e, "Classes") &&
+                !DataRefreshNotifier.IsRelated(e, "AcademicYears") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
+                return;
+
+            try
+            {
+                await LoadClassesAsync();
+                await LoadSubjectsAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("تحديث واجهة المواد تلقائياً", ex);
+            }
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
@@ -255,6 +282,7 @@ namespace SchoolSystem.UI
                 ShowInfo("تمت إضافة المادة بنجاح. الرقم: " + subjectId);
                 await LoadSubjectsAsync();
                 ClearFields();
+                DataRefreshNotifier.Notify("Subjects", this);
             }
             catch (Exception ex)
             {
