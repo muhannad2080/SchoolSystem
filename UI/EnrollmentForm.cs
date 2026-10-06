@@ -69,6 +69,10 @@ namespace SchoolSystem.UI
 
             UIHelper.ApplyStyle(this);
 
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             // ------------------------------------------------------------
             // Behavior-only settings.
             // No visual styling or layout manipulation is performed here.
@@ -130,6 +134,49 @@ namespace SchoolSystem.UI
             // ------------------------------------------------------------
 
             ConfigureOutputButtons();
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                isLoading ||
+                isEditMode ||
+                isSaving)
+            {
+                return;
+            }
+
+            bool related =
+                DataRefreshNotifier.IsRelated(e, "Enrollment") ||
+                DataRefreshNotifier.IsRelated(e, "ClassAssignment") ||
+                DataRefreshNotifier.IsRelated(e, "Students") ||
+                DataRefreshNotifier.IsRelated(e, "Fees") ||
+                DataRefreshNotifier.IsRelated(e, "Vouchers");
+
+            if (!related)
+                return;
+
+            try
+            {
+                isLoading = true;
+
+                LoadData();
+                await LoadSectionsAsync();
+                await LoadRegistrationFeePlanAsync(false);
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة القيد: تحديث تلقائي للبيانات المرتبطة",
+                    ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
         }
 
         // ================================================================
