@@ -55,6 +55,47 @@ namespace SchoolSystem.UI
 
             studentSearchTimer.Tick += studentSearchTimer_Tick;
             WireUpEvents();
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) || IsDisposed || Disposing)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Students") &&
+                !DataRefreshNotifier.IsRelated(e, "Teachers") &&
+                !DataRefreshNotifier.IsRelated(e, "Enrollment") &&
+                !DataRefreshNotifier.IsRelated(e, "ClassAssignment") &&
+                !DataRefreshNotifier.IsRelated(e, "Subjects") &&
+                !DataRefreshNotifier.IsRelated(e, "Classes") &&
+                !DataRefreshNotifier.IsRelated(e, "Sections") &&
+                !DataRefreshNotifier.IsRelated(e, "Fees") &&
+                !DataRefreshNotifier.IsRelated(e, "Users") &&
+                !DataRefreshNotifier.IsRelated(e, "AcademicYears") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
+                return;
+
+            try
+            {
+                isLoadingFilters = true;
+                await LoadAcademicYearsAsync();
+                await LoadClassesAsync();
+                await LoadTermsAsync();
+                await LoadSectionsAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("تحديث مركز التقارير تلقائياً", ex);
+            }
+            finally
+            {
+                isLoadingFilters = false;
+            }
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
