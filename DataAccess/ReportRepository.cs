@@ -317,7 +317,7 @@ namespace SchoolSystem.DataAccess
 
             string query = @"
                 SELECT
-                    " + studentIdExpression + " AS [رقم الطالب],
+                    " + studentIdExpression + @" AS [رقم الطالب],
                     " + (hasStudentNumber ? "CONVERT(nvarchar(30), s.StudentNumber)" : "CONVERT(nvarchar(30), NULL)") + @" AS [الرقم الأكاديمي],
                     CONVERT(nvarchar(200), s.FullName) AS [اسم الطالب],
                     " + (hasGender ? "CONVERT(nvarchar(20), s.Gender)" : "CONVERT(nvarchar(20), NULL)") + @" AS [الجنس],
