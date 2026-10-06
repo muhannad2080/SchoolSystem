@@ -1,28 +1,39 @@
 /*
     SchoolSystem - Production data reset
-    ----------------------------------------------
-    This script removes operational/test data while KEEPING reference/setup data:
-      - Academic years/current academic-year history
-      - Academic terms
-      - Subjects
-      - Academic years/terms
-      - Rooms
-      - Rooms
-      - Users, roles, permissions and their assignments
-      - School settings
-      - School settings
+    ====================================
+    الهدف:
+      تنظيف قاعدة SchoolDB من كل البيانات التشغيلية/التجريبية مع الاحتفاظ
+      فقط بالبيانات المرجعية/الإعدادية التي طلبها المستخدم.
 
-    Cleared:
-      Students/profiles/enrollments/distribution/attendance/grades/marks/transport assignments
-      Teachers/contracts/attendance/payroll/timetable
-      Fees/fee plans/student fees/vouchers/receipts
-      Expenses/borrowings/audit/closing/migration operational logs
-      Buses/routes are cleared because they are operational master data that the user requested
-      to re-enter dynamically from the application.
+    الجداول المحتفظ بها:
+      Subjects
+      AcademicYears
+      AcademicTerms
+      AcademicYearCurrent
+      Rooms
+      Users
+      Roles
+      Permissions
+      RolePermissions
+      UserRoles
+      UserPermissions
+      SchoolSettings
+      SchemaMigrations
 
-    IMPORTANT:
-      Run once against SchoolDB after taking a backup.
-      This script does NOT run automatically from the application.
+    كل جدول dbo آخر يُعتبر تشغيليًا ويُفرغ بالكامل.
+    بذلك تُحذف:
+      الطلاب وملفاتهم وتسجيلاتهم وتوزيعهم وحضورهم ودرجاتهم ونقلهم،
+      المعلمون وعقودهم ورواتبهم وحضورهم،
+      الرسوم وخطط الرسوم والسندات والإيصالات،
+      المصروفات والمكتبة والحافلات والجدول الدراسي،
+      الإغلاقات السنوية وسجلات الترحيل والتدقيق ونسخ قاعدة البيانات
+      وأي جدول تشغيلي جديد أُضيف لاحقًا.
+
+    مهم:
+      1) خذ نسخة احتياطية قبل التنفيذ.
+      2) هذا السكربت لا يُنفَّذ تلقائيًا عند تشغيل البرنامج.
+      3) ملفات PDF/Excel/CSV التي تم تصديرها سابقًا خارج SQL Server
+         يجب حذفها من مجلدات التصدير يدويًا.
 */
 
 IF DB_ID(N'SchoolDB') IS NULL
@@ -38,233 +49,230 @@ GO
 BEGIN TRY
     BEGIN TRANSACTION;
 
-    /* ================================================================
-       1) Child/transactional data first
-       ================================================================ */
-    IF OBJECT_ID(N'dbo.StudentAttendance', N'U') IS NOT NULL DELETE FROM dbo.StudentAttendance;
-    IF OBJECT_ID(N'dbo.TeacherAttendance', N'U') IS NOT NULL DELETE FROM dbo.TeacherAttendance;
-    IF OBJECT_ID(N'dbo.StaffAttendance', N'U') IS NOT NULL DELETE FROM dbo.StaffAttendance;
+    DECLARE @Keep TABLE
+    (
+        SchemaName SYSNAME NOT NULL,
+        TableName SYSNAME NOT NULL,
+        PRIMARY KEY (SchemaName, TableName)
+    );
 
-    IF OBJECT_ID(N'dbo.Grades', N'U') IS NOT NULL DELETE FROM dbo.Grades;
-    IF OBJECT_ID(N'dbo.Marks', N'U') IS NOT NULL DELETE FROM dbo.Marks;
+    INSERT INTO @Keep (SchemaName, TableName)
+    VALUES
+        (N'dbo', N'Subjects'),
+        (N'dbo', N'AcademicYears'),
+        (N'dbo', N'AcademicTerms'),
+        (N'dbo', N'AcademicYearCurrent'),
+        (N'dbo', N'Rooms'),
+        (N'dbo', N'Users'),
+        (N'dbo', N'Roles'),
+        (N'dbo', N'Permissions'),
+        (N'dbo', N'RolePermissions'),
+        (N'dbo', N'UserRoles'),
+        (N'dbo', N'UserPermissions'),
+        (N'dbo', N'SchoolSettings'),
+        (N'dbo', N'SchemaMigrations');
 
-    IF OBJECT_ID(N'dbo.SchoolTimetable', N'U') IS NOT NULL DELETE FROM dbo.SchoolTimetable;
-    IF OBJECT_ID(N'dbo.Timetables', N'U') IS NOT NULL DELETE FROM dbo.Timetables;
+    DECLARE @sql NVARCHAR(MAX);
+    DECLARE @schema SYSNAME;
+    DECLARE @table SYSNAME;
 
-    IF OBJECT_ID(N'dbo.VoucherLines', N'U') IS NOT NULL DELETE FROM dbo.VoucherLines;
-    IF OBJECT_ID(N'dbo.Vouchers', N'U') IS NOT NULL DELETE FROM dbo.Vouchers;
-    IF OBJECT_ID(N'dbo.Receipts', N'U') IS NOT NULL DELETE FROM dbo.Receipts;
+    /* تعطيل FK داخل جداول المستخدم مؤقتًا لضمان تنظيف شامل. */
+    DECLARE fk_disable_cursor CURSOR LOCAL FAST_FORWARD FOR
+        SELECT SCHEMA_NAME(t.schema_id), t.name
+        FROM sys.tables t
+        WHERE t.is_ms_shipped = 0;
 
-    IF OBJECT_ID(N'dbo.Fees', N'U') IS NOT NULL DELETE FROM dbo.Fees;
-    IF OBJECT_ID(N'dbo.StudentFees', N'U') IS NOT NULL DELETE FROM dbo.StudentFees;
-    IF OBJECT_ID(N'dbo.FeePlans', N'U') IS NOT NULL DELETE FROM dbo.FeePlans;
-    IF OBJECT_ID(N'dbo.SchoolSections', N'U') IS NOT NULL DELETE FROM dbo.SchoolSections;
-
-    IF OBJECT_ID(N'dbo.StudentTransport', N'U') IS NOT NULL DELETE FROM dbo.StudentTransport;
-    IF OBJECT_ID(N'dbo.StudentTransportAssignments', N'U') IS NOT NULL DELETE FROM dbo.StudentTransportAssignments;
-
-    IF OBJECT_ID(N'dbo.BookBorrowings', N'U') IS NOT NULL DELETE FROM dbo.BookBorrowings;
-    IF OBJECT_ID(N'dbo.Books', N'U') IS NOT NULL DELETE FROM dbo.Books;
-
-    IF OBJECT_ID(N'dbo.TeacherContracts', N'U') IS NOT NULL DELETE FROM dbo.TeacherContracts;
-    IF OBJECT_ID(N'dbo.Payroll', N'U') IS NOT NULL DELETE FROM dbo.Payroll;
-
-    IF OBJECT_ID(N'dbo.Expenses', N'U') IS NOT NULL DELETE FROM dbo.Expenses;
-
-    /* ================================================================
-       1.5) Academic operational/master data to be re-entered dynamically
-       ================================================================ */
-    IF OBJECT_ID(N'dbo.ClassSubjectTerms', N'U') IS NOT NULL DELETE FROM dbo.ClassSubjectTerms;
-    IF OBJECT_ID(N'dbo.ClassSubjects', N'U') IS NOT NULL DELETE FROM dbo.ClassSubjects;
-
-    IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
-        UPDATE dbo.Subjects
-        SET ClassID = NULL,
-            UpdatedAt = GETDATE();
-
-    IF OBJECT_ID(N'dbo.Classes', N'U') IS NOT NULL DELETE FROM dbo.Classes;
-    IF OBJECT_ID(N'dbo.Stages', N'U') IS NOT NULL DELETE FROM dbo.Stages;
-
-    IF OBJECT_ID(N'dbo.AnnualMigrationLog', N'U') IS NOT NULL DELETE FROM dbo.AnnualMigrationLog;
-    IF OBJECT_ID(N'dbo.AnnualClosings', N'U') IS NOT NULL DELETE FROM dbo.AnnualClosings;
-    IF OBJECT_ID(N'dbo.DatabaseBackupHistory', N'U') IS NOT NULL DELETE FROM dbo.DatabaseBackupHistory;
-    IF OBJECT_ID(N'dbo.AuditLogs', N'U') IS NOT NULL DELETE FROM dbo.AuditLogs;
-
-    /* ================================================================
-       2) Operational people and their dependent records
-       ================================================================ */
-    IF OBJECT_ID(N'dbo.StudentProfiles', N'U') IS NOT NULL DELETE FROM dbo.StudentProfiles;
-    IF OBJECT_ID(N'dbo.Enrollments', N'U') IS NOT NULL DELETE FROM dbo.Enrollments;
-    IF OBJECT_ID(N'dbo.StudentClasses', N'U') IS NOT NULL DELETE FROM dbo.StudentClasses;
-    IF OBJECT_ID(N'dbo.Students', N'U') IS NOT NULL DELETE FROM dbo.Students;
-
-    IF OBJECT_ID(N'dbo.Teachers', N'U') IS NOT NULL DELETE FROM dbo.Teachers;
-
-    /* ================================================================
-       3) Operational transport
-       ================================================================ */
-    IF OBJECT_ID(N'dbo.BusRoutes', N'U') IS NOT NULL DELETE FROM dbo.BusRoutes;
-    IF OBJECT_ID(N'dbo.Buses', N'U') IS NOT NULL DELETE FROM dbo.Buses;
-
-    /* ================================================================
-       4) Reset identity counters for cleared operational tables only
-       ================================================================ */
-    DECLARE @TableName SYSNAME;
-
-    DECLARE identity_cursor CURSOR LOCAL FAST_FORWARD FOR
-    SELECT v.TableName
-    FROM (VALUES
-        (N'Students'),
-        (N'StudentProfiles'),
-        (N'Enrollments'),
-        (N'StudentClasses'),
-        (N'StudentAttendance'),
-        (N'Grades'),
-        (N'Marks'),
-        (N'Teachers'),
-        (N'TeacherAttendance'),
-        (N'TeacherContracts'),
-        (N'Payroll'),
-        (N'SchoolTimetable'),
-        (N'Fees'),
-        (N'StudentFees'),
-        (N'FeePlans'),
-        (N'SchoolSections'),
-        (N'Vouchers'),
-        (N'Receipts'),
-        (N'Expenses'),
-        (N'BookBorrowings'),
-        (N'Books'),
-        (N'Buses'),
-        (N'BusRoutes'),
-        (N'StudentTransport'),
-        (N'StudentTransportAssignments'),
-        (N'ClassSubjectTerms'),
-        (N'ClassSubjects'),
-        (N'Classes'),
-        (N'Stages')
-    ) v(TableName);
-
-    OPEN identity_cursor;
-    FETCH NEXT FROM identity_cursor INTO @TableName;
+    OPEN fk_disable_cursor;
+    FETCH NEXT FROM fk_disable_cursor INTO @schema, @table;
 
     WHILE @@FETCH_STATUS = 0
     BEGIN
-        IF OBJECT_ID(N'dbo.' + @TableName, N'U') IS NOT NULL
-        BEGIN
-            IF EXISTS
-            (
-                SELECT 1
-                FROM sys.identity_columns
-                WHERE object_id = OBJECT_ID(N'dbo.' + @TableName)
-            )
-            BEGIN
-                EXEC(
-                    N'DBCC CHECKIDENT (''' +
-                    REPLACE(N'dbo.' + @TableName, '''', '''''') +
-                    N''', RESEED, 0) WITH NO_INFOMSGS;'
-                );
-            END
-        END
+        SET @sql = N'ALTER TABLE ' +
+                   QUOTENAME(@schema) + N'.' + QUOTENAME(@table) +
+                   N' NOCHECK CONSTRAINT ALL;';
+        EXEC sys.sp_executesql @sql;
 
-        FETCH NEXT FROM identity_cursor INTO @TableName;
+        FETCH NEXT FROM fk_disable_cursor INTO @schema, @table;
+    END
+
+    CLOSE fk_disable_cursor;
+    DEALLOCATE fk_disable_cursor;
+
+    /* تفريغ كل الجداول غير المحتفظ بها. */
+    DECLARE clear_cursor CURSOR LOCAL FAST_FORWARD FOR
+        SELECT SCHEMA_NAME(t.schema_id), t.name
+        FROM sys.tables t
+        WHERE t.is_ms_shipped = 0
+          AND NOT EXISTS
+          (
+              SELECT 1
+              FROM @Keep k
+              WHERE k.SchemaName = SCHEMA_NAME(t.schema_id)
+                AND k.TableName = t.name
+          );
+
+    OPEN clear_cursor;
+    FETCH NEXT FROM clear_cursor INTO @schema, @table;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SET @sql = N'DELETE FROM ' +
+                   QUOTENAME(@schema) + N'.' + QUOTENAME(@table) + N';';
+        EXEC sys.sp_executesql @sql;
+
+        FETCH NEXT FROM clear_cursor INTO @schema, @table;
+    END
+
+    CLOSE clear_cursor;
+    DEALLOCATE clear_cursor;
+
+    /* تصفير الهوية لكل جدول تم تنظيفه فقط. */
+    DECLARE identity_cursor CURSOR LOCAL FAST_FORWARD FOR
+        SELECT SCHEMA_NAME(t.schema_id), t.name
+        FROM sys.tables t
+        INNER JOIN sys.identity_columns ic
+            ON ic.object_id = t.object_id
+        WHERE t.is_ms_shipped = 0
+          AND NOT EXISTS
+          (
+              SELECT 1
+              FROM @Keep k
+              WHERE k.SchemaName = SCHEMA_NAME(t.schema_id)
+                AND k.TableName = t.name
+          );
+
+    OPEN identity_cursor;
+    FETCH NEXT FROM identity_cursor INTO @schema, @table;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SET @sql = N'DBCC CHECKIDENT (' +
+                   QUOTENAME(@schema) + N'.' + QUOTENAME(@table) +
+                   N', RESEED, 0) WITH NO_INFOMSGS;';
+        EXEC sys.sp_executesql @sql;
+
+        FETCH NEXT FROM identity_cursor INTO @schema, @table;
     END
 
     CLOSE identity_cursor;
     DEALLOCATE identity_cursor;
 
-    /* ================================================================
-       5) Verification:
-          Operational records must be zero.
-          Reference records must still exist.
-       ================================================================ */
+    /* إعادة تفعيل FK والتحقق منها. */
+    DECLARE fk_enable_cursor CURSOR LOCAL FAST_FORWARD FOR
+        SELECT SCHEMA_NAME(t.schema_id), t.name
+        FROM sys.tables t
+        WHERE t.is_ms_shipped = 0;
+
+    OPEN fk_enable_cursor;
+    FETCH NEXT FROM fk_enable_cursor INTO @schema, @table;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SET @sql = N'ALTER TABLE ' +
+                   QUOTENAME(@schema) + N'.' + QUOTENAME(@table) +
+                   N' WITH CHECK CHECK CONSTRAINT ALL;';
+        EXEC sys.sp_executesql @sql;
+
+        FETCH NEXT FROM fk_enable_cursor INTO @schema, @table;
+    END
+
+    CLOSE fk_enable_cursor;
+    DEALLOCATE fk_enable_cursor;
+
+    /* تحقق صارم: لا توجد أي صفوف في جدول غير محتفظ به. */
     DECLARE @RemainingOperational BIGINT = 0;
 
-    SELECT @RemainingOperational =
-          ISNULL((SELECT COUNT_BIG(*) FROM dbo.Students), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentProfiles), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Teachers), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.TeacherContracts), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Enrollments), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentClasses), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentAttendance), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.TeacherAttendance), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StaffAttendance), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Grades), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Marks), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.SchoolTimetable), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Timetables), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Fees), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentFees), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.FeePlans), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.VoucherLines), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Vouchers), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Receipts), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Expenses), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.BookBorrowings), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Books), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Buses), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.BusRoutes), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentTransport), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.StudentTransportAssignments), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.ClassSubjectTerms), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.ClassSubjects), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.SchoolSections), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Classes), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.Stages), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AnnualMigrationLog), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AnnualClosings), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.DatabaseBackupHistory), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AuditLogs), 0);
+    DECLARE verify_cursor CURSOR LOCAL FAST_FORWARD FOR
+        SELECT SCHEMA_NAME(t.schema_id), t.name
+        FROM sys.tables t
+        WHERE t.is_ms_shipped = 0
+          AND NOT EXISTS
+          (
+              SELECT 1
+              FROM @Keep k
+              WHERE k.SchemaName = SCHEMA_NAME(t.schema_id)
+                AND k.TableName = t.name
+          );
+
+    OPEN verify_cursor;
+    FETCH NEXT FROM verify_cursor INTO @schema, @table;
+
+    WHILE @@FETCH_STATUS = 0
+    BEGIN
+        SET @sql = N'SELECT @CountOut = COUNT_BIG(*) FROM ' +
+                   QUOTENAME(@schema) + N'.' + QUOTENAME(@table) + N';';
+
+        DECLARE @CountOut BIGINT = 0;
+
+        EXEC sys.sp_executesql
+            @sql,
+            N'@CountOut BIGINT OUTPUT',
+            @CountOut = @CountOut OUTPUT;
+
+        SET @RemainingOperational += ISNULL(@CountOut, 0);
+
+        FETCH NEXT FROM verify_cursor INTO @schema, @table;
+    END
+
+    CLOSE verify_cursor;
+    DEALLOCATE verify_cursor;
 
     IF @RemainingOperational <> 0
         THROW 52001, N'فشل تنظيف البيانات التشغيلية بالكامل.', 1;
 
-    IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.Subjects)
-        THROW 52002, N'لم تبقَ المواد الدراسية المرجعية كما هو متوقع.', 1;
+    /* تحقق من المرجعيات التي يجب أن تبقى. */
+    IF NOT EXISTS (SELECT 1 FROM dbo.Users)
+        THROW 52004, N'لم يبقَ أي مستخدم بعد التنظيف؛ تم إيقاف العملية حمايةً للدخول.', 1;
 
-    IF OBJECT_ID(N'dbo.Rooms', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.Rooms)
-        THROW 52003, N'لم تبقَ القاعات المرجعية كما هو متوقع.', 1;
+    IF NOT EXISTS (SELECT 1 FROM dbo.Roles)
+        THROW 52006, N'لم تبقَ الأدوار بعد التنظيف؛ تم إيقاف العملية حمايةً للصلاحيات.', 1;
 
-    IF OBJECT_ID(N'dbo.Users', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.Users)
-        THROW 52004, N'لم يبقَ مستخدمون. تم إيقاف العملية لحماية الدخول والصلاحيات.', 1;
+    IF NOT EXISTS (SELECT 1 FROM dbo.Permissions)
+        THROW 52005, N'لم تبقَ الصلاحيات بعد التنظيف؛ تم إيقاف العملية حمايةً لنظام الوصول.', 1;
 
-    IF OBJECT_ID(N'dbo.Roles', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.Roles)
-        THROW 52006, N'لم تبقَ الأدوار والصلاحيات الأساسية.', 1;
-
-    IF OBJECT_ID(N'dbo.AcademicYears', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.AcademicYears)
+    IF NOT EXISTS (SELECT 1 FROM dbo.AcademicYears)
         THROW 52007, N'لم تبقَ السنوات الدراسية المرجعية.', 1;
 
-    IF OBJECT_ID(N'dbo.AcademicTerms', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.AcademicTerms)
+    IF NOT EXISTS (SELECT 1 FROM dbo.AcademicTerms)
         THROW 52008, N'لم تبقَ الفصول الدراسية المرجعية.', 1;
 
-    IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
-       AND EXISTS
-       (
-           SELECT 1
-           FROM dbo.Subjects
-           WHERE ClassID IS NOT NULL
-       )
-        THROW 52009, N'بقي ربط قديم لمادة بصف تم تنظيفه. تم إيقاف العملية.', 1;
-
-    IF OBJECT_ID(N'dbo.Permissions', N'U') IS NOT NULL
-       AND NOT EXISTS (SELECT 1 FROM dbo.Permissions)
-        THROW 52005, N'لم تبقَ الصلاحيات. تم إيقاف العملية لحماية نظام الوصول.', 1;
+    /* أي علاقة قديمة للمادة بالصف يجب أن تكون قد زالت مع تنظيف الصفوف. */
+    IF COL_LENGTH(N'dbo.Subjects', N'ClassID') IS NOT NULL
+       AND EXISTS (SELECT 1 FROM dbo.Subjects WHERE ClassID IS NOT NULL)
+        THROW 52009, N'بقي ربط قديم بين مادة وصف بعد التنظيف.', 1;
 
     COMMIT TRANSACTION;
 END TRY
 BEGIN CATCH
+    IF CURSOR_STATUS('local', 'fk_disable_cursor') >= 0
+    BEGIN
+        CLOSE fk_disable_cursor;
+        DEALLOCATE fk_disable_cursor;
+    END;
+
+    IF CURSOR_STATUS('local', 'clear_cursor') >= 0
+    BEGIN
+        CLOSE clear_cursor;
+        DEALLOCATE clear_cursor;
+    END;
+
     IF CURSOR_STATUS('local', 'identity_cursor') >= 0
     BEGIN
         CLOSE identity_cursor;
         DEALLOCATE identity_cursor;
-    END
+    END;
+
+    IF CURSOR_STATUS('local', 'fk_enable_cursor') >= 0
+    BEGIN
+        CLOSE fk_enable_cursor;
+        DEALLOCATE fk_enable_cursor;
+    END;
+
+    IF CURSOR_STATUS('local', 'verify_cursor') >= 0
+    BEGIN
+        CLOSE verify_cursor;
+        DEALLOCATE verify_cursor;
+    END;
 
     IF XACT_STATE() <> 0
         ROLLBACK TRANSACTION;
@@ -273,36 +281,17 @@ BEGIN CATCH
 END CATCH;
 GO
 
-/* تقرير نهائي للمستخدم */
-SELECT 'Students' AS TableName, COUNT_BIG(*) AS RemainingRows FROM dbo.Students
-UNION ALL SELECT 'StudentProfiles', COUNT_BIG(*) FROM dbo.StudentProfiles
-UNION ALL SELECT 'Enrollments', COUNT_BIG(*) FROM dbo.Enrollments
-UNION ALL SELECT 'StudentClasses', COUNT_BIG(*) FROM dbo.StudentClasses
-UNION ALL SELECT 'Teachers', COUNT_BIG(*) FROM dbo.Teachers
-UNION ALL SELECT 'TeacherContracts', COUNT_BIG(*) FROM dbo.TeacherContracts
-UNION ALL SELECT 'Payroll', COUNT_BIG(*) FROM dbo.Payroll
-UNION ALL SELECT 'Fees', COUNT_BIG(*) FROM dbo.Fees
-UNION ALL SELECT 'FeePlans', COUNT_BIG(*) FROM dbo.FeePlans
-UNION ALL SELECT 'Vouchers', COUNT_BIG(*) FROM dbo.Vouchers
-UNION ALL SELECT 'Receipts', COUNT_BIG(*) FROM dbo.Receipts
-UNION ALL SELECT 'Subjects', COUNT_BIG(*) FROM dbo.Subjects
-UNION ALL SELECT 'Rooms', COUNT_BIG(*) FROM dbo.Rooms
-UNION ALL SELECT 'AcademicYears', COUNT_BIG(*) FROM dbo.AcademicYears
-UNION ALL SELECT 'AcademicTerms', COUNT_BIG(*) FROM dbo.AcademicTerms
-UNION ALL SELECT 'Users', COUNT_BIG(*) FROM dbo.Users
-UNION ALL SELECT 'Roles', COUNT_BIG(*) FROM dbo.Roles
-UNION ALL SELECT 'Permissions', COUNT_BIG(*) FROM dbo.Permissions
-UNION ALL SELECT 'RolePermissions', COUNT_BIG(*) FROM dbo.RolePermissions
-UNION ALL SELECT 'UserRoles', COUNT_BIG(*) FROM dbo.UserRoles
-UNION ALL SELECT 'UserPermissions', COUNT_BIG(*) FROM dbo.UserPermissions
-UNION ALL SELECT 'AcademicYearCurrent', COUNT_BIG(*) FROM dbo.AcademicYearCurrent
-UNION ALL SELECT 'Stages', COUNT_BIG(*) FROM dbo.Stages
-UNION ALL SELECT 'Classes', COUNT_BIG(*) FROM dbo.Classes
-UNION ALL SELECT 'ClassSubjects', COUNT_BIG(*) FROM dbo.ClassSubjects
-UNION ALL SELECT 'ClassSubjectTerms', COUNT_BIG(*) FROM dbo.ClassSubjectTerms
-UNION ALL SELECT 'SchoolSections', COUNT_BIG(*) FROM dbo.SchoolSections
-UNION ALL SELECT 'AuditLogs', COUNT_BIG(*) FROM dbo.AuditLogs
-UNION ALL SELECT 'AnnualClosings', COUNT_BIG(*) FROM dbo.AnnualClosings
-UNION ALL SELECT 'DatabaseBackupHistory', COUNT_BIG(*) FROM dbo.DatabaseBackupHistory
+SELECT N'Subjects' AS TableName, COUNT_BIG(*) AS RemainingRows FROM dbo.Subjects
+UNION ALL SELECT N'AcademicYears', COUNT_BIG(*) FROM dbo.AcademicYears
+UNION ALL SELECT N'AcademicTerms', COUNT_BIG(*) FROM dbo.AcademicTerms
+UNION ALL SELECT N'AcademicYearCurrent', COUNT_BIG(*) FROM dbo.AcademicYearCurrent
+UNION ALL SELECT N'Rooms', COUNT_BIG(*) FROM dbo.Rooms
+UNION ALL SELECT N'Users', COUNT_BIG(*) FROM dbo.Users
+UNION ALL SELECT N'Roles', COUNT_BIG(*) FROM dbo.Roles
+UNION ALL SELECT N'Permissions', COUNT_BIG(*) FROM dbo.Permissions
+UNION ALL SELECT N'RolePermissions', COUNT_BIG(*) FROM dbo.RolePermissions
+UNION ALL SELECT N'UserRoles', COUNT_BIG(*) FROM dbo.UserRoles
+UNION ALL SELECT N'UserPermissions', COUNT_BIG(*) FROM dbo.UserPermissions
+UNION ALL SELECT N'SchoolSettings', COUNT_BIG(*) FROM dbo.SchoolSettings
+UNION ALL SELECT N'SchemaMigrations', COUNT_BIG(*) FROM dbo.SchemaMigrations
 ORDER BY TableName;
-GO
