@@ -364,6 +364,7 @@ namespace SchoolSystem.UI
 
                     await LoadSubjectsAsync();
                     ClearFields();
+                    DataRefreshNotifier.Notify("Subjects", this);
                 }
 
                 else
