@@ -83,7 +83,7 @@ namespace SchoolSystem.Services
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
             {
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                user.Permissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
+                user.Permissions = GetAllPermissionsString();
                 // تجهيز قيمة كلمة المرور لمسار التحقق والحماية.
                 user.MustChangePassword = false;
             }
@@ -165,7 +165,7 @@ namespace SchoolSystem.Services
                 user.RoleName = existingUser.RoleName;
                 user.IsActive = true;
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                user.Permissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
+                user.Permissions = GetAllPermissionsString();
                 // تجهيز قيمة كلمة المرور لمسار التحقق والحماية.
                 user.MustChangePassword = false;
             }
@@ -660,8 +660,27 @@ namespace SchoolSystem.Services
         // تعريف الدالة GetAllPermissionsString لتنفيذ العملية المرتبطة بها.
         private string GetAllPermissionsString()
         {
+            DataTable table = userRepository.GetActivePermissions();
+            List<string> keys = new List<string>();
 
-            return PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
+            foreach (DataRow row in table.Rows)
+            {
+                string key = row["PermissionKey"] == DBNull.Value
+                    ? string.Empty
+                    : row["PermissionKey"].ToString().Trim();
+
+                if (PermissionKeys.IsScreenPermission(key) &&
+                    !keys.Contains(key, StringComparer.OrdinalIgnoreCase))
+                {
+                    keys.Add(key);
+                }
+            }
+
+            if (keys.Count == 0)
+                throw new InvalidOperationException(
+                    "لا توجد صلاحيات شاشات نشطة في قاعدة البيانات. لا يمكن إنشاء أو تهيئة مدير النظام.");
+
+            return PermissionKeys.Serialize(keys);
         }
 
         // تعريف الدالة ValidatePasswordPolicy لتنفيذ العملية المرتبطة بها.
@@ -688,7 +707,7 @@ namespace SchoolSystem.Services
             List<string> effective = userRepository.GetEffectivePermissions(userId);
 
             if (PermissionKeys.IsSystemAdministratorRole(roleName))
-                return PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
+                return GetAllPermissionsString();
 
 
             return PermissionKeys.Serialize(effective);
@@ -719,7 +738,7 @@ namespace SchoolSystem.Services
             if (PermissionKeys.IsSystemAdministratorRole(user.RoleName))
             {
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                string fixedPermissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
+                string fixedPermissions = GetAllPermissionsString();
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 userRepository.ReplaceUserPermissions(userId, new List<string>(PermissionKeys.ScreenPermissions));
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
