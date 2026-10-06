@@ -74,44 +74,11 @@ namespace SchoolSystem.DataAccess
             using (SqlConnection con = DbConnection.GetConnection())
             {
                 const string query = @"
-                    SELECT FeeType
-                    FROM
-                    (
-                        SELECT DISTINCT
-                            CASE
-                                WHEN LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
-                                    (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                                THEN N'الرسوم الكلية'
-                                ELSE LTRIM(RTRIM(ISNULL(FeeType, N'')))
-                            END AS FeeType
-                        FROM FeePlans
-                        WHERE NULLIF(LTRIM(RTRIM(FeeType)), N'') IS NOT NULL
-
-                        UNION ALL
-                        SELECT N'الرسوم الكلية'
-                        UNION ALL SELECT N'رسوم تسجيل'
-                        UNION ALL SELECT N'رسوم دراسية'
-                        UNION ALL SELECT N'رسوم كتب'
-                        UNION ALL SELECT N'رسوم زي مدرسي'
-                        UNION ALL SELECT N'رسوم مواصلات'
-                        UNION ALL SELECT N'رسوم امتحانات'
-                        UNION ALL SELECT N'رسوم أنشطة'
-                        UNION ALL SELECT N'أخرى'
-                    ) FeeTypes
+                    SELECT DISTINCT
+                        LTRIM(RTRIM(FeeType)) AS FeeType
+                    FROM FeePlans
                     WHERE NULLIF(LTRIM(RTRIM(FeeType)), N'') IS NOT NULL
-                    GROUP BY FeeType
-                    ORDER BY CASE FeeType
-                        WHEN N'الرسوم الكلية' THEN 0
-                        WHEN N'رسوم تسجيل' THEN 1
-                        WHEN N'رسوم دراسية' THEN 2
-                        WHEN N'رسوم كتب' THEN 3
-                        WHEN N'رسوم زي مدرسي' THEN 4
-                        WHEN N'رسوم مواصلات' THEN 5
-                        WHEN N'رسوم امتحانات' THEN 6
-                        WHEN N'رسوم أنشطة' THEN 7
-                        WHEN N'أخرى' THEN 8
-                        ELSE 99
-                    END, FeeType;";
+                    ORDER BY LTRIM(RTRIM(FeeType));";
 
                 using (SqlDataAdapter da =
                     new SqlDataAdapter(query, con))
