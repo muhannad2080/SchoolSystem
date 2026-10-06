@@ -723,6 +723,21 @@ namespace SchoolSystem.DataAccess
                         RETURN 0;
                     END
 
+                    /* لا نحذف رسمًا له سند قبض مرتبط حتى لا نكسر الأثر المالي.
+                       استخدم الإلغاء/السند العكسي من شاشة السندات. */
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM dbo.Vouchers WITH (UPDLOCK, HOLDLOCK)
+                        WHERE ReferenceType = N'رسوم'
+                          AND ReferenceID = @FeeID
+                    )
+                    BEGIN
+                        THROW 51060,
+                            N'لا يمكن حذف رسم مرتبط بسند قبض. استخدم إلغاء/السند العكسي من شاشة السندات للحفاظ على السجل المالي.',
+                            1;
+                    END;
+
                     IF LTRIM(RTRIM(ISNULL((SELECT FeeType FROM Fees WHERE FeeID = @FeeID), N''))) IN
                         (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
                         SET @IsTotal = 1;
