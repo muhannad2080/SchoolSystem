@@ -43,6 +43,11 @@ namespace SchoolSystem.UI
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
             Dock = DockStyle.Fill;
+
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             Load += SchoolSectionsForm_Load;
         }
 
@@ -246,6 +251,22 @@ namespace SchoolSystem.UI
             lblCount.ForeColor = UIHelper.MutedTextColor;
         }
 
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Sections") &&
+                !DataRefreshNotifier.IsRelated(e, "Classes"))
+                return;
+
+            await LoadClassesAsync();
+            await LoadSectionsAsync();
+        }
+
         private async void SchoolSectionsForm_Load(object sender, EventArgs e)
         {
             try
@@ -388,6 +409,7 @@ namespace SchoolSystem.UI
                 int id = await Task.Run(() => sectionService.AddSection(item));
                 UIHelper.ShowInfo("تمت إضافة الشعبة بنجاح. الرقم: " + id);
                 await LoadSectionsAsync();
+                DataRefreshNotifier.Notify("Sections", this);
                 ClearFields();
             }
             catch (ArgumentException ex)
@@ -421,6 +443,7 @@ namespace SchoolSystem.UI
                 {
                     UIHelper.ShowInfo("تم تعديل الشعبة بنجاح.");
                     await LoadSectionsAsync();
+                    DataRefreshNotifier.Notify("Sections", this);
                     ClearFields();
                 }
             }
@@ -460,6 +483,7 @@ namespace SchoolSystem.UI
                 {
                     UIHelper.ShowInfo("تم حذف الشعبة بنجاح.");
                     await LoadSectionsAsync();
+                    DataRefreshNotifier.Notify("Sections", this);
                     ClearFields();
                 }
             }
