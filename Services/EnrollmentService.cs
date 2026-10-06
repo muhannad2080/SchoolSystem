@@ -122,7 +122,7 @@ namespace SchoolSystem.Services
             if (hasLinkedFinance && HasFinancialIdentityChanges(existing, enrollment))
             {
                 throw new InvalidOperationException(
-                    "لا يمكن تغيير الطالب أو الصف أو العام الدراسي أو رسوم التسجيل بعد إنشاء الحركة المالية المرتبطة. استخدم شاشة الرسوم للحركة المالية، وشاشة توزيع الفصول عند الحاجة لنقل الطالب.");
+                    "لا يمكن تغيير الطالب أو العام الدراسي أو رسوم التسجيل بعد إنشاء الحركة المالية المرتبطة. تغيير الصف والشعبة من التسجيل مسموح به ويُزامن تلقائياً مع التوزيع المرتبط.");
             }
 
             if (hasLinkedFinance && HasFinancialPaymentChanges(existing, enrollment))
@@ -273,7 +273,6 @@ namespace SchoolSystem.Services
                 return true;
 
             return existing.StudentID != updated.StudentID
-                || existing.ClassID != updated.ClassID
                 || !string.Equals(
                     NormalizeAcademicYear(existing.AcademicYear),
                     NormalizeAcademicYear(updated.AcademicYear),
