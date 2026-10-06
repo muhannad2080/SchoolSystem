@@ -1181,6 +1181,69 @@ namespace SchoolSystem.UI
                 true;
 
             EnableInputs();
+
+            ApplyFinancialEditLock();
+        }
+
+        // ================================================================
+        // FINANCIAL EDIT LOCK
+        // ================================================================
+
+        private void ApplyFinancialEditLock()
+        {
+            int studentId = TryGetSelectedId(cmbStudentID);
+            string academicYear = (txtAcademicYear.Text ?? string.Empty).Trim();
+
+            bool hasFinance = false;
+
+            try
+            {
+                hasFinance =
+                    studentId > 0 &&
+                    IsSequentialAcademicYear(academicYear) &&
+                    enrollmentService.HasRegistrationFinance(
+                        studentId,
+                        academicYear);
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة القيد: التحقق من الحركة المالية قبل التعديل",
+                    ex);
+            }
+
+            if (!hasFinance)
+                return;
+
+            // هذه الحقول مرتبطة بالمفتاح المالي أو بالحركة المالية نفسها.
+            // لا نسمح بتعديلها من شاشة التسجيل بعد إنشاء الحركة.
+            cmbStudentID.Enabled = false;
+            cmbClassID.Enabled = false;
+            txtAcademicYear.Enabled = false;
+
+            txtRegistrationFee.Enabled = false;
+            txtPaidAmount.Enabled = false;
+            cmbPaymentMethod.Enabled = false;
+            txtReceiptNo.Enabled = false;
+
+            lblStatus.Text =
+                "السجل مرتبط بحركة مالية؛ بيانات الرسوم والسداد والطالب والصف والعام الدراسي مقفلة للتعديل من هذه الشاشة.";
+
+            errorProvider1.SetError(
+                txtRegistrationFee,
+                "تُدار الرسوم من شاشة الرسوم بعد إنشاء الحركة المالية.");
+
+            errorProvider1.SetError(
+                txtPaidAmount,
+                "يُدار السداد من شاشة الرسوم والسندات.");
+
+            errorProvider1.SetError(
+                cmbStudentID,
+                "لا يمكن تغيير الطالب بعد إنشاء الحركة المالية.");
+
+            errorProvider1.SetError(
+                cmbClassID,
+                "لا يمكن تغيير الصف بعد إنشاء الحركة المالية.");
         }
 
         // ================================================================
