@@ -637,13 +637,32 @@ namespace SchoolSystem.UI.Students
         // تعريف الدالة btnSelectAll_Click لتنفيذ العملية المرتبطة بها.
         private void btnSelectAll_Click(object sender, EventArgs e)
         {
+            int currentClassId = GetSelectedClassId();
+            int selectedCount = 0;
 
             for (int i = 0; i < listBoxUnassigned.Items.Count; i++)
             {
-                listBoxUnassigned.SetItemChecked(i, true);
+                StudentListItem student =
+                    listBoxUnassigned.Items[i] as StudentListItem;
+
+                bool sameClass =
+                    currentClassId > 0 &&
+                    student != null &&
+                    student.EnrolledClassID == currentClassId;
+
+                listBoxUnassigned.SetItemChecked(
+                    i,
+                    sameClass);
+
+                if (sameClass)
+                    selectedCount++;
             }
 
-            lblStatus.Text = "تم تحديد جميع الطلاب غير الموزعين.";
+            lblStatus.Text =
+                selectedCount > 0
+                    ? "تم تحديد " + selectedCount +
+                      " طالب مسجل في الصف المحدد."
+                    : "لا يوجد طلاب غير موزعين مسجلون في الصف المحدد.";
         }
 
         // تعريف الدالة IsValidAcademicYear لتنفيذ العملية المرتبطة بها.
