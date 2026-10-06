@@ -70,6 +70,9 @@ namespace SchoolSystem.UI
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             Dock = DockStyle.Fill;
             Load += UsersForm_Load;
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
 
             // تحديد أقصى طول لأسماء المستخدمين.
             txtUserName.MaxLength = 50;
@@ -197,13 +200,23 @@ namespace SchoolSystem.UI
         {
             checkedListPermissions.Items.Clear();
 
-            // واجهة المدير تعرض صلاحية الشاشة فقط (Module.View)، ولا تعرض
+            DataTable permissions = userService.GetActivePermissions();
+            foreach (DataRow row in permissions.Rows)
+            {
+                string permissionKey = Convert.ToString(row["PermissionKey"]).Trim();
+                if (!PermissionKeys.IsScreenPermission(permissionKey))
+                    continue;
 
+                string displayName = row["DisplayName"] == DBNull.Value
+                    ? string.Empty
+                    : Convert.ToString(row["DisplayName"]).Trim();
 
-
-            foreach (string permissionKey in PermissionKeys.ScreenPermissions)
-                // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                AddPermission(permissionKey, PermissionKeys.GetDisplayName(permissionKey));
+                AddPermission(
+                    permissionKey,
+                    string.IsNullOrWhiteSpace(displayName)
+                        ? PermissionKeys.GetDisplayName(permissionKey)
+                        : displayName);
+            }
 
             ApplyRolePreset();
         }
@@ -218,6 +231,52 @@ namespace SchoolSystem.UI
 
 
             checkedListPermissions.Items.Add(new PermissionListItem(normalizedKey, text));
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) || IsDisposed || Disposing)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Users") &&
+                !DataRefreshNotifier.IsRelated(e, "Roles") &&
+                !DataRefreshNotifier.IsRelated(e, "Permissions") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
+                return;
+
+            try
+            {
+                bool wasLoading = isLoading;
+                isLoading = true;
+                LoadRoles();
+                LoadPermissions();
+                await LoadUsersAsync();
+
+                if (selectedUserId > 0)
+                {
+                    foreach (DataGridViewRow row in dataGridViewUsers.Rows)
+                    {
+                        DataRowView rowView = row.DataBoundItem as DataRowView;
+                        if (rowView == null || rowView.Row["UserID"] == DBNull.Value)
+                            continue;
+
+                        if (Convert.ToInt32(rowView.Row["UserID"]) == selectedUserId)
+                        {
+                            FillFieldsFromRow(rowView.Row);
+                            break;
+                        }
+                    }
+                }
+
+                isLoading = wasLoading;
+            }
+            catch (Exception ex)
+            {
+                isLoading = false;
+                ApplicationLogger.LogException("تحديث واجهة المستخدمين تلقائياً", ex);
+            }
         }
 
         // تعريف الدالة LoadUsersAsync لتنفيذ العملية المرتبطة بها.
@@ -414,6 +473,8 @@ namespace SchoolSystem.UI
                 ApplicationLogger.LogUsage("شاشة المستخدمين", "حفظ الصلاحيات", "تم حفظ صلاحيات الشاشات بنجاح للمستخدم " + userNameBeforeReload);
 
                 permissionsUserModified = false;
+                DataRefreshNotifier.Notify("Permissions", this);
+                DataRefreshNotifier.Notify("Users", this);
             }
 
             catch (Exception ex)
@@ -494,28 +555,18 @@ namespace SchoolSystem.UI
             if (lblRoleScreens == null)
                 return;
 
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             string normalizedRole = PermissionKeys.NormalizeRoleName(roleName);
             if (string.IsNullOrWhiteSpace(normalizedRole))
             {
                 lblRoleScreens.Text = "";
-
                 return;
             }
 
-            List<string> screens = new List<string>();
-            foreach (string permission in PermissionKeys.GetRoleDefaults(normalizedRole)
-                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                string screen = PermissionKeys.ToScreenPermission(permission.Trim());
-                if (!string.IsNullOrWhiteSpace(screen) && !screens.Contains(screen, StringComparer.OrdinalIgnoreCase))
-                    screens.Add(screen);
-            }
+            List<string> screens = userService.GetRoleScreenPermissions(normalizedRole);
 
             lblRoleScreens.Text = screens.Count == 0
-                ? "صلاحيات الدور التلقائية: لا توجد (يُحدد يدوياً من القائمة)"
-                : "صلاحيات الدور التلقائية: " + string.Join("، ",
+                ? "صلاحيات الدور من قاعدة البيانات: لا توجد"
+                : "صلاحيات الدور من قاعدة البيانات: " + string.Join("، ",
                     screens.Select(key => PermissionKeys.GetDisplayName(key)));
         }
 
@@ -525,28 +576,21 @@ namespace SchoolSystem.UI
             if (checkedListPermissions.Items.Count == 0 || cmbRole.SelectedItem == null)
                 return;
 
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             suppressPermissionTracking = true;
-            // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
             try
             {
-                // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 ClearPermissionChecks();
 
-                // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 string roleName = PermissionKeys.NormalizeRoleName(cmbRole.SelectedItem.ToString());
-                // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                string permissions = PermissionKeys.GetRoleDefaults(roleName);
-                foreach (string permission in permissions.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-                    // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                    CheckPermission(permission.Trim());
+                List<string> permissions = userService.GetRoleScreenPermissions(roleName);
+
+                foreach (string permission in permissions)
+                    CheckPermission(permission);
 
                 UpdateRoleScreensLabel(roleName);
             }
-
             finally
             {
-                // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 suppressPermissionTracking = false;
             }
         }
@@ -899,6 +943,7 @@ namespace SchoolSystem.UI
 
                 await LoadUsersAsync();
                 ClearInputs();
+                DataRefreshNotifier.Notify("Users", this);
             }
 
             catch (Exception ex)
@@ -944,6 +989,7 @@ namespace SchoolSystem.UI
 
                 await LoadUsersAsync();
                 ClearInputs();
+                DataRefreshNotifier.Notify("Users", this);
             }
 
             catch (Exception ex)
@@ -982,6 +1028,7 @@ namespace SchoolSystem.UI
 
                 await LoadUsersAsync();
                 ClearInputs();
+                DataRefreshNotifier.Notify("Users", this);
             }
 
             catch (Exception ex)
@@ -1178,12 +1225,7 @@ namespace SchoolSystem.UI
             txtPhone.Clear();
 
             if (cmbRole.Items.Count > 0)
-            {
-
-
-                int safeDefaultIndex = cmbRole.Items.IndexOf("التقارير");
-                cmbRole.SelectedIndex = safeDefaultIndex >= 0 ? safeDefaultIndex : 0;
-            }
+                cmbRole.SelectedIndex = 0;
 
             chkIsActive.Checked = true;
             // تجهيز قيمة كلمة المرور لمسار التحقق والحماية.
