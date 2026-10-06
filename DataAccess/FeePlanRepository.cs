@@ -1197,42 +1197,195 @@ namespace SchoolSystem.DataAccess
             }
         }
 
-        // تعريف الدالة DeleteFeePlan لتنفيذ العملية المرتبطة بها.
+        // حذف خطة رسوم مع حماية السجلات المدفوعة وإبقاء الإجمالي متزامنًا.
         public bool DeleteFeePlan(int feePlanId)
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                const string query = @"
-                    DELETE FROM Fees
-                    WHERE FeePlanID = @FeePlanID;
+                con.Open();
 
-                    DELETE FROM FeePlans
-                    WHERE FeePlanID = @FeePlanID;";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                using (SqlTransaction transaction =
+                    con.BeginTransaction(IsolationLevel.Serializable))
                 {
+                    try
+                    {
+                        const string findSql = @"
+                            SELECT
+                                FeePlanID,
+                                ClassID,
+                                AcademicYear,
+                                FeeType
+                            FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
+                            WHERE FeePlanID = @FeePlanID;";
 
-                    cmd.Parameters.AddWithValue("@FeePlanID", feePlanId);
+                        int classId;
+                        string academicYear;
+                        string feeType;
 
+                        using (SqlCommand find =
+                            new SqlCommand(
+                                findSql,
+                                con,
+                                transaction))
+                        {
+                            find.Parameters.AddWithValue(
+                                "@FeePlanID",
+                                feePlanId);
 
-                    con.Open();
+                            using (SqlDataReader reader =
+                                find.ExecuteReader())
+                            {
+                                if (!reader.Read())
+                                    return false;
 
-                    return cmd.ExecuteNonQuery() > 0;
+                                classId =
+                                    Convert.ToInt32(reader["ClassID"]);
+                                academicYear =
+                                    Convert.ToString(
+                                        reader["AcademicYear"]);
+                                feeType =
+                                    Convert.ToString(
+                                        reader["FeeType"]);
+                            }
+                        }
+
+                        bool isTotal =
+                            IsTotalFeeType(feeType);
+
+                        const string paidSql = @"
+                            SELECT COUNT(1)
+                            FROM Fees f
+                            INNER JOIN FeePlans fp
+                                ON fp.FeePlanID = f.FeePlanID
+                            WHERE fp.ClassID = @ClassID
+                              AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') =
+                                  REPLACE(@AcademicYear, N'-', N'/')
+                              AND ISNULL(f.PaidAmount, 0) > 0
+                              AND
+                              (
+                                  @IsTotal = 1
+                                  OR fp.FeePlanID = @FeePlanID
+                              );";
+
+                        using (SqlCommand paid =
+                            new SqlCommand(
+                                paidSql,
+                                con,
+                                transaction))
+                        {
+                            paid.Parameters.AddWithValue("@ClassID", classId);
+                            paid.Parameters.AddWithValue(
+                                "@AcademicYear",
+                                academicYear ?? string.Empty);
+                            paid.Parameters.AddWithValue(
+                                "@IsTotal",
+                                isTotal);
+                            paid.Parameters.AddWithValue(
+                                "@FeePlanID",
+                                feePlanId);
+
+                            if (Convert.ToInt32(
+                                    paid.ExecuteScalar()) > 0)
+                            {
+                                throw new InvalidOperationException(
+                                    "لا يمكن حذف خطة رسوم تحتوي على سداد سابق. استخدم الاسترجاع أو الإلغاء المالي للحفاظ على السجل التاريخي.");
+                            }
+                        }
+
+                        if (isTotal)
+                        {
+                            const string deleteFamilySql = @"
+                                DELETE FROM Fees
+                                WHERE FeePlanID IN
+                                (
+                                    SELECT FeePlanID
+                                    FROM FeePlans
+                                    WHERE ClassID = @ClassID
+                                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                                          REPLACE(@AcademicYear, N'-', N'/')
+                                );
+
+                                DELETE FROM FeePlans
+                                WHERE ClassID = @ClassID
+                                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                                      REPLACE(@AcademicYear, N'-', N'/');";
+
+                            using (SqlCommand deleteFamily =
+                                new SqlCommand(
+                                    deleteFamilySql,
+                                    con,
+                                    transaction))
+                            {
+                                deleteFamily.Parameters.AddWithValue("@ClassID", classId);
+                                deleteFamily.Parameters.AddWithValue(
+                                    "@AcademicYear",
+                                    academicYear ?? string.Empty);
+
+                                int affected =
+                                    deleteFamily.ExecuteNonQuery();
+
+                                transaction.Commit();
+                                return affected > 0;
+                            }
+                        }
+
+                        const string deleteChildSql = @"
+                            DELETE FROM Fees
+                            WHERE FeePlanID = @FeePlanID;
+
+                            DELETE FROM FeePlans
+                            WHERE FeePlanID = @FeePlanID;
+
+                            DECLARE @RemainingTotal DECIMAL(18,2);
+
+                            SELECT @RemainingTotal =
+                                ISNULL(SUM(Amount), 0)
+                            FROM FeePlans
+                            WHERE ClassID = @ClassID
+                              AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                                  REPLACE(@AcademicYear, N'-', N'/')
+                              AND LTRIM(RTRIM(ISNULL(FeeType, N''))) NOT IN
+                                  (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');
+
+                            UPDATE FeePlans
+                            SET Amount = @RemainingTotal,
+                                UpdatedAt = GETDATE()
+                            WHERE ClassID = @ClassID
+                              AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                                  REPLACE(@AcademicYear, N'-', N'/')
+                              AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
+                                  (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');";
+
+                        using (SqlCommand deleteChild =
+                            new SqlCommand(
+                                deleteChildSql,
+                                con,
+                                transaction))
+                        {
+                            deleteChild.Parameters.AddWithValue(
+                                "@FeePlanID",
+                                feePlanId);
+                            deleteChild.Parameters.AddWithValue(
+                                "@ClassID",
+                                classId);
+                            deleteChild.Parameters.AddWithValue(
+                                "@AcademicYear",
+                                academicYear ?? string.Empty);
+
+                            int affected =
+                                deleteChild.ExecuteNonQuery();
+
+                            transaction.Commit();
+                            return affected > 0;
+                        }
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
                 }
             }
-        }
-
-        private bool IsTotalFeeType(string feeType)
-        {
-            string value = (feeType ?? string.Empty).Trim();
-
-            return value == "الرسوم الكلية" ||
-                   value == "رسوم كلية" ||
-                   value == "الرسوم الكليه" ||
-                   value == "رسوم كليه" ||
-                   value.Equals(
-                       "Total Fee",
-                       StringComparison.OrdinalIgnoreCase);
         }
 
         // تعريف الدالة AddParameters لتنفيذ العملية المرتبطة بها.
