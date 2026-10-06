@@ -165,9 +165,73 @@ namespace SchoolSystem.UI
 
             allFeePlans = await Task.Run(() => feePlanService.GetAllFeePlans());
 
+            PrepareTotalAmountColumn();
+
             ApplyFilter();
 
             Cursor = Cursors.Default;
+        }
+
+        private void PrepareTotalAmountColumn()
+        {
+            if (allFeePlans == null)
+                return;
+
+            if (!allFeePlans.Columns.Contains("TotalFeeAmount"))
+            {
+                allFeePlans.Columns.Add(
+                    "TotalFeeAmount",
+                    typeof(decimal));
+            }
+
+            foreach (DataRow row in allFeePlans.Rows)
+            {
+                int classId =
+                    row["ClassID"] == DBNull.Value
+                        ? 0
+                        : Convert.ToInt32(row["ClassID"]);
+
+                string year =
+                    Convert.ToString(row["AcademicYear"])
+                        .Trim()
+                        .Replace(" ", "");
+
+                decimal total = 0m;
+
+                foreach (DataRow totalRow in allFeePlans.Rows)
+                {
+                    int totalClassId =
+                        totalRow["ClassID"] == DBNull.Value
+                            ? 0
+                            : Convert.ToInt32(totalRow["ClassID"]);
+
+                    string totalYear =
+                        Convert.ToString(totalRow["AcademicYear"])
+                            .Trim()
+                            .Replace(" ", "");
+
+                    string totalType =
+                        Convert.ToString(totalRow["FeeType"])
+                            .Trim();
+
+                    if (totalClassId == classId &&
+                        string.Equals(
+                            totalYear,
+                            year,
+                            StringComparison.OrdinalIgnoreCase) &&
+                        IsTotalFeeType(totalType))
+                    {
+                        total =
+                            totalRow["Amount"] == DBNull.Value
+                                ? 0m
+                                : Convert.ToDecimal(
+                                    totalRow["Amount"]);
+                        break;
+                    }
+                }
+
+                row["TotalFeeAmount"] = total;
+            }
         }
 
         // تعريف الدالة ApplyFilter لتنفيذ العملية المرتبطة بها.
@@ -210,7 +274,15 @@ namespace SchoolSystem.UI
             dv.RowFilter = string.Join(" AND ", filters.ToArray());
 
             dataGridViewFeePlans.DataSource = dv;
-            lblRecordCount.Text = "عدد السجلات: " + dv.Count;
+            decimal selectedClassTotal =
+                GetTotalAmountForClassYear();
+
+            lblRecordCount.Text =
+                "عدد البنود: " +
+                dv.Count +
+                " | الرسوم الكلية للصف: " +
+                selectedClassTotal.ToString("N2") +
+                " ريال";
 
             FormatGrid();
             UpdateSelectedPlanSummary();
@@ -243,13 +315,41 @@ namespace SchoolSystem.UI
             SetHeader("AcademicYear", "العام الدراسي");
             SetHeader("ClassName", "الصف");
             SetHeader("FeeType", "نوع الرسوم");
-            SetHeader("Amount", "المبلغ");
+            SetHeader("Amount", "مبلغ النوع");
+            SetHeader("TotalFeeAmount", "الرسوم الكلية للصف");
             SetHeader("DueDate", "تاريخ الاستحقاق");
             SetHeader("IsRequired", "إلزامية");
             SetHeader("Notes", "ملاحظات");
 
             if (dataGridViewFeePlans.Columns.Contains("Amount"))
                 dataGridViewFeePlans.Columns["Amount"].DefaultCellStyle.Format = "N2";
+
+            if (dataGridViewFeePlans.Columns.Contains("TotalFeeAmount"))
+                dataGridViewFeePlans.Columns["TotalFeeAmount"].DefaultCellStyle.Format = "N2";
+
+            if (dataGridViewFeePlans.Columns.Contains("TotalFeeAmount"))
+            {
+                dataGridViewFeePlans.Columns["TotalFeeAmount"]
+                    .DefaultCellStyle.Font =
+                    new System.Drawing.Font(
+                        "Tahoma",
+                        9F,
+                        System.Drawing.FontStyle.Bold);
+            }
+
+            dataGridViewFeePlans.AllowUserToOrderColumns = true;
+            dataGridViewFeePlans.AllowUserToResizeColumns = true;
+            dataGridViewFeePlans.AllowUserToResizeRows = false;
+            dataGridViewFeePlans.SelectionMode =
+                DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewFeePlans.MultiSelect = false;
+            dataGridViewFeePlans.RowHeadersVisible = false;
+            dataGridViewFeePlans.ColumnHeadersHeight = 40;
+            dataGridViewFeePlans.RowTemplate.Height = 36;
+            dataGridViewFeePlans.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleRight;
+            dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
 
             if (dataGridViewFeePlans.Columns.Contains("DueDate"))
                 dataGridViewFeePlans.Columns["DueDate"].DefaultCellStyle.Format = "dd/MM/yyyy";
@@ -623,6 +723,50 @@ namespace SchoolSystem.UI
         }
 
         // تعريف الدالة IsTotalFeeType لتنفيذ العملية المرتبطة بها.
+        private decimal GetTotalAmountForClassYear()
+        {
+            if (allFeePlans == null)
+                return 0m;
+
+            int classId =
+                cmbClass.SelectedValue == null
+                    ? 0
+                    : UIHelper.GetSelectedId(cmbClass);
+
+            string academicYear =
+                (cmbAcademicYear.Text ?? string.Empty)
+                    .Trim()
+                    .Replace(" ", "");
+
+            foreach (DataRow row in allFeePlans.Rows)
+            {
+                int rowClassId =
+                    row["ClassID"] == DBNull.Value
+                        ? 0
+                        : Convert.ToInt32(row["ClassID"]);
+
+                string rowYear =
+                    Convert.ToString(row["AcademicYear"])
+                        .Trim()
+                        .Replace(" ", "");
+
+                if (rowClassId == classId &&
+                    string.Equals(
+                        rowYear,
+                        academicYear,
+                        StringComparison.OrdinalIgnoreCase) &&
+                    IsTotalFeeType(
+                        Convert.ToString(row["FeeType"])))
+                {
+                    return row["Amount"] == DBNull.Value
+                        ? 0m
+                        : Convert.ToDecimal(row["Amount"]);
+                }
+            }
+
+            return 0m;
+        }
+
         private bool IsTotalFeeType(string feeType)
         {
             string value = (feeType ?? string.Empty).Trim();
