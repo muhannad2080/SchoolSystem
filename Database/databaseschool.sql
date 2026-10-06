@@ -371,6 +371,31 @@ CREATE TABLE [dbo].[Expenses](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
+/****** Object:  Table [dbo].[FeeTypes]    Script Date: current ******/ 
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[FeeTypes](
+    [FeeTypeID] [int] IDENTITY(1,1) NOT NULL,
+    [FeeTypeCode] [nvarchar](30) NOT NULL,
+    [FeeTypeName] [nvarchar](100) NOT NULL,
+    [IsTotal] [bit] NOT NULL,
+    [IsRequiredDefault] [bit] NOT NULL,
+    [DistributionWeight] [decimal](9,4) NOT NULL,
+    [SortOrder] [int] NOT NULL,
+    [IsActive] [bit] NOT NULL,
+    [Notes] [nvarchar](500) NULL,
+    [CreatedAt] [datetime2](0) NOT NULL,
+    [UpdatedAt] [datetime2](0) NULL,
+ CONSTRAINT [PK_FeeTypes] PRIMARY KEY CLUSTERED 
+(
+    [FeeTypeID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_FeeTypes_Code] UNIQUE NONCLUSTERED ([FeeTypeCode] ASC),
+ CONSTRAINT [UQ_FeeTypes_Name] UNIQUE NONCLUSTERED ([FeeTypeName] ASC)
+) ON [PRIMARY]
+GO
 /****** Object:  Table [dbo].[FeePlans]    Script Date: 8/31/2026 7:21:20 PM ******/
 SET ANSI_NULLS ON
 GO
