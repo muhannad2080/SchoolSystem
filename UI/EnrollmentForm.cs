@@ -1171,11 +1171,11 @@ namespace SchoolSystem.UI
 
                     LoadData();
 
-                    DataRefreshNotifier.Notify("Enrollment", this);
-                    DataRefreshNotifier.Notify("Students", this);
-                    DataRefreshNotifier.Notify("ClassAssignment", this);
-                    DataRefreshNotifier.Notify("Fees", this);
-                    DataRefreshNotifier.Notify("Vouchers", this);
+                    DataRefreshNotifier.Notify("All", this);
+                    DataRefreshNotifier.Notify("All", this);
+                    DataRefreshNotifier.Notify("All", this);
+                    DataRefreshNotifier.Notify("All", this);
+                    DataRefreshNotifier.Notify("All", this);
 
                     isEditMode =
                         false;
