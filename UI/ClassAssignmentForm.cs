@@ -214,44 +214,79 @@ namespace SchoolSystem.UI.Students
             if (string.IsNullOrWhiteSpace(academicYear))
                 return;
 
-            // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
+            bool previousLoadingState = isLoading;
+
             try
             {
+                isLoading = true;
                 Cursor = Cursors.WaitCursor;
 
                 selectedStudentClassId = 0;
-
 
                 unassignedStudents = await Task.Run(() =>
                     studentClassService.GetUnassignedStudents(academicYear));
 
                 FillUnassignedList(unassignedStudents);
 
-
-                DataTable assigned = await Task.Run(() =>
-                    studentClassService.GetAssignedStudents(classId, section, academicYear));
-
-                dataGridViewAssigned.DataSource = assigned;
-
-                FormatAssignedGrid();
-
-                lblAssignedTitle.Text = "الطلاب الموزعون على: " + cmbClass.Text + " - شعبة " + section;
-                lblRecordCount.Text = "عدد الطلاب: " + assigned.Rows.Count;
-
-                await RefreshStatisticsAsync(classId, academicYear, assigned.Rows.Count);
-                if (string.IsNullOrWhiteSpace(lblStatus.Text))
-                    lblStatus.Text = "تم تحميل البيانات بنجاح.";
+                await LoadAssignedGridAsync(
+                    classId,
+                    section,
+                    academicYear,
+                    true);
             }
-
             catch (Exception ex)
             {
-                UIHelper.ShowException("خطأ أثناء تحميل بيانات التوزيع:\n", ex);
-                lblStatus.Text = "حدث خطأ أثناء تحميل البيانات.";
+                UIHelper.ShowException(
+                    "خطأ أثناء تحميل بيانات التوزيع:\n",
+                    ex);
+                lblStatus.Text =
+                    "حدث خطأ أثناء تحميل البيانات.";
             }
-
             finally
             {
+                isLoading = previousLoadingState;
                 Cursor = Cursors.Default;
+            }
+        }
+
+        private async Task LoadAssignedGridAsync(
+            int classId,
+            string section,
+            string academicYear,
+            bool refreshStatistics)
+        {
+            if (classId <= 0 ||
+                string.IsNullOrWhiteSpace(section) ||
+                !IsValidAcademicYear(academicYear))
+            {
+                return;
+            }
+
+            DataTable assigned = await Task.Run(() =>
+                studentClassService.GetAssignedStudents(
+                    classId,
+                    section,
+                    academicYear));
+
+            dataGridViewAssigned.DataSource = assigned;
+            FormatAssignedGrid();
+
+            lblAssignedTitle.Text =
+                "الطلاب الموزعون على: " +
+                cmbClass.Text +
+                " - شعبة " +
+                section;
+
+            lblRecordCount.Text =
+                "عدد الطلاب: " +
+                assigned.Rows.Count;
+
+            if (refreshStatistics)
+            {
+                await RefreshStatisticsAsync(
+                    classId,
+                    academicYear,
+                    assigned.Rows.Count);
             }
         }
 
@@ -568,6 +603,15 @@ namespace SchoolSystem.UI.Students
                 cmbClass.SelectedValue = student.EnrolledClassID;
 
                 await LoadSectionsAsync();
+
+                if (cmbSection.Enabled && cmbSection.Items.Count > 0)
+                {
+                    await LoadAssignedGridAsync(
+                        student.EnrolledClassID,
+                        cmbSection.Text.Trim(),
+                        txtAcademicYear.Text.Trim(),
+                        false);
+                }
 
                 lblStatus.Text =
                     "تم اختيار الصف المسجل للطالب: " +
