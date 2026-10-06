@@ -147,7 +147,10 @@ namespace SchoolSystem.UI
         // تعريف الدالة LoadRoles لتنفيذ العملية المرتبطة بها.
         private void LoadRoles()
         {
-            string previousRole = cmbRole.Text == null ? string.Empty : cmbRole.Text.Trim();
+            string previousRole =
+                cmbRole.Text == null
+                    ? string.Empty
+                    : cmbRole.Text.Trim();
 
             try
             {
@@ -155,18 +158,29 @@ namespace SchoolSystem.UI
 
                 cmbRole.DataSource = null;
                 cmbRole.Items.Clear();
-                cmbRole.DisplayMember = "RoleName";
-                cmbRole.ValueMember = "RoleID";
-                cmbRole.DataSource = roles;
 
-                if (!string.IsNullOrWhiteSpace(previousRole))
-                    cmbRole.Text = previousRole;
+                foreach (DataRow row in roles.Rows)
+                {
+                    string roleName = Convert.ToString(row["RoleName"]).Trim();
+                    if (!string.IsNullOrWhiteSpace(roleName) &&
+                        !cmbRole.Items.Contains(roleName))
+                    {
+                        cmbRole.Items.Add(roleName);
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(previousRole) &&
+                    cmbRole.Items.Contains(previousRole))
+                {
+                    cmbRole.SelectedItem = previousRole;
+                }
                 else if (cmbRole.Items.Count > 0)
+                {
                     cmbRole.SelectedIndex = 0;
+                }
             }
             catch (Exception ex)
             {
-                cmbRole.DataSource = null;
                 cmbRole.Items.Clear();
                 UIHelper.ShowException("تحميل أدوار المستخدمين", ex);
             }
