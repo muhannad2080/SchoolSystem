@@ -851,6 +851,383 @@ namespace SchoolSystem.UI.Students
             }
         }
 
+        private List<int> GetSelectedStudentClassIds()
+        {
+            List<int> ids = new List<int>();
+
+            if (!dataGridViewAssigned.Columns.Contains("StudentClassID"))
+                return ids;
+
+            foreach (DataGridViewRow row in dataGridViewAssigned.SelectedRows)
+            {
+                if (row == null || row.IsNewRow)
+                    continue;
+
+                object value =
+                    row.Cells["StudentClassID"].Value;
+
+                int id;
+                if (value != null &&
+                    value != DBNull.Value &&
+                    int.TryParse(value.ToString(), out id) &&
+                    id > 0 &&
+                    !ids.Contains(id))
+                {
+                    ids.Add(id);
+                }
+            }
+
+            return ids;
+        }
+
+        private void dataGridViewAssigned_CellClick(
+            object sender,
+            DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 ||
+                dataGridViewAssigned.Rows.Count == 0 ||
+                !dataGridViewAssigned.Columns.Contains("StudentClassID"))
+            {
+                return;
+            }
+
+            object value =
+                dataGridViewAssigned.Rows[e.RowIndex]
+                    .Cells["StudentClassID"].Value;
+
+            int id;
+            if (value != null &&
+                value != DBNull.Value &&
+                int.TryParse(value.ToString(), out id) &&
+                id > 0)
+            {
+                selectedStudentClassId = id;
+                lblStatus.Text =
+                    "تم تحديد سجل توزيع الطالب.";
+            }
+        }
+
+        private async void btnRemove_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (selectedStudentClassId <= 0)
+            {
+                ShowWarning(
+                    "اختر طالباً موزعاً من الجدول أولاً.");
+                return;
+            }
+
+            bool confirmed =
+                UIHelper.ShowConfirmation(
+                    "هل تريد إزالة الطالب من هذا التوزيع؟",
+                    "تأكيد الإزالة");
+
+            if (!confirmed)
+                return;
+
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                int studentClassId =
+                    selectedStudentClassId;
+
+                bool removed = await Task.Run(
+                    () => studentClassService
+                        .RemoveAssignment(studentClassId));
+
+                if (removed)
+                {
+                    selectedStudentClassId = 0;
+
+                    ShowInfo(
+                        "تمت إزالة التوزيع بنجاح.");
+
+                    ApplicationLogger.LogUsage(
+                        "شاشة توزيع الفصول",
+                        "إزالة توزيع",
+                        "إزالة توزيع طالب من الصف " +
+                        cmbClass.Text +
+                        " - شعبة " +
+                        cmbSection.Text);
+
+                    await LoadDataAsync();
+                }
+                else
+                {
+                    ShowWarning(
+                        "لم يتم العثور على سجل التوزيع.");
+                }
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة توزيع الفصول: فشل إزالة التوزيع",
+                    ex);
+
+                UIHelper.ShowException(
+                    "إزالة توزيع الطالب",
+                    ex);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private async void btnRemoveAll_Click(
+            object sender,
+            EventArgs e)
+        {
+            List<int> ids =
+                GetSelectedStudentClassIds();
+
+            if (ids.Count == 0)
+            {
+                ShowWarning(
+                    "حدد طالباً واحداً على الأقل من الجدول.");
+                return;
+            }
+
+            bool confirmed =
+                UIHelper.ShowConfirmation(
+                    "هل تريد إزالة توزيع " +
+                    ids.Count +
+                    " طالب؟",
+                    "تأكيد الإزالة الجماعية");
+
+            if (!confirmed)
+                return;
+
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                int removed =
+                    await Task.Run(
+                        () => studentClassService
+                            .RemoveAssignments(ids));
+
+                selectedStudentClassId = 0;
+
+                ShowInfo(
+                    "تمت إزالة توزيع " +
+                    removed +
+                    " طالب بنجاح.");
+
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة توزيع الفصول: فشل الإزالة الجماعية",
+                    ex);
+
+                UIHelper.ShowException(
+                    "الإزالة الجماعية",
+                    ex);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private async void btnTransfer_Click(
+            object sender,
+            EventArgs e)
+        {
+            List<int> ids =
+                GetSelectedStudentClassIds();
+
+            if (ids.Count == 0)
+            {
+                ShowWarning(
+                    "حدد طالباً واحداً على الأقل من الجدول.");
+                return;
+            }
+
+            int targetClassId =
+                GetSelectedClassId();
+
+            string targetSection =
+                cmbTransferSection.Text == null
+                    ? string.Empty
+                    : cmbTransferSection.Text.Trim();
+
+            string academicYear =
+                txtAcademicYear.Text == null
+                    ? string.Empty
+                    : txtAcademicYear.Text.Trim();
+
+            if (targetClassId <= 0 ||
+                !IsValidAcademicYear(academicYear))
+            {
+                ShowWarning(
+                    "تأكد من اختيار الصف وكتابة العام الدراسي بشكل صحيح.");
+                return;
+            }
+
+            if (!cmbTransferSection.Enabled ||
+                string.IsNullOrWhiteSpace(targetSection))
+            {
+                ShowWarning(
+                    "لا توجد شعبة هدف أخرى متاحة.");
+                return;
+            }
+
+            if (targetSection.Equals(
+                    cmbSection.Text.Trim(),
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                ShowWarning(
+                    "اختر شعبة مختلفة عن الشعبة الحالية.");
+                return;
+            }
+
+            bool confirmed =
+                UIHelper.ShowConfirmation(
+                    "هل تريد نقل " +
+                    ids.Count +
+                    " طالب إلى الشعبة " +
+                    targetSection +
+                    "؟",
+                    "تأكيد النقل");
+
+            if (!confirmed)
+                return;
+
+            try
+            {
+                Cursor = Cursors.WaitCursor;
+
+                int success = 0;
+                int failed = 0;
+
+                foreach (int id in ids)
+                {
+                    try
+                    {
+                        bool transferred =
+                            await Task.Run(
+                                () => studentClassService
+                                    .TransferAssignment(
+                                        id,
+                                        targetClassId,
+                                        targetSection,
+                                        academicYear));
+
+                        if (transferred)
+                            success++;
+                        else
+                            failed++;
+                    }
+                    catch (Exception ex)
+                    {
+                        ApplicationLogger.LogException(
+                            "شاشة توزيع الفصول: فشل نقل طالب",
+                            ex);
+
+                        failed++;
+                    }
+                }
+
+                ShowInfo(
+                    "تم نقل " +
+                    success +
+                    " طالب بنجاح." +
+                    (failed > 0
+                        ? "\nتعذر نقل " +
+                          failed +
+                          " طالب."
+                        : string.Empty));
+
+                ApplicationLogger.LogUsage(
+                    "شاشة توزيع الفصول",
+                    "نقل طلاب",
+                    "نقل " +
+                    success +
+                    " طالب إلى شعبة " +
+                    targetSection);
+
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة توزيع الفصول: فشل عملية النقل",
+                    ex);
+
+                UIHelper.ShowException(
+                    "نقل الطلاب",
+                    ex);
+            }
+            finally
+            {
+                Cursor = Cursors.Default;
+            }
+        }
+
+        private async void listBoxUnassigned_SelectedIndexChanged(
+            object sender,
+            EventArgs e)
+        {
+            if (isLoading)
+                return;
+
+            StudentListItem student =
+                listBoxUnassigned.SelectedItem
+                as StudentListItem;
+
+            if (student == null ||
+                student.EnrolledClassID <= 0)
+                return;
+
+            try
+            {
+                isLoading = true;
+
+                if (GetSelectedClassId() !=
+                    student.EnrolledClassID)
+                {
+                    cmbClass.SelectedValue =
+                        student.EnrolledClassID;
+
+                    await LoadSectionsAsync();
+                }
+
+                if (cmbSection.Enabled &&
+                    cmbSection.Items.Count > 0)
+                {
+                    await LoadAssignedGridAsync(
+                        student.EnrolledClassID,
+                        cmbSection.Text.Trim(),
+                        txtAcademicYear.Text.Trim(),
+                        false);
+                }
+
+                lblStatus.Text =
+                    "الصف المسجل: " +
+                    student.EnrolledClassName +
+                    " — اختر الشعبة ثم اضغط «توزيع الطلاب».";
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة توزيع الفصول: مزامنة الصف المسجل",
+                    ex);
+
+                UIHelper.ShowException(
+                    "مزامنة الصف المسجل",
+                    ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+
         // تعريف الدالة ShowInfo لتنفيذ العملية المرتبطة بها.
         private void ShowInfo(string message)
         {
