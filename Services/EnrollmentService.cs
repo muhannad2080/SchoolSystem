@@ -119,10 +119,18 @@ namespace SchoolSystem.Services
                 enrollment.StudentID,
                 enrollment.AcademicYear);
 
-            if ((oldHasFinance || newHasFinance) && HasFinancialLinkChanges(existing, enrollment))
+            bool hasLinkedFinance = oldHasFinance || newHasFinance;
+
+            if (hasLinkedFinance && HasFinancialIdentityChanges(existing, enrollment))
             {
                 throw new InvalidOperationException(
-                    "لا يمكن تعديل بيانات الطالب أو الصف أو بيانات رسوم التسجيل بعد إنشاء السجل المالي المرتبط. استخدم شاشة الرسوم لتعديل الحركة المالية.");
+                    "لا يمكن تغيير الطالب أو الصف أو العام الدراسي أو رسوم التسجيل بعد إنشاء الحركة المالية المرتبطة. استخدم شاشة الرسوم للحركة المالية، وشاشة توزيع الفصول عند الحاجة لنقل الطالب.");
+            }
+
+            if (hasLinkedFinance && HasFinancialPaymentChanges(existing, enrollment))
+            {
+                throw new InvalidOperationException(
+                    "لا يمكن تعديل المبلغ المدفوع أو طريقة الدفع أو رقم السند من شاشة التسجيل بعد إنشاء الحركة المالية. استخدم شاشة الرسوم والسندات لتعديل الحركة المالية.");
             }
 
             bool updated = repository.UpdateEnrollment(enrollment);
@@ -247,8 +255,9 @@ namespace SchoolSystem.Services
             return ValidEnrollmentStatuses.Any(s => string.Equals(s, status.Trim(), StringComparison.OrdinalIgnoreCase));
         }
 
-        // تعريف الدالة HasFinancialLinkChanges لتنفيذ العملية المرتبطة بها.
-        private static bool HasFinancialLinkChanges(Enrollment existing, Enrollment updated)
+        // تعريف الدالة HasFinancialIdentityChanges لتنفيذ العملية المرتبطة بها.
+        // هذه الحقول تغيّر هوية الحركة المالية أو الخطة المالية المرتبطة بالتسجيل.
+        private static bool HasFinancialIdentityChanges(Enrollment existing, Enrollment updated)
         {
             if (existing == null || updated == null)
                 return true;
@@ -259,13 +268,38 @@ namespace SchoolSystem.Services
                     NormalizeAcademicYear(existing.AcademicYear),
                     NormalizeAcademicYear(updated.AcademicYear),
                     StringComparison.OrdinalIgnoreCase)
-                || existing.RegistrationFee != updated.RegistrationFee
-                || existing.PaidAmount != updated.PaidAmount
+                || existing.RegistrationFee != updated.RegistrationFee;
+        }
+
+        // تعريف الدالة HasFinancialPaymentChanges لتنفيذ العملية المرتبطة بها.
+        // السداد والسند جزء من الحركة المالية ويُدار من الوحدة المالية.
+        private static bool HasFinancialPaymentChanges(Enrollment existing, Enrollment updated)
+        {
+            if (existing == null || updated == null)
+                return true;
+
+            return existing.PaidAmount != updated.PaidAmount
                 || !string.Equals(
                     NormalizeText(existing.PaymentMethod),
                     NormalizeText(updated.PaymentMethod),
                     StringComparison.OrdinalIgnoreCase)
-                || existing.ApplicationDate.Date != updated.ApplicationDate.Date;
+                || !string.Equals(
+                    NormalizeText(existing.ReceiptNo),
+                    NormalizeText(updated.ReceiptNo),
+                    StringComparison.OrdinalIgnoreCase);
+        }
+
+        // التحقق الذي تحتاجه واجهة التسجيل لمعرفة ما إذا كان السجل مرتبطًا بحركة مالية.
+        public bool HasRegistrationFinance(int studentId, string academicYear)
+        {
+            CurrentUser.DemandAction(
+                "Enrollment",
+                "Edit",
+                "ليس لديك صلاحية التحقق من حالة الحركة المالية للتسجيل.");
+
+            return repository.HasRegistrationFinance(
+                studentId,
+                NormalizeAcademicYear(academicYear));
         }
 
         private static string NormalizeAcademicYear(string value)
