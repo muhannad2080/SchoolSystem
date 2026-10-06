@@ -228,13 +228,22 @@ BEGIN TRY
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AnnualMigrationLog), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AnnualClosings), 0)
         + ISNULL((SELECT COUNT_BIG(*) FROM dbo.DatabaseBackupHistory), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AuditLogs), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.ReportHistory), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.GeneratedReports), 0)
-        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.ReportRuns), 0);
+        + ISNULL((SELECT COUNT_BIG(*) FROM dbo.AuditLogs), 0);
 
     IF @RemainingOperational <> 0
         THROW 52001, N'فشل تنظيف البيانات التشغيلية بالكامل.', 1;
+
+    IF OBJECT_ID(N'dbo.ReportHistory', N'U') IS NOT NULL
+       AND EXISTS (SELECT 1 FROM dbo.ReportHistory)
+        THROW 52010, N'بقيت بيانات تقارير تشغيلية قديمة.', 1;
+
+    IF OBJECT_ID(N'dbo.GeneratedReports', N'U') IS NOT NULL
+       AND EXISTS (SELECT 1 FROM dbo.GeneratedReports)
+        THROW 52011, N'بقيت تقارير مولدة قديمة.', 1;
+
+    IF OBJECT_ID(N'dbo.ReportRuns', N'U') IS NOT NULL
+       AND EXISTS (SELECT 1 FROM dbo.ReportRuns)
+        THROW 52012, N'بقيت سجلات تشغيل تقارير قديمة.', 1;
 
     IF OBJECT_ID(N'dbo.Users', N'U') IS NOT NULL
        AND NOT EXISTS (SELECT 1 FROM dbo.Users)
