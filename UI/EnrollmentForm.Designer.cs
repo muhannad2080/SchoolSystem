@@ -309,7 +309,7 @@ namespace SchoolSystem.UI
             this.dtpApplicationDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dtpApplicationDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpApplicationDate.CustomFormat = "dd/MM/yyyy";
-            this.dtpApplicationDate.MinDate = new System.DateTime(2000, 1, 1);
+            this.dtpApplicationDate.MinDate = new System.DateTime(1900, 1, 1);
             this.dtpApplicationDate.MaxDate = System.DateTime.Today;
             this.dtpApplicationDate.Margin = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.dtpApplicationDate.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -620,7 +620,6 @@ namespace SchoolSystem.UI
             this.txtSearch.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtSearch.MaxLength = 120;
             this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
-            this.txtSearch.PlaceholderText = "بحث باسم الطالب أو الصف أو الشعبة أو العام أو الحالة...";
 
             this.btnSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnReload.Dock = System.Windows.Forms.DockStyle.Fill;
