@@ -233,11 +233,11 @@ namespace SchoolSystem.UI
         {
             layoutRight.RowStyles.Clear();
             layoutRight.RowStyles.Add(
-                new RowStyle(SizeType.Percent, 42F));
+                new RowStyle(SizeType.Percent, 36F));
             layoutRight.RowStyles.Add(
-                new RowStyle(SizeType.Percent, 28F));
+                new RowStyle(SizeType.Percent, 24F));
             layoutRight.RowStyles.Add(
-                new RowStyle(SizeType.Percent, 30F));
+                new RowStyle(SizeType.Percent, 40F));
 
             ConfigureTwoPairTable(tlpStudent, 5, 34F);
             ConfigureTwoPairTable(tlpGuardian, 3, 34F);
@@ -497,11 +497,11 @@ namespace SchoolSystem.UI
                 return;
 
             int contentWidth = gbPhoto.ClientSize.Width;
-            int buttonWidth = 60;
-            int buttonHeight = 30;
+            int buttonWidth = 92;
+            int buttonHeight = 36;
             int gap = 4;
 
-            picStudent.Size = new Size(96, 96);
+            picStudent.Size = new Size(88, 88);
             picStudent.Anchor = AnchorStyles.None;
             picStudent.Location = new Point(
                 Math.Max(6, (contentWidth - picStudent.Width) / 2),
@@ -515,7 +515,7 @@ namespace SchoolSystem.UI
                 button.AutoSize = false;
                 button.Font = new Font(
                     UIHelper.FontFamily,
-                    8.5F,
+                    9F,
                     FontStyle.Bold);
                 button.TextAlign = ContentAlignment.MiddleCenter;
                 button.Padding = new Padding(2, 0, 2, 0);
@@ -525,7 +525,7 @@ namespace SchoolSystem.UI
                 UIHelper.StyleActionButton(button);
                 button.Font = new Font(
                     UIHelper.FontFamily,
-                    8.5F,
+                    9F,
                     FontStyle.Bold);
                 button.Padding = new Padding(2, 0, 2, 0);
             }
@@ -533,10 +533,13 @@ namespace SchoolSystem.UI
             int buttonsWidth = buttonWidth * 2 + gap;
             int startX = Math.Max(4, (contentWidth - buttonsWidth) / 2);
 
-            btnChooseImage.Location = new Point(startX, 127);
+            int photoTop = 24;
+            int chooseTop = photoTop + picStudent.Height + 6;
+
+            btnChooseImage.Location = new Point(startX, chooseTop);
             btnRemoveImage.Location = new Point(
-                startX + buttonWidth + gap,
-                127);
+                startX,
+                chooseTop + buttonHeight + gap);
 
             btnChooseImage.Text = "اختيار";
             btnRemoveImage.Text = "إزالة";
