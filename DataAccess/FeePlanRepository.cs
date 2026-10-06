@@ -1515,6 +1515,33 @@ namespace SchoolSystem.DataAccess
                         bool isTotal =
                             IsTotalFeeType(feeType);
 
+                        const string paidCheckSql = @"
+                            SELECT COUNT(1)
+                            FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                            WHERE FeePlanID = @FeePlanID
+                              AND ISNULL(PaidAmount, 0) > 0;";
+
+                        using (SqlCommand paidCheck =
+                            new SqlCommand(
+                                paidCheckSql,
+                                con,
+                                transaction))
+                        {
+                            paidCheck.Parameters.AddWithValue(
+                                "@FeePlanID",
+                                feePlanId);
+
+                            int paidRows =
+                                Convert.ToInt32(
+                                    paidCheck.ExecuteScalar());
+
+                            if (paidRows > 0)
+                            {
+                                throw new InvalidOperationException(
+                                    "لا يمكن حذف خطة رسوم لها دفعات محصلة. استخدم الإجراءات المالية/السند العكسي للحفاظ على السجل التاريخي.");
+                            }
+                        }
+
                         if (isTotal)
                         {
                             const string childExistsSql = @"
