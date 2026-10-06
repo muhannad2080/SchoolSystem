@@ -705,8 +705,12 @@ namespace SchoolSystem.UI
 
 
                 await LoadFeePlansAsync();
+                SelectPlanByContext(
+                    plan.ClassID,
+                    plan.AcademicYear,
+                    plan.FeeType);
                 DataRefreshNotifier.Notify("FeePlans", this);
-                ClearInputs();
+                DataRefreshNotifier.Notify("Fees", this);
             }
 
             catch (Exception ex)
@@ -832,10 +836,14 @@ namespace SchoolSystem.UI
 
                 await LoadFeePlansAsync();
 
+                SelectPlanByContext(
+                    plan.ClassID,
+                    plan.AcademicYear,
+                    plan.FeeType);
+
                 DataRefreshNotifier.Notify("FeePlans", this);
                 DataRefreshNotifier.Notify("Fees", this);
-
-                ClearInputs();
+                DataRefreshNotifier.Notify("Enrollment", this);
             }
             catch (Exception ex)
             {
@@ -843,6 +851,78 @@ namespace SchoolSystem.UI
                     "فشل تعديل رسوم الصف:\n",
                     ex);
             }
+        }
+
+        private void SelectPlanByContext(
+            int classId,
+            string academicYear,
+            string feeType)
+        {
+            if (allFeePlans == null)
+                return;
+
+            string normalizedYear =
+                (academicYear ?? string.Empty)
+                    .Trim()
+                    .Replace(" ", "")
+                    .Replace("-", "/");
+
+            string normalizedType =
+                (feeType ?? string.Empty).Trim();
+
+            for (int i = 0; i < dataGridViewFeePlans.Rows.Count; i++)
+            {
+                DataRowView rowView =
+                    dataGridViewFeePlans.Rows[i].DataBoundItem as DataRowView;
+
+                if (rowView == null)
+                    continue;
+
+                DataRow row = rowView.Row;
+
+                int rowClassId =
+                    row["ClassID"] == DBNull.Value
+                        ? 0
+                        : Convert.ToInt32(row["ClassID"]);
+
+                string rowYear =
+                    Convert.ToString(row["AcademicYear"])
+                        .Trim()
+                        .Replace(" ", "")
+                        .Replace("-", "/");
+
+                string rowType =
+                    Convert.ToString(row["FeeType"])
+                        .Trim();
+
+                if (rowClassId != classId ||
+                    !string.Equals(
+                        rowYear,
+                        normalizedYear,
+                        StringComparison.OrdinalIgnoreCase) ||
+                    !string.Equals(
+                        rowType,
+                        normalizedType,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                dataGridViewFeePlans.ClearSelection();
+                dataGridViewFeePlans.Rows[i].Selected = true;
+
+                if (dataGridViewFeePlans.Columns.Count > 0)
+                {
+                    dataGridViewFeePlans.CurrentCell =
+                        dataGridViewFeePlans.Rows[i].Cells[0];
+                }
+
+                FillFieldsFromRow(row);
+                UpdateSelectedPlanSummary();
+                return;
+            }
+
+            UpdateSelectedPlanSummary();
         }
 
         // تعريف الدالة btnDelete_Click لتنفيذ العملية المرتبطة بها.
