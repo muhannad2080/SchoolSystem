@@ -135,14 +135,14 @@ namespace SchoolSystem.UI.Students
             // tableLayoutTop
             // 
             this.tableLayoutTop.ColumnCount = 8;
-            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
-            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28F));
-            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 80F));
-            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18F));
-            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 115F));
-            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22F));
-            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 15F));
-            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 32F));
+            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 78F));
+            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 220F));
+            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 78F));
+            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105F));
+            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
+            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 130F));
             this.tableLayoutTop.Controls.Add(this.lblClass, 0, 0);
             this.tableLayoutTop.Controls.Add(this.cmbClass, 1, 0);
             this.tableLayoutTop.Controls.Add(this.lblSection, 2, 0);
@@ -154,6 +154,7 @@ namespace SchoolSystem.UI.Students
             this.tableLayoutTop.Location = new System.Drawing.Point(10, 10);
             this.tableLayoutTop.Name = "tableLayoutTop";
             this.tableLayoutTop.RowCount = 1;
+            this.tableLayoutTop.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tableLayoutTop.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutTop.Size = new System.Drawing.Size(1070, 56);
             this.tableLayoutTop.TabIndex = 0;
@@ -182,6 +183,7 @@ namespace SchoolSystem.UI.Students
             this.cmbClass.Margin = new System.Windows.Forms.Padding(4, 13, 4, 4);
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(210, 29);
+            this.cmbClass.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.cmbClass.TabIndex = 1;
             this.cmbClass.SelectedIndexChanged += new System.EventHandler(this.cmbClass_SelectedIndexChanged);
             // 
@@ -209,6 +211,7 @@ namespace SchoolSystem.UI.Students
             this.cmbSection.Margin = new System.Windows.Forms.Padding(4, 13, 4, 4);
             this.cmbSection.Name = "cmbSection";
             this.cmbSection.Size = new System.Drawing.Size(132, 29);
+            this.cmbSection.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.cmbSection.TabIndex = 3;
             this.cmbSection.SelectedIndexChanged += new System.EventHandler(this.cmbSection_SelectedIndexChanged);
             // 
@@ -234,6 +237,7 @@ namespace SchoolSystem.UI.Students
             this.txtAcademicYear.Margin = new System.Windows.Forms.Padding(4, 13, 4, 4);
             this.txtAcademicYear.Name = "txtAcademicYear";
             this.txtAcademicYear.Size = new System.Drawing.Size(163, 28);
+            this.txtAcademicYear.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.txtAcademicYear.TabIndex = 5;
             this.txtAcademicYear.Text = "2026/2027";
             this.txtAcademicYear.TextChanged += new System.EventHandler(this.txtAcademicYear_TextChanged);
@@ -250,6 +254,7 @@ namespace SchoolSystem.UI.Students
             this.btnLoad.Margin = new System.Windows.Forms.Padding(4, 10, 4, 4);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(130, 42);
+            this.btnLoad.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.btnLoad.TabIndex = 6;
             this.btnLoad.Text = "تحميل البيانات";
             this.btnLoad.UseVisualStyleBackColor = false;
