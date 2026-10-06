@@ -1562,7 +1562,6 @@ string academicYear = cmbAcademicYear.Text.Trim();
                 await LoadFeesAsync();
 
                 DataRefreshNotifier.Notify("All", this);
-                DataRefreshNotifier.Notify("All", this);
 
                 ClearInputs();
             }
@@ -1681,7 +1680,6 @@ string academicYear = cmbAcademicYear.Text.Trim();
 
                 if (result)
                 {
-                    DataRefreshNotifier.Notify("All", this);
                     DataRefreshNotifier.Notify("All", this);
                 }
 
@@ -1815,7 +1813,6 @@ string receiptNumber =
                     await LoadFeesAsync();
 
                     DataRefreshNotifier.Notify("All", this);
-                    DataRefreshNotifier.Notify("All", this);
 
                     ClearInputs();
 
@@ -1863,7 +1860,6 @@ string receiptNumber =
 
                 await LoadFeesAsync();
 
-                DataRefreshNotifier.Notify("All", this);
                 DataRefreshNotifier.Notify("All", this);
 
                 ClearInputs();
@@ -1935,7 +1931,6 @@ string receiptNumber =
 
                 if (result)
                 {
-                    DataRefreshNotifier.Notify("All", this);
                     DataRefreshNotifier.Notify("All", this);
                 }
 
