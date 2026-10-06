@@ -578,40 +578,20 @@ namespace SchoolSystem.UI.Students
         // تعريف الدالة btnAssign_Click لتنفيذ العملية المرتبطة بها.
         private async void btnAssign_Click(object sender, EventArgs e)
         {
-            int classId = GetSelectedClassId();
-
-            if (classId <= 0)
+            if (string.IsNullOrWhiteSpace(txtAcademicYear.Text) ||
+                !IsValidAcademicYear(txtAcademicYear.Text.Trim()))
             {
-                ShowWarning("اختر الصف أولاً.");
-
-                return;
-            }
-
-            if (!cmbSection.Enabled || cmbSection.SelectedIndex < 0 || string.IsNullOrWhiteSpace(cmbSection.Text))
-            {
-                ShowWarning("لا توجد شعبة فعلية متاحة لهذا الصف والعام الدراسي.");
-                cmbSection.Focus();
-
-                return;
-            }
-
-            string academicYear = txtAcademicYear.Text.Trim();
-            if (!IsValidAcademicYear(academicYear))
-            {
-                ShowWarning("أدخل العام الدراسي بالصيغة الصحيحة: 2025/2026.");
+                ShowWarning("أدخل العام الدراسي بالصيغة الصحيحة: 2026/2027.");
                 txtAcademicYear.Focus();
-
                 return;
             }
 
             if (listBoxUnassigned.CheckedItems.Count == 0)
             {
                 ShowWarning("حدد طالباً واحداً على الأقل للتوزيع.");
-
                 return;
             }
 
-            // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
             try
             {
                 Cursor = Cursors.WaitCursor;
@@ -634,35 +614,49 @@ namespace SchoolSystem.UI.Students
                 int registeredClassId = selectedStudents[0].EnrolledClassID;
                 if (registeredClassId <= 0)
                 {
-                    ShowWarning("لا يمكن تحديد الصف المسجل لأحد الطلاب. حدّث بيانات التسجيل ثم أعد التحميل.");
+                    ShowWarning(
+                        "لا يمكن تحديد الصف المسجل لأحد الطلاب. حدّث بيانات التسجيل ثم أعد تحميل القائمة.");
                     return;
                 }
 
                 foreach (StudentListItem student in selectedStudents)
                 {
+                    if (student.EnrolledClassID <= 0)
+                    {
+                        ShowWarning(
+                            "يوجد طالب بلا صف مسجل. صحح بيانات التسجيل أولاً.");
+                        return;
+                    }
+
                     if (student.EnrolledClassID != registeredClassId)
                     {
                         ShowWarning(
-                            "الطلاب المحددون ليسوا من الصف المسجل نفسه. حدّد طلاباً من نفس الصف لإتمام التوزيع دفعة واحدة.");
+                            "الطلاب المحددون من صفوف تسجيل مختلفة. التوزيع الجماعي يجب أن يكون لطلاب من الصف المسجل نفسه.");
                         return;
                     }
                 }
 
-                // الصف في التوزيع يُؤخذ من التسجيل المقبول، ولا يعتمد على الصف المتروك
-                // محدداً سابقاً في الواجهة.
+                string academicYear = txtAcademicYear.Text.Trim();
                 string preferredSection = cmbSection.Text == null
                     ? string.Empty
                     : cmbSection.Text.Trim();
 
+                // الصف المعتمد للتوزيع يُؤخذ دائماً من التسجيل المقبول.
                 if (GetSelectedClassId() != registeredClassId)
                 {
                     cmbClass.SelectedValue = registeredClassId;
                     await LoadSectionsAsync();
                 }
+                else if (!cmbSection.Enabled || cmbSection.Items.Count == 0)
+                {
+                    await LoadSectionsAsync();
+                }
 
                 if (!cmbSection.Enabled || cmbSection.Items.Count == 0)
                 {
-                    ShowWarning("لا توجد شعب فعالة للصف المسجل في العام الدراسي المحدد.");
+                    ShowWarning(
+                        "لا توجد شعب فعالة للصف المسجل في العام الدراسي المحدد.");
+                    cmbSection.Focus();
                     return;
                 }
 
@@ -673,260 +667,64 @@ namespace SchoolSystem.UI.Students
                 }
 
                 string section = cmbSection.Text.Trim();
+                if (string.IsNullOrWhiteSpace(section))
+                {
+                    ShowWarning("اختر الشعبة التي تريد توزيع الطلاب عليها.");
+                    cmbSection.Focus();
+                    return;
+                }
 
                 int successCount = 0;
                 int failedCount = 0;
 
                 foreach (StudentListItem student in selectedStudents)
                 {
-                    // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
                     try
                     {
                         StudentClass assignment = new StudentClass
                         {
                             StudentID = student.StudentID,
-                            ClassID = classId,
+                            ClassID = registeredClassId,
                             Section = section,
                             AcademicYear = academicYear,
                             AssignedBy = null
-
                         };
 
-
-                        bool assigned = await Task.Run(() => studentClassService.AssignStudent(assignment));
+                        bool assigned = await Task.Run(
+                            () => studentClassService.AssignStudent(assignment));
 
                         if (assigned)
                             successCount++;
-
                         else
-
                             failedCount++;
                     }
-
                     catch (Exception ex)
                     {
-                        ApplicationLogger.LogException("شاشة توزيع الفصول: فشل توزيع طالب", ex);
+                        ApplicationLogger.LogException(
+                            "شاشة توزيع الفصول: فشل توزيع طالب",
+                            ex);
                         failedCount++;
                     }
                 }
 
-                Cursor = Cursors.Default;
+                ShowInfo(
+                    "تم توزيع " + successCount + " طالب بنجاح." +
+                    (failedCount > 0
+                        ? "\nتعذر توزيع " + failedCount + " طالب بسبب خطأ في البيانات أو قيود الشعبة."
+                        : string.Empty));
 
-                ShowInfo("تم توزيع " + successCount + " طالب بنجاح." +
-                         (failedCount > 0 ? "\nلم يتم توزيع " + failedCount + " طالب بسبب وجود توزيع سابق أو خطأ في البيانات." : ""));
-                ApplicationLogger.LogUsage("شاشة توزيع الفصول", "توزيع طلاب", "توزيع " + successCount + " طالب على الصف " + cmbClass.Text + " - شعبة " + section);
-
+                ApplicationLogger.LogUsage(
+                    "شاشة توزيع الفصول",
+                    "توزيع طلاب",
+                    "توزيع " + successCount + " طالب على الصف " +
+                    cmbClass.Text + " - شعبة " + section);
 
                 await LoadDataAsync();
             }
-
             catch (Exception ex)
             {
-                Cursor = Cursors.Default;
                 UIHelper.ShowException("خطأ أثناء توزيع الطلاب:\n", ex);
             }
-        }
-
-        // تعريف الدالة GetSelectedStudentClassIds لتنفيذ العملية المرتبطة بها.
-        private List<int> GetSelectedStudentClassIds()
-        {
-            List<int> ids = new List<int>();
-            if (!dataGridViewAssigned.Columns.Contains("StudentClassID"))
-                return ids;
-
-            foreach (DataGridViewRow row in dataGridViewAssigned.SelectedRows)
-            {
-                object value = row.Cells["StudentClassID"].Value;
-                int id;
-                if (value != null && value != DBNull.Value && int.TryParse(value.ToString(), out id) && id > 0 && !ids.Contains(id))
-                    ids.Add(id);
-            }
-
-            return ids;
-        }
-
-        // تعريف الدالة dataGridViewAssigned_CellClick لتنفيذ العملية المرتبطة بها.
-        private void dataGridViewAssigned_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0 || dataGridViewAssigned.Rows.Count == 0)
-                return;
-
-            if (!dataGridViewAssigned.Columns.Contains("StudentClassID"))
-                return;
-
-            object value = dataGridViewAssigned.Rows[e.RowIndex].Cells["StudentClassID"].Value;
-
-            if (value != null && value != DBNull.Value)
-            {
-                selectedStudentClassId = Convert.ToInt32(value);
-                lblStatus.Text = "تم تحديد طالب موزع من الجدول.";
-            }
-        }
-
-        // تعريف الدالة btnRemove_Click لتنفيذ العملية المرتبطة بها.
-        private async void btnRemove_Click(object sender, EventArgs e)
-        {
-            if (selectedStudentClassId <= 0)
-            {
-                ShowWarning("اختر طالباً موزعاً من الجدول أولاً.");
-
-                return;
-            }
-
-
-            bool result = UIHelper.ShowConfirmation(
-                "هل تريد إزالة الطالب من هذا التوزيع؟",
-                "تأكيد الإزالة");
-
-            if (!result)
-                return;
-
-            // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
-            try
-            {
-                Cursor = Cursors.WaitCursor;
-
-
-                bool removed = await Task.Run(() =>
-                    studentClassService.RemoveAssignment(selectedStudentClassId));
-
-                Cursor = Cursors.Default;
-
-                if (removed)
-                {
-                    ShowInfo("تمت إزالة التوزيع بنجاح.");
-                    ApplicationLogger.LogUsage("شاشة توزيع الفصول", "إزالة توزيع", "إزالة توزيع طالب من الصف " + cmbClass.Text + " - شعبة " + cmbSection.Text);
-                    selectedStudentClassId = 0;
-
-                    await LoadDataAsync();
-                }
-
-                else
-                {
-                    ShowWarning("لم يتم العثور على سجل التوزيع.");
-                }
-            }
-
-            catch (Exception ex)
-            {
-                Cursor = Cursors.Default;
-                UIHelper.ShowException("خطأ أثناء الإزالة:\n", ex);
-            }
-        }
-
-        // تعريف الدالة btnRemoveAll_Click لتنفيذ العملية المرتبطة بها.
-        private async void btnRemoveAll_Click(object sender, EventArgs e)
-        {
-            List<int> ids = GetSelectedStudentClassIds();
-            if (ids.Count == 0)
-            {
-                ShowWarning("حدد طالباً واحداً على الأقل من الجدول.");
-
-                return;
-            }
-
-
-            bool result = UIHelper.ShowConfirmation(
-                "هل تريد إزالة توزيع " + ids.Count + " طالب؟",
-                "تأكيد الإزالة الجماعية");
-
-            if (!result)
-                return;
-
-            // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
-            try
-            {
-                Cursor = Cursors.WaitCursor;
-
-                int removed = await Task.Run(() => studentClassService.RemoveAssignments(ids));
-                ShowInfo("تمت إزالة توزيع " + removed + " طالب بنجاح.");
-                selectedStudentClassId = 0;
-
-                await LoadDataAsync();
-            }
-
-            catch (Exception ex)
-            {
-                UIHelper.ShowException("خطأ أثناء الإزالة الجماعية:\n", ex);
-            }
-
-            finally
-            {
-                Cursor = Cursors.Default;
-            }
-        }
-
-        // تعريف الدالة btnTransfer_Click لتنفيذ العملية المرتبطة بها.
-        private async void btnTransfer_Click(object sender, EventArgs e)
-        {
-            List<int> ids = GetSelectedStudentClassIds();
-            string targetSection = cmbTransferSection.Text == null ? string.Empty : cmbTransferSection.Text.Trim();
-            if (ids.Count == 0)
-            {
-                ShowWarning("حدد طالباً واحداً على الأقل من الجدول.");
-
-                return;
-            }
-            if (!cmbTransferSection.Enabled || string.IsNullOrWhiteSpace(targetSection))
-            {
-                ShowWarning("لا توجد شعبة هدف أخرى متاحة لهذا الصف.");
-
-                return;
-            }
-            if (targetSection.Equals(cmbSection.Text.Trim(), StringComparison.OrdinalIgnoreCase))
-            {
-                ShowWarning("اختر شعبة مختلفة عن الشعبة الحالية.");
-
-                return;
-            }
-
-
-            bool result = UIHelper.ShowConfirmation(
-                "هل تريد نقل " + ids.Count + " طالب إلى شعبة " + targetSection + "؟",
-                "تأكيد النقل");
-
-            if (!result)
-                return;
-
-            // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
-            try
-            {
-                Cursor = Cursors.WaitCursor;
-                int success = 0;
-                int failed = 0;
-                int transferClassId = GetSelectedClassId();
-                string transferAcademicYear = txtAcademicYear.Text.Trim();
-                foreach (int id in ids)
-                {
-                    // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
-                    try
-                    {
-                        if (await Task.Run(() => studentClassService.TransferAssignment(
-                            id, transferClassId, targetSection, transferAcademicYear)))
-                            success++;
-
-                        else
-
-                            failed++;
-                    }
-
-                    catch (Exception ex)
-                    {
-                        ApplicationLogger.LogException("شاشة توزيع الفصول: فشل نقل طالب", ex);
-                        failed++;
-                    }
-                }
-                ShowInfo("تم نقل " + success + " طالب بنجاح." + (failed > 0 ? " تعذر نقل " + failed + " طالب." : string.Empty));
-                ApplicationLogger.LogUsage("شاشة توزيع الفصول", "نقل طلاب", "نقل " + success + " طالب إلى شعبة " + targetSection);
-
-                await LoadDataAsync();
-            }
-
-            catch (Exception ex)
-            {
-                UIHelper.ShowException("خطأ أثناء نقل الطلاب:\n", ex);
-            }
-
             finally
             {
                 Cursor = Cursors.Default;
@@ -991,8 +789,7 @@ namespace SchoolSystem.UI.Students
                 if (string.IsNullOrWhiteSpace(EnrolledClassName))
                     return student;
 
-                return EnrolledClassName + " | " + student;
+                return "الصف: " + EnrolledClassName + " | " + student;
             }
-        }
-    }
+        }    }
 }
