@@ -47,6 +47,27 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// يعيد الأدوار النشطة من جدول Roles فقط. لا توجد قائمة أدوار ثابتة داخل الواجهة.
+        /// </summary>
+        public DataTable GetActiveRoles()
+        {
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlDataAdapter da = new SqlDataAdapter(@"
+                SELECT RoleID, RoleName, IsSystem, IsActive
+                FROM dbo.Roles
+                WHERE ISNULL(IsActive, 1) = 1
+                  AND NULLIF(LTRIM(RTRIM(RoleName)), N'') IS NOT NULL
+                ORDER BY
+                    CASE WHEN ISNULL(IsSystem, 0) = 1 THEN 0 ELSE 1 END,
+                    RoleName ASC;", con))
+            {
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                return dt;
+            }
+        }
+
         // تعريف الدالة GetUserByUserName لتنفيذ العملية المرتبطة بها.
         public User GetUserByUserName(string userName)
         {
