@@ -316,6 +316,11 @@ namespace SchoolSystem.UI
         {
             _ = ReloadDashboardAsync();
 
+            // قد يعاد تحميل UserControl أكثر من مرة أثناء التنقل؛
+            // لا ننشئ مؤقتًا جديدًا في كل مرة حتى لا تتكرر الاستعلامات الدورية.
+            if (dashboardAutoRefreshTimer != null)
+                return;
+
             dashboardAutoRefreshTimer =
                 new Timer
                 {

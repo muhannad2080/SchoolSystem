@@ -263,6 +263,14 @@ namespace SchoolSystem.UI
             {
                 isLoadingFilters = false;
                 Cursor = Cursors.Default;
+
+                // بعد تجهيز القوائم، اعرض التقرير الافتراضي تلقائيًا.
+                // التقارير التي تتطلب اسم/رقم طالب أو ترمًا ستبقى فارغة حتى يكتمل المدخل المطلوب.
+                if (IsHandleCreated &&
+                    cmbReportType.SelectedIndex >= 0)
+                {
+                    ScheduleAutomaticReportLoad();
+                }
             }
         }
 
