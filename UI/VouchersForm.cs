@@ -114,10 +114,10 @@ namespace SchoolSystem.UI
 
             foreach (Control control in tableLayoutFields.Controls)
             {
-                if (control is Label)
+                if (control is Label label)
                 {
-                    control.TextAlign = ContentAlignment.MiddleRight;
-                    control.Margin = new Padding(0, 0, 6, 0);
+                    label.TextAlign = ContentAlignment.MiddleRight;
+                    label.Margin = new Padding(0, 0, 6, 0);
                 }
                 else if (control is TextBox textBox)
                 {
