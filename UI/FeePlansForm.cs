@@ -20,6 +20,8 @@ namespace SchoolSystem.UI
 
         private int selectedFeePlanId = 0;
 
+        private bool isLoading = false;
+
         private DataTable allFeePlans;
 
         // تعريف الدالة FeePlansForm لتنفيذ العملية المرتبطة بها.
@@ -46,6 +48,8 @@ namespace SchoolSystem.UI
             cmbAcademicYear.SelectedIndexChanged += FeePlanFilter_Changed;
 
             cmbAcademicYear.TextChanged += FeePlanFilter_Changed;
+
+            txtAmount.TextChanged += txtAmount_TextChanged;
         }
 
         private async void DataRefreshNotifier_DataChanged(
@@ -275,7 +279,140 @@ namespace SchoolSystem.UI
         private void FeePlanFilter_Changed(object sender, EventArgs e)
         {
             if (!IsDisposed)
+            {
                 ApplyFilter();
+                UpdateSelectedPlanSummary();
+            }
+        }
+
+        private void txtAmount_TextChanged(object sender, EventArgs e)
+        {
+            if (isLoading)
+                return;
+
+            UpdateSelectedPlanSummary();
+        }
+
+        private void UpdateSelectedPlanSummary()
+        {
+            if (txtPlanNumber == null || txtTotalFeeAmount == null)
+                return;
+
+            int classId =
+                cmbClass.SelectedValue == null
+                    ? 0
+                    : UIHelper.GetSelectedId(cmbClass);
+
+            string academicYear =
+                (cmbAcademicYear.Text ?? string.Empty)
+                    .Trim()
+                    .Replace(" ", "");
+
+            string feeType =
+                (cmbFeeType.Text ?? string.Empty).Trim();
+
+            DataRow selectedRow = null;
+            DataRow totalRow = null;
+
+            if (allFeePlans != null &&
+                allFeePlans.Rows.Count > 0 &&
+                classId > 0 &&
+                !string.IsNullOrWhiteSpace(academicYear))
+            {
+                foreach (DataRow row in allFeePlans.Rows)
+                {
+                    int rowClassId =
+                        row["ClassID"] == DBNull.Value
+                            ? 0
+                            : Convert.ToInt32(row["ClassID"]);
+
+                    string rowYear =
+                        Convert.ToString(row["AcademicYear"])
+                            .Trim()
+                            .Replace(" ", "");
+
+                    string rowType =
+                        Convert.ToString(row["FeeType"])
+                            .Trim();
+
+                    if (rowClassId != classId ||
+                        !string.Equals(
+                            rowYear,
+                            academicYear,
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    if (IsTotalFeeType(rowType))
+                    {
+                        if (totalRow == null)
+                            totalRow = row;
+                    }
+
+                    if (string.Equals(
+                            rowType,
+                            feeType,
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        selectedRow = row;
+                    }
+                }
+            }
+
+            if (selectedRow != null)
+            {
+                selectedFeePlanId =
+                    selectedRow["FeePlanID"] == DBNull.Value
+                        ? 0
+                        : Convert.ToInt32(
+                            selectedRow["FeePlanID"]);
+
+                txtPlanNumber.Text =
+                    selectedFeePlanId > 0
+                        ? selectedFeePlanId.ToString()
+                        : string.Empty;
+
+                txtAmount.Text =
+                    selectedRow["Amount"] == DBNull.Value
+                        ? "0.00"
+                        : Convert.ToDecimal(
+                            selectedRow["Amount"])
+                            .ToString("N2");
+
+                if (selectedFeePlanId == 0)
+                    txtPlanNumber.Clear();
+            }
+            else if (selectedFeePlanId == 0)
+            {
+                txtPlanNumber.Clear();
+            }
+
+            decimal total =
+                totalRow == null ||
+                totalRow["Amount"] == DBNull.Value
+                    ? 0m
+                    : Convert.ToDecimal(totalRow["Amount"]);
+
+            if (selectedRow != null &&
+                !IsTotalFeeType(feeType))
+            {
+                txtTotalFeeAmount.Text =
+                    total.ToString("N2") + " ريال";
+            }
+            else
+            {
+                decimal amount =
+                    selectedRow == null
+                        ? ReadDecimal(txtAmount.Text)
+                        : Convert.ToDecimal(
+                            selectedRow["Amount"]);
+
+                txtTotalFeeAmount.Text =
+                    IsTotalFeeType(feeType)
+                        ? amount.ToString("N2") + " ريال"
+                        : total.ToString("N2") + " ريال";
+            }
         }
 
         // تعريف الدالة ReadDecimal لتنفيذ العملية المرتبطة بها.
@@ -364,7 +501,10 @@ namespace SchoolSystem.UI
         // تعريف الدالة ClearInputs لتنفيذ العملية المرتبطة بها.
         private void ClearInputs()
         {
+            isLoading = true;
             selectedFeePlanId = 0;
+            txtPlanNumber.Clear();
+            txtTotalFeeAmount.Text = "0.00 ريال";
 
             if (cmbAcademicYear.Items.Count > 0)
                 cmbAcademicYear.SelectedIndex = Math.Min(1, cmbAcademicYear.Items.Count - 1);
@@ -384,7 +524,9 @@ namespace SchoolSystem.UI
             dtpDueDate.Value = DateTime.Today.AddDays(30);
             chkIsRequired.Checked = true;
             txtNotes.Clear();
+            isLoading = false;
             ApplyFilter();
+            UpdateSelectedPlanSummary();
         }
 
         // تعريف الدالة dataGridViewFeePlans_CellClick لتنفيذ العملية المرتبطة بها.
@@ -402,18 +544,33 @@ namespace SchoolSystem.UI
         // تعريف الدالة FillFieldsFromRow لتنفيذ العملية المرتبطة بها.
         private void FillFieldsFromRow(DataRow row)
         {
+            isLoading = true;
+
             selectedFeePlanId = Convert.ToInt32(row["FeePlanID"]);
 
             cmbAcademicYear.Text = row["AcademicYear"].ToString();
             cmbClass.SelectedValue = Convert.ToInt32(row["ClassID"]);
             cmbFeeType.Text = row["FeeType"].ToString();
 
-            txtAmount.Text = Convert.ToDecimal(row["Amount"]).ToString("N2");
+            txtAmount.Text =
+                Convert.ToDecimal(row["Amount"])
+                    .ToString("N2");
+
+            txtPlanNumber.Text =
+                selectedFeePlanId.ToString();
+
             dtpDueDate.Value = Convert.ToDateTime(row["DueDate"]);
 
-            chkIsRequired.Checked = Convert.ToBoolean(row["IsRequired"]);
+            chkIsRequired.Checked =
+                Convert.ToBoolean(row["IsRequired"]);
 
-            txtNotes.Text = row["Notes"] == DBNull.Value ? "" : row["Notes"].ToString();
+            txtNotes.Text =
+                row["Notes"] == DBNull.Value
+                    ? ""
+                    : row["Notes"].ToString();
+
+            isLoading = false;
+            UpdateSelectedPlanSummary();
         }
 
         // تعريف الدالة btnAdd_Click لتنفيذ العملية المرتبطة بها.
@@ -432,8 +589,9 @@ namespace SchoolSystem.UI
 
                 if (IsTotalFeeType(plan.FeeType))
                 {
-
-                    affectedPlans = await Task.Run(() => feePlanService.DistributeTotalFee(plan));
+                    affectedPlans =
+                        await Task.Run(() =>
+                            feePlanService.DistributeTotalFee(plan));
                     if (affectedPlans > 0)
                         UIHelper.ShowInfo("تم إنشاء " + affectedPlans + " نوع رسوم وتوزيع الرسوم الكلية عليها بالنسب المنطقية في الصف نفسه.");
                     else
@@ -444,8 +602,16 @@ namespace SchoolSystem.UI
                 else
                 {
 
-                    await Task.Run(() => feePlanService.AddFeePlan(plan));
-                    UIHelper.ShowInfo("تمت إضافة رسوم الصف بنجاح.");
+                    bool added =
+                        await Task.Run(() =>
+                            feePlanService.AddFeePlan(plan));
+
+                    if (!added)
+                        throw new InvalidOperationException(
+                            "تعذر إضافة نوع الرسوم.");
+
+                    UIHelper.ShowInfo(
+                        "تمت إضافة نوع الرسوم وتحديث الرسوم الكلية للصف نفسه.");
                     ApplicationLogger.LogUsage("شاشة تعريف الرسوم", "إضافة رسوم", "تمت إضافة رسوم الصف بنجاح");
                 }
 
@@ -472,14 +638,17 @@ namespace SchoolSystem.UI
         // تعريف الدالة btnUpdate_Click لتنفيذ العملية المرتبطة بها.
         private async void btnUpdate_Click(object sender, EventArgs e)
         {
-            // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
             try
             {
-                // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                CurrentUser.DemandAction("FeePlans", "Edit", "ليس لديك صلاحية تعديل خطط الرسوم.");
+                CurrentUser.DemandAction(
+                    "FeePlans",
+                    "Edit",
+                    "ليس لديك صلاحية تعديل خطط الرسوم.");
+
                 if (selectedFeePlanId == 0)
                 {
-                    UIHelper.ShowWarning("اختر سجل الرسوم من الجدول.");
+                    UIHelper.ShowWarning(
+                        "اختر سجل الرسوم من الجدول أولاً.");
 
                     return;
                 }
@@ -489,27 +658,58 @@ namespace SchoolSystem.UI
 
                 FeePlan plan = GetPlanFromInputs();
 
+                if (IsTotalFeeType(plan.FeeType))
+                {
+                    int affected =
+                        await Task.Run(() =>
+                            feePlanService.UpdateTotalFeePlanAndDistribute(
+                                plan));
 
-                bool result = await Task.Run(() => feePlanService.UpdateFeePlan(plan));
-
-                if (result)
-                    UIHelper.ShowInfo("تم تعديل رسوم الصف بنجاح.");
-
+                    UIHelper.ShowInfo(
+                        "تم تعديل الرسوم الكلية بمبلغ " +
+                        plan.Amount.ToString("N2") +
+                        " ريال وإعادة توزيعه على " +
+                        affected +
+                        " بنود للصف نفسه.");
+                }
                 else
+                {
+                    bool result =
+                        await Task.Run(() =>
+                            feePlanService.UpdateChildFeePlanAndRecalculateTotal(
+                                plan));
 
-                    UIHelper.ShowWarning("لم يتم العثور على سجل الرسوم أو لم يتم تعديله.");
+                    if (!result)
+                    {
+                        UIHelper.ShowWarning(
+                            "لم يتم العثور على نوع الرسوم المحدد.");
+                        return;
+                    }
 
-                if (result) ApplicationLogger.LogUsage("شاشة تعريف الرسوم", "تعديل رسوم", "تم تعديل رسوم الصف بنجاح");
+                    UIHelper.ShowInfo(
+                        "تم تعديل نوع الرسوم وإعادة احتساب الرسوم الكلية للصف نفسه.");
+                }
 
+                ApplicationLogger.LogUsage(
+                    "شاشة تعريف الرسوم",
+                    "تعديل خطة رسوم",
+                    "تحديث متزامن للكلي والبنود للصف " +
+                    plan.ClassID +
+                    " والعام " +
+                    plan.AcademicYear);
 
                 await LoadFeePlansAsync();
+
                 DataRefreshNotifier.Notify("FeePlans", this);
+                DataRefreshNotifier.Notify("Fees", this);
+
                 ClearInputs();
             }
-
             catch (Exception ex)
             {
-                UIHelper.ShowException("فشل تعديل رسوم الصف:\n", ex);
+                UIHelper.ShowException(
+                    "فشل تعديل رسوم الصف:\n",
+                    ex);
             }
         }
 
