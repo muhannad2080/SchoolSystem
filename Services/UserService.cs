@@ -42,6 +42,25 @@ namespace SchoolSystem.Services
             return userRepository.GetActiveRoles();
         }
 
+        /// <summary>يُعيد الأدوار النشطة من قاعدة البيانات.</summary>
+        public List<string> GetActiveRoleNames()
+        {
+            return userRepository.GetActiveRoleNames();
+        }
+
+        /// <summary>يُعيد كتالوج الصلاحيات النشطة من قاعدة البيانات.</summary>
+        public DataTable GetActivePermissions()
+        {
+            return userRepository.GetActivePermissions();
+        }
+
+        /// <summary>يُعيد صلاحيات الشاشة الممنوحة للدور من قاعدة البيانات.</summary>
+        public List<string> GetRoleScreenPermissions(string roleName)
+        {
+            return userRepository.GetRoleScreenPermissionsByName(
+                PermissionKeys.NormalizeRoleName(roleName));
+        }
+
         // تعريف الدالة AddUser لتنفيذ العملية المرتبطة بها.
         public bool AddUser(User user, string password)
         {
