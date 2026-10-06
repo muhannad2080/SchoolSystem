@@ -493,7 +493,7 @@ namespace SchoolSystem.UI.Students
             this.lblUnassigned.Name = "lblUnassigned";
             this.lblUnassigned.Size = new System.Drawing.Size(513, 32);
             this.lblUnassigned.TabIndex = 0;
-            this.lblUnassigned.Text = "الطلاب غير الموزعين: 0";
+            this.lblUnassigned.Text = "الطلاب غير الموزعين (مرتبطون بالتسجيل المقبول): 0";
             this.lblUnassigned.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panelSearch
@@ -529,7 +529,7 @@ namespace SchoolSystem.UI.Students
             this.lblSearch.Name = "lblSearch";
             this.lblSearch.Size = new System.Drawing.Size(110, 26);
             this.lblSearch.TabIndex = 0;
-            this.lblSearch.Text = "بحث طالب:";
+            this.lblSearch.Text = "بحث في الطلاب:";
             this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // listBoxUnassigned
@@ -540,6 +540,8 @@ namespace SchoolSystem.UI.Students
             this.listBoxUnassigned.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBoxUnassigned.Font = new System.Drawing.Font("Tahoma", 10F);
             this.listBoxUnassigned.FormattingEnabled = true;
+            this.listBoxUnassigned.HorizontalScrollbar = true;
+            this.listBoxUnassigned.IntegralHeight = false;
             this.listBoxUnassigned.Location = new System.Drawing.Point(3, 83);
             this.listBoxUnassigned.Name = "listBoxUnassigned";
             this.listBoxUnassigned.Size = new System.Drawing.Size(513, 289);
