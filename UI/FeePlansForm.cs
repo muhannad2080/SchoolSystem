@@ -20,8 +20,6 @@ namespace SchoolSystem.UI
 
         private int selectedFeePlanId = 0;
 
-        private bool isLoading = false;
-
         private DataTable allFeePlans;
 
         // تعريف الدالة FeePlansForm لتنفيذ العملية المرتبطة بها.
@@ -579,7 +577,6 @@ namespace SchoolSystem.UI
         // تعريف الدالة ClearInputs لتنفيذ العملية المرتبطة بها.
         private void ClearInputs()
         {
-            isLoading = true;
             selectedFeePlanId = 0;
             txtPlanNumber.Clear();
             txtTotalFeeAmount.Text = "0.00 ريال";
@@ -606,7 +603,6 @@ namespace SchoolSystem.UI
             dtpDueDate.Value = DateTime.Today.AddDays(30);
             chkIsRequired.Checked = true;
             txtNotes.Clear();
-            isLoading = false;
             ApplyFilter();
             UpdateSelectedPlanSummary();
         }
@@ -626,8 +622,6 @@ namespace SchoolSystem.UI
         // تعريف الدالة FillFieldsFromRow لتنفيذ العملية المرتبطة بها.
         private void FillFieldsFromRow(DataRow row)
         {
-            isLoading = true;
-
             selectedFeePlanId = Convert.ToInt32(row["FeePlanID"]);
 
             cmbAcademicYear.Text = row["AcademicYear"].ToString();
@@ -655,7 +649,6 @@ namespace SchoolSystem.UI
                     ? ""
                     : row["Notes"].ToString();
 
-            isLoading = false;
             UpdateSelectedPlanSummary();
         }
 
