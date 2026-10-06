@@ -857,10 +857,18 @@ namespace SchoolSystem.UI
                 UIHelper.BuildDataViewSearchFilter(
                     txtSearch.Text,
                     "StudentName",
+                    "StudentNumber",
+                    "ApplicationType",
                     "AcademicYear",
-                    "Status",
+                    "ClassName",
                     "Section",
-                    "ClassName");
+                    "Status",
+                    "PreviousSchool",
+                    "PreviousClass",
+                    "TransferReason",
+                    "PaymentMethod",
+                    "ReceiptNo",
+                    "Notes");
 
             UpdateCount();
         }
@@ -887,7 +895,7 @@ namespace SchoolSystem.UI
         // REFRESH
         // ================================================================
 
-        private void btnRefresh_Click(
+        private void btnClearSearch_Click(
             object sender,
             EventArgs e)
         {
@@ -896,7 +904,23 @@ namespace SchoolSystem.UI
             if (enrollmentsView != null)
             {
                 enrollmentsView.RowFilter =
-                    "";
+                    string.Empty;
+            }
+
+            UpdateCount();
+
+            txtSearch.Focus();
+        }
+
+        private void btnRefresh_Click(
+            object sender,
+            EventArgs e)
+        {
+            if (isEditMode)
+            {
+                UIHelper.ShowWarning(
+                    "لا يمكن تحديث قائمة التسجيل أثناء تعديل سجل. احفظ أو ألغِ التعديل أولاً.");
+                return;
             }
 
             LoadData();
