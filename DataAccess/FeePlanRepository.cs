@@ -21,7 +21,12 @@ namespace SchoolSystem.DataAccess
                         fp.AcademicYear,
                         fp.ClassID,
                         c.ClassName,
-                        fp.FeeType,
+                        CASE
+                            WHEN LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) IN
+                                (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                            THEN N'الرسوم الكلية'
+                            ELSE LTRIM(RTRIM(ISNULL(fp.FeeType, N'')))
+                        END AS FeeType,
                         fp.Amount,
                         fp.DueDate,
                         fp.IsRequired,
@@ -72,12 +77,17 @@ namespace SchoolSystem.DataAccess
                     SELECT FeeType
                     FROM
                     (
-                        SELECT DISTINCT LTRIM(RTRIM(FeeType)) AS FeeType
+                        SELECT DISTINCT
+                            CASE
+                                WHEN LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
+                                    (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                                THEN N'الرسوم الكلية'
+                                ELSE LTRIM(RTRIM(ISNULL(FeeType, N'')))
+                            END AS FeeType
                         FROM FeePlans
                         WHERE NULLIF(LTRIM(RTRIM(FeeType)), N'') IS NOT NULL
 
                         UNION ALL
-
                         SELECT N'الرسوم الكلية'
                         UNION ALL SELECT N'رسوم تسجيل'
                         UNION ALL SELECT N'رسوم دراسية'
@@ -103,7 +113,8 @@ namespace SchoolSystem.DataAccess
                         ELSE 99
                     END, FeeType;";
 
-                using (SqlDataAdapter da = new SqlDataAdapter(query, con))
+                using (SqlDataAdapter da =
+                    new SqlDataAdapter(query, con))
                 {
                     DataTable dt = new DataTable();
 
