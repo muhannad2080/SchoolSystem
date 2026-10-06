@@ -664,30 +664,68 @@ namespace SchoolSystem.DataAccess
                             throw new InvalidOperationException(
                                 "تعذر تحديد أوزان توزيع الرسوم.");
 
-                        decimal allocated = 0m;
+                        // الحدود الدنيا هي أكبر مبلغ سبق تحصيله من أي طالب
+                        // لكل نوع رسوم. نضمن عدم توزيع مبلغ أقل من المبلغ المحصّل.
+                        decimal[] minimumPaidAmounts =
+                            new decimal[childPlans.Count];
+
+                        decimal minimumRequiredTotal = 0m;
+
+                        for (int i = 0; i < childPlans.Count; i++)
+                        {
+                            minimumPaidAmounts[i] =
+                                GetMaxPaidAmountForPlan(
+                                    con,
+                                    transaction,
+                                    childPlans[i].Item1);
+
+                            minimumRequiredTotal +=
+                                minimumPaidAmounts[i];
+                        }
+
+                        if (plan.Amount + 0.01m <
+                            minimumRequiredTotal)
+                        {
+                            throw new InvalidOperationException(
+                                "الرسوم الكلية المطلوبة أقل من مجموع المبالغ المحصّلة سابقًا لبعض أنواع الرسوم. ارفع الرسوم الكلية أو استخدم الإجراءات المالية لتصحيح الحركة.");
+                        }
+
+                        decimal[] ratios =
+                            new decimal[childPlans.Count];
+
+                        for (int i = 0; i < childPlans.Count; i++)
+                        {
+                            ratios[i] =
+                                oldChildTotal > 0m
+                                    ? Math.Max(0m, childPlans[i].Item3) / oldChildTotal
+                                    : weights[i] / weightTotal;
+                        }
+
+                        decimal distributableAmount =
+                            plan.Amount -
+                            minimumRequiredTotal;
+
+                        decimal allocatedExtra = 0m;
 
                         for (int i = 0; i < childPlans.Count; i++)
                         {
                             Tuple<int, string, decimal> child =
                                 childPlans[i];
 
-                            decimal ratio =
-                                oldChildTotal > 0m
-                                    ? Math.Max(0m, child.Item3) / oldChildTotal
-                                    : weights[i] / weightTotal;
-
-                            decimal amount =
+                            decimal extra =
                                 i == childPlans.Count - 1
-                                    ? plan.Amount - allocated
+                                    ? distributableAmount - allocatedExtra
                                     : Math.Round(
-                                        plan.Amount * ratio,
+                                        distributableAmount * ratios[i],
                                         2,
                                         MidpointRounding.AwayFromZero);
 
-                            if (amount < 0m)
-                                amount = 0m;
+                            decimal amount =
+                                minimumPaidAmounts[i] +
+                                Math.Max(0m, extra);
 
-                            allocated += amount;
+                            if (i != childPlans.Count - 1)
+                                allocatedExtra += Math.Max(0m, extra);
 
                             UpdatePlanAmountAndUnpaidFees(
                                 con,
@@ -1200,6 +1238,13 @@ namespace SchoolSystem.DataAccess
             DateTime dueDate,
             string notes)
         {
+            EnsurePlanAmountCoversPaid(
+                con,
+                transaction,
+                feePlanId,
+                amount,
+                null);
+
             const string sql = @"
                 UPDATE FeePlans
                 SET Amount = @Amount,
