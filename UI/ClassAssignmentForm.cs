@@ -523,6 +523,7 @@ namespace SchoolSystem.UI.Students
 
             if (string.IsNullOrWhiteSpace(keyword))
             {
+                unassignedStudents.DefaultView.RowFilter = string.Empty;
                 FillUnassignedList(unassignedStudents);
 
                 return;
@@ -543,6 +544,50 @@ namespace SchoolSystem.UI.Students
             dv.RowFilter = UIHelper.BuildDataViewSearchFilter(keyword, searchableColumns.ToArray());
 
             FillUnassignedList(dv.ToTable());
+        }
+
+        // ربط الطالب المحدد بالصف الذي تم قبوله في واجهة التسجيل والقبول.
+        private async void listBoxUnassigned_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (isLoading)
+                return;
+
+            StudentListItem student =
+                listBoxUnassigned.SelectedItem as StudentListItem;
+
+            if (student == null || student.EnrolledClassID <= 0)
+                return;
+
+            if (GetSelectedClassId() == student.EnrolledClassID)
+                return;
+
+            try
+            {
+                isLoading = true;
+
+                cmbClass.SelectedValue = student.EnrolledClassID;
+
+                await LoadSectionsAsync();
+
+                lblStatus.Text =
+                    "تم اختيار الصف المسجل للطالب: " +
+                    student.EnrolledClassName +
+                    ". اختر الشعبة ثم نفّذ التوزيع.";
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة توزيع الفصول: فشل مزامنة الصف مع التسجيل",
+                    ex);
+
+                UIHelper.ShowException(
+                    "مزامنة الصف المسجل",
+                    ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
         }
 
         // تعريف الدالة btnSelectAll_Click لتنفيذ العملية المرتبطة بها.
@@ -791,5 +836,6 @@ namespace SchoolSystem.UI.Students
 
                 return "الصف: " + EnrolledClassName + " | " + student;
             }
-        }    }
+        }
+    }
 }
