@@ -105,7 +105,7 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            await Task.Run(() => LoadStudents());
+            LoadStudents();
         }
 
         private void ConfigureDesignPreviewTheme()
