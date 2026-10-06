@@ -52,7 +52,7 @@ namespace SchoolSystem.Services
         {
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             CurrentUser.DemandAction("Enrollment", "Add", "ليس لديك صلاحية إضافة التسجيل.");
-            NormalizeEnrollment(enrollment);
+            NormalizeEnrollment(enrollment, false);
             ValidateEnrollment(enrollment, false);
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             EnsureFinancePermissionIfRequired(enrollment, false);
@@ -98,7 +98,7 @@ namespace SchoolSystem.Services
         {
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             CurrentUser.DemandAction("Enrollment", "Edit", "ليس لديك صلاحية تعديل التسجيل.");
-            NormalizeEnrollment(enrollment);
+            NormalizeEnrollment(enrollment, true);
             ValidateEnrollment(enrollment, true);
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             EnsureFinancePermissionIfRequired(enrollment, true);
@@ -445,19 +445,38 @@ namespace SchoolSystem.Services
         }
 
         // تعريف الدالة NormalizeEnrollment لتنفيذ العملية المرتبطة بها.
-        private void NormalizeEnrollment(Enrollment enrollment)
+        private void NormalizeEnrollment(Enrollment enrollment, bool isUpdate)
         {
             if (enrollment == null) return;
-            enrollment.AcademicYear = (enrollment.AcademicYear ?? string.Empty).Trim().Replace('-', '/');
-            enrollment.Section = (enrollment.Section ?? string.Empty).Trim();
 
-            if (enrollment.Section == "بدون شعبة" || enrollment.Section == "(بدون شعبة)")
+            enrollment.AcademicYear =
+                (enrollment.AcademicYear ?? string.Empty)
+                    .Trim()
+                    .Replace('-', '/');
+
+            enrollment.Section =
+                (enrollment.Section ?? string.Empty).Trim();
+
+            if (enrollment.Section == "بدون شعبة" ||
+                enrollment.Section == "(بدون شعبة)")
+            {
                 enrollment.Section = string.Empty;
+            }
 
-
-            if (string.IsNullOrWhiteSpace(enrollment.ReceiptNo))
-                enrollment.ReceiptNo = "REG-" + DateTime.Now.ToString("yyyyMMdd-HHmmss")
-                    + "-" + Guid.NewGuid().ToString("N").Substring(0, 6).ToUpperInvariant();
+            // يُولّد رقم السند تلقائيًا عند إنشاء تسجيل جديد فقط.
+            // أثناء التعديل لا نولد قيمة جديدة حتى لا نعتبر السجل المالي متغيرًا.
+            if (!isUpdate &&
+                string.IsNullOrWhiteSpace(enrollment.ReceiptNo))
+            {
+                enrollment.ReceiptNo =
+                    "REG-" +
+                    DateTime.Now.ToString("yyyyMMdd-HHmmss") +
+                    "-" +
+                    Guid.NewGuid()
+                        .ToString("N")
+                        .Substring(0, 6)
+                        .ToUpperInvariant();
+            }
         }
 
         // تعريف الدالة ValidateAcademicYear لتنفيذ العملية المرتبطة بها.
