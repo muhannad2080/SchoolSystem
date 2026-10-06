@@ -53,7 +53,28 @@ namespace SchoolSystem.UI
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
             Dock = DockStyle.Fill;
+
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             Load += ClassesForm_Load;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Classes") &&
+                !DataRefreshNotifier.IsRelated(e, "Sections"))
+                return;
+
+            await LoadClassesAsync();
+            await LoadNameDropdownsAsync();
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
@@ -434,7 +455,10 @@ namespace SchoolSystem.UI
                 int classId = await Task.Run(() => classService.AddClass(item));
                 ShowInfo("تمت إضافة الفصل بنجاح. الرقم التلقائي: " + classId);
 
-                await LoadClassesAsync(); await LoadNameDropdownsAsync(); ClearClassFields();
+                await LoadClassesAsync();
+                await LoadNameDropdownsAsync();
+                DataRefreshNotifier.Notify("Classes", this);
+                ClearClassFields();
             }
 
             catch (Exception ex) { UIHelper.ShowException("خطأ أثناء إضافة الفصل:\n", ex); }
@@ -466,6 +490,7 @@ namespace SchoolSystem.UI
                     ShowInfo("تم تعديل بيانات الفصل بنجاح.");
 
                     await LoadClassesAsync();
+                    DataRefreshNotifier.Notify("Classes", this);
                     ClearClassFields();
                 }
 
