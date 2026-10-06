@@ -307,7 +307,6 @@ namespace SchoolSystem.UI
             DataRow totalRow = null;
 
             if (allFeePlans != null &&
-                allFeePlans.Rows.Count > 0 &&
                 classId > 0 &&
                 !string.IsNullOrWhiteSpace(academicYear))
             {
@@ -336,10 +335,10 @@ namespace SchoolSystem.UI
                         continue;
                     }
 
-                    if (IsTotalFeeType(rowType))
+                    if (IsTotalFeeType(rowType) &&
+                        totalRow == null)
                     {
-                        if (totalRow == null)
-                            totalRow = row;
+                        totalRow = row;
                     }
 
                     if (string.Equals(
@@ -352,59 +351,45 @@ namespace SchoolSystem.UI
                 }
             }
 
+            // عند اختيار نوع موجود، نعرض رقمه ومبلغه حتى قبل الضغط على الصف.
             if (selectedRow != null)
             {
-                selectedFeePlanId =
+                int displayedPlanId =
                     selectedRow["FeePlanID"] == DBNull.Value
                         ? 0
                         : Convert.ToInt32(
                             selectedRow["FeePlanID"]);
 
                 txtPlanNumber.Text =
-                    selectedFeePlanId > 0
-                        ? selectedFeePlanId.ToString()
+                    displayedPlanId > 0
+                        ? displayedPlanId.ToString()
                         : string.Empty;
 
-                txtAmount.Text =
-                    selectedRow["Amount"] == DBNull.Value
-                        ? "0.00"
-                        : Convert.ToDecimal(
-                            selectedRow["Amount"])
-                            .ToString("N2");
-
                 if (selectedFeePlanId == 0)
-                    txtPlanNumber.Clear();
+                {
+                    txtAmount.Text =
+                        selectedRow["Amount"] == DBNull.Value
+                            ? "0.00"
+                            : Convert.ToDecimal(
+                                selectedRow["Amount"])
+                                .ToString("N2");
+                }
             }
             else if (selectedFeePlanId == 0)
             {
                 txtPlanNumber.Clear();
             }
 
-            decimal total =
+            decimal totalAmount =
                 totalRow == null ||
                 totalRow["Amount"] == DBNull.Value
                     ? 0m
-                    : Convert.ToDecimal(totalRow["Amount"]);
+                    : Convert.ToDecimal(
+                        totalRow["Amount"]);
 
-            if (selectedRow != null &&
-                !IsTotalFeeType(feeType))
-            {
-                txtTotalFeeAmount.Text =
-                    total.ToString("N2") + " ريال";
-            }
-            else
-            {
-                decimal amount =
-                    selectedRow == null
-                        ? ReadDecimal(txtAmount.Text)
-                        : Convert.ToDecimal(
-                            selectedRow["Amount"]);
-
-                txtTotalFeeAmount.Text =
-                    IsTotalFeeType(feeType)
-                        ? amount.ToString("N2") + " ريال"
-                        : total.ToString("N2") + " ريال";
-            }
+            txtTotalFeeAmount.Text =
+                totalAmount.ToString("N2") +
+                " ريال";
         }
 
         // تعريف الدالة ReadDecimal لتنفيذ العملية المرتبطة بها.
@@ -753,6 +738,10 @@ namespace SchoolSystem.UI
                 ClearInputs();
             }
 
+            catch (InvalidOperationException ex)
+            {
+                UIHelper.ShowWarning(ex.Message);
+            }
             catch (Exception ex)
             {
                 UIHelper.ShowException("فشل حذف رسوم الصف:\n", ex);
