@@ -33,6 +33,7 @@ namespace SchoolSystem.UI
         private Student _editingSnapshot;
         private List<Student> _filteredStudents = new List<Student>();
         private readonly ToolTip _toolTip = new ToolTip();
+        private TableLayoutPanel _searchLayout;
 
         // ================================================================
         // CONSTRUCTOR
@@ -44,35 +45,18 @@ namespace SchoolSystem.UI
 
             UIHelper.ApplyStyle(this);
 
-            // ------------------------------------------------------------
-            // خصائص مرتبطة بالسلوك فقط.
-            // لا يوجد هنا أي Styling أو تغيير Layout.
-            // ------------------------------------------------------------
-
             txtStudentNumber.ReadOnly = true;
             txtStudentNumber.TabStop = false;
 
-            // تطبيق قواعد التحقق من الحقول (فلترة الأحرف، أقصى طول، والتحقق عند
-            // المغادرة) دون تغيير تنسيق المصمم لهذه الشاشة.
             SchoolSystem.Helpers.UIHelper.ApplyFieldValidation(this);
 
-            // منع اختيار تاريخ ميلاد في المستقبل.
             dtpBirthDate.MaxDate = DateTime.Today;
 
             _studentService = new StudentService();
-
             _currentStudents = new List<Student>();
-
-            // ------------------------------------------------------------
-            // البحث الفوري
-            // ------------------------------------------------------------
 
             txtSearch.TextChanged +=
                 (sender, e) => ApplyFilters();
-
-            // ------------------------------------------------------------
-            // الفلاتر
-            // ------------------------------------------------------------
 
             cmbFilterClass.SelectedIndexChanged +=
                 cmbFilterClass_SelectedIndexChanged;
@@ -80,33 +64,365 @@ namespace SchoolSystem.UI
             cmbFilterStatus.SelectedIndexChanged +=
                 cmbFilterStatus_SelectedIndexChanged;
 
-            // ------------------------------------------------------------
-            // فتح ملف الطالب بالنقر المزدوج
-            // ------------------------------------------------------------
-
             dgvStudents.CellDoubleClick +=
                 dgvStudents_CellDoubleClick;
-
-            // ------------------------------------------------------------
-            // الطباعة
-            // ------------------------------------------------------------
 
             _studentCardPrintDocument.PrintPage +=
                 StudentCardPrintDocument_PrintPage;
 
             ConfigureFieldConstraints();
             ConfigureTooltips();
-            splitContainerMain.Panel1MinSize = 400;
-            splitContainerMain.Panel2MinSize = 500;
-            Resize += StudentsForm_Resize;
-            SetFormMode(FormMode.View);
+            ConfigureProfessionalLayout();
 
-            // لا يوجد هنا أي:
-            // UIHelper.ApplyStyle(...)
-            // UIHelper.StyleButton(...)
-            // StyleTextBox(...)
-            // StyleComboBox(...)
-            // StyleDataGridView(...)
+            splitContainerMain.Panel1MinSize = 480;
+            splitContainerMain.Panel2MinSize = 480;
+
+            Resize += StudentsForm_Resize;
+            StudentsForm_Resize(this, EventArgs.Empty);
+
+            SetFormMode(FormMode.View);
+        }
+
+        private void ConfigureProfessionalLayout()
+        {
+            pnlSearch.Height = 66;
+            pnlSearch.Padding = new Padding(10, 8, 10, 8);
+            pnlSearch.BackColor = UIHelper.SurfaceColor;
+            pnlSearch.Controls.Clear();
+
+            _searchLayout = new TableLayoutPanel
+            {
+                ColumnCount = 6,
+                RowCount = 1,
+                Dock = DockStyle.Fill,
+                Margin = Padding.Empty,
+                Padding = Padding.Empty,
+                BackColor = UIHelper.SurfaceColor,
+                RightToLeft = RightToLeft.No
+            };
+
+            _searchLayout.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Percent, 1.0F));
+            _searchLayout.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Absolute, 150F));
+            _searchLayout.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Absolute, 125F));
+            _searchLayout.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Percent, 2.2F));
+            _searchLayout.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Absolute, 110F));
+            _searchLayout.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Absolute, 130F));
+
+            _searchLayout.Controls.Add(lblCount, 0, 0);
+            _searchLayout.Controls.Add(cmbFilterClass, 1, 0);
+            _searchLayout.Controls.Add(cmbFilterStatus, 2, 0);
+            _searchLayout.Controls.Add(txtSearch, 3, 0);
+            _searchLayout.Controls.Add(btnSearch, 4, 0);
+            _searchLayout.Controls.Add(btnReload, 5, 0);
+
+            lblCount.Dock = DockStyle.Fill;
+            lblCount.AutoSize = false;
+            lblCount.TextAlign = ContentAlignment.MiddleCenter;
+            lblCount.Margin = new Padding(4, 0, 4, 0);
+
+            foreach (Control control in new Control[]
+            {
+                cmbFilterClass,
+                cmbFilterStatus,
+                txtSearch,
+                btnSearch,
+                btnReload
+            })
+            {
+                control.Dock = DockStyle.Fill;
+                control.Margin = new Padding(4, 4, 4, 4);
+            }
+
+            txtSearch.RightToLeft = RightToLeft.Yes;
+            txtSearch.TextAlign = HorizontalAlignment.Right;
+            txtSearch.MinimumSize = new Size(0, 30);
+
+            cmbFilterClass.MinimumSize = new Size(0, 30);
+            cmbFilterStatus.MinimumSize = new Size(0, 30);
+
+            btnSearch.Text = "مسح الفلاتر";
+            btnReload.Text = "تحديث البيانات";
+            UIHelper.StyleActionButton(btnSearch);
+            UIHelper.StyleActionButton(btnReload);
+
+            _searchLayout.TabIndex = 0;
+            pnlSearch.Controls.Add(_searchLayout);
+
+            pnlButtons.Controls.Clear();
+            pnlButtons.FlowDirection = FlowDirection.LeftToRight;
+            pnlButtons.WrapContents = false;
+            pnlButtons.AutoScroll = false;
+            pnlButtons.Padding = new Padding(8, 8, 8, 8);
+            pnlButtons.BackColor = UIHelper.SurfaceColor;
+            pnlButtons.Height = 62;
+            pnlButtons.RightToLeft = RightToLeft.No;
+
+            Button[] actionButtons =
+            {
+                btnClose,
+                btnStudentProfile,
+                btnPrint,
+                btnExportExcel,
+                btnCancel,
+                btnDelete,
+                btnUpdate,
+                btnSave,
+                btnAdd
+            };
+
+            btnRefresh.Visible = false;
+
+            foreach (Button button in actionButtons)
+            {
+                button.Visible = true;
+                button.AutoSize = false;
+                button.Height = 40;
+                button.Margin = new Padding(3, 0, 3, 0);
+                button.Font = new Font(UIHelper.FontFamily, 9F, FontStyle.Bold);
+                button.TextAlign = ContentAlignment.MiddleCenter;
+                button.Padding = new Padding(4, 0, 4, 0);
+                button.UseVisualStyleBackColor = false;
+                pnlButtons.Controls.Add(button);
+            }
+
+            btnClose.Text = "إغلاق";
+            btnStudentProfile.Text = "ملف الطالب";
+            btnPrint.Text = "طباعة البطاقة";
+            btnExportExcel.Text = "تصدير Excel";
+            btnCancel.Text = "إلغاء";
+            btnDelete.Text = "أرشفة";
+            btnUpdate.Text = "تعديل";
+            btnSave.Text = "حفظ";
+            btnAdd.Text = "إضافة طالب";
+
+            foreach (Button button in actionButtons)
+                UIHelper.StyleActionButton(button);
+
+            ConfigureInputLayout();
+
+            splitContainerMain.Panel1MinSize = 480;
+            splitContainerMain.Panel2MinSize = 480;
+        }
+
+        private void ConfigureInputLayout()
+        {
+            layoutRight.RowStyles.Clear();
+            layoutRight.RowStyles.Add(
+                new RowStyle(SizeType.Percent, 42F));
+            layoutRight.RowStyles.Add(
+                new RowStyle(SizeType.Percent, 28F));
+            layoutRight.RowStyles.Add(
+                new RowStyle(SizeType.Percent, 30F));
+
+            ConfigureTwoPairTable(tlpStudent, 5, 34F);
+            ConfigureTwoPairTable(tlpGuardian, 3, 34F);
+
+            tlpAddress.ColumnStyles.Clear();
+            tlpAddress.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Absolute, 90F));
+            tlpAddress.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Percent, 100F));
+            tlpAddress.RowStyles.Clear();
+            tlpAddress.RowStyles.Add(
+                new RowStyle(SizeType.Absolute, 32F));
+            tlpAddress.RowStyles.Add(
+                new RowStyle(SizeType.Absolute, 32F));
+            tlpAddress.RowStyles.Add(
+                new RowStyle(SizeType.Absolute, 54F));
+
+            txtAddress.Multiline = true;
+            txtAddress.ScrollBars = ScrollBars.None;
+            txtAddress.AcceptsReturn = true;
+
+            foreach (Label label in new Label[]
+            {
+                lblStudentNumber, lblFullName, lblGender, lblBirthDate,
+                lblBirthPlace, lblNationality, lblNationalId, lblPhone,
+                lblStatus, lblGuardianName, lblGuardianRelation,
+                lblGuardianPhone, lblGuardianEmail, lblGuardianJob,
+                lblGovernorate, lblDistrict, lblAddress
+            })
+            {
+                label.AutoSize = false;
+                label.Dock = DockStyle.Fill;
+                label.TextAlign = ContentAlignment.MiddleRight;
+                label.Margin = new Padding(3, 2, 3, 2);
+                label.Font = new Font(UIHelper.FontFamily, 9F, FontStyle.Bold);
+            }
+
+            TextBox[] textInputs =
+            {
+                txtStudentNumber, txtFullName, txtBirthPlace, txtNationality,
+                txtNationalId, txtPhone, txtGuardianName, txtGuardianRelation,
+                txtGuardianPhone, txtGuardianEmail, txtGuardianJob,
+                txtGovernorate, txtDistrict, txtAddress
+            };
+
+            foreach (TextBox textBox in textInputs)
+            {
+                textBox.Dock = DockStyle.Fill;
+                textBox.Margin = new Padding(3, 2, 3, 2);
+                textBox.MinimumSize = new Size(0, 28);
+                textBox.Font = new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+            }
+
+            foreach (ComboBox comboBox in new ComboBox[]
+            {
+                cmbGender,
+                cmbStatus
+            })
+            {
+                comboBox.Dock = DockStyle.Fill;
+                comboBox.Margin = new Padding(3, 2, 3, 2);
+                comboBox.MinimumSize = new Size(0, 28);
+                comboBox.Font = new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+            }
+
+            dtpBirthDate.Dock = DockStyle.Fill;
+            dtpBirthDate.Margin = new Padding(3, 2, 3, 2);
+            dtpBirthDate.MinimumSize = new Size(0, 28);
+            dtpBirthDate.Font = new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+            dtpBirthDate.CalendarFont = new Font(UIHelper.FontFamily, 9.5F);
+            dtpBirthDate.Format = DateTimePickerFormat.Custom;
+            dtpBirthDate.CustomFormat = "dd/MM/yyyy";
+            dtpBirthDate.ShowCheckBox = false;
+            dtpBirthDate.ShowUpDown = false;
+            dtpBirthDate.RightToLeft = RightToLeft.No;
+
+            Control[] tabOrder =
+            {
+                txtFullName, cmbGender, dtpBirthDate, txtBirthPlace,
+                txtNationality, txtNationalId, txtPhone, cmbStatus,
+                txtGuardianName, txtGuardianRelation, txtGuardianPhone,
+                txtGuardianEmail, txtGuardianJob, txtGovernorate,
+                txtDistrict, txtAddress
+            };
+
+            for (int i = 0; i < tabOrder.Length; i++)
+                tabOrder[i].TabIndex = i + 1;
+
+            txtStudentNumber.TabStop = false;
+
+            gbPhoto.Padding = new Padding(6, 22, 6, 6);
+            gbPhoto.Resize -= GbPhoto_Resize;
+            gbPhoto.Resize += GbPhoto_Resize;
+
+            dgvStudents.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvStudents.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            dgvStudents.RowTemplate.Height = 34;
+            dgvStudents.ColumnHeadersHeight = 42;
+            dgvStudents.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvStudents.MultiSelect = false;
+            dgvStudents.ReadOnly = true;
+            dgvStudents.AllowUserToResizeRows = false;
+            dgvStudents.DefaultCellStyle.Font =
+                new Font(UIHelper.FontFamily, 9F, FontStyle.Regular);
+            dgvStudents.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+            dgvStudents.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+            dgvStudents.ColumnHeadersDefaultCellStyle.Font =
+                new Font(UIHelper.FontFamily, 9F, FontStyle.Bold);
+
+            ResizeActionButtons();
+            LayoutPhotoControls();
+        }
+
+        private void ConfigureTwoPairTable(
+            TableLayoutPanel table,
+            int rowCount,
+            float rowHeight)
+        {
+            table.ColumnStyles.Clear();
+            table.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Absolute, 92F));
+            table.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Percent, 50F));
+            table.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Absolute, 92F));
+            table.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Percent, 50F));
+
+            table.RowStyles.Clear();
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                table.RowStyles.Add(
+                    new RowStyle(SizeType.Absolute, rowHeight));
+            }
+        }
+
+        private void ResizeActionButtons()
+        {
+            if (pnlButtons == null || pnlButtons.Controls.Count == 0)
+                return;
+
+            int count = pnlButtons.Controls.Count;
+            int gaps = Math.Max(0, count - 1) * 6;
+            int available =
+                pnlButtons.ClientSize.Width -
+                pnlButtons.Padding.Left -
+                pnlButtons.Padding.Right;
+
+            int width =
+                Math.Max(
+                    88,
+                    (available - gaps) / count);
+
+            int height =
+                Math.Max(
+                    36,
+                    pnlButtons.ClientSize.Height -
+                    pnlButtons.Padding.Top -
+                    pnlButtons.Padding.Bottom);
+
+            foreach (Control control in pnlButtons.Controls)
+            {
+                control.Width = width;
+                control.Height = height;
+            }
+        }
+
+        private void GbPhoto_Resize(object sender, EventArgs e)
+        {
+            LayoutPhotoControls();
+        }
+
+        private void LayoutPhotoControls()
+        {
+            if (gbPhoto == null || picStudent == null)
+                return;
+
+            int contentWidth = gbPhoto.ClientSize.Width;
+            int buttonWidth = 64;
+            int buttonHeight = 30;
+            int gap = 4;
+
+            picStudent.Size = new Size(96, 96);
+            picStudent.Anchor = AnchorStyles.None;
+            picStudent.Location = new Point(
+                Math.Max(6, (contentWidth - picStudent.Width) / 2),
+                26);
+
+            btnChooseImage.Size = new Size(buttonWidth, buttonHeight);
+            btnRemoveImage.Size = new Size(buttonWidth, buttonHeight);
+
+            int buttonsWidth = buttonWidth * 2 + gap;
+            int startX = Math.Max(4, (contentWidth - buttonsWidth) / 2);
+
+            btnChooseImage.Location = new Point(startX, 127);
+            btnRemoveImage.Location = new Point(
+                startX + buttonWidth + gap,
+                127);
+
+            btnChooseImage.Text = "اختيار";
+            btnRemoveImage.Text = "إزالة";
         }
 
         private void StudentsForm_Resize(object sender, EventArgs e)
@@ -173,7 +489,10 @@ namespace SchoolSystem.UI
             cmbFilterStatus.DropDownStyle = ComboBoxStyle.DropDownList;
 
             dtpBirthDate.MaxDate = DateTime.Today;
-            dtpBirthDate.ShowCheckBox = true;
+            dtpBirthDate.Format = DateTimePickerFormat.Custom;
+            dtpBirthDate.CustomFormat = "dd/MM/yyyy";
+            dtpBirthDate.ShowCheckBox = false;
+            dtpBirthDate.ShowUpDown = false;
         }
 
         private void ConfigureTooltips()
@@ -185,6 +504,8 @@ namespace SchoolSystem.UI
             _toolTip.SetToolTip(cmbFilterStatus, "تصفية الطلاب حسب الحالة.");
             _toolTip.SetToolTip(btnUpdate, "ينقل الطالب المحدد إلى وضع التعديل.");
             _toolTip.SetToolTip(btnDelete, "أرشفة الطالب وإخفاؤه من القائمة دون حذف سجله.");
+            _toolTip.SetToolTip(btnSearch, "يمسح البحث والفلاتر ويعرض جميع الطلاب.");
+            _toolTip.SetToolTip(btnReload, "يعيد تحميل بيانات الطلاب من قاعدة البيانات.");
         }
 
         private void SetFormMode(FormMode mode)
@@ -1241,6 +1562,14 @@ namespace SchoolSystem.UI
             object sender,
             EventArgs e)
         {
+            Student gridStudent = GetSelectedStudentFromGrid();
+
+            if (gridStudent != null &&
+                gridStudent.StudentId != _selectedStudentId)
+            {
+                FillForm(gridStudent);
+            }
+
             if (_selectedStudentId == 0)
             {
                 UIHelper.ShowWarning(
@@ -1490,11 +1819,7 @@ namespace SchoolSystem.UI
                     s.Status
                 }).ToList();
 
-            if (dgvStudents.Columns["StudentId"] != null)
-            {
-                dgvStudents.Columns[
-                    "StudentId"].Visible = false;
-            }
+            ConfigureStudentsGridColumns();
 
             dgvStudents.Columns[
                 "StudentNumber"].HeaderText =
@@ -1541,6 +1866,55 @@ namespace SchoolSystem.UI
                 SetFormMode(FormMode.View);
         }
 
+        private void ConfigureStudentsGridColumns()
+        {
+            if (dgvStudents.Columns["StudentId"] != null)
+                dgvStudents.Columns["StudentId"].Visible = false;
+
+            if (dgvStudents.Columns["AcademicYear"] != null)
+                dgvStudents.Columns["AcademicYear"].Visible = false;
+
+            if (dgvStudents.Columns["GuardianName"] != null)
+                dgvStudents.Columns["GuardianName"].Visible = false;
+
+            SetGridColumn("StudentNumber", 1.0F, 72);
+            SetGridColumn("FullName", 2.35F, 130);
+            SetGridColumn("Gender", 0.8F, 62);
+            SetGridColumn("CurrentClassName", 1.3F, 80);
+            SetGridColumn("CurrentSection", 1.0F, 68);
+            SetGridColumn("StudentPhone", 1.2F, 88);
+            SetGridColumn("Status", 0.9F, 72);
+
+            if (dgvStudents.Columns["FullName"] != null)
+                dgvStudents.Columns["FullName"].DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+
+            foreach (DataGridViewColumn column in dgvStudents.Columns)
+            {
+                if (!column.Visible)
+                    continue;
+
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+                column.HeaderCell.Style.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+            }
+        }
+
+        private void SetGridColumn(
+            string columnName,
+            float fillWeight,
+            int minimumWidth)
+        {
+            DataGridViewColumn column = dgvStudents.Columns[columnName];
+
+            if (column == null)
+                return;
+
+            column.Visible = true;
+            column.FillWeight = fillWeight;
+            column.MinimumWidth = minimumWidth;
+        }
+
         // ================================================================
         // SAVE
         // ================================================================
@@ -1584,10 +1958,15 @@ namespace SchoolSystem.UI
                 Student student = GetStudentFromForm();
                 bool isAdd = _formMode == FormMode.Add;
 
+                int savedStudentId;
+
                 if (isAdd)
-                    _studentService.Add(student);
+                    savedStudentId = _studentService.Add(student);
                 else
+                {
                     _studentService.Update(student);
+                    savedStudentId = student.StudentId;
+                }
 
                 UIHelper.ShowInfo(
                     isAdd
@@ -1595,7 +1974,7 @@ namespace SchoolSystem.UI
                         : "تم حفظ تعديلات الطالب بنجاح.");
 
                 LoadStudents();
-                ClearForm();
+                SelectStudentInGrid(savedStudentId);
                 SetFormMode(FormMode.View);
             }
             catch (Exception ex)
@@ -1606,6 +1985,50 @@ namespace SchoolSystem.UI
             {
                 _isSaving = false;
                 SetFormMode(_formMode);
+            }
+        }
+
+        private void SelectStudentInGrid(int studentId)
+        {
+            if (studentId <= 0 || dgvStudents == null)
+                return;
+
+            for (int i = 0; i < dgvStudents.Rows.Count; i++)
+            {
+                DataGridViewRow row = dgvStudents.Rows[i];
+                DataGridViewCell idCell = row.Cells["StudentId"];
+
+                if (idCell == null || idCell.Value == null)
+                    continue;
+
+                int rowId;
+                if (!int.TryParse(idCell.Value.ToString(), out rowId) ||
+                    rowId != studentId)
+                {
+                    continue;
+                }
+
+                dgvStudents.ClearSelection();
+
+                DataGridViewColumn firstVisibleColumn =
+                    dgvStudents.Columns.Cast<DataGridViewColumn>()
+                        .FirstOrDefault(column =>
+                            column.Visible && column.Name != "StudentId");
+
+                if (firstVisibleColumn != null)
+                    dgvStudents.CurrentCell =
+                        row.Cells[firstVisibleColumn.Index];
+
+                row.Selected = true;
+
+                Student student =
+                    _currentStudents.FirstOrDefault(
+                        s => s.StudentId == studentId);
+
+                if (student != null)
+                    FillForm(student);
+
+                return;
             }
         }
 
@@ -1647,13 +2070,6 @@ namespace SchoolSystem.UI
                 throw ValidationError(
                     cmbGender,
                     "يرجى اختيار جنس الطالب.");
-            }
-
-            if (!dtpBirthDate.Checked)
-            {
-                throw ValidationError(
-                    dtpBirthDate,
-                    "تاريخ الميلاد مطلوب. فعّل خانة التاريخ ثم اختر تاريخ الميلاد.");
             }
 
             if (cmbStatus.SelectedIndex < 0 ||
@@ -1783,9 +2199,7 @@ namespace SchoolSystem.UI
                     cmbGender.Text,
 
                 BirthDate =
-                    dtpBirthDate.Checked
-                        ? dtpBirthDate.Value.Date
-                        : (DateTime?)null,
+                    dtpBirthDate.Value.Date,
 
                 BirthPlace =
                     txtBirthPlace.Text.Trim(),
@@ -1872,7 +2286,6 @@ namespace SchoolSystem.UI
             cmbStatus.SelectedIndex = 0;
 
             dtpBirthDate.Value = DateTime.Today;
-            dtpBirthDate.Checked = false;
         }
 
         // ================================================================
@@ -1952,7 +2365,6 @@ namespace SchoolSystem.UI
             {
                 return !string.IsNullOrWhiteSpace(txtFullName.Text) ||
                        cmbGender.SelectedIndex >= 0 ||
-                       dtpBirthDate.Checked ||
                        !string.IsNullOrWhiteSpace(txtBirthPlace.Text) ||
                        !string.IsNullOrWhiteSpace(txtNationality.Text) ||
                        !string.IsNullOrWhiteSpace(txtNationalId.Text) ||
@@ -1984,9 +2396,7 @@ namespace SchoolSystem.UI
                 StudentId = _selectedStudentId,
                 FullName = txtFullName.Text.Trim(),
                 Gender = cmbGender.Text.Trim(),
-                BirthDate = dtpBirthDate.Checked
-                    ? dtpBirthDate.Value.Date
-                    : (DateTime?)null,
+                BirthDate = dtpBirthDate.Value.Date,
                 BirthPlace = txtBirthPlace.Text.Trim(),
                 Nationality = txtNationality.Text.Trim(),
                 NationalId = txtNationalId.Text.Trim(),
@@ -2187,12 +2597,10 @@ namespace SchoolSystem.UI
                 s.BirthDate.Value.Date <= DateTime.Today)
             {
                 dtpBirthDate.Value = s.BirthDate.Value.Date;
-                dtpBirthDate.Checked = true;
             }
             else
             {
                 dtpBirthDate.Value = DateTime.Today;
-                dtpBirthDate.Checked = false;
             }
 
             txtGuardianName.Text =
