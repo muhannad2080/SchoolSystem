@@ -187,7 +187,7 @@ namespace SchoolSystem.UI
                 dataGridViewSubjects.DataSource = subjectsTable;
 
                 FormatGrid();
-                UpdateRecordCount();
+                ApplySubjectsFilter();
             }
 
             catch (Exception ex)
@@ -205,7 +205,7 @@ namespace SchoolSystem.UI
             SetHeader("SubjectID", "الرقم");
             SetHeader("SubjectCode", "كود المادة");
             SetHeader("SubjectName", "اسم المادة");
-            SetHeader("ClassName", "الصف");
+            SetHeader("ClassName", "الصفوف المرتبطة");
             SetHeader("MaxDegree", "الدرجة الكبرى");
             SetHeader("PassDegree", "درجة النجاح");
             SetHeader("IsActive", "نشطة");
@@ -214,6 +214,8 @@ namespace SchoolSystem.UI
             SetHeader("UpdatedAt", "آخر تعديل");
 
             HideColumn("ClassID");
+            HideColumn("DefaultClassID");
+            HideColumn("MappedClassIDs");
 
             dataGridViewSubjects.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
@@ -402,6 +404,7 @@ namespace SchoolSystem.UI
                     ShowInfo("تم حذف المادة بنجاح.");
                     await LoadSubjectsAsync();
                     ClearFields();
+                    DataRefreshNotifier.Notify("Subjects", this);
                 }
                 else
                 {
@@ -455,12 +458,11 @@ namespace SchoolSystem.UI
             txtSubjectCode.Text = ReadRowText(row, "SubjectCode");
             txtSubjectName.Text = ReadRowText(row, "SubjectName");
 
-            int classId = ReadRowInt(row, "ClassID");
+            int classId = ReadRowInt(row, "DefaultClassID");
             if (classId > 0 && cmbClass.DataSource != null)
             {
-                            cmbClass.Enabled = true;
-            cmbClass.SelectedValue = classId;
-
+                cmbClass.Enabled = true;
+                cmbClass.SelectedValue = classId;
             }
 
             else
@@ -589,7 +591,12 @@ namespace SchoolSystem.UI
             string classFilter = string.Empty;
             int classId;
             if (cmbClass.SelectedValue != null && int.TryParse(cmbClass.SelectedValue.ToString(), out classId) && classId > 0)
-                classFilter = "ClassID = " + classId.ToString();
+            {
+                if (subjectsTable.Columns.Contains("MappedClassIDs"))
+                    classFilter = "MappedClassIDs LIKE '%|" + classId.ToString() + "|%'";
+                else
+                    classFilter = "ClassID = " + classId.ToString();
+            }
 
             if (!string.IsNullOrWhiteSpace(classFilter))
                 subjectsTable.DefaultView.RowFilter = string.IsNullOrWhiteSpace(subjectsTable.DefaultView.RowFilter)
