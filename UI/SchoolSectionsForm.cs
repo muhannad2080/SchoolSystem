@@ -291,12 +291,9 @@ namespace SchoolSystem.UI
 
         private string GetCurrentYear()
         {
-            string year = AcademicYearHelper.GetCurrentAcademicYear();
-            if (!string.IsNullOrWhiteSpace(year))
-                return year.Replace('-', '/');
-
-            int start = DateTime.Today.Month >= 8 ? DateTime.Today.Year : DateTime.Today.Year - 1;
-            return start + "/" + (start + 1);
+            return AcademicYearHelper
+                .GetCurrentAcademicYear()
+                .Replace('-', '/');
         }
 
         private async Task LoadClassesAsync()
