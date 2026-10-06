@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Printing;
@@ -94,16 +94,6 @@ namespace SchoolSystem.UI
             // Events
             // ------------------------------------------------------------
 
-            cmbClassID.SelectedIndexChanged +=
-                cmbClassID_SelectedIndexChanged;
-
-            cmbStudentID.SelectedIndexChanged +=
-                cmbStudentID_SelectedIndexChanged;
-
-            dtpApplicationDate.ValueChanged +=
-                dtpApplicationDate_ValueChanged;
-
-            // البحث يتم عند الضغط على «بحث» أو Enter لتجنب تكرار تنفيذ البحث مع كل حرف.
             // ------------------------------------------------------------
             // Services
             // ------------------------------------------------------------
@@ -712,6 +702,36 @@ namespace SchoolSystem.UI
             ShowColumn(
                 "ApplicationDate",
                 "تاريخ التسجيل");
+
+            SetGridColumnLayout("EnrollmentID", 70);
+            SetGridColumnLayout("StudentName", 180);
+            SetGridColumnLayout("ClassName", 95);
+            SetGridColumnLayout("Section", 75);
+            SetGridColumnLayout("AcademicYear", 105);
+            SetGridColumnLayout("Status", 85);
+            SetGridColumnLayout("RegistrationFee", 90);
+            SetGridColumnLayout("PaidAmount", 85);
+            SetGridColumnLayout("RemainingAmount", 90);
+            SetGridColumnLayout("ApplicationDate", 105);
+
+            dgvEnrollments.AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.Fill;
+            dgvEnrollments.AutoSizeRowsMode =
+                DataGridViewAutoSizeRowsMode.None;
+            dgvEnrollments.ColumnHeadersHeight = 42;
+            dgvEnrollments.RowTemplate.Height = 38;
+        }
+
+        private void SetGridColumnLayout(
+            string name,
+            float width)
+        {
+            if (!dgvEnrollments.Columns.Contains(name))
+                return;
+
+            dgvEnrollments.Columns[name].FillWeight = width;
+            dgvEnrollments.Columns[name].MinimumWidth =
+                Math.Max(55, (int)width);
         }
 
         // ================================================================
@@ -805,6 +825,13 @@ namespace SchoolSystem.UI
         // ================================================================
 
         private void btnSearch_Click(
+            object sender,
+            EventArgs e)
+        {
+            ApplyEnrollmentSearch();
+        }
+
+        private void txtSearch_TextChanged(
             object sender,
             EventArgs e)
         {
