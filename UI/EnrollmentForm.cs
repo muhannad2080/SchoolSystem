@@ -154,7 +154,10 @@ namespace SchoolSystem.UI
                 DataRefreshNotifier.IsRelated(e, "ClassAssignment") ||
                 DataRefreshNotifier.IsRelated(e, "Students") ||
                 DataRefreshNotifier.IsRelated(e, "Fees") ||
-                DataRefreshNotifier.IsRelated(e, "Vouchers");
+                DataRefreshNotifier.IsRelated(e, "Vouchers") ||
+                DataRefreshNotifier.IsRelated(e, "Classes") ||
+                DataRefreshNotifier.IsRelated(e, "Sections") ||
+                DataRefreshNotifier.IsRelated(e, "FeePlans");
 
             if (!related)
                 return;
