@@ -460,24 +460,24 @@ namespace SchoolSystem.UI
                         : Convert.ToInt32(
                             selectedRow["FeePlanID"]);
 
+                selectedFeePlanId = displayedPlanId;
+
                 txtPlanNumber.Text =
                     displayedPlanId > 0
                         ? displayedPlanId.ToString()
-                        : string.Empty;
+                        : "جديدة";
 
-                if (selectedFeePlanId == 0)
-                {
-                    txtAmount.Text =
-                        selectedRow["Amount"] == DBNull.Value
-                            ? "0.00"
-                            : Convert.ToDecimal(
-                                selectedRow["Amount"])
-                                .ToString("N2");
-                }
+                txtAmount.Text =
+                    selectedRow["Amount"] == DBNull.Value
+                        ? "0.00"
+                        : Convert.ToDecimal(
+                            selectedRow["Amount"])
+                            .ToString("N2");
             }
-            else if (selectedFeePlanId == 0)
+            else
             {
-                txtPlanNumber.Clear();
+                selectedFeePlanId = 0;
+                txtPlanNumber.Text = "جديدة";
                 txtAmount.Text = "0.00";
             }
 
