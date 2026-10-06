@@ -962,6 +962,121 @@
             this.RightToLeftLayout = true;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "إدارة الطلاب";
+
+            // Design-time theme: keep the WinForms designer visually identical
+            // to the runtime theme without calling custom methods from InitializeComponent.
+            this.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
+            this.pnlRight.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.pnlSearch.BackColor = System.Drawing.Color.White;
+            this.pnlButtons.BackColor = System.Drawing.Color.White;
+
+            this.gbStudent.BackColor = System.Drawing.Color.White;
+            this.gbStudent.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.gbStudent.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbGuardian.BackColor = System.Drawing.Color.White;
+            this.gbGuardian.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.gbGuardian.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbAddress.BackColor = System.Drawing.Color.White;
+            this.gbAddress.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.gbAddress.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gbPhoto.BackColor = System.Drawing.Color.White;
+            this.gbPhoto.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.gbPhoto.Font = new System.Drawing.Font("Tahoma", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
+            this.dgvStudents.BackgroundColor = System.Drawing.Color.White;
+            this.dgvStudents.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            this.dgvStudents.EnableHeadersVisualStyles = false;
+            this.dgvStudents.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dgvStudents.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dgvStudents.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dgvStudents.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dgvStudents.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dgvStudents.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dgvStudents.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dgvStudents.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dgvStudents.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dgvStudents.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dgvStudents.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+
+            this.lblCount.ForeColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.lblCount.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
+            foreach (System.Windows.Forms.Label label in new System.Windows.Forms.Label[]
+            {
+                this.lblStudentNumber, this.lblFullName, this.lblGender, this.lblBirthDate,
+                this.lblBirthPlace, this.lblNationality, this.lblNationalId, this.lblPhone,
+                this.lblStatus, this.lblGuardianName, this.lblGuardianRelation,
+                this.lblGuardianPhone, this.lblGuardianEmail, this.lblGuardianJob,
+                this.lblGovernorate, this.lblDistrict, this.lblAddress
+            })
+            {
+                label.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+                label.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            }
+
+            foreach (System.Windows.Forms.TextBox textBox in new System.Windows.Forms.TextBox[]
+            {
+                this.txtStudentNumber, this.txtFullName, this.txtBirthPlace, this.txtNationality,
+                this.txtNationalId, this.txtPhone, this.txtGuardianName, this.txtGuardianRelation,
+                this.txtGuardianPhone, this.txtGuardianEmail, this.txtGuardianJob,
+                this.txtGovernorate, this.txtDistrict, this.txtAddress, this.txtSearch
+            })
+            {
+                textBox.BackColor = System.Drawing.Color.White;
+                textBox.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+                textBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+                textBox.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            }
+
+            foreach (System.Windows.Forms.ComboBox comboBox in new System.Windows.Forms.ComboBox[]
+            {
+                this.cmbGender, this.cmbStatus, this.cmbFilterClass, this.cmbFilterStatus
+            })
+            {
+                comboBox.BackColor = System.Drawing.Color.White;
+                comboBox.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+                comboBox.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            }
+
+            this.dtpBirthDate.BackColor = System.Drawing.Color.White;
+            this.dtpBirthDate.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dtpBirthDate.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+
+            this.btnSearch.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.btnReload.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+
+            this.btnClose.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnStudentProfile.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
+            this.btnPrint.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
+            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
+            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnCancel.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
+            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
+            this.btnSave.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
+            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
+
+            foreach (System.Windows.Forms.Button button in new System.Windows.Forms.Button[]
+            {
+                this.btnSearch, this.btnReload, this.btnClose, this.btnStudentProfile,
+                this.btnPrint, this.btnExportExcel, this.btnRefresh, this.btnCancel,
+                this.btnDelete, this.btnUpdate, this.btnSave, this.btnAdd,
+                this.btnChooseImage, this.btnRemoveImage
+            })
+            {
+                button.ForeColor = System.Drawing.Color.White;
+                button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 0;
+                button.UseVisualStyleBackColor = false;
+                button.UseCompatibleTextRendering = true;
+                button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                button.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            }
+
+            this.btnRefresh.Visible = true;
             this.Load += new System.EventHandler(this.StudentsForm_Load);
             this.gbStudent.ResumeLayout(false);
             this.tlpStudent.ResumeLayout(false);
@@ -986,10 +1101,6 @@
             this.pnlSearch.ResumeLayout(false);
             this.pnlSearch.PerformLayout();
             this.pnlButtons.ResumeLayout(false);
-
-            // Apply the same visual theme used at runtime so the WinForms designer
-            // preview matches the running screen.
-            this.ConfigureDesignPreviewTheme();
 
             this.ResumeLayout(false);
 
