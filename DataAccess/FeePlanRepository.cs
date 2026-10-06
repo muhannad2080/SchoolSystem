@@ -797,6 +797,17 @@ namespace SchoolSystem.DataAccess
                             plan.DueDate,
                             plan.Notes);
 
+                        EnsureStudentFeesForPlan(
+                            con,
+                            transaction,
+                            plan.FeePlanID,
+                            plan.ClassID,
+                            plan.AcademicYear,
+                            plan.FeeType,
+                            plan.Amount,
+                            plan.DueDate,
+                            plan.Notes);
+
                         List<Tuple<int, string, decimal>> childPlans =
                             LoadChildPlans(
                                 con,
@@ -828,6 +839,17 @@ namespace SchoolSystem.DataAccess
                             con,
                             transaction,
                             totalPlanId,
+                            totalAmount,
+                            plan.DueDate,
+                            plan.Notes);
+
+                        EnsureStudentFeesForPlan(
+                            con,
+                            transaction,
+                            totalPlanId,
+                            plan.ClassID,
+                            plan.AcademicYear,
+                            "الرسوم الكلية",
                             totalAmount,
                             plan.DueDate,
                             plan.Notes);
