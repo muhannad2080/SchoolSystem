@@ -75,6 +75,7 @@ namespace SchoolSystem.UI
             this.pnlRight = new System.Windows.Forms.Panel();
             this.pnlSearch = new System.Windows.Forms.Panel();
             this.tlpSearch = new System.Windows.Forms.TableLayoutPanel();
+            this.lblSearch = new System.Windows.Forms.Label();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.btnSearch = new System.Windows.Forms.Button();
             this.btnReload = new System.Windows.Forms.Button();
@@ -830,61 +831,51 @@ namespace SchoolSystem.UI
             // 
             // tlpSearch
             // 
-            this.tlpSearch.ColumnCount = 4;
-            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 95F));
-            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105F));
+            this.tlpSearch.ColumnCount = 6;
             this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 120F));
-            this.tlpSearch.Controls.Add(this.lblCount, 0, 0);
-            this.tlpSearch.Controls.Add(this.txtSearch, 1, 0);
-            this.tlpSearch.Controls.Add(this.btnSearch, 2, 0);
-            this.tlpSearch.Controls.Add(this.btnReload, 3, 0);
+            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 92F));
+            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 118F));
+            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 235F));
+            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 55F));
+            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpSearch.Controls.Add(this.btnReload, 0, 0);
+            this.tlpSearch.Controls.Add(this.btnSearch, 1, 0);
+            this.tlpSearch.Controls.Add(this.txtSearch, 2, 0);
+            this.tlpSearch.Controls.Add(this.lblSearch, 3, 0);
+            this.tlpSearch.Controls.Add(this.lblCount, 5, 0);
             this.tlpSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpSearch.Location = new System.Drawing.Point(8, 8);
             this.tlpSearch.Margin = new System.Windows.Forms.Padding(0);
             this.tlpSearch.Name = "tlpSearch";
-            this.tlpSearch.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.tlpSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tlpSearch.RowCount = 1;
             this.tlpSearch.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpSearch.Size = new System.Drawing.Size(1184, 44);
             this.tlpSearch.TabIndex = 0;
             // 
-            // lblCount
+            // btnReload
             // 
-            this.lblCount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblCount.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCount.ForeColor = System.Drawing.Color.FromArgb(75, 85, 99);
-            this.lblCount.Location = new System.Drawing.Point(4, 4);
-            this.lblCount.Margin = new System.Windows.Forms.Padding(4);
-            this.lblCount.Name = "lblCount";
-            this.lblCount.Size = new System.Drawing.Size(87, 36);
-            this.lblCount.TabIndex = 3;
-            this.lblCount.Text = "العدد: 0";
-            this.lblCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtSearch
-            // 
-            this.txtSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSearch.Location = new System.Drawing.Point(103, 4);
-            this.txtSearch.Margin = new System.Windows.Forms.Padding(4);
-            this.txtSearch.Name = "txtSearch";
-            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.txtSearch.Size = new System.Drawing.Size(0, 26);
-            this.txtSearch.TabIndex = 0;
-            this.txtSearch.BackColor = System.Drawing.Color.White;
-            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-            this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
-            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
-            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
+            this.btnReload.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnReload.Margin = new System.Windows.Forms.Padding(4);
+            this.btnReload.Name = "btnReload";
+            this.btnReload.TabIndex = 2;
+            this.btnReload.Text = "مسح الفلاتر";
+            this.btnReload.UseVisualStyleBackColor = false;
+            this.btnReload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReload.FlatAppearance.BorderSize = 0;
+            this.btnReload.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnReload.ForeColor = System.Drawing.Color.White;
+            this.btnReload.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnReload.UseCompatibleTextRendering = true;
+            this.btnReload.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnReload.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.btnReload.Click += new System.EventHandler(this.btnClearSearch_Click);
             // 
             // btnSearch
             // 
             this.btnSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnSearch.Location = new System.Drawing.Point(0, 0);
             this.btnSearch.Margin = new System.Windows.Forms.Padding(4);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(97, 36);
             this.btnSearch.TabIndex = 1;
             this.btnSearch.Text = "بحث";
             this.btnSearch.UseVisualStyleBackColor = false;
@@ -895,26 +886,44 @@ namespace SchoolSystem.UI
             this.btnSearch.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnSearch.UseCompatibleTextRendering = true;
             this.btnSearch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
-            // btnReload
+            // txtSearch
             // 
-            this.btnReload.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnReload.Location = new System.Drawing.Point(0, 0);
-            this.btnReload.Margin = new System.Windows.Forms.Padding(4);
-            this.btnReload.Name = "btnReload";
-            this.btnReload.Size = new System.Drawing.Size(112, 36);
-            this.btnReload.TabIndex = 2;
-            this.btnReload.Text = "مسح الفلاتر";
-            this.btnReload.UseVisualStyleBackColor = false;
-            this.btnReload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnReload.FlatAppearance.BorderSize = 0;
-            this.btnReload.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
-            this.btnReload.ForeColor = System.Drawing.Color.White;
-            this.btnReload.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
-            this.btnReload.UseCompatibleTextRendering = true;
-            this.btnReload.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.btnReload.Click += new System.EventHandler(this.btnClearSearch_Click);
+            this.txtSearch.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.txtSearch.BackColor = System.Drawing.Color.White;
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.txtSearch.Size = new System.Drawing.Size(110, 26);
+            this.txtSearch.TabIndex = 0;
+            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
+            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
+            // 
+            // lblSearch
+            // 
+            this.lblSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblSearch.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblSearch.ForeColor = System.Drawing.Color.FromArgb(75, 85, 99);
+            this.lblSearch.Name = "lblSearch";
+            this.lblSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblSearch.Size = new System.Drawing.Size(110, 36);
+            this.lblSearch.TabIndex = 4;
+            this.lblSearch.Text = "بحث:";
+            this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lblCount
+            // 
+            this.lblCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblCount.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.lblCount.ForeColor = System.Drawing.Color.FromArgb(75, 85, 99);
+            this.lblCount.Name = "lblCount";
+            this.lblCount.TabIndex = 3;
+            this.lblCount.Text = "العدد: 0";
+            this.lblCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // pnlButtons
             // 
@@ -1304,6 +1313,8 @@ namespace SchoolSystem.UI
         private System.Windows.Forms.Panel pnlSearch;
 
         private System.Windows.Forms.TableLayoutPanel tlpSearch;
+
+        private System.Windows.Forms.Label lblSearch;
 
         private System.Windows.Forms.TextBox txtSearch;
 
