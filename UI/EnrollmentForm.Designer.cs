@@ -347,6 +347,31 @@ namespace SchoolSystem.UI
             this.cmbStatus.Margin = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.cmbStatus.IntegralHeight = false;
 
+            // Design-time input theme: matches UIHelper runtime theme
+            this.cmbStudentID.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbStudentID.BackColor = System.Drawing.Color.White;
+            this.cmbStudentID.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+
+            this.dtpApplicationDate.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dtpApplicationDate.BackColor = System.Drawing.Color.White;
+            this.dtpApplicationDate.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+
+            this.cmbApplicationType.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbApplicationType.BackColor = System.Drawing.Color.White;
+            this.cmbApplicationType.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+
+            this.cmbClassID.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbClassID.BackColor = System.Drawing.Color.White;
+            this.cmbClassID.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+
+            this.txtSection.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtSection.BackColor = System.Drawing.Color.White;
+            this.txtSection.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+
+            this.cmbStatus.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbStatus.BackColor = System.Drawing.Color.White;
+            this.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+
             // Previous school
             this.lblPreviousSchool.AutoSize = false;
             this.lblPreviousSchool.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -453,6 +478,16 @@ namespace SchoolSystem.UI
             this.txtPreviousClass.MaxLength = 100;
             this.txtTransferReason.MaxLength = 250;
 
+            this.txtPreviousSchool.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtPreviousSchool.BackColor = System.Drawing.Color.White;
+            this.txtPreviousSchool.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtPreviousClass.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtPreviousClass.BackColor = System.Drawing.Color.White;
+            this.txtPreviousClass.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtTransferReason.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtTransferReason.BackColor = System.Drawing.Color.White;
+            this.txtTransferReason.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+
             // Fees
             this.gbFees.BackColor = System.Drawing.Color.White;
             this.gbFees.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -512,6 +547,13 @@ namespace SchoolSystem.UI
             this.cmbPaymentMethod.Margin = new System.Windows.Forms.Padding(3, 3, 3, 3);
             this.txtReceiptNo.Margin = new System.Windows.Forms.Padding(3, 3, 3, 3);
 
+            this.txtPaidAmount.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtPaidAmount.BackColor = System.Drawing.Color.White;
+            this.txtPaidAmount.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbPaymentMethod.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbPaymentMethod.BackColor = System.Drawing.Color.White;
+            this.cmbPaymentMethod.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+
             // Attachments
             this.gbAttachments.BackColor = System.Drawing.Color.White;
             this.gbAttachments.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -549,6 +591,17 @@ namespace SchoolSystem.UI
             this.chkHasPhoto.Margin = new System.Windows.Forms.Padding(10, 4, 10, 4);
             this.chkHasLastCertificate.Margin = new System.Windows.Forms.Padding(10, 4, 10, 4);
             this.chkHasMedicalReport.Margin = new System.Windows.Forms.Padding(10, 4, 10, 4);
+
+            this.chkHasBirthCertificate.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.chkHasBirthCertificate.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.chkHasGuardianId.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.chkHasGuardianId.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.chkHasPhoto.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.chkHasPhoto.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.chkHasLastCertificate.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.chkHasLastCertificate.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.chkHasMedicalReport.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.chkHasMedicalReport.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
 
             // Notes
             this.gbNotes.BackColor = System.Drawing.Color.White;
@@ -621,9 +674,30 @@ namespace SchoolSystem.UI
             this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
 
             this.btnSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnReload.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnSearch.Text = "بحث";
+            this.btnSearch.AutoSize = false;
+            this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSearch.FlatAppearance.BorderSize = 0;
+            this.btnSearch.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.btnSearch.ForeColor = System.Drawing.Color.White;
+            this.btnSearch.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnSearch.UseCompatibleTextRendering = true;
+            this.btnSearch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
+
+            this.btnReload.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnReload.Text = "مسح الفلتر";
+            this.btnReload.AutoSize = false;
+            this.btnReload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnReload.FlatAppearance.BorderSize = 0;
+            this.btnReload.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnReload.ForeColor = System.Drawing.Color.White;
+            this.btnReload.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnReload.UseCompatibleTextRendering = true;
+            this.btnReload.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnReload.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnReload.Margin = new System.Windows.Forms.Padding(3, 5, 3, 5);
 
             // Grid
             this.dgvEnrollments.Dock = System.Windows.Forms.DockStyle.Fill;
