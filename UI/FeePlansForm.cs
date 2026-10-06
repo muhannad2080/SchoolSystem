@@ -265,9 +265,31 @@ namespace SchoolSystem.UI
                 filters.Add("ClassID = " + classId);
             }
 
-            string feeType = cmbFeeType.Text == null ? "" : cmbFeeType.Text.Trim();
-            if (!string.IsNullOrWhiteSpace(feeType) && allFeePlans.Columns.Contains("FeeType"))
-                filters.Add("FeeType = '" + UIHelper.EscapeDataViewFilterValue(feeType) + "'");
+            string feeType =
+                cmbFeeType.Text == null
+                    ? ""
+                    : cmbFeeType.Text.Trim();
+
+            if (!string.IsNullOrWhiteSpace(feeType) &&
+                allFeePlans.Columns.Contains("FeeType"))
+            {
+                if (IsTotalFeeType(feeType))
+                {
+                    filters.Add(
+                        "(FeeType = 'الرسوم الكلية' " +
+                        "OR FeeType = 'رسوم كلية' " +
+                        "OR FeeType = 'الرسوم الكليه' " +
+                        "OR FeeType = 'رسوم كليه' " +
+                        "OR FeeType = 'Total Fee')");
+                }
+                else
+                {
+                    filters.Add(
+                        "FeeType = '" +
+                        UIHelper.EscapeDataViewFilterValue(feeType) +
+                        "'");
+                }
+            }
 
             dv.RowFilter = string.Join(" AND ", filters.ToArray());
 
@@ -439,10 +461,20 @@ namespace SchoolSystem.UI
                         totalRow = row;
                     }
 
-                    if (string.Equals(
-                            rowType,
-                            feeType,
-                            StringComparison.OrdinalIgnoreCase))
+                    bool sameType =
+                        IsTotalFeeType(feeType) &&
+                        IsTotalFeeType(rowType);
+
+                    if (!sameType)
+                    {
+                        sameType =
+                            string.Equals(
+                                rowType,
+                                feeType,
+                                StringComparison.OrdinalIgnoreCase);
+                    }
+
+                    if (sameType)
                     {
                         selectedRow = row;
                     }
