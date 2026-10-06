@@ -1084,18 +1084,18 @@ namespace SchoolSystem.DataAccess
         {
             const string sql = @"
                 SELECT
-                    FeePlanID,
-                    LTRIM(RTRIM(FeeType)) AS FeeType,
-                    ISNULL(Amount, 0) AS Amount
-                FROM FeePlans WITH (UPDLOCK, HOLDLOCK)
-                WHERE ClassID = @ClassID
-                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
-                      REPLACE(@AcademicYear, N'-', N'/')
-                  AND NULLIF(LTRIM(RTRIM(FeeType)), N'') IS NOT NULL
-                  AND LTRIM(RTRIM(FeeType)) NOT IN
-                      (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                    fp.FeePlanID,
+                    LTRIM(RTRIM(fp.FeeType)) AS FeeType,
+                    ISNULL(fp.Amount, 0) AS Amount
+                FROM dbo.FeePlans fp WITH (UPDLOCK, HOLDLOCK)
                 LEFT JOIN dbo.FeeTypes ft
                     ON LTRIM(RTRIM(ft.FeeTypeName)) = LTRIM(RTRIM(fp.FeeType))
+                WHERE fp.ClassID = @ClassID
+                  AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') =
+                      REPLACE(@AcademicYear, N'-', N'/')
+                  AND NULLIF(LTRIM(RTRIM(fp.FeeType)), N'') IS NOT NULL
+                  AND LTRIM(RTRIM(fp.FeeType)) NOT IN
+                      (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
                 ORDER BY
                     CASE
                         WHEN ft.SortOrder IS NULL THEN 100000
