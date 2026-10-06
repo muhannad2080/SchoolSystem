@@ -255,6 +255,7 @@ namespace SchoolSystem.UI
             this.cmbClassID.Name = "cmbClassID";
             this.cmbClassID.Size = new System.Drawing.Size(372, 26);
             this.cmbClassID.TabIndex = 13;
+            this.cmbClassID.SelectedIndexChanged += new System.EventHandler(this.cmbClassID_SelectedIndexChanged);
             // 
             // lblSection
             // 
