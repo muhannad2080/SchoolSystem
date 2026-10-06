@@ -158,7 +158,12 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = @"
+                const string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+                    SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+                    BEGIN TRANSACTION;
+
                     IF NOT EXISTS
                     (
                         SELECT 1
@@ -167,6 +172,71 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
                           AND ISNULL(Status, N'نشط') = N'نشط'
                     )
                         THROW 50003, N'لا يمكن ربط تسجيل بطالب غير نشط.', 1;
+
+                    DECLARE @AssignedStudentClassID INT = NULL;
+                    DECLARE @StudentClassAcademicYear NVARCHAR(20) = NULL;
+
+                    SELECT TOP (1)
+                        @AssignedStudentClassID = sc.StudentClassID,
+                        @StudentClassAcademicYear = sc.AcademicYear
+                    FROM StudentClasses sc WITH (UPDLOCK, HOLDLOCK)
+                    WHERE sc.StudentID = @StudentID
+                      AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') =
+                          REPLACE(@AcademicYear, N'-', N'/')
+                    ORDER BY sc.AssignedDate DESC, sc.StudentClassID DESC;
+
+                    /* إذا كان الطالب موزعاً فعلياً، يجب أن يعكس التوزيع
+                       الصف والشعبة الجديدين في التسجيل، وإلا ستنشأ نسختان مختلفتان
+                       من بيانات الطالب في الواجهات المرتبطة. */
+                    IF @AssignedStudentClassID IS NOT NULL
+                    BEGIN
+                        IF NOT EXISTS
+                        (
+                            SELECT 1
+                            FROM SchoolSections ss
+                            INNER JOIN Students s ON s.StudentID = @StudentID
+                            WHERE ss.ClassID = @ClassID
+                              AND LTRIM(RTRIM(ss.SectionName)) = LTRIM(RTRIM(ISNULL(@Section, N'')))
+                              AND REPLACE(ISNULL(ss.AcademicYear, N''), N'-', N'/') =
+                                  REPLACE(@AcademicYear, N'-', N'/')
+                              AND ISNULL(ss.IsActive, 1) = 1
+                              AND
+                              (
+                                  ss.AllowedGender IS NULL
+                                  OR LTRIM(RTRIM(ss.AllowedGender)) = N''
+                                  OR LTRIM(RTRIM(ss.AllowedGender)) IN (N'Any', N'All', N'الكل', N'مختلط')
+                                  OR (LTRIM(RTRIM(ss.AllowedGender)) IN (N'Male', N'ذكر', N'ذكور')
+                                      AND LTRIM(RTRIM(ISNULL(s.Gender, N''))) IN (N'Male', N'ذكر', N'ذكور'))
+                                  OR (LTRIM(RTRIM(ss.AllowedGender)) IN (N'Female', N'أنثى', N'إناث')
+                                      AND LTRIM(RTRIM(ISNULL(s.Gender, N''))) IN (N'Female', N'أنثى', N'إناث'))
+                              )
+                        )
+                            THROW 50020, N'لا يمكن مزامنة التوزيع: الشعبة الجديدة غير موجودة أو لا تسمح بجنس الطالب.', 1;
+
+                        IF EXISTS
+                        (
+                            SELECT 1
+                            FROM SchoolSections ss
+                            WHERE ss.ClassID = @ClassID
+                              AND LTRIM(RTRIM(ss.SectionName)) = LTRIM(RTRIM(ISNULL(@Section, N'')))
+                              AND REPLACE(ISNULL(ss.AcademicYear, N''), N'-', N'/') =
+                                  REPLACE(@AcademicYear, N'-', N'/')
+                              AND ISNULL(ss.IsActive, 1) = 1
+                              AND ss.Capacity IS NOT NULL
+                              AND ss.Capacity > 0
+                              AND
+                              (
+                                  SELECT COUNT(1)
+                                  FROM StudentClasses sc
+                                  WHERE sc.ClassID = @ClassID
+                                    AND LTRIM(RTRIM(sc.Section)) = LTRIM(RTRIM(ISNULL(@Section, N'')))
+                                    AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') =
+                                        REPLACE(@AcademicYear, N'-', N'/')
+                                    AND sc.StudentClassID <> @AssignedStudentClassID
+                              ) >= ss.Capacity
+                        )
+                            THROW 50021, N'لا يمكن مزامنة التوزيع: الشعبة الجديدة ممتلئة.', 1;
+                    END;
 
                     UPDATE Enrollments
                     SET
@@ -192,7 +262,35 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
                         HasMedicalReport = @HasMedicalReport,
                         GeneralNotes = @Notes,
                         UpdatedAt = GETDATE()
-                    WHERE EnrollmentID = @EnrollmentID";
+                    WHERE EnrollmentID = @EnrollmentID;
+
+                    IF @@ROWCOUNT = 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                        RETURN 0;
+                    END;
+
+                    IF @AssignedStudentClassID IS NOT NULL
+                    BEGIN
+                        UPDATE StudentClasses
+                        SET
+                            ClassID = @ClassID,
+                            Section = LTRIM(RTRIM(@Section)),
+                            AcademicYear = REPLACE(@AcademicYear, N'-', N'/'),
+                            AssignedDate = GETDATE()
+                        WHERE StudentClassID = @AssignedStudentClassID;
+
+                        UPDATE Students
+                        SET
+                            ClassID = @ClassID,
+                            Section = LTRIM(RTRIM(@Section)),
+                            AcademicYear = REPLACE(@AcademicYear, N'-', N'/'),
+                            UpdatedAt = GETDATE()
+                        WHERE StudentID = @StudentID;
+                    END;
+
+                    COMMIT TRANSACTION;
+                    SELECT 1;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -200,7 +298,11 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
 
                     conn.Open();
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    object result = cmd.ExecuteScalar();
+
+                    return result != null &&
+                           result != DBNull.Value &&
+                           Convert.ToInt32(result) > 0;
                 }
             }
         }
