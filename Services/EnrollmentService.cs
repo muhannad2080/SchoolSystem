@@ -100,8 +100,6 @@ namespace SchoolSystem.Services
             CurrentUser.DemandAction("Enrollment", "Edit", "ليس لديك صلاحية تعديل التسجيل.");
             NormalizeEnrollment(enrollment, true);
             ValidateEnrollment(enrollment, true);
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            EnsureFinancePermissionIfRequired(enrollment, true);
 
             if (repository.IsStudentEnrolled(enrollment.StudentID, enrollment.AcademicYear, enrollment.EnrollmentID))
 
@@ -131,6 +129,13 @@ namespace SchoolSystem.Services
             {
                 throw new InvalidOperationException(
                     "لا يمكن تعديل المبلغ المدفوع أو طريقة الدفع أو رقم السند من شاشة التسجيل بعد إنشاء الحركة المالية. استخدم شاشة الرسوم والسندات لتعديل الحركة المالية.");
+            }
+
+            // لا نطلب صلاحية مالية عند تعديل سجل مرتبط بحركة موجودة؛
+            // التحقق المالي مطلوب فقط عندما سيُنشأ/يُزامَن سجل مالي جديد.
+            if (!oldHasFinance)
+            {
+                EnsureFinancePermissionIfRequired(enrollment, true);
             }
 
             bool updated = repository.UpdateEnrollment(enrollment);
