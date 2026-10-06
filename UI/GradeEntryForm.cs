@@ -51,6 +51,10 @@ namespace SchoolSystem.UI
             // المغادرة) دون تغيير تنسيق الشاشة.
             SchoolSystem.Helpers.UIHelper.ApplyFieldValidation(this);
 
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             Load += GradeEntryForm_Load;
 
             txtSearch.TextChanged += txtSearch_TextChanged;
@@ -60,6 +64,45 @@ namespace SchoolSystem.UI
             cmbTerm.SelectedIndexChanged += cmbTerm_SelectedIndexChanged;
 
             dataGridViewGrades.CellValidating += dataGridViewGrades_CellValidating;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                isLoading)
+            {
+                return;
+            }
+
+            if (!(DataRefreshNotifier.IsRelated(e, "Enrollment")
+                && !DataRefreshNotifier.IsRelated(e, "ClassAssignment")
+                && !DataRefreshNotifier.IsRelated(e, "Students")
+                && !DataRefreshNotifier.IsRelated(e, "Classes")
+                && !DataRefreshNotifier.IsRelated(e, "Sections")
+                && !DataRefreshNotifier.IsRelated(e, "Subjects") ))
+                return;
+
+            try
+            {
+                isLoading = true;
+                await LoadClassesAsync();
+                await LoadSubjectsForSelectedClassAsync();
+                await LoadSectionsAsync();
+                await LoadGradesAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "GradeEntryForm: التحديث التلقائي",
+                    ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
         }
 
         // تحميل البيانات الأساسية والصفوف والشعب والمواد عند فتح الواجهة.
