@@ -378,6 +378,7 @@ namespace SchoolSystem.UI
             else if (selectedFeePlanId == 0)
             {
                 txtPlanNumber.Clear();
+                txtAmount.Text = "0.00";
             }
 
             decimal totalAmount =
