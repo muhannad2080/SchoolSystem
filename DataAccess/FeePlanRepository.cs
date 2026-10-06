@@ -1275,7 +1275,20 @@ namespace SchoolSystem.DataAccess
                             WHERE existing.StudentID = cs.StudentID
                               AND existing.FeePlanID = @FeePlanID
                         );
-                    END
+                    END";
+
+                using (SqlCommand syncStudents =
+                    new SqlCommand(
+                        syncStudentsSql,
+                        con,
+                        transaction))
+                {
+                    syncStudents.Parameters.AddWithValue(
+                        "@FeePlanID",
+                        feePlanId);
+
+                    syncStudents.ExecuteNonQuery();
+                }
             }
         }
 
