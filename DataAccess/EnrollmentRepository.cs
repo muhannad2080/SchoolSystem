@@ -287,6 +287,25 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
                             AcademicYear = REPLACE(@AcademicYear, N'-', N'/'),
                             UpdatedAt = GETDATE()
                         WHERE StudentID = @StudentID;
+                    END
+                    ELSE IF LTRIM(RTRIM(ISNULL(@Status, N''))) IN
+                    (
+                        N'مقبول',
+                        N'Accepted',
+                        N'Approved',
+                        N'نشط',
+                        N'Active'
+                    )
+                    BEGIN
+                        /* لا يوجد توزيع بعد، لكن التسجيل المقبول هو المرجع
+                           الحالي لبيانات الصف في شاشة الطلاب. */
+                        UPDATE Students
+                        SET
+                            ClassID = @ClassID,
+                            Section = LTRIM(RTRIM(@Section)),
+                            AcademicYear = REPLACE(@AcademicYear, N'-', N'/'),
+                            UpdatedAt = GETDATE()
+                        WHERE StudentID = @StudentID;
                     END;
 
                     COMMIT TRANSACTION;
