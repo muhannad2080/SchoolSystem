@@ -1945,6 +1945,18 @@ string receiptNumber =
 
                 ClearInputs();
             }
+            catch (System.Data.SqlClient.SqlException ex)
+                when (ex.Number == 51060)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة الرسوم: محاولة حذف رسم مرتبط بسند",
+                    ex);
+
+                UIHelper.ShowWarning(
+                    "لا يمكن حذف هذا الرسم لأنه مرتبط بسند قبض. استخدم إلغاء/سندًا عكسيًا من شاشة السندات للحفاظ على السجل المالي.");
+
+                await LoadFeesAsync();
+            }
             catch (Exception ex)
             {
                 UIHelper.ShowException(
