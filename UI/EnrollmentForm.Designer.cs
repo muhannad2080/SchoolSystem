@@ -854,7 +854,7 @@ namespace SchoolSystem.UI
             this.btnSearch.UseVisualStyleBackColor = false;
             this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSearch.FlatAppearance.BorderSize = 0;
-            this.btnSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235))))));
+            this.btnSearch.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
             this.btnSearch.ForeColor = System.Drawing.Color.White;
             this.btnSearch.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnSearch.UseCompatibleTextRendering = true;
@@ -872,7 +872,7 @@ namespace SchoolSystem.UI
             this.btnReload.UseVisualStyleBackColor = false;
             this.btnReload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReload.FlatAppearance.BorderSize = 0;
-            this.btnReload.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105))))));
+            this.btnReload.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnReload.ForeColor = System.Drawing.Color.White;
             this.btnReload.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnReload.UseCompatibleTextRendering = true;
@@ -925,7 +925,7 @@ namespace SchoolSystem.UI
             this.btnClose.UseVisualStyleBackColor = false;
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClose.FlatAppearance.BorderSize = 0;
-            this.btnClose.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105))))));
+            this.btnClose.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnClose.ForeColor = System.Drawing.Color.White;
             this.btnClose.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnClose.UseCompatibleTextRendering = true;
@@ -943,7 +943,7 @@ namespace SchoolSystem.UI
             this.btnExportExcel.UseVisualStyleBackColor = false;
             this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExportExcel.FlatAppearance.BorderSize = 0;
-            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(148)))), ((int)(((byte)(136))))));
+            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportExcel.ForeColor = System.Drawing.Color.White;
             this.btnExportExcel.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnExportExcel.UseCompatibleTextRendering = true;
@@ -960,7 +960,7 @@ namespace SchoolSystem.UI
             this.btnExportPdf.UseVisualStyleBackColor = false;
             this.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExportPdf.FlatAppearance.BorderSize = 0;
-            this.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(148)))), ((int)(((byte)(136))))));
+            this.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportPdf.ForeColor = System.Drawing.Color.White;
             this.btnExportPdf.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnExportPdf.UseCompatibleTextRendering = true;
@@ -977,7 +977,7 @@ namespace SchoolSystem.UI
             this.btnPreviewOutput.UseVisualStyleBackColor = false;
             this.btnPreviewOutput.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPreviewOutput.FlatAppearance.BorderSize = 0;
-            this.btnPreviewOutput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(118)))), ((int)(((byte)(110))))));
+            this.btnPreviewOutput.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnPreviewOutput.ForeColor = System.Drawing.Color.White;
             this.btnPreviewOutput.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnPreviewOutput.UseCompatibleTextRendering = true;
@@ -995,7 +995,7 @@ namespace SchoolSystem.UI
             this.btnPrintReceipt.UseVisualStyleBackColor = false;
             this.btnPrintReceipt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPrintReceipt.FlatAppearance.BorderSize = 0;
-            this.btnPrintReceipt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(118)))), ((int)(((byte)(110))))));
+            this.btnPrintReceipt.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnPrintReceipt.ForeColor = System.Drawing.Color.White;
             this.btnPrintReceipt.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnPrintReceipt.UseCompatibleTextRendering = true;
@@ -1013,7 +1013,7 @@ namespace SchoolSystem.UI
             this.btnPrintForm.UseVisualStyleBackColor = false;
             this.btnPrintForm.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPrintForm.FlatAppearance.BorderSize = 0;
-            this.btnPrintForm.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(118)))), ((int)(((byte)(110))))));
+            this.btnPrintForm.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnPrintForm.ForeColor = System.Drawing.Color.White;
             this.btnPrintForm.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnPrintForm.UseCompatibleTextRendering = true;
@@ -1031,7 +1031,7 @@ namespace SchoolSystem.UI
             this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefresh.FlatAppearance.BorderSize = 0;
-            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105))))));
+            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
             this.btnRefresh.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnRefresh.UseCompatibleTextRendering = true;
@@ -1049,7 +1049,7 @@ namespace SchoolSystem.UI
             this.btnCancel.UseVisualStyleBackColor = false;
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.FlatAppearance.BorderSize = 0;
-            this.btnCancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105))))));
+            this.btnCancel.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnCancel.ForeColor = System.Drawing.Color.White;
             this.btnCancel.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnCancel.UseCompatibleTextRendering = true;
@@ -1067,7 +1067,7 @@ namespace SchoolSystem.UI
             this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnDelete.FlatAppearance.BorderSize = 0;
-            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(40)))), ((int)(((byte)(40))))));
+            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnDelete.ForeColor = System.Drawing.Color.White;
             this.btnDelete.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnDelete.UseCompatibleTextRendering = true;
@@ -1085,7 +1085,7 @@ namespace SchoolSystem.UI
             this.btnUpdate.UseVisualStyleBackColor = false;
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdate.FlatAppearance.BorderSize = 0;
-            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(118)))), ((int)(((byte)(110))))));
+            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnUpdate.ForeColor = System.Drawing.Color.White;
             this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnUpdate.UseCompatibleTextRendering = true;
@@ -1103,7 +1103,7 @@ namespace SchoolSystem.UI
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSave.FlatAppearance.BorderSize = 0;
-            this.btnSave.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74))))));
+            this.btnSave.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnSave.ForeColor = System.Drawing.Color.White;
             this.btnSave.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnSave.UseCompatibleTextRendering = true;
@@ -1121,7 +1121,7 @@ namespace SchoolSystem.UI
             this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAdd.FlatAppearance.BorderSize = 0;
-            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74))))));
+            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAdd.ForeColor = System.Drawing.Color.White;
             this.btnAdd.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnAdd.UseCompatibleTextRendering = true;
