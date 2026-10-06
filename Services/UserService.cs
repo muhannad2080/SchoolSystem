@@ -57,8 +57,32 @@ namespace SchoolSystem.Services
         /// <summary>يُعيد صلاحيات الشاشة الممنوحة للدور من قاعدة البيانات.</summary>
         public List<string> GetRoleScreenPermissions(string roleName)
         {
-            return userRepository.GetRoleScreenPermissionsByName(
-                PermissionKeys.NormalizeRoleName(roleName));
+            string normalizedRole = PermissionKeys.NormalizeRoleName(roleName);
+
+            if (PermissionKeys.IsSystemAdministratorRole(normalizedRole))
+            {
+                DataTable permissions = userRepository.GetActivePermissions();
+                List<string> allScreens = new List<string>();
+
+                foreach (DataRow row in permissions.Rows)
+                {
+                    string key = row["PermissionKey"] == DBNull.Value
+                        ? string.Empty
+                        : row["PermissionKey"].ToString().Trim();
+
+                    if (PermissionKeys.IsScreenPermission(key) &&
+                        !allScreens.Contains(key, StringComparer.OrdinalIgnoreCase))
+                    {
+                        allScreens.Add(key);
+                    }
+                }
+
+                return allScreens
+                    .OrderBy(key => key, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+            }
+
+            return userRepository.GetRoleScreenPermissionsByName(normalizedRole);
         }
 
         // تعريف الدالة AddUser لتنفيذ العملية المرتبطة بها.
