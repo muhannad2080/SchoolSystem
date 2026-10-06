@@ -47,6 +47,7 @@ namespace SchoolSystem.UI
 
             Load += DashboardHome_Load;
             Disposed += DashboardHome_Disposed;
+            DataRefreshNotifier.DataChanged += DashboardHome_DataChanged;
 
             ResizeDashboardCards();
         }
@@ -340,12 +341,30 @@ namespace SchoolSystem.UI
             object sender,
             EventArgs e)
         {
+            DataRefreshNotifier.DataChanged -= DashboardHome_DataChanged;
+
             if (dashboardAutoRefreshTimer == null)
                 return;
 
             dashboardAutoRefreshTimer.Stop();
             dashboardAutoRefreshTimer.Dispose();
             dashboardAutoRefreshTimer = null;
+        }
+
+        private async void DashboardHome_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                Disposing)
+            {
+                return;
+            }
+
+            // لوحة التحكم لا تعرض بيانات محلية؛ كل مؤشر يعاد قراءته من قاعدة البيانات
+            // بعد أي تغيير من أي وحدة حتى تبقى المؤشرات والمخطط حيّة.
+            await ReloadDashboardAsync();
         }
 
         private async Task ReloadDashboardAsync()
