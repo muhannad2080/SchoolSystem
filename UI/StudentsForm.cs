@@ -74,6 +74,10 @@ namespace SchoolSystem.UI
             ConfigureTooltips();
             ConfigureProfessionalLayout();
 
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             splitContainerMain.Panel1MinSize = 480;
             splitContainerMain.Panel2MinSize = 480;
 
@@ -81,6 +85,27 @@ namespace SchoolSystem.UI
             StudentsForm_Resize(this, EventArgs.Empty);
 
             SetFormMode(FormMode.View);
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                _isSaving)
+            {
+                return;
+            }
+
+            if (!DataRefreshNotifier.IsRelated(e, "Students") &&
+                !DataRefreshNotifier.IsRelated(e, "Enrollment") &&
+                !DataRefreshNotifier.IsRelated(e, "ClassAssignment"))
+            {
+                return;
+            }
+
+            await Task.Run(() => LoadStudents());
         }
 
         private void ConfigureDesignPreviewTheme()
