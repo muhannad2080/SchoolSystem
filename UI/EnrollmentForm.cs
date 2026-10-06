@@ -77,6 +77,8 @@ namespace SchoolSystem.UI
 
             txtAcademicYear.ReadOnly = true;
 
+            dtpApplicationDate.MaxDate = DateTime.Today;
+
             txtSection.DropDownStyle =
                 ComboBoxStyle.DropDownList;
 
