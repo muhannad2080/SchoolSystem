@@ -97,20 +97,20 @@ namespace SchoolSystem.UI
             cmbAcademicYear.Items.Clear();
 
 
-            string dbYear = SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
-            if (!string.IsNullOrWhiteSpace(dbYear))
+            try
             {
-                cmbAcademicYear.Items.Add(dbYear);
-                cmbAcademicYear.SelectedIndex = 0;
-            }
+                string dbYear =
+                    SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
 
-            else
+                if (!string.IsNullOrWhiteSpace(dbYear))
+                {
+                    cmbAcademicYear.Items.Add(dbYear);
+                    cmbAcademicYear.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex)
             {
-                int year = DateTime.Today.Year;
-                cmbAcademicYear.Items.Add((year - 1) + " / " + year);
-                cmbAcademicYear.Items.Add(year + " / " + (year + 1));
-                cmbAcademicYear.Items.Add((year + 1) + " / " + (year + 2));
-                cmbAcademicYear.SelectedIndex = 1;
+                UIHelper.ShowException("تحميل العام الدراسي من قاعدة البيانات", ex);
             }
 
             dtpDueDate.Value = DateTime.Today.AddDays(30);
