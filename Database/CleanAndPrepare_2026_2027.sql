@@ -1,16 +1,18 @@
 /*
     SchoolSystem - Production cleanup (compatibility name)
     ----------------------------------------------
-    This script removes operational/test data while KEEPING reference/setup data:
-      - Academic years/current academic-year history
-      - Academic terms
+    This script removes all transactional/test data while KEEPING only the
+    requested reference/security baseline:
       - Subjects
-      - Academic years/terms
+      - AcademicYears / AcademicTerms / AcademicYearCurrent
       - Rooms
-      - Rooms
-      - Users, roles, permissions and their assignments
-      - School settings
-      - School settings
+      - Users / Roles / Permissions / RolePermissions / UserRoles / UserPermissions
+      - SchoolSettings
+
+    Classes, stages, sections, student/teacher records, fee plans, vouchers,
+    attendance, grades, payroll, contracts, transport, library transactions,
+    expenses and audit/closing operational history are cleared so that the
+    operator re-enters real data through the UI.
 
     Cleared:
       Students/profiles/enrollments/distribution/attendance/grades/marks/transport assignments
@@ -37,6 +39,12 @@ GO
 
 BEGIN TRY
     BEGIN TRANSACTION;
+
+    /* ReportCenter reports are generated from live database queries and are
+       not stored as report records in SQL Server. Clearing the source data
+       therefore clears old report content automatically. Exported PDF/Excel
+       files saved manually by the user are filesystem artifacts and are not
+       deleted by this SQL script. */
 
     /* ================================================================
        1) Child/transactional data first
@@ -256,6 +264,11 @@ BEGIN TRY
     IF OBJECT_ID(N'dbo.Permissions', N'U') IS NOT NULL
        AND NOT EXISTS (SELECT 1 FROM dbo.Permissions)
         THROW 52005, N'لم تبقَ الصلاحيات. تم إيقاف العملية لحماية نظام الوصول.', 1;
+
+    /* Audit logs are intentionally empty after the reset. */
+    IF OBJECT_ID(N'dbo.AuditLogs', N'U') IS NOT NULL
+       AND EXISTS (SELECT 1 FROM dbo.AuditLogs)
+        THROW 52010, N'بقيت سجلات تشغيلية قديمة في AuditLogs.', 1;
 
     COMMIT TRANSACTION;
 END TRY
