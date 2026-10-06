@@ -723,6 +723,7 @@ namespace SchoolSystem.UI
 
                 await LoadNameDropdownsAsync();
                 ClearRoomFields();
+                DataRefreshNotifier.Notify("Rooms", this);
             }
 
             catch (Exception ex)
@@ -759,6 +760,7 @@ namespace SchoolSystem.UI
 
                     await LoadRoomsAsync();
                     ClearRoomFields();
+                    DataRefreshNotifier.Notify("Rooms", this);
                 }
 
                 else
