@@ -21,6 +21,9 @@ namespace SchoolSystem.UI
 
         private DataTable currentAttendanceTable;
 
+        // يمنع التحديث التلقائي المتداخل أثناء تحميل بيانات الحضور.
+        private bool isLoading;
+
         // تعريف الدالة DailyAttendanceForm لتنفيذ العملية المرتبطة بها.
         public DailyAttendanceForm()
         {
