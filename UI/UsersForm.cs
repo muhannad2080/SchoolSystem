@@ -147,34 +147,35 @@ namespace SchoolSystem.UI
         // تعريف الدالة LoadRoles لتنفيذ العملية المرتبطة بها.
         private void LoadRoles()
         {
-            cmbRole.Items.Clear();
+            string previousRole = cmbRole.Text == null ? string.Empty : cmbRole.Text.Trim();
 
-            cmbRole.Items.Add("مدير النظام");
-            cmbRole.Items.Add("الإدارة");
-            cmbRole.Items.Add("شؤون الطلاب");
-            cmbRole.Items.Add("المعلمون");
-            cmbRole.Items.Add("المالية");
-            cmbRole.Items.Add("المكتبة");
-            cmbRole.Items.Add("النقل");
-            cmbRole.Items.Add("التقارير");
-            cmbRole.Items.Add("مدير المدرسة");
-            cmbRole.Items.Add("وكيل المدرسة");
-            cmbRole.Items.Add("شؤون الموظفين");
-            cmbRole.Items.Add("أمين المكتبة");
-            cmbRole.Items.Add("مسؤول النقل");
-            cmbRole.Items.Add("موظف الاستقبال");
-            cmbRole.Items.Add("مدقق");
+            try
+            {
+                DataTable roles = userService.GetActiveRoles();
 
+                cmbRole.DataSource = null;
+                cmbRole.Items.Clear();
+                cmbRole.DisplayMember = "RoleName";
+                cmbRole.ValueMember = "RoleID";
+                cmbRole.DataSource = roles;
 
-            int safeDefaultIndex = cmbRole.Items.IndexOf("التقارير");
-            if (safeDefaultIndex < 0)
-                safeDefaultIndex = 0;
-            if (cmbRole.Items.Count > 0)
-                cmbRole.SelectedIndex = safeDefaultIndex;
+                if (!string.IsNullOrWhiteSpace(previousRole))
+                    cmbRole.Text = previousRole;
+                else if (cmbRole.Items.Count > 0)
+                    cmbRole.SelectedIndex = 0;
+            }
+            catch (Exception ex)
+            {
+                cmbRole.DataSource = null;
+                cmbRole.Items.Clear();
+                UIHelper.ShowException("تحميل أدوار المستخدمين", ex);
+            }
 
             cmbRole.SelectedIndexChanged -= cmbRole_SelectedIndexChanged;
-
             cmbRole.SelectedIndexChanged += cmbRole_SelectedIndexChanged;
+
+            if (cmbRole.SelectedItem != null)
+                ApplyRolePreset();
         }
 
         // تعريف الدالة LoadPermissions لتنفيذ العملية المرتبطة بها.
