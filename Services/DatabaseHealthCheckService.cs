@@ -43,7 +43,7 @@ namespace SchoolSystem.Services
             "AcademicYearCurrent", "AnnualClosings", "AnnualMigrationLog", "DatabaseBackupHistory",
             "AcademicTerms", "Stages", "Subjects", "ClassSubjects", "ClassSubjectTerms",
             "Enrollments", "SchoolTimetable", "Books", "BookBorrowings", "Buses", "BusRoutes",
-            "Rooms", "AuditLogs"
+            "Rooms", "AuditLogs", "FeeTypes"
         };
 
         private static readonly Dictionary<string, string[]> RequiredColumns =
@@ -54,6 +54,7 @@ namespace SchoolSystem.Services
                 { "Classes", new[] { "ClassID", "ClassName", "StageID" } },
                 { "Fees", new[] { "FeeID", "StudentID", "TotalAmount", "PaidAmount", "DueDate" } },
                 { "SchoolSections", new[] { "SectionID", "ClassID", "SectionName", "AcademicYear" } },
+                { "FeeTypes", new[] { "FeeTypeID", "FeeTypeCode", "FeeTypeName", "IsTotal", "DistributionWeight", "SortOrder", "IsActive" } },
                 { "Payroll", new[] { "PayrollID", "TeacherID", "SalaryMonth", "SalaryYear", "BasicSalary", "Allowances", "Deductions", "NetSalary", "PaymentDate" } },
                 { "TeacherContracts", new[] { "ContractID", "TeacherID", "ContractNumber", "ContractType", "ContractStatus", "BasicSalary", "StartDate" } },
                 { "Expenses", new[] { "ExpenseID", "ExpenseNumber", "Amount", "ExpenseDate", "Category" } },
