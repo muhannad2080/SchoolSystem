@@ -35,6 +35,10 @@ namespace SchoolSystem.UI
             dataGridViewAttendance.MultiSelect = true;
             dataGridViewAttendance.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             Load += DailyAttendanceForm_Load;
 
             txtSearch.TextChanged += txtSearch_TextChanged;
@@ -42,6 +46,42 @@ namespace SchoolSystem.UI
             cmbClass.SelectedIndexChanged += cmbClass_SelectedIndexChanged;
 
             txtAcademicYear.Leave += txtAcademicYear_Leave;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                isLoading)
+            {
+                return;
+            }
+
+            if (!(DataRefreshNotifier.IsRelated(e, "Enrollment")
+                && !DataRefreshNotifier.IsRelated(e, "ClassAssignment")
+                && !DataRefreshNotifier.IsRelated(e, "Students")
+                && !DataRefreshNotifier.IsRelated(e, "Classes")
+                && !DataRefreshNotifier.IsRelated(e, "Sections") ))
+                return;
+
+            try
+            {
+                isLoading = true;
+                await LoadClassesAsync();
+                await LoadAttendanceAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "DailyAttendanceForm: التحديث التلقائي",
+                    ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
         }
 
         // تعريف الدالة DailyAttendanceForm_Load لتنفيذ العملية المرتبطة بها.
