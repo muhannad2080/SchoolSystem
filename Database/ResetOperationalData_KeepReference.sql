@@ -9,7 +9,7 @@
       - Rooms
       - Users, roles, permissions and their assignments
       - School settings
-      - Library books are kept as reference data; borrowing transactions are cleared
+      - Library books are also cleared; this reset keeps only the explicitly requested reference data.
 
     Cleared:
       Students/profiles/enrollments/distribution/attendance/grades/marks/transport assignments
@@ -62,6 +62,7 @@ BEGIN TRY
     IF OBJECT_ID(N'dbo.StudentTransportAssignments', N'U') IS NOT NULL DELETE FROM dbo.StudentTransportAssignments;
 
     IF OBJECT_ID(N'dbo.BookBorrowings', N'U') IS NOT NULL DELETE FROM dbo.BookBorrowings;
+    IF OBJECT_ID(N'dbo.Books', N'U') IS NOT NULL DELETE FROM dbo.Books;
 
     IF OBJECT_ID(N'dbo.TeacherContracts', N'U') IS NOT NULL DELETE FROM dbo.TeacherContracts;
     IF OBJECT_ID(N'dbo.Payroll', N'U') IS NOT NULL DELETE FROM dbo.Payroll;
@@ -116,6 +117,7 @@ BEGIN TRY
         (N'Receipts'),
         (N'Expenses'),
         (N'BookBorrowings'),
+        (N'Books'),
         (N'Buses'),
         (N'BusRoutes'),
         (N'StudentTransport'),
