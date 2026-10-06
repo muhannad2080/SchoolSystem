@@ -1486,7 +1486,7 @@ string academicYear = cmbAcademicYear.Text.Trim();
 
                 await LoadFeesAsync();
 
-                DataRefreshNotifier.Notify("Fees", this);
+                DataRefreshNotifier.Notify("All", this);
             }
             catch (System.Data.SqlClient.SqlException ex)
                 when (ex.Number == 51040)
@@ -1555,8 +1555,8 @@ string academicYear = cmbAcademicYear.Text.Trim();
 
                 await LoadFeesAsync();
 
-                DataRefreshNotifier.Notify("Fees", this);
-                DataRefreshNotifier.Notify("Vouchers", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
 
                 ClearInputs();
             }
@@ -1675,8 +1675,8 @@ string academicYear = cmbAcademicYear.Text.Trim();
 
                 if (result)
                 {
-                    DataRefreshNotifier.Notify("Fees", this);
-                    DataRefreshNotifier.Notify("Vouchers", this);
+                    DataRefreshNotifier.Notify("All", this);
+                    DataRefreshNotifier.Notify("All", this);
                 }
 
                 ClearInputs();
@@ -1808,8 +1808,8 @@ string receiptNumber =
 
                     await LoadFeesAsync();
 
-                    DataRefreshNotifier.Notify("Fees", this);
-                    DataRefreshNotifier.Notify("Vouchers", this);
+                    DataRefreshNotifier.Notify("All", this);
+                    DataRefreshNotifier.Notify("All", this);
 
                     ClearInputs();
 
@@ -1857,8 +1857,8 @@ string receiptNumber =
 
                 await LoadFeesAsync();
 
-                DataRefreshNotifier.Notify("Fees", this);
-                DataRefreshNotifier.Notify("Vouchers", this);
+                DataRefreshNotifier.Notify("All", this);
+                DataRefreshNotifier.Notify("All", this);
 
                 ClearInputs();
             }
@@ -1929,8 +1929,8 @@ string receiptNumber =
 
                 if (result)
                 {
-                    DataRefreshNotifier.Notify("Fees", this);
-                    DataRefreshNotifier.Notify("Vouchers", this);
+                    DataRefreshNotifier.Notify("All", this);
+                    DataRefreshNotifier.Notify("All", this);
                 }
 
                 ClearInputs();
