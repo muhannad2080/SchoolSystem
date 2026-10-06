@@ -43,13 +43,10 @@ namespace SchoolSystem.UI
 
             catch (Exception ex)
             {
-                // فشل تحميل السنوات لا يمنع فتح الشاشة؛ نسجل السبب ونعرض العام المحسوب فقط.
                 ApplicationLogger.LogException("تحميل قائمة السنوات الدراسية", ex);
+                UIHelper.ShowException("تحميل السنوات الدراسية من قاعدة البيانات", ex);
             }
 
-            string current = DateTime.Today.Year + "/" + (DateTime.Today.Year + 1);
-            if (!cmbYear.Items.Contains(current))
-                cmbYear.Items.Add(current);
 
             // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
             try
