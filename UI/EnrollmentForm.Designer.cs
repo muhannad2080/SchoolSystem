@@ -151,12 +151,12 @@ namespace SchoolSystem.UI
             this.layoutRight.Name = "layoutRight";
             this.layoutRight.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.layoutRight.RowCount = 5;
-            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 205F));
+            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 215F));
+            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 145F));
+            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 145F));
+            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 95F));
             this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 125F));
-            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 128F));
-            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 80F));
-            this.layoutRight.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 125F));
-            this.layoutRight.Size = new System.Drawing.Size(505, 663);
+            this.layoutRight.Size = new System.Drawing.Size(505, 725);
             this.layoutRight.TabIndex = 0;
 
             // Basic group
@@ -680,7 +680,7 @@ namespace SchoolSystem.UI
 
             // Action bar
             this.pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlButtons.Height = 94;
+            this.pnlButtons.Height = 110;
             this.pnlButtons.BackColor = System.Drawing.Color.White;
             this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.pnlButtons.WrapContents = true;
