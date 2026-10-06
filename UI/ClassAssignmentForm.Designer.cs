@@ -545,7 +545,9 @@ namespace SchoolSystem.UI.Students
             this.listBoxUnassigned.Location = new System.Drawing.Point(3, 83);
             this.listBoxUnassigned.Name = "listBoxUnassigned";
             this.listBoxUnassigned.Size = new System.Drawing.Size(513, 289);
+            this.listBoxUnassigned.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.listBoxUnassigned.TabIndex = 2;
+            this.listBoxUnassigned.SelectedIndexChanged += new System.EventHandler(this.listBoxUnassigned_SelectedIndexChanged);
             // 
             // panelRightButtons
             // 
