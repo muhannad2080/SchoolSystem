@@ -260,7 +260,8 @@ namespace SchoolSystem.UI
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Sections") &&
-                !DataRefreshNotifier.IsRelated(e, "Classes"))
+                !DataRefreshNotifier.IsRelated(e, "Classes") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
                 return;
 
             await LoadClassesAsync();
