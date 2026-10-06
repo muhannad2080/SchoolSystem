@@ -16,6 +16,7 @@ namespace SchoolSystem.UI
     {
         // تعريف الدالة FeePlanService لتنفيذ العملية المرتبطة بها.
         private readonly FeePlanService feePlanService = new FeePlanService();
+        private readonly AcademicReferenceRepository academicReferenceRepository = new AcademicReferenceRepository();
 
 
         private int selectedFeePlanId = 0;
@@ -58,7 +59,10 @@ namespace SchoolSystem.UI
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "FeePlans") &&
-                !DataRefreshNotifier.IsRelated(e, "Classes"))
+                !DataRefreshNotifier.IsRelated(e, "Classes") &&
+                !DataRefreshNotifier.IsRelated(e, "Students") &&
+                !DataRefreshNotifier.IsRelated(e, "AcademicYears") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
                 return;
 
             await LoadClassesAsync();
@@ -73,6 +77,7 @@ namespace SchoolSystem.UI
             {
                 InitializeLookups();
 
+                await LoadAcademicYearsAsync();
                 await LoadFeeTypesAsync();
 
 
@@ -93,28 +98,35 @@ namespace SchoolSystem.UI
         private void InitializeLookups()
         {
             cmbFeeType.Items.Clear();
-
             cmbAcademicYear.Items.Clear();
-
-
-            try
-            {
-                string dbYear =
-                    SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
-
-                if (!string.IsNullOrWhiteSpace(dbYear))
-                {
-                    cmbAcademicYear.Items.Add(dbYear);
-                    cmbAcademicYear.SelectedIndex = 0;
-                }
-            }
-            catch (Exception ex)
-            {
-                UIHelper.ShowException("تحميل العام الدراسي من قاعدة البيانات", ex);
-            }
 
             dtpDueDate.Value = DateTime.Today.AddDays(30);
             chkIsRequired.Checked = true;
+        }
+
+        private async Task LoadAcademicYearsAsync()
+        {
+            DataTable years = await Task.Run(() => academicReferenceRepository.GetAcademicYears());
+            string current = SchoolSystem.Helpers.AcademicYearHelper.GetCurrentAcademicYear();
+
+            cmbAcademicYear.Items.Clear();
+
+            foreach (DataRow row in years.Rows)
+            {
+                string year = Convert.ToString(row["AcademicYear"]).Trim();
+                if (!string.IsNullOrWhiteSpace(year) && !cmbAcademicYear.Items.Contains(year))
+                    cmbAcademicYear.Items.Add(year);
+            }
+
+            if (cmbAcademicYear.Items.Count == 0)
+            {
+                cmbAcademicYear.SelectedIndex = -1;
+                cmbAcademicYear.Text = string.Empty;
+                return;
+            }
+
+            int currentIndex = cmbAcademicYear.Items.IndexOf(current);
+            cmbAcademicYear.SelectedIndex = currentIndex >= 0 ? currentIndex : 0;
         }
 
         // تعريف الدالة LoadFeeTypesAsync لتنفيذ العملية المرتبطة بها.
