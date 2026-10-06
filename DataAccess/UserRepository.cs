@@ -68,6 +68,108 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        /// <summary>يُعيد أسماء الأدوار النشطة من قاعدة البيانات فقط.</summary>
+        public List<string> GetActiveRoleNames()
+        {
+            List<string> roles = new List<string>();
+
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT RoleName
+                FROM dbo.Roles
+                WHERE IsActive = 1
+                  AND NULLIF(LTRIM(RTRIM(RoleName)), N'') IS NOT NULL
+                ORDER BY CASE WHEN IsSystemRole = 1 THEN 0 ELSE 1 END,
+                         RoleName;", con))
+            {
+                con.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string role = reader["RoleName"] == DBNull.Value
+                            ? string.Empty
+                            : reader["RoleName"].ToString().Trim();
+
+                        if (!string.IsNullOrWhiteSpace(role) &&
+                            !roles.Contains(role, StringComparer.OrdinalIgnoreCase))
+                        {
+                            roles.Add(role);
+                        }
+                    }
+                }
+            }
+
+            return roles;
+        }
+
+        /// <summary>يُعيد كتالوج الصلاحيات النشطة من قاعدة البيانات.</summary>
+        public DataTable GetActivePermissions()
+        {
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT
+                    PermissionID,
+                    PermissionKey,
+                    ISNULL(NULLIF(LTRIM(RTRIM(DisplayName)), N''), PermissionKey) AS DisplayName,
+                    ModuleName,
+                    ActionName
+                FROM dbo.Permissions
+                WHERE IsActive = 1
+                  AND NULLIF(LTRIM(RTRIM(PermissionKey)), N'') IS NOT NULL
+                ORDER BY ModuleName, ActionName, PermissionKey;", con))
+            using (SqlDataAdapter da = new SqlDataAdapter(cmd))
+            {
+                DataTable table = new DataTable();
+                da.Fill(table);
+                return table;
+            }
+        }
+
+        /// <summary>يُعيد صلاحيات الشاشة للدور المحدد من RolePermissions.</summary>
+        public List<string> GetRoleScreenPermissionsByName(string roleName)
+        {
+            List<string> permissions = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(roleName))
+                return permissions;
+
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT DISTINCT P.PermissionKey
+                FROM dbo.Roles R
+                INNER JOIN dbo.RolePermissions RP ON RP.RoleID = R.RoleID
+                INNER JOIN dbo.Permissions P ON P.PermissionID = RP.PermissionID
+                WHERE R.IsActive = 1
+                  AND P.IsActive = 1
+                  AND LTRIM(RTRIM(R.RoleName)) = LTRIM(RTRIM(@RoleName))
+                  AND NULLIF(LTRIM(RTRIM(P.PermissionKey)), N'') IS NOT NULL
+                ORDER BY P.PermissionKey;", con))
+            {
+                cmd.Parameters.Add("@RoleName", SqlDbType.NVarChar, 100).Value = roleName.Trim();
+                con.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string key = reader["PermissionKey"] == DBNull.Value
+                            ? string.Empty
+                            : reader["PermissionKey"].ToString().Trim();
+
+                        if (PermissionKeys.IsScreenPermission(key) &&
+                            !permissions.Contains(key, StringComparer.OrdinalIgnoreCase))
+                        {
+                            permissions.Add(key);
+                        }
+                    }
+                }
+            }
+
+            return permissions;
+        }
+
         // تعريف الدالة GetUserByUserName لتنفيذ العملية المرتبطة بها.
         public User GetUserByUserName(string userName)
         {
