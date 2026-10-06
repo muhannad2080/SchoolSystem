@@ -65,6 +65,10 @@ namespace SchoolSystem.UI
             ApplyCustomStyles();
             Dock = DockStyle.Fill;
 
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             Load += TransportForm_Load;
 
             tabControl.SelectedIndexChanged += TabControl_SelectedIndexChanged;
@@ -73,6 +77,41 @@ namespace SchoolSystem.UI
             txtBusNumber.MaxLength = 30;
             txtBusNumber.KeyPress -= BusNumber_KeyPress;
             txtBusNumber.KeyPress += BusNumber_KeyPress;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                isLoading)
+            {
+                return;
+            }
+
+            if (!(DataRefreshNotifier.IsRelated(e, "Students")
+                && !DataRefreshNotifier.IsRelated(e, "Classes")
+                && !DataRefreshNotifier.IsRelated(e, "Enrollment") ))
+                return;
+
+            try
+            {
+                isLoading = true;
+                await LoadBusesAsync();
+                await LoadRoutesAsync();
+                await LoadStudentTransportAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "TransportForm: التحديث التلقائي",
+                    ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
         }
 
         // تعريف الدالة BusNumber_KeyPress للسماح بالحروف والأرقام والشرطات فقط.
