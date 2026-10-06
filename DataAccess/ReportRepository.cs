@@ -285,6 +285,7 @@ namespace SchoolSystem.DataAccess
              * varchar/nvarchar. يتم فحص الأعمدة أولاً واختيار أعمدة آمنة فقط حتى
              * لا يفشل تقرير الطلاب بسبب تعريف قديم غير متوافق في قاعدة محلية.
              */
+            bool hasStudentId = ColumnExists("Students", "StudentID") && !IsComputedColumn("Students", "StudentID");
             bool hasStudentNumber = ColumnExists("Students", "StudentNumber") && !IsComputedColumn("Students", "StudentNumber");
             bool hasGender = ColumnExists("Students", "Gender") && !IsComputedColumn("Students", "Gender");
             bool hasBirthDate = ColumnExists("Students", "BirthDate") && !IsComputedColumn("Students", "BirthDate");
@@ -302,6 +303,10 @@ namespace SchoolSystem.DataAccess
                 && !IsComputedColumn("Classes", "ClassName")
                 && ColumnExists("Classes", "ClassID");
 
+            string studentIdExpression = hasStudentId
+                ? "TRY_CONVERT(int, s.StudentID)"
+                : "CONVERT(int, NULL)";
+
             string academicYearExpression = hasAcademicYear
                 ? "CONVERT(nvarchar(20), s.AcademicYear)"
                 : "CONVERT(nvarchar(20), NULL)";
@@ -312,7 +317,7 @@ namespace SchoolSystem.DataAccess
 
             string query = @"
                 SELECT
-                    CONVERT(int, s.StudentID) AS [رقم الطالب],
+                    " + studentIdExpression + " AS [رقم الطالب],
                     " + (hasStudentNumber ? "CONVERT(nvarchar(30), s.StudentNumber)" : "CONVERT(nvarchar(30), NULL)") + @" AS [الرقم الأكاديمي],
                     CONVERT(nvarchar(200), s.FullName) AS [اسم الطالب],
                     " + (hasGender ? "CONVERT(nvarchar(20), s.Gender)" : "CONVERT(nvarchar(20), NULL)") + @" AS [الجنس],
