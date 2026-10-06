@@ -281,17 +281,36 @@ BEGIN CATCH
 END CATCH;
 GO
 
-SELECT N'Subjects' AS TableName, COUNT_BIG(*) AS RemainingRows FROM dbo.Subjects
-UNION ALL SELECT N'AcademicYears', COUNT_BIG(*) FROM dbo.AcademicYears
-UNION ALL SELECT N'AcademicTerms', COUNT_BIG(*) FROM dbo.AcademicTerms
-UNION ALL SELECT N'AcademicYearCurrent', COUNT_BIG(*) FROM dbo.AcademicYearCurrent
-UNION ALL SELECT N'Rooms', COUNT_BIG(*) FROM dbo.Rooms
-UNION ALL SELECT N'Users', COUNT_BIG(*) FROM dbo.Users
-UNION ALL SELECT N'Roles', COUNT_BIG(*) FROM dbo.Roles
-UNION ALL SELECT N'Permissions', COUNT_BIG(*) FROM dbo.Permissions
-UNION ALL SELECT N'RolePermissions', COUNT_BIG(*) FROM dbo.RolePermissions
-UNION ALL SELECT N'UserRoles', COUNT_BIG(*) FROM dbo.UserRoles
-UNION ALL SELECT N'UserPermissions', COUNT_BIG(*) FROM dbo.UserPermissions
-UNION ALL SELECT N'SchoolSettings', COUNT_BIG(*) FROM dbo.SchoolSettings
-UNION ALL SELECT N'SchemaMigrations', COUNT_BIG(*) FROM dbo.SchemaMigrations
-ORDER BY TableName;
+/* تقرير نهائي ديناميكي: يعرض فقط الجداول المرجعية الموجودة فعلياً في القاعدة. */
+DECLARE @ReportSql NVARCHAR(MAX) = N'';
+
+SELECT @ReportSql = @ReportSql +
+    CASE WHEN @ReportSql = N'' THEN N'' ELSE N' UNION ALL ' END +
+    N'SELECT N''' + REPLACE(t.name,'''','''''') + N''' AS TableName, COUNT_BIG(*) AS RemainingRows FROM ' +
+    QUOTENAME(SCHEMA_NAME(t.schema_id)) + N'.' + QUOTENAME(t.name)
+FROM sys.tables t
+WHERE t.is_ms_shipped = 0
+  AND t.name IN
+  (
+      N'Subjects',
+      N'AcademicYears',
+      N'AcademicTerms',
+      N'AcademicYearCurrent',
+      N'Rooms',
+      N'Users',
+      N'Roles',
+      N'Permissions',
+      N'RolePermissions',
+      N'UserRoles',
+      N'UserPermissions',
+      N'SchoolSettings',
+      N'SchemaMigrations'
+  )
+ORDER BY t.name;
+
+IF @ReportSql <> N''
+BEGIN
+    SET @ReportSql = @ReportSql + N' ORDER BY TableName;';
+    EXEC sp_executesql @ReportSql;
+END;
+GO
