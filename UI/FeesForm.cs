@@ -35,6 +35,10 @@ namespace SchoolSystem.UI
 
         private decimal originalPaidAmount = 0;
 
+        private string originalPaymentMethod = "";
+        private string originalReceiptNumber = "";
+        private DateTime? originalPaymentDate = null;
+
         private DataTable allFees;
 
         private bool isLoading = false;
@@ -1014,6 +1018,22 @@ namespace SchoolSystem.UI
                     ? ""
                     : row["ReceiptNumber"].ToString();
 
+            originalPaymentMethod =
+                cmbPaymentMethod.Text.Trim();
+
+            originalReceiptNumber =
+                txtReceiptNumber.Text.Trim();
+
+            originalPaymentDate =
+                row["PaymentDate"] == DBNull.Value
+                    ? (DateTime?)null
+                    : Convert.ToDateTime(row["PaymentDate"]).Date;
+
+            // بيانات السداد التاريخية لا تُعدّل من زر «تعديل».
+            // تغيير المدفوع يتم فقط من «تحصيل دفعة» أو «استرجاع».
+            txtPaidAmount.ReadOnly = selectedFeeId > 0;
+            txtReceiptNumber.ReadOnly = selectedFeeId > 0;
+
             if (cmbStatus.Items.Contains(row["Status"].ToString()))
                 cmbStatus.SelectedItem = row["Status"].ToString();
 
@@ -1095,6 +1115,12 @@ string academicYear = cmbAcademicYear.Text.Trim();
             selectedPlanClassName = "";
             studentFinancialSummary = "";
             originalPaidAmount = 0;
+            originalPaymentMethod = "";
+            originalReceiptNumber = "";
+            originalPaymentDate = null;
+
+            txtPaidAmount.ReadOnly = false;
+            txtReceiptNumber.ReadOnly = false;
 
             if (cmbStudent.Items.Count > 0)
                 cmbStudent.SelectedIndex = 0;
@@ -1352,7 +1378,9 @@ string academicYear = cmbAcademicYear.Text.Trim();
                     cmbPaymentMethod.Text.Trim(),
 
                 ReceiptNumber =
-                    EnsureReceiptNumber(),
+                    selectedFeeId > 0
+                        ? txtReceiptNumber.Text.Trim()
+                        : EnsureReceiptNumber(),
 
                 Status =
                     cmbStatus.Text.Trim(),
@@ -1360,6 +1388,19 @@ string academicYear = cmbAcademicYear.Text.Trim();
                 Notes =
                     txtNotes.Text.Trim()
             };
+        }
+
+        private static bool NullableDatesEqual(
+            DateTime? left,
+            DateTime? right)
+        {
+            if (!left.HasValue && !right.HasValue)
+                return true;
+
+            if (!left.HasValue || !right.HasValue)
+                return false;
+
+            return left.Value.Date == right.Value.Date;
         }
 
         // ============================================================
@@ -1583,12 +1624,37 @@ string academicYear = cmbAcademicYear.Text.Trim();
                 Fee fee =
                     GetFeeFromInputs();
 
+                if (Math.Abs(fee.PaidAmount - originalPaidAmount) > 0.01m)
+                {
+                    UIHelper.ShowWarning(
+                        "لا تعدّل حقل المدفوع من «تعديل». استخدم «تحصيل دفعة» أو «استرجاع» حتى يتم تحديث السند والحركة المالية معًا.");
+
+                    txtPaidAmount.Focus();
+                    return;
+                }
+
+                if (!string.Equals(
+                        fee.PaymentMethod.Trim(),
+                        originalPaymentMethod,
+                        StringComparison.OrdinalIgnoreCase)
+                    || !string.Equals(
+                        fee.ReceiptNumber.Trim(),
+                        originalReceiptNumber,
+                        StringComparison.OrdinalIgnoreCase)
+                    || !NullableDatesEqual(
+                        fee.PaymentDate,
+                        originalPaymentDate))
+                {
+                    UIHelper.ShowWarning(
+                        "بيانات السداد ورقم السند لا تُعدّل من «تعديل الرسوم». استخدم مسار التحصيل أو الاسترجاع.");
+
+                    return;
+                }
+
                 decimal newPaidAmount =
                     fee.PaidAmount;
 
-                decimal paymentDifference =
-                    newPaidAmount -
-                    originalPaidAmount;
+                decimal paymentDifference = 0m;
 
                 bool result =
                     await Task.Run(() =>
