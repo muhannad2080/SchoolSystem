@@ -239,7 +239,7 @@ namespace SchoolSystem.UI.Students
             this.txtAcademicYear.Size = new System.Drawing.Size(163, 28);
             this.txtAcademicYear.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.txtAcademicYear.TabIndex = 5;
-            this.txtAcademicYear.Text = "2026/2027";
+            this.txtAcademicYear.Text = "";
             this.txtAcademicYear.TextChanged += new System.EventHandler(this.txtAcademicYear_TextChanged);
             // 
             // btnLoad
