@@ -151,6 +151,8 @@ namespace SchoolSystem.UI
             btnReload.Text = "تحديث البيانات";
             UIHelper.StyleActionButton(btnSearch);
             UIHelper.StyleActionButton(btnReload);
+            ConfigureToolbarButton(btnSearch, 118);
+            ConfigureToolbarButton(btnReload, 136);
 
             _searchLayout.TabIndex = 0;
             pnlSearch.Controls.Add(_searchLayout);
@@ -188,7 +190,9 @@ namespace SchoolSystem.UI
                 button.Font = new Font(UIHelper.FontFamily, 9F, FontStyle.Bold);
                 button.TextAlign = ContentAlignment.MiddleCenter;
                 button.Padding = new Padding(4, 0, 4, 0);
+                button.UseCompatibleTextRendering = true;
                 button.UseVisualStyleBackColor = false;
+                button.RightToLeft = RightToLeft.Yes;
                 pnlButtons.Controls.Add(button);
             }
 
@@ -204,6 +208,20 @@ namespace SchoolSystem.UI
 
             foreach (Button button in actionButtons)
                 UIHelper.StyleActionButton(button);
+
+            // StyleActionButton يرفع الخط ويطبع بعض التسميات العامة.
+            // نعيد التسميات النهائية هنا ثم نضبط الخط ديناميكيًا حسب العرض الفعلي.
+            btnClose.Text = "إغلاق";
+            btnStudentProfile.Text = "ملف الطالب";
+            btnPrint.Text = "طباعة البطاقة";
+            btnExportExcel.Text = "تصدير Excel";
+            btnCancel.Text = "إلغاء";
+            btnDelete.Text = "أرشفة";
+            btnUpdate.Text = "تعديل";
+            btnSave.Text = "حفظ";
+            btnAdd.Text = "إضافة طالب";
+
+            ResizeActionButtons();
 
             ConfigureInputLayout();
 
@@ -226,7 +244,7 @@ namespace SchoolSystem.UI
 
             tlpAddress.ColumnStyles.Clear();
             tlpAddress.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Absolute, 90F));
+                new ColumnStyle(SizeType.Absolute, 100F));
             tlpAddress.ColumnStyles.Add(
                 new ColumnStyle(SizeType.Percent, 100F));
             tlpAddress.RowStyles.Clear();
@@ -342,11 +360,11 @@ namespace SchoolSystem.UI
         {
             table.ColumnStyles.Clear();
             table.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Absolute, 92F));
+                new ColumnStyle(SizeType.Absolute, 106F));
             table.ColumnStyles.Add(
                 new ColumnStyle(SizeType.Percent, 50F));
             table.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Absolute, 92F));
+                new ColumnStyle(SizeType.Absolute, 106F));
             table.ColumnStyles.Add(
                 new ColumnStyle(SizeType.Percent, 50F));
 
@@ -365,29 +383,107 @@ namespace SchoolSystem.UI
                 return;
 
             int count = pnlButtons.Controls.Count;
-            int gaps = Math.Max(0, count - 1) * 6;
             int available =
                 pnlButtons.ClientSize.Width -
                 pnlButtons.Padding.Left -
                 pnlButtons.Padding.Right;
 
+            int totalMargins =
+                pnlButtons.Controls.Cast<Control>()
+                    .Sum(control =>
+                        control.Margin.Left +
+                        control.Margin.Right);
+
             int width =
                 Math.Max(
-                    88,
-                    (available - gaps) / count);
+                    82,
+                    (available - totalMargins) / count);
+
+            // قياس النص فعليًا ومن ثم خفض الخط قليلًا عند الحاجة؛
+            // هذا يمنع قص النص حتى مع العروض الصغيرة أو اختلاف مقياس Windows.
+            float fontSize = 9.5F;
+            while (fontSize > 8F)
+            {
+                Font candidateFont =
+                    new Font(
+                        UIHelper.FontFamily,
+                        fontSize,
+                        FontStyle.Bold);
+
+                bool allFit = true;
+
+                foreach (Control control in pnlButtons.Controls)
+                {
+                    Button button = control as Button;
+                    if (button == null)
+                        continue;
+
+                    Size measured =
+                        TextRenderer.MeasureText(
+                            button.Text ?? string.Empty,
+                            candidateFont);
+
+                    if (measured.Width + 12 > width)
+                    {
+                        allFit = false;
+                        break;
+                    }
+                }
+
+                candidateFont.Dispose();
+
+                if (allFit)
+                    break;
+
+                fontSize -= 0.25F;
+            }
+
+            Font finalFont =
+                new Font(
+                    UIHelper.FontFamily,
+                    fontSize,
+                    FontStyle.Bold);
 
             int height =
                 Math.Max(
-                    36,
+                    38,
                     pnlButtons.ClientSize.Height -
                     pnlButtons.Padding.Top -
                     pnlButtons.Padding.Bottom);
 
             foreach (Control control in pnlButtons.Controls)
             {
-                control.Width = width;
-                control.Height = height;
+                Button button = control as Button;
+                if (button == null)
+                    continue;
+
+                button.Width = width;
+                button.Height = height;
+                button.Font = finalFont;
+                button.TextAlign = ContentAlignment.MiddleCenter;
+                button.Padding = new Padding(3, 0, 3, 0);
+                button.UseCompatibleTextRendering = true;
+                button.RightToLeft = RightToLeft.Yes;
             }
+        }
+
+        private void ConfigureToolbarButton(Button button, int width)
+        {
+            if (button == null)
+                return;
+
+            button.AutoSize = false;
+            button.Width = width;
+            button.Height = 32;
+            button.Margin = new Padding(4, 1, 4, 1);
+            button.Font = new Font(
+                UIHelper.FontFamily,
+                9.25F,
+                FontStyle.Bold);
+            button.Padding = new Padding(3, 0, 3, 0);
+            button.TextAlign = ContentAlignment.MiddleCenter;
+            button.UseCompatibleTextRendering = true;
+            button.RightToLeft = RightToLeft.Yes;
         }
 
         private void GbPhoto_Resize(object sender, EventArgs e)
@@ -401,9 +497,9 @@ namespace SchoolSystem.UI
                 return;
 
             int contentWidth = gbPhoto.ClientSize.Width;
-            int buttonWidth = 64;
+            int buttonWidth = 72;
             int buttonHeight = 30;
-            int gap = 4;
+            int gap = 6;
 
             picStudent.Size = new Size(96, 96);
             picStudent.Anchor = AnchorStyles.None;
