@@ -5,7 +5,7 @@
       تنظيف قاعدة SchoolDB من كل البيانات التشغيلية/التجريبية مع الاحتفاظ
       فقط بالبيانات المرجعية/الإعدادية التي طلبها المستخدم.
 
-    الجداول المحتفظ بها:
+    الجداول المحتفظ بها فقط كبيانات مرجعية/تشغيلية لازمة:
       Subjects
       AcademicYears
       AcademicTerms
@@ -20,13 +20,20 @@
       SchoolSettings
       SchemaMigrations
 
-    كل جدول dbo آخر يُعتبر تشغيليًا ويُفرغ بالكامل.
-    بذلك تُحذف:
-      الطلاب وملفاتهم وتسجيلاتهم وتوزيعهم وحضورهم ودرجاتهم ونقلهم،
-      المعلمون وعقودهم ورواتبهم وحضورهم،
-      الرسوم وخطط الرسوم والسندات والإيصالات،
-      المصروفات والمكتبة والحافلات والجدول الدراسي،
-      الإغلاقات السنوية وسجلات الترحيل والتدقيق ونسخ قاعدة البيانات
+    ملاحظة مهمة:
+      Classes و SchoolSections لا تُحفظ هنا؛ لأن المطلوب هو بدء إدخال
+      بيانات المستخدم الفعلية من الصفر. يمكن إنشاء الصفوف والشعب من الواجهة
+      بعد التنظيف قبل إدخال الطلاب.
+
+    كل جدول dbo آخر يُعتبر بيانات تشغيلية/تجريبية ويُفرغ بالكامل.
+    يشمل ذلك صراحةً:
+      Students / StudentProfiles / Enrollments / StudentClasses
+      Teachers / TeacherContracts / TeacherAttendance / Payroll
+      Fees / FeePlans / Vouchers / Expenses
+      Marks / Grades / StudentAttendance
+      Library / Borrowings / Books circulation
+      Buses / Transport / Timetable
+      AuditLogs / Report history / AnnualClosing / migrations of data
       وأي جدول تشغيلي جديد أُضيف لاحقًا.
 
     مهم:
@@ -72,8 +79,7 @@ BEGIN TRY
         (N'dbo', N'SchoolSettings'),
         (N'dbo', N'SchemaMigrations');
 
-    /* فك أي ربط قديم للمواد بصفوف سيتم حذفها.
-       المواد نفسها تبقى مرجعية، لكن لا يجوز أن تحتفظ بمعرّف صف محذوف. */
+    /* المواد تبقى، لكن أي ارتباط تشغيلي قديم يجب ألا يبقى بعد التنظيف. */
     IF OBJECT_ID(N'dbo.Subjects', N'U') IS NOT NULL
        AND COL_LENGTH(N'dbo.Subjects', N'ClassID') IS NOT NULL
     BEGIN
@@ -85,7 +91,9 @@ BEGIN TRY
     DECLARE @schema SYSNAME;
     DECLARE @table SYSNAME;
 
-    /* تعطيل FK داخل جداول المستخدم مؤقتًا لضمان تنظيف شامل. */
+    /* تعطيل القيود مؤقتًا حتى يمكن تنظيف جميع البيانات التشغيلية
+       حتى لو كانت مترابطة بعلاقات FK متعددة. سيتم فحصها وإعادتها
+       إلى WITH CHECK CHECK قبل COMMIT. */
     DECLARE fk_disable_cursor CURSOR LOCAL FAST_FORWARD FOR
         SELECT SCHEMA_NAME(t.schema_id), t.name
         FROM sys.tables t
