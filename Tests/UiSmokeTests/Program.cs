@@ -116,6 +116,47 @@ namespace SchoolSystem.UiSmokeTests
             Console.WriteLine("[PASS] Source event wiring: " + checkedHandlers + " handlers checked");
         }
 
+        private static void ValidateTextFit(Control root)
+        {
+            foreach (Control control in GetAllControls(root))
+            {
+                Button button = control as Button;
+                if (button == null || !button.Visible || string.IsNullOrWhiteSpace(button.Text) || button.AutoSize)
+                    continue;
+
+                System.Drawing.Size measured = System.Windows.Forms.TextRenderer.MeasureText(
+                    button.Text,
+                    button.Font);
+
+                int requiredWidth = Math.Max(
+                    92,
+                    measured.Width + button.Padding.Horizontal + 12);
+
+                int requiredHeight = Math.Max(
+                    36,
+                    measured.Height + button.Padding.Vertical + 8);
+
+                if (button.Width < requiredWidth || button.Height < requiredHeight)
+                {
+                    throw new InvalidOperationException(
+                        "Button text may be clipped: " + button.Name +
+                        " (" + button.Width + "x" + button.Height +
+                        ", required " + requiredWidth + "x" + requiredHeight + ").");
+                }
+            }
+        }
+
+        private static IEnumerable<Control> GetAllControls(Control parent)
+        {
+            foreach (Control child in parent.Controls)
+            {
+                yield return child;
+
+                foreach (Control nested in GetAllControls(child))
+                    yield return nested;
+            }
+        }
+
         private static void ValidateStudentProfile(Control control)
         {
             if (!(control is SchoolSystem.UI.StudentProfileForm))
@@ -157,6 +198,11 @@ namespace SchoolSystem.UiSmokeTests
                 AssertControlText(control, "btnDelete", "حذف العقد");
                 AssertControlText(control, "btnClear", "تفريغ الحقول");
                 AssertControlText(control, "lblSearch", "بحث عن عقد:");
+
+                TextBox total = GetPrivateControl<TextBox>(control, "txtTotal");
+                TextBox net = GetPrivateControl<TextBox>(control, "txtNetSalary");
+                if (!total.ReadOnly || !net.ReadOnly || total.TabStop || net.TabStop)
+                    throw new InvalidOperationException("Calculated contract salary fields must be read-only.");
             }
             else if (control is SchoolSystem.UI.PayrollRecordsForm)
             {
@@ -321,6 +367,7 @@ namespace SchoolSystem.UiSmokeTests
                             throw new ObjectDisposedException(type.Name);
 
                         ValidateLayout(control);
+                        ValidateTextFit(control);
                         ValidatePayrollScreens(control);
                         ValidateStudentProfile(control);
                     }
