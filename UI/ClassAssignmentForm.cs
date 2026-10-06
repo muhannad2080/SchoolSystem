@@ -36,6 +36,10 @@ namespace SchoolSystem.UI.Students
             ApplyCustomStyles();
             this.Dock = DockStyle.Fill;
 
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             this.Load += ClassAssignmentForm_Load;
         }
 
@@ -59,6 +63,22 @@ namespace SchoolSystem.UI.Students
             listBoxUnassigned.ForeColor = UIHelper.TextColor;
             listBoxUnassigned.BorderStyle = BorderStyle.FixedSingle;
             lblStatus.ForeColor = UIHelper.MutedTextColor;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                (!DataRefreshNotifier.IsRelated(e, "Enrollment") &&
+                 !DataRefreshNotifier.IsRelated(e, "ClassAssignment") &&
+                 !DataRefreshNotifier.IsRelated(e, "Students")))
+            {
+                return;
+            }
+
+            await LoadDataAsync();
         }
 
         // تعريف الدالة ClassAssignmentForm_Load لتنفيذ العملية المرتبطة بها.
@@ -900,6 +920,10 @@ namespace SchoolSystem.UI.Students
                         cmbSection.Text);
 
                     await LoadDataAsync();
+
+                    DataRefreshNotifier.Notify("ClassAssignment", this);
+                    DataRefreshNotifier.Notify("Students", this);
+                    DataRefreshNotifier.Notify("Fees", this);
                 }
                 else
                 {
@@ -964,6 +988,10 @@ namespace SchoolSystem.UI.Students
                     " طالب بنجاح.");
 
                 await LoadDataAsync();
+
+                DataRefreshNotifier.Notify("ClassAssignment", this);
+                DataRefreshNotifier.Notify("Students", this);
+                DataRefreshNotifier.Notify("Fees", this);
             }
             catch (Exception ex)
             {
@@ -1099,6 +1127,10 @@ namespace SchoolSystem.UI.Students
                     targetSection);
 
                 await LoadDataAsync();
+
+                DataRefreshNotifier.Notify("ClassAssignment", this);
+                DataRefreshNotifier.Notify("Students", this);
+                DataRefreshNotifier.Notify("Fees", this);
             }
             catch (Exception ex)
             {
