@@ -70,6 +70,13 @@ namespace SchoolSystem.UI
             dataGridViewTeachers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewTeachers.MultiSelect = false;
             dataGridViewTeachers.ReadOnly = true;
+            dataGridViewTeachers.RowHeadersVisible = false;
+            dataGridViewTeachers.AllowUserToResizeRows = false;
+            dataGridViewTeachers.AllowUserToOrderColumns = true;
+            dataGridViewTeachers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewTeachers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+            dataGridViewTeachers.ColumnHeadersHeight = 40;
+            dataGridViewTeachers.RowTemplate.Height = 36;
         }
 
         // تعريف الدالة InitializeEvents لتنفيذ العملية المرتبطة بها.
@@ -179,20 +186,97 @@ namespace SchoolSystem.UI
 
             dataGridViewTeachers.DataSource = dv;
 
-            if (dataGridViewTeachers.Columns.Contains("TeacherID"))
-                dataGridViewTeachers.Columns["TeacherID"].Visible = false;
-            if (dataGridViewTeachers.Columns.Contains("EmployeeNumber"))
-                dataGridViewTeachers.Columns["EmployeeNumber"].HeaderText = "الرقم الوظيفي";
-            if (dataGridViewTeachers.Columns.Contains("FullName"))
-                dataGridViewTeachers.Columns["FullName"].HeaderText = "الاسم الكامل";
-            if (dataGridViewTeachers.Columns.Contains("Gender"))
-                dataGridViewTeachers.Columns["Gender"].HeaderText = "الجنس";
-            if (dataGridViewTeachers.Columns.Contains("Phone"))
-                dataGridViewTeachers.Columns["Phone"].HeaderText = "الهاتف";
-            if (dataGridViewTeachers.Columns.Contains("Specialization"))
-                dataGridViewTeachers.Columns["Specialization"].HeaderText = "التخصص";
-            if (dataGridViewTeachers.Columns.Contains("Status"))
-                dataGridViewTeachers.Columns["Status"].HeaderText = "الحالة";
+            ConfigureTeachersGridColumns();
+        }
+
+        // تنظيم جدول المعلمين ليكون جدولًا عمليًا شبيهًا بـExcel:
+        // عناوين عربية، ترتيب ثابت، فرز من العناوين، وأحجام واضحة.
+        private void ConfigureTeachersGridColumns()
+        {
+            if (dataGridViewTeachers.Columns.Count == 0)
+                return;
+
+            dataGridViewTeachers.RightToLeft = RightToLeft.Yes;
+            dataGridViewTeachers.AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewTeachers.AutoSizeRowsMode =
+                DataGridViewAutoSizeRowsMode.None;
+            dataGridViewTeachers.ColumnHeadersHeight = 40;
+            dataGridViewTeachers.RowTemplate.Height = 36;
+            dataGridViewTeachers.AllowUserToResizeColumns = true;
+            dataGridViewTeachers.AllowUserToResizeRows = false;
+            dataGridViewTeachers.AllowUserToOrderColumns = true;
+            dataGridViewTeachers.SelectionMode =
+                DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewTeachers.MultiSelect = false;
+            dataGridViewTeachers.ReadOnly = true;
+            dataGridViewTeachers.RowHeadersVisible = false;
+
+            ConfigureTeacherColumn("TeacherID", "المعرف", 0, 0, false, 60);
+            ConfigureTeacherColumn("EmployeeNumber", "الرقم الوظيفي", 1, 105, true, 95);
+            ConfigureTeacherColumn("FullName", "اسم المعلم", 2, 180, true, 150);
+            ConfigureTeacherColumn("Gender", "الجنس", 3, 75, true, 65);
+            ConfigureTeacherColumn("BirthDate", "تاريخ الميلاد", 4, 105, true, 95);
+            ConfigureTeacherColumn("BirthPlace", "مكان الميلاد", 5, 110, true, 90);
+            ConfigureTeacherColumn("Nationality", "الجنسية", 6, 90, true, 75);
+            ConfigureTeacherColumn("NationalID", "رقم الهوية", 7, 115, true, 100);
+            ConfigureTeacherColumn("Phone", "الهاتف", 8, 110, true, 95);
+            ConfigureTeacherColumn("Email", "البريد الإلكتروني", 9, 150, true, 120);
+            ConfigureTeacherColumn("Address", "العنوان", 10, 150, true, 120);
+            ConfigureTeacherColumn("Qualification", "المؤهل العلمي", 11, 120, true, 105);
+            ConfigureTeacherColumn("Specialization", "التخصص", 12, 120, true, 105);
+            ConfigureTeacherColumn("HireDate", "تاريخ التعيين", 13, 105, true, 95);
+            ConfigureTeacherColumn("BasicSalary", "الراتب الأساسي", 14, 115, true, 100);
+            ConfigureTeacherColumn("TransportAllowance", "بدل النقل", 15, 105, true, 95);
+            ConfigureTeacherColumn("HousingAllowance", "بدل السكن", 16, 105, true, 95);
+            ConfigureTeacherColumn("Status", "الحالة الوظيفية", 17, 110, true, 95);
+            ConfigureTeacherColumn("Notes", "ملاحظات", 18, 180, true, 120);
+            ConfigureTeacherColumn("CreatedAt", "تاريخ الإنشاء", 19, 105, false, 95);
+
+            FormatTeacherGridCell("BirthDate", "dd/MM/yyyy");
+            FormatTeacherGridCell("HireDate", "dd/MM/yyyy");
+            FormatTeacherGridCell("BasicSalary", "N2");
+            FormatTeacherGridCell("TransportAllowance", "N2");
+            FormatTeacherGridCell("HousingAllowance", "N2");
+
+            dataGridViewTeachers.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleRight;
+            dataGridViewTeachers.ColumnHeadersDefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+        }
+
+        private void ConfigureTeacherColumn(
+            string name,
+            string header,
+            int displayIndex,
+            float fillWeight,
+            bool visible,
+            int minimumWidth)
+        {
+            if (!dataGridViewTeachers.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column =
+                dataGridViewTeachers.Columns[name];
+
+            column.HeaderText = header;
+            column.Visible = visible;
+            column.DisplayIndex = displayIndex;
+            column.FillWeight = Math.Max(1F, fillWeight);
+            column.MinimumWidth = minimumWidth;
+            column.SortMode =
+                DataGridViewColumnSortMode.Automatic;
+        }
+
+        private void FormatTeacherGridCell(
+            string name,
+            string format)
+        {
+            if (!dataGridViewTeachers.Columns.Contains(name))
+                return;
+
+            dataGridViewTeachers.Columns[name]
+                .DefaultCellStyle.Format = format;
         }
 
         // تعريف الدالة ValidateInputs لتنفيذ العملية المرتبطة بها.
