@@ -98,6 +98,27 @@ BEGIN
         ALTER TABLE dbo.SchoolSections ADD AllowedGender NVARCHAR(20) NULL;
 END;
 
+
+/* FeeTypes lookup table for dynamic fee screens. */
+IF OBJECT_ID(N'dbo.FeeTypes', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.FeeTypes
+    (
+        FeeTypeID INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_FeeTypes_Startup PRIMARY KEY,
+        FeeTypeCode NVARCHAR(30) NOT NULL,
+        FeeTypeName NVARCHAR(100) NOT NULL,
+        IsTotal BIT NOT NULL CONSTRAINT DF_FeeTypes_Startup_IsTotal DEFAULT (0),
+        IsRequiredDefault BIT NOT NULL CONSTRAINT DF_FeeTypes_Startup_IsRequiredDefault DEFAULT (1),
+        DistributionWeight DECIMAL(9,4) NOT NULL CONSTRAINT DF_FeeTypes_Startup_DistributionWeight DEFAULT (1),
+        SortOrder INT NOT NULL CONSTRAINT DF_FeeTypes_Startup_SortOrder DEFAULT (100),
+        IsActive BIT NOT NULL CONSTRAINT DF_FeeTypes_Startup_IsActive DEFAULT (1),
+        Notes NVARCHAR(500) NULL,
+        CreatedAt DATETIME2(0) NOT NULL CONSTRAINT DF_FeeTypes_Startup_CreatedAt DEFAULT SYSUTCDATETIME(),
+        UpdatedAt DATETIME2(0) NULL,
+        CONSTRAINT UQ_FeeTypes_Startup_Code UNIQUE (FeeTypeCode),
+        CONSTRAINT UQ_FeeTypes_Startup_Name UNIQUE (FeeTypeName)
+    );
+END;
 COMMIT TRANSACTION;";
         }
     }
