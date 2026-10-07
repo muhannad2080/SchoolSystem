@@ -129,7 +129,7 @@ namespace SchoolSystem.UI
             // txtEnrollmentID
             // 
             this.txtEnrollmentID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtEnrollmentID.Location = new System.Drawing.Point(-18, 3);
+            this.txtEnrollmentID.Location = new System.Drawing.Point(3, 3);
             this.txtEnrollmentID.Name = "txtEnrollmentID";
             this.txtEnrollmentID.ReadOnly = true;
             this.txtEnrollmentID.Size = new System.Drawing.Size(372, 26);
@@ -149,7 +149,7 @@ namespace SchoolSystem.UI
             // cmbStudentID
             // 
             this.cmbStudentID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmbStudentID.Location = new System.Drawing.Point(-18, 34);
+            this.cmbStudentID.Location = new System.Drawing.Point(3, 34);
             this.cmbStudentID.Name = "cmbStudentID";
             this.cmbStudentID.Size = new System.Drawing.Size(372, 26);
             this.cmbStudentID.TabIndex = 3;
@@ -169,7 +169,7 @@ namespace SchoolSystem.UI
             // txtStudentName
             // 
             this.txtStudentName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtStudentName.Location = new System.Drawing.Point(-18, 65);
+            this.txtStudentName.Location = new System.Drawing.Point(3, 65);
             this.txtStudentName.Name = "txtStudentName";
             this.txtStudentName.ReadOnly = true;
             this.txtStudentName.Size = new System.Drawing.Size(372, 26);
@@ -190,7 +190,7 @@ namespace SchoolSystem.UI
             // 
             this.dtpApplicationDate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.dtpApplicationDate.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpApplicationDate.Location = new System.Drawing.Point(-18, 96);
+            this.dtpApplicationDate.Location = new System.Drawing.Point(3, 96);
             this.dtpApplicationDate.Name = "dtpApplicationDate";
             this.dtpApplicationDate.Size = new System.Drawing.Size(372, 26);
             this.dtpApplicationDate.TabIndex = 7;
@@ -211,7 +211,7 @@ namespace SchoolSystem.UI
             this.cmbApplicationType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbApplicationType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbApplicationType.FormattingEnabled = true;
-            this.cmbApplicationType.Location = new System.Drawing.Point(-18, 127);
+            this.cmbApplicationType.Location = new System.Drawing.Point(3, 127);
             this.cmbApplicationType.Name = "cmbApplicationType";
             this.cmbApplicationType.Size = new System.Drawing.Size(372, 26);
             this.cmbApplicationType.TabIndex = 9;
@@ -230,7 +230,7 @@ namespace SchoolSystem.UI
             // txtAcademicYear
             // 
             this.txtAcademicYear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtAcademicYear.Location = new System.Drawing.Point(-18, 158);
+            this.txtAcademicYear.Location = new System.Drawing.Point(3, 158);
             this.txtAcademicYear.Name = "txtAcademicYear";
             this.txtAcademicYear.Size = new System.Drawing.Size(372, 26);
             this.txtAcademicYear.TabIndex = 11;
@@ -251,7 +251,7 @@ namespace SchoolSystem.UI
             this.cmbClassID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbClassID.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbClassID.FormattingEnabled = true;
-            this.cmbClassID.Location = new System.Drawing.Point(-18, 189);
+            this.cmbClassID.Location = new System.Drawing.Point(3, 189);
             this.cmbClassID.Name = "cmbClassID";
             this.cmbClassID.Size = new System.Drawing.Size(372, 26);
             this.cmbClassID.TabIndex = 13;
@@ -273,7 +273,7 @@ namespace SchoolSystem.UI
             this.txtSection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.txtSection.FormattingEnabled = true;
-            this.txtSection.Location = new System.Drawing.Point(-18, 220);
+            this.txtSection.Location = new System.Drawing.Point(3, 220);
             this.txtSection.Name = "txtSection";
             this.txtSection.Size = new System.Drawing.Size(372, 26);
             this.txtSection.TabIndex = 15;
@@ -292,7 +292,7 @@ namespace SchoolSystem.UI
             // txtSeatNumber
             // 
             this.txtSeatNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSeatNumber.Location = new System.Drawing.Point(-18, 251);
+            this.txtSeatNumber.Location = new System.Drawing.Point(3, 251);
             this.txtSeatNumber.Name = "txtSeatNumber";
             this.txtSeatNumber.Size = new System.Drawing.Size(372, 26);
             this.txtSeatNumber.TabIndex = 17;
@@ -313,7 +313,7 @@ namespace SchoolSystem.UI
             this.cmbStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbStatus.FormattingEnabled = true;
-            this.cmbStatus.Location = new System.Drawing.Point(-18, 282);
+            this.cmbStatus.Location = new System.Drawing.Point(3, 282);
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.Size = new System.Drawing.Size(372, 26);
             this.cmbStatus.TabIndex = 19;
@@ -332,7 +332,7 @@ namespace SchoolSystem.UI
             // txtPreviousSchool
             // 
             this.txtPreviousSchool.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPreviousSchool.Location = new System.Drawing.Point(-18, 3);
+            this.txtPreviousSchool.Location = new System.Drawing.Point(3, 3);
             this.txtPreviousSchool.Name = "txtPreviousSchool";
             this.txtPreviousSchool.Size = new System.Drawing.Size(372, 26);
             this.txtPreviousSchool.TabIndex = 1;
@@ -351,7 +351,7 @@ namespace SchoolSystem.UI
             // txtPreviousClass
             // 
             this.txtPreviousClass.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPreviousClass.Location = new System.Drawing.Point(-18, 34);
+            this.txtPreviousClass.Location = new System.Drawing.Point(3, 34);
             this.txtPreviousClass.Name = "txtPreviousClass";
             this.txtPreviousClass.Size = new System.Drawing.Size(372, 26);
             this.txtPreviousClass.TabIndex = 3;
@@ -370,7 +370,7 @@ namespace SchoolSystem.UI
             // txtTransferReason
             // 
             this.txtTransferReason.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtTransferReason.Location = new System.Drawing.Point(-18, 66);
+            this.txtTransferReason.Location = new System.Drawing.Point(3, 66);
             this.txtTransferReason.Name = "txtTransferReason";
             this.txtTransferReason.Size = new System.Drawing.Size(372, 26);
             this.txtTransferReason.TabIndex = 5;
@@ -389,7 +389,7 @@ namespace SchoolSystem.UI
             // txtRegistrationFee
             // 
             this.txtRegistrationFee.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtRegistrationFee.Location = new System.Drawing.Point(-18, 3);
+            this.txtRegistrationFee.Location = new System.Drawing.Point(3, 3);
             this.txtRegistrationFee.Name = "txtRegistrationFee";
             this.txtRegistrationFee.Size = new System.Drawing.Size(372, 26);
             this.txtRegistrationFee.TabIndex = 1;
@@ -409,7 +409,7 @@ namespace SchoolSystem.UI
             // txtPaidAmount
             // 
             this.txtPaidAmount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtPaidAmount.Location = new System.Drawing.Point(-18, 34);
+            this.txtPaidAmount.Location = new System.Drawing.Point(3, 34);
             this.txtPaidAmount.Name = "txtPaidAmount";
             this.txtPaidAmount.Size = new System.Drawing.Size(372, 26);
             this.txtPaidAmount.TabIndex = 3;
@@ -429,7 +429,7 @@ namespace SchoolSystem.UI
             // txtRemainingAmount
             // 
             this.txtRemainingAmount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtRemainingAmount.Location = new System.Drawing.Point(-18, 65);
+            this.txtRemainingAmount.Location = new System.Drawing.Point(3, 65);
             this.txtRemainingAmount.Name = "txtRemainingAmount";
             this.txtRemainingAmount.ReadOnly = true;
             this.txtRemainingAmount.Size = new System.Drawing.Size(372, 26);
@@ -451,7 +451,7 @@ namespace SchoolSystem.UI
             this.cmbPaymentMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbPaymentMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPaymentMethod.FormattingEnabled = true;
-            this.cmbPaymentMethod.Location = new System.Drawing.Point(-18, 96);
+            this.cmbPaymentMethod.Location = new System.Drawing.Point(3, 96);
             this.cmbPaymentMethod.Name = "cmbPaymentMethod";
             this.cmbPaymentMethod.Size = new System.Drawing.Size(372, 26);
             this.cmbPaymentMethod.TabIndex = 7;
@@ -470,7 +470,7 @@ namespace SchoolSystem.UI
             // txtReceiptNo
             // 
             this.txtReceiptNo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtReceiptNo.Location = new System.Drawing.Point(-18, 142);
+            this.txtReceiptNo.Location = new System.Drawing.Point(3, 142);
             this.txtReceiptNo.Name = "txtReceiptNo";
             this.txtReceiptNo.ReadOnly = true;
             this.txtReceiptNo.Size = new System.Drawing.Size(372, 26);
@@ -554,7 +554,7 @@ namespace SchoolSystem.UI
             // 
             this.tlpBasic.ColumnCount = 2;
             this.tlpBasic.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 108F));
-            this.tlpBasic.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 378F));
+            this.tlpBasic.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpBasic.Controls.Add(this.lblEnrollmentID, 0, 0);
             this.tlpBasic.Controls.Add(this.txtEnrollmentID, 1, 0);
             this.tlpBasic.Controls.Add(this.lblStudentID, 0, 1);
@@ -612,7 +612,7 @@ namespace SchoolSystem.UI
             // 
             this.tlpPrevious.ColumnCount = 2;
             this.tlpPrevious.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 108F));
-            this.tlpPrevious.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 378F));
+            this.tlpPrevious.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpPrevious.Controls.Add(this.lblPreviousSchool, 0, 0);
             this.tlpPrevious.Controls.Add(this.txtPreviousSchool, 1, 0);
             this.tlpPrevious.Controls.Add(this.lblPreviousClass, 0, 1);
@@ -649,7 +649,7 @@ namespace SchoolSystem.UI
             // 
             this.tlpFees.ColumnCount = 2;
             this.tlpFees.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 108F));
-            this.tlpFees.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 378F));
+            this.tlpFees.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpFees.Controls.Add(this.lblRegistrationFee, 0, 0);
             this.tlpFees.Controls.Add(this.txtRegistrationFee, 1, 0);
             this.tlpFees.Controls.Add(this.lblPaidAmount, 0, 1);
@@ -952,7 +952,7 @@ namespace SchoolSystem.UI
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(14, 12);
+            this.btnClose.Location = new System.Drawing.Point(1041, 12);
             this.btnClose.Margin = new System.Windows.Forms.Padding(4);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(145, 40);
@@ -970,7 +970,7 @@ namespace SchoolSystem.UI
             // 
             // btnExportExcel
             // 
-            this.btnExportExcel.Location = new System.Drawing.Point(142, 12);
+            this.btnExportExcel.Location = new System.Drawing.Point(888, 12);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(4);
             this.btnExportExcel.Name = "btnExportExcel";
             this.btnExportExcel.Size = new System.Drawing.Size(145, 40);
@@ -987,7 +987,7 @@ namespace SchoolSystem.UI
             // 
             // btnExportPdf
             // 
-            this.btnExportPdf.Location = new System.Drawing.Point(285, 12);
+            this.btnExportPdf.Location = new System.Drawing.Point(735, 12);
             this.btnExportPdf.Margin = new System.Windows.Forms.Padding(4);
             this.btnExportPdf.Name = "btnExportPdf";
             this.btnExportPdf.Size = new System.Drawing.Size(145, 40);
@@ -1004,7 +1004,7 @@ namespace SchoolSystem.UI
             // 
             // btnPreviewOutput
             // 
-            this.btnPreviewOutput.Location = new System.Drawing.Point(418, 12);
+            this.btnPreviewOutput.Location = new System.Drawing.Point(582, 12);
             this.btnPreviewOutput.Margin = new System.Windows.Forms.Padding(4);
             this.btnPreviewOutput.Name = "btnPreviewOutput";
             this.btnPreviewOutput.Size = new System.Drawing.Size(145, 40);
@@ -1022,7 +1022,7 @@ namespace SchoolSystem.UI
             // 
             // btnPrintReceipt
             // 
-            this.btnPrintReceipt.Location = new System.Drawing.Point(561, 12);
+            this.btnPrintReceipt.Location = new System.Drawing.Point(429, 12);
             this.btnPrintReceipt.Margin = new System.Windows.Forms.Padding(4);
             this.btnPrintReceipt.Name = "btnPrintReceipt";
             this.btnPrintReceipt.Size = new System.Drawing.Size(145, 40);
@@ -1040,7 +1040,7 @@ namespace SchoolSystem.UI
             // 
             // btnPrintForm
             // 
-            this.btnPrintForm.Location = new System.Drawing.Point(694, 12);
+            this.btnPrintForm.Location = new System.Drawing.Point(276, 12);
             this.btnPrintForm.Margin = new System.Windows.Forms.Padding(4);
             this.btnPrintForm.Name = "btnPrintForm";
             this.btnPrintForm.Size = new System.Drawing.Size(145, 40);
@@ -1058,7 +1058,7 @@ namespace SchoolSystem.UI
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(857, 12);
+            this.btnRefresh.Location = new System.Drawing.Point(123, 12);
             this.btnRefresh.Margin = new System.Windows.Forms.Padding(4);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(145, 40);
@@ -1076,7 +1076,7 @@ namespace SchoolSystem.UI
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(985, 12);
+            this.btnCancel.Location = new System.Drawing.Point(1041, 60);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(145, 40);
@@ -1094,7 +1094,7 @@ namespace SchoolSystem.UI
             // 
             // btnDelete
             // 
-            this.btnDelete.Location = new System.Drawing.Point(14, 60);
+            this.btnDelete.Location = new System.Drawing.Point(888, 60);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(4);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(145, 40);
@@ -1112,7 +1112,7 @@ namespace SchoolSystem.UI
             // 
             // btnUpdate
             // 
-            this.btnUpdate.Location = new System.Drawing.Point(137, 60);
+            this.btnUpdate.Location = new System.Drawing.Point(735, 60);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(4);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(145, 40);
@@ -1130,7 +1130,7 @@ namespace SchoolSystem.UI
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(265, 60);
+            this.btnSave.Location = new System.Drawing.Point(582, 60);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(145, 40);
@@ -1148,7 +1148,7 @@ namespace SchoolSystem.UI
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(393, 60);
+            this.btnAdd.Location = new System.Drawing.Point(429, 60);
             this.btnAdd.Margin = new System.Windows.Forms.Padding(4);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(145, 40);
