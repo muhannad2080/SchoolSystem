@@ -267,12 +267,7 @@ namespace SchoolSystem.UiSmokeTests
             if (parts.Length != 2)
                 throw new InvalidOperationException("Dual date format must expose two calendar values.");
 
-            int hijriIndex = dual.IndexOf("هـ", StringComparison.Ordinal);
-            string hijri = dual.Substring(
-                dual.LastIndexOf(" ", hijriIndex, hijriIndex + 1) + 1)
-                .Trim();
-
-            // Use the helper's accepted explicit Hijri form for a real round-trip test.
+            // Use the helper's accepted Hijri form for a real round-trip test.
             string hijriValue = new string(
                 dual
                     .Substring(
