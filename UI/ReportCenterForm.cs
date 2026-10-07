@@ -1112,6 +1112,8 @@ namespace SchoolSystem.UI
                 SchoolSettings branding = SchoolSettingsService.Current();
                 sw.WriteLine(EscapeCsv(ReportOutputHelper.GetSchoolName(branding)));
                 sw.WriteLine(EscapeCsv(ReportOutputHelper.GetOrganizationLine(branding)));
+                sw.WriteLine(EscapeCsv("تاريخ الإنشاء: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm")));
+                sw.WriteLine(EscapeCsv("المستخدم المنفذ: " + ReportOutputHelper.GetCurrentOperatorDisplayName()));
 
                 for (int i = 0; i < dt.Columns.Count; i++)
                 {
