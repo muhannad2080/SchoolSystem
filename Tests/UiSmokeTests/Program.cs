@@ -474,12 +474,13 @@ namespace SchoolSystem.UiSmokeTests
             {
                 ValidateDesignerGeometry();
                 ValidateButtonFlowContainers();
+                ValidateSourceWiring();
                 passed++;
             }
             catch (Exception ex)
             {
                 failed++;
-                Console.WriteLine("[FAIL] Source event wiring: " + ex.Message);
+                Console.WriteLine("[FAIL] Source/UI wiring audit: " + ex.Message);
             }
 
             foreach (Type type in screenTypes)
