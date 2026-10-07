@@ -76,7 +76,7 @@ namespace SchoolSystem.UiSmokeTests
 
                 MatchCollection negativeLocations = Regex.Matches(
                     source,
-                    @"Location\s*=\s*new\s+(?:System\.)?Drawing\.Point\(\s*(-\d+)\s*,\s*(-?\d+)\s*\)");
+                    @"Location\s*=\s*new\s+(?:(?:System\.)?Drawing\.)?Point\(\s*(-\d+)\s*,\s*(-?\d+)\s*\)");
 
                 if (negativeLocations.Count > 0)
                 {
@@ -90,11 +90,18 @@ namespace SchoolSystem.UiSmokeTests
 
                 Match client = Regex.Match(
                     source,
-                    @"this\.ClientSize\s*=\s*new\s+(?:System\.)?Drawing\.Size\(\s*(\d+)\s*,\s*(\d+)\s*\)");
+                    @"this\.ClientSize\s*=\s*new\s+(?:(?:System\.)?Drawing\.)?Size\(\s*(\d+)\s*,\s*(\d+)\s*\)");
+
+                if (!client.Success)
+                {
+                    client = Regex.Match(
+                        source,
+                        @"this\.Size\s*=\s*new\s+(?:(?:System\.)?Drawing\.)?Size\(\s*(\d+)\s*,\s*(\d+)\s*\)");
+                }
 
                 Match minimum = Regex.Match(
                     source,
-                    @"this\.MinimumSize\s*=\s*new\s+(?:System\.)?Drawing\.Size\(\s*(\d+)\s*,\s*(\d+)\s*\)");
+                    @"this\.MinimumSize\s*=\s*new\s+(?:(?:System\.)?Drawing\.)?Size\(\s*(\d+)\s*,\s*(\d+)\s*\)");
 
                 if (client.Success && minimum.Success)
                 {
@@ -106,7 +113,7 @@ namespace SchoolSystem.UiSmokeTests
                     if (minimumWidth > clientWidth || minimumHeight > clientHeight)
                     {
                         throw new InvalidOperationException(
-                            "MinimumSize exceeds ClientSize in " +
+                            "MinimumSize exceeds base form size in " +
                             Path.GetFileName(designerPath) + ".");
                     }
                 }
