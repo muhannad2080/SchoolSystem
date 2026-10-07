@@ -82,6 +82,9 @@ namespace SchoolSystem
             lblSystemTitle.Text =
                 "نظام إدارة المدرسة";
 
+            lblSystemTitle.Visible =
+                true;
+
             lblSystemSubtitle.Visible =
                 true;
 
