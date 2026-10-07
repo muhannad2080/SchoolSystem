@@ -356,8 +356,14 @@ namespace SchoolSystem
             var welcome =
                 new WelcomeScreen();
 
+            SchoolSettings branding = SchoolSettingsService.Current();
+            string schoolName =
+                branding != null && !string.IsNullOrWhiteSpace(branding.SchoolNameAr)
+                    ? branding.SchoolNameAr.Trim()
+                    : "نظام إدارة المدرسة";
+
             welcome.SystemName =
-                "أهلاً بك في نظام إدارة المدرسة";
+                "أهلاً بك في " + schoolName;
 
             welcome.Dock =
                 DockStyle.Fill;
