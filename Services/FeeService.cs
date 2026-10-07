@@ -170,6 +170,7 @@ namespace SchoolSystem.Services
             DataTable result = feeRepository.RefundPayment(
                 feeId,
                 refundAmount,
+                paymentDate.Date,
                 notes == null ? string.Empty : notes.Trim());
 
             if (result.Rows.Count == 0)
