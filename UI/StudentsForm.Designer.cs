@@ -792,9 +792,9 @@
             // btnSearch
             // 
             this.btnSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSearch.Location = new System.Drawing.Point(918, 13);
+            this.btnSearch.Location = new System.Drawing.Point(896, 13);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(110, 40);
+            this.btnSearch.Size = new System.Drawing.Size(118, 40);
             this.btnSearch.TabIndex = 3;
             this.btnSearch.Text = "مسح الفلاتر";
             this.btnSearch.UseVisualStyleBackColor = true;
