@@ -5,6 +5,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using SchoolSystem.UI;
 using SchoolSystem.Helpers;
+using SchoolSystem.Models;
+using SchoolSystem.Services;
 using SchoolSystem.Security;
 
 
@@ -26,6 +28,7 @@ namespace SchoolSystem.UI
 
             InitializeComponent();
             LoadWelcomeBackground();
+            ConfigureSchoolIdentity();
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             this.Dock = DockStyle.Fill;
@@ -33,6 +36,33 @@ namespace SchoolSystem.UI
             ApplyPermissionVisibility();
         }
 
+
+        private void ConfigureSchoolIdentity()
+        {
+            SchoolSettings settings = SchoolSettingsService.Current();
+            if (settings == null)
+                return;
+
+            string schoolName =
+                !string.IsNullOrWhiteSpace(settings.SchoolNameAr)
+                    ? settings.SchoolNameAr.Trim()
+                    : settings.SchoolNameEn;
+
+            if (!string.IsNullOrWhiteSpace(schoolName))
+                lblSystemName.Text = schoolName;
+
+            var parts = new System.Collections.Generic.List<string>();
+            if (!string.IsNullOrWhiteSpace(settings.OrganizationNameAr))
+                parts.Add(settings.OrganizationNameAr.Trim());
+            if (!string.IsNullOrWhiteSpace(settings.AddressAr))
+                parts.Add(settings.AddressAr.Trim());
+            if (!string.IsNullOrWhiteSpace(settings.Phone))
+                parts.Add("هاتف: " + settings.Phone.Trim());
+
+            lblTagline.Text = parts.Count == 0
+                ? "بوابة التشغيل اليومية لإدارة المدرسة"
+                : string.Join("   •   ", parts);
+        }
 
         private void LoadWelcomeBackground()
         {
