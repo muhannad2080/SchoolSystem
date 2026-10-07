@@ -462,8 +462,8 @@ namespace SchoolSystem.UI
                     "تم حفظ الصلاحيات بنجاح للمستخدم {0}. عدد الصلاحيات: {1}",
                     userNameBeforeReload,
                     // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                    PermissionKeys.GetScreenKeysFromPermissions(effective).Count));
-                ApplicationLogger.LogUsage("شاشة المستخدمين", "حفظ الصلاحيات", "تم حفظ صلاحيات الشاشات بنجاح للمستخدم " + userNameBeforeReload);
+                    effective.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Length));
+                ApplicationLogger.LogUsage("شاشة المستخدمين", "حفظ الصلاحيات", "تم حفظ الصلاحيات بنجاح للمستخدم " + userNameBeforeReload);
 
                 permissionsUserModified = false;
                 DataRefreshNotifier.Notify("Permissions", this);
@@ -908,7 +908,7 @@ namespace SchoolSystem.UI
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             btnSavePermissions.Enabled = canEditSelectedPermissions;
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            btnReloadPermissions.Enabled = canManage;
+            btnReloadPermissions.Enabled = canView;
             btnCloseForm.Enabled = true;
 
             if (selectedSystemAdministrator && lblPermissionHeader != null)
