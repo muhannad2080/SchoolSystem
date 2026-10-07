@@ -204,18 +204,11 @@ namespace SchoolSystem.UI
             foreach (DataRow row in permissions.Rows)
             {
                 string permissionKey = Convert.ToString(row["PermissionKey"]).Trim();
-                if (!PermissionKeys.IsScreenPermission(permissionKey))
+                string normalizedKey = PermissionKeys.NormalizePermissionKey(permissionKey);
+                if (string.IsNullOrWhiteSpace(normalizedKey))
                     continue;
 
-                string displayName = row["DisplayName"] == DBNull.Value
-                    ? string.Empty
-                    : Convert.ToString(row["DisplayName"]).Trim();
-
-                AddPermission(
-                    permissionKey,
-                    string.IsNullOrWhiteSpace(displayName)
-                        ? PermissionKeys.GetDisplayName(permissionKey)
-                        : displayName);
+                AddPermission(normalizedKey, PermissionKeys.GetDisplayName(normalizedKey));
             }
 
             ApplyRolePreset();
@@ -466,7 +459,7 @@ namespace SchoolSystem.UI
                 await LoadUsersAsync();
 
                 ShowInfo(string.Format(
-                    "تم حفظ صلاحيات الشاشات بنجاح للمستخدم {0}. عدد الشاشات: {1}",
+                    "تم حفظ الصلاحيات بنجاح للمستخدم {0}. عدد الصلاحيات: {1}",
                     userNameBeforeReload,
                     // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                     PermissionKeys.GetScreenKeysFromPermissions(effective).Count));
@@ -562,12 +555,22 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            List<string> screens = userService.GetRoleScreenPermissions(normalizedRole);
+            List<string> permissions = userService.GetRoleScreenPermissions(normalizedRole);
+            if (permissions.Count == 0)
+            {
+                lblRoleScreens.Text = "صلاحيات الدور من قاعدة البيانات: لا توجد";
+                return;
+            }
 
-            lblRoleScreens.Text = screens.Count == 0
-                ? "صلاحيات الدور من قاعدة البيانات: لا توجد"
-                : "صلاحيات الدور من قاعدة البيانات: " + string.Join("، ",
-                    screens.Select(key => PermissionKeys.GetDisplayName(key)));
+            List<string> preview = permissions.Take(8)
+                .Select(key => PermissionKeys.GetDisplayName(key))
+                .ToList();
+
+            lblRoleScreens.Text = string.Format(
+                "صلاحيات الدور من قاعدة البيانات: {0} صلاحية — {1}{2}",
+                permissions.Count,
+                string.Join("، ", preview),
+                permissions.Count > preview.Count ? "، ..." : string.Empty);
         }
 
         // تعريف الدالة ApplyRolePreset لتنفيذ العملية المرتبطة بها.
@@ -629,7 +632,7 @@ namespace SchoolSystem.UI
 
             if (selectedSystemAdministrator)
             {
-                UIHelper.ShowInformation("حساب مدير النظام محمي وتُمنح له جميع صلاحيات الشاشات تلقائياً. لا يمكن تعديل صلاحياته من الواجهة.");
+                UIHelper.ShowInformation("حساب مدير النظام محمي وتُمنح له كامل الصلاحيات تلقائياً. لا يمكن تعديل صلاحياته من الواجهة.");
 
                 return false;
             }
@@ -667,7 +670,7 @@ namespace SchoolSystem.UI
 
 
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            string normalizedKey = PermissionKeys.ToScreenPermission(permissionKey);
+            string normalizedKey = PermissionKeys.NormalizePermissionKey(permissionKey);
             if (string.IsNullOrWhiteSpace(normalizedKey))
                 return;
 
@@ -724,7 +727,7 @@ namespace SchoolSystem.UI
 
                 // تجهيز قيمة كلمة المرور لمسار التحقق والحماية.
                 HashSet<string> selectedKeys = new HashSet<string>(
-                    parts.Select(part => PermissionKeys.ToScreenPermission(part.Trim()))
+                    parts.Select(part => PermissionKeys.NormalizePermissionKey(part.Trim()))
                          .Where(key => !string.IsNullOrWhiteSpace(key)),
                     StringComparer.OrdinalIgnoreCase);
 
@@ -882,14 +885,14 @@ namespace SchoolSystem.UI
         private void ApplyPermissionUiState()
         {
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            bool canManage = CurrentUser.CanAccessModule("Users");
-            bool canView = canManage;
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            bool canEditSelectedPermissions = canManage && !selectedSystemAdministrator;
+            bool canView = CurrentUser.HasPermission(PermissionKeys.UsersView)
+                || CurrentUser.HasPermission(PermissionKeys.UsersManage);
+            bool canEditSelectedPermissions =
+                CanManagePermissions() && !selectedSystemAdministrator;
 
-            btnAdd.Enabled = canManage;
-            btnUpdate.Enabled = canManage;
-            btnDelete.Enabled = canManage && !selectedSystemAdministrator;
+            btnAdd.Enabled = CurrentUser.CanAdd("Users");
+            btnUpdate.Enabled = CurrentUser.CanEdit("Users");
+            btnDelete.Enabled = CurrentUser.CanDelete("Users") && !selectedSystemAdministrator;
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             cmbRole.Enabled = canEditSelectedPermissions;
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
@@ -916,9 +919,9 @@ namespace SchoolSystem.UI
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 groupBoxPermissions.Enabled = canView;
 
-            btnAdd.AccessibleDescription = canManage ? "إضافة مستخدم" : "لا توجد صلاحية إدارة المستخدمين";
-            btnUpdate.AccessibleDescription = canManage ? "تعديل مستخدم" : "لا توجد صلاحية إدارة المستخدمين";
-            btnDelete.AccessibleDescription = canManage ? "حذف مستخدم" : "لا توجد صلاحية إدارة المستخدمين";
+            btnAdd.AccessibleDescription = CurrentUser.CanAdd("Users") ? "إضافة مستخدم" : "لا توجد صلاحية إضافة المستخدمين";
+            btnUpdate.AccessibleDescription = CurrentUser.CanEdit("Users") ? "تعديل مستخدم" : "لا توجد صلاحية تعديل المستخدمين";
+            btnDelete.AccessibleDescription = CurrentUser.CanDelete("Users") ? "حذف مستخدم" : "لا توجد صلاحية حذف المستخدمين";
         }
 
         // تعريف الدالة btnAdd_Click لتنفيذ العملية المرتبطة بها.
@@ -1101,7 +1104,7 @@ namespace SchoolSystem.UI
             selectedSystemAdministrator = PermissionKeys.IsSystemAdministratorRole(roleName);
             if (selectedSystemAdministrator)
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                permissions = PermissionKeys.Serialize(PermissionKeys.ScreenPermissions);
+                permissions = PermissionKeys.Serialize(PermissionKeys.All);
 
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             SetPermissionsFromString(permissions);
