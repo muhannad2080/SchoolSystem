@@ -230,37 +230,44 @@ namespace SchoolSystem.Helpers
             // تعريف الدالة OnEndPage لتنفيذ العملية المرتبطة بها.
             public override void OnEndPage(PdfWriter writer, Document document)
             {
+                float width = document.PageSize.Width - document.LeftMargin - document.RightMargin;
                 PdfPTable header = new PdfPTable(1)
                 {
-                    TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin,
+                    TotalWidth = width,
                     LockedWidth = true,
                     RunDirection = PdfWriter.RUN_DIRECTION_RTL
-
                 };
-                ITextFont schoolFont = new ITextFont(baseFont, 13f, ITextFont.BOLD);
-                ITextFont detailFont = new ITextFont(baseFont, 8f, ITextFont.NORMAL);
-                ITextFont titleFont = new ITextFont(baseFont, 11f, ITextFont.BOLD);
+
+                ITextFont schoolFont = new ITextFont(baseFont, 16f, ITextFont.BOLD, Navy);
+                ITextFont englishFont = new ITextFont(baseFont, 8.5f, ITextFont.NORMAL, Accent);
+                ITextFont detailFont = new ITextFont(baseFont, 8f, ITextFont.NORMAL, Navy);
+                ITextFont titleFont = new ITextFont(baseFont, 12f, ITextFont.BOLD, White);
+                ITextFont summaryFont = new ITextFont(baseFont, 8f, ITextFont.NORMAL, Navy);
+
+                PdfPCell brandCell = new PdfPCell
+                {
+                    BackgroundColor = White,
+                    Border = iTextSharp.text.Rectangle.NO_BORDER,
+                    BorderWidthBottom = 2f,
+                    BorderColor = Accent,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_MIDDLE,
+                    PaddingTop = 5f,
+                    PaddingBottom = 6f,
+                    RunDirection = PdfWriter.RUN_DIRECTION_RTL
+                };
 
                 if (settings != null && settings.Logo != null && settings.Logo.Length > 0)
                 {
-                    // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
                     try
                     {
                         ITextImage logo = ITextImage.GetInstance(settings.Logo);
-                        logo.ScaleToFit(48f, 48f);
-                        PdfPCell logoCell = new PdfPCell(logo)
-                        {
-                            Border = iTextSharp.text.Rectangle.NO_BORDER,
-                            HorizontalAlignment = Element.ALIGN_CENTER,
-                            PaddingBottom = 1f
-
-                        };
-                        header.AddCell(logoCell);
+                        logo.ScaleToFit(62f, 62f);
+                        logo.Alignment = Element.ALIGN_CENTER;
+                        brandCell.AddElement(logo);
                     }
-
                     catch (Exception logoEx)
                     {
-                        // الشعار تكميلي؛ فشل إدراجه في ترويسة PDF يُسجل ولا يوقف التقرير.
                         ApplicationLogger.LogException("إدراج شعار المدرسة في ترويسة PDF", logoEx);
                     }
                 }
@@ -269,45 +276,86 @@ namespace SchoolSystem.Helpers
                 string englishSchool = settings == null ? string.Empty : settings.SchoolNameEn;
                 string arabicOrganization = settings == null ? string.Empty : BuildOrganizationLine(settings, true);
                 string englishOrganization = settings == null ? string.Empty : BuildOrganizationLine(settings, false);
+
                 if (!string.IsNullOrWhiteSpace(arabicSchool))
-                    AddTextCell(header, arabicSchool.Trim(), schoolFont, Navy, Element.ALIGN_CENTER,
-                        PdfWriter.RUN_DIRECTION_RTL);
+                    brandCell.AddElement(CreateCenteredParagraph(arabicSchool.Trim(), schoolFont, PdfWriter.RUN_DIRECTION_RTL));
+
                 if (!string.IsNullOrWhiteSpace(englishSchool))
-                    AddTextCell(header, englishSchool.Trim(), detailFont, White, Element.ALIGN_CENTER,
-                        PdfWriter.RUN_DIRECTION_LTR);
+                    brandCell.AddElement(CreateCenteredParagraph(englishSchool.Trim(), englishFont, PdfWriter.RUN_DIRECTION_LTR));
+
                 if (!string.IsNullOrWhiteSpace(arabicOrganization))
-                    AddTextCell(header, arabicOrganization, detailFont, White, Element.ALIGN_CENTER,
-                        PdfWriter.RUN_DIRECTION_RTL);
+                    brandCell.AddElement(CreateCenteredParagraph(arabicOrganization, detailFont, PdfWriter.RUN_DIRECTION_RTL));
+
                 if (!string.IsNullOrWhiteSpace(englishOrganization))
-                    AddTextCell(header, englishOrganization, detailFont, White, Element.ALIGN_CENTER,
-                        PdfWriter.RUN_DIRECTION_LTR);
-                AddTextCell(header, title ?? string.Empty, titleFont, Navy, Element.ALIGN_CENTER,
-                    PdfWriter.RUN_DIRECTION_RTL);
-                if (!string.IsNullOrWhiteSpace(summary))
-                    AddTextCell(header, summary, detailFont, White, Element.ALIGN_CENTER,
-                        PdfWriter.RUN_DIRECTION_RTL);
+                    brandCell.AddElement(CreateCenteredParagraph(englishOrganization, detailFont, PdfWriter.RUN_DIRECTION_LTR));
 
-                header.WriteSelectedRows(0, -1, document.LeftMargin, document.PageSize.Height - 16f, writer.DirectContent);
+                header.AddCell(brandCell);
 
-                string footerText = GetSchoolName(settings) + " | " + (title ?? "تقرير النظام") + " | الصفحة " + writer.PageNumber;
-                PdfPTable footerTable = new PdfPTable(1)
+                PdfPCell titleCell = new PdfPCell(new Phrase(title ?? "تقرير النظام", titleFont))
                 {
-                    TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin,
-                    LockedWidth = true,
-                    RunDirection = PdfWriter.RUN_DIRECTION_RTL
-
-                };
-                PdfPCell footerCell = new PdfPCell(new Phrase(footerText, detailFont))
-                {
+                    BackgroundColor = Navy,
                     Border = iTextSharp.text.Rectangle.NO_BORDER,
                     HorizontalAlignment = Element.ALIGN_CENTER,
                     VerticalAlignment = Element.ALIGN_MIDDLE,
                     RunDirection = PdfWriter.RUN_DIRECTION_RTL,
-                    Padding = 0f
+                    PaddingTop = 7f,
+                    PaddingBottom = 7f
+                };
+                header.AddCell(titleCell);
 
+                if (!string.IsNullOrWhiteSpace(summary))
+                {
+                    PdfPCell summaryCell = new PdfPCell(new Phrase(summary, summaryFont))
+                    {
+                        BackgroundColor = Alternate,
+                        Border = iTextSharp.text.Rectangle.NO_BORDER,
+                        HorizontalAlignment = Element.ALIGN_CENTER,
+                        VerticalAlignment = Element.ALIGN_MIDDLE,
+                        RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+                        PaddingTop = 5f,
+                        PaddingBottom = 5f
+                    };
+                    header.AddCell(summaryCell);
+                }
+
+                header.WriteSelectedRows(0, -1, document.LeftMargin, document.PageSize.Height - 12f, writer.DirectContent);
+
+                string footerText = GetSchoolName(settings) + " | " + (title ?? "تقرير النظام") +
+                                    " | المستخدم: " + GetCurrentOperatorDisplayName() +
+                                    " | الصفحة " + writer.PageNumber;
+                PdfPTable footerTable = new PdfPTable(1)
+                {
+                    TotalWidth = width,
+                    LockedWidth = true,
+                    RunDirection = PdfWriter.RUN_DIRECTION_RTL
+                };
+
+                PdfPCell footerCell = new PdfPCell(new Phrase(footerText, detailFont))
+                {
+                    BackgroundColor = White,
+                    Border = iTextSharp.text.Rectangle.NO_BORDER,
+                    BorderWidthTop = 1f,
+                    BorderColor = Border,
+                    HorizontalAlignment = Element.ALIGN_CENTER,
+                    VerticalAlignment = Element.ALIGN_MIDDLE,
+                    RunDirection = PdfWriter.RUN_DIRECTION_RTL,
+                    PaddingTop = 4f,
+                    PaddingBottom = 1f
                 };
                 footerTable.AddCell(footerCell);
                 footerTable.WriteSelectedRows(0, -1, document.LeftMargin, 34f, writer.DirectContent);
+            }
+
+            private static Paragraph CreateCenteredParagraph(string text, ITextFont font, int direction)
+            {
+                Paragraph paragraph = new Paragraph(text ?? string.Empty, font)
+                {
+                    Alignment = Element.ALIGN_CENTER
+                };
+                paragraph.SetLeading(0f, 1.12f);
+                return paragraph;
+            }
+
             }
         }
 
