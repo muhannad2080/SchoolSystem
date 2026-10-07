@@ -230,94 +230,78 @@ namespace SchoolSystem.DataAccess
             }
         }
 
-        // تعريف الدالة UpdateFee لتنفيذ العملية المرتبطة بها.
+        // تعديل الخصم والاستحقاق والملاحظات فقط؛ هوية الرسم والحركة المالية التاريخية لا تتغير.
         public bool UpdateFee(Fee fee)
         {
-            CalculateAmounts(fee);
+            if (fee == null || fee.FeeID <= 0)
+                return false;
 
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = @"
+                const string query = @"
                     SET NOCOUNT ON;
                     SET XACT_ABORT ON;
 
-                    IF @FeePlanID IS NOT NULL AND NOT EXISTS
-                    (
-                        SELECT 1
-                        FROM FeePlans fp
-                        WHERE fp.FeePlanID = @FeePlanID
-                          AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
-                          AND
-                          (
-                              EXISTS
-                              (
-                                  SELECT 1
-                                  FROM StudentClasses sc
-                                  WHERE sc.ClassID = fp.ClassID
-                                    AND sc.StudentID = @StudentID
-                                    AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                              )
-                              OR EXISTS
-                              (
-                                  SELECT 1
-                                  FROM Enrollments e
-                                  WHERE e.ClassID = fp.ClassID
-                                    AND e.StudentID = @StudentID
-                                    AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                                    AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
-                              )
-                          )
-                    )
-                    BEGIN
-                        THROW 51041, N'خطة الرسوم لا تطابق صف الطالب في العام الدراسي المحدد.', 1;
-                    END;
+                    DECLARE @TotalAmount DECIMAL(18,2);
+                    DECLARE @PaidAmount DECIMAL(18,2);
+                    DECLARE @CurrentStudentID INT;
+                    DECLARE @CurrentPlanID INT;
 
-                    IF EXISTS
-                    (
-                        SELECT 1 FROM Fees WITH (UPDLOCK, HOLDLOCK)
-                        WHERE FeeID <> @FeeID
-                          AND StudentID = @StudentID
-                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND (
-                                (@FeePlanID IS NOT NULL AND FeePlanID = @FeePlanID)
-                                OR (@FeePlanID IS NULL AND FeePlanID IS NULL
-                                    AND LTRIM(RTRIM(ISNULL(FeeType, N''))) = LTRIM(RTRIM(ISNULL(@FeeType, N'')))
-                                    )
-                              )
-                    )
-                        THROW 51043, N'التعديل سيؤدي إلى تكرار بند رسوم موجود للطالب في العام نفسه.', 1;
+                    SELECT
+                        @CurrentStudentID = StudentID,
+                        @CurrentPlanID = FeePlanID,
+                        @TotalAmount = ISNULL(TotalAmount, 0),
+                        @PaidAmount = ISNULL(PaidAmount, 0)
+                    FROM dbo.Fees WITH (UPDLOCK, HOLDLOCK)
+                    WHERE FeeID = @FeeID;
 
-                    UPDATE Fees SET
-                        StudentID = @StudentID,
-                        FeePlanID = @FeePlanID,
-                        AcademicYear = @AcademicYear,
-                        FeeType = @FeeType,
-                        TotalAmount = @TotalAmount,
-                        DiscountAmount = @DiscountAmount,
+                    IF @CurrentStudentID IS NULL
+                        RETURN;
+
+                    IF @PaidAmount <> @ExpectedPaidAmount
+                        THROW 51050, N'تم تغيير المدفوع من جلسة أخرى. أعد تحميل البيانات ثم سجل الدفعة من زر تحصيل دفعة.', 1;
+
+                    IF @DiscountAmount < 0 OR @DiscountAmount > @TotalAmount
+                        THROW 51051, N'قيمة الخصم غير صحيحة.', 1;
+
+                    DECLARE @NetAmount DECIMAL(18,2) =
+                        @TotalAmount - @DiscountAmount;
+
+                    DECLARE @RemainingAmount DECIMAL(18,2) =
+                        @NetAmount - @PaidAmount;
+
+                    UPDATE dbo.Fees
+                    SET DiscountAmount = @DiscountAmount,
                         NetAmount = @NetAmount,
-                        PaidAmount = @PaidAmount,
                         RemainingAmount = @RemainingAmount,
                         DueDate = @DueDate,
-                        PaymentDate = @PaymentDate,
-                        PaymentMethod = @PaymentMethod,
-                        ReceiptNumber = @ReceiptNumber,
-                        Status = @Status,
+                        Status = CASE
+                            WHEN @NetAmount = 0 THEN N'معفى'
+                            WHEN @RemainingAmount < 0 THEN N'رصيد دائن'
+                            WHEN @RemainingAmount <= 0 THEN N'مسدد'
+                            WHEN @PaidAmount > 0 THEN N'مسدد جزئياً'
+                            WHEN @DueDate < CONVERT(date, GETDATE()) THEN N'متأخر'
+                            ELSE N'غير مسدد'
+                        END,
                         Notes = @Notes,
                         UpdatedAt = GETDATE()
-                    WHERE FeeID = @FeeID";
+                    WHERE FeeID = @FeeID;
+
+                    SELECT @FeeID AS FeeID;";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-
                     cmd.Parameters.AddWithValue("@FeeID", fee.FeeID);
-
-                    AddParameters(cmd, fee);
-
+                    cmd.Parameters.AddWithValue("@ExpectedPaidAmount", fee.PaidAmount);
+                    cmd.Parameters.AddWithValue("@DiscountAmount", fee.DiscountAmount);
+                    cmd.Parameters.AddWithValue("@DueDate", fee.DueDate.Date);
+                    cmd.Parameters.AddWithValue("@Notes",
+                        string.IsNullOrWhiteSpace(fee.Notes)
+                            ? (object)DBNull.Value
+                            : fee.Notes.Trim());
 
                     con.Open();
-
-                    return cmd.ExecuteNonQuery() > 0;
+                    return cmd.ExecuteScalar() != null;
                 }
             }
         }
