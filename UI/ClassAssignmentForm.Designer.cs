@@ -142,7 +142,7 @@ namespace SchoolSystem.UI.Students
             this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 105F));
             this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 130F));
+            this.tableLayoutTop.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 155F));
             this.tableLayoutTop.Controls.Add(this.lblClass, 0, 0);
             this.tableLayoutTop.Controls.Add(this.cmbClass, 1, 0);
             this.tableLayoutTop.Controls.Add(this.lblSection, 2, 0);
@@ -245,15 +245,16 @@ namespace SchoolSystem.UI.Students
             // btnLoad
             // 
             this.btnLoad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
-            this.btnLoad.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnLoad.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnLoad.FlatAppearance.BorderSize = 0;
             this.btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLoad.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.btnLoad.ForeColor = System.Drawing.Color.White;
-            this.btnLoad.Location = new System.Drawing.Point(4, 10);
-            this.btnLoad.Margin = new System.Windows.Forms.Padding(4, 10, 4, 4);
+            this.btnLoad.Location = new System.Drawing.Point(4, 7);
+            this.btnLoad.Margin = new System.Windows.Forms.Padding(4, 7, 4, 4);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(130, 42);
+            this.btnLoad.Size = new System.Drawing.Size(147, 45);
+            this.btnLoad.MinimumSize = new System.Drawing.Size(130, 42);
             this.btnLoad.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.btnLoad.TabIndex = 6;
             this.btnLoad.Text = "تحميل البيانات";
