@@ -51,7 +51,7 @@ namespace SchoolSystem.UI
             this.panelBackground.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelBackground.Location = new System.Drawing.Point(0, 0);
             this.panelBackground.Name = "panelBackground";
-            this.panelBackground.Size = new System.Drawing.Size(760, 520);
+            this.panelBackground.Size = new System.Drawing.Size(900, 640);
             this.panelBackground.TabIndex = 0;
 
             this.panelCard.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -73,7 +73,7 @@ namespace SchoolSystem.UI
             // تمرير قيمة كلمة المرور إلى مسار الحماية المناسب.
             this.panelCard.Controls.Add(this.btnSave);
             this.panelCard.Controls.Add(this.btnCancel);
-            this.panelCard.Location = new System.Drawing.Point(170, 55);
+            this.panelCard.Location = new System.Drawing.Point(240, 115);
             this.panelCard.Name = "panelCard";
             this.panelCard.Size = new System.Drawing.Size(420, 410);
             this.panelCard.TabIndex = 0;
@@ -194,7 +194,7 @@ namespace SchoolSystem.UI
             this.AcceptButton = this.btnSave;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(760, 520);
+            this.ClientSize = new System.Drawing.Size(900, 640);
             this.MinimumSize = new System.Drawing.Size(900, 640);
             this.Controls.Add(this.panelBackground);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
