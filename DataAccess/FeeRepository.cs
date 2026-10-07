@@ -513,7 +513,8 @@ namespace SchoolSystem.DataAccess
                         f.FeeType, f.TotalAmount, f.DiscountAmount, f.NetAmount,
                         f.PaidAmount, f.RemainingAmount, f.DueDate, f.PaymentDate,
                         f.PaymentMethod, f.ReceiptNumber, f.Status, f.Notes,
-                        @VoucherID AS VoucherID
+                        @VoucherID AS VoucherID,
+                        @GeneratedVoucherNumber AS VoucherNumber
                     FROM Fees f
                     INNER JOIN Students s ON f.StudentID = s.StudentID
                     WHERE f.FeeID = @FeeID;";
