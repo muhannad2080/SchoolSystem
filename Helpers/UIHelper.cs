@@ -502,13 +502,11 @@ namespace SchoolSystem.Helpers
                 DateToolTips.Add(picker, tip);
             }
 
-            EventHandler update = delegate { UpdateDatePresentation(picker, tip); };
-            picker.ValueChanged -= update;
-            picker.ValueChanged += update;
+            picker.ValueChanged -= DatePicker_ValueChanged;
+            picker.ValueChanged += DatePicker_ValueChanged;
 
-            KeyEventHandler keyHandler = DatePicker_KeyDown;
-            picker.KeyDown -= keyHandler;
-            picker.KeyDown += keyHandler;
+            picker.KeyDown -= DatePicker_KeyDown;
+            picker.KeyDown += DatePicker_KeyDown;
 
             ContextMenuStrip menu = picker.ContextMenuStrip;
             if (menu == null)
@@ -580,6 +578,17 @@ namespace SchoolSystem.Helpers
             menuItem.RightToLeft = RightToLeft.Yes;
             menuItem.Click += handler;
             menu.Items.Add(menuItem);
+        }
+
+        private static void DatePicker_ValueChanged(object sender, EventArgs e)
+        {
+            DateTimePicker picker = sender as DateTimePicker;
+            if (picker == null)
+                return;
+
+            ToolTip tip;
+            if (DateToolTips.TryGetValue(picker, out tip))
+                UpdateDatePresentation(picker, tip);
         }
 
         private static void DatePicker_KeyDown(object sender, KeyEventArgs e)
@@ -1832,13 +1841,6 @@ namespace SchoolSystem.Helpers
 
             if (e.Value is DateTime)
                 date = ((DateTime)e.Value).Date;
-            else if (e.Value is DateTime?)
-            {
-                DateTime? nullable = (DateTime?)e.Value;
-                if (!nullable.HasValue)
-                    return;
-                date = nullable.Value.Date;
-            }
             else
                 return;
 
