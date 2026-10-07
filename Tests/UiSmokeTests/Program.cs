@@ -162,11 +162,19 @@ namespace SchoolSystem.UiSmokeTests
                             @"this\." + Regex.Escape(panelName) +
                             @"\.AutoScroll\s*=\s*true");
 
-                    bool wrap =
-                        Regex.IsMatch(
+                    Match wrapMatch =
+                        Regex.Match(
                             source,
                             @"this\." + Regex.Escape(panelName) +
-                            @"\.WrapContents\s*=\s*true");
+                            @"\.WrapContents\s*=\s*(true|false)");
+
+                    // القيمة الافتراضية لـFlowLayoutPanel.WrapContents هي true.
+                    bool wrap =
+                        !wrapMatch.Success ||
+                        string.Equals(
+                            wrapMatch.Groups[1].Value,
+                            "true",
+                            StringComparison.OrdinalIgnoreCase);
 
                     if (!autoScroll && !wrap)
                     {
