@@ -124,6 +124,7 @@ namespace SchoolSystem.Helpers
             ApplyInputValidation(form);
             ApplyResponsiveLayout(form);
             ApplyConsistentLayout(form);
+            FinalizeLayout(form);
         }
 
         // تعريف الدالة ApplyStyle لتنفيذ العملية المرتبطة بها.
@@ -135,6 +136,7 @@ namespace SchoolSystem.Helpers
             ApplyInputValidation(uc);
             ApplyResponsiveLayout(uc);
             ApplyConsistentLayout(uc);
+            FinalizeLayout(uc);
         }
 
         /// <summary>
@@ -196,6 +198,138 @@ namespace SchoolSystem.Helpers
                     StyleDataGridView(grid);
 
                 ApplyConsistentLayoutRecursive(child);
+            }
+        }
+
+        /// <summary>
+        /// يضمن إنهاء دورة التخطيط بعد تطبيق التنسيق حتى تظهر أشرطة الأزرار
+        /// والجداول الثنائية الأبعاد بالشكل الصحيح من أول عرض للشاشة، لا بعد أول Resize.
+        /// </summary>
+        private static void FinalizeLayout(Control root)
+        {
+            if (root == null || IsDesignMode(root))
+                return;
+
+            root.SuspendLayout();
+            try
+            {
+                NormalizeLayoutRecursive(root);
+            }
+            finally
+            {
+                root.ResumeLayout(true);
+            }
+        }
+
+        // يرمم الحاويات ذات العمودين عندما تكون أعمدة المصمم أوسع من الحاوية.
+        private static void NormalizeLayoutRecursive(Control parent)
+        {
+            foreach (Control child in parent.Controls)
+            {
+                TableLayoutPanel table = child as TableLayoutPanel;
+                if (table != null)
+                {
+                    NormalizeTwoColumnTable(table);
+                }
+
+                FlowLayoutPanel flow = child as FlowLayoutPanel;
+                if (flow != null)
+                {
+                    NormalizeButtonFlowPanel(flow);
+                }
+
+                ApplyLayoutDirectionDefaults(child);
+                NormalizeLayoutRecursive(child);
+            }
+
+            parent.PerformLayout();
+        }
+
+        private static void NormalizeTwoColumnTable(TableLayoutPanel table)
+        {
+            if (table == null || table.ColumnCount != 2 || table.ClientSize.Width <= 0)
+                return;
+
+            int[] widths = table.GetColumnWidths();
+            if (widths == null || widths.Length != 2)
+                return;
+
+            int usableWidth = Math.Max(0, table.ClientSize.Width - table.Padding.Horizontal);
+            if (widths[0] + widths[1] <= usableWidth + 1)
+                return;
+
+            ColumnStyle second = table.ColumnStyles[1];
+            second.SizeType = SizeType.Percent;
+            second.Width = 100F;
+        }
+
+        private static void NormalizeButtonFlowPanel(FlowLayoutPanel flow)
+        {
+            bool hasButton = false;
+
+            foreach (Control child in flow.Controls)
+            {
+                if (child is Button || child is KryptonButton)
+                {
+                    hasButton = true;
+                    break;
+                }
+            }
+
+            if (!hasButton)
+                return;
+
+            flow.AutoScroll = true;
+            flow.WrapContents = true;
+
+            foreach (Control child in flow.Controls)
+            {
+                Button button = child as Button;
+                if (button != null)
+                {
+                    EnsureButtonTextFits(button);
+                    button.Anchor = AnchorStyles.None;
+                    continue;
+                }
+
+                KryptonButton kryptonButton = child as KryptonButton;
+                if (kryptonButton != null)
+                {
+                    EnsureKryptonButtonTextFits(kryptonButton);
+                    kryptonButton.Anchor = AnchorStyles.None;
+                }
+            }
+
+            flow.PerformLayout();
+        }
+
+        private static void ApplyLayoutDirectionDefaults(Control control)
+        {
+            if (control == null)
+                return;
+
+            if (control is Label label &&
+                label.RightToLeft == RightToLeft.Inherit)
+            {
+                label.RightToLeft = RightToLeft.Yes;
+            }
+
+            else if (control is TextBox textBox &&
+                     textBox.RightToLeft == RightToLeft.Inherit)
+            {
+                textBox.RightToLeft = RightToLeft.Yes;
+            }
+
+            else if (control is ComboBox comboBox &&
+                     comboBox.RightToLeft == RightToLeft.Inherit)
+            {
+                comboBox.RightToLeft = RightToLeft.Yes;
+            }
+
+            else if (control is CheckBox checkBox &&
+                     checkBox.RightToLeft == RightToLeft.Inherit)
+            {
+                checkBox.RightToLeft = RightToLeft.Yes;
             }
         }
 
