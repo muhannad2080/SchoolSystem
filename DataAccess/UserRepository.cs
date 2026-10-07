@@ -226,11 +226,11 @@ namespace SchoolSystem.DataAccess
                         }
                     }
 
+                    MigrateLegacyRolePermissions(con, transaction);
                     transaction.Commit();
                 }
             }
 
-            MigrateLegacyRolePermissions(con, transaction);
             return changed;
         }
 
