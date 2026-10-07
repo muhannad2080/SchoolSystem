@@ -57,9 +57,24 @@ namespace SchoolSystem.UI
         /// </summary>
         private void ConfigureArabicDashboardLayout()
         {
-            lblDashboardTitle.Text = "لوحة التحكم";
+            SchoolSettings branding = SchoolSettingsService.Current();
+
+            string schoolName =
+                branding != null && !string.IsNullOrWhiteSpace(branding.SchoolNameAr)
+                    ? branding.SchoolNameAr.Trim()
+                    : "المدرسة";
+
+            string organization =
+                branding != null && !string.IsNullOrWhiteSpace(branding.OrganizationNameAr)
+                    ? branding.OrganizationNameAr.Trim()
+                    : string.Empty;
+
+            lblDashboardTitle.Text = "لوحة تحكم " + schoolName;
+
             lblDashboardSubtitle.Text =
-                "ملخص حي لمؤشرات المدرسة وحالتها التشغيلية";
+                string.IsNullOrWhiteSpace(organization)
+                    ? "ملخص حي لمؤشرات المدرسة وحالتها التشغيلية"
+                    : organization + "  •  ملخص حي لمؤشرات المدرسة وحالتها التشغيلية";
             lblActiveAcademicYear.Text =
                 "العام الدراسي: جاري التحميل...";
             lblLastUpdated.Text =
