@@ -738,7 +738,7 @@ namespace SchoolSystem.UI
             this.MinimumSize = new Size(960, 680);
             this.Name = "LoginForm";
             this.RightToLeft = RightToLeft.Yes;
-            this.RightToLeftLayout = false;
+            this.RightToLeftLayout = true;
             this.StartPosition = FormStartPosition.CenterScreen;
             this.Text = "تسجيل الدخول | نظام إدارة المدرسة";
 
