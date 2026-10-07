@@ -1654,7 +1654,7 @@ namespace SchoolSystem.UI
 
                 e.Graphics.DrawString(
                     "تاريخ الإصدار: " +
-                    DateTime.Now.ToString("yyyy/MM/dd"),
+                    UIHelper.FormatDateDual(DateTime.Now.Date),
                     valueFont,
                     Brushes.DimGray,
                     new RectangleF(
