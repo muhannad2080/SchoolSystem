@@ -350,6 +350,64 @@ namespace SchoolSystem.UiSmokeTests
             Console.WriteLine("[PASS] Button wiring: " + checkedButtons + " buttons checked");
         }
 
+        private static void ValidateDatePickers(Control root)
+        {
+            foreach (Control control in GetAllControls(root))
+            {
+                DateTimePicker picker = control as DateTimePicker;
+                if (picker == null)
+                    continue;
+
+                string key = (picker.Name ?? string.Empty).ToLowerInvariant();
+                string format = (picker.CustomFormat ?? string.Empty).ToLowerInvariant();
+
+                bool timeOnly =
+                    format.Contains("h") ||
+                    format.Contains("minute") ||
+                    format.Contains("second") ||
+                    key.Contains("start") ||
+                    key.Contains("end") ||
+                    key.Contains("departure") ||
+                    key.Contains("arrival") ||
+                    key.Contains("checkin") ||
+                    key.Contains("checkout") ||
+                    key.Contains("وقت") ||
+                    key.Contains("بداية") ||
+                    key.Contains("نهاية");
+
+                if (timeOnly)
+                    continue;
+
+                if (picker.Format != DateTimePickerFormat.Custom ||
+                    !string.Equals(picker.CustomFormat, "dd/MM/yyyy", StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException(
+                        "Date picker is not using the standard Gregorian date format: " +
+                        picker.Name);
+                }
+
+                if (picker.ContextMenuStrip == null ||
+                    !picker.ContextMenuStrip.Items.Cast<ToolStripItem>()
+                        .Any(item => string.Equals(
+                            item.Text,
+                            "إدخال تاريخ هجري",
+                            StringComparison.Ordinal)))
+                {
+                    throw new InvalidOperationException(
+                        "Date picker has no Hijri input command: " +
+                        picker.Name);
+                }
+
+                if (string.IsNullOrWhiteSpace(picker.AccessibleDescription) ||
+                    picker.AccessibleDescription.IndexOf("هـ", StringComparison.Ordinal) < 0)
+                {
+                    throw new InvalidOperationException(
+                        "Date picker has no dual Gregorian/Hijri description: " +
+                        picker.Name);
+                }
+            }
+        }
+
         private static void ValidateTextFit(Control root)
         {
             foreach (Control control in GetAllControls(root))
@@ -606,6 +664,7 @@ namespace SchoolSystem.UiSmokeTests
 
                         ValidateLayout(control);
                         ValidateTextFit(control);
+                        ValidateDatePickers(control);
                         ValidatePayrollScreens(control);
                         ValidateStudentProfile(control);
                     }
