@@ -84,6 +84,9 @@ def generate_designer_code():
     res.append("            this.btnPrintForm = new System.Windows.Forms.Button();")
     res.append("            this.btnPrintReceipt = new System.Windows.Forms.Button();")
     res.append("            this.btnClose = new System.Windows.Forms.Button();")
+    res.append("            this.btnExportExcel = new System.Windows.Forms.Button();")
+    res.append("            this.btnExportPdf = new System.Windows.Forms.Button();")
+    res.append("            this.btnPreviewOutput = new System.Windows.Forms.Button();")
     res.append("            this.pnlRight = new System.Windows.Forms.Panel();")
 
     res.append("            ((System.ComponentModel.ISupportInitialize)(this.dgvEnrollments)).BeginInit();")
@@ -188,15 +191,15 @@ def generate_designer_code():
     res.append("            this.dgvEnrollments.SelectionChanged += new System.EventHandler(this.dgvEnrollments_SelectionChanged);")
 
     res.append("            this.pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;")
-    res.append("            this.pnlButtons.Height = 92;")
+    res.append("            this.pnlButtons.Height = 136;")
     res.append("            this.pnlButtons.AutoScroll = true;")
     res.append("            this.pnlButtons.WrapContents = true;")
     res.append("            this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;")
     res.append("            this.pnlButtons.Padding = new System.Windows.Forms.Padding(10);")
 
-    b_list = ["btnClose", "btnPrintReceipt", "btnPrintForm", "btnRefresh", "btnCancel", "btnDelete", "btnUpdate", "btnSave", "btnAdd"]
-    b_txts = ["إغلاق النافذة", "طباعة إيصال التسجيل", "طباعة استمارة التسجيل", "تحديث القائمة", "إلغاء التعديل", "حذف التسجيل", "تعديل التسجيل", "حفظ التسجيل", "إضافة تسجيل جديد"]
-    b_widths = [140, 190, 210, 150, 150, 150, 150, 150, 190]
+    b_list = ["btnClose", "btnExportExcel", "btnExportPdf", "btnPreviewOutput", "btnPrintReceipt", "btnPrintForm", "btnRefresh", "btnCancel", "btnDelete", "btnUpdate", "btnSave", "btnAdd"]
+    b_txts = ["إغلاق النافذة", "تصدير إلى Excel", "تصدير إلى PDF", "معاينة المخرجات", "طباعة إيصال التسجيل", "طباعة استمارة التسجيل", "تحديث القائمة", "إلغاء التعديل", "حذف التسجيل", "تعديل التسجيل", "حفظ التسجيل", "إضافة تسجيل جديد"]
+    b_widths = [145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145]
     for i, (b, t, w) in enumerate(zip(b_list, b_txts, b_widths)):
         res.append(f"            this.{b}.Text = \"{t}\";")
         res.append(f"            this.{b}.AutoSize = false;")
@@ -302,6 +305,9 @@ def generate_designer_code():
         "        private System.Windows.Forms.Button btnPrintForm;",
         "        private System.Windows.Forms.Button btnPrintReceipt;",
         "        private System.Windows.Forms.Button btnClose;",
+        "        private System.Windows.Forms.Button btnExportExcel;",
+        "        private System.Windows.Forms.Button btnExportPdf;",
+        "        private System.Windows.Forms.Button btnPreviewOutput;",
         "        private System.Windows.Forms.Panel pnlRight;",
         "    }",
         "}"
