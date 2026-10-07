@@ -436,7 +436,7 @@ namespace SchoolSystem.Helpers
 
             SchoolSettings branding = SchoolSettingsService.Current();
             int top = bounds.Top;
-            int headerHeight = 126;
+            int headerHeight = 138;
             StringFormat format = new StringFormat
             {
                 Alignment = rtl ? StringAlignment.Far : StringAlignment.Near,
@@ -446,14 +446,15 @@ namespace SchoolSystem.Helpers
 
             };
             using (format)
-            using (System.Drawing.Font schoolFont = new System.Drawing.Font("Tahoma", 13F, System.Drawing.FontStyle.Bold))
-            using (System.Drawing.Font organizationFont = new System.Drawing.Font("Tahoma", 8.5F, System.Drawing.FontStyle.Regular))
-            using (System.Drawing.Font titleFont = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Bold))
-            using (Pen linePen = new Pen(Color.FromArgb(22, 50, 79), 1.8F))
+            using (System.Drawing.Font schoolFont = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold))
+            using (System.Drawing.Font organizationFont = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular))
+            using (System.Drawing.Font titleFont = new System.Drawing.Font("Tahoma", 13F, System.Drawing.FontStyle.Bold))
+            using (Pen linePen = new Pen(Color.FromArgb(22, 50, 79), 2F))
+            using (Pen accentLinePen = new Pen(Color.FromArgb(180, 145, 50), 1F))
             using (Brush navyBrush = new SolidBrush(Color.FromArgb(22, 50, 79)))
             using (Brush accentBrush = new SolidBrush(Color.FromArgb(15, 118, 110)))
             {
-                int logoSize = 58;
+                int logoSize = 66;
                 int logoX = rtl ? bounds.Right - logoSize : bounds.Left;
                 int textLeft = rtl ? bounds.Left : bounds.Left + logoSize + 12;
                 int textRight = rtl ? bounds.Right - logoSize - 12 : bounds.Right;
@@ -493,21 +494,22 @@ namespace SchoolSystem.Helpers
                     if (!string.IsNullOrWhiteSpace(englishSchool))
                         graphics.DrawString(englishSchool.Trim(), organizationFont, accentBrush,
 
-                            new System.Drawing.Rectangle(textLeft, top + 27, textWidth, 22), englishFormat);
+                            new System.Drawing.Rectangle(textLeft, top + 29, textWidth, 22), englishFormat);
                     if (!string.IsNullOrWhiteSpace(arabicOrganization))
                         graphics.DrawString(arabicOrganization, organizationFont, accentBrush,
 
-                            new System.Drawing.Rectangle(textLeft, top + 48, textWidth, 22), arabicFormat);
+                            new System.Drawing.Rectangle(textLeft, top + 52, textWidth, 22), arabicFormat);
                     if (!string.IsNullOrWhiteSpace(englishOrganization))
                         graphics.DrawString(englishOrganization, organizationFont, accentBrush,
 
-                            new System.Drawing.Rectangle(textLeft, top + 68, textWidth, 22), englishFormat);
+                            new System.Drawing.Rectangle(textLeft, top + 75, textWidth, 22), englishFormat);
                     graphics.DrawString("المستخدم المنفذ: " + GetCurrentOperatorDisplayName(), organizationFont, accentBrush,
-                        new System.Drawing.Rectangle(bounds.Left, top + 89, bounds.Width, 20), arabicFormat);
+                        new System.Drawing.Rectangle(bounds.Left, top + 98, bounds.Width, 20), arabicFormat);
                     graphics.DrawString(title ?? string.Empty, titleFont, navyBrush,
-                        new System.Drawing.Rectangle(bounds.Left, top + 109, bounds.Width, 30), arabicFormat);
+                        new System.Drawing.Rectangle(bounds.Left, top + 114, bounds.Width, 30), arabicFormat);
                 }
                 graphics.DrawLine(linePen, bounds.Left, top + headerHeight, bounds.Right, top + headerHeight);
+                graphics.DrawLine(accentLinePen, bounds.Left, top + headerHeight + 3, bounds.Right, top + headerHeight + 3);
             }
 
 
