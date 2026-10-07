@@ -68,6 +68,30 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        /// <summary>يُعيد جميع صلاحيات الدور من قاعدة البيانات، بما فيها الصلاحيات الإجرائية.</summary>
+        public List<string> GetRolePermissionsByName(string roleName)
+        {
+            if (string.IsNullOrWhiteSpace(roleName))
+                return new List<string>();
+
+            int roleId = 0;
+            using (SqlConnection con = DbConnection.GetConnection())
+            using (SqlCommand cmd = new SqlCommand(@"
+                SELECT TOP 1 RoleID
+                FROM dbo.Roles
+                WHERE IsActive = 1
+                  AND LTRIM(RTRIM(RoleName)) = LTRIM(RTRIM(@RoleName));", con))
+            {
+                cmd.Parameters.Add("@RoleName", SqlDbType.NVarChar, 100).Value = roleName.Trim();
+                con.Open();
+                object value = cmd.ExecuteScalar();
+                if (value != null && value != DBNull.Value)
+                    roleId = Convert.ToInt32(value);
+            }
+
+            return GetRolePermissionsByRoleId(roleId);
+        }
+
         /// <summary>يُعيد أسماء الأدوار النشطة من قاعدة البيانات فقط.</summary>
         public List<string> GetActiveRoleNames()
         {
