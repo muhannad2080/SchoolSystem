@@ -568,10 +568,8 @@ namespace SchoolSystem.DataAccess
             }
         }
 
-        // تعريف الدالة RefundPayment لتنفيذ العملية المرتبطة بها.
-        // تخفيض المبلغ المدفوع (خصم دفعة مسجلة) مع التراجع تلقائياً على رسوم
-        // الطالب ككل مع تحديث الحالة والمتبقي في نفس المعاملة.
-        public DataTable RefundPayment(int feeId, decimal refundAmount, string notes)
+        // استرجاع دفعة مع سند صرف عكسي داخل نفس المعاملة، ثم مزامنة الرسوم الكلية.
+        public DataTable RefundPayment(int feeId, decimal refundAmount, DateTime refundDate, string notes)
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
@@ -585,36 +583,45 @@ namespace SchoolSystem.DataAccess
                     DECLARE @CurrentFeeID INT;
                     DECLARE @CurrentPaid DECIMAL(18,2);
                     DECLARE @AppliedAmount DECIMAL(18,2);
+                    DECLARE @TotalFeeID INT;
+                    DECLARE @StudentName NVARCHAR(200);
+                    DECLARE @VoucherID INT;
 
                     SELECT @StudentID = StudentID, @AcademicYear = AcademicYear
                     FROM Fees WITH (UPDLOCK, HOLDLOCK)
                     WHERE FeeID = @FeeID;
 
                     IF @StudentID IS NULL OR @RefundAmount <= 0
-                        THROW 51044, N'بيانات الخصم غير صحيحة.', 1;
+                        THROW 51044, N'بيانات الاسترجاع غير صحيحة.', 1;
 
-                    /* خصم المبلغ من الدفعات المسجلة للطالب في نفس السنة؛ نبدأ من
-                       الرسم المحدد ثم بقية الرسوم حتى يغطي المبلغ المطلوب. */
+                    IF @RefundDate > CONVERT(date, GETDATE())
+                        THROW 51044, N'تاريخ الاسترجاع لا يمكن أن يكون في المستقبل.', 1;
+
                     WHILE @RemainingRefund > 0
                     BEGIN
                         SET @CurrentFeeID = NULL;
-                        SELECT TOP 1
+                        SET @CurrentPaid = 0;
+
+                        SELECT TOP (1)
                             @CurrentFeeID = FeeID,
                             @CurrentPaid = ISNULL(PaidAmount, 0)
                         FROM Fees WITH (UPDLOCK, HOLDLOCK)
                         WHERE StudentID = @StudentID
-                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                              REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
                           AND ISNULL(PaidAmount, 0) > 0
                           AND LTRIM(RTRIM(ISNULL(FeeType, N''))) NOT IN
                               (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
                         ORDER BY CASE WHEN FeeID = @FeeID THEN 0 ELSE 1 END, FeeID;
 
-                        IF @CurrentFeeID IS NULL BREAK;
+                        IF @CurrentFeeID IS NULL
+                            BREAK;
 
-                        SET @AppliedAmount = CASE
-                            WHEN @RemainingRefund < @CurrentPaid THEN @RemainingRefund
-                            ELSE @CurrentPaid
-                        END;
+                        SET @AppliedAmount =
+                            CASE
+                                WHEN @RemainingRefund < @CurrentPaid THEN @RemainingRefund
+                                ELSE @CurrentPaid
+                            END;
 
                         UPDATE Fees
                         SET PaidAmount = ISNULL(PaidAmount, 0) - @AppliedAmount,
@@ -634,12 +641,13 @@ namespace SchoolSystem.DataAccess
                             Notes = CASE
                                 WHEN NULLIF(@Notes, N'') IS NULL THEN Notes
                                 WHEN NULLIF(Notes, N'') IS NULL THEN @Notes
-                                ELSE LEFT(Notes + N' | خصم تعديل: ' + @Notes, 500)
+                                ELSE LEFT(Notes + N' | استرجاع: ' + @Notes, 500)
                             END,
                             Status = CASE
                                 WHEN ISNULL(PaidAmount, 0) - @AppliedAmount <= 0 THEN
-                                    CASE WHEN DueDate < CONVERT(date, GETDATE()) THEN N'متأخر'
-                                         ELSE N'غير مسدد'
+                                    CASE
+                                        WHEN DueDate < CONVERT(date, GETDATE()) THEN N'متأخر'
+                                        ELSE N'غير مسدد'
                                     END
                                 WHEN ISNULL(RemainingAmount, 0) + @AppliedAmount <= 0 THEN N'مسدد'
                                 ELSE N'مسدد جزئياً'
@@ -650,9 +658,10 @@ namespace SchoolSystem.DataAccess
                         SET @RemainingRefund = @RemainingRefund - @AppliedAmount;
                     END;
 
-                    /* الرسوم الكلية بعد الاسترجاع تعاد مزامنتها من البنود
-                       الفعلية حتى يبقى الملخص المالي متسقاً مع الحركة. */
-                    SELECT TOP (1) @CurrentFeeID = FeeID
+                    IF @RemainingRefund > 0
+                        THROW 51044, N'المبلغ المطلوب استرجاعه أكبر من إجمالي المدفوع للطالب في هذه السنة.', 1;
+
+                    SELECT TOP (1) @TotalFeeID = FeeID
                     FROM Fees WITH (UPDLOCK, HOLDLOCK)
                     WHERE StudentID = @StudentID
                       AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
@@ -661,7 +670,7 @@ namespace SchoolSystem.DataAccess
                           (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
                     ORDER BY FeeID;
 
-                    IF @CurrentFeeID IS NOT NULL
+                    IF @TotalFeeID IS NOT NULL
                     BEGIN
                         DECLARE @TotalPaidAfterRefund DECIMAL(18,2);
                         DECLARE @TotalNetAfterRefund DECIMAL(18,2);
@@ -676,7 +685,7 @@ namespace SchoolSystem.DataAccess
 
                         SELECT @TotalNetAfterRefund = ISNULL(NetAmount, 0)
                         FROM Fees WITH (UPDLOCK, HOLDLOCK)
-                        WHERE FeeID = @CurrentFeeID;
+                        WHERE FeeID = @TotalFeeID;
 
                         UPDATE Fees
                         SET PaidAmount = @TotalPaidAfterRefund,
@@ -688,37 +697,79 @@ namespace SchoolSystem.DataAccess
                                 ELSE N'غير مسدد'
                             END,
                             UpdatedAt = GETDATE()
-                        WHERE FeeID = @CurrentFeeID;
+                        WHERE FeeID = @TotalFeeID;
                     END;
 
-                    IF @RemainingRefund > 0
-                        THROW 51044, N'المبلغ المطلوب خصمه أكبر من إجمالي المدفوع للطالب في هذه السنة.', 1;
+                    SELECT @StudentName = ISNULL(FullName, N'')
+                    FROM Students
+                    WHERE StudentID = @StudentID;
+
+                    INSERT INTO Vouchers
+                    (
+                        VoucherNumber, VoucherType, Amount, VoucherDate,
+                        PartyName, Description, PaymentMethod,
+                        ReferenceType, ReferenceID, Notes, IsAutoGenerated
+                    )
+                    VALUES
+                    (
+                        NULL, N'صرف', @RefundAmount, @RefundDate,
+                        @StudentName, N'سند صرف عكسي لاسترجاع رسوم الطالب',
+                        N'نقداً', N'رسوم', @FeeID,
+                        CASE
+                            WHEN NULLIF(@Notes, N'') IS NULL
+                                THEN N'استرجاع دفعة رسوم من شاشة الرسوم.'
+                            ELSE N'استرجاع دفعة رسوم: ' + LEFT(@Notes, 430)
+                        END,
+                        1
+                    );
+
+                    SET @VoucherID = CONVERT(INT, SCOPE_IDENTITY());
+
+                    UPDATE Vouchers
+                    SET VoucherNumber =
+                        N'PAY-' + CONVERT(NVARCHAR(4), YEAR(@RefundDate)) +
+                        N'-' + RIGHT(N'00000' + CONVERT(NVARCHAR(20), @VoucherID), 5)
+                    WHERE VoucherID = @VoucherID;
 
                     SELECT
                         f.FeeID, f.StudentID, s.FullName AS StudentName, f.AcademicYear,
                         f.FeeType, f.TotalAmount, f.DiscountAmount, f.NetAmount,
                         f.PaidAmount, f.RemainingAmount, f.DueDate, f.PaymentDate,
-                        f.PaymentMethod, f.ReceiptNumber, f.Status, f.Notes
+                        f.PaymentMethod, f.ReceiptNumber, f.Status, f.Notes,
+                        @VoucherID AS VoucherID
                     FROM Fees f
                     INNER JOIN Students s ON f.StudentID = s.StudentID
                     WHERE f.FeeID = @FeeID;";
 
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-
                     cmd.Parameters.AddWithValue("@FeeID", feeId);
-
                     cmd.Parameters.AddWithValue("@RefundAmount", refundAmount);
-
+                    cmd.Parameters.AddWithValue("@RefundDate", refundDate.Date);
                     cmd.Parameters.AddWithValue("@Notes", (object)(notes ?? string.Empty));
 
                     con.Open();
 
-                    DataTable result = new DataTable();
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
-                        adapter.Fill(result);
+                    using (SqlTransaction transaction =
+                        con.BeginTransaction(IsolationLevel.Serializable))
+                    {
+                        cmd.Transaction = transaction;
 
-                    return result;
+                        DataTable result = new DataTable();
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            result.Load(reader);
+                        }
+
+                        if (result.Rows.Count == 0)
+                        {
+                            transaction.Rollback();
+                            return result;
+                        }
+
+                        transaction.Commit();
+                        return result;
+                    }
                 }
             }
         }
