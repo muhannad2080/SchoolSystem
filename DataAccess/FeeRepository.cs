@@ -668,35 +668,45 @@ namespace SchoolSystem.DataAccess
                         SET @RemainingRefund = @RemainingRefund - @AppliedAmount;
                     END;
 
-                    /* الخصم ينعكس تلقائيًا على بند الرسوم الكلية الحقيقي:
-                       يتناقص المدفوع ويزداد المتبقي بنفس القيمة. */
-                    DECLARE @RefundedTotal DECIMAL(18,2) = @RefundAmount - @RemainingRefund;
-                    IF @RefundedTotal > 0
+                    /* الرسوم الكلية بعد الاسترجاع تعاد مزامنتها من البنود
+                       الفعلية حتى يبقى الملخص المالي متسقاً مع الحركة. */
+                    SELECT TOP (1) @CurrentFeeID = FeeID
+                    FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                    WHERE StudentID = @StudentID
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                          REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
+                      AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
+                          (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                    ORDER BY FeeID;
+
+                    IF @CurrentFeeID IS NOT NULL
                     BEGIN
+                        DECLARE @TotalPaidAfterRefund DECIMAL(18,2);
+                        DECLARE @TotalNetAfterRefund DECIMAL(18,2);
+
+                        SELECT @TotalPaidAfterRefund = ISNULL(SUM(PaidAmount), 0)
+                        FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                        WHERE StudentID = @StudentID
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                              REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
+                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) NOT IN
+                              (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');
+
+                        SELECT @TotalNetAfterRefund = ISNULL(NetAmount, 0)
+                        FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                        WHERE FeeID = @CurrentFeeID;
+
                         UPDATE Fees
-                        SET PaidAmount = CASE
-                                WHEN ISNULL(PaidAmount, 0) - @RefundedTotal < 0 THEN 0
-                                ELSE ISNULL(PaidAmount, 0) - @RefundedTotal
-                            END,
-                            RemainingAmount = CASE
-                                WHEN ISNULL(PaidAmount, 0) - @RefundedTotal < 0
-                                    THEN ISNULL(RemainingAmount, 0) + (@RefundedTotal - ISNULL(PaidAmount, 0))
-                                ELSE ISNULL(RemainingAmount, 0) + @RefundedTotal
-                            END,
+                        SET PaidAmount = @TotalPaidAfterRefund,
+                            RemainingAmount = @TotalNetAfterRefund - @TotalPaidAfterRefund,
                             Status = CASE
-                                WHEN ISNULL(PaidAmount, 0) - @RefundedTotal > 0 THEN N'مسدد جزئياً'
+                                WHEN @TotalNetAfterRefund - @TotalPaidAfterRefund < 0 THEN N'رصيد دائن'
+                                WHEN @TotalNetAfterRefund - @TotalPaidAfterRefund <= 0 THEN N'مسدد'
+                                WHEN @TotalPaidAfterRefund > 0 THEN N'مسدد جزئياً'
                                 ELSE N'غير مسدد'
                             END,
-                            PaymentDate = CASE
-                                WHEN ISNULL(PaidAmount, 0) - @RefundedTotal <= 0 THEN NULL
-                                ELSE PaymentDate
-                            END,
                             UpdatedAt = GETDATE()
-                        WHERE StudentID = @StudentID
-                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
-                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
-                              (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                          AND FeeID <> @FeeID;
+                        WHERE FeeID = @CurrentFeeID;
                     END;
 
                     IF @RemainingRefund > 0
