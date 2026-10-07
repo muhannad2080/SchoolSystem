@@ -948,7 +948,7 @@ namespace SchoolSystem.UI
                     : "";
 
             SetExistingFeeIdentityState(true);
-            lblPaidAmount.Text = "المدفوع بعد الدفعة";
+            lblPaidAmount.Text = "المدفوع الحالي";
 
             txtTotalAmount.ReadOnly =
                 selectedFeePlanId.HasValue;
@@ -991,6 +991,8 @@ namespace SchoolSystem.UI
                 Convert.ToDecimal(
                     row["PaidAmount"]);
 
+            txtPaymentAmount.Text = "0";
+
             dtpDueDate.Value =
                 Convert.ToDateTime(
                     row["DueDate"]);
@@ -1031,8 +1033,8 @@ namespace SchoolSystem.UI
 
             // بيانات السداد التاريخية لا تُعدّل من زر «تعديل».
             // تغيير المدفوع يتم فقط من «تحصيل دفعة» أو «استرجاع».
-            txtPaidAmount.ReadOnly = selectedFeeId > 0;
-            txtReceiptNumber.ReadOnly = selectedFeeId > 0;
+            txtPaidAmount.ReadOnly = true;
+            txtReceiptNumber.ReadOnly = true;
 
             if (cmbStatus.Items.Contains(row["Status"].ToString()))
                 cmbStatus.SelectedItem = row["Status"].ToString();
@@ -1108,6 +1110,9 @@ string academicYear = cmbAcademicYear.Text.Trim();
             cmbAcademicYear.Enabled = !existing;
             cmbFeeType.Enabled = !existing;
 
+            txtPaymentAmount.Enabled = existing;
+            txtPaymentAmount.ReadOnly = !existing;
+
             if (existing)
             {
                 cmbStudent.Cursor = Cursors.No;
@@ -1141,8 +1146,8 @@ string academicYear = cmbAcademicYear.Text.Trim();
             originalReceiptNumber = "";
             originalPaymentDate = null;
 
-            txtPaidAmount.ReadOnly = false;
-            txtReceiptNumber.ReadOnly = false;
+            txtPaidAmount.ReadOnly = true;
+            txtReceiptNumber.ReadOnly = true;
 
             if (cmbStudent.Items.Count > 0)
                 cmbStudent.SelectedIndex = 0;
@@ -1169,6 +1174,7 @@ string academicYear = cmbAcademicYear.Text.Trim();
             txtNetAmount.Text = "0";
             txtPaidAmount.Text = "0";
             txtRemainingAmount.Text = "0";
+            txtPaymentAmount.Text = "0";
 
             dtpDueDate.Value =
                 DateTime.Today.AddDays(30);
@@ -1254,15 +1260,6 @@ string academicYear = cmbAcademicYear.Text.Trim();
                 return false;
             }
 
-            if (selectedFeeId == 0 &&
-                !selectedFeePlanId.HasValue)
-            {
-                UIHelper.ShowWarning(
-                    "لا توجد خطة رسوم مطابقة لصف الطالب في العام المحدد. أنشئ الخطة أولاً من واجهة خطط الرسوم.");
-
-                return false;
-            }
-
             decimal total;
             decimal discount;
             decimal paid;
@@ -1317,9 +1314,6 @@ string academicYear = cmbAcademicYear.Text.Trim();
                 UIHelper.ShowWarning("المدفوع لا يمكن أن يكون سالبًا.");
                 return false;
             }
-
-            if (paid > 0)
-                EnsureReceiptNumber();
 
             if (dtpPaymentDate.Checked &&
                 dtpPaymentDate.Value.Date >
@@ -1668,7 +1662,33 @@ string academicYear = cmbAcademicYear.Text.Trim();
             if (isSaving)
             {
                 UIHelper.ShowInfo("عملية قيد التنفيذ؛ انتظر انتهاء الحفظ الحالي.");
+                return;
+            }
 
+            if (selectedFeeId <= 0)
+            {
+                UIHelper.ShowWarning(
+                    "اختر سجل الرسوم من الجدول أولاً.");
+                return;
+            }
+
+            decimal paymentAmount;
+            if (!UIHelper.TryParseDecimal(
+                    txtPaymentAmount.Text,
+                    out paymentAmount) ||
+                paymentAmount <= 0)
+            {
+                UIHelper.ShowWarning(
+                    "أدخل مبلغ الدفعة الحالية، ويجب أن يكون أكبر من صفر.");
+                txtPaymentAmount.Focus();
+                return;
+            }
+
+            if (paymentAmount > 100000000m)
+            {
+                UIHelper.ShowWarning(
+                    "مبلغ الدفعة لا يمكن أن يتجاوز 100,000,000.");
+                txtPaymentAmount.Focus();
                 return;
             }
 
@@ -1676,35 +1696,6 @@ string academicYear = cmbAcademicYear.Text.Trim();
 
             try
             {
-                if (selectedFeeId <= 0)
-                {
-                    UIHelper.ShowWarning(
-                        "اختر سجل الرسوم من الجدول أولاً.");
-
-                    return;
-                }
-
-                decimal newTotalPaid =
-                    ReadDecimal(
-                        txtPaidAmount.Text);
-
-                decimal paymentAmount =
-                    newTotalPaid -
-                    originalPaidAmount;
-
-                int studentId =
-                    UIHelper.GetSelectedId(cmbStudent);
-
-                if (paymentAmount == 0)
-                {
-                    UIHelper.ShowWarning(
-                        "أدخل إجمالي المدفوع الجديد في حقل المدفوع، ليختلف عن المدفوع الحالي.");
-
-                    txtPaidAmount.Focus();
-
-                    return;
-                }
-
                 if (!dtpPaymentDate.Checked)
                     dtpPaymentDate.Checked = true;
 
@@ -1713,71 +1704,29 @@ string academicYear = cmbAcademicYear.Text.Trim();
                 {
                     UIHelper.ShowWarning(
                         "تاريخ السداد لا يمكن أن يكون في المستقبل.");
-
                     return;
                 }
 
-string receiptNumber =
+                string receiptNumber =
                     EnsureReceiptNumber();
 
-                DateTime paymentDate = dtpPaymentDate.Value.Date;
-                string paymentMethod = cmbPaymentMethod.Text;
+                DateTime paymentDate =
+                    dtpPaymentDate.Value.Date;
+
+                string paymentMethod =
+                    cmbPaymentMethod.Text;
+
                 if (string.IsNullOrWhiteSpace(paymentMethod))
                     paymentMethod = "نقداً";
-                string notes = txtNotes.Text;
-                string academicYear = cmbAcademicYear.Text.Trim();
 
-                bool isRefund = paymentAmount < 0;
+                string notes =
+                    txtNotes.Text;
 
-                if (isRefund)
-                {
-                    decimal refundAmount = -paymentAmount;
+                string academicYear =
+                    cmbAcademicYear.Text.Trim();
 
-                    DataTable refundResult =
-                        await Task.Run(() =>
-                            feeService.RefundPayment(
-                                selectedFeeId,
-                                refundAmount,
-                                paymentDate,
-                                notes));
-
-                    DataRow refundRow =
-                        refundResult.Rows[0];
-
-                    DataTable refundedSummary =
-                        await Task.Run(() =>
-                            feeService.GetStudentFinancialSummary(
-                                studentId,
-                                academicYear));
-
-                    decimal refundedRemaining =
-                        refundedSummary != null &&
-                        refundedSummary.Rows.Count > 0
-                            ? Convert.ToDecimal(
-                                refundedSummary.Rows[0]
-                                    ["TotalRemainingAmount"])
-                            : Convert.ToDecimal(
-                                refundRow["RemainingAmount"]);
-
-                    string refundBalanceLabel =
-                        refundedRemaining < 0
-                            ? "الرصيد الدائن للطالب"
-                            : "إجمالي المتبقي على الطالب";
-
-                    UIHelper.ShowInfo(
-                        "تم خصم المبلغ تلقائيًا من رسوم الطالب. "
-                        + refundBalanceLabel +
-                        ": " +
-                        refundedRemaining.ToString("N2"));
-
-                    await LoadFeesAsync();
-
-                    DataRefreshNotifier.Notify("All", this);
-
-                    ClearInputs();
-
-                    return;
-                }
+                int studentId =
+                    UIHelper.GetSelectedId(cmbStudent);
 
                 DataTable result =
                     await Task.Run(() =>
@@ -1788,6 +1737,13 @@ string receiptNumber =
                             paymentMethod,
                             receiptNumber,
                             notes));
+
+                if (result == null ||
+                    result.Rows.Count == 0)
+                {
+                    throw new InvalidOperationException(
+                        "لم يتم تسجيل الدفعة ولم تتغير أرصدة الرسوم.");
+                }
 
                 DataRow row =
                     result.Rows[0];
@@ -1802,8 +1758,7 @@ string receiptNumber =
                     refreshedSummary != null &&
                     refreshedSummary.Rows.Count > 0
                         ? Convert.ToDecimal(
-                            refreshedSummary.Rows[0]
-                                ["TotalRemainingAmount"])
+                            refreshedSummary.Rows[0]["TotalRemainingAmount"])
                         : Convert.ToDecimal(
                             row["RemainingAmount"]);
 
@@ -1813,8 +1768,10 @@ string receiptNumber =
                         : "إجمالي المتبقي على الطالب";
 
                 UIHelper.ShowInfo(
-                    "تم تسجيل الدفعة وإنشاء سند القبض بنجاح. "
-                    + balanceLabel +
+                    "تم تسجيل دفعة بمبلغ " +
+                    paymentAmount.ToString("N2") +
+                    " وإنشاء سند قبض تلقائياً. " +
+                    balanceLabel +
                     ": " +
                     totalRemaining.ToString("N2"));
 
@@ -1823,6 +1780,16 @@ string receiptNumber =
                 DataRefreshNotifier.Notify("All", this);
 
                 ClearInputs();
+            }
+            catch (System.Data.SqlClient.SqlException ex)
+                when (ex.Number == 51055)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة الرسوم: سداد زائد دون بنود رسوم فعلية",
+                    ex);
+
+                UIHelper.ShowWarning(
+                    "تعذر ترحيل الدفعة الزائدة لأنه لا توجد بنود رسوم فعلية للطالب في العام الدراسي المحدد.");
             }
             catch (Exception ex)
             {
