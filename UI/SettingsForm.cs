@@ -489,6 +489,7 @@ namespace SchoolSystem.UI
                 statusLabel.Text = "تم حفظ بيانات المدرسة وتحديث الشعار بنجاح.";
 
                 new AuditLogService().Record("تعديل بيانات المدرسة", "SchoolSettings", "1", "تحديث هوية المدرسة والشعار");
+                DataRefreshNotifier.Notify("All", this);
                 UIHelper.ShowInformation("تم حفظ بيانات المدرسة بنجاح.");
             }
 
