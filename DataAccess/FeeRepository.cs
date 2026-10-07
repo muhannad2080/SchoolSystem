@@ -390,10 +390,24 @@ namespace SchoolSystem.DataAccess
                     /* المبلغ المستهلك فعليًا لتسوية بنود الطالب الفرعية. */
                     DECLARE @AppliedToFees DECIMAL(18,2) = @PaymentAmount - @RemainingPayment;
 
-                    /* أي مبلغ زائد عن إجمالي الرسوم يتحول إلى رصيد دائن بالسالب
-                       في الرسم الذي بدأت منه العملية، مع بقاء الدفعة كاملة في PaidAmount. */
+                    /* السداد الزائد لا يضيع: يضاف كرصيد دائن على أول بند فعلي
+                       للطالب، ثم يُعاد اشتقاق الرسوم الكلية من البنود الفعلية. */
                     IF @RemainingPayment > 0
                     BEGIN
+                        DECLARE @CreditFeeID INT;
+
+                        SELECT TOP (1) @CreditFeeID = FeeID
+                        FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                        WHERE StudentID = @StudentID
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                              REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
+                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) NOT IN
+                              (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                        ORDER BY CASE WHEN FeeID = @FeeID THEN 0 ELSE 1 END, FeeID;
+
+                        IF @CreditFeeID IS NULL
+                            SET @CreditFeeID = @FeeID;
+
                         UPDATE Fees
                         SET PaidAmount = ISNULL(PaidAmount, 0) + @RemainingPayment,
                             RemainingAmount = ISNULL(RemainingAmount, 0) - @RemainingPayment,
@@ -401,35 +415,55 @@ namespace SchoolSystem.DataAccess
                             PaymentMethod = @PaymentMethod,
                             ReceiptNumber = @ReceiptNumber,
                             Notes = CASE
-                                WHEN NULLIF(@Notes, N'') IS NULL THEN Notes
-                                WHEN NULLIF(Notes, N'') IS NULL THEN @Notes
-                                ELSE LEFT(Notes + N' | دفعة زائدة: ' + @Notes, 500)
+                                WHEN NULLIF(@Notes, N'') IS NULL THEN N'رصيد دائن ناتج عن زيادة السداد.'
+                                WHEN NULLIF(Notes, N'') IS NULL THEN LEFT(N'رصيد دائن: ' + @Notes, 500)
+                                ELSE LEFT(Notes + N' | رصيد دائن: ' + @Notes, 500)
                             END,
-                            Status = N'رصيد دائن'
-                        WHERE FeeID = @FeeID;
+                            Status = N'رصيد دائن',
+                            UpdatedAt = GETDATE()
+                        WHERE FeeID = @CreditFeeID;
+
+                        SET @RemainingPayment = 0;
                     END;
 
-                    /* أي سداد على بنود الطالب ينعكس تلقائيًا على بند الرسوم الكلية
-                       الحقيقي: يزداد المدفوع ويتناقص المتبقي بنفس القيمة دون تغيير
-                       إجمالي المبلغ، حتى يساوي المتبقي الكلي مجموع المتبقي الفرعي. */
-                    IF @AppliedToFees > 0
+                    /* الرسوم الكلية ملخص محاسبي مشتق: المدفوع = مجموع البنود،
+                       والمتبقي = قيمة الرسوم الكلية - مجموع المدفوع. */
+                    SELECT TOP (1) @TotalFeeID = FeeID
+                    FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                    WHERE StudentID = @StudentID
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                          REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
+                      AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
+                          (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                    ORDER BY FeeID;
+
+                    IF @TotalFeeID IS NOT NULL
                     BEGIN
+                        DECLARE @TotalPaid DECIMAL(18,2);
+                        DECLARE @TotalNet DECIMAL(18,2);
+
+                        SELECT @TotalPaid = ISNULL(SUM(PaidAmount), 0)
+                        FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                        WHERE StudentID = @StudentID
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                              REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
+                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) NOT IN
+                              (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');
+
+                        SELECT @TotalNet = ISNULL(NetAmount, 0)
+                        FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                        WHERE FeeID = @TotalFeeID;
+
                         UPDATE Fees
-                        SET PaidAmount = ISNULL(PaidAmount, 0) + @AppliedToFees,
-                            RemainingAmount = CASE
-                                WHEN ISNULL(RemainingAmount, 0) - @AppliedToFees < 0 THEN 0
-                                ELSE ISNULL(RemainingAmount, 0) - @AppliedToFees
-                            END,
+                        SET PaidAmount = @TotalPaid,
+                            RemainingAmount = @TotalNet - @TotalPaid,
                             Status = CASE
-                                WHEN ISNULL(RemainingAmount, 0) - @AppliedToFees <= 0 THEN N'مسدد'
-                                ELSE N'مسدد جزئياً'
+                                WHEN @TotalNet - @TotalPaid < 0 THEN N'رصيد دائن'
+                                WHEN @TotalNet - @TotalPaid <= 0 THEN N'مسدد'
+                                ELSE CASE WHEN @TotalPaid > 0 THEN N'مسدد جزئياً' ELSE N'غير مسدد' END
                             END,
                             UpdatedAt = GETDATE()
-                        WHERE StudentID = @StudentID
-                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
-                          AND LTRIM(RTRIM(ISNULL(FeeType, N''))) IN
-                              (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                          AND FeeID <> @FeeID;
+                        WHERE FeeID = @TotalFeeID;
                     END;
 
                     /* سند القبض التلقائي يُنشأ في نفس المعاملة مع الدفعة:
