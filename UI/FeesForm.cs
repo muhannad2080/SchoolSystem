@@ -160,7 +160,7 @@ namespace SchoolSystem.UI
             rootLayout.RowStyles.Clear();
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 218F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
+            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F));
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -195,7 +195,7 @@ namespace SchoolSystem.UI
             }
 
             panelButtons.FlowDirection = FlowDirection.RightToLeft;
-            panelButtons.WrapContents = false;
+            panelButtons.WrapContents = true;
             panelButtons.AutoScroll = true;
             panelButtons.Padding = new Padding(12, 6, 12, 6);
 
@@ -216,12 +216,14 @@ namespace SchoolSystem.UI
                 if (button == null)
                     continue;
 
-                button.AutoSize = false;
-                button.Width = widths[i];
+                button.AutoSize = true;
+                button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                button.MinimumSize = new Size(Math.Max(88, widths[i]), 38);
                 button.Height = 38;
                 button.Margin = new Padding(4, 3, 4, 3);
                 button.TextAlign = ContentAlignment.MiddleCenter;
                 button.RightToLeft = RightToLeft.Yes;
+                button.UseCompatibleTextRendering = true;
             }
 
             panelSearch.Padding = new Padding(16, 7, 16, 7);
