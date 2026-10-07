@@ -1146,10 +1146,14 @@ string academicYear = cmbAcademicYear.Text.Trim();
 
             if (cmbAcademicYear.Items.Count > 0)
             {
+                string currentYear =
+                    AcademicYearHelper.GetCurrentAcademicYear();
+
+                int currentIndex =
+                    cmbAcademicYear.Items.IndexOf(currentYear);
+
                 cmbAcademicYear.SelectedIndex =
-                    Math.Min(
-                        1,
-                        cmbAcademicYear.Items.Count - 1);
+                    currentIndex >= 0 ? currentIndex : 0;
             }
 
             if (cmbFeeType.Items.Count > 0)
@@ -1174,15 +1178,7 @@ string academicYear = cmbAcademicYear.Text.Trim();
             if (cmbPaymentMethod.Items.Count > 0)
                 cmbPaymentMethod.SelectedIndex = 0;
 
-            txtReceiptNumber.Text =
-                "RCV-" +
-                DateTime.Now.ToString(
-                    "yyyyMMddHHmmssfff") +
-                "-" +
-                Guid.NewGuid()
-                    .ToString("N")
-                    .Substring(0, 6)
-                    .ToUpperInvariant();
+            txtReceiptNumber.Clear();
 
             if (cmbStatus.Items.Count > 0)
                 cmbStatus.SelectedIndex = 0;
