@@ -47,6 +47,8 @@ namespace SchoolSystem.UI
 
         private bool isSaving = false;
 
+        private bool refreshInProgress = false;
+
         private bool showOutstandingOnly = false;
 
         // ============================================================
@@ -72,7 +74,10 @@ namespace SchoolSystem.UI
 
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
             Disposed += (sender, e) =>
+            {
                 DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+                VisibleChanged -= FeesForm_VisibleChanged;
+            };
 
             cmbStudent.SelectedIndexChanged += async (sender, e) =>
                 await ApplySelectedFeePlanAsync();
@@ -84,6 +89,7 @@ namespace SchoolSystem.UI
                 await ApplySelectedFeePlanAsync();
 
             Load += FeesForm_Load;
+            VisibleChanged += FeesForm_VisibleChanged;
         }
 
         private async void DataRefreshNotifier_DataChanged(
@@ -103,15 +109,72 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            await LoadAcademicYearsAsync();
-            await LoadFeeTypesAsync();
-            await LoadStudentsAsync();
-            await LoadFeesAsync();
+            await RefreshFeesViewAsync();
+        }
 
-            if (selectedFeeId > 0)
-                RefreshSelectedFeeFromLoadedData();
-            else
-                await ApplySelectedFeePlanAsync();
+        private async void FeesForm_VisibleChanged(
+            object sender,
+            EventArgs e)
+        {
+            if (!Visible ||
+                IsDisposed ||
+                isLoading ||
+                isSaving ||
+                refreshInProgress)
+            {
+                return;
+            }
+
+            await RefreshFeesViewAsync();
+        }
+
+        private async Task RefreshFeesViewAsync()
+        {
+            if (IsDisposed ||
+                isSaving ||
+                refreshInProgress)
+            {
+                return;
+            }
+
+            refreshInProgress = true;
+
+            int feeIdToKeep = selectedFeeId;
+
+            try
+            {
+                /*
+                 * الشاشة لا تعتمد على الذاكرة القديمة عند الرجوع إليها أو
+                 * عند تغيير خطط الرسوم. نعيد قراءة Fees من SQL Server،
+                 * والاستعلام نفسه يسقط القيم الحالية من FeePlans على البنود
+                 * المرتبطة، ثم نعيد تعبئة السجل المختار والملخص المالي.
+                 */
+                await LoadFeesAsync();
+
+                if (feeIdToKeep > 0)
+                {
+                    selectedFeeId = feeIdToKeep;
+                    RefreshSelectedFeeFromLoadedData();
+                }
+                else
+                {
+                    await ApplySelectedFeePlanAsync();
+                    await LoadStudentFinancialSummaryAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!IsDisposed && !isLoading)
+                {
+                    UIHelper.ShowException(
+                        "تعذر تحديث بيانات الرسوم تلقائيًا:\n",
+                        ex);
+                }
+            }
+            finally
+            {
+                refreshInProgress = false;
+            }
         }
 
         private void RefreshSelectedFeeFromLoadedData()
@@ -126,10 +189,42 @@ namespace SchoolSystem.UI
                     continue;
 
                 FillFieldsFromRow(row);
+                SelectFeeRowById(selectedFeeId);
                 return;
             }
 
             ClearInputs();
+        }
+
+        private void SelectFeeRowById(int feeId)
+        {
+            if (feeId <= 0)
+                return;
+
+            for (int i = 0; i < dataGridViewFees.Rows.Count; i++)
+            {
+                DataRowView rowView =
+                    dataGridViewFees.Rows[i].DataBoundItem as DataRowView;
+
+                if (rowView == null ||
+                    !rowView.Row.Table.Columns.Contains("FeeID") ||
+                    rowView.Row["FeeID"] == DBNull.Value ||
+                    Convert.ToInt32(rowView.Row["FeeID"]) != feeId)
+                {
+                    continue;
+                }
+
+                dataGridViewFees.ClearSelection();
+                dataGridViewFees.Rows[i].Selected = true;
+
+                if (dataGridViewFees.Columns.Count > 0)
+                {
+                    dataGridViewFees.CurrentCell =
+                        dataGridViewFees.Rows[i].Cells[0];
+                }
+
+                return;
+            }
         }
 
         // ============================================================
