@@ -10,6 +10,7 @@ using ITextFont = iTextSharp.text.Font;
 using ITextImage = iTextSharp.text.Image;
 using SchoolSystem.Models;
 using SchoolSystem.Services;
+using SchoolSystem.Security;
 
 
 namespace SchoolSystem.Helpers
@@ -48,6 +49,7 @@ namespace SchoolSystem.Helpers
                 AddExcelLogo(sheet, branding);
                 string schoolName = GetBilingualSchoolName(branding);
                 string organization = GetBilingualOrganizationLine(branding);
+                string generatedBy = GetCurrentOperatorDisplayName();
                 sheet.Range(1, 1, 1, columnCount).Merge();
                 sheet.Cell(1, 1).Value = schoolName;
                 StyleMergedHeader(sheet.Cell(1, 1), 15, Navy);
@@ -67,6 +69,10 @@ namespace SchoolSystem.Helpers
                 sheet.Range(5, 1, 5, columnCount).Merge();
                 sheet.Cell(5, 1).Value = "تاريخ الإنشاء: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm");
                 StyleMergedHeader(sheet.Cell(5, 1), 9, Navy);
+
+                sheet.Range(6, 1, 6, columnCount).Merge();
+                sheet.Cell(6, 1).Value = "المستخدم المنفذ: " + generatedBy;
+                StyleMergedHeader(sheet.Cell(6, 1), 9, Accent);
                  
 
                 for (int column = 0; column < table.Columns.Count; column++)
@@ -137,7 +143,10 @@ namespace SchoolSystem.Helpers
             iTextSharp.text.Rectangle pageSize = table.Columns.Count > 10 ? PageSize.A3.Rotate() : PageSize.A4.Rotate();
             SchoolSettings branding = SchoolSettingsService.Current();
             string safeTitle = string.IsNullOrWhiteSpace(title) ? "تقرير النظام" : title;
-            string safeSummary = summary ?? string.Empty;
+            string safeSummary = string.IsNullOrWhiteSpace(summary) ? string.Empty : summary.Trim();
+            safeSummary = safeSummary.Length == 0
+                ? "المستخدم المنفذ: " + GetCurrentOperatorDisplayName()
+                : safeSummary + " | المستخدم المنفذ: " + GetCurrentOperatorDisplayName();
 
             using (FileStream stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
             using (Document document = new Document(pageSize, 28, 28, 150, 42))
@@ -302,6 +311,31 @@ namespace SchoolSystem.Helpers
             }
         }
 
+        private static string GetCurrentOperatorDisplayName()
+        {
+            try
+            {
+                if (CurrentUser.User == null)
+                    return "غير معروف";
+
+                string name = (CurrentUser.User.FullName ?? string.Empty).Trim();
+                string userName = (CurrentUser.User.UserName ?? string.Empty).Trim();
+
+                if (name.Length > 0 && userName.Length > 0)
+                    return name + " (" + userName + ")";
+                if (name.Length > 0)
+                    return name;
+                if (userName.Length > 0)
+                    return userName;
+
+                return "غير معروف";
+            }
+            catch
+            {
+                return "غير معروف";
+            }
+        }
+
         // تعريف الدالة AddExcelLogo لتنفيذ العملية المرتبطة بها.
         private static void AddExcelLogo(IXLWorksheet sheet, SchoolSettings settings)
         {
@@ -422,9 +456,10 @@ namespace SchoolSystem.Helpers
                         graphics.DrawString(englishOrganization, organizationFont, accentBrush,
 
                             new System.Drawing.Rectangle(textLeft, top + 68, textWidth, 22), englishFormat);
+                    graphics.DrawString("المستخدم المنفذ: " + GetCurrentOperatorDisplayName(), organizationFont, accentBrush,
+                        new System.Drawing.Rectangle(bounds.Left, top + 89, bounds.Width, 20), arabicFormat);
                     graphics.DrawString(title ?? string.Empty, titleFont, navyBrush,
-
-                        new System.Drawing.Rectangle(bounds.Left, top + 91, bounds.Width, 30), arabicFormat);
+                        new System.Drawing.Rectangle(bounds.Left, top + 109, bounds.Width, 30), arabicFormat);
                 }
                 graphics.DrawLine(linePen, bounds.Left, top + headerHeight, bounds.Right, top + headerHeight);
             }
