@@ -182,6 +182,7 @@
     <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="Helpers\AcademicYearHelper.cs" />
     <Compile Include="Helpers\DataRefreshNotifier.cs" />
+    <Compile Include="Helpers\PermissionUiHelper.cs" />
     <Compile Include="UI\PayrollRecordsForm.cs">
       <SubType>UserControl</SubType>
     </Compile>
