@@ -56,6 +56,125 @@ namespace SchoolSystem.UiSmokeTests
                 ValidateLayoutNode(child);
         }
 
+        private static void ValidateDesignerGeometry()
+        {
+            string projectRoot = Path.GetFullPath(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", ".."));
+
+            string uiRoot = Path.Combine(projectRoot, "UI");
+            if (!Directory.Exists(uiRoot))
+                throw new DirectoryNotFoundException("UI source directory was not found.");
+
+            int checkedFiles = 0;
+
+            foreach (string designerPath in Directory.GetFiles(
+                uiRoot,
+                "*.Designer.cs",
+                SearchOption.AllDirectories))
+            {
+                string source = File.ReadAllText(designerPath);
+
+                MatchCollection negativeLocations = Regex.Matches(
+                    source,
+                    @"Location\\s*=\\s*new\\s+(?:System\\.)?Drawing\\.Point\\(\\s*(-\\d+)\\s*,\\s*(-?\\d+)\\s*\\)");
+
+                if (negativeLocations.Count > 0)
+                {
+                    Match first = negativeLocations[0];
+                    throw new InvalidOperationException(
+                        "Negative control location in " +
+                        Path.GetFileName(designerPath) +
+                        ": (" + first.Groups[1].Value + ", " +
+                        first.Groups[2].Value + ").");
+                }
+
+                Match client = Regex.Match(
+                    source,
+                    @"this\\.ClientSize\\s*=\\s*new\\s+(?:System\\.)?Drawing\\.Size\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
+
+                Match minimum = Regex.Match(
+                    source,
+                    @"this\\.MinimumSize\\s*=\\s*new\\s+(?:System\\.)?Drawing\\.Size\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
+
+                if (client.Success && minimum.Success)
+                {
+                    int clientWidth = int.Parse(client.Groups[1].Value);
+                    int clientHeight = int.Parse(client.Groups[2].Value);
+                    int minimumWidth = int.Parse(minimum.Groups[1].Value);
+                    int minimumHeight = int.Parse(minimum.Groups[2].Value);
+
+                    if (minimumWidth > clientWidth || minimumHeight > clientHeight)
+                    {
+                        throw new InvalidOperationException(
+                            "MinimumSize exceeds ClientSize in " +
+                            Path.GetFileName(designerPath) + ".");
+                    }
+                }
+
+                checkedFiles++;
+            }
+
+            Console.WriteLine("[PASS] Designer geometry: " + checkedFiles + " Designer files checked");
+        }
+
+        private static void ValidateButtonFlowContainers()
+        {
+            string projectRoot = Path.GetFullPath(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", ".."));
+
+            string uiRoot = Path.Combine(projectRoot, "UI");
+            int checkedPanels = 0;
+
+            foreach (string designerPath in Directory.GetFiles(
+                uiRoot,
+                "*.Designer.cs",
+                SearchOption.AllDirectories))
+            {
+                string source = File.ReadAllText(designerPath);
+
+                MatchCollection flowPanels = Regex.Matches(
+                    source,
+                    @"this\\.(\\w+)\\s*=\\s*new\\s+System\\.Windows\\.Forms\\.FlowLayoutPanel\\(\\);");
+
+                foreach (Match flow in flowPanels)
+                {
+                    string panelName = flow.Groups[1].Value;
+
+                    bool containsButton =
+                        Regex.IsMatch(
+                            source,
+                            @"this\\." + Regex.Escape(panelName) +
+                            @"\\.Controls\\.Add\\(this\\.(?:btn|kryptonBtn)[A-Za-z0-9_]*\\)");
+
+                    if (!containsButton)
+                        continue;
+
+                    bool autoScroll =
+                        Regex.IsMatch(
+                            source,
+                            @"this\\." + Regex.Escape(panelName) +
+                            @"\\.AutoScroll\\s*=\\s*true");
+
+                    bool wrap =
+                        Regex.IsMatch(
+                            source,
+                            @"this\\." + Regex.Escape(panelName) +
+                            @"\\.WrapContents\\s*=\\s*true");
+
+                    if (!autoScroll && !wrap)
+                    {
+                        throw new InvalidOperationException(
+                            "Button FlowLayoutPanel has neither AutoScroll nor WrapContents in " +
+                            Path.GetFileName(designerPath) + ": " + panelName);
+                    }
+
+                    checkedPanels++;
+                }
+            }
+
+            Console.WriteLine("[PASS] Button flow containers: " + checkedPanels + " containers checked");
+        }
+
         private static void ValidateSourceWiring()
         {
             string projectRoot = Path.GetFullPath(
@@ -338,7 +457,8 @@ namespace SchoolSystem.UiSmokeTests
 
             try
             {
-                ValidateSourceWiring();
+                ValidateDesignerGeometry();
+                ValidateButtonFlowContainers();
                 passed++;
             }
             catch (Exception ex)
