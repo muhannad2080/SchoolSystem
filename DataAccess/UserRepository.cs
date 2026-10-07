@@ -230,7 +230,99 @@ namespace SchoolSystem.DataAccess
                 }
             }
 
+            MigrateLegacyRolePermissions(con, transaction);
             return changed;
+        }
+
+        /// <summary>
+        /// يحول بيانات RolePermissions القديمة التي كانت تحتوي على View فقط
+        /// إلى قوالب الصلاحيات الإجرائية المعرفة في PermissionKeys.GetRoleDefaults.
+        /// يعمل مرة واحدة عملياً؛ إذا وجدت أي صلاحية إجرائية في RolePermissions
+        /// لا يغير الأدوار حتى لا يكتب فوق تخصيصات المسؤول.
+        /// </summary>
+        private void MigrateLegacyRolePermissions(SqlConnection con, SqlTransaction transaction)
+        {
+            using (SqlCommand actionCountCommand = new SqlCommand(@"
+                SELECT COUNT(*)
+                FROM dbo.RolePermissions RP
+                INNER JOIN dbo.Permissions P ON P.PermissionID = RP.PermissionID
+                WHERE ISNULL(P.IsActive, 1) = 1
+                  AND P.ActionName <> N'View';", con, transaction))
+            {
+                int actionCount = Convert.ToInt32(actionCountCommand.ExecuteScalar());
+                if (actionCount > 0)
+                    return;
+            }
+
+            List<Tuple<int, string>> roles = new List<Tuple<int, string>>();
+            using (SqlCommand roleCommand = new SqlCommand(@"
+                SELECT RoleID, RoleName
+                FROM dbo.Roles
+                WHERE ISNULL(IsActive, 1) = 1
+                  AND NULLIF(LTRIM(RTRIM(RoleName)), N'') IS NOT NULL;", con, transaction))
+            using (SqlDataReader reader = roleCommand.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    int roleId = reader["RoleID"] == DBNull.Value ? 0 : Convert.ToInt32(reader["RoleID"]);
+                    string roleName = reader["RoleName"] == DBNull.Value ? string.Empty : reader["RoleName"].ToString().Trim();
+                    if (roleId > 0 && !string.IsNullOrWhiteSpace(roleName))
+                        roles.Add(Tuple.Create(roleId, roleName));
+                }
+            }
+
+            using (SqlCommand deleteCommand = new SqlCommand(
+                "DELETE FROM dbo.RolePermissions WHERE RoleID = @RoleID;", con, transaction))
+            using (SqlCommand permissionIdCommand = new SqlCommand(@"
+                SELECT PermissionID
+                FROM dbo.Permissions
+                WHERE PermissionKey = @PermissionKey
+                  AND IsActive = 1;", con, transaction))
+            using (SqlCommand insertCommand = new SqlCommand(@"
+                INSERT INTO dbo.RolePermissions
+                    (RoleID, PermissionID, GrantedAt, GrantedBy)
+                VALUES
+                    (@RoleID, @PermissionID, GETDATE(), @GrantedBy);", con, transaction))
+            {
+                SqlParameter deleteRoleId = deleteCommand.Parameters.Add("@RoleID", SqlDbType.Int);
+                SqlParameter permissionKey = permissionIdCommand.Parameters.Add("@PermissionKey", SqlDbType.NVarChar, 150);
+                SqlParameter insertRoleId = insertCommand.Parameters.Add("@RoleID", SqlDbType.Int);
+                SqlParameter insertPermissionId = insertCommand.Parameters.Add("@PermissionID", SqlDbType.Int);
+                SqlParameter grantedBy = insertCommand.Parameters.Add("@GrantedBy", SqlDbType.Int);
+
+                grantedBy.Value =
+                    CurrentUser.IsLoggedIn && CurrentUser.User != null
+                        ? (object)CurrentUser.User.UserID
+                        : DBNull.Value;
+
+                foreach (Tuple<int, string> role in roles)
+                {
+                    string defaults = PermissionKeys.GetRoleDefaults(role.Item2);
+                    if (string.IsNullOrWhiteSpace(defaults))
+                        continue;
+
+                    deleteRoleId.Value = role.Item1;
+                    deleteCommand.ExecuteNonQuery();
+
+                    HashSet<string> uniqueKeys = new HashSet<string>(
+                        defaults.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                            .Select(PermissionKeys.NormalizePermissionKey)
+                            .Where(key => !string.IsNullOrWhiteSpace(key)),
+                        StringComparer.OrdinalIgnoreCase);
+
+                    foreach (string key in uniqueKeys)
+                    {
+                        permissionKey.Value = key;
+                        object permissionId = permissionIdCommand.ExecuteScalar();
+                        if (permissionId == null || permissionId == DBNull.Value)
+                            continue;
+
+                        insertRoleId.Value = role.Item1;
+                        insertPermissionId.Value = Convert.ToInt32(permissionId);
+                        insertCommand.ExecuteNonQuery();
+                    }
+                }
+            }
         }
 
         /// <summary>يُعيد صلاحيات الشاشة للدور المحدد من RolePermissions.</summary>
