@@ -160,7 +160,7 @@ namespace SchoolSystem
             schoolLogoBox = new PictureBox
             {
                 Name = "schoolLogoBox",
-                Size = new Size(68, 68),
+                Size = new Size(76, 76),
                 SizeMode = PictureBoxSizeMode.Zoom,
                 BackColor = Color.Transparent,
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
@@ -209,7 +209,7 @@ namespace SchoolSystem
 
                 schoolLogoBox.Image = schoolLogoImage;
                 schoolLogoBox.Visible = true;
-                tblHeader.Padding = new Padding(0, 0, 84, 0);
+                tblHeader.Padding = new Padding(0, 0, 92, 0);
             }
             catch (Exception ex)
             {
@@ -1411,6 +1411,13 @@ namespace SchoolSystem
                         "إغلاق التطبيق في سجل التدقيق",
                         auditException);
                 }
+            }
+
+            if (schoolLogoImage != null)
+            {
+                schoolLogoBox.Image = null;
+                schoolLogoImage.Dispose();
+                schoolLogoImage = null;
             }
 
             CurrentUser.Clear();
