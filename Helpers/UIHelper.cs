@@ -1844,7 +1844,17 @@ namespace SchoolSystem.Helpers
             else
                 return;
 
-            e.Value = FormatDateDual(date);
+            e.Value =
+                date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) +
+                " م" +
+                Environment.NewLine +
+                GetHijriDateText(date);
+
+            e.CellStyle.WrapMode = DataGridViewTriState.True;
+            e.CellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            if (grid.Rows[e.RowIndex].Height < 48)
+                grid.Rows[e.RowIndex].Height = 48;
+
             e.FormattingApplied = true;
         }
 
