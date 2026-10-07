@@ -311,7 +311,7 @@ namespace SchoolSystem.Helpers
             }
         }
 
-        private static string GetCurrentOperatorDisplayName()
+        public static string GetCurrentOperatorDisplayName()
         {
             try
             {
