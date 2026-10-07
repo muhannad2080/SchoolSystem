@@ -388,7 +388,7 @@ namespace SchoolSystem.DataAccess
                         ORDER BY CASE WHEN FeeID = @FeeID THEN 0 ELSE 1 END, FeeID;
 
                         IF @CreditFeeID IS NULL
-                            SET @CreditFeeID = @FeeID;
+                            THROW 51055, N'لا توجد بنود رسوم فعلية لترحيل الدفعة الزائدة كرَصيد دائن.', 1;
 
                         UPDATE Fees
                         SET PaidAmount = ISNULL(PaidAmount, 0) + @RemainingPayment,
