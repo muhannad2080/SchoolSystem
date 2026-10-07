@@ -135,7 +135,8 @@ namespace SchoolSystem.Helpers
 
             tip.SetToolTip(button, message);
 
-            if (!PermissionGuardStates.TryGetValue(button, out _))
+            PermissionGuardState existingGuardState;
+            if (!PermissionGuardStates.TryGetValue(button, out existingGuardState))
             {
                 PermissionGuardStates.Add(button, new PermissionGuardState
                 {
