@@ -359,14 +359,14 @@ namespace SchoolSystem
             // 
             // panelTop
             // 
-            this.panelTop.BackColor = System.Drawing.Color.White;
+            this.panelTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(252)))), ((int)(((byte)(253)))), ((int)(((byte)(255)))));
             this.panelTop.Controls.Add(this.tblHeader);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 33);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Padding = new System.Windows.Forms.Padding(18, 6, 18, 6);
+            this.panelTop.Padding = new System.Windows.Forms.Padding(18, 8, 18, 8);
             this.panelTop.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.panelTop.Size = new System.Drawing.Size(1280, 83);
+            this.panelTop.Size = new System.Drawing.Size(1280, 96);
             this.panelTop.TabIndex = 1;
             // 
             // tblHeader
@@ -461,15 +461,15 @@ namespace SchoolSystem
             // lblSystemTitle
             // 
             this.lblSystemTitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblSystemTitle.Font = new System.Drawing.Font("Tahoma", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSystemTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.lblSystemTitle.Font = new System.Drawing.Font("Tahoma", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSystemTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(50)))), ((int)(((byte)(79)))));
             this.lblSystemTitle.Location = new System.Drawing.Point(8, 0);
             this.lblSystemTitle.Margin = new System.Windows.Forms.Padding(8, 0, 8, 0);
             this.lblSystemTitle.Name = "lblSystemTitle";
             this.lblSystemTitle.Size = new System.Drawing.Size(706, 40);
             this.lblSystemTitle.TabIndex = 0;
             this.lblSystemTitle.Text = "نظام إدارة المدرسة";
-            this.lblSystemTitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSystemTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblSystemSubtitle
             // 
@@ -481,8 +481,8 @@ namespace SchoolSystem
             this.lblSystemSubtitle.Name = "lblSystemSubtitle";
             this.lblSystemSubtitle.Size = new System.Drawing.Size(706, 31);
             this.lblSystemSubtitle.TabIndex = 1;
-            this.lblSystemSubtitle.Text = "الحل المتكامل لإدارة المؤسسات التعليمية";
-            this.lblSystemSubtitle.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblSystemSubtitle.Text = "بيانات المدرسة والهوية المؤسسية";
+            this.lblSystemSubtitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panelContent
             // 
