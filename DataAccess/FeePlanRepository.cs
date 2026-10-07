@@ -429,11 +429,42 @@ namespace SchoolSystem.DataAccess
                                                 ELSE @TotalAmount - ISNULL(f.DiscountAmount, 0)
                                             END,
                                         RemainingAmount =
-                                            CASE
+                                            (CASE
                                                 WHEN ISNULL(f.DiscountAmount, 0) > @TotalAmount
                                                     THEN 0
-                                                ELSE @TotalAmount - ISNULL(f.DiscountAmount, 0) - ISNULL(f.PaidAmount, 0)
-                                            END,
+                                                ELSE @TotalAmount - ISNULL(f.DiscountAmount, 0)
+                                             END) - ISNULL(f.PaidAmount, 0),
+                                        DueDate = @DueDate,
+                                        Notes = CASE
+                                            WHEN ISNULL(f.PaidAmount, 0) = 0 THEN @Notes
+                                            ELSE f.Notes
+                                        END,
+                                        Status = CASE
+                                            WHEN
+                                                (CASE
+                                                    WHEN ISNULL(f.DiscountAmount, 0) > @TotalAmount THEN 0
+                                                    ELSE @TotalAmount - ISNULL(f.DiscountAmount, 0)
+                                                 END) = 0
+                                                AND ISNULL(f.PaidAmount, 0) = 0
+                                                THEN N'معفى'
+                                            WHEN
+                                                (CASE
+                                                    WHEN ISNULL(f.DiscountAmount, 0) > @TotalAmount THEN 0
+                                                    ELSE @TotalAmount - ISNULL(f.DiscountAmount, 0)
+                                                 END) - ISNULL(f.PaidAmount, 0) < 0
+                                                THEN N'رصيد دائن'
+                                            WHEN
+                                                (CASE
+                                                    WHEN ISNULL(f.DiscountAmount, 0) > @TotalAmount THEN 0
+                                                    ELSE @TotalAmount - ISNULL(f.DiscountAmount, 0)
+                                                 END) - ISNULL(f.PaidAmount, 0) <= 0
+                                                THEN N'مسدد'
+                                            WHEN ISNULL(f.PaidAmount, 0) > 0
+                                                THEN N'مسدد جزئياً'
+                                            WHEN @DueDate < CONVERT(date, GETDATE())
+                                                THEN N'متأخر'
+                                            ELSE N'غير مسدد'
+                                        END,
                                         UpdatedAt = GETDATE()
                                     FROM Fees f
                                     INNER JOIN FeePlans fp ON fp.FeePlanID = f.FeePlanID
@@ -441,8 +472,7 @@ namespace SchoolSystem.DataAccess
                                       AND REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') =
                                           REPLACE(@AcademicYear, N'-', N'/')
                                       AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) IN
-                                          (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                                      AND ISNULL(f.PaidAmount, 0) = 0;
+                                          (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');
                                 END
                                 ELSE
                                 BEGIN
