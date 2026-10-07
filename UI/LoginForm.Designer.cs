@@ -735,7 +735,7 @@ namespace SchoolSystem.UI
             this.FormBorderStyle = FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.MinimumSize = new Size(960, 680);
+            this.MinimumSize = new Size(1040, 680);
             this.Name = "LoginForm";
             this.RightToLeft = RightToLeft.Yes;
             this.RightToLeftLayout = true;
