@@ -1305,6 +1305,11 @@ namespace SchoolSystem.DataAccess
                     Notes = @Notes
                 WHERE FeePlanID = @FeePlanID;
 
+                /*
+                 * الخطة هي المصدر الرئيسي للمبلغ وتاريخ الاستحقاق.
+                 * يتم تحديث جميع رسوم الطلاب المرتبطة بالخطة، مع إبقاء PaidAmount
+                 * التاريخي كما هو ثم إعادة حساب NetAmount وRemainingAmount والحالة.
+                 */
                 UPDATE f
                 SET TotalAmount = @Amount,
                     NetAmount =
@@ -1313,15 +1318,44 @@ namespace SchoolSystem.DataAccess
                             ELSE @Amount - ISNULL(f.DiscountAmount, 0)
                         END,
                     RemainingAmount =
-                        CASE
+                        (CASE
                             WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
-                            ELSE @Amount - ISNULL(f.DiscountAmount, 0) - ISNULL(f.PaidAmount, 0)
-                        END,
+                            ELSE @Amount - ISNULL(f.DiscountAmount, 0)
+                         END) - ISNULL(f.PaidAmount, 0),
                     DueDate = @DueDate,
+                    Notes = CASE
+                        WHEN ISNULL(f.PaidAmount, 0) = 0 THEN @Notes
+                        ELSE f.Notes
+                    END,
+                    Status = CASE
+                        WHEN
+                            (CASE
+                                WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
+                                ELSE @Amount - ISNULL(f.DiscountAmount, 0)
+                             END) = 0
+                            AND ISNULL(f.PaidAmount, 0) = 0
+                            THEN N'معفى'
+                        WHEN
+                            (CASE
+                                WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
+                                ELSE @Amount - ISNULL(f.DiscountAmount, 0)
+                             END) - ISNULL(f.PaidAmount, 0) < 0
+                            THEN N'رصيد دائن'
+                        WHEN
+                            (CASE
+                                WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
+                                ELSE @Amount - ISNULL(f.DiscountAmount, 0)
+                             END) - ISNULL(f.PaidAmount, 0) <= 0
+                            THEN N'مسدد'
+                        WHEN ISNULL(f.PaidAmount, 0) > 0
+                            THEN N'مسدد جزئياً'
+                        WHEN @DueDate < CONVERT(date, GETDATE())
+                            THEN N'متأخر'
+                        ELSE N'غير مسدد'
+                    END,
                     UpdatedAt = GETDATE()
                 FROM Fees f
-                WHERE f.FeePlanID = @FeePlanID
-                  AND ISNULL(f.PaidAmount, 0) = 0;";
+                WHERE f.FeePlanID = @FeePlanID;";
 
             using (SqlCommand command =
                 new SqlCommand(
@@ -1474,6 +1508,15 @@ namespace SchoolSystem.DataAccess
                     )
                         THROW 51022, N'لا يمكن تغيير صف أو عام أو نوع خطة مستخدمة في رسوم موجودة. أنشئ خطة جديدة بدلاً من تغيير هوية الخطة.', 1;
 
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM Fees WITH (UPDLOCK, HOLDLOCK)
+                        WHERE FeePlanID = @FeePlanID
+                          AND ISNULL(PaidAmount, 0) > @Amount
+                    )
+                        THROW 51023, N'لا يمكن تخفيض خطة الرسوم إلى مبلغ أقل من مبلغ سبق تحصيله من أحد الطلاب المرتبطين بها.', 1;
+
                     UPDATE FeePlans SET
                         AcademicYear = @AcademicYear,
                         ClassID = @ClassID,
@@ -1484,17 +1527,52 @@ namespace SchoolSystem.DataAccess
                         Notes = @Notes
                     WHERE FeePlanID = @FeePlanID;
 
-                    /* تحديث البنود غير المسددة فقط؛ السجلات المسددة تبقى تاريخية. */
+                    /* تحديث كل الطلاب المرتبطين بالخطة مع المحافظة على المدفوعات السابقة. */
                     UPDATE f SET
                         TotalAmount = @Amount,
-                        NetAmount = CASE WHEN f.DiscountAmount > @Amount THEN 0 ELSE @Amount - f.DiscountAmount END,
-                        RemainingAmount = CASE WHEN f.DiscountAmount > @Amount THEN 0 ELSE @Amount - f.DiscountAmount - f.PaidAmount END,
+                        NetAmount = CASE
+                            WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
+                            ELSE @Amount - ISNULL(f.DiscountAmount, 0)
+                        END,
+                        RemainingAmount =
+                            (CASE
+                                WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
+                                ELSE @Amount - ISNULL(f.DiscountAmount, 0)
+                             END) - ISNULL(f.PaidAmount, 0),
                         DueDate = @DueDate,
-                        Notes = @Notes,
+                        Notes = CASE
+                            WHEN ISNULL(f.PaidAmount, 0) = 0 THEN @Notes
+                            ELSE f.Notes
+                        END,
+                        Status = CASE
+                            WHEN
+                                (CASE
+                                    WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
+                                    ELSE @Amount - ISNULL(f.DiscountAmount, 0)
+                                 END) = 0
+                                AND ISNULL(f.PaidAmount, 0) = 0
+                                THEN N'معفى'
+                            WHEN
+                                (CASE
+                                    WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
+                                    ELSE @Amount - ISNULL(f.DiscountAmount, 0)
+                                 END) - ISNULL(f.PaidAmount, 0) < 0
+                                THEN N'رصيد دائن'
+                            WHEN
+                                (CASE
+                                    WHEN ISNULL(f.DiscountAmount, 0) > @Amount THEN 0
+                                    ELSE @Amount - ISNULL(f.DiscountAmount, 0)
+                                 END) - ISNULL(f.PaidAmount, 0) <= 0
+                                THEN N'مسدد'
+                            WHEN ISNULL(f.PaidAmount, 0) > 0
+                                THEN N'مسدد جزئياً'
+                            WHEN @DueDate < CONVERT(date, GETDATE())
+                                THEN N'متأخر'
+                            ELSE N'غير مسدد'
+                        END,
                         UpdatedAt = GETDATE()
                     FROM Fees f
-                    WHERE f.FeePlanID = @FeePlanID
-                      AND f.PaidAmount = 0;
+                    WHERE f.FeePlanID = @FeePlanID;
 
                     COMMIT TRANSACTION";
 
