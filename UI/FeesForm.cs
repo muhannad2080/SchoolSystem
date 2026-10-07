@@ -946,6 +946,8 @@ namespace SchoolSystem.UI
                     ? row["ClassName"].ToString()
                     : "";
 
+            SetExistingFeeIdentityState(true);
+
             txtTotalAmount.ReadOnly =
                 selectedFeePlanId.HasValue;
 
@@ -1098,6 +1100,26 @@ string academicYear = cmbAcademicYear.Text.Trim();
             }
         }
 
+        private void SetExistingFeeIdentityState(bool existing)
+        {
+            cmbStudent.Enabled = !existing;
+            cmbAcademicYear.Enabled = !existing;
+            cmbFeeType.Enabled = !existing;
+
+            if (existing)
+            {
+                cmbStudent.Cursor = Cursors.No;
+                cmbAcademicYear.Cursor = Cursors.No;
+                cmbFeeType.Cursor = Cursors.No;
+            }
+            else
+            {
+                cmbStudent.Cursor = Cursors.Default;
+                cmbAcademicYear.Cursor = Cursors.Default;
+                cmbFeeType.Cursor = Cursors.Default;
+            }
+        }
+
         // ============================================================
         // CLEAR
         // ============================================================
@@ -1108,6 +1130,7 @@ string academicYear = cmbAcademicYear.Text.Trim();
 
             selectedFeeId = 0;
             selectedFeePlanId = null;
+            SetExistingFeeIdentityState(false);
             selectedPlanClassName = "";
             studentFinancialSummary = "";
             originalPaidAmount = 0;
@@ -1130,18 +1153,7 @@ string academicYear = cmbAcademicYear.Text.Trim();
             }
 
             if (cmbFeeType.Items.Count > 0)
-            {
-                int academicIndex =
-                    cmbFeeType.FindStringExact(
-                        "رسوم دراسية");
-
-                cmbFeeType.SelectedIndex =
-                    academicIndex >= 0
-                        ? academicIndex
-                        : Math.Min(
-                            1,
-                            cmbFeeType.Items.Count - 1);
-            }
+                cmbFeeType.SelectedIndex = 0;
 
             txtTotalAmount.ReadOnly = false;
 
@@ -1289,6 +1301,21 @@ string academicYear = cmbAcademicYear.Text.Trim();
 
                 txtDiscountAmount.Focus();
 
+                return false;
+            }
+
+            if (selectedFeeId == 0 && paid > 0)
+            {
+                UIHelper.ShowWarning(
+                    "لا تُنشئ الرسم مع مبلغ مدفوع. احفظ الرسم أولًا ثم استخدم زر «تحصيل دفعة» حتى ينشأ سند القبض وتُحدّث الرسوم الكلية تلقائيًا.");
+
+                txtPaidAmount.Focus();
+                return false;
+            }
+
+            if (selectedFeeId > 0 && paid < 0)
+            {
+                UIHelper.ShowWarning("المدفوع لا يمكن أن يكون سالبًا.");
                 return false;
             }
 
@@ -1544,18 +1571,6 @@ string academicYear = cmbAcademicYear.Text.Trim();
                     await Task.Run(() =>
                         feeService.AddFee(fee));
 
-                decimal paidAmount =
-                    fee.PaidAmount;
-
-                if (paidAmount > 0)
-                {
-                    await CreateReceiptVoucherIfNeededAsync(
-                        newFeeId,
-                        paidAmount,
-                        cmbStudent.Text,
-                        cmbPaymentMethod.Text);
-                }
-
                 UIHelper.ShowInfo(
                     "تمت إضافة الرسوم بنجاح.");
 
@@ -1646,24 +1661,9 @@ string academicYear = cmbAcademicYear.Text.Trim();
                     return;
                 }
 
-                decimal newPaidAmount =
-                    fee.PaidAmount;
-
-                decimal paymentDifference = 0m;
-
                 bool result =
                     await Task.Run(() =>
                         feeService.UpdateFee(fee));
-
-                if (result &&
-                    paymentDifference > 0)
-                {
-                    await CreateReceiptVoucherIfNeededAsync(
-                        selectedFeeId,
-                        paymentDifference,
-                        cmbStudent.Text,
-                        cmbPaymentMethod.Text);
-                }
 
                 if (result)
                 {
