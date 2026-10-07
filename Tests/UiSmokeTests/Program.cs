@@ -250,6 +250,63 @@ namespace SchoolSystem.UiSmokeTests
             Console.WriteLine("[PASS] Source event wiring: " + checkedHandlers + " handlers checked");
         }
 
+        private static void ValidateButtonWiring()
+        {
+            string projectRoot = Path.GetFullPath(
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", ".."));
+
+            string uiRoot = Path.Combine(projectRoot, "UI");
+            int checkedButtons = 0;
+
+            foreach (string designerPath in Directory.GetFiles(
+                uiRoot,
+                "*.Designer.cs",
+                SearchOption.AllDirectories))
+            {
+                string source = File.ReadAllText(designerPath);
+                string codePath = Path.Combine(
+                    Path.GetDirectoryName(designerPath),
+                    Path.GetFileNameWithoutExtension(designerPath) + ".cs");
+
+                if (File.Exists(codePath))
+                    source += Environment.NewLine + File.ReadAllText(codePath);
+
+                MatchCollection buttons = Regex.Matches(
+                    source,
+                    @"this\.(btn[A-Za-z0-9_]+)\s*=\s*new\s+(?:System\.Windows\.Forms\.)?Button\(\);");
+
+                foreach (Match button in buttons)
+                {
+                    string name = button.Groups[1].Value;
+                    bool hasClickSubscription =
+                        Regex.IsMatch(
+                            source,
+                            @"(?:this\.)?" + Regex.Escape(name) +
+                            @"\.Click\s*\+=");
+
+                    bool hasClickHandler =
+                        Regex.IsMatch(
+                            source,
+                            @"\b(?:private|protected|public|internal)\s+(?:async\s+)?void\s+" +
+                            Regex.Escape(name) +
+                            @"_Click\s*\(");
+
+                    if (!hasClickSubscription && !hasClickHandler)
+                    {
+                        throw new InvalidOperationException(
+                            "Button has no click wiring: " +
+                            name +
+                            " in " +
+                            Path.GetFileName(designerPath));
+                    }
+
+                    checkedButtons++;
+                }
+            }
+
+            Console.WriteLine("[PASS] Button wiring: " + checkedButtons + " buttons checked");
+        }
+
         private static void ValidateTextFit(Control root)
         {
             foreach (Control control in GetAllControls(root))
@@ -475,6 +532,7 @@ namespace SchoolSystem.UiSmokeTests
                 ValidateDesignerGeometry();
                 ValidateButtonFlowContainers();
                 ValidateSourceWiring();
+                ValidateButtonWiring();
                 passed++;
             }
             catch (Exception ex)
