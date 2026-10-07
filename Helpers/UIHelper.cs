@@ -265,39 +265,63 @@ namespace SchoolSystem.Helpers
 
         private static void NormalizeButtonFlowPanel(FlowLayoutPanel flow)
         {
-            bool hasButton = false;
-
-            foreach (Control child in flow.Controls)
-            {
-                if (child is Button || child is KryptonButton)
-                {
-                    hasButton = true;
-                    break;
-                }
-            }
-
-            if (!hasButton)
+            if (flow == null)
                 return;
 
-            flow.AutoScroll = true;
-            flow.WrapContents = true;
+            int buttonCount = 0;
+            int preferredWidth = flow.Padding.Horizontal;
+
+            int maxButtonHeight = 0;
 
             foreach (Control child in flow.Controls)
             {
                 Button button = child as Button;
-                if (button != null)
-                {
-                    EnsureButtonTextFits(button);
-                    button.Anchor = AnchorStyles.None;
-                    continue;
-                }
-
                 KryptonButton kryptonButton = child as KryptonButton;
-                if (kryptonButton != null)
-                {
+
+                if (button == null && kryptonButton == null)
+                    continue;
+
+                buttonCount++;
+
+                int width = child.Width;
+                int height = child.Height;
+
+                if (button != null)
+                    EnsureButtonTextFits(button);
+                else
                     EnsureKryptonButtonTextFits(kryptonButton);
-                    kryptonButton.Anchor = AnchorStyles.None;
-                }
+
+                width = child.Width;
+                height = child.Height;
+
+                preferredWidth += width + child.Margin.Horizontal;
+                maxButtonHeight = Math.Max(
+                    maxButtonHeight,
+                    height + child.Margin.Vertical);
+            }
+
+            if (buttonCount == 0)
+                return;
+
+            flow.AutoScroll = true;
+
+            bool horizontalOverflow =
+                flow.ClientSize.Width > 0 &&
+                preferredWidth > flow.ClientSize.Width;
+
+            bool enoughHeightForSecondRow =
+                flow.ClientSize.Height > 0 &&
+                flow.ClientSize.Height >= (maxButtonHeight * 2) + flow.Padding.Vertical;
+
+            // نلتف إلى سطرين فقط عندما يكون هناك فائض أفقي ومساحة رأسية حقيقية.
+            // خلاف ذلك نُبقي السطر واحدًا مع تمرير أفقي، منعًا لقص الصف الثاني.
+            if (horizontalOverflow && enoughHeightForSecondRow)
+                flow.WrapContents = true;
+
+            foreach (Control child in flow.Controls)
+            {
+                if (child is Button || child is KryptonButton)
+                    child.Anchor = AnchorStyles.None;
             }
 
             flow.PerformLayout();
