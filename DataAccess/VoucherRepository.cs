@@ -288,7 +288,7 @@ namespace SchoolSystem.DataAccess
                         ReceiptNumber = @GeneratedVoucherNumber,
                         Notes = CASE WHEN NULLIF(@Notes, N'') IS NULL THEN Notes
                                      WHEN NULLIF(Notes, N'') IS NULL THEN @Notes
-                                     ELSE LEFT(Notes + N' | دفعة سند: ' + @VoucherNumber, 500) END,
+                                     ELSE LEFT(Notes + N' | دفعة سند: ' + @GeneratedVoucherNumber, 500) END,
                         Status = CASE WHEN ISNULL(RemainingAmount, 0) - @AppliedAmount <= 0
                                       THEN N'مسدد' ELSE N'مسدد جزئياً' END,
                         UpdatedAt = GETDATE()
