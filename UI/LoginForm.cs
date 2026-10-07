@@ -28,6 +28,15 @@ namespace SchoolSystem.UI
 
             ConfigureLoginExperience();
 
+            FormClosed += delegate
+            {
+                if (schoolBrandImage != null)
+                {
+                    schoolBrandImage.Dispose();
+                    schoolBrandImage = null;
+                }
+            };
+
             // توحيد اللون الرئيسي مع هوية النظام مع الإبقاء على تخطيط شاشة الدخول المخصص.
             btnLogin.BackColor = UIHelper.AccentColor;
             btnLogin.ForeColor = System.Drawing.Color.White;
