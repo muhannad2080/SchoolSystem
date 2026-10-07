@@ -175,6 +175,48 @@ namespace SchoolSystem.UI
             }
         }
 
+        private void LoadSchoolBrandLogo(SchoolSettings branding)
+        {
+            if (lblBrandMark == null)
+                return;
+
+            if (schoolBrandImage != null)
+            {
+                lblBrandMark.BackgroundImage = null;
+                schoolBrandImage.Dispose();
+                schoolBrandImage = null;
+            }
+
+            if (branding == null || branding.Logo == null || branding.Logo.Length == 0)
+            {
+                lblBrandMark.Text = "م";
+                lblBrandMark.BackgroundImage = null;
+                lblBrandMark.BackColor = Color.FromArgb(13, 148, 136);
+                return;
+            }
+
+            try
+            {
+                using (var stream = new System.IO.MemoryStream(branding.Logo))
+                using (Image source = Image.FromStream(stream))
+                {
+                    schoolBrandImage = new Bitmap(source);
+                }
+
+                lblBrandMark.Text = string.Empty;
+                lblBrandMark.BackgroundImage = schoolBrandImage;
+                lblBrandMark.BackgroundImageLayout = ImageLayout.Zoom;
+                lblBrandMark.BackColor = Color.White;
+            }
+            catch (Exception ex)
+            {
+                lblBrandMark.Text = "م";
+                lblBrandMark.BackgroundImage = null;
+                lblBrandMark.BackColor = Color.FromArgb(13, 148, 136);
+                ApplicationLogger.LogException("تحميل شعار المدرسة في شاشة الدخول", ex);
+            }
+        }
+
         // تعريف الدالة ShowInitializationError لتنفيذ العملية المرتبطة بها.
         private void ShowInitializationError(Exception exception)
         {
