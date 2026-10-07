@@ -105,7 +105,7 @@ namespace SchoolSystem.UI
             rootLayout.RowStyles.Clear();
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 205F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
+            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F));
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 82F));
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
@@ -144,7 +144,7 @@ namespace SchoolSystem.UI
             }
 
             actionLayout.FlowDirection = FlowDirection.RightToLeft;
-            actionLayout.WrapContents = false;
+            actionLayout.WrapContents = true;
             actionLayout.AutoScroll = true;
             actionLayout.Padding = new Padding(12, 6, 12, 6);
 
@@ -165,12 +165,14 @@ namespace SchoolSystem.UI
                 if (button == null)
                     continue;
 
-                button.AutoSize = false;
-                button.Width = widths[i];
+                button.AutoSize = true;
+                button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+                button.MinimumSize = new Size(Math.Max(90, widths[i]), 38);
                 button.Height = 38;
                 button.Margin = new Padding(4, 3, 4, 3);
                 button.TextAlign = ContentAlignment.MiddleCenter;
                 button.RightToLeft = RightToLeft.Yes;
+                button.UseCompatibleTextRendering = true;
             }
 
             filterTable.Padding = new Padding(10, 4, 10, 4);
