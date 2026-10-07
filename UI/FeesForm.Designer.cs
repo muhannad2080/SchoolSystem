@@ -35,6 +35,8 @@
             this.txtNetAmount = new System.Windows.Forms.TextBox();
             this.lblPaidAmount = new System.Windows.Forms.Label();
             this.txtPaidAmount = new System.Windows.Forms.TextBox();
+            this.lblPaymentAmount = new System.Windows.Forms.Label();
+            this.txtPaymentAmount = new System.Windows.Forms.TextBox();
             this.lblRemainingAmount = new System.Windows.Forms.Label();
             this.txtRemainingAmount = new System.Windows.Forms.TextBox();
             this.lblDueDate = new System.Windows.Forms.Label();
@@ -166,18 +168,20 @@
             this.tableFields.Controls.Add(this.txtPaidAmount, 1, 2);
             this.tableFields.Controls.Add(this.lblRemainingAmount, 2, 2);
             this.tableFields.Controls.Add(this.txtRemainingAmount, 3, 2);
-            this.tableFields.Controls.Add(this.lblDueDate, 4, 2);
-            this.tableFields.Controls.Add(this.dtpDueDate, 5, 2);
-            this.tableFields.Controls.Add(this.lblPaymentDate, 0, 3);
-            this.tableFields.Controls.Add(this.dtpPaymentDate, 1, 3);
-            this.tableFields.Controls.Add(this.lblPaymentMethod, 2, 3);
-            this.tableFields.Controls.Add(this.cmbPaymentMethod, 3, 3);
-            this.tableFields.Controls.Add(this.lblReceiptNumber, 4, 3);
-            this.tableFields.Controls.Add(this.txtReceiptNumber, 5, 3);
-            this.tableFields.Controls.Add(this.lblStatus, 0, 4);
-            this.tableFields.Controls.Add(this.cmbStatus, 1, 4);
-            this.tableFields.Controls.Add(this.lblNotes, 2, 4);
-            this.tableFields.Controls.Add(this.txtNotes, 3, 4);
+            this.tableFields.Controls.Add(this.lblPaymentAmount, 4, 2);
+            this.tableFields.Controls.Add(this.txtPaymentAmount, 5, 2);
+            this.tableFields.Controls.Add(this.lblDueDate, 0, 3);
+            this.tableFields.Controls.Add(this.dtpDueDate, 1, 3);
+            this.tableFields.Controls.Add(this.lblPaymentDate, 2, 3);
+            this.tableFields.Controls.Add(this.dtpPaymentDate, 3, 3);
+            this.tableFields.Controls.Add(this.lblPaymentMethod, 4, 3);
+            this.tableFields.Controls.Add(this.cmbPaymentMethod, 5, 3);
+            this.tableFields.Controls.Add(this.lblReceiptNumber, 0, 4);
+            this.tableFields.Controls.Add(this.txtReceiptNumber, 1, 4);
+            this.tableFields.Controls.Add(this.lblStatus, 2, 4);
+            this.tableFields.Controls.Add(this.cmbStatus, 3, 4);
+            this.tableFields.Controls.Add(this.lblNotes, 4, 4);
+            this.tableFields.Controls.Add(this.txtNotes, 5, 4);
             this.tableFields.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableFields.Location = new System.Drawing.Point(18, 7);
             this.tableFields.Margin = new System.Windows.Forms.Padding(0);
@@ -375,11 +379,39 @@
             this.txtPaidAmount.Location = new System.Drawing.Point(789, 76);
             this.txtPaidAmount.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
             this.txtPaidAmount.Name = "txtPaidAmount";
+            this.txtPaidAmount.ReadOnly = true;
             this.txtPaidAmount.Size = new System.Drawing.Size(193, 27);
             this.txtPaidAmount.TabIndex = 13;
             this.txtPaidAmount.Text = "0";
             this.txtPaidAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtPaidAmount.TextChanged += new System.EventHandler(this.AmountFields_TextChanged);
+            // 
+            // lblPaymentAmount
+            // 
+            this.lblPaymentAmount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblPaymentAmount.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.lblPaymentAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(120)))), ((int)(((byte)(92)))));
+            this.lblPaymentAmount.Location = new System.Drawing.Point(412, 72);
+            this.lblPaymentAmount.Margin = new System.Windows.Forms.Padding(0, 0, 6, 0);
+            this.lblPaymentAmount.Name = "lblPaymentAmount";
+            this.lblPaymentAmount.Size = new System.Drawing.Size(76, 36);
+            this.lblPaymentAmount.TabIndex = 14;
+            this.lblPaymentAmount.Text = "مبلغ الدفعة";
+            this.lblPaymentAmount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // txtPaymentAmount
+            // 
+            this.txtPaymentAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(250)))), ((int)(((byte)(246)))));
+            this.txtPaymentAmount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtPaymentAmount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.txtPaymentAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(100)))), ((int)(((byte)(78)))));
+            this.txtPaymentAmount.Location = new System.Drawing.Point(0, 76);
+            this.txtPaymentAmount.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            this.txtPaymentAmount.Name = "txtPaymentAmount";
+            this.txtPaymentAmount.Size = new System.Drawing.Size(406, 27);
+            this.txtPaymentAmount.TabIndex = 15;
+            this.txtPaymentAmount.Text = "0";
+            this.txtPaymentAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // lblRemainingAmount
             // 
@@ -405,7 +437,7 @@
             this.txtRemainingAmount.Name = "txtRemainingAmount";
             this.txtRemainingAmount.ReadOnly = true;
             this.txtRemainingAmount.Size = new System.Drawing.Size(193, 27);
-            this.txtRemainingAmount.TabIndex = 15;
+            this.txtRemainingAmount.TabIndex = 16;
             this.txtRemainingAmount.Text = "0";
             this.txtRemainingAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
@@ -418,7 +450,7 @@
             this.lblDueDate.Margin = new System.Windows.Forms.Padding(0, 0, 6, 0);
             this.lblDueDate.Name = "lblDueDate";
             this.lblDueDate.Size = new System.Drawing.Size(76, 36);
-            this.lblDueDate.TabIndex = 16;
+            this.lblDueDate.TabIndex = 17;
             this.lblDueDate.Text = "الاستحقاق";
             this.lblDueDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -432,7 +464,7 @@
             this.dtpDueDate.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
             this.dtpDueDate.Name = "dtpDueDate";
             this.dtpDueDate.Size = new System.Drawing.Size(406, 27);
-            this.dtpDueDate.TabIndex = 17;
+            this.dtpDueDate.TabIndex = 18;
             // 
             // lblPaymentDate
             // 
@@ -443,7 +475,7 @@
             this.lblPaymentDate.Margin = new System.Windows.Forms.Padding(0, 0, 6, 0);
             this.lblPaymentDate.Name = "lblPaymentDate";
             this.lblPaymentDate.Size = new System.Drawing.Size(76, 36);
-            this.lblPaymentDate.TabIndex = 18;
+            this.lblPaymentDate.TabIndex = 19;
             this.lblPaymentDate.Text = "تاريخ الدفع";
             this.lblPaymentDate.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -458,7 +490,7 @@
             this.dtpPaymentDate.Name = "dtpPaymentDate";
             this.dtpPaymentDate.ShowCheckBox = true;
             this.dtpPaymentDate.Size = new System.Drawing.Size(193, 27);
-            this.dtpPaymentDate.TabIndex = 19;
+            this.dtpPaymentDate.TabIndex = 20;
             // 
             // lblPaymentMethod
             // 
@@ -469,7 +501,7 @@
             this.lblPaymentMethod.Margin = new System.Windows.Forms.Padding(0, 0, 6, 0);
             this.lblPaymentMethod.Name = "lblPaymentMethod";
             this.lblPaymentMethod.Size = new System.Drawing.Size(82, 36);
-            this.lblPaymentMethod.TabIndex = 20;
+            this.lblPaymentMethod.TabIndex = 21;
             this.lblPaymentMethod.Text = "طريقة الدفع";
             this.lblPaymentMethod.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -484,7 +516,7 @@
             this.cmbPaymentMethod.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
             this.cmbPaymentMethod.Name = "cmbPaymentMethod";
             this.cmbPaymentMethod.Size = new System.Drawing.Size(193, 28);
-            this.cmbPaymentMethod.TabIndex = 21;
+            this.cmbPaymentMethod.TabIndex = 22;
             // 
             // lblReceiptNumber
             // 
@@ -495,7 +527,7 @@
             this.lblReceiptNumber.Margin = new System.Windows.Forms.Padding(0, 0, 6, 0);
             this.lblReceiptNumber.Name = "lblReceiptNumber";
             this.lblReceiptNumber.Size = new System.Drawing.Size(76, 36);
-            this.lblReceiptNumber.TabIndex = 22;
+            this.lblReceiptNumber.TabIndex = 23;
             this.lblReceiptNumber.Text = "رقم السند";
             this.lblReceiptNumber.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -510,7 +542,7 @@
             this.txtReceiptNumber.Name = "txtReceiptNumber";
             this.txtReceiptNumber.ReadOnly = true;
             this.txtReceiptNumber.Size = new System.Drawing.Size(406, 27);
-            this.txtReceiptNumber.TabIndex = 23;
+            this.txtReceiptNumber.TabIndex = 24;
             this.txtReceiptNumber.TabStop = false;
             // 
             // lblStatus
@@ -522,7 +554,7 @@
             this.lblStatus.Margin = new System.Windows.Forms.Padding(0, 0, 6, 0);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(76, 38);
-            this.lblStatus.TabIndex = 24;
+            this.lblStatus.TabIndex = 25;
             this.lblStatus.Text = "الحالة";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -537,7 +569,7 @@
             this.cmbStatus.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.Size = new System.Drawing.Size(193, 28);
-            this.cmbStatus.TabIndex = 25;
+            this.cmbStatus.TabIndex = 26;
             // 
             // lblNotes
             // 
@@ -548,7 +580,7 @@
             this.lblNotes.Margin = new System.Windows.Forms.Padding(0, 0, 6, 0);
             this.lblNotes.Name = "lblNotes";
             this.lblNotes.Size = new System.Drawing.Size(82, 38);
-            this.lblNotes.TabIndex = 26;
+            this.lblNotes.TabIndex = 27;
             this.lblNotes.Text = "الملاحظات";
             this.lblNotes.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -563,7 +595,7 @@
             this.txtNotes.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(691, 27);
-            this.txtNotes.TabIndex = 27;
+            this.txtNotes.TabIndex = 28;
             // 
             // panelSummary
             // 
@@ -954,6 +986,9 @@
 
         private System.Windows.Forms.Label lblPaidAmount;
         private System.Windows.Forms.TextBox txtPaidAmount;
+
+        private System.Windows.Forms.Label lblPaymentAmount;
+        private System.Windows.Forms.TextBox txtPaymentAmount;
 
         private System.Windows.Forms.Label lblRemainingAmount;
         private System.Windows.Forms.TextBox txtRemainingAmount;
