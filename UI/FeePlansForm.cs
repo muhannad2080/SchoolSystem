@@ -950,14 +950,40 @@ namespace SchoolSystem.UI
                     continue;
                 }
 
-                dataGridViewFeePlans.ClearSelection();
-                dataGridViewFeePlans.Rows[i].Selected = true;
+                DataGridViewRow selectedGridRow =
+                    dataGridViewFeePlans.Rows[i];
 
-                if (dataGridViewFeePlans.Columns.Count > 0)
+                dataGridViewFeePlans.ClearSelection();
+                selectedGridRow.Selected = true;
+
+                /*
+                 * لا يجوز تعيين CurrentCell على عمود مخفي.
+                 * الأعمدة الداخلية مثل FeePlanID وClassID مخفية في
+                 * FormatGrid، لذلك نبحث عن أول عمود ظاهر وآمن للصف.
+                 */
+                DataGridViewCell visibleCell = null;
+
+                foreach (DataGridViewColumn column in dataGridViewFeePlans.Columns)
                 {
-                    dataGridViewFeePlans.CurrentCell =
-                        dataGridViewFeePlans.Rows[i].Cells[0];
+                    if (!column.Visible ||
+                        column.Index < 0 ||
+                        column.Index >= selectedGridRow.Cells.Count)
+                    {
+                        continue;
+                    }
+
+                    DataGridViewCell candidate =
+                        selectedGridRow.Cells[column.Index];
+
+                    if (candidate.Visible)
+                    {
+                        visibleCell = candidate;
+                        break;
+                    }
                 }
+
+                if (visibleCell != null)
+                    dataGridViewFeePlans.CurrentCell = visibleCell;
 
                 FillFieldsFromRow(row);
                 UpdateSelectedPlanSummary();
