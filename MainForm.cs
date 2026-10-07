@@ -20,6 +20,12 @@ namespace SchoolSystem
 
         public static MainForm Instance { get; private set; }
 
+        /// <summary>
+        /// يحدد أن إغلاق MainForm سببه تسجيل الخروج لإعادة فتح شاشة الدخول،
+        /// وليس خروج المستخدم من التطبيق بالكامل.
+        /// </summary>
+        public bool RequestedLogout { get; private set; }
+
         // ================================================================
         // SERVICES
         // ================================================================
@@ -1433,8 +1439,6 @@ namespace SchoolSystem
 
             Instance =
                 null;
-
-            Application.Exit();
         }
 
         // ================================================================
@@ -1474,50 +1478,12 @@ namespace SchoolSystem
                     auditException);
             }
 
+            RequestedLogout = true;
+
+            // تنتهي دورة MainForm الحالية فقط؛ Program.cs يعيد عرض LoginForm.
             CurrentUser.Clear();
-
-            RefreshCurrentUserSession();
-
-            LoadWelcomeScreen();
-
-            Hide();
-
-            // بعد تأكيد تسجيل الخروج يعود النظام دائماً إلى شاشة تسجيل الدخول ولا يغلق
-            // التطبيق. لا يتم إغلاق النظام إلا عبر زر "خروج" في شاشة الدخول صراحةً.
-            while (true)
-            {
-                using (LoginForm loginForm =
-                       new LoginForm())
-                {
-                    DialogResult loginResult =
-                        loginForm.ShowDialog();
-
-                    if (loginResult ==
-                        DialogResult.OK)
-                    {
-                        Show();
-
-                        WindowState =
-                            FormWindowState.Normal;
-
-                        RefreshCurrentUserSession();
-
-                        LoadWelcomeScreen();
-
-                        break;
-                    }
-
-                    // إلغاء إعادة تسجيل الدخول لا يغلق النظام ولا يُبقي واجهة بلا
-                    // مستخدم؛ بل يعود إلى شاشة الدخول من جديد لانتظار تسجيل الدخول.
-                    // خروج النظام يتم فقط عبر زر "خروج" (Application.Exit).
-                    if (!loginForm.AppShouldExit)
-                        continue;
-
-                    Close();
-
-                    break;
-                }
-            }
+            ClearPanelContent();
+            Close();
         }
     }
 }
