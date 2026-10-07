@@ -14,30 +14,79 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(@"
+                ;WITH FeeBase AS
+                (
+                    SELECT
+                        f.FeeID,
+                        f.StudentID,
+                        f.FeePlanID,
+                        CASE
+                            WHEN fp.FeePlanID IS NOT NULL THEN LTRIM(RTRIM(fp.FeeType))
+                            ELSE LTRIM(RTRIM(ISNULL(f.FeeType, N'')))
+                        END AS FeeType,
+                        CASE
+                            WHEN fp.FeePlanID IS NOT NULL THEN ISNULL(fp.Amount, 0)
+                            ELSE ISNULL(f.TotalAmount, 0)
+                        END AS TotalAmount,
+                        ISNULL(f.DiscountAmount, 0) AS DiscountAmount,
+                        ISNULL(f.PaidAmount, 0) AS PaidAmount,
+                        CASE
+                            WHEN fp.FeePlanID IS NOT NULL THEN fp.DueDate
+                            ELSE f.DueDate
+                        END AS DueDate
+                    FROM dbo.Fees f
+                    LEFT JOIN dbo.FeePlans fp
+                        ON fp.FeePlanID = f.FeePlanID
+                    WHERE f.StudentID = @StudentID
+                      AND REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/') =
+                          REPLACE(@AcademicYear, N'-', N'/')
+                ),
+                ProjectedFees AS
+                (
+                    SELECT
+                        FeeID,
+                        StudentID,
+                        FeePlanID,
+                        FeeType,
+                        TotalAmount,
+                        DiscountAmount,
+                        CASE
+                            WHEN DiscountAmount > TotalAmount THEN 0
+                            ELSE TotalAmount - DiscountAmount
+                        END AS NetAmount,
+                        PaidAmount,
+                        DueDate
+                    FROM FeeBase
+                )
                 SELECT
                     COUNT(*) AS FeeCount,
                     ISNULL(SUM(NetAmount), 0) AS TotalNetAmount,
                     ISNULL(SUM(PaidAmount), 0) AS TotalPaidAmount,
-                    ISNULL(SUM(RemainingAmount), 0) AS TotalRemainingAmount,
-                    ISNULL(SUM(CASE WHEN RemainingAmount > 0 THEN 1 ELSE 0 END), 0) AS UnpaidFeeCount,
-                    ISNULL(STUFF((SELECT N'، ' + ISNULL(f2.FeeType, N'غير محدد')
-                                  FROM Fees f2
-                                  WHERE f2.StudentID = @StudentID
-                                    AND REPLACE(ISNULL(f2.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                                    AND ISNULL(f2.RemainingAmount, 0) > 0
-                                    AND LTRIM(RTRIM(ISNULL(f2.FeeType, N''))) NOT IN
-                                        (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                                  ORDER BY f2.FeeID
-                                  FOR XML PATH(N''), TYPE).value(N'.', N'nvarchar(max)'), 1, 2, N''), N'') AS UnpaidFeeTypes
-                FROM Fees
-                WHERE StudentID = @StudentID
-                  AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                  AND LTRIM(RTRIM(ISNULL(FeeType, N''))) NOT IN
-                      (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');", con))
+                    ISNULL(SUM(NetAmount - PaidAmount), 0) AS TotalRemainingAmount,
+                    ISNULL(SUM(CASE WHEN NetAmount - PaidAmount > 0 THEN 1 ELSE 0 END), 0) AS UnpaidFeeCount,
+                    ISNULL(
+                        STUFF(
+                            (
+                                SELECT N'، ' + ISNULL(p2.FeeType, N'غير محدد')
+                                FROM ProjectedFees p2
+                                WHERE p2.StudentID = @StudentID
+                                  AND p2.NetAmount - p2.PaidAmount > 0
+                                  AND p2.FeeType NOT IN
+                                      (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                                ORDER BY p2.FeeID
+                                FOR XML PATH(N''), TYPE
+                            ).value(N'.', N'nvarchar(max)'),
+                            1,
+                            2,
+                            N''
+                        ),
+                        N''
+                    ) AS UnpaidFeeTypes
+                FROM ProjectedFees
+                WHERE FeeType NOT IN
+                    (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee');", con))
             {
-
                 cmd.Parameters.AddWithValue("@StudentID", studentId);
-
                 cmd.Parameters.AddWithValue("@AcademicYear", academicYear ?? string.Empty);
 
                 DataTable table = new DataTable();
@@ -53,65 +102,170 @@ namespace SchoolSystem.DataAccess
         {
             using (SqlConnection con = DbConnection.GetConnection())
             {
-                string query = @"
-                    SELECT
-                        f.FeeID,
-                        f.StudentID,
-                        s.FullName AS StudentName,
-                        sc.ClassID,
-                        c.ClassName,
-                        sc.Section,
-                        f.FeePlanID,
-                        f.AcademicYear,
-                        f.FeeType,
-                        f.TotalAmount,
-                        f.DiscountAmount,
-                        f.NetAmount,
-                        f.PaidAmount,
-                        f.RemainingAmount,
-                        SUM(CASE WHEN LTRIM(RTRIM(ISNULL(f.FeeType, N''))) IN
-                                    (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                                 THEN 0 ELSE ISNULL(f.NetAmount, 0) END)
-                            OVER (PARTITION BY f.StudentID, REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/')) AS StudentTotalNetAmount,
-                        SUM(CASE WHEN LTRIM(RTRIM(ISNULL(f.FeeType, N''))) IN
-                                    (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                                 THEN 0 ELSE ISNULL(f.PaidAmount, 0) END)
-                            OVER (PARTITION BY f.StudentID, REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/')) AS StudentTotalPaidAmount,
-                        SUM(CASE WHEN LTRIM(RTRIM(ISNULL(f.FeeType, N''))) IN
-                                    (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                                 THEN 0 ELSE ISNULL(f.RemainingAmount, 0) END)
-                            OVER (PARTITION BY f.StudentID, REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/')) AS StudentTotalRemainingAmount,
-                        SUM(CASE WHEN LTRIM(RTRIM(ISNULL(f.FeeType, N''))) IN
-                                    (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
-                                 THEN 0 WHEN ISNULL(f.RemainingAmount, 0) > 0 THEN 1 ELSE 0 END)
-                            OVER (PARTITION BY f.StudentID, REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/')) AS StudentUnpaidFeeCount,
-                        f.DueDate,
-                        f.PaymentDate,
-                        f.PaymentMethod,
-                        f.ReceiptNumber,
-                        f.Status,
-                        f.Notes,
-                        f.CreatedAt,
-                        f.UpdatedAt
-                    FROM Fees f
-                    INNER JOIN Students s ON f.StudentID = s.StudentID
-                    LEFT JOIN StudentClasses sc ON sc.StudentClassID =
+                const string query = @"
+                    ;WITH FeeBase AS
                     (
-                        SELECT TOP (1) sc2.StudentClassID
-                        FROM StudentClasses sc2
-                        WHERE sc2.StudentID = f.StudentID
-                          AND REPLACE(ISNULL(sc2.AcademicYear, N''), N'-', N'/') = REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/')
-                        ORDER BY sc2.AssignedDate DESC, sc2.StudentClassID DESC
+                        SELECT
+                            f.FeeID,
+                            f.StudentID,
+                            f.FeePlanID,
+                            f.AcademicYear,
+                            CASE
+                                WHEN fp.FeePlanID IS NOT NULL THEN fp.ClassID
+                                ELSE NULL
+                            END AS PlanClassID,
+                            CASE
+                                WHEN fp.FeePlanID IS NOT NULL THEN LTRIM(RTRIM(fp.FeeType))
+                                ELSE LTRIM(RTRIM(ISNULL(f.FeeType, N'')))
+                            END AS FeeType,
+                            CASE
+                                WHEN fp.FeePlanID IS NOT NULL THEN ISNULL(fp.Amount, 0)
+                                ELSE ISNULL(f.TotalAmount, 0)
+                            END AS TotalAmount,
+                            ISNULL(f.DiscountAmount, 0) AS DiscountAmount,
+                            ISNULL(f.PaidAmount, 0) AS PaidAmount,
+                            CASE
+                                WHEN fp.FeePlanID IS NOT NULL THEN fp.DueDate
+                                ELSE f.DueDate
+                            END AS DueDate,
+                            f.PaymentDate,
+                            f.PaymentMethod,
+                            f.ReceiptNumber,
+                            f.Notes,
+                            f.CreatedAt,
+                            f.UpdatedAt
+                        FROM dbo.Fees f
+                        LEFT JOIN dbo.FeePlans fp
+                            ON fp.FeePlanID = f.FeePlanID
+                    ),
+                    ProjectedFees AS
+                    (
+                        SELECT
+                            fb.*,
+                            CASE
+                                WHEN fb.DiscountAmount > fb.TotalAmount THEN 0
+                                ELSE fb.TotalAmount - fb.DiscountAmount
+                            END AS NetAmount,
+                            (
+                                CASE
+                                    WHEN fb.DiscountAmount > fb.TotalAmount THEN 0
+                                    ELSE fb.TotalAmount - fb.DiscountAmount
+                                END
+                            ) - fb.PaidAmount AS RemainingAmount
+                        FROM FeeBase fb
+                    ),
+                    FinalFees AS
+                    (
+                        SELECT
+                            pf.*,
+                            CASE
+                                WHEN pf.NetAmount = 0 AND pf.PaidAmount = 0 THEN N'معفى'
+                                WHEN pf.RemainingAmount < 0 THEN N'رصيد دائن'
+                                WHEN pf.RemainingAmount <= 0 THEN N'مسدد'
+                                WHEN pf.PaidAmount > 0 THEN N'مسدد جزئياً'
+                                WHEN pf.DueDate < CONVERT(date, GETDATE()) THEN N'متأخر'
+                                ELSE N'غير مسدد'
+                            END AS Status,
+                            SUM(
+                                CASE
+                                    WHEN pf.FeeType IN
+                                        (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                                        THEN 0
+                                    ELSE pf.NetAmount
+                                END
+                            ) OVER
+                            (
+                                PARTITION BY pf.StudentID,
+                                             REPLACE(ISNULL(pf.AcademicYear, N''), N'-', N'/')
+                            ) AS StudentTotalNetAmount,
+                            SUM(
+                                CASE
+                                    WHEN pf.FeeType IN
+                                        (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                                        THEN 0
+                                    ELSE pf.PaidAmount
+                                END
+                            ) OVER
+                            (
+                                PARTITION BY pf.StudentID,
+                                             REPLACE(ISNULL(pf.AcademicYear, N''), N'-', N'/')
+                            ) AS StudentTotalPaidAmount,
+                            SUM(
+                                CASE
+                                    WHEN pf.FeeType IN
+                                        (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                                        THEN 0
+                                    ELSE pf.RemainingAmount
+                                END
+                            ) OVER
+                            (
+                                PARTITION BY pf.StudentID,
+                                             REPLACE(ISNULL(pf.AcademicYear, N''), N'-', N'/')
+                            ) AS StudentTotalRemainingAmount,
+                            SUM(
+                                CASE
+                                    WHEN pf.FeeType IN
+                                        (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
+                                        THEN 0
+                                    WHEN pf.RemainingAmount > 0 THEN 1
+                                    ELSE 0
+                                END
+                            ) OVER
+                            (
+                                PARTITION BY pf.StudentID,
+                                             REPLACE(ISNULL(pf.AcademicYear, N''), N'-', N'/')
+                            ) AS StudentUnpaidFeeCount
+                        FROM ProjectedFees pf
                     )
-                    LEFT JOIN Classes c ON c.ClassID = COALESCE(sc.ClassID, s.ClassID)
-                    ORDER BY f.FeeID DESC";
+                    SELECT
+                        ff.FeeID,
+                        ff.StudentID,
+                        s.FullName AS StudentName,
+                        currentClass.ClassID,
+                        currentClass.ClassName,
+                        sc.Section,
+                        ff.FeePlanID,
+                        ff.AcademicYear,
+                        ff.FeeType,
+                        ff.TotalAmount,
+                        ff.DiscountAmount,
+                        ff.NetAmount,
+                        ff.PaidAmount,
+                        ff.RemainingAmount,
+                        ff.StudentTotalNetAmount,
+                        ff.StudentTotalPaidAmount,
+                        ff.StudentTotalRemainingAmount,
+                        ff.StudentUnpaidFeeCount,
+                        ff.DueDate,
+                        ff.PaymentDate,
+                        ff.PaymentMethod,
+                        ff.ReceiptNumber,
+                        ff.Status,
+                        ff.Notes,
+                        ff.CreatedAt,
+                        ff.UpdatedAt
+                    FROM FinalFees ff
+                    INNER JOIN dbo.Students s
+                        ON s.StudentID = ff.StudentID
+                    LEFT JOIN dbo.StudentClasses sc
+                        ON sc.StudentClassID =
+                        (
+                            SELECT TOP (1) sc2.StudentClassID
+                            FROM dbo.StudentClasses sc2
+                            WHERE sc2.StudentID = ff.StudentID
+                              AND REPLACE(ISNULL(sc2.AcademicYear, N''), N'-', N'/') =
+                                  REPLACE(ISNULL(ff.AcademicYear, N''), N'-', N'/')
+                            ORDER BY sc2.AssignedDate DESC, sc2.StudentClassID DESC
+                        )
+                    LEFT JOIN dbo.Classes currentClass
+                        ON currentClass.ClassID =
+                            COALESCE(ff.PlanClassID, sc.ClassID, s.ClassID)
+                    ORDER BY ff.FeeID DESC";
 
                 using (SqlDataAdapter da = new SqlDataAdapter(query, con))
                 {
                     DataTable dt = new DataTable();
-
                     da.Fill(dt);
-
                     return dt;
                 }
             }
