@@ -322,6 +322,9 @@ namespace SchoolSystem.DataAccess
                     DECLARE @CurrentRemaining DECIMAL(18,2);
                     DECLARE @AppliedAmount DECIMAL(18,2);
                     DECLARE @TotalFeeID INT;
+                    DECLARE @WorkingReceiptNumber NVARCHAR(100) =
+                        N'FEE-TXN-' + REPLACE(CONVERT(NVARCHAR(36), NEWID()), N'-', N'');
+                    DECLARE @GeneratedVoucherNumber NVARCHAR(100);
 
                     SELECT @StudentID = StudentID, @AcademicYear = AcademicYear
                     FROM Fees WITH (UPDLOCK, HOLDLOCK)
@@ -356,7 +359,7 @@ namespace SchoolSystem.DataAccess
                             RemainingAmount = ISNULL(RemainingAmount, 0) - @AppliedAmount,
                             PaymentDate = @PaymentDate,
                             PaymentMethod = @PaymentMethod,
-                            ReceiptNumber = @ReceiptNumber,
+                            ReceiptNumber = @WorkingReceiptNumber,
                             Notes = CASE
                                 WHEN NULLIF(@Notes, N'') IS NULL THEN Notes
                                 WHEN NULLIF(Notes, N'') IS NULL THEN @Notes
@@ -395,7 +398,7 @@ namespace SchoolSystem.DataAccess
                             RemainingAmount = ISNULL(RemainingAmount, 0) - @RemainingPayment,
                             PaymentDate = @PaymentDate,
                             PaymentMethod = @PaymentMethod,
-                            ReceiptNumber = @ReceiptNumber,
+                            ReceiptNumber = @WorkingReceiptNumber,
                             Notes = CASE
                                 WHEN NULLIF(@Notes, N'') IS NULL THEN N'رصيد دائن ناتج عن زيادة السداد.'
                                 WHEN NULLIF(Notes, N'') IS NULL THEN LEFT(N'رصيد دائن: ' + @Notes, 500)
@@ -488,6 +491,23 @@ namespace SchoolSystem.DataAccess
                     );
                     SET @VoucherID = CONVERT(INT, SCOPE_IDENTITY());
 
+                    SET @GeneratedVoucherNumber =
+                        N'REC-' + CONVERT(NVARCHAR(4), YEAR(@PaymentDate)) +
+                        N'-' + RIGHT(N'00000' + CONVERT(NVARCHAR(20), @VoucherID), 5);
+
+                    UPDATE Vouchers
+                    SET VoucherNumber = @GeneratedVoucherNumber
+                    WHERE VoucherID = @VoucherID;
+
+                    /* بعد إنشاء رقم السند الحقيقي، توحّد كل بنود الرسوم التي
+                       لمستها هذه العملية على نفس رقم سند القبض. */
+                    UPDATE Fees
+                    SET ReceiptNumber = @GeneratedVoucherNumber
+                    WHERE StudentID = @StudentID
+                      AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                          REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
+                      AND ReceiptNumber = @WorkingReceiptNumber;
+
                     SELECT
                         f.FeeID, f.StudentID, s.FullName AS StudentName, f.AcademicYear,
                         f.FeeType, f.TotalAmount, f.DiscountAmount, f.NetAmount,
@@ -530,34 +550,6 @@ namespace SchoolSystem.DataAccess
                             transaction.Rollback();
 
                             return result;
-                        }
-
-                        /* ترقيم السند التلقائي داخل نفس المعاملة قبل الالتزام. */
-                        object voucherIdValue = result.Rows[0]["VoucherID"];
-
-                        if (voucherIdValue != null && voucherIdValue != DBNull.Value &&
-                            Convert.ToInt32(voucherIdValue) > 0)
-                        {
-                            int generatedVoucherId = Convert.ToInt32(voucherIdValue);
-                            string voucherNumber = "REC-" + paymentDate.Year + "-" + generatedVoucherId.ToString("00000");
-
-                            using (SqlCommand numberCommand = new SqlCommand(
-                                "UPDATE Vouchers SET VoucherNumber = @VoucherNumber WHERE VoucherID = @VoucherID", con, transaction))
-                            {
-                                numberCommand.Parameters.AddWithValue("@VoucherNumber", voucherNumber);
-                                numberCommand.Parameters.AddWithValue("@VoucherID", generatedVoucherId);
-                                numberCommand.ExecuteNonQuery();
-                            }
-
-                            // رقم الإيصال في سجل الرسوم مرجع عرض، ومصدره authoritative
-                            // هو رقم سند القبض المنشأ في Vouchers ضمن نفس المعاملة.
-                            using (SqlCommand receiptCommand = new SqlCommand(
-                                "UPDATE Fees SET ReceiptNumber = @VoucherNumber WHERE FeeID = @FeeID", con, transaction))
-                            {
-                                receiptCommand.Parameters.AddWithValue("@VoucherNumber", voucherNumber);
-                                receiptCommand.Parameters.AddWithValue("@FeeID", feeId);
-                                receiptCommand.ExecuteNonQuery();
-                            }
                         }
 
                         transaction.Commit();
