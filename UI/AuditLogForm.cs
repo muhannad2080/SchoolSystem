@@ -336,7 +336,9 @@ namespace SchoolSystem.UI
                             object value = sourceRow[columnIndex];
                             targetRow[columnIndex] = value == DBNull.Value ? string.Empty :
                                 (currentData.Columns[columnIndex].ColumnName == "CreatedAt"
-                                    ? Convert.ToDateTime(value).ToString("yyyy-MM-dd HH:mm")
+                                    ? UIHelper.FormatDateDual(Convert.ToDateTime(value).Date) +
+                                      " " +
+                                      Convert.ToDateTime(value).ToString("HH:mm")
                                     : value.ToString());
                         }
                         exportTable.Rows.Add(targetRow);
