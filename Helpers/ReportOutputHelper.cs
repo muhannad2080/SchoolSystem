@@ -355,8 +355,6 @@ namespace SchoolSystem.Helpers
                 paragraph.SetLeading(0f, 1.12f);
                 return paragraph;
             }
-
-            }
         }
 
         public static string GetCurrentOperatorDisplayName()
