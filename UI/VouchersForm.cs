@@ -656,8 +656,8 @@ namespace SchoolSystem.UI
                     bounds,
                     ref y,
                     "التاريخ",
-                    voucherToPrint.VoucherDate
-                        .ToString("dd/MM/yyyy"),
+                    UIHelper.FormatDateDual(
+                        voucherToPrint.VoucherDate.Date),
                     labelFont,
                     valueFont,
                     rtl,
@@ -975,8 +975,8 @@ namespace SchoolSystem.UI
                     AddVoucherPdfRow(
                         table,
                         "التاريخ",
-                        voucherToPrint.VoucherDate
-                            .ToString("dd/MM/yyyy"));
+                        UIHelper.FormatDateDual(
+                            voucherToPrint.VoucherDate.Date));
 
                     AddVoucherPdfRow(
                         table,
