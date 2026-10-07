@@ -107,7 +107,29 @@ namespace SchoolSystem.UI
             await LoadFeeTypesAsync();
             await LoadStudentsAsync();
             await LoadFeesAsync();
-            await ApplySelectedFeePlanAsync();
+
+            if (selectedFeeId > 0)
+                RefreshSelectedFeeFromLoadedData();
+            else
+                await ApplySelectedFeePlanAsync();
+        }
+
+        private void RefreshSelectedFeeFromLoadedData()
+        {
+            if (selectedFeeId <= 0 || allFees == null)
+                return;
+
+            foreach (DataRow row in allFees.Rows)
+            {
+                if (row["FeeID"] == DBNull.Value ||
+                    Convert.ToInt32(row["FeeID"]) != selectedFeeId)
+                    continue;
+
+                FillFieldsFromRow(row);
+                return;
+            }
+
+            ClearInputs();
         }
 
         // ============================================================
