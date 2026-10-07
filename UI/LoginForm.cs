@@ -13,6 +13,7 @@ namespace SchoolSystem.UI
     {
         // تعريف الدالة UserService لتنفيذ العملية المرتبطة بها.
         private readonly UserService userService = new UserService();
+        private Image schoolBrandImage;
 
         // يُضبط فقط بعد تأكيد المستخدم الإغلاق أو بعد نجاح تسجيل الدخول.
         public bool AppShouldExit { get; private set; }
