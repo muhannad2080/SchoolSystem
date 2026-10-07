@@ -250,6 +250,54 @@ namespace SchoolSystem.UiSmokeTests
             Console.WriteLine("[PASS] Source event wiring: " + checkedHandlers + " handlers checked");
         }
 
+        private static void ValidateDualDateSupport()
+        {
+            DateTime source = new DateTime(2026, 10, 7);
+
+            string dual = UIHelper.FormatDateDual(source);
+            if (string.IsNullOrWhiteSpace(dual) ||
+                dual.IndexOf("م", StringComparison.Ordinal) < 0 ||
+                dual.IndexOf("هـ", StringComparison.Ordinal) < 0)
+            {
+                throw new InvalidOperationException(
+                    "Dual date formatting must contain both Gregorian and Hijri values.");
+            }
+
+            string[] parts = dual.Split('|');
+            if (parts.Length != 2)
+                throw new InvalidOperationException("Dual date format must expose two calendar values.");
+
+            int hijriIndex = dual.IndexOf("هـ", StringComparison.Ordinal);
+            string hijri = dual.Substring(
+                dual.LastIndexOf(" ", hijriIndex, hijriIndex + 1) + 1)
+                .Trim();
+
+            // Use the helper's accepted explicit Hijri form for a real round-trip test.
+            string hijriValue = new string(
+                dual
+                    .Substring(
+                        dual.LastIndexOf("|", StringComparison.Ordinal) + 1)
+                    .Trim()
+                    .Where(ch => char.IsDigit(ch) || ch == '/')
+                    .ToArray());
+
+            if (!UIHelper.TryParseDate(hijriValue, out DateTime parsed) ||
+                parsed.Date != source.Date)
+            {
+                throw new InvalidOperationException(
+                    "Hijri date parsing does not round-trip to the original Gregorian date.");
+            }
+
+            if (!UIHelper.TryParseDate("07/10/2026", out DateTime gregorian) ||
+                gregorian.Date != source.Date)
+            {
+                throw new InvalidOperationException(
+                    "Gregorian date parsing failed.");
+            }
+
+            Console.WriteLine("[PASS] Gregorian/Hijri date formatting and parsing");
+        }
+
         private static void ValidateButtonWiring()
         {
             string projectRoot = Path.GetFullPath(
@@ -533,6 +581,7 @@ namespace SchoolSystem.UiSmokeTests
                 ValidateButtonFlowContainers();
                 ValidateSourceWiring();
                 ValidateButtonWiring();
+                ValidateDualDateSupport();
                 passed++;
             }
             catch (Exception ex)
