@@ -348,11 +348,14 @@ namespace SchoolSystem.Services
                 fee.AcademicYear,
                 fee.FeeType);
 
-            if (matchedPlan == null)
-
-                throw new Exception("يجب ربط الرسوم بخطة مطابقة لصف الطالب ونوع الرسوم في العام الدراسي المحدد.");
-
-            fee.FeePlanID = matchedPlan.FeePlanID;
+            /*
+             * عند وجود خطة مطابقة نربط الرسم بها.
+             * عدم وجود الخطة لا يمنع الإدخال اليدوي الديناميكي؛ عندها يبقى
+             * FeePlanID = NULL، بينما تتولى قاعدة البيانات التحقق من التكرار
+             * وصحة القيم.
+             */
+            if (matchedPlan != null)
+                fee.FeePlanID = matchedPlan.FeePlanID;
         }
 
         // تعريف الدالة ValidateAcademicYear لتنفيذ العملية المرتبطة بها.
