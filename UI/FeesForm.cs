@@ -1396,7 +1396,7 @@ string academicYear = cmbAcademicYear.Text.Trim();
                 ReceiptNumber =
                     selectedFeeId > 0
                         ? txtReceiptNumber.Text.Trim()
-                        : EnsureReceiptNumber(),
+                        : string.Empty,
 
                 Status =
                     cmbStatus.Text.Trim(),
