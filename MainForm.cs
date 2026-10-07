@@ -6,6 +6,7 @@ using SchoolSystem.Helpers;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using SchoolSystem.Models;
 
 using SchoolSystem.UI.Students;
 
@@ -25,6 +26,9 @@ namespace SchoolSystem
 
         private readonly AuditLogService auditLogService =
             new AuditLogService();
+
+        private PictureBox schoolLogoBox;
+        private Image schoolLogoImage;
 
         // ================================================================
         // DYNAMIC MENU ITEM
@@ -46,6 +50,7 @@ namespace SchoolSystem
             Instance = this;
 
             UpdateCurrentUserLabel();
+            InitializeSchoolBranding();
 
             timerClock.Start();
 
@@ -97,6 +102,121 @@ namespace SchoolSystem
             panelTop.BringToFront();
 
             statusStripMain.BringToFront();
+            InitializeSchoolBranding();
+        }
+
+        private void InitializeSchoolBranding()
+        {
+            EnsureSchoolLogoControl();
+
+            SchoolSettings settings = SchoolSettingsService.Current();
+            if (settings == null)
+                return;
+
+            string schoolName = !string.IsNullOrWhiteSpace(settings.SchoolNameAr)
+                ? settings.SchoolNameAr.Trim()
+                : (!string.IsNullOrWhiteSpace(settings.SchoolNameEn)
+                    ? settings.SchoolNameEn.Trim()
+                    : "نظام إدارة المدرسة");
+
+            lblSystemTitle.Text = schoolName;
+            lblSystemTitle.TextAlign = ContentAlignment.MiddleRight;
+            lblSystemTitle.Font = new Font("Tahoma", 20F, FontStyle.Bold, GraphicsUnit.Point);
+            lblSystemTitle.ForeColor = Color.FromArgb(22, 50, 79);
+
+            lblSystemSubtitle.Text = BuildSchoolHeaderSubtitle(settings);
+            lblSystemSubtitle.TextAlign = ContentAlignment.MiddleRight;
+            lblSystemSubtitle.Font = new Font("Tahoma", 9.5F, FontStyle.Regular, GraphicsUnit.Point);
+            lblSystemSubtitle.ForeColor = Color.FromArgb(71, 85, 105);
+
+            LoadSchoolLogo(settings);
+        }
+
+        private static string BuildSchoolHeaderSubtitle(SchoolSettings settings)
+        {
+            var parts = new System.Collections.Generic.List<string>();
+
+            if (!string.IsNullOrWhiteSpace(settings.OrganizationNameAr))
+                parts.Add(settings.OrganizationNameAr.Trim());
+
+            if (!string.IsNullOrWhiteSpace(settings.AddressAr))
+                parts.Add(settings.AddressAr.Trim());
+
+            if (!string.IsNullOrWhiteSpace(settings.Phone))
+                parts.Add("هاتف: " + settings.Phone.Trim());
+
+            if (!string.IsNullOrWhiteSpace(settings.Email))
+                parts.Add(settings.Email.Trim());
+
+            string result = string.Join("   •   ", parts);
+            return string.IsNullOrWhiteSpace(result) ? "نظام إدارة المدرسة" : result;
+        }
+
+        private void EnsureSchoolLogoControl()
+        {
+            if (schoolLogoBox != null && !schoolLogoBox.IsDisposed)
+                return;
+
+            schoolLogoBox = new PictureBox
+            {
+                Name = "schoolLogoBox",
+                Size = new Size(68, 68),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                BackColor = Color.Transparent,
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                TabStop = false
+            };
+
+            panelTop.Controls.Add(schoolLogoBox);
+            schoolLogoBox.BringToFront();
+
+            panelTop.Resize += delegate
+            {
+                schoolLogoBox.Left = panelTop.ClientSize.Width - schoolLogoBox.Width - 18;
+                schoolLogoBox.Top = Math.Max(6, (panelTop.ClientSize.Height - schoolLogoBox.Height) / 2);
+            };
+
+            schoolLogoBox.Left = panelTop.ClientSize.Width - schoolLogoBox.Width - 18;
+            schoolLogoBox.Top = Math.Max(6, (panelTop.ClientSize.Height - schoolLogoBox.Height) / 2);
+        }
+
+        private void LoadSchoolLogo(SchoolSettings settings)
+        {
+            if (schoolLogoBox == null)
+                return;
+
+            if (schoolLogoImage != null)
+            {
+                schoolLogoBox.Image = null;
+                schoolLogoImage.Dispose();
+                schoolLogoImage = null;
+            }
+
+            if (settings.Logo == null || settings.Logo.Length == 0)
+            {
+                schoolLogoBox.Visible = false;
+                tblHeader.Padding = new Padding(0);
+                return;
+            }
+
+            try
+            {
+                using (var stream = new System.IO.MemoryStream(settings.Logo))
+                using (Image source = Image.FromStream(stream))
+                {
+                    schoolLogoImage = new Bitmap(source);
+                }
+
+                schoolLogoBox.Image = schoolLogoImage;
+                schoolLogoBox.Visible = true;
+                tblHeader.Padding = new Padding(0, 0, 84, 0);
+            }
+            catch (Exception ex)
+            {
+                schoolLogoBox.Visible = false;
+                tblHeader.Padding = new Padding(0);
+                ApplicationLogger.LogException("تحميل شعار المدرسة في الترويسة", ex);
+            }
         }
 
         private void HideMainHeader()
