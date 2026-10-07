@@ -69,6 +69,13 @@ namespace SchoolSystem.Helpers
                 case "Approve":
                     allowed = CurrentUser.CanApprove(module);
                     break;
+                case "PermissionManage":
+                    allowed = CurrentUser.IsAdmin()
+                        || CurrentUser.HasAny(
+                            PermissionKeys.PermissionsManage,
+                            PermissionKeys.UsersManageRoles,
+                            PermissionKeys.UsersManage);
+                    break;
                 default:
                     allowed = true;
                     break;
@@ -89,7 +96,7 @@ namespace SchoolSystem.Helpers
                 name.Equals("btnSelectAllPermissions", StringComparison.OrdinalIgnoreCase) ||
                 name.Equals("btnClearPermissions", StringComparison.OrdinalIgnoreCase) ||
                 name.Equals("btnApplyRolePreset", StringComparison.OrdinalIgnoreCase))
-                return "Edit";
+                return "PermissionManage";
 
             if (name.Equals("btnReloadPermissions", StringComparison.OrdinalIgnoreCase))
                 return "View";
