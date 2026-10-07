@@ -20,7 +20,6 @@ namespace SchoolSystem.UI
 
         private readonly FeeService feeService = new FeeService();
         private readonly StudentService studentService = new StudentService();
-        private readonly VoucherService voucherService = new VoucherService();
         private readonly FeePlanService feePlanService = new FeePlanService();
         private readonly AcademicReferenceRepository academicReferenceRepository = new AcademicReferenceRepository();
 
@@ -947,6 +946,7 @@ namespace SchoolSystem.UI
                     : "";
 
             SetExistingFeeIdentityState(true);
+            lblPaidAmount.Text = "المدفوع بعد الدفعة";
 
             txtTotalAmount.ReadOnly =
                 selectedFeePlanId.HasValue;
@@ -1131,6 +1131,7 @@ string academicYear = cmbAcademicYear.Text.Trim();
             selectedFeeId = 0;
             selectedFeePlanId = null;
             SetExistingFeeIdentityState(false);
+            lblPaidAmount.Text = "المدفوع";
             selectedPlanClassName = "";
             studentFinancialSummary = "";
             originalPaidAmount = 0;
@@ -1423,44 +1424,6 @@ string academicYear = cmbAcademicYear.Text.Trim();
         }
 
         // ============================================================
-        // RECEIPT VOUCHER
-        // ============================================================
-
-        private async Task CreateReceiptVoucherIfNeededAsync(
-            int feeId,
-            decimal paymentAmount,
-            string studentName,
-            string paymentMethod)
-        {
-            if (paymentAmount <= 0)
-                return;
-
-            DateTime paymentDate =
-                dtpPaymentDate.Checked
-                    ? dtpPaymentDate.Value.Date
-                    : DateTime.Today;
-
-            string notes =
-                "تم إنشاء سند قبض تلقائياً من شاشة الرسوم الدراسية."
-                + Environment.NewLine +
-                "نوع الرسوم: " +
-                cmbFeeType.Text +
-                Environment.NewLine +
-                "العام الدراسي: " +
-                cmbAcademicYear.Text;
-
-            await Task.Run(() =>
-                voucherService.CreateReceiptVoucherForFeePayment(
-                    paymentAmount,
-                    paymentDate,
-                    studentName,
-                    feeId,
-                    paymentMethod,
-                    notes
-                ));
-        }
-
-        // ============================================================
         // GENERATE FEES
         // ============================================================
 
@@ -1563,9 +1526,8 @@ string academicYear = cmbAcademicYear.Text.Trim();
                 Fee fee =
                     GetFeeFromInputs();
 
-                int newFeeId =
-                    await Task.Run(() =>
-                        feeService.AddFee(fee));
+                await Task.Run(() =>
+                    feeService.AddFee(fee));
 
                 UIHelper.ShowInfo(
                     "تمت إضافة الرسوم بنجاح.");
