@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using SchoolSystem.Models;
 using SchoolSystem.Services;
@@ -96,8 +97,41 @@ namespace SchoolSystem.UI
             FormBorderStyle = FormBorderStyle.None;
             BackColor = UIHelper.BackgroundColor;
 
-            lblBrandName.Text = "نظام إدارة المدرسة";
-            lblBrandTagline.Text = "منصة مدرسية موحّدة لإدارة الطلاب والمعلمين والحضور والرسوم والعمليات اليومية";
+            SchoolSettings branding = SchoolSettingsService.Current();
+
+            string schoolName =
+                branding != null && !string.IsNullOrWhiteSpace(branding.SchoolNameAr)
+                    ? branding.SchoolNameAr.Trim()
+                    : branding != null && !string.IsNullOrWhiteSpace(branding.SchoolNameEn)
+                        ? branding.SchoolNameEn.Trim()
+                        : "نظام إدارة المدرسة";
+
+            string organization =
+                branding != null && !string.IsNullOrWhiteSpace(branding.OrganizationNameAr)
+                    ? branding.OrganizationNameAr.Trim()
+                    : string.Empty;
+
+            string address =
+                branding != null && !string.IsNullOrWhiteSpace(branding.AddressAr)
+                    ? branding.AddressAr.Trim()
+                    : string.Empty;
+
+            string phone =
+                branding != null && !string.IsNullOrWhiteSpace(branding.Phone)
+                    ? "هاتف: " + branding.Phone.Trim()
+                    : string.Empty;
+
+            string contact = string.Join("   •   ",
+                new[] { organization, address, phone }
+                .Where(value => !string.IsNullOrWhiteSpace(value)));
+
+            lblBrandName.Text = schoolName;
+            lblBrandTagline.Text =
+                string.IsNullOrWhiteSpace(contact)
+                    ? "منصة مدرسية موحّدة لإدارة العمليات اليومية"
+                    : contact;
+
+            LoadSchoolBrandLogo(branding);
             lblFeatureTitle.Text = "إدارة مدرسية واضحة ومتكاملة";
             lblFeature1.Text = "✓  بيانات مترابطة وسهلة الوصول";
             lblFeature2.Text = "✓  متابعة أكاديمية ومالية في واجهة واحدة";
