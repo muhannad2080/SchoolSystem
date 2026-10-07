@@ -1,5 +1,7 @@
 using System;
 using System.Windows.Forms;
+using System.Drawing;
+using System.Runtime.CompilerServices;
 using SchoolSystem.Security;
 
 namespace SchoolSystem.Helpers
@@ -11,6 +13,8 @@ namespace SchoolSystem.Helpers
     /// </summary>
     public static class PermissionUiHelper
     {
+        private static readonly ConditionalWeakTable<Button, ToolTip> PermissionToolTips =
+            new ConditionalWeakTable<Button, ToolTip>();
         public static void Apply(Control root, string module)
         {
             if (root == null || string.IsNullOrWhiteSpace(module))
@@ -81,10 +85,63 @@ namespace SchoolSystem.Helpers
                     break;
             }
 
-            button.Enabled = allowed;
-            button.AccessibleDescription = allowed
-                ? button.AccessibleDescription
-                : "لا توجد الصلاحية المطلوبة لهذا الإجراء";
+            if (allowed)
+            {
+                button.Enabled = true;
+                button.Cursor = Cursors.Default;
+                button.AccessibleDescription = button.AccessibleDescription;
+
+                ToolTip existingTip;
+                if (PermissionToolTips.TryGetValue(button, out existingTip))
+                    existingTip.SetToolTip(button, string.Empty);
+
+                return;
+            }
+
+            button.Enabled = false;
+            button.Cursor = Cursors.No;
+
+            string permissionName = GetPermissionName(module, action);
+            string message =
+                "هذا الإجراء غير متاح لهذا الحساب." +
+                Environment.NewLine +
+                "الصلاحية المطلوبة: " + permissionName;
+
+            button.AccessibleDescription = message;
+
+            ToolTip tip;
+            if (!PermissionToolTips.TryGetValue(button, out tip))
+            {
+                tip = new ToolTip
+                {
+                    AutoPopDelay = 8000,
+                    InitialDelay = 250,
+                    ReshowDelay = 100,
+                    ShowAlways = true
+                };
+                PermissionToolTips.Add(button, tip);
+            }
+
+            tip.SetToolTip(button, message);
+        }
+
+        private static string GetPermissionName(string module, string action)
+        {
+            if (string.IsNullOrWhiteSpace(module) || string.IsNullOrWhiteSpace(action))
+                return "الصلاحية المناسبة للوحدة";
+
+            if (action.Equals("Export", StringComparison.OrdinalIgnoreCase))
+                return "تصدير البيانات";
+
+            if (action.Equals("PermissionManage", StringComparison.OrdinalIgnoreCase))
+                return "إدارة صلاحيات المستخدمين";
+
+            string key = module.Trim() + "." + action.Trim();
+            string display = PermissionKeys.GetDisplayName(key);
+
+            return string.IsNullOrWhiteSpace(display)
+                ? action.Trim()
+                : display;
         }
 
         private static string GetAction(string name)
@@ -130,25 +187,20 @@ namespace SchoolSystem.Helpers
                 name.Equals("btnNewPayment", StringComparison.OrdinalIgnoreCase))
                 return "Add";
 
-            if (name.Equals("btnAdd", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnAddBook", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnAddBus", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnAddRoute", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnClassAdd", StringComparison.OrdinalIgnoreCase))
+            if (name.StartsWith("btnAdd", StringComparison.OrdinalIgnoreCase) ||
+                name.StartsWith("btnNew", StringComparison.OrdinalIgnoreCase) ||
+                name.StartsWith("btnCreate", StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("btnGenerateFees", StringComparison.OrdinalIgnoreCase))
                 return "Add";
 
-            if (name.Equals("btnUpdate", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnUpdateBus", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnUpdateRoute", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnUpdateAssignment", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnSaveAll", StringComparison.OrdinalIgnoreCase))
+            if (name.StartsWith("btnUpdate", StringComparison.OrdinalIgnoreCase) ||
+                name.StartsWith("btnEdit", StringComparison.OrdinalIgnoreCase) ||
+                name.StartsWith("btnSave", StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("btnTransfer", StringComparison.OrdinalIgnoreCase))
                 return "Edit";
 
-            if (name.Equals("btnDelete", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnDeleteBook", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnDeleteBus", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnDeleteRoute", StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("btnDeleteAssignment", StringComparison.OrdinalIgnoreCase))
+            if (name.StartsWith("btnDelete", StringComparison.OrdinalIgnoreCase) ||
+                name.StartsWith("btnRemove", StringComparison.OrdinalIgnoreCase))
                 return "Delete";
 
             if (name.Equals("btnSearch", StringComparison.OrdinalIgnoreCase))
