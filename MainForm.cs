@@ -396,6 +396,7 @@ namespace SchoolSystem
                 return;
             }
 
+            PermissionUiHelper.Apply(uc, module);
             LoadUserControl(uc);
         }
 
@@ -419,6 +420,7 @@ namespace SchoolSystem
                 return;
             }
 
+            PermissionUiHelper.Apply(form, module);
             LoadFormInPanel(form);
         }
 
