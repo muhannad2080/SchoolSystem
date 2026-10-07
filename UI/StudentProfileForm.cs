@@ -455,7 +455,7 @@ namespace SchoolSystem.UI
         private static string FormatBirthDate(DateTime? date)
         {
 
-            return date.HasValue ? date.Value.ToString("dd/MM/yyyy") : "-";
+            return date.HasValue ? UIHelper.FormatDateDual(date.Value.Date) : "-";
         }
 
         // تعريف الدالة Safe لتنفيذ العملية المرتبطة بها.
@@ -812,7 +812,7 @@ namespace SchoolSystem.UI
                 }
 
                 StringFormat footerFormat = rtl ? rtlFormat : ltrFormat;
-                e.Graphics.DrawString("تاريخ الإصدار: " + DateTime.Now.ToString("yyyy-MM-dd"), footer,
+                e.Graphics.DrawString("تاريخ الإصدار: " + UIHelper.FormatDateDual(DateTime.Now.Date), footer,
 
                     Brushes.DimGray, new Rectangle(area.Left, area.Bottom - 28, area.Width, 22), footerFormat);
             }
