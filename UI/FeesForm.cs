@@ -1770,10 +1770,18 @@ string academicYear = cmbAcademicYear.Text.Trim();
                         ? "الرصيد الدائن للطالب"
                         : "إجمالي المتبقي على الطالب";
 
+                string voucherNumber =
+                    row.Table.Columns.Contains("VoucherNumber") &&
+                    row["VoucherNumber"] != DBNull.Value
+                        ? Convert.ToString(row["VoucherNumber"])
+                        : "غير متاح";
+
                 UIHelper.ShowInfo(
                     "تم تسجيل دفعة بمبلغ " +
                     paymentAmount.ToString("N2") +
-                    " وإنشاء سند قبض تلقائياً. " +
+                    " وإنشاء سند قبض رقم " +
+                    voucherNumber +
+                    " تلقائياً. " +
                     balanceLabel +
                     ": " +
                     totalRemaining.ToString("N2"));
