@@ -100,17 +100,32 @@ namespace SchoolSystem
                 return;
             }
 
-            using (LoginForm loginForm = new LoginForm())
+            // دورة التطبيق: تسجيل دخول -> MainForm -> تسجيل خروج -> شاشة الدخول.
+            // لا تغلق Application.Run عند تسجيل الخروج؛ نبدأ دورة مصادقة جديدة.
+            while (true)
             {
-                DialogResult loginResult = loginForm.ShowDialog();
+                using (LoginForm loginForm = new LoginForm())
+                {
+                    DialogResult loginResult = loginForm.ShowDialog();
 
-                // زر "خروج" يعيد Cancel + AppShouldExit بدون العبث برسالة التطبيق.
-                // أما إغلاق/إلغاء شاشة الدخول لأي سبب آخر فلا يفتح MainForm.
-                if (loginForm.AppShouldExit)
+                    // زر "خروج" صريح من شاشة الدخول ينهي التطبيق.
+                    if (loginForm.AppShouldExit)
+                        return;
+
+                    // أي إغلاق غير ناجح لشاشة الدخول لا يفتح النظام.
+                    if (loginResult != DialogResult.OK)
+                        return;
+                }
+
+                MainForm mainForm = new MainForm();
+                Application.Run(mainForm);
+
+                // إغلاق MainForm العادي = خروج من التطبيق.
+                // إغلاقها بسبب زر تسجيل الخروج = العودة إلى شاشة الدخول.
+                if (!mainForm.RequestedLogout)
                     return;
 
-                if (loginResult == DialogResult.OK)
-                    Application.Run(new MainForm());
+                CurrentUser.Clear();
             }
         }
 
