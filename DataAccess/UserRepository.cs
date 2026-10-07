@@ -127,6 +127,88 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// يزامن كتالوج الصلاحيات البرمجي مع dbo.Permissions.
+        /// مفتاح الصلاحية هو المصدر التقني، والاسم العربي يُعاد توليده مركزياً.
+        /// العملية آمنة لإعادة التشغيل وتضيف أي صلاحية جديدة وتصلح الأسماء القديمة تلقائياً.
+        /// </summary>
+        public int SyncPermissionCatalog()
+        {
+            int changed = 0;
+            IReadOnlyList<string> catalog = PermissionKeys.All ?? Array.Empty<string>();
+
+            using (SqlConnection con = DbConnection.GetConnection())
+            {
+                con.Open();
+
+                using (SqlTransaction transaction = con.BeginTransaction())
+                using (SqlCommand selectCommand = new SqlCommand(
+                    "SELECT PermissionID FROM dbo.Permissions WHERE PermissionKey = @PermissionKey;",
+                    con, transaction))
+                using (SqlCommand insertCommand = new SqlCommand(@"
+                    INSERT INTO dbo.Permissions
+                        (PermissionKey, DisplayName, ModuleName, ActionName, IsActive, CreatedAt)
+                    VALUES
+                        (@PermissionKey, @DisplayName, @ModuleName, @ActionName, 1, GETDATE());",
+                    con, transaction))
+                using (SqlCommand updateCommand = new SqlCommand(@"
+                    UPDATE dbo.Permissions
+                    SET DisplayName = @DisplayName,
+                        ModuleName = @ModuleName,
+                        ActionName = @ActionName,
+                        IsActive = 1
+                    WHERE PermissionKey = @PermissionKey;",
+                    con, transaction))
+                {
+                    SqlParameter selectKey = selectCommand.Parameters.Add("@PermissionKey", SqlDbType.NVarChar, 150);
+                    SqlParameter insertKey = insertCommand.Parameters.Add("@PermissionKey", SqlDbType.NVarChar, 150);
+                    SqlParameter insertDisplay = insertCommand.Parameters.Add("@DisplayName", SqlDbType.NVarChar, 250);
+                    SqlParameter insertModule = insertCommand.Parameters.Add("@ModuleName", SqlDbType.NVarChar, 100);
+                    SqlParameter insertAction = insertCommand.Parameters.Add("@ActionName", SqlDbType.NVarChar, 100);
+                    SqlParameter updateKey = updateCommand.Parameters.Add("@PermissionKey", SqlDbType.NVarChar, 150);
+                    SqlParameter updateDisplay = updateCommand.Parameters.Add("@DisplayName", SqlDbType.NVarChar, 250);
+                    SqlParameter updateModule = updateCommand.Parameters.Add("@ModuleName", SqlDbType.NVarChar, 100);
+                    SqlParameter updateAction = updateCommand.Parameters.Add("@ActionName", SqlDbType.NVarChar, 100);
+
+                    foreach (string rawKey in catalog)
+                    {
+                        string key = PermissionKeys.NormalizePermissionKey(rawKey);
+                        if (string.IsNullOrWhiteSpace(key))
+                            continue;
+
+                        string displayName = PermissionKeys.GetDisplayName(key);
+                        string[] parts = key.Split(new[] { '.' }, 2);
+                        string moduleName = parts.Length > 0 ? parts[0] : key;
+                        string actionName = parts.Length > 1 ? parts[1] : string.Empty;
+
+                        selectKey.Value = key;
+                        object existingId = selectCommand.ExecuteScalar();
+
+                        if (existingId == null || existingId == DBNull.Value)
+                        {
+                            insertKey.Value = key;
+                            insertDisplay.Value = displayName ?? key;
+                            insertModule.Value = moduleName;
+                            insertAction.Value = actionName;
+                            changed += insertCommand.ExecuteNonQuery();
+                        }
+                        else
+                        {
+                            updateKey.Value = key;
+                            updateDisplay.Value = displayName ?? key;
+                            updateModule.Value = moduleName;
+                            updateAction.Value = actionName;
+                            changed += updateCommand.ExecuteNonQuery();
+                        }
+                    }
+
+                    transaction.Commit();
+                }
+            }
+
+            return changed;
+        }
+
         /// <summary>يُعيد صلاحيات الشاشة للدور المحدد من RolePermissions.</summary>
         public List<string> GetRoleScreenPermissionsByName(string roleName)
         {
@@ -363,8 +445,8 @@ namespace SchoolSystem.DataAccess
 
 
             return source
-                // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                .Where(key => PermissionKeys.IsScreenPermission(key))
+                .Select(PermissionKeys.NormalizePermissionKey)
+                .Where(key => !string.IsNullOrWhiteSpace(key))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .OrderBy(key => key, StringComparer.OrdinalIgnoreCase)
                 .ToList();
@@ -390,9 +472,9 @@ namespace SchoolSystem.DataAccess
             {
                 foreach (string key in screenKeys)
                 {
-                    // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                     string normalized = PermissionKeys.NormalizePermissionKey(key);
-                    if (PermissionKeys.IsScreenPermission(normalized))
+                    if (!string.IsNullOrWhiteSpace(normalized) &&
+                        !validKeys.Contains(normalized, StringComparer.OrdinalIgnoreCase))
                         validKeys.Add(normalized);
                 }
             }
