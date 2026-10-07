@@ -140,15 +140,42 @@ namespace SchoolSystem.UI
             refreshInProgress = true;
 
             int feeIdToKeep = selectedFeeId;
+            int studentIdToKeep = UIHelper.GetSelectedId(cmbStudent);
+            string academicYearToKeep = cmbAcademicYear.Text;
+            string feeTypeToKeep = cmbFeeType.Text;
 
             try
             {
                 /*
-                 * الشاشة لا تعتمد على الذاكرة القديمة عند الرجوع إليها أو
-                 * عند تغيير خطط الرسوم. نعيد قراءة Fees من SQL Server،
-                 * والاستعلام نفسه يسقط القيم الحالية من FeePlans على البنود
-                 * المرتبطة، ثم نعيد تعبئة السجل المختار والملخص المالي.
+                 * مزامنة كاملة للشاشة: نعيد تحميل القوائم المرجعية مع
+                 * الاحتفاظ باختيارات المستخدم، ثم نعيد قراءة الرسوم من SQL Server.
+                 * الاستعلام نفسه يستخدم FeePlans كمصدر حي للإجمالي والنوع
+                 * والاستحقاق، ثم نعيد تعبئة السجل المختار والملخص المالي.
                  */
+                isLoading = true;
+
+                await LoadAcademicYearsAsync();
+                await LoadFeeTypesAsync();
+                await LoadStudentsAsync();
+
+                if (!string.IsNullOrWhiteSpace(academicYearToKeep) &&
+                    cmbAcademicYear.Items.Contains(academicYearToKeep))
+                {
+                    cmbAcademicYear.SelectedItem = academicYearToKeep;
+                }
+
+                if (!string.IsNullOrWhiteSpace(feeTypeToKeep) &&
+                    cmbFeeType.Items.Contains(feeTypeToKeep))
+                {
+                    cmbFeeType.SelectedItem = feeTypeToKeep;
+                    cmbFeeType.Text = feeTypeToKeep;
+                }
+
+                if (studentIdToKeep > 0)
+                    cmbStudent.SelectedValue = studentIdToKeep;
+
+                isLoading = false;
+
                 await LoadFeesAsync();
 
                 if (feeIdToKeep > 0)
@@ -173,6 +200,7 @@ namespace SchoolSystem.UI
             }
             finally
             {
+                isLoading = false;
                 refreshInProgress = false;
             }
         }
