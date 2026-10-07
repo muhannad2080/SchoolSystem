@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Helpers;
+using SchoolSystem.Models;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
