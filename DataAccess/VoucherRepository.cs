@@ -400,6 +400,7 @@ namespace SchoolSystem.DataAccess
 
                         if (reader.FieldCount >= 3 && !reader.IsDBNull(2))
                             voucher.VoucherNumber = reader.GetString(2);
+                    }
 
                     transaction.Commit();
 
