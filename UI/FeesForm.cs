@@ -1707,6 +1707,9 @@ string academicYear = cmbAcademicYear.Text.Trim();
                     return;
                 }
 
+                // لا نعيد استخدام رقم سند قديم عند تسجيل دفعة جديدة.
+                txtReceiptNumber.Clear();
+
                 string receiptNumber =
                     EnsureReceiptNumber();
 
