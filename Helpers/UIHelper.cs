@@ -3,6 +3,9 @@ using System.Drawing;
 using System.Linq;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 
@@ -459,16 +462,416 @@ namespace SchoolSystem.Helpers
         }
 
         // تعريف الدالة ConfigureDateInput لتنفيذ العملية المرتبطة بها.
+        private static readonly ConditionalWeakTable<DateTimePicker, ToolTip> DateToolTips =
+            new ConditionalWeakTable<DateTimePicker, ToolTip>();
+
         private static void ConfigureDateInput(DateTimePicker picker)
         {
+            if (picker == null)
+                return;
+
             string key = (picker.Name ?? string.Empty).ToLowerInvariant();
+
+            // حقول الوقت فقط (مثل بداية/نهاية الحصة ووقت الحضور والانصراف) لا تُعامل كتاريخ.
+            if (IsTimeOnlyDatePicker(picker, key))
+                return;
+
+            picker.RightToLeft = RightToLeft.Yes;
+            picker.RightToLeftLayout = true;
+            picker.Format = DateTimePickerFormat.Custom;
+            picker.CustomFormat = "dd/MM/yyyy";
+            picker.ShowUpDown = false;
+
             if (ContainsAny(key, "birth", "ميلاد"))
             {
                 picker.MaxDate = DateTime.Today;
                 if (picker.Value.Date > picker.MaxDate)
                     picker.Value = picker.MaxDate;
             }
+
+            ToolTip tip;
+            if (!DateToolTips.TryGetValue(picker, out tip))
+            {
+                tip = new ToolTip
+                {
+                    AutoPopDelay = 12000,
+                    InitialDelay = 350,
+                    ReshowDelay = 100,
+                    ShowAlways = true
+                };
+                DateToolTips.Add(picker, tip);
+            }
+
+            EventHandler update = delegate { UpdateDatePresentation(picker, tip); };
+            picker.ValueChanged -= update;
+            picker.ValueChanged += update;
+
+            KeyEventHandler keyHandler = DatePicker_KeyDown;
+            picker.KeyDown -= keyHandler;
+            picker.KeyDown += keyHandler;
+
+            ContextMenuStrip menu = picker.ContextMenuStrip;
+            if (menu == null)
+            {
+                menu = new ContextMenuStrip();
+                picker.ContextMenuStrip = menu;
+            }
+
+            EnsureDateMenuItem(
+                menu,
+                "إدخال تاريخ هجري",
+                "حوّل تاريخًا هجريًا إلى ميلادي ثم استخدمه في الحقل.",
+                delegate { ShowHijriDateInputDialog(picker); });
+
+            EnsureDateMenuItem(
+                menu,
+                "نسخ التاريخين",
+                "نسخ التاريخ الميلادي والهجري إلى الحافظة.",
+                delegate
+                {
+                    try
+                    {
+                        Clipboard.SetText(FormatDateDual(picker.Value.Date));
+                    }
+                    catch
+                    {
+                        // فشل الحافظة لا يؤثر على عمل التاريخ.
+                    }
+                });
+
+            UpdateDatePresentation(picker, tip);
         }
+
+        private static bool IsTimeOnlyDatePicker(DateTimePicker picker, string key)
+        {
+            string format = (picker.CustomFormat ?? string.Empty).ToLowerInvariant();
+
+            if (format.Contains("h") || format.Contains("minute") || format.Contains("second"))
+                return true;
+
+            return ContainsAny(
+                key,
+                "start",
+                "end",
+                "departure",
+                "arrival",
+                "checkin",
+                "checkout",
+                "وقت",
+                "بداية",
+                "نهاية");
+        }
+
+        private static void EnsureDateMenuItem(
+            ContextMenuStrip menu,
+            string text,
+            string accessibleDescription,
+            EventHandler handler)
+        {
+            foreach (ToolStripItem item in menu.Items)
+            {
+                if (string.Equals(item.Text, text, StringComparison.Ordinal))
+                    return;
+            }
+
+            ToolStripMenuItem menuItem = new ToolStripMenuItem(text);
+            menuItem.AccessibleName = text;
+            menuItem.AccessibleDescription = accessibleDescription;
+            menuItem.RightToLeft = RightToLeft.Yes;
+            menuItem.Click += handler;
+            menu.Items.Add(menuItem);
+        }
+
+        private static void DatePicker_KeyDown(object sender, KeyEventArgs e)
+        {
+            DateTimePicker picker = sender as DateTimePicker;
+            if (picker == null)
+                return;
+
+            if (e.Control && e.KeyCode == Keys.H)
+            {
+                ShowHijriDateInputDialog(picker);
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private static void UpdateDatePresentation(DateTimePicker picker, ToolTip tip)
+        {
+            if (picker == null)
+                return;
+
+            string dual = FormatDateDual(picker.Value.Date);
+            string help =
+                "ميلادي: " + dual.Split('|')[0].Trim() +
+                Environment.NewLine +
+                "هجري: " + GetHijriDateText(picker.Value.Date) +
+                Environment.NewLine +
+                Environment.NewLine +
+                "لإدخال التاريخ الهجري: زر الفأرة الأيمن ← إدخال تاريخ هجري، أو Ctrl+H.";
+
+            tip.SetToolTip(picker, help);
+            picker.AccessibleName = string.IsNullOrWhiteSpace(picker.AccessibleName)
+                ? "التاريخ"
+                : picker.AccessibleName;
+            picker.AccessibleDescription = help;
+        }
+
+        public static string FormatDateDual(DateTime date)
+        {
+            return date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) +
+                   " م | " +
+                   GetHijriDateText(date);
+        }
+
+        private static string GetHijriDateText(DateTime date)
+        {
+            try
+            {
+                UmAlQuraCalendar calendar = new UmAlQuraCalendar();
+                return calendar.GetDayOfMonth(date).ToString("00", CultureInfo.InvariantCulture) +
+                       "/" +
+                       calendar.GetMonth(date).ToString("00", CultureInfo.InvariantCulture) +
+                       "/" +
+                       calendar.GetYear(date).ToString("0000", CultureInfo.InvariantCulture) +
+                       " هـ";
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                HijriCalendar calendar = new HijriCalendar();
+                return calendar.GetDayOfMonth(date).ToString("00", CultureInfo.InvariantCulture) +
+                       "/" +
+                       calendar.GetMonth(date).ToString("00", CultureInfo.InvariantCulture) +
+                       "/" +
+                       calendar.GetYear(date).ToString("0000", CultureInfo.InvariantCulture) +
+                       " هـ";
+            }
+        }
+
+        public static bool TryParseDate(string input, out DateTime date)
+        {
+            date = DateTime.MinValue;
+
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            string normalized = NormalizeDateDigits(input.Trim());
+            bool explicitHijri =
+                normalized.IndexOf("هـ", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                normalized.IndexOf("هجري", StringComparison.OrdinalIgnoreCase) >= 0;
+
+            MatchCollection parts = Regex.Matches(normalized, @"\d{1,4}");
+            if (parts.Count != 3)
+                return TryParseGregorianDate(normalized, out date);
+
+            int a = int.Parse(parts[0].Value, CultureInfo.InvariantCulture);
+            int b = int.Parse(parts[1].Value, CultureInfo.InvariantCulture);
+            int c = int.Parse(parts[2].Value, CultureInfo.InvariantCulture);
+
+            if (explicitHijri || a >= 1300 && a <= 1600 || c >= 1300 && c <= 1600)
+            {
+                int year;
+                int month;
+                int day;
+
+                if (a >= 1300 && a <= 1600)
+                {
+                    year = a;
+                    month = b;
+                    day = c;
+                }
+                else if (c >= 1300 && c <= 1600)
+                {
+                    year = c;
+                    month = b;
+                    day = a;
+                }
+                else
+                {
+                    year = a;
+                    month = b;
+                    day = c;
+                }
+
+                return TryConvertHijriToGregorian(year, month, day, out date);
+            }
+
+            return TryParseGregorianDate(normalized, out date);
+        }
+
+        private static bool TryParseGregorianDate(string input, out DateTime date)
+        {
+            string[] formats =
+            {
+                "dd/MM/yyyy", "d/M/yyyy",
+                "yyyy/MM/dd", "yyyy/M/d",
+                "dd-MM-yyyy", "d-M-yyyy",
+                "yyyy-MM-dd", "yyyy-M-d"
+            };
+
+            if (DateTime.TryParseExact(
+                input,
+                formats,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AllowWhiteSpaces,
+                out date))
+            {
+                return true;
+            }
+
+            return DateTime.TryParse(
+                input,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AllowWhiteSpaces,
+                out date);
+        }
+
+        private static bool TryConvertHijriToGregorian(
+            int year,
+            int month,
+            int day,
+            out DateTime date)
+        {
+            date = DateTime.MinValue;
+
+            try
+            {
+                UmAlQuraCalendar calendar = new UmAlQuraCalendar();
+                date = calendar.ToDateTime(year, month, day, 0, 0, 0, 0);
+                return true;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                try
+                {
+                    HijriCalendar calendar = new HijriCalendar();
+                    date = calendar.ToDateTime(year, month, day, 0, 0, 0, 0);
+                    return true;
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    return false;
+                }
+            }
+        }
+
+        private static string NormalizeDateDigits(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            char[] chars = value.ToCharArray();
+
+            for (int i = 0; i < chars.Length; i++)
+            {
+                if (chars[i] >= '\u0660' && chars[i] <= '\u0669')
+                    chars[i] = (char)('0' + (chars[i] - '\u0660'));
+                else if (chars[i] >= '\u06F0' && chars[i] <= '\u06F9')
+                    chars[i] = (char)('0' + (chars[i] - '\u06F0'));
+            }
+
+            return new string(chars);
+        }
+
+        private static void ShowHijriDateInputDialog(DateTimePicker picker)
+        {
+            using (Form dialog = new Form())
+            using (Label title = new Label())
+            using (Label current = new Label())
+            using (Label inputLabel = new Label())
+            using (TextBox input = new TextBox())
+            using (Button apply = new Button())
+            using (Button cancel = new Button())
+            {
+                dialog.Text = "إدخال التاريخ الهجري";
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.ClientSize = new Size(480, 205);
+                dialog.MinimumSize = new Size(480, 205);
+                dialog.FormBorderStyle = FormBorderStyle.FixedDialog;
+                dialog.MaximizeBox = false;
+                dialog.MinimizeBox = false;
+                dialog.RightToLeft = RightToLeft.Yes;
+                dialog.RightToLeftLayout = true;
+                dialog.AcceptButton = apply;
+                dialog.CancelButton = cancel;
+
+                title.Text = "أدخل التاريخ الهجري";
+                title.Font = new Font(FontFamily, 12F, FontStyle.Bold);
+                title.Dock = DockStyle.Top;
+                title.Height = 34;
+                title.TextAlign = ContentAlignment.MiddleCenter;
+
+                current.Text = "التاريخ الحالي: " + FormatDateDual(picker.Value.Date);
+                current.Dock = DockStyle.Top;
+                current.Height = 40;
+                current.TextAlign = ContentAlignment.MiddleCenter;
+
+                inputLabel.Text = "التاريخ الهجري (مثال: 15/04/1448):";
+                inputLabel.Dock = DockStyle.Top;
+                inputLabel.Height = 30;
+                inputLabel.TextAlign = ContentAlignment.MiddleRight;
+
+                input.Dock = DockStyle.Top;
+                input.Height = 30;
+                input.Font = new Font(FontFamily, 10F);
+                input.RightToLeft = RightToLeft.Yes;
+
+                Panel buttons = new Panel();
+                buttons.Dock = DockStyle.Bottom;
+                buttons.Height = 52;
+
+                apply.Text = "تطبيق";
+                apply.DialogResult = DialogResult.OK;
+                apply.Width = 100;
+                apply.Height = 34;
+                apply.Location = new Point(255, 8);
+
+                cancel.Text = "إلغاء";
+                cancel.DialogResult = DialogResult.Cancel;
+                cancel.Width = 100;
+                cancel.Height = 34;
+                cancel.Location = new Point(145, 8);
+
+                buttons.Controls.Add(apply);
+                buttons.Controls.Add(cancel);
+
+                dialog.Controls.Add(buttons);
+                dialog.Controls.Add(input);
+                dialog.Controls.Add(inputLabel);
+                dialog.Controls.Add(current);
+                dialog.Controls.Add(title);
+
+                if (dialog.ShowDialog(picker.FindForm()) != DialogResult.OK)
+                    return;
+
+                if (!TryParseDate(input.Text, out DateTime parsed))
+                {
+                    ShowWarning("صيغة التاريخ الهجري غير صحيحة. استخدم مثلًا: 15/04/1448.");
+                    return;
+                }
+
+                try
+                {
+                    if (parsed < picker.MinDate || parsed > picker.MaxDate)
+                    {
+                        ShowWarning(
+                            "التاريخ المحدد خارج النطاق المسموح لهذا الحقل." +
+                            Environment.NewLine +
+                            "الميلادي: " + FormatDateDual(parsed));
+                        return;
+                    }
+
+                    picker.Value = parsed;
+                    picker.Focus();
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    ShowWarning("التاريخ المحدد غير صالح لهذا الحقل.");
+                }
+            }
+        }
+
+
 
         // تعريف الدالة ConfigureComboInput لتنفيذ العملية المرتبطة بها.
         private static void ConfigureComboInput(ComboBox comboBox)
@@ -1391,6 +1794,56 @@ namespace SchoolSystem.Helpers
             dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgv.GridColor = BorderColor;
             dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(6, 4, 6, 4);
+
+            dgv.CellFormatting -= DataGridView_DualDateFormatting;
+            dgv.CellFormatting += DataGridView_DualDateFormatting;
+        }
+
+        private static void DataGridView_DualDateFormatting(
+            object sender,
+            DataGridViewCellFormattingEventArgs e)
+        {
+            DataGridView grid = sender as DataGridView;
+            if (grid == null || e.RowIndex < 0 || e.ColumnIndex < 0 || e.Value == null)
+                return;
+
+            DataGridViewColumn column = grid.Columns[e.ColumnIndex];
+            string key =
+                ((column.Name ?? string.Empty) + " " +
+                 (column.DataPropertyName ?? string.Empty) + " " +
+                 (column.HeaderText ?? string.Empty))
+                .ToLowerInvariant();
+
+            if (ContainsAny(
+                key,
+                "start",
+                "end",
+                "departure",
+                "arrival",
+                "checkin",
+                "checkout",
+                "time",
+                "وقت",
+                "بداية",
+                "نهاية"))
+                return;
+
+            DateTime date;
+
+            if (e.Value is DateTime)
+                date = ((DateTime)e.Value).Date;
+            else if (e.Value is DateTime?)
+            {
+                DateTime? nullable = (DateTime?)e.Value;
+                if (!nullable.HasValue)
+                    return;
+                date = nullable.Value.Date;
+            }
+            else
+                return;
+
+            e.Value = FormatDateDual(date);
+            e.FormattingApplied = true;
         }
 
         // تعريف الدالة StyleButton لتنفيذ العملية المرتبطة بها.
