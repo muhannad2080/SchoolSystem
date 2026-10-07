@@ -76,7 +76,7 @@ namespace SchoolSystem.UiSmokeTests
 
                 MatchCollection negativeLocations = Regex.Matches(
                     source,
-                    @"Location\\s*=\\s*new\\s+(?:System\\.)?Drawing\\.Point\\(\\s*(-\\d+)\\s*,\\s*(-?\\d+)\\s*\\)");
+                    @"Location\s*=\s*new\s+(?:System\.)?Drawing\.Point\(\s*(-\\d+)\s*,\s*(-?\\d+)\s*\)");
 
                 if (negativeLocations.Count > 0)
                 {
@@ -90,11 +90,11 @@ namespace SchoolSystem.UiSmokeTests
 
                 Match client = Regex.Match(
                     source,
-                    @"this\\.ClientSize\\s*=\\s*new\\s+(?:System\\.)?Drawing\\.Size\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
+                    @"this\.ClientSize\s*=\s*new\s+(?:System\.)?Drawing\.Size\(\s*(\\d+)\s*,\s*(\\d+)\s*\)");
 
                 Match minimum = Regex.Match(
                     source,
-                    @"this\\.MinimumSize\\s*=\\s*new\\s+(?:System\\.)?Drawing\\.Size\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)");
+                    @"this\.MinimumSize\s*=\s*new\s+(?:System\.)?Drawing\.Size\(\s*(\\d+)\s*,\s*(\\d+)\s*\)");
 
                 if (client.Success && minimum.Success)
                 {
@@ -134,7 +134,7 @@ namespace SchoolSystem.UiSmokeTests
 
                 MatchCollection flowPanels = Regex.Matches(
                     source,
-                    @"this\\.(\\w+)\\s*=\\s*new\\s+System\\.Windows\\.Forms\\.FlowLayoutPanel\\(\\);");
+                    @"this\.(\\w+)\s*=\s*new\s+System\.Windows\\.Forms\\.FlowLayoutPanel\(\);");
 
                 foreach (Match flow in flowPanels)
                 {
@@ -143,8 +143,8 @@ namespace SchoolSystem.UiSmokeTests
                     bool containsButton =
                         Regex.IsMatch(
                             source,
-                            @"this\\." + Regex.Escape(panelName) +
-                            @"\\.Controls\\.Add\\(this\\.(?:btn|kryptonBtn)[A-Za-z0-9_]*\\)");
+                            @"this\." + Regex.Escape(panelName) +
+                            @"\\.Controls\\.Add\(this\.(?:btn|kryptonBtn)[A-Za-z0-9_]*\)");
 
                     if (!containsButton)
                         continue;
@@ -152,14 +152,14 @@ namespace SchoolSystem.UiSmokeTests
                     bool autoScroll =
                         Regex.IsMatch(
                             source,
-                            @"this\\." + Regex.Escape(panelName) +
-                            @"\\.AutoScroll\\s*=\\s*true");
+                            @"this\." + Regex.Escape(panelName) +
+                            @"\\.AutoScroll\s*=\s*true");
 
                     bool wrap =
                         Regex.IsMatch(
                             source,
-                            @"this\\." + Regex.Escape(panelName) +
-                            @"\\.WrapContents\\s*=\\s*true");
+                            @"this\." + Regex.Escape(panelName) +
+                            @"\\.WrapContents\s*=\s*true");
 
                     if (!autoScroll && !wrap)
                     {
