@@ -60,29 +60,20 @@ namespace SchoolSystem.Services
             string normalizedRole = PermissionKeys.NormalizeRoleName(roleName);
 
             if (PermissionKeys.IsSystemAdministratorRole(normalizedRole))
-            {
-                DataTable permissions = userRepository.GetActivePermissions();
-                List<string> allScreens = new List<string>();
-
-                foreach (DataRow row in permissions.Rows)
-                {
-                    string key = row["PermissionKey"] == DBNull.Value
-                        ? string.Empty
-                        : row["PermissionKey"].ToString().Trim();
-
-                    if (PermissionKeys.IsScreenPermission(key) &&
-                        !allScreens.Contains(key, StringComparer.OrdinalIgnoreCase))
-                    {
-                        allScreens.Add(key);
-                    }
-                }
-
-                return allScreens
+                return PermissionKeys.All
+                    .Select(PermissionKeys.NormalizePermissionKey)
+                    .Where(key => !string.IsNullOrWhiteSpace(key))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
                     .OrderBy(key => key, StringComparer.OrdinalIgnoreCase)
                     .ToList();
-            }
 
-            return userRepository.GetRoleScreenPermissionsByName(normalizedRole);
+            return userRepository.GetRolePermissionsByName(normalizedRole);
+        }
+
+        /// <summary>يزامن كتالوج الصلاحيات مع قاعدة البيانات ويعيد عدد السجلات المتأثرة.</summary>
+        public int SyncPermissionCatalog()
+        {
+            return userRepository.SyncPermissionCatalog();
         }
 
         // تعريف الدالة AddUser لتنفيذ العملية المرتبطة بها.
@@ -502,6 +493,10 @@ namespace SchoolSystem.Services
         // تعريف الدالة EnsureDefaultAdmin لتنفيذ العملية المرتبطة بها.
         public void EnsureDefaultAdmin()
         {
+            // مزامنة كتالوج الصلاحيات في كل تشغيل لضمان أن قاعدة البيانات والواجهة
+            // تستخدمان نفس المصدر البرمجي، بما في ذلك الأسماء العربية.
+            userRepository.SyncPermissionCatalog();
+
             if (userRepository.CountUsers() > 0)
                 return;
 
@@ -693,10 +688,11 @@ namespace SchoolSystem.Services
                     ? string.Empty
                     : row["PermissionKey"].ToString().Trim();
 
-                if (PermissionKeys.IsScreenPermission(key) &&
-                    !keys.Contains(key, StringComparer.OrdinalIgnoreCase))
+                string normalized = PermissionKeys.NormalizePermissionKey(key);
+                if (!string.IsNullOrWhiteSpace(normalized) &&
+                    !keys.Contains(normalized, StringComparer.OrdinalIgnoreCase))
                 {
-                    keys.Add(key);
+                    keys.Add(normalized);
                 }
             }
 
@@ -722,7 +718,7 @@ namespace SchoolSystem.Services
         /// <summary>
         /// الصلاحيات الفعلية للمستخدم من قاعدة البيانات:
         /// UserPermissions إن وُجدت (اللقطة المحددة)، وإلا RolePermissions (افتراضيات الدور).
-        /// مدير النظام يحصل على كامل كتالوج الشاشات كسياسة مركزية.
+        /// مدير النظام يحصل على كامل كتالوج الصلاحيات كسياسة مركزية.
         /// </summary>
         // تعريف الدالة BuildEffectivePermissions لتنفيذ العملية المرتبطة بها.
         private string BuildEffectivePermissions(int userId, string roleName)
@@ -742,7 +738,7 @@ namespace SchoolSystem.Services
         /// ويُحدِّث الكاش Users.Permissions. يُستخدم من زر "حفظ الصلاحيات" في واجهة المستخدمين.
         /// </summary>
         // تعريف الدالة SaveUserPermissions لتنفيذ العملية المرتبطة بها.
-        public string SaveUserPermissions(int userId, IList<string> screenKeys)
+        public string SaveUserPermissions(int userId, IList<string> permissionKeys)
         {
             if (!CurrentUser.IsAdmin() && !CurrentUser.HasAny(PermissionKeys.PermissionsManage, PermissionKeys.UsersManageRoles, PermissionKeys.UsersManage))
 
@@ -764,7 +760,7 @@ namespace SchoolSystem.Services
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 string fixedPermissions = GetAllPermissionsString();
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-                userRepository.ReplaceUserPermissions(userId, new List<string>(PermissionKeys.ScreenPermissions));
+                userRepository.ReplaceUserPermissions(userId, new List<string>(PermissionKeys.All));
                 // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 userRepository.UpdatePermissions(userId, fixedPermissions);
 
@@ -772,9 +768,8 @@ namespace SchoolSystem.Services
             }
 
 
-            screenKeys = screenKeys ?? new List<string>();
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            userRepository.ReplaceUserPermissions(userId, screenKeys);
+            permissionKeys = permissionKeys ?? new List<string>();
+            userRepository.ReplaceUserPermissions(userId, permissionKeys);
 
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             string effective = BuildEffectivePermissions(userId, user.RoleName);
@@ -790,8 +785,8 @@ namespace SchoolSystem.Services
             }
 
             auditLogService.Record("تعديل الصلاحيات", "User", userId.ToString(),
-                string.Format("الحساب: {0}، الدور: {1}، عدد شاشات الصلاحية: {2}",
-                    user.UserName, user.RoleName, screenKeys == null ? 0 : screenKeys.Count));
+                string.Format("الحساب: {0}، الدور: {1}، عدد الصلاحيات: {2}",
+                    user.UserName, user.RoleName, permissionKeys == null ? 0 : permissionKeys.Count));
 
 
             return effective;
