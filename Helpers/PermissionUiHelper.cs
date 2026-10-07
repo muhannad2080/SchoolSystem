@@ -2,6 +2,8 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
+using SchoolSystem.Models;
 using SchoolSystem.Security;
 
 namespace SchoolSystem.Helpers
@@ -13,8 +15,18 @@ namespace SchoolSystem.Helpers
     /// </summary>
     public static class PermissionUiHelper
     {
+        private sealed class PermissionGuardState
+        {
+            public string Module { get; set; }
+            public string Action { get; set; }
+            public string Message { get; set; }
+        }
+
         private static readonly ConditionalWeakTable<Button, ToolTip> PermissionToolTips =
             new ConditionalWeakTable<Button, ToolTip>();
+
+        private static readonly ConditionalWeakTable<Button, PermissionGuardState> PermissionGuardStates =
+            new ConditionalWeakTable<Button, PermissionGuardState>();
         public static void Apply(Control root, string module)
         {
             if (root == null || string.IsNullOrWhiteSpace(module))
@@ -98,15 +110,14 @@ namespace SchoolSystem.Helpers
                 return;
             }
 
-            button.Enabled = false;
-            button.Cursor = Cursors.No;
-
             string permissionName = GetPermissionName(module, action);
             string message =
                 "هذا الإجراء غير متاح لهذا الحساب." +
                 Environment.NewLine +
                 "الصلاحية المطلوبة: " + permissionName;
 
+            button.Enabled = true;
+            button.Cursor = Cursors.No;
             button.AccessibleDescription = message;
 
             ToolTip tip;
@@ -123,6 +134,85 @@ namespace SchoolSystem.Helpers
             }
 
             tip.SetToolTip(button, message);
+
+            if (!PermissionGuardStates.TryGetValue(button, out _))
+            {
+                PermissionGuardStates.Add(button, new PermissionGuardState
+                {
+                    Module = module.Trim(),
+                    Action = action,
+                    Message = message
+                });
+
+                button.MouseDown += UnauthorizedButton_MouseDown;
+            }
+        }
+
+        private static void UnauthorizedButton_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left)
+                return;
+
+            Button button = sender as Button;
+            if (button == null)
+                return;
+
+            PermissionGuardState state;
+            if (!PermissionGuardStates.TryGetValue(button, out state))
+                return;
+
+            // تحقق مرة أخرى قبل إظهار المنع حتى لا يبقى القرار مبنيًا على حالة قديمة.
+            bool allowed;
+            switch (state.Action)
+            {
+                case "View":
+                    allowed = CurrentUser.CanView(state.Module);
+                    break;
+                case "Add":
+                    allowed = CurrentUser.CanAdd(state.Module);
+                    break;
+                case "Edit":
+                    allowed = CurrentUser.CanEdit(state.Module);
+                    break;
+                case "Delete":
+                    allowed = CurrentUser.CanDelete(state.Module);
+                    break;
+                case "Search":
+                    allowed = CurrentUser.CanSearch(state.Module);
+                    break;
+                case "Print":
+                    allowed = CurrentUser.CanPrint(state.Module);
+                    break;
+                case "Export":
+                    allowed = CurrentUser.CanExport(state.Module);
+                    break;
+                case "Approve":
+                    allowed = CurrentUser.CanApprove(state.Module);
+                    break;
+                case "PermissionManage":
+                    allowed = CurrentUser.IsAdmin()
+                        || CurrentUser.HasAny(
+                            PermissionKeys.PermissionsManage,
+                            PermissionKeys.UsersManageRoles,
+                            PermissionKeys.UsersManage);
+                    break;
+                default:
+                    allowed = true;
+                    break;
+            }
+
+            if (allowed)
+            {
+                button.Cursor = Cursors.Default;
+                return;
+            }
+
+            UIHelper.ShowWarning(state.Message);
+
+            // تعطيل الزر بعد إظهار الرسالة يمنع حدث Click الأصلي من تنفيذ الإجراء.
+            button.Enabled = false;
+            button.Cursor = Cursors.No;
+            button.Refresh();
         }
 
         private static string GetPermissionName(string module, string action)
