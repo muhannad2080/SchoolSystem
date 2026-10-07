@@ -337,6 +337,7 @@ namespace SchoolSystem.DataAccess
                     DECLARE @CurrentFeeID INT;
                     DECLARE @CurrentRemaining DECIMAL(18,2);
                     DECLARE @AppliedAmount DECIMAL(18,2);
+                    DECLARE @TotalFeeID INT;
 
                     SELECT @StudentID = StudentID, @AcademicYear = AcademicYear
                     FROM Fees WITH (UPDLOCK, HOLDLOCK)
@@ -386,9 +387,6 @@ namespace SchoolSystem.DataAccess
 
                         SET @RemainingPayment = @RemainingPayment - @AppliedAmount;
                     END;
-
-                    /* المبلغ المستهلك فعليًا لتسوية بنود الطالب الفرعية. */
-                    DECLARE @AppliedToFees DECIMAL(18,2) = @PaymentAmount - @RemainingPayment;
 
                     /* السداد الزائد لا يضيع: يضاف كرصيد دائن على أول بند فعلي
                        للطالب، ثم يُعاد اشتقاق الرسوم الكلية من البنود الفعلية. */
