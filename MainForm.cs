@@ -231,18 +231,9 @@ namespace SchoolSystem
 
         private void ShowScreenHeader(string moduleOrType)
         {
-            if (panelScreenHeader == null ||
-                lblScreenTitle == null ||
-                IsDisposed ||
-                Disposing)
-            {
-                return;
-            }
-
-            lblScreenTitle.Text = GetScreenTitle(moduleOrType);
-            lblScreenTitle.TextAlign = ContentAlignment.MiddleCenter;
-            panelScreenHeader.Visible = true;
-            panelScreenHeader.BringToFront();
+            // عنوان الشاشة يعيش داخل الشاشة نفسها؛ لا يوجد شريط عنوان ثابت
+            // تابع لـ MainForm.
+            HideScreenHeader();
         }
 
         private void HideScreenHeader()
@@ -251,6 +242,7 @@ namespace SchoolSystem
                 return;
 
             panelScreenHeader.Visible = false;
+            panelScreenHeader.Height = 0;
         }
 
         private static string GetScreenTitle(string moduleOrType)
@@ -288,30 +280,17 @@ namespace SchoolSystem
         }
 
         // ================================================================
-        // EMBEDDED SCREEN TITLE POLICY
+        // EMBEDDED SCREEN HEADER
         //
-        // MainForm owns the screen title. Any legacy title/header panel
-        // inside an embedded screen is hidden so no interface renders
-        // the same title twice.
+        // MainForm provides the hosting surface only. The screen owns its
+        // 60px header so its content starts below the title with no overlap.
         // ================================================================
 
-        private static void HideEmbeddedDuplicateTitles(Control root)
+        private static void ConfigureEmbeddedScreenHeader(
+            Control root,
+            string title)
         {
-            if (root == null)
-                return;
-
-            foreach (Control child in root.Controls)
-            {
-                string name = (child.Name ?? string.Empty).Trim();
-
-                if (string.Equals(name, "panelTitle", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(name, "pnlTitle", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(name, "panelHeader", StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(name, "pnlHeader", StringComparison.OrdinalIgnoreCase))
-                {
-                    child.Visible = false;
-                }
-            }
+            UIHelper.ConfigureEmbeddedScreenHeader(root, title);
         }
 
         private void HideMainHeader()
@@ -520,17 +499,19 @@ namespace SchoolSystem
 
                 ClearPanelContent();
 
-                // إخفاء ترويسة النظام الرئيسية وإظهار عنوان الوحدة في الشريط الموحد.
+                // الشاشة الفرعية تملك رأسها داخل حدودها، وليس في MainForm.
                 HideMainHeader();
-                ShowScreenHeader(uc.GetType().Name);
-                HideEmbeddedDuplicateTitles(uc);
+                HideScreenHeader();
 
-                // جعل UserControl يستخدم كل مساحة panelContent.
                 uc.Dock =
                     DockStyle.Fill;
 
                 panelContent.Controls.Add(
                     uc);
+
+                ConfigureEmbeddedScreenHeader(
+                    uc,
+                    GetScreenTitle(uc.GetType().Name));
 
                 uc.BringToFront();
 
@@ -568,10 +549,9 @@ namespace SchoolSystem
 
                 ClearPanelContent();
 
-                // إخفاء ترويسة النظام الرئيسية وإظهار عنوان الوحدة في الشريط الموحد.
+                // الشاشة الفرعية تملك رأسها داخل حدودها، وليس في MainForm.
                 HideMainHeader();
-                ShowScreenHeader(form.GetType().Name);
-                HideEmbeddedDuplicateTitles(form);
+                HideScreenHeader();
 
                 form.TopLevel =
                     false;
@@ -585,11 +565,18 @@ namespace SchoolSystem
                 panelContent.Controls.Add(
                     form);
 
+                ConfigureEmbeddedScreenHeader(
+                    form,
+                    GetScreenTitle(form.GetType().Name));
+
                 form.Show();
 
-                // بعض النماذج القديمة تعيد إظهار ترويسة داخلية أثناء Load؛
-                // نثبت سياسة العنوان الموحد بعد اكتمال دورة التحميل أيضًا.
-                HideEmbeddedDuplicateTitles(form);
+                // تثبيت الرأس بعد Load أيضًا لأن بعض النماذج القديمة
+                // تعيد ضبط خصائصها أثناء التهيئة.
+                ConfigureEmbeddedScreenHeader(
+                    form,
+                    GetScreenTitle(form.GetType().Name));
+
                 form.BringToFront();
 
                 ApplicationLogger.LogUsage("الشاشة الرئيسية", "فتح شاشة", form.GetType().Name);
