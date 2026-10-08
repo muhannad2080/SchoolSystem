@@ -32,6 +32,11 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
 
+            btnSearch.Visible = true;
+            txtSearch.Visible = true;
+            btnSearch.BringToFront();
+            txtSearch.BringToFront();
+
             Dock = DockStyle.Fill;
             // وضع التحديد المتعدد متطلب وظيفي لتعليم مجموعة طلاب؛ يُضبط بعد ApplyStyle
             // لأن الستايل الموحد يفرض تحديد صف واحد لبقية الشاشات.
