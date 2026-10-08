@@ -1071,6 +1071,8 @@ namespace SchoolSystem.UI
                     " طالب بنجاح.");
 
                 await LoadGradesAsync();
+                if (success > 0)
+                    DataRefreshNotifier.Notify("Grades", this);
             }
             catch (Exception ex)
             {
@@ -1173,6 +1175,7 @@ namespace SchoolSystem.UI
                     selectedGradeId = 0;
 
                     await LoadGradesAsync();
+                    DataRefreshNotifier.Notify("Grades", this);
                 }
                 else
                 {
