@@ -625,6 +625,7 @@ namespace SchoolSystem.UiSmokeTests
             if (!(control is SchoolSystem.UI.EnrollmentForm))
                 return;
 
+            TableLayoutPanel mainLayout = GetPrivateControl<TableLayoutPanel>(control, "layoutMain");
             Panel title = GetPrivateControl<Panel>(control, "panelTitle");
             Panel search = GetPrivateControl<Panel>(control, "pnlSearch");
             TableLayoutPanel searchLayout = GetPrivateControl<TableLayoutPanel>(control, "tlpSearch");
@@ -635,8 +636,17 @@ namespace SchoolSystem.UiSmokeTests
             FlowLayoutPanel actions = GetPrivateControl<FlowLayoutPanel>(control, "pnlButtons");
             SplitContainer split = GetPrivateControl<SplitContainer>(control, "splitContainerMain");
 
-            if (!title.Visible || !search.Visible || !searchBox.Visible || !searchButton.Visible || !clearButton.Visible)
+            if (!mainLayout.Visible || !title.Visible || !search.Visible || !searchBox.Visible || !searchButton.Visible || !clearButton.Visible)
                 throw new InvalidOperationException("Enrollment search/header controls must be visible after construction.");
+
+            if (mainLayout.RowCount != 4 ||
+                mainLayout.RowStyles.Count != 4 ||
+                mainLayout.RowStyles[0].Size != 54F ||
+                mainLayout.RowStyles[1].Size != 66F ||
+                mainLayout.RowStyles[3].Size != 104F)
+            {
+                throw new InvalidOperationException("Enrollment root layout must reserve fixed title/search/action zones.");
+            }
 
             if (title.Height > 58)
                 throw new InvalidOperationException("Enrollment header is too tall and is consuming excessive content space.");
@@ -650,12 +660,16 @@ namespace SchoolSystem.UiSmokeTests
             if (split.Bottom != actions.Top)
                 throw new InvalidOperationException("Enrollment action bar must remain below the main content without overlap.");
 
-            if (control.Controls.GetChildIndex(title) != 0 ||
-                control.Controls.GetChildIndex(search) != 1 ||
-                control.Controls.GetChildIndex(actions) != 2 ||
-                control.Controls.GetChildIndex(split) != 3)
+            if (title.Parent != mainLayout ||
+                search.Parent != mainLayout ||
+                split.Parent != mainLayout ||
+                actions.Parent != mainLayout ||
+                mainLayout.GetControlFromPosition(0, 0) != title ||
+                mainLayout.GetControlFromPosition(0, 1) != search ||
+                mainLayout.GetControlFromPosition(0, 2) != split ||
+                mainLayout.GetControlFromPosition(0, 3) != actions)
             {
-                throw new InvalidOperationException("Enrollment dock order must be header, search, content, actions.");
+                throw new InvalidOperationException("Enrollment root layout must be header, search, content, actions.");
             }
 
             if (searchLayout.Parent != search ||
