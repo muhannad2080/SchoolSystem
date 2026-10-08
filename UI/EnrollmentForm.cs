@@ -69,6 +69,12 @@ namespace SchoolSystem.UI
 
             UIHelper.ApplyStyle(this);
 
+            pnlSearch.Visible = true;
+            txtSearch.Visible = true;
+            btnSearch.Visible = true;
+            pnlSearch.BringToFront();
+            btnSearch.BringToFront();
+
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
             Disposed += (sender, e) =>
                 DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
