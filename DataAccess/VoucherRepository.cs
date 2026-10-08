@@ -576,7 +576,7 @@ namespace SchoolSystem.DataAccess
         // تعريف الدالة CancelVoucher لإنشاء سند عكسي يلغي الأثر المالي
         // مع إبقاء السند الأصلي كاملاً وحفظ المسار التدقيقي دون كسر العلاقات.
         public int CancelVoucher(int voucherId)
-
+        {
             const string query = @"
                 SET NOCOUNT ON;
                 SET XACT_ABORT ON;
@@ -618,7 +618,8 @@ namespace SchoolSystem.DataAccess
 
                 IF @OriginalRefType = N'رسوم' AND @OriginalRefID IS NOT NULL
                 BEGIN
-                    SELECT @OriginalStudentID = StudentID, @OriginalAcademicYear = AcademicYear
+                    SELECT @OriginalStudentID = StudentID,
+                           @OriginalAcademicYear = AcademicYear
                     FROM dbo.Fees WITH (UPDLOCK, HOLDLOCK)
                     WHERE FeeID = @OriginalRefID;
                 END;
@@ -626,8 +627,15 @@ namespace SchoolSystem.DataAccess
                 IF ISNULL(CONVERT(NVARCHAR(MAX), @OriginalNotes), N'') LIKE N'%| أُلغي بسند عكسي%'
                     THROW 51010, N'تم إلغاء هذا السند مسبقاً بسند عكسي.', 1;
 
-                IF @OriginalRefType = N'رسوم' AND @OriginalRefID IS NOT NULL AND @OriginalStudentID IS NOT NULL AND @OriginalType = N'قبض'
+                IF @OriginalRefType = N'رسوم'
+                   AND @OriginalRefID IS NOT NULL
+                   AND @OriginalStudentID IS NOT NULL
+                   AND @OriginalType = N'قبض'
                 BEGIN
+                    /*
+                     * كل دفعة تسجل نفس VoucherNumber على البنود التي استقبلتها.
+                     * لذلك نعكس فقط البنود المرتبطة بهذا السند، وليس أي دفعات سابقة.
+                     */
                     SET @RemainingReversal = @OriginalAmount;
 
                     WHILE @RemainingReversal > 0
@@ -648,9 +656,15 @@ namespace SchoolSystem.DataAccess
                               NULLIF(LTRIM(RTRIM(ISNULL(@OriginalNumber, N''))), N'')
                         ORDER BY CASE WHEN f.FeeID = @OriginalRefID THEN 0 ELSE 1 END, f.FeeID;
 
-                        IF @CurrentFeeID IS NULL BREAK;
+                        IF @CurrentFeeID IS NULL
+                            BREAK;
 
-                        SET @AppliedAmount = CASE WHEN @RemainingReversal < @CurrentPaid THEN @RemainingReversal ELSE @CurrentPaid END;
+                        SET @AppliedAmount =
+                            CASE
+                                WHEN @RemainingReversal < @CurrentPaid
+                                    THEN @RemainingReversal
+                                ELSE @CurrentPaid
+                            END;
 
                         UPDATE dbo.Fees
                         SET PaidAmount = ISNULL(PaidAmount, 0) - @AppliedAmount,
@@ -661,40 +675,65 @@ namespace SchoolSystem.DataAccess
                                         ELSE ISNULL(TotalAmount, 0) - ISNULL(DiscountAmount, 0)
                                     END
                                 ) - (ISNULL(PaidAmount, 0) - @AppliedAmount),
-                            PaymentDate = CASE WHEN ISNULL(PaidAmount, 0) - @AppliedAmount <= 0 THEN NULL ELSE PaymentDate END,
-                            PaymentMethod = CASE WHEN ISNULL(PaidAmount, 0) - @AppliedAmount <= 0 THEN NULL ELSE PaymentMethod END,
-                            ReceiptNumber = CASE WHEN ISNULL(PaidAmount, 0) - @AppliedAmount <= 0 THEN NULL ELSE ReceiptNumber END,
-                            Status = CASE
-                                WHEN ISNULL(PaidAmount, 0) - @AppliedAmount <= 0 THEN
-                                    CASE WHEN DueDate < CONVERT(date, GETDATE()) THEN N'متأخر' ELSE N'غير مسدد' END
-                                WHEN
-                                    (
+                            PaymentDate =
+                                CASE
+                                    WHEN ISNULL(PaidAmount, 0) - @AppliedAmount <= 0
+                                        THEN NULL
+                                    ELSE PaymentDate
+                                END,
+                            PaymentMethod =
+                                CASE
+                                    WHEN ISNULL(PaidAmount, 0) - @AppliedAmount <= 0
+                                        THEN NULL
+                                    ELSE PaymentMethod
+                                END,
+                            ReceiptNumber =
+                                CASE
+                                    WHEN ISNULL(PaidAmount, 0) - @AppliedAmount <= 0
+                                        THEN NULL
+                                    ELSE ReceiptNumber
+                                END,
+                            Status =
+                                CASE
+                                    WHEN ISNULL(PaidAmount, 0) - @AppliedAmount <= 0 THEN
                                         CASE
-                                            WHEN ISNULL(TotalAmount, 0) - ISNULL(DiscountAmount, 0) < 0 THEN 0
-                                            ELSE ISNULL(TotalAmount, 0) - ISNULL(DiscountAmount, 0)
+                                            WHEN DueDate < CONVERT(date, GETDATE())
+                                                THEN N'متأخر'
+                                            ELSE N'غير مسدد'
                                         END
-                                    ) - (ISNULL(PaidAmount, 0) - @AppliedAmount) < 0
-                                    THEN N'رصيد دائن'
-                                WHEN
-                                    (
-                                        CASE
-                                            WHEN ISNULL(TotalAmount, 0) - ISNULL(DiscountAmount, 0) < 0 THEN 0
-                                            ELSE ISNULL(TotalAmount, 0) - ISNULL(DiscountAmount, 0)
-                                        END
-                                    ) - (ISNULL(PaidAmount, 0) - @AppliedAmount) <= 0
-                                    THEN N'مسدد'
-                                ELSE N'مسدد جزئياً'
-                            END,
+                                    WHEN
+                                        (
+                                            CASE
+                                                WHEN ISNULL(TotalAmount, 0) - ISNULL(DiscountAmount, 0) < 0 THEN 0
+                                                ELSE ISNULL(TotalAmount, 0) - ISNULL(DiscountAmount, 0)
+                                            END
+                                        ) - (ISNULL(PaidAmount, 0) - @AppliedAmount) < 0
+                                        THEN N'رصيد دائن'
+                                    WHEN
+                                        (
+                                            CASE
+                                                WHEN ISNULL(TotalAmount, 0) - ISNULL(DiscountAmount, 0) < 0 THEN 0
+                                                ELSE ISNULL(TotalAmount, 0) - ISNULL(DiscountAmount, 0)
+                                            END
+                                        ) - (ISNULL(PaidAmount, 0) - @AppliedAmount) <= 0
+                                        THEN N'مسدد'
+                                    ELSE N'مسدد جزئياً'
+                                END,
                             UpdatedAt = GETDATE()
                         WHERE FeeID = @CurrentFeeID;
 
-                        SET @RemainingReversal = @RemainingReversal - @AppliedAmount;
+                        SET @RemainingReversal =
+                            @RemainingReversal - @AppliedAmount;
                     END;
 
-                    /* إعادة اشتقاق بند الرسوم الكلية من البنود الفعلية بعد العكس.
-                       لا نعكس البند الكلي مباشرة لأنه ملخص محاسبي مشتق. */
+                    /*
+                     * الرسوم الكلية ملخص مشتق من البنود الفعلية.
+                     * بعد العكس نعيد اشتقاق المدفوع والمتبقي والحالة دون خصم
+                     * السداد مباشرة من صف الملخص.
+                     */
                     DECLARE @TotalFeeID INT;
-                    SELECT TOP 1 @TotalFeeID = f.FeeID
+                    SELECT TOP 1
+                        @TotalFeeID = f.FeeID
                     FROM dbo.Fees f WITH (UPDLOCK, HOLDLOCK)
                     WHERE f.StudentID = @OriginalStudentID
                       AND REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/') =
@@ -734,37 +773,98 @@ namespace SchoolSystem.DataAccess
                     END;
                 END;
 
-                SET @ReverseType = CASE WHEN @OriginalType = N'قبض' THEN N'صرف' ELSE N'قبض' END;
+                SET @ReverseType =
+                    CASE WHEN @OriginalType = N'قبض' THEN N'صرف' ELSE N'قبض' END;
 
                 INSERT INTO dbo.Vouchers
-                (VoucherNumber, VoucherType, Amount, VoucherDate, PartyName, Description,
-                 PaymentMethod, ReferenceType, ReferenceID, Notes, IsAutoGenerated)
+                (
+                    VoucherNumber,
+                    VoucherType,
+                    Amount,
+                    VoucherDate,
+                    PartyName,
+                    Description,
+                    PaymentMethod,
+                    ReferenceType,
+                    ReferenceID,
+                    Notes,
+                    IsAutoGenerated
+                )
                 VALUES
-                (NULL, @ReverseType, @OriginalAmount, @OriginalDate,
-                 @OriginalParty + N' (عكسي)',
-                 N'سند عكسي للسند الأصلي ' + ISNULL(@OriginalNumber, CONVERT(NVARCHAR(20), @OriginalID)),
-                 @OriginalPayMethod, @OriginalRefType, @OriginalRefID,
-                 N'سند عكسي؛ إلغاء الأثر المالي للسند رقم ' + CONVERT(NVARCHAR(20), @OriginalID), 1);
+                (
+                    NULL,
+                    @ReverseType,
+                    @OriginalAmount,
+                    @OriginalDate,
+                    @OriginalParty + N' (عكسي)',
+                    N'سند عكسي للسند الأصلي ' +
+                        ISNULL(@OriginalNumber, CONVERT(NVARCHAR(20), @OriginalID)),
+                    @OriginalPayMethod,
+                    @OriginalRefType,
+                    @OriginalRefID,
+                    N'سند عكسي؛ إلغاء الأثر المالي للسند رقم ' +
+                        CONVERT(NVARCHAR(20), @OriginalID),
+                    1
+                );
 
                 SET @NewVoucherID = CONVERT(INT, SCOPE_IDENTITY());
 
                 SET @NewVoucherNumber =
                     (CASE WHEN @ReverseType = N'صرف' THEN N'PAY-' ELSE N'REC-' END)
-                    + CONVERT(NVARCHAR(4), YEAR(@OriginalDate)) + N'-'
+                    + CONVERT(NVARCHAR(4), YEAR(@OriginalDate))
+                    + N'-'
                     + RIGHT(N'00000' + CONVERT(NVARCHAR(10), @NewVoucherID), 5);
 
-                UPDATE dbo.Vouchers SET VoucherNumber = @NewVoucherNumber WHERE VoucherID = @NewVoucherID;
+                UPDATE dbo.Vouchers
+                SET VoucherNumber = @NewVoucherNumber
+                WHERE VoucherID = @NewVoucherID;
 
                 UPDATE dbo.Vouchers
-                SET Notes = LEFT(ISNULL(CONVERT(NVARCHAR(MAX), Notes), N'') + N' | أُلغي بسند عكسي ' + @NewVoucherNumber, 495)
+                SET Notes =
+                    LEFT(
+                        ISNULL(CONVERT(NVARCHAR(MAX), Notes), N'') +
+                        N' | أُلغي بسند عكسي ' +
+                        @NewVoucherNumber,
+                        495)
                 WHERE VoucherID = @OriginalID;
 
-                SELECT @NewVoucherID AS NewVoucherID, @NewVoucherNumber AS NewVoucherNumber;";
+                SELECT
+                    @NewVoucherID AS NewVoucherID,
+                    @NewVoucherNumber AS NewVoucherNumber;";
 
             using (SqlConnection con = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(query, con))
             {
                 cmd.Parameters.AddWithValue("@VoucherID", voucherId);
+
+                con.Open();
+
+                using (SqlTransaction transaction =
+                       con.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    cmd.Transaction = transaction;
+
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (!reader.Read())
+                        {
+                            reader.Close();
+                            transaction.Rollback();
+                            return 0;
+                        }
+
+                        int newVoucherId =
+                            Convert.ToInt32(reader["NewVoucherID"]);
+
+                        reader.Close();
+                        transaction.Commit();
+
+                        return newVoucherId;
+                    }
+                }
+            }
+        }
+
         // تعريف الدالة BuildVoucherNumber لتنفيذ العملية المرتبطة بها.
         private string BuildVoucherNumber(string voucherType, DateTime voucherDate, int voucherId)
         {
