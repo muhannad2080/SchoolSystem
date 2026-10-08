@@ -760,7 +760,7 @@ namespace SchoolSystem.UI
             this.dgvEnrollments.BackgroundColor = System.Drawing.Color.White;
             this.dgvEnrollments.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.dgvEnrollments.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            this.dgvEnrollments.ColumnHeadersHeight = 40;
+            this.dgvEnrollments.ColumnHeadersHeight = 42;
             this.dgvEnrollments.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgvEnrollments.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvEnrollments.EnableHeadersVisualStyles = false;
@@ -772,12 +772,31 @@ namespace SchoolSystem.UI
             this.dgvEnrollments.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.dgvEnrollments.RowHeadersWidth = 40;
             this.dgvEnrollments.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dgvEnrollments.RowTemplate.Height = 34;
+            this.dgvEnrollments.RowTemplate.Height = 36;
             this.dgvEnrollments.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvEnrollments.Size = new System.Drawing.Size(652, 534);
             this.dgvEnrollments.TabIndex = 0;
             this.dgvEnrollments.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvEnrollments_CellClick);
             this.dgvEnrollments.SelectionChanged += new System.EventHandler(this.dgvEnrollments_SelectionChanged);
+            this.dgvEnrollments.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dgvEnrollments.RowHeadersVisible = false;
+            this.dgvEnrollments.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            this.dgvEnrollments.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dgvEnrollments.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dgvEnrollments.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.dgvEnrollments.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dgvEnrollments.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dgvEnrollments.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dgvEnrollments.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dgvEnrollments.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dgvEnrollments.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dgvEnrollments.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.dgvEnrollments.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dgvEnrollments.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dgvEnrollments.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvEnrollments.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.dgvEnrollments.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dgvEnrollments.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             // 
             // errorProvider1
             // 
@@ -862,20 +881,22 @@ namespace SchoolSystem.UI
             this.btnReload.Margin = new System.Windows.Forms.Padding(4);
             this.btnReload.Name = "btnReload";
             this.btnReload.Size = new System.Drawing.Size(118, 36);
-            this.btnReload.MinimumSize = new System.Drawing.Size(118, 36);
+            this.btnReload.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnReload.TabIndex = 2;
             this.btnReload.Text = "مسح البحث";
             this.btnReload.UseVisualStyleBackColor = false;
             this.btnReload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReload.FlatAppearance.BorderSize = 0;
-            this.btnReload.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
+            this.btnReload.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
             this.btnReload.ForeColor = System.Drawing.Color.White;
-            this.btnReload.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnReload.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnReload.UseCompatibleTextRendering = true;
             this.btnReload.AutoEllipsis = false;
             this.btnReload.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnReload.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.btnReload.Click += new System.EventHandler(this.btnClearSearch_Click);
+            this.btnReload.AutoSize = false;
+            this.btnReload.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnSearch
             // 
@@ -883,7 +904,7 @@ namespace SchoolSystem.UI
             this.btnSearch.Margin = new System.Windows.Forms.Padding(4);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(110, 36);
-            this.btnSearch.MinimumSize = new System.Drawing.Size(110, 36);
+            this.btnSearch.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnSearch.TabIndex = 1;
             this.btnSearch.Text = "بحث";
             this.btnSearch.UseVisualStyleBackColor = false;
@@ -891,12 +912,14 @@ namespace SchoolSystem.UI
             this.btnSearch.FlatAppearance.BorderSize = 0;
             this.btnSearch.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
             this.btnSearch.ForeColor = System.Drawing.Color.White;
-            this.btnSearch.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnSearch.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnSearch.UseCompatibleTextRendering = true;
             this.btnSearch.AutoEllipsis = false;
             this.btnSearch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            this.btnSearch.AutoSize = false;
+            this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // txtSearch
             // 
@@ -971,10 +994,13 @@ namespace SchoolSystem.UI
             this.btnClose.FlatAppearance.BorderSize = 0;
             this.btnClose.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnClose.ForeColor = System.Drawing.Color.White;
-            this.btnClose.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnClose.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnClose.UseCompatibleTextRendering = true;
             this.btnClose.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            this.btnClose.AutoSize = false;
+            this.btnClose.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnExportExcel
             // 
@@ -989,9 +1015,12 @@ namespace SchoolSystem.UI
             this.btnExportExcel.FlatAppearance.BorderSize = 0;
             this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportExcel.ForeColor = System.Drawing.Color.White;
-            this.btnExportExcel.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportExcel.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnExportExcel.UseCompatibleTextRendering = true;
             this.btnExportExcel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportExcel.AutoSize = false;
+            this.btnExportExcel.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnExportExcel.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnExportPdf
             // 
@@ -1006,9 +1035,12 @@ namespace SchoolSystem.UI
             this.btnExportPdf.FlatAppearance.BorderSize = 0;
             this.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportPdf.ForeColor = System.Drawing.Color.White;
-            this.btnExportPdf.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportPdf.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnExportPdf.UseCompatibleTextRendering = true;
             this.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportPdf.AutoSize = false;
+            this.btnExportPdf.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnPreviewOutput
             // 
@@ -1023,10 +1055,13 @@ namespace SchoolSystem.UI
             this.btnPreviewOutput.FlatAppearance.BorderSize = 0;
             this.btnPreviewOutput.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnPreviewOutput.ForeColor = System.Drawing.Color.White;
-            this.btnPreviewOutput.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnPreviewOutput.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnPreviewOutput.UseCompatibleTextRendering = true;
             this.btnPreviewOutput.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnPreviewOutput.Click += new System.EventHandler(this.btnPreviewOutput_Click);
+            this.btnPreviewOutput.AutoSize = false;
+            this.btnPreviewOutput.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnPreviewOutput.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnPrintReceipt
             // 
@@ -1041,10 +1076,13 @@ namespace SchoolSystem.UI
             this.btnPrintReceipt.FlatAppearance.BorderSize = 0;
             this.btnPrintReceipt.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnPrintReceipt.ForeColor = System.Drawing.Color.White;
-            this.btnPrintReceipt.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnPrintReceipt.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnPrintReceipt.UseCompatibleTextRendering = true;
             this.btnPrintReceipt.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnPrintReceipt.Click += new System.EventHandler(this.btnPrintReceipt_Click);
+            this.btnPrintReceipt.AutoSize = false;
+            this.btnPrintReceipt.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnPrintReceipt.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnPrintForm
             // 
@@ -1059,10 +1097,13 @@ namespace SchoolSystem.UI
             this.btnPrintForm.FlatAppearance.BorderSize = 0;
             this.btnPrintForm.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnPrintForm.ForeColor = System.Drawing.Color.White;
-            this.btnPrintForm.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnPrintForm.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnPrintForm.UseCompatibleTextRendering = true;
             this.btnPrintForm.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnPrintForm.Click += new System.EventHandler(this.btnPrintForm_Click);
+            this.btnPrintForm.AutoSize = false;
+            this.btnPrintForm.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnPrintForm.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnRefresh
             // 
@@ -1077,10 +1118,13 @@ namespace SchoolSystem.UI
             this.btnRefresh.FlatAppearance.BorderSize = 0;
             this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
-            this.btnRefresh.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnRefresh.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnRefresh.UseCompatibleTextRendering = true;
             this.btnRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnRefresh.AutoSize = false;
+            this.btnRefresh.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnCancel
             // 
@@ -1095,10 +1139,13 @@ namespace SchoolSystem.UI
             this.btnCancel.FlatAppearance.BorderSize = 0;
             this.btnCancel.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnCancel.ForeColor = System.Drawing.Color.White;
-            this.btnCancel.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnCancel.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnCancel.UseCompatibleTextRendering = true;
             this.btnCancel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            this.btnCancel.AutoSize = false;
+            this.btnCancel.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnCancel.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnDelete
             // 
@@ -1113,10 +1160,13 @@ namespace SchoolSystem.UI
             this.btnDelete.FlatAppearance.BorderSize = 0;
             this.btnDelete.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnDelete.ForeColor = System.Drawing.Color.White;
-            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnDelete.UseCompatibleTextRendering = true;
             this.btnDelete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.AutoSize = false;
+            this.btnDelete.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnUpdate
             // 
@@ -1131,10 +1181,13 @@ namespace SchoolSystem.UI
             this.btnUpdate.FlatAppearance.BorderSize = 0;
             this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnUpdate.ForeColor = System.Drawing.Color.White;
-            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnUpdate.UseCompatibleTextRendering = true;
             this.btnUpdate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnUpdate.AutoSize = false;
+            this.btnUpdate.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnSave
             // 
@@ -1149,10 +1202,13 @@ namespace SchoolSystem.UI
             this.btnSave.FlatAppearance.BorderSize = 0;
             this.btnSave.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnSave.ForeColor = System.Drawing.Color.White;
-            this.btnSave.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnSave.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnSave.UseCompatibleTextRendering = true;
             this.btnSave.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnSave.AutoSize = false;
+            this.btnSave.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnSave.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnAdd
             // 
@@ -1167,10 +1223,13 @@ namespace SchoolSystem.UI
             this.btnAdd.FlatAppearance.BorderSize = 0;
             this.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAdd.ForeColor = System.Drawing.Color.White;
-            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnAdd.UseCompatibleTextRendering = true;
             this.btnAdd.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            this.btnAdd.AutoSize = false;
+            this.btnAdd.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnAdd.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // panelTitle
             // 
