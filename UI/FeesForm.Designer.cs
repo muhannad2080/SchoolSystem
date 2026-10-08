@@ -99,13 +99,13 @@
             this.rootLayout.Margin = new System.Windows.Forms.Padding(0);
             this.rootLayout.Name = "rootLayout";
             this.rootLayout.RowCount = 7;
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 28F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 5F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 4F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 45F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 3F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 218F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 56F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
             this.rootLayout.Size = new System.Drawing.Size(1100, 700);
             this.rootLayout.TabIndex = 0;
             // 
@@ -127,7 +127,7 @@
             this.lblTitle.ForeColor = System.Drawing.Color.White;
             this.lblTitle.Location = new System.Drawing.Point(0, 0);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(1100, 49);
+            this.lblTitle.Size = new System.Drawing.Size(1100, 60);
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "إدارة الرسوم الدراسية والتحصيل";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -137,11 +137,11 @@
             this.panelFields.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.panelFields.Controls.Add(this.tableFields);
             this.panelFields.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelFields.Location = new System.Drawing.Point(0, 49);
+            this.panelFields.Location = new System.Drawing.Point(0, 60);
             this.panelFields.Margin = new System.Windows.Forms.Padding(0);
             this.panelFields.Name = "panelFields";
             this.panelFields.Padding = new System.Windows.Forms.Padding(18, 7, 18, 7);
-            this.panelFields.Size = new System.Drawing.Size(1100, 196);
+            this.panelFields.Size = new System.Drawing.Size(1100, 218);
             this.panelFields.TabIndex = 1;
             // 
             // tableFields
@@ -625,11 +625,11 @@
             this.panelSummary.BackColor = System.Drawing.Color.White;
             this.panelSummary.Controls.Add(this.lblSummary);
             this.panelSummary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelSummary.Location = new System.Drawing.Point(0, 245);
+            this.panelSummary.Location = new System.Drawing.Point(0, 278);
             this.panelSummary.Margin = new System.Windows.Forms.Padding(0);
             this.panelSummary.Name = "panelSummary";
             this.panelSummary.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
-            this.panelSummary.Size = new System.Drawing.Size(1100, 35);
+            this.panelSummary.Size = new System.Drawing.Size(1100, 100);
             this.panelSummary.TabIndex = 2;
             // 
             // lblSummary
@@ -660,10 +660,10 @@
             this.panelButtons.Controls.Add(this.btnOutstandingReport);
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.panelButtons.Location = new System.Drawing.Point(0, 280);
+            this.panelButtons.Location = new System.Drawing.Point(0, 378);
             this.panelButtons.Margin = new System.Windows.Forms.Padding(0);
             this.panelButtons.Name = "panelButtons";
-            this.panelButtons.Padding = new System.Windows.Forms.Padding(14, 5, 14, 5);
+            this.panelButtons.Padding = new System.Windows.Forms.Padding(12, 8, 12, 8);
             this.panelButtons.Size = new System.Drawing.Size(1100, 56);
             this.panelButtons.TabIndex = 3;
             this.panelButtons.WrapContents = false;
@@ -855,7 +855,7 @@
             this.panelSearch.Controls.Add(this.txtSearch);
             this.panelSearch.Controls.Add(this.cmbFilterStatus);
             this.panelSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelSearch.Location = new System.Drawing.Point(0, 336);
+            this.panelSearch.Location = new System.Drawing.Point(0, 434);
             this.panelSearch.Margin = new System.Windows.Forms.Padding(0);
             this.panelSearch.Name = "panelSearch";
             this.panelSearch.Padding = new System.Windows.Forms.Padding(18, 3, 18, 3);
