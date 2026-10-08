@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using SchoolSystem.Models;
@@ -28,6 +29,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             ConfigureLoginExperience();
+            ConfigurePremiumSurface();
 
             FormClosed += delegate
             {
@@ -63,7 +65,7 @@ namespace SchoolSystem.UI
                 catch (Exception ex)
                 {
                     ApplicationLogger.LogException("تهيئة مدير النظام في شاشة الدخول", ex);
-                    ShowInitializationError(ex);
+                    SetStartupStatus(ex);
                     System.Diagnostics.Debug.WriteLine(ex.ToString());
                 }
             }
@@ -132,14 +134,14 @@ namespace SchoolSystem.UI
                     : contact;
 
             LoadSchoolBrandLogo(branding);
-            lblFeatureTitle.Text = "إدارة مدرسية واضحة ومتكاملة";
-            lblFeature1.Text = "✓  بيانات مترابطة وسهلة الوصول";
-            lblFeature2.Text = "✓  متابعة أكاديمية ومالية في واجهة واحدة";
-            lblFeature3.Text = "✓  صلاحيات مستخدمين وسجل للعمليات";
-            lblBrandFooter.Text = "بوابة تشغيل يومية لإدارة المدرسة";
+            lblFeatureTitle.Text = "إدارة مدرسية ذكية في منصة واحدة";
+            lblFeature1.Text = "✓  بيانات الطلاب والتسجيلات مترابطة ومنظمة";
+            lblFeature2.Text = "✓  الأكاديميات والرسوم والحضور في مسار واحد";
+            lblFeature3.Text = "✓  أدوار وصلاحيات وسجل تدقيق للعمليات";
+            lblBrandFooter.Text = "SchoolSystem • نظام إدارة المدرسة";
 
-            lblWelcome.Text = "مرحبًا بك";
-            lblTitle.Text = "تسجيل الدخول إلى النظام";
+            lblWelcome.Text = "مرحبًا بك في SchoolSystem";
+            lblTitle.Text = "تسجيل الدخول";
             lblSubtitle.Text = "أدخل بيانات حسابك المصرّح له بالوصول إلى نظام إدارة المدرسة";
 
             lblUserLabel.Text = "اسم المستخدم";
@@ -157,7 +159,7 @@ namespace SchoolSystem.UI
             lblFooter.TextAlign = ContentAlignment.MiddleRight;
 
             lblDevelopers.Text =
-                "المطورون\r\nالمهندس مهند علي علي علي سعد • عبد الرحمن سعد علي سعد • سامي الحاج";
+                "تطوير النظام\r\nالمهندس مهند علي علي علي سعد • عبد الرحمن سعد علي سعد • سامي الحاج";
             lblDevelopers.TextAlign = ContentAlignment.MiddleCenter;
 
             btnWindowClose.Text = "×";
@@ -173,6 +175,162 @@ namespace SchoolSystem.UI
             {
                 control.RightToLeft = RightToLeft.Yes;
             }
+        }
+
+        private void ConfigurePremiumSurface()
+        {
+            // طبقة بصرية خفيفة تحافظ على طابع عربي RTL دون الاعتماد على صور إضافية.
+            panelBrand.Paint -= panelBrand_Paint;
+            panelBrand.Paint += panelBrand_Paint;
+
+            panelLoginArea.Paint -= panelLoginArea_Paint;
+            panelLoginArea.Paint += panelLoginArea_Paint;
+
+            Resize -= LoginForm_Resize;
+            Resize += LoginForm_Resize;
+
+            loginCard.Resize -= LoginCard_Resize;
+            loginCard.Resize += LoginCard_Resize;
+
+            ApplyRoundedRegion(this, 16);
+            ApplyRoundedRegion(loginCard, 18);
+        }
+
+        private void LoginForm_Resize(object sender, EventArgs e)
+        {
+            ApplyRoundedRegion(this, 16);
+            ApplyRoundedRegion(loginCard, 18);
+            panelBrand.Invalidate();
+            panelLoginArea.Invalidate();
+        }
+
+        private void LoginCard_Resize(object sender, EventArgs e)
+        {
+            ApplyRoundedRegion(loginCard, 18);
+        }
+
+        private static void ApplyRoundedRegion(Control control, int radius)
+        {
+            if (control == null || control.Width <= 0 || control.Height <= 0)
+                return;
+
+            int diameter = Math.Min(
+                Math.Max(8, radius * 2),
+                Math.Min(control.Width, control.Height));
+
+            using (GraphicsPath path = new GraphicsPath())
+            {
+                path.AddArc(0, 0, diameter, diameter, 180, 90);
+                path.AddArc(control.Width - diameter, 0, diameter, diameter, 270, 90);
+                path.AddArc(
+                    control.Width - diameter,
+                    control.Height - diameter,
+                    diameter,
+                    diameter,
+                    0,
+                    90);
+                path.AddArc(
+                    0,
+                    control.Height - diameter,
+                    diameter,
+                    diameter,
+                    90,
+                    90);
+                path.CloseFigure();
+
+                Region oldRegion = control.Region;
+                control.Region = new Region(path);
+                if (oldRegion != null)
+                    oldRegion.Dispose();
+            }
+        }
+
+        private void panelBrand_Paint(object sender, PaintEventArgs e)
+        {
+            Rectangle bounds = panelBrand.ClientRectangle;
+            if (bounds.Width <= 0 || bounds.Height <= 0)
+                return;
+
+            using (LinearGradientBrush brush = new LinearGradientBrush(
+                bounds,
+                Color.FromArgb(15, 23, 42),
+                Color.FromArgb(15, 118, 110),
+                125F))
+            {
+                e.Graphics.FillRectangle(brush, bounds);
+            }
+
+            using (SolidBrush glow = new SolidBrush(Color.FromArgb(24, 94, 234, 212)))
+            {
+                e.Graphics.FillEllipse(
+                    glow,
+                    new Rectangle(bounds.Width - 210, -90, 270, 270));
+            }
+
+            using (SolidBrush glow = new SolidBrush(Color.FromArgb(18, 255, 255, 255)))
+            {
+                e.Graphics.FillEllipse(
+                    glow,
+                    new Rectangle(-120, bounds.Height - 170, 250, 250));
+            }
+
+            using (Pen accent = new Pen(Color.FromArgb(94, 234, 212), 3F))
+            {
+                e.Graphics.DrawLine(
+                    accent,
+                    bounds.Width - 6,
+                    42,
+                    bounds.Width - 6,
+                    bounds.Height - 42);
+            }
+        }
+
+        private void panelLoginArea_Paint(object sender, PaintEventArgs e)
+        {
+            Rectangle bounds = panelLoginArea.ClientRectangle;
+            if (bounds.Width <= 0 || bounds.Height <= 0)
+                return;
+
+            using (LinearGradientBrush brush = new LinearGradientBrush(
+                bounds,
+                Color.White,
+                Color.FromArgb(241, 245, 249),
+                90F))
+            {
+                e.Graphics.FillRectangle(brush, bounds);
+            }
+
+            using (SolidBrush accent = new SolidBrush(Color.FromArgb(12, 15, 118, 110)))
+            {
+                e.Graphics.FillEllipse(
+                    accent,
+                    new Rectangle(bounds.Width - 120, -40, 180, 180));
+            }
+
+            using (SolidBrush accent = new SolidBrush(Color.FromArgb(9, 37, 99, 235)))
+            {
+                e.Graphics.FillEllipse(
+                    accent,
+                    new Rectangle(-100, bounds.Height - 130, 180, 180));
+            }
+        }
+
+        private void SetStartupStatus(Exception exception)
+        {
+            string message =
+                exception == null
+                    ? string.Empty
+                    : exception.Message ?? string.Empty;
+
+            if (message.Contains("SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD"))
+            {
+                lblStatus.Text = "الحالة: يلزم إعداد حساب مدير النظام الأول من مسؤول النشر.";
+                lblStatus.ForeColor = UIHelper.WarningColor;
+                return;
+            }
+
+            lblStatus.Text = "الحالة: وضع الدخول جاهز، لكن قاعدة البيانات غير متاحة حاليًا.";
+            lblStatus.ForeColor = UIHelper.WarningColor;
         }
 
         private void LoadSchoolBrandLogo(SchoolSettings branding)
