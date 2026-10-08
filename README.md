@@ -6,9 +6,11 @@
 
 يتطلب المشروع Visual Studio 2022 مع workload **.NET desktop development** وTargeting Pack الخاص بـ **.NET Framework 4.7.2**. يمكن فتح ملف `.vsconfig` من Visual Studio Installer لتثبيت المكونات المطلوبة تلقائيًا.
 
-بعد استنساخ المستودع، افتح PowerShell داخل مجلد المشروع وشغّل:
+بعد استنساخ المستودع، استخدم فرع التطوير الحالي ثم افتح PowerShell داخل مجلد المشروع وشغّل:
 
 ```powershell
+git switch feature/new-development
+git pull --ff-only origin feature/new-development
 powershell -ExecutionPolicy Bypass -File .\scripts\Restore-Packages.ps1
 ```
 
@@ -24,9 +26,16 @@ SchoolSystem.sln
 
 من Visual Studio اختر `Build > Rebuild Solution`، ثم شغّل المشروع باستخدام `F5`. يجب إعداد اتصال SQL Server في `App.config` قبل التشغيل الفعلي.
 
-## مزامنة التحديثات
+## مزامنة التحديثات للنسخة الحالية
 
 ```powershell
-git switch main
-git pull --ff-only origin main
+git switch feature/new-development
+git pull --ff-only origin feature/new-development
+```
+
+لبناء نسخة العرض النظيفة:
+
+```powershell
+nuget restore SchoolSystem.sln
+msbuild SchoolSystem.sln /m /p:Configuration=Release /p:Platform="Any CPU"
 ```
