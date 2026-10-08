@@ -91,9 +91,9 @@ namespace SchoolSystem.UI
             this.headerPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.headerPanel.Location = new System.Drawing.Point(0, 0);
             this.headerPanel.Name = "headerPanel";
-            this.headerPanel.Padding = new System.Windows.Forms.Padding(12, 10, 12, 10);
+            this.headerPanel.Padding = new System.Windows.Forms.Padding(8, 6, 8, 6);
             this.headerPanel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.headerPanel.Size = new System.Drawing.Size(1100, 138);
+            this.headerPanel.Size = new System.Drawing.Size(1100, 116);
             this.headerPanel.TabIndex = 2;
 
             // منطقة العنوان والصورة مستقلة عن الأزرار لمنع أي تداخل.
@@ -101,20 +101,20 @@ namespace SchoolSystem.UI
             this.headerTitlePanel.Controls.Add(this.lblTitle);
             this.headerTitlePanel.Controls.Add(this.studentPictureBox);
             this.headerTitlePanel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.headerTitlePanel.Location = new System.Drawing.Point(12, 10);
+            this.headerTitlePanel.Location = new System.Drawing.Point(8, 6);
             this.headerTitlePanel.Name = "headerTitlePanel";
-            this.headerTitlePanel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 6);
+            this.headerTitlePanel.Padding = new System.Windows.Forms.Padding(0);
             this.headerTitlePanel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.headerTitlePanel.Size = new System.Drawing.Size(1076, 74);
+            this.headerTitlePanel.Size = new System.Drawing.Size(1084, 64);
             this.headerTitlePanel.TabIndex = 0;
 
             this.studentPictureBox.BackColor = SchoolSystem.Helpers.UIHelper.PrimaryLightColor;
             this.studentPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.studentPictureBox.Dock = System.Windows.Forms.DockStyle.Right;
-            this.studentPictureBox.Location = new System.Drawing.Point(992, 0);
+            this.studentPictureBox.Location = new System.Drawing.Point(1028, 4);
             this.studentPictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.studentPictureBox.Name = "studentPictureBox";
-            this.studentPictureBox.Size = new System.Drawing.Size(84, 68);
+            this.studentPictureBox.Size = new System.Drawing.Size(56, 56);
             this.studentPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.studentPictureBox.TabIndex = 0;
             this.studentPictureBox.TabStop = false;
@@ -125,9 +125,9 @@ namespace SchoolSystem.UI
             this.lblTitle.Location = new System.Drawing.Point(0, 0);
             this.lblTitle.Margin = new System.Windows.Forms.Padding(0);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Padding = new System.Windows.Forms.Padding(0, 0, 16, 0);
+            this.lblTitle.Padding = new System.Windows.Forms.Padding(0, 0, 8, 0);
             this.lblTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblTitle.Size = new System.Drawing.Size(992, 68);
+            this.lblTitle.Size = new System.Drawing.Size(1028, 64);
             this.lblTitle.TabIndex = 1;
             this.lblTitle.Text = "ملف الطالب الموحد";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -142,12 +142,12 @@ namespace SchoolSystem.UI
             this.headerActionsPanel.Controls.Add(this.btnExportProfileExcel);
             this.headerActionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.headerActionsPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.headerActionsPanel.Location = new System.Drawing.Point(12, 84);
+            this.headerActionsPanel.Location = new System.Drawing.Point(8, 70);
             this.headerActionsPanel.Margin = new System.Windows.Forms.Padding(0);
             this.headerActionsPanel.Name = "headerActionsPanel";
-            this.headerActionsPanel.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
+            this.headerActionsPanel.Padding = new System.Windows.Forms.Padding(0);
             this.headerActionsPanel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.headerActionsPanel.Size = new System.Drawing.Size(1076, 44);
+            this.headerActionsPanel.Size = new System.Drawing.Size(1084, 40);
             this.headerActionsPanel.TabIndex = 1;
             this.headerActionsPanel.WrapContents = false;
 
@@ -169,7 +169,7 @@ namespace SchoolSystem.UI
             this.summaryTable.Controls.Add(this.lblFinancialSummary, 2, 1);
             this.summaryTable.Dock = System.Windows.Forms.DockStyle.Top;
             this.summaryTable.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
-            this.summaryTable.Location = new System.Drawing.Point(0, 138);
+            this.summaryTable.Location = new System.Drawing.Point(0, 116);
             this.summaryTable.Margin = new System.Windows.Forms.Padding(0);
             this.summaryTable.Name = "summaryTable";
             this.summaryTable.Padding = new System.Windows.Forms.Padding(12, 10, 12, 10);
@@ -194,7 +194,7 @@ namespace SchoolSystem.UI
             this.tabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabs.Font = new System.Drawing.Font(SchoolSystem.Helpers.UIHelper.FontFamily, 10F, System.Drawing.FontStyle.Bold);
             this.tabs.ItemSize = new System.Drawing.Size(130, 38);
-            this.tabs.Location = new System.Drawing.Point(0, 364);
+            this.tabs.Location = new System.Drawing.Point(0, 342);
             this.tabs.Margin = new System.Windows.Forms.Padding(0);
             this.tabs.Name = "tabs";
             this.tabs.Padding = new System.Drawing.Point(18, 6);
