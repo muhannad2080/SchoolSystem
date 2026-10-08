@@ -68,6 +68,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             UIHelper.ApplyStyle(this);
+            EnsureEnrollmentToolbarLayout();
 
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
             Disposed += (sender, e) =>
@@ -134,6 +135,46 @@ namespace SchoolSystem.UI
             // ------------------------------------------------------------
 
             ConfigureOutputButtons();
+        }
+
+        // ================================================================
+        // EMBEDDED LAYOUT
+        //
+        // The host MainForm owns the screen title. This form owns only its
+        // search and action bars, which must remain visible when embedded.
+        // ================================================================
+
+        private void EnsureEnrollmentToolbarLayout()
+        {
+            if (pnlSearch != null)
+            {
+                pnlSearch.Visible = true;
+                pnlSearch.Dock = DockStyle.Top;
+                pnlSearch.Height = 64;
+            }
+
+            if (splitContainerMain != null)
+            {
+                splitContainerMain.Dock = DockStyle.Fill;
+            }
+
+            if (pnlButtons != null)
+            {
+                pnlButtons.Visible = true;
+                pnlButtons.Dock = DockStyle.Bottom;
+                pnlButtons.Height = 112;
+            }
+
+            // تثبيت ترتيب الطبقات: المحتوى في الوسط، شريط البحث أعلى،
+            // وشريط الإجراءات أسفل. العنوان يأتي من MainForm فقط.
+            if (splitContainerMain != null)
+                splitContainerMain.SendToBack();
+
+            if (pnlSearch != null)
+                pnlSearch.BringToFront();
+
+            if (pnlButtons != null)
+                pnlButtons.BringToFront();
         }
 
         private async void DataRefreshNotifier_DataChanged(
