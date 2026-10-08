@@ -140,7 +140,7 @@ namespace SchoolSystem.UI
                 lblBirthPlace, lblNationality, lblNationalId, lblPhone,
                 lblStatus, lblGuardianName, lblGuardianRelation,
                 lblGuardianPhone, lblGuardianEmail, lblGuardianJob,
-                lblGovernorate, lblDistrict, lblAddress, lblCount
+                lblGovernorate, lblDistrict, lblAddress, lblSearch, lblCount
             })
             {
                 label.ForeColor = UIHelper.TextColor;
@@ -214,6 +214,12 @@ namespace SchoolSystem.UI
             ConfigurePreviewButton(
                 btnSearch,
                 UIHelper.InfoColor,
+                "بحث",
+                9.25F,
+                96);
+            ConfigurePreviewButton(
+                btnClearFilters,
+                UIHelper.NeutralColor,
                 "مسح الفلاتر",
                 9.25F,
                 118);
@@ -298,7 +304,7 @@ namespace SchoolSystem.UI
 
             _searchLayout = new TableLayoutPanel
             {
-                ColumnCount = 6,
+                ColumnCount = 8,
                 RowCount = 1,
                 Dock = DockStyle.Fill,
                 Margin = Padding.Empty,
@@ -310,27 +316,41 @@ namespace SchoolSystem.UI
             _searchLayout.ColumnStyles.Add(
                 new ColumnStyle(SizeType.Percent, 1.0F));
             _searchLayout.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Absolute, 150F));
+                new ColumnStyle(SizeType.Absolute, 155F));
             _searchLayout.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Absolute, 125F));
+                new ColumnStyle(SizeType.Absolute, 135F));
             _searchLayout.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Percent, 2.2F));
+                new ColumnStyle(SizeType.Absolute, 54F));
             _searchLayout.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Absolute, 110F));
+                new ColumnStyle(SizeType.Percent, 2.9F));
             _searchLayout.ColumnStyles.Add(
-                new ColumnStyle(SizeType.Absolute, 130F));
+                new ColumnStyle(SizeType.Absolute, 96F));
+            _searchLayout.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Absolute, 118F));
+            _searchLayout.ColumnStyles.Add(
+                new ColumnStyle(SizeType.Absolute, 136F));
 
             _searchLayout.Controls.Add(lblCount, 0, 0);
             _searchLayout.Controls.Add(cmbFilterClass, 1, 0);
             _searchLayout.Controls.Add(cmbFilterStatus, 2, 0);
-            _searchLayout.Controls.Add(txtSearch, 3, 0);
-            _searchLayout.Controls.Add(btnSearch, 4, 0);
-            _searchLayout.Controls.Add(btnReload, 5, 0);
+            _searchLayout.Controls.Add(lblSearch, 3, 0);
+            _searchLayout.Controls.Add(txtSearch, 4, 0);
+            _searchLayout.Controls.Add(btnSearch, 5, 0);
+            _searchLayout.Controls.Add(btnClearFilters, 6, 0);
+            _searchLayout.Controls.Add(btnReload, 7, 0);
 
             lblCount.Dock = DockStyle.Fill;
             lblCount.AutoSize = false;
             lblCount.TextAlign = ContentAlignment.MiddleCenter;
             lblCount.Margin = new Padding(4, 0, 4, 0);
+
+            lblSearch.Dock = DockStyle.Fill;
+            lblSearch.AutoSize = false;
+            lblSearch.Text = "بحث:";
+            lblSearch.TextAlign = ContentAlignment.MiddleRight;
+            lblSearch.Font = new Font(UIHelper.FontFamily, UIHelper.CaptionFontSize, FontStyle.Bold);
+            lblSearch.ForeColor = UIHelper.TextColor;
+            lblSearch.Margin = new Padding(4, 0, 4, 0);
 
             foreach (Control control in new Control[]
             {
@@ -338,25 +358,30 @@ namespace SchoolSystem.UI
                 cmbFilterStatus,
                 txtSearch,
                 btnSearch,
+                btnClearFilters,
                 btnReload
             })
             {
                 control.Dock = DockStyle.Fill;
                 control.Margin = new Padding(4, 4, 4, 4);
+                control.Visible = true;
             }
 
             txtSearch.RightToLeft = RightToLeft.Yes;
             txtSearch.TextAlign = HorizontalAlignment.Right;
-            txtSearch.MinimumSize = new Size(0, 30);
+            txtSearch.MinimumSize = new Size(0, 32);
 
-            cmbFilterClass.MinimumSize = new Size(0, 30);
-            cmbFilterStatus.MinimumSize = new Size(0, 30);
+            cmbFilterClass.MinimumSize = new Size(0, 32);
+            cmbFilterStatus.MinimumSize = new Size(0, 32);
 
-            btnSearch.Text = "مسح الفلاتر";
+            btnSearch.Text = "بحث";
+            btnClearFilters.Text = "مسح الفلاتر";
             btnReload.Text = "تحديث البيانات";
             UIHelper.StyleActionButton(btnSearch);
+            UIHelper.StyleActionButton(btnClearFilters);
             UIHelper.StyleActionButton(btnReload);
-            ConfigureToolbarButton(btnSearch, 118);
+            ConfigureToolbarButton(btnSearch, 96);
+            ConfigureToolbarButton(btnClearFilters, 118);
             ConfigureToolbarButton(btnReload, 136);
 
             _searchLayout.TabIndex = 0;
@@ -835,7 +860,8 @@ namespace SchoolSystem.UI
             _toolTip.SetToolTip(btnUpdate, "ينقل الطالب المحدد إلى وضع التعديل.");
             _toolTip.SetToolTip(btnDelete, "أرشفة الطالب وإخفاؤه من القائمة دون حذف سجله.");
             _toolTip.SetToolTip(btnRefresh, "يعيد تحميل قائمة الطلاب من قاعدة البيانات.");
-            _toolTip.SetToolTip(btnSearch, "يمسح البحث والفلاتر ويعرض جميع الطلاب.");
+            _toolTip.SetToolTip(btnSearch, "تنفيذ البحث بالاسم أو الرقم أو البيانات المرتبطة.");
+            _toolTip.SetToolTip(btnClearFilters, "مسح البحث والفلاتر وإظهار جميع الطلاب.");
             _toolTip.SetToolTip(btnReload, "يعيد تحميل بيانات الطلاب من قاعدة البيانات.");
         }
 
@@ -2650,10 +2676,24 @@ namespace SchoolSystem.UI
             object sender,
             EventArgs e)
         {
-            txtSearch.Clear();
-            cmbFilterClass.SelectedIndex = 0;
-            cmbFilterStatus.SelectedIndex = 0;
             ApplyFilters();
+            txtSearch.Focus();
+        }
+
+        private void btnClearFilters_Click(
+            object sender,
+            EventArgs e)
+        {
+            txtSearch.Clear();
+
+            if (cmbFilterClass.Items.Count > 0)
+                cmbFilterClass.SelectedIndex = 0;
+
+            if (cmbFilterStatus.Items.Count > 0)
+                cmbFilterStatus.SelectedIndex = 0;
+
+            ApplyFilters();
+            txtSearch.Focus();
         }
 
         // ================================================================
