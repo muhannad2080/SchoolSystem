@@ -125,6 +125,7 @@ namespace SchoolSystem.UI
             // 
             this.rootLayout.SetColumnSpan(this.titleLabel, 2);
             this.titleLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.titleLabel.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
             this.titleLabel.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
             this.titleLabel.ForeColor = System.Drawing.Color.White;
             this.titleLabel.Location = new System.Drawing.Point(16, 16);
