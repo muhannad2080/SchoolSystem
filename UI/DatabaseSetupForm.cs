@@ -28,6 +28,8 @@ namespace SchoolSystem.UI
 
         public DatabaseSetupForm()
         {
+            LastFreshInstallAdminPassword = null;
+
             InitializeComponent();
             UIHelper.ApplyStyle(this);
             LoadCurrentSettings();
