@@ -84,7 +84,7 @@ namespace SchoolSystem.Helpers
 
         public const float TitleFontSize = 16F;
 
-        public const float HeadingFontSize = 14F;
+        public const float HeadingFontSize = 10.5F;
 
         public const float SectionFontSize = 11F;
 
