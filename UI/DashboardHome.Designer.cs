@@ -204,13 +204,13 @@ namespace SchoolSystem.UI
 
             this.panelSummary.Padding =
                 new System.Windows.Forms.Padding(
-                    20, 14, 20, 10);
+                    18, 10, 18, 6);
 
             this.panelSummary.RightToLeft =
                 System.Windows.Forms.RightToLeft.Yes;
 
             this.panelSummary.Size =
-                new System.Drawing.Size(1100, 104);
+                new System.Drawing.Size(1100, 154);
 
             this.panelSummary.TabIndex = 0;
 
@@ -542,7 +542,7 @@ namespace SchoolSystem.UI
             this.cardStudents.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.cardStudents.Margin = new System.Windows.Forms.Padding(6);
             this.cardStudents.Name = "cardStudents";
-            this.cardStudents.Size = new System.Drawing.Size(190, 122);
+            this.cardStudents.Size = new System.Drawing.Size(201, 122);
             this.cardStudents.TabIndex = 0;
 
             this.cardStudents.Controls.Add(
@@ -589,7 +589,7 @@ namespace SchoolSystem.UI
             this.cardTeachers.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.cardTeachers.Margin = new System.Windows.Forms.Padding(6);
             this.cardTeachers.Name = "cardTeachers";
-            this.cardTeachers.Size = new System.Drawing.Size(190, 122);
+            this.cardTeachers.Size = new System.Drawing.Size(201, 122);
             this.cardTeachers.TabIndex = 0;
 
             this.cardTeachers.Controls.Add(
@@ -636,7 +636,7 @@ namespace SchoolSystem.UI
             this.cardSubjects.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.cardSubjects.Margin = new System.Windows.Forms.Padding(6);
             this.cardSubjects.Name = "cardSubjects";
-            this.cardSubjects.Size = new System.Drawing.Size(190, 122);
+            this.cardSubjects.Size = new System.Drawing.Size(201, 122);
             this.cardSubjects.TabIndex = 0;
 
             this.cardSubjects.Controls.Add(
@@ -683,7 +683,7 @@ namespace SchoolSystem.UI
             this.cardClasses.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.cardClasses.Margin = new System.Windows.Forms.Padding(6);
             this.cardClasses.Name = "cardClasses";
-            this.cardClasses.Size = new System.Drawing.Size(190, 122);
+            this.cardClasses.Size = new System.Drawing.Size(201, 122);
             this.cardClasses.TabIndex = 0;
 
             this.cardClasses.Controls.Add(
@@ -730,7 +730,7 @@ namespace SchoolSystem.UI
             this.cardFees.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.cardFees.Margin = new System.Windows.Forms.Padding(6);
             this.cardFees.Name = "cardFees";
-            this.cardFees.Size = new System.Drawing.Size(190, 122);
+            this.cardFees.Size = new System.Drawing.Size(201, 122);
             this.cardFees.TabIndex = 0;
 
             this.cardFees.Controls.Add(
