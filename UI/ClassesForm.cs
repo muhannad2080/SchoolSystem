@@ -170,7 +170,21 @@ namespace SchoolSystem.UI
         // تعريف الدالة AddClassCreateButton لتنفيذ العملية المرتبطة بها.
         private void AddClassCreateButton()
         {
-            btnClassAdd = new Button { Name = "btnClassAdd", Text = "إضافة فصل", Size = new Size(115, 36), TabIndex = 0 };
+            btnClassAdd = new Button
+            {
+                Name = "btnClassAdd",
+                Text = "إضافة فصل",
+                Size = new Size(115, 40),
+                MinimumSize = new Size(110, 40),
+                TabIndex = 0,
+                BackColor = UIHelper.SuccessColor,
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Tahoma", 10.5F, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter,
+                UseVisualStyleBackColor = false,
+                Cursor = Cursors.Hand
+            };
 
             btnClassAdd.Click += btnClassAdd_Click;
             panelClassButtons.Controls.Add(btnClassAdd);
@@ -249,9 +263,14 @@ namespace SchoolSystem.UI
                 return;
 
             button.Text = text;
-            button.Size = new System.Drawing.Size(115, 36);
+            button.Size = new System.Drawing.Size(115, 40);
             button.BackColor = color;
             button.ForeColor = System.Drawing.Color.White;
+            button.MinimumSize = new System.Drawing.Size(110, 40);
+            button.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            button.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            button.UseVisualStyleBackColor = false;
+            button.Cursor = System.Windows.Forms.Cursors.Hand;
             button.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             button.FlatAppearance.BorderSize = 0;
         }
@@ -267,6 +286,27 @@ namespace SchoolSystem.UI
             grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             grid.BackgroundColor = System.Drawing.Color.White;
             grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            grid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            grid.EnableHeadersVisualStyles = false;
+            grid.ColumnHeadersHeight = 42;
+            grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            grid.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+            grid.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            grid.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            grid.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            grid.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            grid.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            grid.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            grid.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+            grid.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            grid.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            grid.DefaultCellStyle.SelectionForeColor = UIHelper.TextColor;
+            grid.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            grid.AlternatingRowsDefaultCellStyle.BackColor = UIHelper.BackgroundColor;
+            grid.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            grid.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+            grid.GridColor = UIHelper.BorderColor;
+            grid.RowTemplate.Height = 36;
             grid.Dock = System.Windows.Forms.DockStyle.Fill;
             grid.MultiSelect = false;
             grid.ReadOnly = true;
