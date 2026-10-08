@@ -318,7 +318,7 @@ namespace SchoolSystem.UI
                 "لوحة التحكم";
 
             this.lblDashboardTitle.TextAlign =
-                System.Drawing.ContentAlignment.MiddleRight;
+                System.Drawing.ContentAlignment.MiddleCenter;
 
             // lblDashboardSubtitle
             this.lblDashboardSubtitle.Dock =
