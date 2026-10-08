@@ -279,7 +279,7 @@ namespace SchoolSystem.UI
             this.btnSearch.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.btnSearch.Size = new System.Drawing.Size(109, 40);
+            this.btnSearch.Size = new System.Drawing.Size(120, 40);
             this.btnSearch.TabIndex = 11;
             this.btnSearch.Text = "بحث";
             this.btnSearch.UseVisualStyleBackColor = false;
