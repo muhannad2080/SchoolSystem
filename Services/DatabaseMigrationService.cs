@@ -26,6 +26,12 @@ namespace SchoolSystem.Services
 
         public const int InitialBaselineVersion = 1;
 
+        /// <summary>
+        /// يحدد ما إذا كانت آخر عملية Apply أنشأت قاعدة البيانات فعليًا.
+        /// لا يُستخدم لتعديل قاعدة موجودة.
+        /// </summary>
+        public static bool DatabaseCreatedInLastRun { get; private set; }
+
         /// <summary>اسم ملف النسخة الاحتياطية التي تُستخدم للاستعادة عند التثبيت أول مرة.</summary>
         public const string BackupFileName = "SchoolDB_14480309_230530.bak";
 
@@ -48,6 +54,7 @@ namespace SchoolSystem.Services
             bool replaceFromBackup = false)
         {
             AppliedInLastRun = 0;
+            DatabaseCreatedInLastRun = false;
 
             string databaseFolderFull =
                 (databaseFolder ?? string.Empty).Trim();
@@ -111,9 +118,21 @@ namespace SchoolSystem.Services
                     if (currentVersion == 0)
                     {
                         ApplyInitialSchema(con, initialFolder);
-                        RecordMigration(con, InitialBaselineVersion, "initial-schema");
-                        currentVersion = InitialBaselineVersion;
-                        AppliedInLastRun++;
+
+                        /*
+                         * بعض نسخ databaseschool.sql هي Snapshot حالي للمخطط وليست
+                         * مخطط الإصدار 1 فقط؛ وقد تحتوي بالفعل على SchemaMigrations
+                         * مثل 1 و3. بعد التنفيذ نقرأ التاريخ مرة أخرى ونبدأ من آخر
+                         * نسخة مسجلة بدل محاولة تسجيل 1 مكررًا.
+                         */
+                        currentVersion = ReadCurrentVersion(con);
+
+                        if (currentVersion == 0)
+                        {
+                            RecordMigration(con, InitialBaselineVersion, "initial-schema");
+                            currentVersion = InitialBaselineVersion;
+                            AppliedInLastRun++;
+                        }
                     }
 
                     // 4) تطبيق الترحيلات المرقّمة الأحدث.
