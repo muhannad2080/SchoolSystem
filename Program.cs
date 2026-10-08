@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using SchoolSystem.DataAccess;
@@ -15,6 +17,8 @@ namespace SchoolSystem
 
     internal static class Program
     {
+        private static string freshInstallAdminPassword;
+
         private enum StartupState
         {
             Ready,
@@ -103,6 +107,21 @@ namespace SchoolSystem
 
             // دورة التطبيق: تسجيل دخول -> MainForm -> تسجيل خروج -> شاشة الدخول.
             // لا تغلق Application.Run عند تسجيل الخروج؛ نبدأ دورة مصادقة جديدة.
+            if (!string.IsNullOrWhiteSpace(freshInstallAdminPassword))
+            {
+                MessageBox.Show(
+                    "تم تجهيز قاعدة البيانات والبيانات المرجعية تلقائياً.\n\n" +
+                    "حساب مدير النظام الأول:\n" +
+                    "اسم المستخدم: admin\n" +
+                    "كلمة المرور المؤقتة: " + freshInstallAdminPassword + "\n\n" +
+                    "سيُطلب تغيير كلمة المرور عند أول دخول. احتفظ بكلمة المرور المؤقتة الآن.",
+                    "اكتمل تجهيز التثبيت الأول",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                freshInstallAdminPassword = null;
+            }
+
             while (true)
             {
                 using (LoginForm loginForm = new LoginForm())
@@ -148,14 +167,36 @@ namespace SchoolSystem
             Exception masterFailure;
             if (!CanOpenConnection(masterConnection, out masterFailure))
             {
-                StartupState state = ClassifyMasterFailure(masterFailure);
-                return new StartupCheckResult
+                // على جهاز جديد قد يكون SQL Server مثبتًا باسم مثيل محلي مختلف.
+                // نجرّب المثيلات المحلية الشائعة قبل إظهار شاشة الإعداد.
+                if (!useSql && TryAutoDiscoverLocalServer(config, database, out string discoveredServer))
                 {
-                    State = state,
-                    Message = BuildMasterFailureMessage(state, server, masterFailure),
-                    ShowSetupForm = true
-                };
+                    server = discoveredServer;
+                    masterConnection = BuildConnectionString(
+                        server, "master", useSql, sqlUser, sqlPassword, 15);
+                    masterFailure = null;
+                }
+
+                if (masterFailure == null)
+                {
+                    // بعد الاكتشاف الناجح يستمر الفحص بالسيرفر المكتشف.
+                }
+                else
+                {
+                    StartupState state = ClassifyMasterFailure(masterFailure);
+                    return new StartupCheckResult
+                    {
+                        State = state,
+                        Message = BuildMasterFailureMessage(state, server, masterFailure),
+                        ShowSetupForm = true
+                    };
+                }
             }
+
+            // تحديث إعدادات الاتصال إذا اكتشفنا مثيلاً محلياً أفضل.
+            config.ServerInstance = server;
+            ApplicationSettingsService.Save(config);
+            DbConnection.Reload();
 
             if (!DatabaseExists(masterConnection, database))
             {
@@ -247,6 +288,27 @@ namespace SchoolSystem
                     databaseFolder);
 
                 ApplicationLogger.Log("DatabaseMigration", result);
+
+                if (DatabaseMigrationService.DatabaseCreatedInLastRun &&
+                    !DatabaseMigrationService.DatabaseRestoredInLastRun)
+                {
+                    DatabaseMigrationService.ApplyFreshInstallationReferenceData(
+                        server,
+                        database,
+                        useSqlAuth,
+                        sqlUser,
+                        sqlPassword,
+                        databaseFolder);
+
+                    UserService userService = new UserService();
+                    userService.InitializeFreshInstallation(
+                        out string initialAdminPassword);
+
+                    freshInstallAdminPassword = initialAdminPassword;
+                    ApplicationLogger.Log(
+                        "DatabaseMigration",
+                        "تم إكمال تهيئة التثبيت الأول: البيانات المرجعية وحساب مدير النظام.");
+                }
             }
             catch (Exception ex)
             {
@@ -258,6 +320,59 @@ namespace SchoolSystem
                 // يجب أن يوقف مسار الإقلاع التطبيق ويعرض المشكلة للمسؤول.
                 throw;
             }
+        }
+
+        /// <summary>
+        /// يكتشف مثيل SQL Server المحلي عند استخدام مصادقة Windows.
+        /// يستخدم اتصال master مباشرة، لذلك لا يحتاج إلى معرفة حالة قاعدة SchoolDB مسبقًا.
+        /// </summary>
+        private static bool TryAutoDiscoverLocalServer(
+            ApplicationSettingsData config,
+            string database,
+            out string discoveredServer)
+        {
+            discoveredServer = string.Empty;
+
+            List<string> candidates = new List<string>
+            {
+                config == null ? string.Empty : config.ServerInstance,
+                ".",
+                "localhost",
+                Environment.MachineName,
+                @".\SQLEXPRESS",
+                Environment.MachineName + @"\SQLEXPRESS",
+                @"(localdb)\MSSQLLocalDB"
+            };
+
+            foreach (string candidate in candidates
+                .Where(value => !string.IsNullOrWhiteSpace(value))
+                .Select(value => value.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    string master = BuildConnectionString(
+                        candidate,
+                        "master",
+                        false,
+                        string.Empty,
+                        string.Empty,
+                        8);
+
+                    using (SqlConnection connection = new SqlConnection(master))
+                    {
+                        connection.Open();
+                        discoveredServer = candidate;
+                        return true;
+                    }
+                }
+                catch
+                {
+                    // جرّب المرشح المحلي التالي فقط.
+                }
+            }
+
+            return false;
         }
 
         private static bool CanOpenConnection(string connectionString, out Exception failure)
