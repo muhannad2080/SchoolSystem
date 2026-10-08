@@ -106,6 +106,26 @@ namespace SchoolSystem.Helpers
 
         public const int Space32 = 32;
 
+        // ================================================================
+        // SchoolSystem Visual Identity — single source of truth
+        // ================================================================
+        public static readonly Color BrandColor = Color.FromArgb(13, 148, 136);
+        public static readonly Color BrandHoverColor = Color.FromArgb(20, 184, 166);
+        public static readonly Color BrandHighlightColor = Color.FromArgb(94, 234, 212);
+        public static readonly Color BrandMutedTextColor = Color.FromArgb(203, 213, 225);
+        public static readonly Color BrandFeatureTextColor = Color.FromArgb(226, 232, 240);
+        public static readonly Color LoginSecondaryTextColor = Color.FromArgb(100, 116, 139);
+        public static readonly Color LoginInputFocusColor = Color.FromArgb(240, 253, 250);
+        public static readonly Color LoginDangerHoverColor = Color.FromArgb(254, 242, 242);
+        public static readonly Color LoginDangerPressedColor = Color.FromArgb(254, 226, 226);
+        public static readonly Color LoginDangerTextColor = Color.FromArgb(185, 28, 28);
+
+        public const string LoginDeveloperCredits =
+            "تطوير النظام\r\nالمهندسين: مهند علي علي علي سعد • عبد الرحمن سعد علي سعد • سامي الحاج";
+
+        public const string LoginWindowTitle = "تسجيل الدخول | نظام إدارة المدرسة";
+
+
 
         // تعريف الدالة Font لتنفيذ العملية المرتبطة بها.
         private static readonly Font BodyFont = new Font(FontFamily, BodyFontSize);
@@ -189,15 +209,15 @@ namespace SchoolSystem.Helpers
                 // قد يقص الأزرار أو يزيحها عند اختلاف حجم الشاشة.
 
                 Button button = child as Button;
-                if (button != null)
+                if (button != null && ShouldApplyCentralControlStyle(button))
                     StyleActionButton(button);
 
                 KryptonButton kryptonButton = child as KryptonButton;
-                if (kryptonButton != null)
+                if (kryptonButton != null && ShouldApplyCentralControlStyle(kryptonButton))
                     StyleButton(kryptonButton, AccentColor);
 
                 DataGridView grid = child as DataGridView;
-                if (grid != null)
+                if (grid != null && ShouldApplyCentralGridStyle(grid))
                     StyleDataGridView(grid);
 
                 ApplyConsistentLayoutRecursive(child);
@@ -1423,6 +1443,81 @@ namespace SchoolSystem.Helpers
             }
         }
 
+        private static bool IsDefaultBackColor(Control control)
+        {
+            if (control == null)
+                return true;
+
+            Color expected = control is TextBox
+                ? SystemColors.Window
+                : SystemColors.Control;
+
+            return control.BackColor == expected || control.BackColor == Color.Empty;
+        }
+
+        private static bool IsDefaultForeColor(Control control)
+        {
+            if (control == null)
+                return true;
+
+            return control.ForeColor == SystemColors.ControlText ||
+                   control.ForeColor == SystemColors.WindowText ||
+                   control.ForeColor == Color.Empty;
+        }
+
+        private static bool IsDefaultFont(Control control)
+        {
+            if (control == null || control.Font == null)
+                return true;
+
+            Font defaultFont = Control.DefaultFont;
+            Font current = control.Font;
+
+            return string.Equals(
+                       current.FontFamily.Name,
+                       defaultFont.FontFamily.Name,
+                       StringComparison.OrdinalIgnoreCase) &&
+                   Math.Abs(current.SizeInPoints - defaultFont.SizeInPoints) < 0.01F &&
+                   current.Style == defaultFont.Style &&
+                   current.Unit == defaultFont.Unit;
+        }
+
+        private static bool ShouldApplyCentralControlStyle(Control control)
+        {
+            if (control == null)
+                return false;
+
+            string tag = Convert.ToString(control.Tag);
+            if (string.Equals(tag, "ui:central", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return IsDefaultBackColor(control) &&
+                   IsDefaultForeColor(control) &&
+                   IsDefaultFont(control);
+        }
+
+        private static bool ShouldApplyCentralGridStyle(DataGridView grid)
+        {
+            if (grid == null)
+                return false;
+
+            string tag = Convert.ToString(grid.Tag);
+            if (string.Equals(tag, "ui:central", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            DataGridViewCellStyle header = grid.ColumnHeadersDefaultCellStyle;
+            DataGridViewCellStyle cell = grid.DefaultCellStyle;
+
+            bool hasExplicitAppearance =
+                (grid.BackgroundColor != SystemColors.Window &&
+                 grid.BackgroundColor != Color.Empty) ||
+                (header != null && header.BackColor != Color.Empty) ||
+                (cell != null && cell.BackColor != Color.Empty) ||
+                !IsDefaultFont(grid);
+
+            return !hasExplicitAppearance;
+        }
+
         // تعريف الدالة ApplyTheme لتنفيذ العملية المرتبطة بها.
         public static void ApplyTheme(Control root)
         {
@@ -1431,16 +1526,25 @@ namespace SchoolSystem.Helpers
 
             if (root is Form form)
             {
-                form.BackColor = BackgroundColor;
-                form.Font = new Font(FontFamily, BodyFontSize);
+                if (IsDefaultBackColor(form))
+                    form.BackColor = BackgroundColor;
+
+                if (IsDefaultFont(form))
+                    form.Font = BodyFont;
+
+                // RTL is an application invariant for the Arabic UI.
                 form.RightToLeft = RightToLeft.Yes;
                 form.RightToLeftLayout = true;
             }
 
             else if (root is UserControl userControl)
             {
-                userControl.BackColor = BackgroundColor;
-                userControl.Font = new Font(FontFamily, BodyFontSize);
+                if (IsDefaultBackColor(userControl))
+                    userControl.BackColor = BackgroundColor;
+
+                if (IsDefaultFont(userControl))
+                    userControl.Font = BodyFont;
+
                 userControl.RightToLeft = RightToLeft.Yes;
             }
 
@@ -1454,53 +1558,80 @@ namespace SchoolSystem.Helpers
             {
                 if (child is Panel panel)
                 {
-                    panel.BackColor = SurfaceColor;
+                    if (IsDefaultBackColor(panel))
+                        panel.BackColor = SurfaceColor;
                 }
 
                 else if (child is GroupBox groupBox)
                 {
-                    groupBox.BackColor = SurfaceColor;
-                    groupBox.ForeColor = TextColor;
-                    groupBox.Font = SectionFont;
+                    if (IsDefaultBackColor(groupBox))
+                        groupBox.BackColor = SurfaceColor;
+
+                    if (IsDefaultForeColor(groupBox))
+                        groupBox.ForeColor = TextColor;
+
+                    if (IsDefaultFont(groupBox))
+                        groupBox.Font = SectionFont;
                 }
 
                 else if (child is Label label)
                 {
-                    label.ForeColor = TextColor;
+                    if (IsDefaultBackColor(label))
+                        label.BackColor = Color.Transparent;
+
+                    if (IsDefaultForeColor(label))
+                        label.ForeColor = TextColor;
+
+                    if (IsDefaultFont(label))
+                        label.Font = BodyFont;
+
                     if (!label.AutoSize)
                         label.AutoEllipsis = true;
 
                     string labelKey = ((label.Name ?? string.Empty) + " " + (label.Text ?? string.Empty)).ToLowerInvariant();
                     if (labelKey.Contains("title") || labelKey.Contains("header") || labelKey.Contains("عنوان") || labelKey.Contains("رئيسي"))
                     {
-                        label.ForeColor = PrimaryColor;
-                        label.Font = TitleFont;
+                        if (IsDefaultForeColor(label))
+                            label.ForeColor = PrimaryColor;
+
+                        if (IsDefaultFont(label))
+                            label.Font = TitleFont;
                     }
 
                     else if (labelKey.Contains("section") || labelKey.Contains("قسم") || labelKey.Contains("بيانات"))
                     {
-                        label.ForeColor = MutedTextColor;
-                        label.Font = SectionFont;
+                        if (IsDefaultForeColor(label))
+                            label.ForeColor = MutedTextColor;
+
+                        if (IsDefaultFont(label))
+                            label.Font = SectionFont;
                     }
                 }
 
                 else if (child is LinkLabel linkLabel)
                 {
-                    linkLabel.LinkColor = SearchColor;
-                    linkLabel.ActiveLinkColor = AccentColor;
-                    linkLabel.Font = new Font(FontFamily, BodyFontSize, FontStyle.Underline);
+                    if (linkLabel.LinkColor == SystemColors.ControlText ||
+                        linkLabel.LinkColor == Color.Empty)
+                        linkLabel.LinkColor = SearchColor;
+
+                    if (linkLabel.ActiveLinkColor == SystemColors.ControlText ||
+                        linkLabel.ActiveLinkColor == Color.Empty)
+                        linkLabel.ActiveLinkColor = AccentColor;
+
+                    if (IsDefaultFont(linkLabel))
+                        linkLabel.Font = new Font(FontFamily, BodyFontSize, FontStyle.Underline);
                 }
 
                 else if (child is TextBox textBox)
                 {
-                    StyleTextBox(textBox);
-                    textBox.BackColor = Color.White;
+                    if (ShouldApplyCentralControlStyle(textBox))
+                        StyleTextBox(textBox);
                 }
 
                 else if (child is ComboBox comboBox)
                 {
-                    StyleComboBox(comboBox);
-                    comboBox.BackColor = Color.White;
+                    if (ShouldApplyCentralControlStyle(comboBox))
+                        StyleComboBox(comboBox);
                 }
 
                 else if (child is DateTimePicker dateTimePicker)
@@ -1535,17 +1666,20 @@ namespace SchoolSystem.Helpers
 
                 else if (child is DataGridView dataGridView)
                 {
-                    StyleDataGridView(dataGridView);
+                    if (ShouldApplyCentralGridStyle(dataGridView))
+                        StyleDataGridView(dataGridView);
                 }
 
                 else if (child is Button button)
                 {
-                    StyleActionButton(button);
+                    if (ShouldApplyCentralControlStyle(button))
+                        StyleActionButton(button);
                 }
 
                 else if (child is KryptonButton kryptonButton)
                 {
-                    StyleActionButton(kryptonButton);
+                    if (ShouldApplyCentralControlStyle(kryptonButton))
+                        StyleActionButton(kryptonButton);
                 }
 
                 else if (child is TabControl tabControl)
