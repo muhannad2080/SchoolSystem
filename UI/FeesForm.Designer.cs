@@ -647,7 +647,7 @@
             // 
             // panelButtons
             // 
-            this.panelButtons.AutoScroll = true;
+            this.panelButtons.AutoScroll = false;
             this.panelButtons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.panelButtons.Controls.Add(this.btnAdd);
             this.panelButtons.Controls.Add(this.btnUpdate);
@@ -679,7 +679,7 @@
             this.btnAdd.Location = new System.Drawing.Point(18, 10);
             this.btnAdd.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(110, 40);
+            this.btnAdd.Size = new System.Drawing.Size(104, 40);
             this.btnAdd.TabIndex = 0;
             this.btnAdd.Text = "إضافة";
             this.btnAdd.UseVisualStyleBackColor = false;
@@ -699,7 +699,7 @@
             this.btnUpdate.Location = new System.Drawing.Point(114, 10);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(110, 40);
+            this.btnUpdate.Size = new System.Drawing.Size(104, 40);
             this.btnUpdate.TabIndex = 1;
             this.btnUpdate.Text = "تعديل";
             this.btnUpdate.UseVisualStyleBackColor = false;
@@ -719,7 +719,7 @@
             this.btnDelete.Location = new System.Drawing.Point(210, 10);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(110, 40);
+            this.btnDelete.Size = new System.Drawing.Size(104, 40);
             this.btnDelete.TabIndex = 2;
             this.btnDelete.Text = "حذف";
             this.btnDelete.UseVisualStyleBackColor = false;
@@ -739,7 +739,7 @@
             this.btnClear.Location = new System.Drawing.Point(306, 10);
             this.btnClear.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(110, 40);
+            this.btnClear.Size = new System.Drawing.Size(104, 40);
             this.btnClear.TabIndex = 3;
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
@@ -759,7 +759,7 @@
             this.btnGenerateFees.Location = new System.Drawing.Point(402, 10);
             this.btnGenerateFees.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnGenerateFees.Name = "btnGenerateFees";
-            this.btnGenerateFees.Size = new System.Drawing.Size(122, 40);
+            this.btnGenerateFees.Size = new System.Drawing.Size(120, 40);
             this.btnGenerateFees.TabIndex = 4;
             this.btnGenerateFees.Text = "توليد الرسوم";
             this.btnGenerateFees.UseVisualStyleBackColor = false;
@@ -779,7 +779,7 @@
             this.btnExportExcel.Location = new System.Drawing.Point(532, 10);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnExportExcel.Name = "btnExportExcel";
-            this.btnExportExcel.Size = new System.Drawing.Size(112, 40);
+            this.btnExportExcel.Size = new System.Drawing.Size(110, 40);
             this.btnExportExcel.TabIndex = 5;
             this.btnExportExcel.Text = "تصدير Excel";
             this.btnExportExcel.UseVisualStyleBackColor = false;
@@ -799,7 +799,7 @@
             this.btnExportPdf.Location = new System.Drawing.Point(652, 10);
             this.btnExportPdf.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnExportPdf.Name = "btnExportPdf";
-            this.btnExportPdf.Size = new System.Drawing.Size(104, 40);
+            this.btnExportPdf.Size = new System.Drawing.Size(110, 40);
             this.btnExportPdf.TabIndex = 6;
             this.btnExportPdf.Text = "تصدير PDF";
             this.btnExportPdf.UseVisualStyleBackColor = false;
@@ -819,7 +819,7 @@
             this.btnRecordPayment.Location = new System.Drawing.Point(764, 10);
             this.btnRecordPayment.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnRecordPayment.Name = "btnRecordPayment";
-            this.btnRecordPayment.Size = new System.Drawing.Size(116, 40);
+            this.btnRecordPayment.Size = new System.Drawing.Size(110, 40);
             this.btnRecordPayment.TabIndex = 7;
             this.btnRecordPayment.Text = "تحصيل دفعة";
             this.btnRecordPayment.UseVisualStyleBackColor = false;
@@ -839,7 +839,7 @@
             this.btnOutstandingReport.Location = new System.Drawing.Point(888, 10);
             this.btnOutstandingReport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnOutstandingReport.Name = "btnOutstandingReport";
-            this.btnOutstandingReport.Size = new System.Drawing.Size(126, 40);
+            this.btnOutstandingReport.Size = new System.Drawing.Size(120, 40);
             this.btnOutstandingReport.TabIndex = 8;
             this.btnOutstandingReport.Text = "تقرير المتأخرات";
             this.btnOutstandingReport.UseVisualStyleBackColor = false;
@@ -865,7 +865,7 @@
             // lblSearch
             // 
             this.lblSearch.Dock = System.Windows.Forms.DockStyle.Right;
-            this.lblSearch.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.lblSearch.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
             this.lblSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
             this.lblSearch.Location = new System.Drawing.Point(590, 3);
             this.lblSearch.Name = "lblSearch";
