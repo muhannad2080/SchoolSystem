@@ -356,10 +356,10 @@ namespace SchoolSystem.UI
             // 
             // exportButton
             // 
-            this.exportButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
+            this.exportButton.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.exportButton.FlatAppearance.BorderSize = 0;
             this.exportButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.exportButton.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.exportButton.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.exportButton.ForeColor = System.Drawing.Color.White;
             this.exportButton.Location = new System.Drawing.Point(6, 6);
             this.exportButton.Margin = new System.Windows.Forms.Padding(4);
@@ -370,13 +370,17 @@ namespace SchoolSystem.UI
             this.exportButton.Text = "تصدير السجل إلى Excel وPDF";
             this.exportButton.UseVisualStyleBackColor = false;
             this.exportButton.Click += new System.EventHandler(this.ExportButton_Click);
+            this.exportButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.exportButton.AutoSize = false;
+            this.exportButton.MinimumSize = new System.Drawing.Size(110, 40);
+            this.exportButton.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // refreshButton
             // 
-            this.refreshButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.refreshButton.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
             this.refreshButton.FlatAppearance.BorderSize = 0;
             this.refreshButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.refreshButton.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.refreshButton.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.refreshButton.ForeColor = System.Drawing.Color.White;
             this.refreshButton.Location = new System.Drawing.Point(204, 6);
             this.refreshButton.Margin = new System.Windows.Forms.Padding(4);
@@ -387,6 +391,10 @@ namespace SchoolSystem.UI
             this.refreshButton.Text = "بحث / تحديث";
             this.refreshButton.UseVisualStyleBackColor = false;
             this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
+            this.refreshButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.refreshButton.AutoSize = false;
+            this.refreshButton.MinimumSize = new System.Drawing.Size(110, 40);
+            this.refreshButton.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // searchDebounceTimer
             // 
@@ -436,6 +444,37 @@ namespace SchoolSystem.UI
             this.grid.TabIndex = 0;
             this.grid.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.Grid_CellFormatting);
             this.grid.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.Grid_DataBindingComplete);
+            this.grid.BackgroundColor = System.Drawing.Color.White;
+            this.grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.grid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.grid.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.grid.RowHeadersVisible = false;
+            this.grid.MultiSelect = false;
+            this.grid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            this.grid.AllowUserToResizeRows = false;
+            this.grid.EnableHeadersVisualStyles = false;
+            this.grid.ColumnHeadersHeight = 42;
+            this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.grid.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.grid.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.grid.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.grid.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.grid.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.grid.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.grid.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.grid.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.grid.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.grid.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.grid.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.grid.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.grid.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.grid.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.grid.RowTemplate.Height = 36;
+            this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid.AllowUserToAddRows = false;
+            this.grid.AllowUserToDeleteRows = false;
+            this.grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.grid.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
             // 
             // footer
             // 
