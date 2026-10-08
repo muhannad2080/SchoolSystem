@@ -63,6 +63,8 @@ namespace SchoolSystem
             this.lblSystemTitle = new System.Windows.Forms.Label();
             this.lblSystemSubtitle = new System.Windows.Forms.Label();
             this.panelContent = new System.Windows.Forms.Panel();
+            this.panelScreenHeader = new System.Windows.Forms.Panel();
+            this.lblScreenTitle = new System.Windows.Forms.Label();
             this.statusStripMain = new System.Windows.Forms.StatusStrip();
             this.lblDBStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.lblOnlineUsers = new System.Windows.Forms.ToolStripStatusLabel();
@@ -494,6 +496,31 @@ namespace SchoolSystem
             this.panelContent.Size = new System.Drawing.Size(1280, 660);
             this.panelContent.TabIndex = 2;
             // 
+            // panelScreenHeader
+            // 
+            this.panelScreenHeader.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(118)))), ((int)(((byte)(110)))));
+            this.panelScreenHeader.Controls.Add(this.lblScreenTitle);
+            this.panelScreenHeader.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelScreenHeader.Location = new System.Drawing.Point(0, 116);
+            this.panelScreenHeader.Name = "panelScreenHeader";
+            this.panelScreenHeader.Padding = new System.Windows.Forms.Padding(18, 0, 18, 0);
+            this.panelScreenHeader.Size = new System.Drawing.Size(1280, 54);
+            this.panelScreenHeader.TabIndex = 3;
+            this.panelScreenHeader.Visible = false;
+            // 
+            // lblScreenTitle
+            // 
+            this.lblScreenTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblScreenTitle.Font = new System.Drawing.Font("Tahoma", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblScreenTitle.ForeColor = System.Drawing.Color.White;
+            this.lblScreenTitle.Location = new System.Drawing.Point(18, 0);
+            this.lblScreenTitle.Name = "lblScreenTitle";
+            this.lblScreenTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblScreenTitle.Size = new System.Drawing.Size(1244, 54);
+            this.lblScreenTitle.TabIndex = 0;
+            this.lblScreenTitle.Text = "الشاشة الحالية";
+            this.lblScreenTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // statusStripMain
             // 
             this.statusStripMain.BackColor = System.Drawing.Color.White;
@@ -546,6 +573,7 @@ namespace SchoolSystem
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.ClientSize = new System.Drawing.Size(1280, 800);
             this.Controls.Add(this.panelContent);
+            this.Controls.Add(this.panelScreenHeader);
             this.Controls.Add(this.statusStripMain);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.menuStripMain);
@@ -648,6 +676,10 @@ namespace SchoolSystem
         // ================================================================
 
         private System.Windows.Forms.Panel panelContent;
+
+        private System.Windows.Forms.Panel panelScreenHeader;
+
+        private System.Windows.Forms.Label lblScreenTitle;
 
         // ================================================================
         // STATUS
