@@ -142,6 +142,7 @@ namespace SchoolSystem.Helpers
         public static void ApplyStyle(Form form)
         {
             ApplyKryptonTheme();
+            ApplyTheme(form);
             ApplyKryptonTheme((Control)form);
             ApplyInputValidation(form);
             ApplyResponsiveLayout(form);
@@ -151,6 +152,7 @@ namespace SchoolSystem.Helpers
         public static void ApplyStyle(UserControl uc)
         {
             ApplyKryptonTheme();
+            ApplyTheme(uc);
             ApplyKryptonTheme((Control)uc);
             ApplyInputValidation(uc);
             ApplyResponsiveLayout(uc);
@@ -1637,32 +1639,44 @@ namespace SchoolSystem.Helpers
 
                 else if (child is DateTimePicker dateTimePicker)
                 {
-                    dateTimePicker.Font = new Font(FontFamily, BodyFontSize);
-                    dateTimePicker.CalendarFont = new Font(FontFamily, BodyFontSize);
-                    dateTimePicker.CalendarForeColor = TextColor;
-                    dateTimePicker.CalendarMonthBackground = SurfaceColor;
-                    dateTimePicker.BackColor = SurfaceColor;
-                    dateTimePicker.ForeColor = TextColor;
+                    if (ShouldApplyCentralControlStyle(dateTimePicker))
+                    {
+                        dateTimePicker.Font = new Font(FontFamily, BodyFontSize);
+                        dateTimePicker.CalendarFont = new Font(FontFamily, BodyFontSize);
+                        dateTimePicker.CalendarForeColor = TextColor;
+                        dateTimePicker.CalendarMonthBackground = SurfaceColor;
+                        dateTimePicker.BackColor = SurfaceColor;
+                        dateTimePicker.ForeColor = TextColor;
+                    }
                 }
 
                 else if (child is NumericUpDown numericUpDown)
                 {
-                    numericUpDown.Font = new Font(FontFamily, BodyFontSize);
-                    numericUpDown.BackColor = SurfaceColor;
-                    numericUpDown.ForeColor = TextColor;
-                    numericUpDown.BorderStyle = BorderStyle.FixedSingle;
+                    if (ShouldApplyCentralControlStyle(numericUpDown))
+                    {
+                        numericUpDown.Font = new Font(FontFamily, BodyFontSize);
+                        numericUpDown.BackColor = SurfaceColor;
+                        numericUpDown.ForeColor = TextColor;
+                        numericUpDown.BorderStyle = BorderStyle.FixedSingle;
+                    }
                 }
 
                 else if (child is CheckBox checkBox)
                 {
-                    checkBox.Font = new Font(FontFamily, BodyFontSize);
-                    checkBox.ForeColor = TextColor;
+                    if (ShouldApplyCentralControlStyle(checkBox))
+                    {
+                        checkBox.Font = new Font(FontFamily, BodyFontSize);
+                        checkBox.ForeColor = TextColor;
+                    }
                 }
 
                 else if (child is RadioButton radioButton)
                 {
-                    radioButton.Font = new Font(FontFamily, BodyFontSize);
-                    radioButton.ForeColor = TextColor;
+                    if (ShouldApplyCentralControlStyle(radioButton))
+                    {
+                        radioButton.Font = new Font(FontFamily, BodyFontSize);
+                        radioButton.ForeColor = TextColor;
+                    }
                 }
 
                 else if (child is DataGridView dataGridView)
@@ -1685,8 +1699,11 @@ namespace SchoolSystem.Helpers
 
                 else if (child is TabControl tabControl)
                 {
-                    tabControl.Font = new Font(FontFamily, BodyFontSize);
-                    tabControl.BackColor = BackgroundColor;
+                    if (ShouldApplyCentralControlStyle(tabControl))
+                    {
+                        tabControl.Font = new Font(FontFamily, BodyFontSize);
+                        tabControl.BackColor = BackgroundColor;
+                    }
                 }
 
                 ApplyThemeRecursive(child);
