@@ -113,7 +113,7 @@ namespace SchoolSystem.UI
             // 
             // header
             // 
-            this.header.BackColor = System.Drawing.Color.White;
+            this.header.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
             this.header.Controls.Add(this.subtitle);
             this.header.Controls.Add(this.title);
             this.header.Dock = System.Windows.Forms.DockStyle.Top;
@@ -128,27 +128,27 @@ namespace SchoolSystem.UI
             // 
             this.subtitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.subtitle.Font = new System.Drawing.Font("Tahoma", 9F);
-            this.subtitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
+            this.subtitle.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
             this.subtitle.Location = new System.Drawing.Point(14, 42);
             this.subtitle.Name = "subtitle";
             this.subtitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.subtitle.Size = new System.Drawing.Size(999, 28);
             this.subtitle.TabIndex = 0;
             this.subtitle.Text = "مراجعة موثقة لتغييرات السندات والدرجات والرسوم والمستخدمين";
-            this.subtitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.subtitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // title
             // 
             this.title.Dock = System.Windows.Forms.DockStyle.Top;
             this.title.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
-            this.title.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.title.ForeColor = System.Drawing.Color.White;
             this.title.Location = new System.Drawing.Point(14, 8);
             this.title.Name = "title";
             this.title.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.title.Size = new System.Drawing.Size(999, 34);
             this.title.TabIndex = 1;
             this.title.Text = "سجل الأنشطة والعمليات الحساسة";
-            this.title.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.title.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // filters
             // 
