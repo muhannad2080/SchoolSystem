@@ -74,6 +74,8 @@ namespace SchoolSystem.Services
             bool existed = DatabaseExists(masterConnection, database);
             if (!existed)
             {
+                DatabaseCreatedInLastRun = true;
+
                 // قاعدة غير موجودة: نستعيد من النسخة الاحتياطية إن وُجدت، وإلا ننشئ قاعدة فارغة.
                 if (!string.IsNullOrWhiteSpace(backupPath))
                 {
