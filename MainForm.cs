@@ -549,10 +549,6 @@ namespace SchoolSystem
                 panelContent.Controls.Add(
                     form);
 
-                ConfigureEmbeddedScreenHeader(
-                    form,
-                    GetScreenTitle(form.GetType().Name));
-
                 form.Show();
 
                 form.BringToFront();
