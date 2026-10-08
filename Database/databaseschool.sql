@@ -173,6 +173,25 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+CREATE TABLE [dbo].[StudentTransportAssignments](
+	[AssignmentID] [int] IDENTITY(1,1) NOT NULL,
+	[StudentID] [int] NOT NULL,
+	[RouteID] [int] NOT NULL,
+	[AcademicYear] [nvarchar](20) NOT NULL,
+	[PickupPoint] [nvarchar](200) NOT NULL,
+	[DropoffPoint] [nvarchar](200) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[StartDate] [date] NOT NULL,
+	[EndDate] [date] NULL,
+	[Notes] [nvarchar](max) NULL,
+	[CreatedAt] [datetime] NOT NULL,
+	[UpdatedAt] [datetime] NULL,
+ CONSTRAINT [PK_StudentTransportAssignments] PRIMARY KEY CLUSTERED
+(
+	[AssignmentID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
 CREATE TABLE [dbo].[Books](
 	[BookID] [int] IDENTITY(1,1) NOT NULL,
 	[Title] [nvarchar](200) NOT NULL,
@@ -1888,6 +1907,16 @@ REFERENCES [dbo].[Books] ([BookID])
 GO
 ALTER TABLE [dbo].[BookBorrowings] CHECK CONSTRAINT [FK_BookBorrowings_Books]
 GO
+ALTER TABLE [dbo].[StudentTransportAssignments]  WITH CHECK ADD CONSTRAINT [FK_StudentTransportAssignments_Students] FOREIGN KEY([StudentID])
+REFERENCES [dbo].[Students] ([StudentID])
+GO
+ALTER TABLE [dbo].[StudentTransportAssignments] CHECK CONSTRAINT [FK_StudentTransportAssignments_Students]
+GO
+ALTER TABLE [dbo].[StudentTransportAssignments]  WITH CHECK ADD CONSTRAINT [FK_StudentTransportAssignments_BusRoutes] FOREIGN KEY([RouteID])
+REFERENCES [dbo].[BusRoutes] ([RouteID])
+GO
+ALTER TABLE [dbo].[StudentTransportAssignments] CHECK CONSTRAINT [FK_StudentTransportAssignments_BusRoutes]
+GO
 ALTER TABLE [dbo].[BusRoutes]  WITH CHECK ADD  CONSTRAINT [FK_BusRoutes_Buses] FOREIGN KEY([BusID])
 REFERENCES [dbo].[Buses] ([BusID])
 GO
@@ -2646,6 +2675,5 @@ FROM dbo.Roles r CROSS JOIN dbo.Permissions p
 WHERE r.RoleName = N'مدير النظام'
   AND NOT EXISTS (SELECT 1 FROM dbo.RolePermissions rp WHERE rp.RoleID = r.RoleID AND rp.PermissionID = p.PermissionID);
 GO
-
 
 
