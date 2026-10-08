@@ -252,6 +252,7 @@ namespace SchoolSystem.UI
 
                 UIHelper.ShowInfo(lblStatus.Text);
 
+                DataRefreshNotifier.Notify("AcademicYears", this);
                 LoadYears();
             }
 
