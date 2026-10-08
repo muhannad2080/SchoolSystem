@@ -364,7 +364,7 @@ namespace SchoolSystem.UI
             // 
             // btnRefresh
             // 
-            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
+            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnRefresh.FlatAppearance.BorderSize = 0;
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
@@ -375,10 +375,15 @@ namespace SchoolSystem.UI
             this.btnRefresh.Text = "تحديث";
             this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnRefresh.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnRefresh.AutoSize = false;
+            this.btnRefresh.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnClear
             // 
-            this.btnClear.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
+            this.btnClear.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnClear.FlatAppearance.BorderSize = 0;
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClear.ForeColor = System.Drawing.Color.White;
@@ -389,10 +394,15 @@ namespace SchoolSystem.UI
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            this.btnClear.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnClear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnClear.AutoSize = false;
+            this.btnClear.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnDelete
             // 
-            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(163)))), ((int)(((byte)(175)))));
+            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnDelete.Enabled = true;
             this.btnDelete.FlatAppearance.BorderSize = 0;
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -404,10 +414,15 @@ namespace SchoolSystem.UI
             this.btnDelete.Text = "حذف المادة";
             this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnDelete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnDelete.AutoSize = false;
+            this.btnDelete.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnUpdate
             // 
-            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnUpdate.FlatAppearance.BorderSize = 0;
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnUpdate.ForeColor = System.Drawing.Color.White;
@@ -418,10 +433,15 @@ namespace SchoolSystem.UI
             this.btnUpdate.Text = "حفظ التعديل";
             this.btnUpdate.UseVisualStyleBackColor = false;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnUpdate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnUpdate.AutoSize = false;
+            this.btnUpdate.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnAdd
             // 
-            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
+            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAdd.FlatAppearance.BorderSize = 0;
             this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAdd.ForeColor = System.Drawing.Color.White;
@@ -432,6 +452,11 @@ namespace SchoolSystem.UI
             this.btnAdd.Text = "إضافة مادة";
             this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnAdd.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnAdd.AutoSize = false;
+            this.btnAdd.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnAdd.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // panelSearch
             // 
@@ -473,7 +498,7 @@ namespace SchoolSystem.UI
             this.dataGridViewSubjects.BackgroundColor = System.Drawing.Color.White;
             this.dataGridViewSubjects.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridViewSubjects.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.dataGridViewSubjects.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.dataGridViewSubjects.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 9.5F);
@@ -482,7 +507,7 @@ namespace SchoolSystem.UI
             this.dataGridViewSubjects.ColumnHeadersHeight = 42;
             this.dataGridViewSubjects.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewSubjects.EnableHeadersVisualStyles = false;
-            this.dataGridViewSubjects.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(231)))), ((int)(((byte)(235)))));
+            this.dataGridViewSubjects.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
             this.dataGridViewSubjects.Location = new System.Drawing.Point(15, 304);
             this.dataGridViewSubjects.MultiSelect = false;
             this.dataGridViewSubjects.Name = "dataGridViewSubjects";
@@ -494,11 +519,29 @@ namespace SchoolSystem.UI
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(219)))), ((int)(((byte)(234)))), ((int)(((byte)(254)))));
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(64)))), ((int)(((byte)(175)))));
             this.dataGridViewSubjects.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewSubjects.RowTemplate.Height = 34;
+            this.dataGridViewSubjects.RowTemplate.Height = 36;
             this.dataGridViewSubjects.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewSubjects.Size = new System.Drawing.Size(1070, 321);
             this.dataGridViewSubjects.TabIndex = 3;
             this.dataGridViewSubjects.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewSubjects_CellClick);
+            this.dataGridViewSubjects.AllowUserToResizeRows = false;
+            this.dataGridViewSubjects.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dataGridViewSubjects.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dataGridViewSubjects.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dataGridViewSubjects.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.dataGridViewSubjects.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dataGridViewSubjects.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dataGridViewSubjects.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewSubjects.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewSubjects.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewSubjects.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dataGridViewSubjects.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.dataGridViewSubjects.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dataGridViewSubjects.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewSubjects.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewSubjects.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.dataGridViewSubjects.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewSubjects.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             // 
             // panelBottom
             // 
