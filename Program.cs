@@ -68,7 +68,6 @@ namespace SchoolSystem
                             {
                                 freshInstallAdminPassword =
                                     DatabaseSetupForm.LastFreshInstallAdminPassword;
-                                DatabaseSetupForm.LastFreshInstallAdminPassword = null;
                             }
                         }
 
