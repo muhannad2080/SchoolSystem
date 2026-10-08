@@ -41,6 +41,7 @@ namespace SchoolSystem.UI
             this.lblSearch = new System.Windows.Forms.Label();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.btnLoad = new System.Windows.Forms.Button();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.panelSummary = new System.Windows.Forms.Panel();
             this.lblSummary = new System.Windows.Forms.Label();
             this.dataGridViewAttendance = new System.Windows.Forms.DataGridView();
@@ -146,6 +147,7 @@ namespace SchoolSystem.UI
             this.tableLayoutFilters.Controls.Add(this.cmbSection, 1, 1);
             this.tableLayoutFilters.Controls.Add(this.lblSearch, 2, 1);
             this.tableLayoutFilters.Controls.Add(this.txtSearch, 3, 1);
+            this.tableLayoutFilters.Controls.Add(this.btnSearch, 4, 1);
             this.tableLayoutFilters.Controls.Add(this.btnLoad, 5, 1);
             this.tableLayoutFilters.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutFilters.Location = new System.Drawing.Point(12, 31);
@@ -264,6 +266,25 @@ namespace SchoolSystem.UI
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(243, 28);
             this.txtSearch.TabIndex = 9;
+            // 
+            // btnSearch
+            this.btnSearch.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.btnSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnSearch.FlatAppearance.BorderSize = 0;
+            this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSearch.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnSearch.ForeColor = System.Drawing.Color.White;
+            this.btnSearch.Location = new System.Drawing.Point(3, 53);
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSearch.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.btnSearch.Size = new System.Drawing.Size(109, 40);
+            this.btnSearch.TabIndex = 11;
+            this.btnSearch.Text = "بحث";
+            this.btnSearch.UseVisualStyleBackColor = false;
+            this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // btnLoad
             // 
@@ -537,6 +558,7 @@ namespace SchoolSystem.UI
 
 
         private System.Windows.Forms.Button btnLoad;
+        private System.Windows.Forms.Button btnSearch;
 
 
         private System.Windows.Forms.Panel panelSummary;
