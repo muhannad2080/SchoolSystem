@@ -905,24 +905,33 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            enrollmentsView.RowFilter =
-                UIHelper.BuildDataViewSearchFilter(
-                    txtSearch.Text,
-                    "StudentName",
-                    "StudentNumber",
-                    "ApplicationType",
-                    "AcademicYear",
-                    "ClassName",
-                    "Section",
-                    "Status",
-                    "PreviousSchool",
-                    "PreviousClass",
-                    "TransferReason",
-                    "PaymentMethod",
-                    "ReceiptNo",
-                    "Notes");
+            try
+            {
+                string[] requestedColumns =
+                {
+                    "StudentName", "StudentNumber", "ApplicationType", "AcademicYear",
+                    "ClassName", "Section", "Status", "PreviousSchool", "PreviousClass",
+                    "TransferReason", "PaymentMethod", "ReceiptNo", "Notes"
+                };
 
-            UpdateCount();
+                var availableColumns = requestedColumns
+                    .Where(column =>
+                        enrollmentsView.Table != null &&
+                        enrollmentsView.Table.Columns.Contains(column))
+                    .ToArray();
+
+                enrollmentsView.RowFilter =
+                    UIHelper.BuildDataViewSearchFilter(txtSearch.Text, availableColumns);
+
+                UpdateCount();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("شاشة القبول والتسجيل: البحث", ex);
+                enrollmentsView.RowFilter = string.Empty;
+                UpdateCount();
+                UIHelper.ShowException("البحث في القبول والتسجيل", ex);
+            }
         }
 
         // ================================================================
