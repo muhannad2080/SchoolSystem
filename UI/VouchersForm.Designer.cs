@@ -519,8 +519,8 @@
             this.actionLayout.Location = new System.Drawing.Point(0, 0);
             this.actionLayout.Margin = new System.Windows.Forms.Padding(0);
             this.actionLayout.Name = "actionLayout";
-            this.actionLayout.Padding = new System.Windows.Forms.Padding(14, 5, 14, 5);
-            this.actionLayout.Size = new System.Drawing.Size(1100, 56);
+            this.actionLayout.Padding = new System.Windows.Forms.Padding(12, 6, 12, 6);
+            this.actionLayout.Size = new System.Drawing.Size(1100, 82);
             this.actionLayout.TabIndex = 0;
             this.actionLayout.WrapContents = true;
             // 
@@ -951,7 +951,7 @@
             this.dataGridViewVouchers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewVouchers.EnableHeadersVisualStyles = false;
             this.dataGridViewVouchers.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
-            this.dataGridViewVouchers.Location = new System.Drawing.Point(0, 385);
+            this.dataGridViewVouchers.Location = new System.Drawing.Point(0, 424);
             this.dataGridViewVouchers.Margin = new System.Windows.Forms.Padding(0);
             this.dataGridViewVouchers.MultiSelect = false;
             this.dataGridViewVouchers.Name = "dataGridViewVouchers";
@@ -960,7 +960,7 @@
             this.dataGridViewVouchers.RowHeadersWidth = 51;
             this.dataGridViewVouchers.RowTemplate.Height = 36;
             this.dataGridViewVouchers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewVouchers.Size = new System.Drawing.Size(1100, 294);
+            this.dataGridViewVouchers.Size = new System.Drawing.Size(1100, 252);
             this.dataGridViewVouchers.TabIndex = 4;
             this.dataGridViewVouchers.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewVouchers_CellClick);
             this.dataGridViewVouchers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -986,10 +986,10 @@
             this.panelBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.panelBottom.Controls.Add(this.lblRecordCount);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(0, 679);
+            this.panelBottom.Location = new System.Drawing.Point(0, 676);
             this.panelBottom.Margin = new System.Windows.Forms.Padding(0);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1100, 21);
+            this.panelBottom.Size = new System.Drawing.Size(1100, 24);
             this.panelBottom.TabIndex = 5;
             // 
             // lblRecordCount
