@@ -632,7 +632,7 @@ namespace SchoolSystem.UiSmokeTests
             Button searchButton = GetPrivateControl<Button>(control, "btnSearch");
             Button clearButton = GetPrivateControl<Button>(control, "btnReload");
             Label count = GetPrivateControl<Label>(control, "lblCount");
-            Panel actions = GetPrivateControl<Panel>(control, "pnlButtons");
+            FlowLayoutPanel actions = GetPrivateControl<FlowLayoutPanel>(control, "pnlButtons");
             SplitContainer split = GetPrivateControl<SplitContainer>(control, "splitContainerMain");
 
             if (!title.Visible || !search.Visible || !searchBox.Visible || !searchButton.Visible || !clearButton.Visible)
