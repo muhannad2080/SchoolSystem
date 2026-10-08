@@ -49,6 +49,30 @@ powershell -ExecutionPolicy Bypass -File .\Deployment\Build-Installers.ps1 -Conf
 
 المتطلبات: Windows، و`.NET Framework 4.7.2` أو أحدث، وSQL Server/SQL Express/LocalDB متاح للمستخدم. إذا لم يوجد SQL Server محلي أو لم يكن الاتصال قابلاً للاستخدام، تظهر شاشة إعداد الاتصال داخل البرنامج.
 
+## بناء حزمة التثبيت
+
+حزمة التثبيت الحالية لا تعتمد على Inno Setup أو winget. يبني المشروع Setup.exe ذاتيًا باستخدام MSBuild فقط، ويضمّن البرنامج وملفات DLL وقاعدة البيانات الأولية وmigrations وبيانات المرجع الأكاديمي داخل ملف واحد.
+
+من **Developer PowerShell for Visual Studio 2022**:
+
+```powershell
+cd D:\E\SchoolSystems
+git switch feature/new-development
+git pull --ff-only origin feature/new-development
+nuget restore SchoolSystem.sln
+powershell -ExecutionPolicy Bypass -File .\Deployment\Build-Installers.ps1 -Configuration Release -Version 1.0.0
+```
+
+الملف الناتج:
+
+```text
+dist\SchoolSystem-1.0.0-Setup.exe
+```
+
+هذا الملف هو الذي يُنقل إلى الجهاز الآخر ويُشغّل **Run as administrator**. لا يحتاج الجهاز الآخر إلى Visual Studio. يحتاج Windows و.NET Framework 4.7.2 أو أحدث وSQL Server قابلًا للوصول.
+
+بعد التثبيت، عند تشغيل SchoolSystem يفحص النظام SQL Server تلقائيًا؛ إن كانت SchoolDB موجودة يستخدمها ويطبق فقط الترحيلات الناقصة، وإن لم تكن موجودة ينشئها من `Database\databaseschool.sql` ويطبق migrations وبيانات المرجع الأكاديمي.
+
 ## مزامنة التحديثات للنسخة الحالية
 
 ```powershell
