@@ -142,24 +142,18 @@ namespace SchoolSystem.Helpers
         public static void ApplyStyle(Form form)
         {
             ApplyKryptonTheme();
-            ApplyTheme(form);
             ApplyKryptonTheme((Control)form);
             ApplyInputValidation(form);
             ApplyResponsiveLayout(form);
-            ApplyConsistentLayout(form);
-            FinalizeLayout(form);
         }
 
         // تعريف الدالة ApplyStyle لتنفيذ العملية المرتبطة بها.
         public static void ApplyStyle(UserControl uc)
         {
             ApplyKryptonTheme();
-            ApplyTheme(uc);
             ApplyKryptonTheme((Control)uc);
             ApplyInputValidation(uc);
             ApplyResponsiveLayout(uc);
-            ApplyConsistentLayout(uc);
-            FinalizeLayout(uc);
         }
 
         /// <summary>
