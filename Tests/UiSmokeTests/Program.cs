@@ -915,7 +915,6 @@ namespace SchoolSystem.UiSmokeTests
                 ValidateSourceWiring();
                 ValidateButtonWiring();
                 ValidateDualDateSupport();
-                ValidateDualDateSupport();
 
                 using (SchoolSystem.UI.LoginForm loginForm = new SchoolSystem.UI.LoginForm())
                 {
