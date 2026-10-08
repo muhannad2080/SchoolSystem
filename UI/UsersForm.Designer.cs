@@ -104,7 +104,7 @@ namespace SchoolSystem.UI
             this.lblTitle.ForeColor = System.Drawing.Color.White;
             this.lblTitle.Location = new System.Drawing.Point(0, 0);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(1100, 58);
+            this.lblTitle.Size = new System.Drawing.Size(1100, 60);
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "إدارة المستخدمين والصلاحيات";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -123,7 +123,7 @@ namespace SchoolSystem.UI
             this.mainContainer.Controls.Add(this.dataGridViewUsers, 0, 3);
             this.mainContainer.Controls.Add(this.panelBottom, 0, 4);
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainContainer.Location = new System.Drawing.Point(0, 58);
+            this.mainContainer.Location = new System.Drawing.Point(0, 60);
             this.mainContainer.Name = "mainContainer";
             this.mainContainer.Padding = new System.Windows.Forms.Padding(12, 10, 12, 10);
             this.mainContainer.RowCount = 5;
