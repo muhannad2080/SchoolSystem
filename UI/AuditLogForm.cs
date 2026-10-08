@@ -47,6 +47,25 @@ namespace SchoolSystem.UI
             entityFilter.SelectedIndexChanged += Filter_SelectedIndexChanged;
 
             searchBox.TextChanged += SearchBox_TextChanged;
+
+            DataRefreshNotifier.DataChanged += AuditLogForm_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= AuditLogForm_DataChanged;
+        }
+
+        private async void AuditLogForm_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                filterLoadInProgress)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "All"))
+                return;
+
+            await LoadLogsAsync();
         }
 
         // تعريف الدالة AuditLogForm_Load لتنفيذ العملية المرتبطة بها.
