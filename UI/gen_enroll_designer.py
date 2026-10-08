@@ -318,7 +318,8 @@ def generate_designer_code():
 
         "        private System.Windows.Forms.Panel panelTitle;",
         "        private System.Windows.Forms.Label lblTitle;",
-        "        private System.Windows.Forms.DataGridView dgvEnrollments;"
+        "        private System.Windows.Forms.TableLayoutPanel tlpSearch;",
+        "        private System.Windows.Forms.DataGridView dgvEnrollments;",
         "        private System.Windows.Forms.ErrorProvider errorProvider1;",
         "        private System.Windows.Forms.SplitContainer splitContainerMain;",
         "        private System.Windows.Forms.Panel pnlSearch;",
