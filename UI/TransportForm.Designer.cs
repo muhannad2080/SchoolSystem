@@ -149,7 +149,7 @@ namespace SchoolSystem.UI
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 10F);
             dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
             this.dataGridViewBuses.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridViewBuses.ColumnHeadersHeight = 38;
+            this.dataGridViewBuses.ColumnHeadersHeight = 42;
             this.dataGridViewBuses.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewBuses.EnableHeadersVisualStyles = false;
             this.dataGridViewBuses.Location = new System.Drawing.Point(0, 237);
@@ -158,11 +158,33 @@ namespace SchoolSystem.UI
             this.dataGridViewBuses.ReadOnly = true;
             this.dataGridViewBuses.RowHeadersVisible = false;
             this.dataGridViewBuses.RowHeadersWidth = 51;
-            this.dataGridViewBuses.RowTemplate.Height = 33;
+            this.dataGridViewBuses.RowTemplate.Height = 36;
             this.dataGridViewBuses.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewBuses.Size = new System.Drawing.Size(942, 294);
             this.dataGridViewBuses.TabIndex = 2;
             this.dataGridViewBuses.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewBuses_CellClick);
+            this.dataGridViewBuses.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.dataGridViewBuses.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.dataGridViewBuses.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            this.dataGridViewBuses.AllowUserToResizeRows = false;
+            this.dataGridViewBuses.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dataGridViewBuses.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            this.dataGridViewBuses.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dataGridViewBuses.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dataGridViewBuses.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.dataGridViewBuses.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dataGridViewBuses.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dataGridViewBuses.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewBuses.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewBuses.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewBuses.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dataGridViewBuses.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.dataGridViewBuses.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dataGridViewBuses.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewBuses.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewBuses.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.dataGridViewBuses.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewBuses.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             // 
             // panelBusesButtons
             // 
@@ -186,10 +208,10 @@ namespace SchoolSystem.UI
             // btnAddBus
             // 
             this.btnAddBus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddBus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(174)))), ((int)(((byte)(96)))));
+            this.btnAddBus.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAddBus.FlatAppearance.BorderSize = 0;
             this.btnAddBus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAddBus.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnAddBus.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnAddBus.ForeColor = System.Drawing.Color.White;
             this.btnAddBus.Location = new System.Drawing.Point(11, 11);
             this.btnAddBus.Name = "btnAddBus";
@@ -198,14 +220,18 @@ namespace SchoolSystem.UI
             this.btnAddBus.Text = "إضافة حافلة";
             this.btnAddBus.UseVisualStyleBackColor = false;
             this.btnAddBus.Click += new System.EventHandler(this.btnAddBus_Click);
+            this.btnAddBus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnAddBus.AutoSize = false;
+            this.btnAddBus.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnAddBus.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnUpdateBus
             // 
             this.btnUpdateBus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdateBus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(126)))), ((int)(((byte)(34)))));
+            this.btnUpdateBus.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnUpdateBus.FlatAppearance.BorderSize = 0;
             this.btnUpdateBus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpdateBus.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnUpdateBus.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnUpdateBus.ForeColor = System.Drawing.Color.White;
             this.btnUpdateBus.Location = new System.Drawing.Point(112, 11);
             this.btnUpdateBus.Name = "btnUpdateBus";
@@ -214,14 +240,18 @@ namespace SchoolSystem.UI
             this.btnUpdateBus.Text = "تعديل بيانات الحافلة";
             this.btnUpdateBus.UseVisualStyleBackColor = false;
             this.btnUpdateBus.Click += new System.EventHandler(this.btnUpdateBus_Click);
+            this.btnUpdateBus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnUpdateBus.AutoSize = false;
+            this.btnUpdateBus.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnUpdateBus.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnDeleteBus
             // 
             this.btnDeleteBus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteBus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(57)))), ((int)(((byte)(43)))));
+            this.btnDeleteBus.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnDeleteBus.FlatAppearance.BorderSize = 0;
             this.btnDeleteBus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDeleteBus.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnDeleteBus.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnDeleteBus.ForeColor = System.Drawing.Color.White;
             this.btnDeleteBus.Location = new System.Drawing.Point(213, 11);
             this.btnDeleteBus.Name = "btnDeleteBus";
@@ -230,14 +260,18 @@ namespace SchoolSystem.UI
             this.btnDeleteBus.Text = "حذف الحافلة";
             this.btnDeleteBus.UseVisualStyleBackColor = false;
             this.btnDeleteBus.Click += new System.EventHandler(this.btnDeleteBus_Click);
+            this.btnDeleteBus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnDeleteBus.AutoSize = false;
+            this.btnDeleteBus.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnDeleteBus.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnClearBus
             // 
             this.btnClearBus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearBus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(140)))), ((int)(((byte)(141)))));
+            this.btnClearBus.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnClearBus.FlatAppearance.BorderSize = 0;
             this.btnClearBus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClearBus.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnClearBus.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnClearBus.ForeColor = System.Drawing.Color.White;
             this.btnClearBus.Location = new System.Drawing.Point(314, 11);
             this.btnClearBus.Name = "btnClearBus";
@@ -246,6 +280,10 @@ namespace SchoolSystem.UI
             this.btnClearBus.Text = "تفريغ النموذج";
             this.btnClearBus.UseVisualStyleBackColor = false;
             this.btnClearBus.Click += new System.EventHandler(this.btnClearBus_Click);
+            this.btnClearBus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnClearBus.AutoSize = false;
+            this.btnClearBus.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnClearBus.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // panelBusesFields
             // 
@@ -410,7 +448,7 @@ namespace SchoolSystem.UI
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Tahoma", 10F);
             dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
             this.dataGridViewRoutes.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewRoutes.ColumnHeadersHeight = 38;
+            this.dataGridViewRoutes.ColumnHeadersHeight = 42;
             this.dataGridViewRoutes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewRoutes.EnableHeadersVisualStyles = false;
             this.dataGridViewRoutes.Location = new System.Drawing.Point(0, 317);
@@ -419,11 +457,33 @@ namespace SchoolSystem.UI
             this.dataGridViewRoutes.ReadOnly = true;
             this.dataGridViewRoutes.RowHeadersVisible = false;
             this.dataGridViewRoutes.RowHeadersWidth = 51;
-            this.dataGridViewRoutes.RowTemplate.Height = 33;
+            this.dataGridViewRoutes.RowTemplate.Height = 36;
             this.dataGridViewRoutes.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewRoutes.Size = new System.Drawing.Size(942, 214);
             this.dataGridViewRoutes.TabIndex = 2;
             this.dataGridViewRoutes.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRoutes_CellClick);
+            this.dataGridViewRoutes.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.dataGridViewRoutes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.dataGridViewRoutes.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            this.dataGridViewRoutes.AllowUserToResizeRows = false;
+            this.dataGridViewRoutes.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dataGridViewRoutes.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            this.dataGridViewRoutes.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dataGridViewRoutes.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dataGridViewRoutes.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.dataGridViewRoutes.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dataGridViewRoutes.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dataGridViewRoutes.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewRoutes.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewRoutes.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewRoutes.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dataGridViewRoutes.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.dataGridViewRoutes.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dataGridViewRoutes.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewRoutes.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewRoutes.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.dataGridViewRoutes.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewRoutes.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             // 
             // panelRoutesButtons
             // 
@@ -447,10 +507,10 @@ namespace SchoolSystem.UI
             // btnAddRoute
             // 
             this.btnAddRoute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddRoute.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(174)))), ((int)(((byte)(96)))));
+            this.btnAddRoute.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAddRoute.FlatAppearance.BorderSize = 0;
             this.btnAddRoute.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAddRoute.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnAddRoute.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnAddRoute.ForeColor = System.Drawing.Color.White;
             this.btnAddRoute.Location = new System.Drawing.Point(11, 11);
             this.btnAddRoute.Name = "btnAddRoute";
@@ -459,14 +519,18 @@ namespace SchoolSystem.UI
             this.btnAddRoute.Text = "إضافة مسار";
             this.btnAddRoute.UseVisualStyleBackColor = false;
             this.btnAddRoute.Click += new System.EventHandler(this.btnAddRoute_Click);
+            this.btnAddRoute.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnAddRoute.AutoSize = false;
+            this.btnAddRoute.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnAddRoute.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnUpdateRoute
             // 
             this.btnUpdateRoute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdateRoute.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(126)))), ((int)(((byte)(34)))));
+            this.btnUpdateRoute.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnUpdateRoute.FlatAppearance.BorderSize = 0;
             this.btnUpdateRoute.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpdateRoute.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnUpdateRoute.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnUpdateRoute.ForeColor = System.Drawing.Color.White;
             this.btnUpdateRoute.Location = new System.Drawing.Point(112, 11);
             this.btnUpdateRoute.Name = "btnUpdateRoute";
@@ -475,14 +539,18 @@ namespace SchoolSystem.UI
             this.btnUpdateRoute.Text = "تعديل بيانات المسار";
             this.btnUpdateRoute.UseVisualStyleBackColor = false;
             this.btnUpdateRoute.Click += new System.EventHandler(this.btnUpdateRoute_Click);
+            this.btnUpdateRoute.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnUpdateRoute.AutoSize = false;
+            this.btnUpdateRoute.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnUpdateRoute.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnDeleteRoute
             // 
             this.btnDeleteRoute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteRoute.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(57)))), ((int)(((byte)(43)))));
+            this.btnDeleteRoute.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnDeleteRoute.FlatAppearance.BorderSize = 0;
             this.btnDeleteRoute.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDeleteRoute.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnDeleteRoute.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnDeleteRoute.ForeColor = System.Drawing.Color.White;
             this.btnDeleteRoute.Location = new System.Drawing.Point(213, 11);
             this.btnDeleteRoute.Name = "btnDeleteRoute";
@@ -491,14 +559,18 @@ namespace SchoolSystem.UI
             this.btnDeleteRoute.Text = "حذف المسار";
             this.btnDeleteRoute.UseVisualStyleBackColor = false;
             this.btnDeleteRoute.Click += new System.EventHandler(this.btnDeleteRoute_Click);
+            this.btnDeleteRoute.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnDeleteRoute.AutoSize = false;
+            this.btnDeleteRoute.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnDeleteRoute.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnClearRoute
             // 
             this.btnClearRoute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearRoute.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(140)))), ((int)(((byte)(141)))));
+            this.btnClearRoute.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnClearRoute.FlatAppearance.BorderSize = 0;
             this.btnClearRoute.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClearRoute.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnClearRoute.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnClearRoute.ForeColor = System.Drawing.Color.White;
             this.btnClearRoute.Location = new System.Drawing.Point(314, 11);
             this.btnClearRoute.Name = "btnClearRoute";
@@ -507,6 +579,10 @@ namespace SchoolSystem.UI
             this.btnClearRoute.Text = "تفريغ النموذج";
             this.btnClearRoute.UseVisualStyleBackColor = false;
             this.btnClearRoute.Click += new System.EventHandler(this.btnClearRoute_Click);
+            this.btnClearRoute.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnClearRoute.AutoSize = false;
+            this.btnClearRoute.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnClearRoute.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // panelRoutesFields
             // 
