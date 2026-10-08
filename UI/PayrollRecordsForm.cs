@@ -331,13 +331,19 @@ namespace SchoolSystem.UI
             }
             else
             {
-                view.RowFilter = UIHelper.BuildDataViewSearchFilter(
-                    searchText,
-                    "TeacherName",
-                    "SalaryMonth",
-                    "SalaryYear",
-                    "PaymentMethod",
-                    "Notes");
+                string safe = UIHelper.EscapeDataViewFilterValue(searchText);
+                string textFilter =
+                    "TeacherName LIKE '%" + safe + "%'" +
+                    " OR PaymentMethod LIKE '%" + safe + "%'" +
+                    " OR Notes LIKE '%" + safe + "%'";
+
+                // الحقول الرقمية تُحوّل إلى نص قبل المقارنة لتجنب خطأ RowFilter
+                // عند استخدام LIKE على SalaryMonth / SalaryYear.
+                string numericFilter =
+                    "CONVERT(SalaryMonth, 'System.String') LIKE '%" + safe + "%'" +
+                    " OR CONVERT(SalaryYear, 'System.String') LIKE '%" + safe + "%'";
+
+                view.RowFilter = "(" + textFilter + ") OR (" + numericFilter + ")";
             }
 
             dataGridViewPayrolls.DataSource = view;
