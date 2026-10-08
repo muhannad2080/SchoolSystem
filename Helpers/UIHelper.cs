@@ -2018,10 +2018,12 @@ namespace SchoolSystem.Helpers
 
             else
             {
+                // الزر المصمم صراحةً يحتفظ بحجمه؛ لا نعيد قياسه أثناء التشغيل.
                 btn.Cursor = Cursors.Hand;
             }
 
-            EnsureButtonTextFits(btn);
+            if (ShouldApplyCentralControlStyle(btn))
+                EnsureButtonTextFits(btn);
         }
 
         // تعريف الدالة EnsureButtonTextFits لتنفيذ العملية المرتبطة بها.
