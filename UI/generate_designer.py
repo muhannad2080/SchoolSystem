@@ -279,9 +279,9 @@ def generate_designer_code():
         "        private System.Windows.Forms.Button btnRemoveImage;",
         "        private System.Windows.Forms.DataGridView dgvStudents;",
         "        private System.Windows.Forms.ErrorProvider errorProvider1;",
-        "        private System.Windows.Forms.Panel panelTitle;
-        private System.Windows.Forms.Label lblTitle;
-        private System.Windows.Forms.SplitContainer splitContainerMain;",
+        "        private System.Windows.Forms.Panel panelTitle;",
+        "        private System.Windows.Forms.Label lblTitle;",
+        "        private System.Windows.Forms.SplitContainer splitContainerMain;",
         "        private System.Windows.Forms.Panel pnlSearch;",
         "        private System.Windows.Forms.TextBox txtSearch;",
         "        private System.Windows.Forms.Button btnSearch;",
