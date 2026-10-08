@@ -240,7 +240,9 @@ namespace SchoolSystem
             }
 
             lblScreenTitle.Text = GetScreenTitle(moduleOrType);
+            lblScreenTitle.TextAlign = ContentAlignment.MiddleCenter;
             panelScreenHeader.Visible = true;
+            panelScreenHeader.BringToFront();
         }
 
         private void HideScreenHeader()
@@ -282,6 +284,33 @@ namespace SchoolSystem
                 case "Settings": case "SettingsForm": return "إعدادات النظام";
                 case "AnnualClosing": case "AnnualClosingForm": return "الإغلاق السنوي والترحيل";
                 default: return string.IsNullOrWhiteSpace(key) ? "الشاشة الحالية" : key;
+            }
+        }
+
+        // ================================================================
+        // EMBEDDED SCREEN TITLE POLICY
+        //
+        // MainForm owns the screen title. Any legacy title/header panel
+        // inside an embedded screen is hidden so no interface renders
+        // the same title twice.
+        // ================================================================
+
+        private static void HideEmbeddedDuplicateTitles(Control root)
+        {
+            if (root == null)
+                return;
+
+            foreach (Control child in root.Controls)
+            {
+                string name = (child.Name ?? string.Empty).Trim();
+
+                if (string.Equals(name, "panelTitle", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, "pnlTitle", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, "panelHeader", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(name, "pnlHeader", StringComparison.OrdinalIgnoreCase))
+                {
+                    child.Visible = false;
+                }
             }
         }
 
@@ -494,6 +523,7 @@ namespace SchoolSystem
                 // إخفاء ترويسة النظام الرئيسية وإظهار عنوان الوحدة في الشريط الموحد.
                 HideMainHeader();
                 ShowScreenHeader(uc.GetType().Name);
+                HideEmbeddedDuplicateTitles(uc);
 
                 // جعل UserControl يستخدم كل مساحة panelContent.
                 uc.Dock =
@@ -541,6 +571,7 @@ namespace SchoolSystem
                 // إخفاء ترويسة النظام الرئيسية وإظهار عنوان الوحدة في الشريط الموحد.
                 HideMainHeader();
                 ShowScreenHeader(form.GetType().Name);
+                HideEmbeddedDuplicateTitles(form);
 
                 form.TopLevel =
                     false;
@@ -556,6 +587,9 @@ namespace SchoolSystem
 
                 form.Show();
 
+                // بعض النماذج القديمة تعيد إظهار ترويسة داخلية أثناء Load؛
+                // نثبت سياسة العنوان الموحد بعد اكتمال دورة التحميل أيضًا.
+                HideEmbeddedDuplicateTitles(form);
                 form.BringToFront();
 
                 ApplicationLogger.LogUsage("الشاشة الرئيسية", "فتح شاشة", form.GetType().Name);
