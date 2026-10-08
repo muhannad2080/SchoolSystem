@@ -648,11 +648,11 @@
             // 
             // btnAdd
             // 
-            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
+            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAdd.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAdd.FlatAppearance.BorderSize = 0;
             this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAdd.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnAdd.ForeColor = System.Drawing.Color.White;
             this.btnAdd.Location = new System.Drawing.Point(18, 10);
             this.btnAdd.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -662,14 +662,17 @@
             this.btnAdd.Text = "إضافة";
             this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            this.btnAdd.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnAdd.AutoSize = false;
+            this.btnAdd.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnUpdate
             // 
-            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(234)))), ((int)(((byte)(138)))), ((int)(((byte)(42)))));
+            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnUpdate.FlatAppearance.BorderSize = 0;
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpdate.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnUpdate.ForeColor = System.Drawing.Color.White;
             this.btnUpdate.Location = new System.Drawing.Point(114, 10);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -679,14 +682,17 @@
             this.btnUpdate.Text = "تعديل";
             this.btnUpdate.UseVisualStyleBackColor = false;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnUpdate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnUpdate.AutoSize = false;
+            this.btnUpdate.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnDelete
             // 
-            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(62)))), ((int)(((byte)(62)))));
+            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDelete.FlatAppearance.BorderSize = 0;
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelete.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnDelete.ForeColor = System.Drawing.Color.White;
             this.btnDelete.Location = new System.Drawing.Point(210, 10);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -696,14 +702,17 @@
             this.btnDelete.Text = "حذف";
             this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnDelete.AutoSize = false;
+            this.btnDelete.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnClear
             // 
-            this.btnClear.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
+            this.btnClear.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnClear.FlatAppearance.BorderSize = 0;
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClear.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnClear.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnClear.ForeColor = System.Drawing.Color.White;
             this.btnClear.Location = new System.Drawing.Point(306, 10);
             this.btnClear.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -713,14 +722,17 @@
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            this.btnClear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnClear.AutoSize = false;
+            this.btnClear.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnGenerateFees
             // 
-            this.btnGenerateFees.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.btnGenerateFees.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnGenerateFees.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnGenerateFees.FlatAppearance.BorderSize = 0;
             this.btnGenerateFees.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnGenerateFees.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnGenerateFees.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnGenerateFees.ForeColor = System.Drawing.Color.White;
             this.btnGenerateFees.Location = new System.Drawing.Point(402, 10);
             this.btnGenerateFees.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -730,14 +742,17 @@
             this.btnGenerateFees.Text = "توليد الرسوم";
             this.btnGenerateFees.UseVisualStyleBackColor = false;
             this.btnGenerateFees.Click += new System.EventHandler(this.btnGenerateFees_Click);
+            this.btnGenerateFees.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnGenerateFees.AutoSize = false;
+            this.btnGenerateFees.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnExportExcel
             // 
-            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(124)))), ((int)(((byte)(89)))));
+            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportExcel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExportExcel.FlatAppearance.BorderSize = 0;
             this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportExcel.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportExcel.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnExportExcel.ForeColor = System.Drawing.Color.White;
             this.btnExportExcel.Location = new System.Drawing.Point(532, 10);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -747,14 +762,17 @@
             this.btnExportExcel.Text = "تصدير Excel";
             this.btnExportExcel.UseVisualStyleBackColor = false;
             this.btnExportExcel.Click += new System.EventHandler(this.btnExportExcel_Click);
+            this.btnExportExcel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportExcel.AutoSize = false;
+            this.btnExportExcel.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnExportPdf
             // 
-            this.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(124)))), ((int)(((byte)(58)))), ((int)(((byte)(237)))));
+            this.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExportPdf.FlatAppearance.BorderSize = 0;
             this.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportPdf.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportPdf.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnExportPdf.ForeColor = System.Drawing.Color.White;
             this.btnExportPdf.Location = new System.Drawing.Point(652, 10);
             this.btnExportPdf.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -764,14 +782,17 @@
             this.btnExportPdf.Text = "تصدير PDF";
             this.btnExportPdf.UseVisualStyleBackColor = false;
             this.btnExportPdf.Click += new System.EventHandler(this.btnExportPdf_Click);
+            this.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportPdf.AutoSize = false;
+            this.btnExportPdf.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnRecordPayment
             // 
-            this.btnRecordPayment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(194)))), ((int)(((byte)(65)))), ((int)(((byte)(12)))));
+            this.btnRecordPayment.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnRecordPayment.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnRecordPayment.FlatAppearance.BorderSize = 0;
             this.btnRecordPayment.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRecordPayment.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnRecordPayment.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnRecordPayment.ForeColor = System.Drawing.Color.White;
             this.btnRecordPayment.Location = new System.Drawing.Point(764, 10);
             this.btnRecordPayment.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -781,14 +802,17 @@
             this.btnRecordPayment.Text = "تحصيل دفعة";
             this.btnRecordPayment.UseVisualStyleBackColor = false;
             this.btnRecordPayment.Click += new System.EventHandler(this.btnRecordPayment_Click);
+            this.btnRecordPayment.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnRecordPayment.AutoSize = false;
+            this.btnRecordPayment.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnOutstandingReport
             // 
-            this.btnOutstandingReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(185)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.btnOutstandingReport.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnOutstandingReport.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnOutstandingReport.FlatAppearance.BorderSize = 0;
             this.btnOutstandingReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnOutstandingReport.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnOutstandingReport.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnOutstandingReport.ForeColor = System.Drawing.Color.White;
             this.btnOutstandingReport.Location = new System.Drawing.Point(888, 10);
             this.btnOutstandingReport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -798,6 +822,9 @@
             this.btnOutstandingReport.Text = "تقرير المتأخرات";
             this.btnOutstandingReport.UseVisualStyleBackColor = false;
             this.btnOutstandingReport.Click += new System.EventHandler(this.btnOutstandingReport_Click);
+            this.btnOutstandingReport.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnOutstandingReport.AutoSize = false;
+            this.btnOutstandingReport.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // panelSearch
             // 
@@ -862,7 +889,7 @@
             this.dataGridViewFees.BackgroundColor = System.Drawing.Color.White;
             this.dataGridViewFees.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridViewFees.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.dataGridViewFees.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.dataGridViewFees.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -871,7 +898,7 @@
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewFees.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridViewFees.ColumnHeadersHeight = 38;
+            this.dataGridViewFees.ColumnHeadersHeight = 42;
             this.dataGridViewFees.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
@@ -883,7 +910,7 @@
             this.dataGridViewFees.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewFees.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewFees.EnableHeadersVisualStyles = false;
-            this.dataGridViewFees.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(235)))), ((int)(((byte)(240)))));
+            this.dataGridViewFees.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
             this.dataGridViewFees.Location = new System.Drawing.Point(0, 364);
             this.dataGridViewFees.Margin = new System.Windows.Forms.Padding(0);
             this.dataGridViewFees.MultiSelect = false;
@@ -891,11 +918,28 @@
             this.dataGridViewFees.ReadOnly = true;
             this.dataGridViewFees.RowHeadersVisible = false;
             this.dataGridViewFees.RowHeadersWidth = 51;
-            this.dataGridViewFees.RowTemplate.Height = 34;
+            this.dataGridViewFees.RowTemplate.Height = 36;
             this.dataGridViewFees.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewFees.Size = new System.Drawing.Size(1100, 315);
             this.dataGridViewFees.TabIndex = 5;
             this.dataGridViewFees.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewFees_CellClick);
+            this.dataGridViewFees.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.dataGridViewFees.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dataGridViewFees.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dataGridViewFees.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.dataGridViewFees.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dataGridViewFees.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dataGridViewFees.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewFees.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewFees.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewFees.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dataGridViewFees.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.dataGridViewFees.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dataGridViewFees.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewFees.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewFees.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.dataGridViewFees.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewFees.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             // 
             // panelBottom
             // 
