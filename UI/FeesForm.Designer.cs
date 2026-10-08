@@ -215,13 +215,14 @@
             this.cmbStudent.BackColor = System.Drawing.Color.White;
             this.cmbStudent.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbStudent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbStudent.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.cmbStudent.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.cmbStudent.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbStudent.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbStudent.Location = new System.Drawing.Point(789, 4);
-            this.cmbStudent.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.cmbStudent.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbStudent.Name = "cmbStudent";
             this.cmbStudent.Size = new System.Drawing.Size(193, 28);
             this.cmbStudent.TabIndex = 1;
+            this.cmbStudent.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblAcademicYear
             // 
@@ -241,13 +242,14 @@
             this.cmbAcademicYear.BackColor = System.Drawing.Color.White;
             this.cmbAcademicYear.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbAcademicYear.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbAcademicYear.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.cmbAcademicYear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.cmbAcademicYear.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbAcademicYear.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbAcademicYear.Location = new System.Drawing.Point(498, 4);
-            this.cmbAcademicYear.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.cmbAcademicYear.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbAcademicYear.Name = "cmbAcademicYear";
             this.cmbAcademicYear.Size = new System.Drawing.Size(193, 28);
             this.cmbAcademicYear.TabIndex = 3;
+            this.cmbAcademicYear.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblFeeType
             // 
@@ -266,13 +268,15 @@
             // 
             this.cmbFeeType.BackColor = System.Drawing.Color.White;
             this.cmbFeeType.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cmbFeeType.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.cmbFeeType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.cmbFeeType.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbFeeType.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbFeeType.Location = new System.Drawing.Point(0, 4);
-            this.cmbFeeType.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            this.cmbFeeType.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbFeeType.Name = "cmbFeeType";
             this.cmbFeeType.Size = new System.Drawing.Size(406, 28);
             this.cmbFeeType.TabIndex = 5;
+            this.cmbFeeType.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.cmbFeeType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // lblTotalAmount
             // 
@@ -291,16 +295,18 @@
             // 
             this.txtTotalAmount.BackColor = System.Drawing.Color.White;
             this.txtTotalAmount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtTotalAmount.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtTotalAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.txtTotalAmount.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtTotalAmount.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtTotalAmount.Location = new System.Drawing.Point(789, 40);
-            this.txtTotalAmount.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.txtTotalAmount.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtTotalAmount.Name = "txtTotalAmount";
             this.txtTotalAmount.Size = new System.Drawing.Size(193, 27);
             this.txtTotalAmount.TabIndex = 7;
             this.txtTotalAmount.Text = "0";
             this.txtTotalAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtTotalAmount.TextChanged += new System.EventHandler(this.AmountFields_TextChanged);
+            this.txtTotalAmount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtTotalAmount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblDiscountAmount
             // 
@@ -319,16 +325,18 @@
             // 
             this.txtDiscountAmount.BackColor = System.Drawing.Color.White;
             this.txtDiscountAmount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDiscountAmount.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtDiscountAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.txtDiscountAmount.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtDiscountAmount.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtDiscountAmount.Location = new System.Drawing.Point(498, 40);
-            this.txtDiscountAmount.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.txtDiscountAmount.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtDiscountAmount.Name = "txtDiscountAmount";
             this.txtDiscountAmount.Size = new System.Drawing.Size(193, 27);
             this.txtDiscountAmount.TabIndex = 9;
             this.txtDiscountAmount.Text = "0";
             this.txtDiscountAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtDiscountAmount.TextChanged += new System.EventHandler(this.AmountFields_TextChanged);
+            this.txtDiscountAmount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtDiscountAmount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNetAmount
             // 
@@ -345,18 +353,20 @@
             // 
             // txtNetAmount
             // 
-            this.txtNetAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(248)))), ((int)(((byte)(244)))));
+            this.txtNetAmount.BackColor = System.Drawing.Color.White;
             this.txtNetAmount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNetAmount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.txtNetAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(100)))), ((int)(((byte)(78)))));
+            this.txtNetAmount.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtNetAmount.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtNetAmount.Location = new System.Drawing.Point(0, 40);
-            this.txtNetAmount.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            this.txtNetAmount.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNetAmount.Name = "txtNetAmount";
             this.txtNetAmount.ReadOnly = true;
             this.txtNetAmount.Size = new System.Drawing.Size(406, 27);
             this.txtNetAmount.TabIndex = 11;
             this.txtNetAmount.Text = "0";
             this.txtNetAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtNetAmount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNetAmount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblPaidAmount
             // 
@@ -375,10 +385,10 @@
             // 
             this.txtPaidAmount.BackColor = System.Drawing.Color.White;
             this.txtPaidAmount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtPaidAmount.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtPaidAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.txtPaidAmount.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtPaidAmount.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtPaidAmount.Location = new System.Drawing.Point(789, 76);
-            this.txtPaidAmount.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.txtPaidAmount.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPaidAmount.Name = "txtPaidAmount";
             this.txtPaidAmount.ReadOnly = true;
             this.txtPaidAmount.Size = new System.Drawing.Size(193, 27);
@@ -386,6 +396,8 @@
             this.txtPaidAmount.Text = "0";
             this.txtPaidAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.txtPaidAmount.TextChanged += new System.EventHandler(this.AmountFields_TextChanged);
+            this.txtPaidAmount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPaidAmount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblPaymentAmount
             // 
@@ -402,17 +414,19 @@
             // 
             // txtPaymentAmount
             // 
-            this.txtPaymentAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(250)))), ((int)(((byte)(246)))));
+            this.txtPaymentAmount.BackColor = System.Drawing.Color.White;
             this.txtPaymentAmount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtPaymentAmount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.txtPaymentAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(100)))), ((int)(((byte)(78)))));
+            this.txtPaymentAmount.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtPaymentAmount.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtPaymentAmount.Location = new System.Drawing.Point(0, 76);
-            this.txtPaymentAmount.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            this.txtPaymentAmount.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPaymentAmount.Name = "txtPaymentAmount";
             this.txtPaymentAmount.Size = new System.Drawing.Size(406, 27);
             this.txtPaymentAmount.TabIndex = 15;
             this.txtPaymentAmount.Text = "0";
             this.txtPaymentAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtPaymentAmount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPaymentAmount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblRemainingAmount
             // 
@@ -429,18 +443,20 @@
             // 
             // txtRemainingAmount
             // 
-            this.txtRemainingAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(243)))), ((int)(((byte)(242)))));
+            this.txtRemainingAmount.BackColor = System.Drawing.Color.White;
             this.txtRemainingAmount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtRemainingAmount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.txtRemainingAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(60)))), ((int)(((byte)(55)))));
+            this.txtRemainingAmount.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtRemainingAmount.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtRemainingAmount.Location = new System.Drawing.Point(498, 76);
-            this.txtRemainingAmount.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.txtRemainingAmount.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtRemainingAmount.Name = "txtRemainingAmount";
             this.txtRemainingAmount.ReadOnly = true;
             this.txtRemainingAmount.Size = new System.Drawing.Size(193, 27);
             this.txtRemainingAmount.TabIndex = 16;
             this.txtRemainingAmount.Text = "0";
             this.txtRemainingAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtRemainingAmount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtRemainingAmount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblDueDate
             // 
@@ -511,13 +527,14 @@
             this.cmbPaymentMethod.BackColor = System.Drawing.Color.White;
             this.cmbPaymentMethod.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbPaymentMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPaymentMethod.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.cmbPaymentMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.cmbPaymentMethod.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbPaymentMethod.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbPaymentMethod.Location = new System.Drawing.Point(498, 112);
-            this.cmbPaymentMethod.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.cmbPaymentMethod.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbPaymentMethod.Name = "cmbPaymentMethod";
             this.cmbPaymentMethod.Size = new System.Drawing.Size(193, 28);
             this.cmbPaymentMethod.TabIndex = 22;
+            this.cmbPaymentMethod.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblReceiptNumber
             // 
@@ -534,17 +551,19 @@
             // 
             // txtReceiptNumber
             // 
-            this.txtReceiptNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(246)))), ((int)(((byte)(248)))));
+            this.txtReceiptNumber.BackColor = System.Drawing.Color.White;
             this.txtReceiptNumber.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtReceiptNumber.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtReceiptNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(104)))), ((int)(((byte)(114)))), ((int)(((byte)(126)))));
+            this.txtReceiptNumber.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtReceiptNumber.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtReceiptNumber.Location = new System.Drawing.Point(0, 112);
-            this.txtReceiptNumber.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            this.txtReceiptNumber.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtReceiptNumber.Name = "txtReceiptNumber";
             this.txtReceiptNumber.ReadOnly = true;
             this.txtReceiptNumber.Size = new System.Drawing.Size(406, 27);
             this.txtReceiptNumber.TabIndex = 24;
             this.txtReceiptNumber.TabStop = false;
+            this.txtReceiptNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtReceiptNumber.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblStatus
             // 
@@ -564,13 +583,14 @@
             this.cmbStatus.BackColor = System.Drawing.Color.White;
             this.cmbStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbStatus.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.cmbStatus.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbStatus.Location = new System.Drawing.Point(789, 148);
-            this.cmbStatus.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.cmbStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.Size = new System.Drawing.Size(193, 28);
             this.cmbStatus.TabIndex = 26;
+            this.cmbStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNotes
             // 
@@ -590,13 +610,15 @@
             this.txtNotes.BackColor = System.Drawing.Color.White;
             this.tableFields.SetColumnSpan(this.txtNotes, 3);
             this.txtNotes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNotes.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtNotes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.txtNotes.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtNotes.Location = new System.Drawing.Point(0, 148);
-            this.txtNotes.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            this.txtNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(691, 27);
             this.txtNotes.TabIndex = 28;
+            this.txtNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelSummary
             // 
@@ -854,31 +876,33 @@
             // 
             // txtSearch
             // 
-            this.txtSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.txtSearch.BackColor = System.Drawing.Color.White;
             this.txtSearch.Dock = System.Windows.Forms.DockStyle.Right;
-            this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 8.5F);
-            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(55)))), ((int)(((byte)(72)))));
+            this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtSearch.Location = new System.Drawing.Point(652, 3);
-            this.txtSearch.Margin = new System.Windows.Forms.Padding(10, 0, 10, 0);
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.txtSearch.Size = new System.Drawing.Size(270, 26);
             this.txtSearch.TabIndex = 1;
             this.txtSearch.TextChanged += new System.EventHandler(this.FilterControls_Changed);
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             // 
             // cmbFilterStatus
             // 
             this.cmbFilterStatus.BackColor = System.Drawing.Color.White;
             this.cmbFilterStatus.Dock = System.Windows.Forms.DockStyle.Right;
             this.cmbFilterStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFilterStatus.Font = new System.Drawing.Font("Segoe UI", 8.5F);
-            this.cmbFilterStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(55)))), ((int)(((byte)(72)))));
+            this.cmbFilterStatus.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbFilterStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbFilterStatus.Location = new System.Drawing.Point(922, 3);
-            this.cmbFilterStatus.Margin = new System.Windows.Forms.Padding(8, 0, 0, 0);
+            this.cmbFilterStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbFilterStatus.Name = "cmbFilterStatus";
             this.cmbFilterStatus.Size = new System.Drawing.Size(160, 27);
             this.cmbFilterStatus.TabIndex = 2;
             this.cmbFilterStatus.SelectedIndexChanged += new System.EventHandler(this.FilterControls_Changed);
+            this.cmbFilterStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // dataGridViewFees
             // 
