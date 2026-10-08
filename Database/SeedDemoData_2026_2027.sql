@@ -39,6 +39,43 @@ BEGIN TRY
     IF ISNULL(@C1,0)=0 OR ISNULL(@C9,0)=0 OR ISNULL(@C10,0)=0
         THROW 56003,N'الصفوف المطلوبة غير موجودة. شغّل SeedAcademicStructure_2026_2027.sql.',1;
 
+    /* أنواع الرسوم المستخدمة في الشاشة؛ مصدر القائمة هو dbo.FeeTypes. */
+    IF OBJECT_ID(N'dbo.FeeTypes', N'U') IS NULL
+    BEGIN
+        CREATE TABLE dbo.FeeTypes
+        (
+            FeeTypeID INT IDENTITY(1,1) NOT NULL PRIMARY KEY,
+            FeeTypeCode NVARCHAR(30) NOT NULL,
+            FeeTypeName NVARCHAR(100) NOT NULL,
+            IsTotal BIT NOT NULL DEFAULT(0),
+            IsRequiredDefault BIT NOT NULL DEFAULT(1),
+            DistributionWeight DECIMAL(9,4) NOT NULL DEFAULT(1),
+            SortOrder INT NOT NULL DEFAULT(100),
+            IsActive BIT NOT NULL DEFAULT(1),
+            Notes NVARCHAR(500) NULL,
+            CreatedAt DATETIME2(0) NOT NULL DEFAULT SYSUTCDATETIME(),
+            UpdatedAt DATETIME2(0) NULL
+        );
+    END;
+
+    INSERT dbo.FeeTypes
+    (FeeTypeCode,FeeTypeName,IsTotal,IsRequiredDefault,DistributionWeight,SortOrder,IsActive,Notes,CreatedAt)
+    SELECT v.FeeTypeCode,v.FeeTypeName,v.IsTotal,v.IsRequiredDefault,v.DistributionWeight,v.SortOrder,1,@Demo,SYSUTCDATETIME()
+    FROM
+    (
+        VALUES
+        (N'TUITION',N'رسوم دراسية',0,1,1.0000,10),
+        (N'TRANSPORT',N'مواصلات',0,0,1.0000,20),
+        (N'BOOKS',N'كتب',0,0,1.0000,30),
+        (N'TOTAL',N'الرسوم الكلية',1,1,1.0000,1),
+        (N'REGISTRATION',N'رسوم تسجيل',0,1,1.0000,5)
+    ) v(FeeTypeCode,FeeTypeName,IsTotal,IsRequiredDefault,DistributionWeight,SortOrder)
+    WHERE NOT EXISTS
+    (
+        SELECT 1 FROM dbo.FeeTypes ft
+        WHERE ft.FeeTypeCode=v.FeeTypeCode OR ft.FeeTypeName=v.FeeTypeName
+    );
+
     /* ---------------------------------------------------------------
        الشعب والقاعات
        --------------------------------------------------------------- */
@@ -178,11 +215,28 @@ BEGIN TRY
         WHERE p.AcademicYear=@Year AND p.ClassID=v.ClassID AND LTRIM(RTRIM(p.FeeType))=v.FeeType
     );
 
+    ;WITH RankedPlans AS
+    (
+        SELECT
+            fp.ClassID,
+            fp.FeeType,
+            fp.Amount,
+            fp.FeePlanID,
+            ROW_NUMBER() OVER
+            (
+                PARTITION BY fp.ClassID, LTRIM(RTRIM(fp.FeeType))
+                ORDER BY
+                    CASE WHEN fp.Notes=@Demo THEN 0 ELSE 1 END,
+                    fp.FeePlanID DESC
+            ) AS rn
+        FROM dbo.FeePlans fp
+        WHERE REPLACE(ISNULL(fp.AcademicYear,N''),N'-',N'/')=REPLACE(@Year,N'-',N'/')
+          AND fp.ClassID IN (@C1,@C9,@C10)
+    )
     INSERT @Plans(ClassID,FeeType,Amount,PlanID)
     SELECT ClassID,FeeType,Amount,FeePlanID
-    FROM dbo.FeePlans
-    WHERE AcademicYear=@Year
-      AND ClassID IN (@C1,@C9,@C10);
+    FROM RankedPlans
+    WHERE rn=1;
 
     DECLARE @P1T int=(SELECT PlanID FROM @Plans WHERE ClassID=@C1 AND FeeType=N'رسوم دراسية');
     DECLARE @P1R int=(SELECT PlanID FROM @Plans WHERE ClassID=@C1 AND FeeType=N'مواصلات');
@@ -290,6 +344,8 @@ BEGIN TRY
       );
 
     DECLARE @RegistrationFeeID int;
+    DECLARE @ReceiptFee int,@V int,@VN nvarchar(50);
+
     SELECT TOP(1) @RegistrationFeeID=FeeID
     FROM dbo.Fees
     WHERE StudentID=@S1 AND AcademicYear=@Year AND FeeType=N'رسوم تسجيل' AND Notes=@Demo
@@ -441,6 +497,9 @@ BEGIN TRY
     SELECT @Math=SubjectID FROM dbo.Subjects WHERE SubjectName=N'الرياضيات' AND IsActive=1;
     SELECT @Arabic=SubjectID FROM dbo.Subjects WHERE SubjectName=N'اللغة العربية' AND IsActive=1;
     SELECT @Physics=SubjectID FROM dbo.Subjects WHERE SubjectName=N'الفيزياء' AND IsActive=1;
+
+    IF @Math IS NULL OR @Arabic IS NULL OR @Physics IS NULL
+        THROW 56005,N'المواد المطلوبة لبيانات العرض غير موجودة أو غير نشطة.',1;
 
     IF NOT EXISTS (SELECT 1 FROM dbo.StudentAttendance WHERE StudentID=@S1 AND AttendanceDate='2026-10-07')
         INSERT dbo.StudentAttendance(StudentID,ClassID,Section,AcademicYear,AttendanceDate,Status,ArrivalTime,Notes,CreatedAt)
