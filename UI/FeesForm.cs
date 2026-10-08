@@ -62,7 +62,6 @@ namespace SchoolSystem.UI
             UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
 
-            ApplyProfessionalLayout();
 
             // التحقق والسلوك الخاصان بشاشة الرسوم.
 
@@ -289,113 +288,6 @@ namespace SchoolSystem.UI
                 isLoading = false;
                 CalculateAmounts();
             }
-        }
-
-        // ============================================================
-        // PROFESSIONAL LAYOUT
-        // ============================================================
-
-        private void ApplyProfessionalLayout()
-        {
-            RightToLeft = RightToLeft.Yes;
-            Dock = DockStyle.Fill;
-            MinimumSize = new System.Drawing.Size(1000, 650);
-
-            // ارتفاعات ثابتة للمناطق المهمة، والجدول يأخذ المساحة المتبقية.
-            rootLayout.RowStyles.Clear();
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 218F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
-
-            tableFields.Padding = new Padding(8, 4, 8, 4);
-
-            foreach (Control control in tableFields.Controls)
-            {
-                if (control is Label label)
-                {
-                    label.TextAlign = ContentAlignment.MiddleRight;
-                    label.Margin = new Padding(0, 0, 6, 0);
-                }
-                else if (control is TextBox textBox)
-                {
-                    textBox.RightToLeft = RightToLeft.Yes;
-                    textBox.TextAlign = HorizontalAlignment.Right;
-                    textBox.Margin = new Padding(0, 4, 8, 4);
-                }
-                else if (control is ComboBox comboBox)
-                {
-                    comboBox.RightToLeft = RightToLeft.Yes;
-                    comboBox.Margin = new Padding(0, 4, 8, 4);
-                }
-                else if (control is DateTimePicker datePicker)
-                {
-                    datePicker.RightToLeft = RightToLeft.Yes;
-                    datePicker.RightToLeftLayout = true;
-                    datePicker.Margin = new Padding(0, 4, 8, 4);
-                }
-            }
-
-            panelButtons.FlowDirection = FlowDirection.RightToLeft;
-            panelButtons.WrapContents = true;
-            panelButtons.AutoScroll = true;
-            panelButtons.Padding = new Padding(12, 6, 12, 6);
-
-            Control[] buttons =
-            {
-                btnAdd, btnUpdate, btnDelete, btnClear,
-                btnGenerateFees, btnRecordPayment,
-                btnOutstandingReport, btnExportExcel, btnExportPdf
-            };
-
-            panelButtons.Controls.Clear();
-            panelButtons.Controls.AddRange(buttons);
-
-            int[] widths = { 92, 92, 88, 88, 118, 120, 126, 112, 104 };
-            for (int i = 0; i < buttons.Length; i++)
-            {
-                Button button = buttons[i] as Button;
-                if (button == null)
-                    continue;
-
-                button.AutoSize = true;
-                button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-                button.MinimumSize = new Size(Math.Max(88, widths[i]), 38);
-                button.Height = 38;
-                button.Margin = new Padding(4, 3, 4, 3);
-                button.TextAlign = ContentAlignment.MiddleCenter;
-                button.RightToLeft = RightToLeft.Yes;
-                button.UseCompatibleTextRendering = true;
-            }
-
-            panelSearch.Padding = new Padding(16, 7, 16, 7);
-
-            txtSearch.RightToLeft = RightToLeft.Yes;
-            txtSearch.TextAlign = HorizontalAlignment.Right;
-            cmbFilterStatus.RightToLeft = RightToLeft.Yes;
-
-            dataGridViewFees.RightToLeft = RightToLeft.Yes;
-            dataGridViewFees.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewFees.AutoSizeRowsMode =
-                DataGridViewAutoSizeRowsMode.None;
-            dataGridViewFees.AllowUserToOrderColumns = true;
-            dataGridViewFees.AllowUserToResizeColumns = true;
-            dataGridViewFees.AllowUserToResizeRows = false;
-            dataGridViewFees.RowHeadersVisible = false;
-            dataGridViewFees.SelectionMode =
-                DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewFees.MultiSelect = false;
-            dataGridViewFees.ReadOnly = true;
-            dataGridViewFees.ColumnHeadersHeight = 40;
-            dataGridViewFees.RowTemplate.Height = 36;
-            dataGridViewFees.DefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleRight;
-            dataGridViewFees.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
         }
 
         // ============================================================
