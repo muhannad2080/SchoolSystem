@@ -36,6 +36,7 @@
         private System.Windows.Forms.Panel panelSearch;
         private System.Windows.Forms.Label lblSearch;
         private System.Windows.Forms.TextBox txtSearch;
+        private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.DataGridView dataGridViewPayrolls;
         private System.Windows.Forms.Panel panelBottom;
         private System.Windows.Forms.Label lblRecordCount;
@@ -81,6 +82,7 @@
             this.panelSearch = new System.Windows.Forms.Panel();
             this.lblSearch = new System.Windows.Forms.Label();
             this.txtSearch = new System.Windows.Forms.TextBox();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.dataGridViewPayrolls = new System.Windows.Forms.DataGridView();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.lblRecordCount = new System.Windows.Forms.Label();
@@ -108,7 +110,7 @@
             this.mainContainer.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 215F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
+            this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 52F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainContainer.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
 
@@ -295,8 +297,27 @@
             this.btnClear.Margin = new System.Windows.Forms.Padding(4);
 
             this.panelSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelSearch.Padding = new System.Windows.Forms.Padding(10, 6, 10, 6);
             this.panelSearch.Controls.Add(this.txtSearch);
+            this.panelSearch.Controls.Add(this.btnSearch);
             this.panelSearch.Controls.Add(this.lblSearch);
+
+            this.btnSearch.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnSearch.Margin = new System.Windows.Forms.Padding(8, 0, 0, 0);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(110, 40);
+            this.btnSearch.TabIndex = 20;
+            this.btnSearch.Text = "بحث";
+            this.btnSearch.UseVisualStyleBackColor = false;
+            this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSearch.FlatAppearance.BorderSize = 0;
+            this.btnSearch.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.btnSearch.ForeColor = System.Drawing.Color.White;
+            this.btnSearch.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnSearch.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnSearch.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
 
             this.lblSearch.Dock = System.Windows.Forms.DockStyle.Right;
             this.lblSearch.Text = "بحث في سجلات الرواتب:";
