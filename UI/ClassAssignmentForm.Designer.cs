@@ -245,22 +245,25 @@ namespace SchoolSystem.UI.Students
             // 
             // btnLoad
             // 
-            this.btnLoad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.btnLoad.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnLoad.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnLoad.FlatAppearance.BorderSize = 0;
             this.btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLoad.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnLoad.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnLoad.ForeColor = System.Drawing.Color.White;
             this.btnLoad.Location = new System.Drawing.Point(4, 7);
             this.btnLoad.Margin = new System.Windows.Forms.Padding(4, 7, 4, 4);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(147, 45);
-            this.btnLoad.MinimumSize = new System.Drawing.Size(130, 42);
+            this.btnLoad.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnLoad.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.btnLoad.TabIndex = 6;
             this.btnLoad.Text = "تحميل البيانات";
             this.btnLoad.UseVisualStyleBackColor = false;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            this.btnLoad.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnLoad.AutoSize = false;
+            this.btnLoad.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // tableLayoutMain
             // 
@@ -330,7 +333,7 @@ namespace SchoolSystem.UI.Students
             this.dataGridViewAssigned.BackgroundColor = System.Drawing.Color.White;
             this.dataGridViewAssigned.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridViewAssigned.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.dataGridViewAssigned.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.dataGridViewAssigned.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
@@ -342,7 +345,7 @@ namespace SchoolSystem.UI.Students
             this.dataGridViewAssigned.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dataGridViewAssigned.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewAssigned.EnableHeadersVisualStyles = false;
-            this.dataGridViewAssigned.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(231)))), ((int)(((byte)(235)))));
+            this.dataGridViewAssigned.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
             this.dataGridViewAssigned.Location = new System.Drawing.Point(3, 39);
             this.dataGridViewAssigned.Name = "dataGridViewAssigned";
             this.dataGridViewAssigned.ReadOnly = true;
@@ -356,11 +359,29 @@ namespace SchoolSystem.UI.Students
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(219)))), ((int)(((byte)(234)))), ((int)(((byte)(254)))));
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(64)))), ((int)(((byte)(175)))));
             this.dataGridViewAssigned.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewAssigned.RowTemplate.Height = 34;
+            this.dataGridViewAssigned.RowTemplate.Height = 36;
             this.dataGridViewAssigned.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewAssigned.Size = new System.Drawing.Size(513, 333);
             this.dataGridViewAssigned.TabIndex = 1;
             this.dataGridViewAssigned.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewAssigned_CellClick);
+            this.dataGridViewAssigned.MultiSelect = false;
+            this.dataGridViewAssigned.AllowUserToResizeRows = false;
+            this.dataGridViewAssigned.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dataGridViewAssigned.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dataGridViewAssigned.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.dataGridViewAssigned.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dataGridViewAssigned.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dataGridViewAssigned.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewAssigned.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewAssigned.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewAssigned.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dataGridViewAssigned.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.dataGridViewAssigned.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dataGridViewAssigned.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewAssigned.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewAssigned.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.dataGridViewAssigned.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewAssigned.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             // 
             // panelLeftButtons
             // 
@@ -382,39 +403,43 @@ namespace SchoolSystem.UI.Students
             // 
             // btnRemove
             // 
-            this.btnRemove.AutoSize = true;
+            this.btnRemove.AutoSize = false;
             this.btnRemove.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnRemove.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
+            this.btnRemove.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnRemove.FlatAppearance.BorderSize = 0;
             this.btnRemove.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRemove.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnRemove.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnRemove.ForeColor = System.Drawing.Color.White;
             this.btnRemove.Location = new System.Drawing.Point(9, 7);
-            this.btnRemove.MinimumSize = new System.Drawing.Size(110, 42);
+            this.btnRemove.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(110, 42);
             this.btnRemove.TabIndex = 0;
             this.btnRemove.Text = "إزالة التوزيع";
             this.btnRemove.UseVisualStyleBackColor = false;
             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+            this.btnRemove.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnRemove.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnRemoveAll
             // 
-            this.btnRemoveAll.AutoSize = true;
+            this.btnRemoveAll.AutoSize = false;
             this.btnRemoveAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnRemoveAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(185)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.btnRemoveAll.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnRemoveAll.FlatAppearance.BorderSize = 0;
             this.btnRemoveAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRemoveAll.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnRemoveAll.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnRemoveAll.ForeColor = System.Drawing.Color.White;
             this.btnRemoveAll.Location = new System.Drawing.Point(125, 7);
-            this.btnRemoveAll.MinimumSize = new System.Drawing.Size(110, 42);
+            this.btnRemoveAll.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnRemoveAll.Name = "btnRemoveAll";
             this.btnRemoveAll.Size = new System.Drawing.Size(110, 42);
             this.btnRemoveAll.TabIndex = 2;
             this.btnRemoveAll.Text = "إزالة المحدد";
             this.btnRemoveAll.UseVisualStyleBackColor = false;
             this.btnRemoveAll.Click += new System.EventHandler(this.btnRemoveAll_Click);
+            this.btnRemoveAll.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnRemoveAll.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // cmbTransferSection
             // 
@@ -428,21 +453,23 @@ namespace SchoolSystem.UI.Students
             // 
             // btnTransfer
             // 
-            this.btnTransfer.AutoSize = true;
+            this.btnTransfer.AutoSize = false;
             this.btnTransfer.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnTransfer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(124)))), ((int)(((byte)(58)))), ((int)(((byte)(237)))));
+            this.btnTransfer.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnTransfer.FlatAppearance.BorderSize = 0;
             this.btnTransfer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnTransfer.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnTransfer.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnTransfer.ForeColor = System.Drawing.Color.White;
             this.btnTransfer.Location = new System.Drawing.Point(367, 7);
-            this.btnTransfer.MinimumSize = new System.Drawing.Size(110, 42);
+            this.btnTransfer.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnTransfer.Name = "btnTransfer";
             this.btnTransfer.Size = new System.Drawing.Size(118, 42);
             this.btnTransfer.TabIndex = 4;
             this.btnTransfer.Text = "نقل إلى شعبة";
             this.btnTransfer.UseVisualStyleBackColor = false;
             this.btnTransfer.Click += new System.EventHandler(this.btnTransfer_Click);
+            this.btnTransfer.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnTransfer.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // lblRecordCount
             // 
@@ -573,41 +600,45 @@ namespace SchoolSystem.UI.Students
             // 
             // btnSelectAll
             // 
-            this.btnSelectAll.AutoSize = true;
+            this.btnSelectAll.AutoSize = false;
             this.btnSelectAll.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnSelectAll.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.btnSelectAll.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnSelectAll.FlatAppearance.BorderSize = 0;
             this.btnSelectAll.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSelectAll.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnSelectAll.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnSelectAll.ForeColor = System.Drawing.Color.White;
             this.btnSelectAll.Location = new System.Drawing.Point(11, 4);
             this.btnSelectAll.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.btnSelectAll.MinimumSize = new System.Drawing.Size(110, 42);
+            this.btnSelectAll.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnSelectAll.Name = "btnSelectAll";
             this.btnSelectAll.Size = new System.Drawing.Size(110, 42);
             this.btnSelectAll.TabIndex = 0;
             this.btnSelectAll.Text = "تحديد الكل";
             this.btnSelectAll.UseVisualStyleBackColor = false;
             this.btnSelectAll.Click += new System.EventHandler(this.btnSelectAll_Click);
+            this.btnSelectAll.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnSelectAll.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnAssign
             // 
-            this.btnAssign.AutoSize = true;
+            this.btnAssign.AutoSize = false;
             this.btnAssign.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnAssign.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
+            this.btnAssign.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAssign.FlatAppearance.BorderSize = 0;
             this.btnAssign.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAssign.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
+            this.btnAssign.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnAssign.ForeColor = System.Drawing.Color.White;
             this.btnAssign.Location = new System.Drawing.Point(131, 4);
             this.btnAssign.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
-            this.btnAssign.MinimumSize = new System.Drawing.Size(110, 42);
+            this.btnAssign.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnAssign.Name = "btnAssign";
             this.btnAssign.Size = new System.Drawing.Size(111, 42);
             this.btnAssign.TabIndex = 1;
             this.btnAssign.Text = "توزيع الطلاب";
             this.btnAssign.UseVisualStyleBackColor = false;
             this.btnAssign.Click += new System.EventHandler(this.btnAssign_Click);
+            this.btnAssign.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnAssign.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // panelBottom
             // 
