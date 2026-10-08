@@ -297,7 +297,7 @@ namespace SchoolSystem.UI
         private void ConfigureProfessionalLayout()
         {
             MinimumSize = new Size(1000, 700);
-            pnlSearch.Height = 66;
+            pnlSearch.Height = 72;
             pnlSearch.Padding = new Padding(10, 8, 10, 8);
             pnlSearch.BackColor = UIHelper.SurfaceColor;
             pnlSearch.Controls.Clear();
