@@ -19,6 +19,7 @@ namespace SchoolSystem.UI
             this.components = new System.ComponentModel.Container();
             this.panelTitle = new System.Windows.Forms.Panel();
             this.lblTitle = new System.Windows.Forms.Label();
+            this.layoutMain = new System.Windows.Forms.TableLayoutPanel();
             this.lblEnrollmentID = new System.Windows.Forms.Label();
             this.txtEnrollmentID = new System.Windows.Forms.TextBox();
             this.lblStudentID = new System.Windows.Forms.Label();
@@ -113,6 +114,7 @@ namespace SchoolSystem.UI
             this.splitContainerMain.SuspendLayout();
             this.pnlRight.SuspendLayout();
             this.pnlSearch.SuspendLayout();
+            this.layoutMain.SuspendLayout();
             this.tlpSearch.SuspendLayout();
             this.pnlButtons.SuspendLayout();
             this.SuspendLayout();
@@ -902,7 +904,7 @@ namespace SchoolSystem.UI
             // splitContainerMain
             // 
             this.splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerMain.Location = new System.Drawing.Point(0, 120);
+            this.splitContainerMain.Location = new System.Drawing.Point(0, 0);
             this.splitContainerMain.Name = "splitContainerMain";
             // 
             // splitContainerMain.Panel1
@@ -942,7 +944,7 @@ namespace SchoolSystem.UI
             this.pnlSearch.BackColor = System.Drawing.Color.White;
             this.pnlSearch.Controls.Add(this.tlpSearch);
             this.pnlSearch.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlSearch.Location = new System.Drawing.Point(0, 54);
+            this.pnlSearch.Location = new System.Drawing.Point(0, 0);
             this.pnlSearch.Name = "pnlSearch";
             this.pnlSearch.Padding = new System.Windows.Forms.Padding(8);
             this.pnlSearch.Size = new System.Drawing.Size(1200, 66);
@@ -966,7 +968,7 @@ namespace SchoolSystem.UI
             this.tlpSearch.Location = new System.Drawing.Point(8, 8);
             this.tlpSearch.Margin = new System.Windows.Forms.Padding(0);
             this.tlpSearch.Name = "tlpSearch";
-            this.tlpSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.tlpSearch.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.tlpSearch.RowCount = 1;
             this.tlpSearch.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpSearch.Size = new System.Drawing.Size(1184, 48);
@@ -1051,7 +1053,7 @@ namespace SchoolSystem.UI
             this.lblCount.Name = "lblCount";
             this.lblCount.TabIndex = 3;
             this.lblCount.Text = "عدد السجلات: 0";
-            this.lblCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pnlButtons
             // 
@@ -1071,7 +1073,7 @@ namespace SchoolSystem.UI
             this.pnlButtons.Controls.Add(this.btnAdd);
             this.pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.pnlButtons.Location = new System.Drawing.Point(0, 646);
+            this.pnlButtons.Location = new System.Drawing.Point(0, 0);
             this.pnlButtons.Name = "pnlButtons";
             this.pnlButtons.Padding = new System.Windows.Forms.Padding(10, 8, 10, 8);
             this.pnlButtons.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -1360,10 +1362,30 @@ namespace SchoolSystem.UI
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(247)))), ((int)(((byte)(250)))));
             this.ClientSize = new System.Drawing.Size(1200, 750);
-            this.Controls.Add(this.splitContainerMain);
-            this.Controls.Add(this.pnlSearch);
-            this.Controls.Add(this.pnlButtons);
-            this.Controls.Add(this.panelTitle);
+            this.layoutMain.ColumnCount = 1;
+            this.layoutMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.layoutMain.RowCount = 4;
+            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));
+            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 66F));
+            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 104F));
+            this.layoutMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.layoutMain.Margin = new System.Windows.Forms.Padding(0);
+            this.layoutMain.Name = "layoutMain";
+            this.layoutMain.Padding = new System.Windows.Forms.Padding(0);
+            this.layoutMain.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.layoutMain.TabIndex = 0;
+            this.layoutMain.Controls.Add(this.panelTitle, 0, 0);
+            this.layoutMain.Controls.Add(this.pnlSearch, 0, 1);
+            this.layoutMain.Controls.Add(this.splitContainerMain, 0, 2);
+            this.layoutMain.Controls.Add(this.pnlButtons, 0, 3);
+
+            this.panelTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlButtons.Dock = System.Windows.Forms.DockStyle.Fill;
+
+            this.Controls.Add(this.layoutMain);
             this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MinimumSize = new System.Drawing.Size(1050, 650);
             this.Name = "EnrollmentForm";
@@ -1523,6 +1545,7 @@ namespace SchoolSystem.UI
 
         private System.Windows.Forms.Panel panelTitle;
         private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.TableLayoutPanel layoutMain;
 
         private System.Windows.Forms.Button btnClose;
 
