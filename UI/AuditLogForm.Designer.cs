@@ -140,7 +140,7 @@ namespace SchoolSystem.UI
             // title
             // 
             this.title.Dock = System.Windows.Forms.DockStyle.Top;
-            this.title.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
+            this.title.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
             this.title.ForeColor = System.Drawing.Color.White;
             this.title.Location = new System.Drawing.Point(14, 8);
             this.title.Name = "title";
