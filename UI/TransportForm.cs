@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Globalization;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -657,9 +658,8 @@ namespace SchoolSystem.UI
                 return false;
             }
 
-            decimal fee = 0;
             if (!string.IsNullOrWhiteSpace(txtFee.Text) &&
-                (!UIHelper.TryParseDecimal(txtFee.Text, out fee) || fee < 0))
+                (!UIHelper.TryParseDecimal(txtFee.Text, out decimal fee) || fee < 0))
             {
 
                 UIHelper.ShowWarning("أدخل رسوم نقل رقمية غير سالبة.");
