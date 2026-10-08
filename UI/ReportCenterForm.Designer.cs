@@ -372,39 +372,45 @@ namespace SchoolSystem.UI
             // 
             // btnLoad
             // 
-            this.btnLoad.AutoSize = true;
+            this.btnLoad.AutoSize = false;
             this.btnLoad.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnLoad.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.btnLoad.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnLoad.FlatAppearance.BorderSize = 0;
             this.btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLoad.ForeColor = System.Drawing.Color.White;
             this.btnLoad.Location = new System.Drawing.Point(5, 1);
             this.btnLoad.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
-            this.btnLoad.MinimumSize = new System.Drawing.Size(128, 36);
+            this.btnLoad.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(133, 36);
             this.btnLoad.TabIndex = 16;
             this.btnLoad.Text = " تحميل التقرير";
             this.btnLoad.UseVisualStyleBackColor = false;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            this.btnLoad.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnLoad.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnLoad.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnRefresh
             // 
-            this.btnRefresh.AutoSize = true;
+            this.btnRefresh.AutoSize = false;
             this.btnRefresh.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
+            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnRefresh.FlatAppearance.BorderSize = 0;
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
             this.btnRefresh.Location = new System.Drawing.Point(144, 1);
             this.btnRefresh.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
-            this.btnRefresh.MinimumSize = new System.Drawing.Size(128, 36);
+            this.btnRefresh.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(128, 36);
             this.btnRefresh.TabIndex = 17;
             this.btnRefresh.Text = "مسح الفلاتر";
             this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnRefresh.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // panelSummary
             // 
@@ -447,71 +453,83 @@ namespace SchoolSystem.UI
             // 
             // btnExportExcel
             // 
-            this.btnExportExcel.AutoSize = true;
+            this.btnExportExcel.AutoSize = false;
             this.btnExportExcel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
+            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportExcel.FlatAppearance.BorderSize = 0;
             this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExportExcel.ForeColor = System.Drawing.Color.White;
             this.btnExportExcel.Location = new System.Drawing.Point(11, 9);
-            this.btnExportExcel.MinimumSize = new System.Drawing.Size(110, 42);
+            this.btnExportExcel.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnExportExcel.Name = "btnExportExcel";
             this.btnExportExcel.Size = new System.Drawing.Size(172, 42);
             this.btnExportExcel.TabIndex = 0;
             this.btnExportExcel.Text = "تصدير التقرير إلى Excel";
             this.btnExportExcel.UseVisualStyleBackColor = false;
             this.btnExportExcel.Click += new System.EventHandler(this.btnExportExcel_Click);
+            this.btnExportExcel.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportExcel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportExcel.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnExportCsv
             // 
-            this.btnExportCsv.AutoSize = true;
+            this.btnExportCsv.AutoSize = false;
             this.btnExportCsv.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnExportCsv.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(184)))), ((int)(((byte)(166)))));
+            this.btnExportCsv.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportCsv.FlatAppearance.BorderSize = 0;
             this.btnExportCsv.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExportCsv.ForeColor = System.Drawing.Color.White;
             this.btnExportCsv.Location = new System.Drawing.Point(189, 9);
-            this.btnExportCsv.MinimumSize = new System.Drawing.Size(110, 42);
+            this.btnExportCsv.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnExportCsv.Name = "btnExportCsv";
             this.btnExportCsv.Size = new System.Drawing.Size(165, 42);
             this.btnExportCsv.TabIndex = 1;
             this.btnExportCsv.Text = "تصدير التقرير إلى CSV";
             this.btnExportCsv.UseVisualStyleBackColor = false;
             this.btnExportCsv.Click += new System.EventHandler(this.btnExportCsv_Click);
+            this.btnExportCsv.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportCsv.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportCsv.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnExportPDF
             // 
-            this.btnExportPDF.AutoSize = true;
+            this.btnExportPDF.AutoSize = false;
             this.btnExportPDF.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnExportPDF.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
+            this.btnExportPDF.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportPDF.FlatAppearance.BorderSize = 0;
             this.btnExportPDF.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExportPDF.ForeColor = System.Drawing.Color.White;
             this.btnExportPDF.Location = new System.Drawing.Point(360, 9);
-            this.btnExportPDF.MinimumSize = new System.Drawing.Size(110, 42);
+            this.btnExportPDF.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnExportPDF.Name = "btnExportPDF";
             this.btnExportPDF.Size = new System.Drawing.Size(164, 42);
             this.btnExportPDF.TabIndex = 2;
             this.btnExportPDF.Text = "تصدير التقرير إلى PDF";
             this.btnExportPDF.UseVisualStyleBackColor = false;
             this.btnExportPDF.Click += new System.EventHandler(this.btnExportPDF_Click);
+            this.btnExportPDF.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportPDF.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportPDF.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnPrint
             // 
-            this.btnPrint.AutoSize = true;
+            this.btnPrint.AutoSize = false;
             this.btnPrint.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnPrint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.btnPrint.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnPrint.FlatAppearance.BorderSize = 0;
             this.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPrint.ForeColor = System.Drawing.Color.White;
             this.btnPrint.Location = new System.Drawing.Point(530, 9);
-            this.btnPrint.MinimumSize = new System.Drawing.Size(110, 42);
+            this.btnPrint.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnPrint.Name = "btnPrint";
             this.btnPrint.Size = new System.Drawing.Size(110, 42);
             this.btnPrint.TabIndex = 3;
             this.btnPrint.Text = "طباعة التقرير";
             this.btnPrint.UseVisualStyleBackColor = false;
             this.btnPrint.Click += new System.EventHandler(this.btnPrint_Click);
+            this.btnPrint.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnPrint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnPrint.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // dataGridViewReport
             // 
@@ -521,7 +539,7 @@ namespace SchoolSystem.UI
             this.dataGridViewReport.BackgroundColor = System.Drawing.Color.White;
             this.dataGridViewReport.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridViewReport.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.dataGridViewReport.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.dataGridViewReport.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 9.5F);
@@ -530,7 +548,7 @@ namespace SchoolSystem.UI
             this.dataGridViewReport.ColumnHeadersHeight = 42;
             this.dataGridViewReport.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewReport.EnableHeadersVisualStyles = false;
-            this.dataGridViewReport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(231)))), ((int)(((byte)(235)))));
+            this.dataGridViewReport.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
             this.dataGridViewReport.Location = new System.Drawing.Point(15, 283);
             this.dataGridViewReport.MultiSelect = false;
             this.dataGridViewReport.Name = "dataGridViewReport";
@@ -542,10 +560,28 @@ namespace SchoolSystem.UI
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(219)))), ((int)(((byte)(234)))), ((int)(((byte)(254)))));
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(64)))), ((int)(((byte)(175)))));
             this.dataGridViewReport.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewReport.RowTemplate.Height = 34;
+            this.dataGridViewReport.RowTemplate.Height = 36;
             this.dataGridViewReport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewReport.Size = new System.Drawing.Size(1170, 362);
             this.dataGridViewReport.TabIndex = 3;
+            this.dataGridViewReport.AllowUserToResizeRows = false;
+            this.dataGridViewReport.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dataGridViewReport.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dataGridViewReport.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dataGridViewReport.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.dataGridViewReport.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dataGridViewReport.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dataGridViewReport.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewReport.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewReport.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewReport.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dataGridViewReport.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.dataGridViewReport.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dataGridViewReport.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewReport.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewReport.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.dataGridViewReport.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewReport.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             // 
             // panelBottom
             // 
