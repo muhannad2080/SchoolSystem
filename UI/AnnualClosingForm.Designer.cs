@@ -280,16 +280,16 @@ namespace SchoolSystem.UI
             // 
             // btnVerify
             // 
-            this.btnVerify.AutoSize = true;
+            this.btnVerify.AutoSize = false;
             this.btnVerify.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnVerify.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(119)))), ((int)(((byte)(180)))));
+            this.btnVerify.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnVerify.FlatAppearance.BorderSize = 0;
             this.btnVerify.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnVerify.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnVerify.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnVerify.ForeColor = System.Drawing.Color.White;
             this.btnVerify.Location = new System.Drawing.Point(5, 5);
             this.btnVerify.Margin = new System.Windows.Forms.Padding(5);
-            this.btnVerify.MinimumSize = new System.Drawing.Size(160, 40);
+            this.btnVerify.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnVerify.Name = "btnVerify";
             this.btnVerify.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
             this.btnVerify.Size = new System.Drawing.Size(192, 40);
@@ -297,19 +297,21 @@ namespace SchoolSystem.UI
             this.btnVerify.Text = "فحص جاهزية الإغلاق";
             this.btnVerify.UseVisualStyleBackColor = false;
             this.btnVerify.Click += new System.EventHandler(this.VerifyClick);
+            this.btnVerify.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnVerify.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnPlan
             // 
-            this.btnPlan.AutoSize = true;
+            this.btnPlan.AutoSize = false;
             this.btnPlan.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnPlan.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(112)))), ((int)(((byte)(173)))), ((int)(((byte)(71)))));
+            this.btnPlan.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnPlan.FlatAppearance.BorderSize = 0;
             this.btnPlan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPlan.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnPlan.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnPlan.ForeColor = System.Drawing.Color.White;
             this.btnPlan.Location = new System.Drawing.Point(207, 5);
             this.btnPlan.Margin = new System.Windows.Forms.Padding(5);
-            this.btnPlan.MinimumSize = new System.Drawing.Size(160, 40);
+            this.btnPlan.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnPlan.Name = "btnPlan";
             this.btnPlan.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
             this.btnPlan.Size = new System.Drawing.Size(173, 40);
@@ -317,19 +319,21 @@ namespace SchoolSystem.UI
             this.btnPlan.Text = "إنشاء خطة الترحيل";
             this.btnPlan.UseVisualStyleBackColor = false;
             this.btnPlan.Click += new System.EventHandler(this.PlanClick);
+            this.btnPlan.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnPlan.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnMigrationReport
             // 
-            this.btnMigrationReport.AutoSize = true;
+            this.btnMigrationReport.AutoSize = false;
             this.btnMigrationReport.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnMigrationReport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(91)))), ((int)(((byte)(155)))), ((int)(((byte)(213)))));
+            this.btnMigrationReport.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnMigrationReport.FlatAppearance.BorderSize = 0;
             this.btnMigrationReport.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnMigrationReport.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnMigrationReport.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnMigrationReport.ForeColor = System.Drawing.Color.White;
             this.btnMigrationReport.Location = new System.Drawing.Point(390, 5);
             this.btnMigrationReport.Margin = new System.Windows.Forms.Padding(5);
-            this.btnMigrationReport.MinimumSize = new System.Drawing.Size(160, 40);
+            this.btnMigrationReport.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnMigrationReport.Name = "btnMigrationReport";
             this.btnMigrationReport.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
             this.btnMigrationReport.Size = new System.Drawing.Size(176, 40);
@@ -337,19 +341,21 @@ namespace SchoolSystem.UI
             this.btnMigrationReport.Text = "عرض تقرير الترحيل";
             this.btnMigrationReport.UseVisualStyleBackColor = false;
             this.btnMigrationReport.Click += new System.EventHandler(this.MigrationReportClick);
+            this.btnMigrationReport.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnMigrationReport.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnApproveMigration
             // 
-            this.btnApproveMigration.AutoSize = true;
+            this.btnApproveMigration.AutoSize = false;
             this.btnApproveMigration.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnApproveMigration.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(237)))), ((int)(((byte)(125)))), ((int)(((byte)(49)))));
+            this.btnApproveMigration.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnApproveMigration.FlatAppearance.BorderSize = 0;
             this.btnApproveMigration.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnApproveMigration.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnApproveMigration.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnApproveMigration.ForeColor = System.Drawing.Color.White;
             this.btnApproveMigration.Location = new System.Drawing.Point(576, 5);
             this.btnApproveMigration.Margin = new System.Windows.Forms.Padding(5);
-            this.btnApproveMigration.MinimumSize = new System.Drawing.Size(160, 40);
+            this.btnApproveMigration.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnApproveMigration.Name = "btnApproveMigration";
             this.btnApproveMigration.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
             this.btnApproveMigration.Size = new System.Drawing.Size(192, 40);
@@ -357,19 +363,21 @@ namespace SchoolSystem.UI
             this.btnApproveMigration.Text = "اعتماد الترحيل المحدد";
             this.btnApproveMigration.UseVisualStyleBackColor = false;
             this.btnApproveMigration.Click += new System.EventHandler(this.ApproveMigrationClick);
+            this.btnApproveMigration.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnApproveMigration.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnClose
             // 
-            this.btnClose.AutoSize = true;
+            this.btnClose.AutoSize = false;
             this.btnClose.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnClose.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(80)))), ((int)(((byte)(77)))));
+            this.btnClose.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnClose.FlatAppearance.BorderSize = 0;
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClose.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnClose.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnClose.ForeColor = System.Drawing.Color.White;
             this.btnClose.Location = new System.Drawing.Point(778, 5);
             this.btnClose.Margin = new System.Windows.Forms.Padding(5);
-            this.btnClose.MinimumSize = new System.Drawing.Size(160, 40);
+            this.btnClose.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnClose.Name = "btnClose";
             this.btnClose.Padding = new System.Windows.Forms.Padding(12, 0, 12, 0);
             this.btnClose.Size = new System.Drawing.Size(160, 40);
@@ -377,6 +385,8 @@ namespace SchoolSystem.UI
             this.btnClose.Text = "تنفيذ إغلاق العام";
             this.btnClose.UseVisualStyleBackColor = false;
             this.btnClose.Click += new System.EventHandler(this.CloseClick);
+            this.btnClose.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnClose.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // lblStatus
             // 
@@ -412,6 +422,37 @@ namespace SchoolSystem.UI
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.Size = new System.Drawing.Size(1062, 280);
             this.grid.TabIndex = 9;
+            this.grid.BackgroundColor = System.Drawing.Color.White;
+            this.grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.grid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.grid.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.grid.RowHeadersVisible = false;
+            this.grid.MultiSelect = false;
+            this.grid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            this.grid.AllowUserToResizeRows = false;
+            this.grid.EnableHeadersVisualStyles = false;
+            this.grid.ColumnHeadersHeight = 42;
+            this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.grid.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.grid.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.grid.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.grid.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.grid.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.grid.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.grid.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.grid.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.grid.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.grid.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.grid.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.grid.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.grid.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.grid.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.grid.RowTemplate.Height = 36;
+            this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.grid.AllowUserToAddRows = false;
+            this.grid.AllowUserToDeleteRows = false;
+            this.grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.grid.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
             // 
             // AnnualClosingForm
             // 
