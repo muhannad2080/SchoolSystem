@@ -238,7 +238,7 @@ namespace SchoolSystem.UI
             // 
             // txtClassID
             // 
-            this.txtClassID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtClassID.BackColor = System.Drawing.Color.White;
             this.txtClassID.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtClassID.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtClassID.Location = new System.Drawing.Point(519, 3);
@@ -246,6 +246,10 @@ namespace SchoolSystem.UI
             this.txtClassID.ReadOnly = true;
             this.txtClassID.Size = new System.Drawing.Size(385, 28);
             this.txtClassID.TabIndex = 1;
+            this.txtClassID.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtClassID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtClassID.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtClassID.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblClassCode
             // 
@@ -259,7 +263,7 @@ namespace SchoolSystem.UI
             // 
             // txtClassCode
             // 
-            this.txtClassCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtClassCode.BackColor = System.Drawing.Color.White;
             this.txtClassCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtClassCode.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtClassCode.Location = new System.Drawing.Point(3, 3);
@@ -267,6 +271,10 @@ namespace SchoolSystem.UI
             this.txtClassCode.ReadOnly = true;
             this.txtClassCode.Size = new System.Drawing.Size(385, 28);
             this.txtClassCode.TabIndex = 3;
+            this.txtClassCode.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtClassCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtClassCode.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtClassCode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblClassName
             // 
@@ -280,7 +288,7 @@ namespace SchoolSystem.UI
             // 
             // txtClassName
             // 
-            this.txtClassName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtClassName.BackColor = System.Drawing.Color.White;
             this.txtClassName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtClassName.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtClassName.Location = new System.Drawing.Point(519, 34);
@@ -288,6 +296,10 @@ namespace SchoolSystem.UI
             this.txtClassName.ReadOnly = true;
             this.txtClassName.Size = new System.Drawing.Size(385, 28);
             this.txtClassName.TabIndex = 5;
+            this.txtClassName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtClassName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtClassName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtClassName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblStageName
             // 
@@ -307,6 +319,11 @@ namespace SchoolSystem.UI
             this.txtStageName.Name = "txtStageName";
             this.txtStageName.Size = new System.Drawing.Size(385, 28);
             this.txtStageName.TabIndex = 7;
+            this.txtStageName.BackColor = System.Drawing.Color.White;
+            this.txtStageName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtStageName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtStageName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtStageName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblGradeOrder
             // 
@@ -383,6 +400,11 @@ namespace SchoolSystem.UI
             this.txtClassNotes.Name = "txtClassNotes";
             this.txtClassNotes.Size = new System.Drawing.Size(901, 28);
             this.txtClassNotes.TabIndex = 13;
+            this.txtClassNotes.BackColor = System.Drawing.Color.White;
+            this.txtClassNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtClassNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtClassNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtClassNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelClassButtons
             // 
@@ -476,6 +498,11 @@ namespace SchoolSystem.UI
             this.txtClassSearch.Size = new System.Drawing.Size(916, 28);
             this.txtClassSearch.TabIndex = 0;
             this.txtClassSearch.TextChanged += new System.EventHandler(this.txtClassSearch_TextChanged);
+            this.txtClassSearch.BackColor = System.Drawing.Color.White;
+            this.txtClassSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtClassSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtClassSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtClassSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblClassSearch
             // 
@@ -648,7 +675,7 @@ namespace SchoolSystem.UI
             // 
             // txtRoomID
             // 
-            this.txtRoomID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtRoomID.BackColor = System.Drawing.Color.White;
             this.txtRoomID.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtRoomID.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtRoomID.Location = new System.Drawing.Point(519, 3);
@@ -656,6 +683,10 @@ namespace SchoolSystem.UI
             this.txtRoomID.ReadOnly = true;
             this.txtRoomID.Size = new System.Drawing.Size(385, 28);
             this.txtRoomID.TabIndex = 1;
+            this.txtRoomID.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtRoomID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtRoomID.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtRoomID.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblRoomCode
             // 
@@ -675,6 +706,11 @@ namespace SchoolSystem.UI
             this.txtRoomCode.Name = "txtRoomCode";
             this.txtRoomCode.Size = new System.Drawing.Size(385, 28);
             this.txtRoomCode.TabIndex = 3;
+            this.txtRoomCode.BackColor = System.Drawing.Color.White;
+            this.txtRoomCode.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtRoomCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtRoomCode.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtRoomCode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblRoomName
             // 
@@ -694,6 +730,11 @@ namespace SchoolSystem.UI
             this.txtRoomName.Name = "txtRoomName";
             this.txtRoomName.Size = new System.Drawing.Size(385, 28);
             this.txtRoomName.TabIndex = 5;
+            this.txtRoomName.BackColor = System.Drawing.Color.White;
+            this.txtRoomName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtRoomName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtRoomName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtRoomName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblRoomType
             // 
@@ -719,6 +760,10 @@ namespace SchoolSystem.UI
             this.cmbRoomType.Name = "cmbRoomType";
             this.cmbRoomType.Size = new System.Drawing.Size(385, 29);
             this.cmbRoomType.TabIndex = 7;
+            this.cmbRoomType.BackColor = System.Drawing.Color.White;
+            this.cmbRoomType.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbRoomType.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbRoomType.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblCapacity
             // 
@@ -772,6 +817,11 @@ namespace SchoolSystem.UI
             this.txtLocation.Name = "txtLocation";
             this.txtLocation.Size = new System.Drawing.Size(385, 28);
             this.txtLocation.TabIndex = 11;
+            this.txtLocation.BackColor = System.Drawing.Color.White;
+            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtLocation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLocation.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtLocation.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblRoomActive
             // 
@@ -813,6 +863,11 @@ namespace SchoolSystem.UI
             this.txtRoomNotes.Name = "txtRoomNotes";
             this.txtRoomNotes.Size = new System.Drawing.Size(385, 28);
             this.txtRoomNotes.TabIndex = 15;
+            this.txtRoomNotes.BackColor = System.Drawing.Color.White;
+            this.txtRoomNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtRoomNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtRoomNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtRoomNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelRoomButtons
             // 
@@ -946,6 +1001,11 @@ namespace SchoolSystem.UI
             this.txtRoomSearch.Size = new System.Drawing.Size(916, 28);
             this.txtRoomSearch.TabIndex = 0;
             this.txtRoomSearch.TextChanged += new System.EventHandler(this.txtRoomSearch_TextChanged);
+            this.txtRoomSearch.BackColor = System.Drawing.Color.White;
+            this.txtRoomSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtRoomSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtRoomSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtRoomSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblRoomSearch
             // 
