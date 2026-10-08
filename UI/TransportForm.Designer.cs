@@ -342,6 +342,11 @@ namespace SchoolSystem.UI
             this.txtBusNumber.Name = "txtBusNumber";
             this.txtBusNumber.Size = new System.Drawing.Size(350, 28);
             this.txtBusNumber.TabIndex = 0;
+            this.txtBusNumber.BackColor = System.Drawing.Color.White;
+            this.txtBusNumber.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtBusNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtBusNumber.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtBusNumber.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblDriverName
             // 
@@ -362,6 +367,11 @@ namespace SchoolSystem.UI
             this.txtDriverName.Name = "txtDriverName";
             this.txtDriverName.Size = new System.Drawing.Size(350, 28);
             this.txtDriverName.TabIndex = 1;
+            this.txtDriverName.BackColor = System.Drawing.Color.White;
+            this.txtDriverName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtDriverName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtDriverName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtDriverName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblDriverPhone
             // 
@@ -382,6 +392,11 @@ namespace SchoolSystem.UI
             this.txtDriverPhone.Name = "txtDriverPhone";
             this.txtDriverPhone.Size = new System.Drawing.Size(350, 28);
             this.txtDriverPhone.TabIndex = 2;
+            this.txtDriverPhone.BackColor = System.Drawing.Color.White;
+            this.txtDriverPhone.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtDriverPhone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtDriverPhone.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtDriverPhone.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblCapacity
             // 
@@ -403,6 +418,11 @@ namespace SchoolSystem.UI
             this.txtCapacity.Size = new System.Drawing.Size(350, 28);
             this.txtCapacity.TabIndex = 3;
             this.txtCapacity.Text = "30";
+            this.txtCapacity.BackColor = System.Drawing.Color.White;
+            this.txtCapacity.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtCapacity.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtCapacity.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtCapacity.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNotes
             // 
@@ -423,6 +443,11 @@ namespace SchoolSystem.UI
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(350, 28);
             this.txtNotes.TabIndex = 4;
+            this.txtNotes.BackColor = System.Drawing.Color.White;
+            this.txtNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // tabRoutes
             // 
@@ -648,6 +673,11 @@ namespace SchoolSystem.UI
             this.txtRouteName.Name = "txtRouteName";
             this.txtRouteName.Size = new System.Drawing.Size(350, 28);
             this.txtRouteName.TabIndex = 0;
+            this.txtRouteName.BackColor = System.Drawing.Color.White;
+            this.txtRouteName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtRouteName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtRouteName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtRouteName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblBus
             // 
@@ -670,6 +700,10 @@ namespace SchoolSystem.UI
             this.cmbBus.Name = "cmbBus";
             this.cmbBus.Size = new System.Drawing.Size(350, 29);
             this.cmbBus.TabIndex = 1;
+            this.cmbBus.BackColor = System.Drawing.Color.White;
+            this.cmbBus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbBus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbBus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblStartPoint
             // 
@@ -690,6 +724,11 @@ namespace SchoolSystem.UI
             this.txtStartPoint.Name = "txtStartPoint";
             this.txtStartPoint.Size = new System.Drawing.Size(350, 28);
             this.txtStartPoint.TabIndex = 2;
+            this.txtStartPoint.BackColor = System.Drawing.Color.White;
+            this.txtStartPoint.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtStartPoint.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtStartPoint.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtStartPoint.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblEndPoint
             // 
@@ -710,6 +749,11 @@ namespace SchoolSystem.UI
             this.txtEndPoint.Name = "txtEndPoint";
             this.txtEndPoint.Size = new System.Drawing.Size(350, 28);
             this.txtEndPoint.TabIndex = 3;
+            this.txtEndPoint.BackColor = System.Drawing.Color.White;
+            this.txtEndPoint.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtEndPoint.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtEndPoint.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtEndPoint.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblDeparture
             // 
@@ -777,6 +821,11 @@ namespace SchoolSystem.UI
             this.txtFee.Size = new System.Drawing.Size(350, 28);
             this.txtFee.TabIndex = 6;
             this.txtFee.Text = "0";
+            this.txtFee.BackColor = System.Drawing.Color.White;
+            this.txtFee.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtFee.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFee.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtFee.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblRouteNotes
             // 
@@ -797,6 +846,11 @@ namespace SchoolSystem.UI
             this.txtRouteNotes.Name = "txtRouteNotes";
             this.txtRouteNotes.Size = new System.Drawing.Size(350, 28);
             this.txtRouteNotes.TabIndex = 7;
+            this.txtRouteNotes.BackColor = System.Drawing.Color.White;
+            this.txtRouteNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtRouteNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtRouteNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtRouteNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelBottom
             // 
