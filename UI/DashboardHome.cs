@@ -159,7 +159,7 @@ namespace SchoolSystem.UI
             }
 
             lblDashboardTitle.TextAlign =
-                ContentAlignment.MiddleRight;
+                ContentAlignment.MiddleCenter;
 
             lblDashboardSubtitle.TextAlign =
                 ContentAlignment.MiddleRight;
