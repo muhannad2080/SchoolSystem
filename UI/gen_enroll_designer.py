@@ -43,6 +43,8 @@ def generate_designer_code():
     res.append("        }")
     res.append("        private void InitializeComponent() {")
     res.append("            this.components = new System.ComponentModel.Container();")
+    res.append("            this.panelTitle = new System.Windows.Forms.Panel();")
+    res.append("            this.lblTitle = new System.Windows.Forms.Label();")
 
     for name, lbl, typ, grp, isCombo in controls:
         res.append(f"            this.lbl{name} = new System.Windows.Forms.Label();")
@@ -96,6 +98,7 @@ def generate_designer_code():
     res.append("            this.splitContainerMain.Panel2.SuspendLayout();")
     res.append("            this.splitContainerMain.SuspendLayout();")
     res.append("            this.pnlRight.SuspendLayout();")
+    res.append("            this.panelTitle.SuspendLayout();")
     res.append("            this.pnlButtons.SuspendLayout();")
     res.append("            this.pnlSearch.SuspendLayout();")
     res.append("            this.SuspendLayout();")
@@ -215,28 +218,50 @@ def generate_designer_code():
         else:
             res.append(f"            this.{b}.Click += new System.EventHandler(this.{b}_Click);")
 
+    res.append("            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);")
+    res.append("            this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;")
+    res.append("            this.panelTitle.Height = 54;")
+    res.append("            this.panelTitle.Controls.Add(this.lblTitle);")
+    res.append("            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;")
+    res.append("            this.lblTitle.Text = \"إدارة القبول والتسجيل\";")
+    res.append("            this.lblTitle.ForeColor = System.Drawing.Color.White;")
+    res.append("            this.lblTitle.Font = new System.Drawing.Font(\"Tahoma\", 13.5F, System.Drawing.FontStyle.Bold);")
+    res.append("            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;")
+    res.append("            this.lblTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;")
     res.append("            this.pnlSearch.Dock = System.Windows.Forms.DockStyle.Top;")
-    res.append("            this.pnlSearch.Height = 72;")
-    res.append("            this.pnlSearch.Padding = new System.Windows.Forms.Padding(10);")
+    res.append("            this.pnlSearch.Height = 66;")
+    res.append("            this.pnlSearch.Padding = new System.Windows.Forms.Padding(8);")
     res.append("            this.btnReload.Text = \"مسح البحث\";")
-    res.append("            this.btnReload.Dock = System.Windows.Forms.DockStyle.Right;")
-    res.append("            this.btnReload.Width = 120;")
-    res.append("            this.btnReload.Click += new System.EventHandler(this.btnRefresh_Click);")
+    res.append("            this.btnReload.Width = 125;")
+    res.append("            this.btnReload.Height = 38;")
+    res.append("            this.btnReload.Click += new System.EventHandler(this.btnClearSearch_Click);")
     res.append("            this.btnSearch.Text = \"بحث\";")
-    res.append("            this.lblSearch.Text = \"بحث في التسجيلات:\";")
-    res.append("            this.btnSearch.Dock = System.Windows.Forms.DockStyle.Right;")
-    res.append("            this.btnSearch.Width = 90;")
+    res.append("            this.btnSearch.Width = 100;")
+    res.append("            this.btnSearch.Height = 38;")
     res.append("            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);")
-    res.append("            this.txtSearch.Dock = System.Windows.Forms.DockStyle.Right;")
+    res.append("            this.lblSearch.Text = \"البحث في التسجيلات\";")
+    res.append("            this.lblCount.Text = \"عدد السجلات: 0\";")
     res.append("            this.txtSearch.Width = 350;")
     res.append("            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);")
     res.append("            this.lblCount.Dock = System.Windows.Forms.DockStyle.Left;")
     res.append("            this.lblCount.AutoSize = true;")
 
-    res.append("            this.pnlSearch.Controls.Add(this.txtSearch);")
-    res.append("            this.pnlSearch.Controls.Add(this.btnSearch);")
-    res.append("            this.pnlSearch.Controls.Add(this.btnReload);")
-    res.append("            this.pnlSearch.Controls.Add(this.lblCount);")
+    res.append("            this.tlpSearch = new System.Windows.Forms.TableLayoutPanel();")
+    res.append("            this.tlpSearch.ColumnCount = 6;")
+    res.append("            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 160F));")
+    res.append("            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));")
+    res.append("            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 100F));")
+    res.append("            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 125F));")
+    res.append("            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 16F));")
+    res.append("            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 165F));")
+    res.append("            this.tlpSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;")
+    res.append("            this.tlpSearch.Dock = System.Windows.Forms.DockStyle.Fill;")
+    res.append("            this.tlpSearch.Controls.Add(this.lblSearch, 0, 0);")
+    res.append("            this.tlpSearch.Controls.Add(this.txtSearch, 1, 0);")
+    res.append("            this.tlpSearch.Controls.Add(this.btnSearch, 2, 0);")
+    res.append("            this.tlpSearch.Controls.Add(this.btnReload, 3, 0);")
+    res.append("            this.tlpSearch.Controls.Add(this.lblCount, 5, 0);")
+    res.append("            this.pnlSearch.Controls.Add(this.tlpSearch);")
 
     res.append("            this.lblCount.BringToFront();")
     res.append("            this.btnReload.BringToFront();")
@@ -246,9 +271,11 @@ def generate_designer_code():
     res.append("            this.Controls.Add(this.splitContainerMain);")
     res.append("            this.Controls.Add(this.pnlSearch);")
     res.append("            this.Controls.Add(this.pnlButtons);")
+    res.append("            this.Controls.Add(this.panelTitle);")
     res.append("            this.ClientSize = new System.Drawing.Size(1200, 750);")
+    res.append("            this.MinimumSize = new System.Drawing.Size(1050, 650);")
     res.append("            this.Name = \"EnrollmentForm\";")
-    res.append("            this.Text = \"القبول والتسجيل\";")
+    res.append("            this.Text = \"إدارة القبول والتسجيل\";")
     res.append("            this.Load += new System.EventHandler(this.EnrollmentForm_Load);")
     res.append("            this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;")
     res.append("            this.RightToLeftLayout = true;")
@@ -266,6 +293,7 @@ def generate_designer_code():
     res.append("            this.pnlRight.ResumeLayout(false);")
     res.append("            this.pnlButtons.ResumeLayout(false);")
     res.append("            this.pnlSearch.ResumeLayout(false);")
+    res.append("            this.panelTitle.ResumeLayout(false);")
     res.append("            this.ResumeLayout(false);")
     res.append("        }")
 
@@ -288,7 +316,9 @@ def generate_designer_code():
         "        private System.Windows.Forms.GroupBox gbNotes;",
         "        private System.Windows.Forms.RichTextBox rtbNotes;",
 
-        "        private System.Windows.Forms.DataGridView dgvEnrollments;",
+        "        private System.Windows.Forms.Panel panelTitle;",
+        "        private System.Windows.Forms.Label lblTitle;",
+        "        private System.Windows.Forms.DataGridView dgvEnrollments;"
         "        private System.Windows.Forms.ErrorProvider errorProvider1;",
         "        private System.Windows.Forms.SplitContainer splitContainerMain;",
         "        private System.Windows.Forms.Panel pnlSearch;",
