@@ -498,11 +498,7 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            ShowError(
-                message,
-                message.Contains("تم تعطيل")
-                    ? "تم تعطيل الحساب"
-                    : "فشل الدخول");
+            ShowError(message);
         }
 
         // تعريف الدالة GetSafeLoginError لتنفيذ العملية المرتبطة بها.
