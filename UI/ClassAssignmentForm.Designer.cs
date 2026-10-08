@@ -98,7 +98,7 @@ namespace SchoolSystem.UI.Students
             this.lblTitle.ForeColor = System.Drawing.Color.White;
             this.lblTitle.Location = new System.Drawing.Point(0, 0);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(1120, 58);
+            this.lblTitle.Size = new System.Drawing.Size(1120, 60);
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "توزيع الطلاب على الفصول والشعب";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
