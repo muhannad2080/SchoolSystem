@@ -83,6 +83,7 @@ namespace SchoolSystem
                 return;
 
             panelTop.Visible = true;
+            HideScreenHeader();
 
             // استعادة حالة العنوان الرئيسية فقط.
             lblSystemTitle.Text =
@@ -228,6 +229,63 @@ namespace SchoolSystem
             }
         }
 
+        private void ShowScreenHeader(string moduleOrType)
+        {
+            if (panelScreenHeader == null ||
+                lblScreenTitle == null ||
+                IsDisposed ||
+                Disposing)
+            {
+                return;
+            }
+
+            lblScreenTitle.Text = GetScreenTitle(moduleOrType);
+            panelScreenHeader.Visible = true;
+            panelScreenHeader.BringToFront();
+        }
+
+        private void HideScreenHeader()
+        {
+            if (panelScreenHeader == null || panelScreenHeader.IsDisposed)
+                return;
+
+            panelScreenHeader.Visible = false;
+        }
+
+        private static string GetScreenTitle(string moduleOrType)
+        {
+            string key = (moduleOrType ?? string.Empty).Trim();
+
+            switch (key)
+            {
+                case "Students": case "StudentsForm": return "إدارة الطلاب";
+                case "Enrollment": case "EnrollmentForm": return "القبول والتسجيل";
+                case "ClassAssignment": case "ClassAssignmentForm": return "توزيع الطلاب على الفصول والشعب";
+                case "Teachers": case "TeachersForm": return "إدارة المعلمين";
+                case "StaffAttendance": case "TeacherAttendance": case "StaffAttendanceForm": case "TeacherAttendanceForm": return "حضور وانصراف الموظفين";
+                case "TeacherContracts": case "PayrollForm": return "العقود الوظيفية";
+                case "Payroll": case "PayrollRecordsForm": return "مسير الرواتب";
+                case "Subjects": case "SubjectsForm": return "المواد الدراسية";
+                case "Classes": case "ClassesForm": return "الفصول الدراسية والقاعات";
+                case "Sections": case "SchoolSectionsForm": return "الشعب الدراسية";
+                case "Timetable": case "TimetableForm": return "الجداول الدراسية";
+                case "Grades": case "GradeEntryForm": return "إدخال الدرجات";
+                case "Attendance": case "DailyAttendanceForm": return "حضور الطلاب";
+                case "Fees": case "FeesForm": return "الرسوم الدراسية";
+                case "FeePlans": case "FeePlansForm": return "خطط الرسوم الدراسية";
+                case "Vouchers": case "VouchersForm": return "السندات المالية";
+                case "Expenses": case "ExpensesForm": return "المصروفات";
+                case "Transport": case "TransportForm": return "إدارة النقل";
+                case "Library": case "LibraryForm": return "إدارة المكتبة";
+                case "Users": case "UsersForm": return "المستخدمون والصلاحيات";
+                case "Reports": case "ReportCenterForm": return "مركز التقارير";
+                case "AuditLogs": case "AuditLogForm": return "سجل التدقيق";
+                case "Settings": case "SettingsForm": return "إعدادات النظام";
+                case "AnnualClosing": case "AnnualClosingForm": return "الإغلاق السنوي والترحيل";
+                default: return string.IsNullOrWhiteSpace(key) ? "الشاشة الحالية" : key;
+            }
+        }
+
         private void HideMainHeader()
         {
             if (IsDisposed || Disposing)
@@ -355,6 +413,7 @@ namespace SchoolSystem
         private void LoadWelcomeScreen()
         {
             ClearPanelContent();
+            HideScreenHeader();
 
             // الرئيسية هي الحالة الوحيدة التي يظهر فيها الرأس.
             ShowMainHeader();
@@ -433,8 +492,9 @@ namespace SchoolSystem
 
                 ClearPanelContent();
 
-                // إخفاء الرأس بالكامل.
+                // إخفاء ترويسة النظام الرئيسية وإظهار عنوان الوحدة في الشريط الموحد.
                 HideMainHeader();
+                ShowScreenHeader(uc.GetType().Name);
 
                 // جعل UserControl يستخدم كل مساحة panelContent.
                 uc.Dock =
@@ -479,8 +539,9 @@ namespace SchoolSystem
 
                 ClearPanelContent();
 
-                // إخفاء الـHeader بالكامل.
+                // إخفاء ترويسة النظام الرئيسية وإظهار عنوان الوحدة في الشريط الموحد.
                 HideMainHeader();
+                ShowScreenHeader(form.GetType().Name);
 
                 form.TopLevel =
                     false;
@@ -569,6 +630,7 @@ namespace SchoolSystem
             ClearPanelContent();
 
             HideMainHeader();
+            HideScreenHeader();
 
             Label errorLabel =
                 new Label
