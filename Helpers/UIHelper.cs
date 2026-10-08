@@ -1419,24 +1419,31 @@ namespace SchoolSystem.Helpers
 
                 if (child is KryptonButton kryptonButton)
                 {
-                    kryptonButton.ForeColor = Color.White;
-                    kryptonButton.Font = new Font(FontFamily, BodyFontSize, FontStyle.Bold);
+                    if (IsDefaultForeColor(kryptonButton))
+                        kryptonButton.ForeColor = Color.White;
+
+                    if (IsDefaultFont(kryptonButton))
+                        kryptonButton.Font = new Font(FontFamily, BodyFontSize, FontStyle.Bold);
+
                     kryptonButton.Cursor = Cursors.Hand;
                 }
 
                 else if (child is KryptonTextBox kryptonTextBox)
                 {
-                    kryptonTextBox.ForeColor = TextColor;
+                    if (IsDefaultForeColor(kryptonTextBox))
+                        kryptonTextBox.ForeColor = TextColor;
                 }
 
                 else if (child is KryptonComboBox kryptonComboBox)
                 {
-                    kryptonComboBox.ForeColor = TextColor;
+                    if (IsDefaultForeColor(kryptonComboBox))
+                        kryptonComboBox.ForeColor = TextColor;
                 }
 
                 else if (child is KryptonLabel kryptonLabel)
                 {
-                    kryptonLabel.ForeColor = TextColor;
+                    if (IsDefaultForeColor(kryptonLabel))
+                        kryptonLabel.ForeColor = TextColor;
                 }
 
                 ApplyKryptonThemeRecursive(child);
