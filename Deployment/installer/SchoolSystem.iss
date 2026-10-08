@@ -3,7 +3,9 @@
 ; يشترط: Inno Setup 6 مثبّت (winget install JRSoftware.InnoSetup)
 
 #define MyAppName "نظام إدارة المدارس - SchoolSystem"
+#ifndef MyAppVersion
 #define MyAppVersion "1.0.0"
+#endif
 #define MyAppPublisher "SchoolSystem"
 #define MyAppExeName "SchoolSystem.exe"
 
