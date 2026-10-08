@@ -359,7 +359,8 @@ namespace SchoolSystem.UI
             dataGridViewContracts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
-        // تعريف الدالة txtSearch_TextChanged لتنفيذ العملية المرتبطة بها.        private void btnSearch_Click(object sender, EventArgs e)
+        // تعريف زر البحث لتنفيذ تصفية العقود.
+        private void btnSearch_Click(object sender, EventArgs e)
         {
             ApplyFilter(txtSearch.Text);
             txtSearch.Focus();
