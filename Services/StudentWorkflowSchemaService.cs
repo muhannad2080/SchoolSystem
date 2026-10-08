@@ -99,6 +99,59 @@ BEGIN
 END;
 
 
+/* Student transport assignment schema used by the Transport screen. */
+IF OBJECT_ID(N'dbo.StudentTransportAssignments', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.StudentTransportAssignments
+    (
+        AssignmentID INT IDENTITY(1,1) NOT NULL
+            CONSTRAINT PK_StudentTransportAssignments_Startup PRIMARY KEY,
+        StudentID INT NOT NULL,
+        RouteID INT NOT NULL,
+        AcademicYear NVARCHAR(20) NOT NULL,
+        PickupPoint NVARCHAR(200) NOT NULL,
+        DropoffPoint NVARCHAR(200) NOT NULL,
+        IsActive BIT NOT NULL
+            CONSTRAINT DF_StudentTransportAssignments_Startup_IsActive DEFAULT (1),
+        StartDate DATE NOT NULL
+            CONSTRAINT DF_StudentTransportAssignments_Startup_StartDate DEFAULT (CONVERT(date, GETDATE())),
+        EndDate DATE NULL,
+        Notes NVARCHAR(MAX) NULL,
+        CreatedAt DATETIME NOT NULL
+            CONSTRAINT DF_StudentTransportAssignments_Startup_CreatedAt DEFAULT GETDATE(),
+        UpdatedAt DATETIME NULL,
+        CONSTRAINT FK_StudentTransportAssignments_Startup_Students
+            FOREIGN KEY (StudentID) REFERENCES dbo.Students(StudentID),
+        CONSTRAINT FK_StudentTransportAssignments_Startup_BusRoutes
+            FOREIGN KEY (RouteID) REFERENCES dbo.BusRoutes(RouteID)
+    );
+END
+ELSE
+BEGIN
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'StudentID') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD StudentID INT NULL;
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'RouteID') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD RouteID INT NULL;
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'AcademicYear') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD AcademicYear NVARCHAR(20) NULL;
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'PickupPoint') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD PickupPoint NVARCHAR(200) NULL;
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'DropoffPoint') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD DropoffPoint NVARCHAR(200) NULL;
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'IsActive') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD IsActive BIT NULL;
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'StartDate') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD StartDate DATE NULL;
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'EndDate') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD EndDate DATE NULL;
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'Notes') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD Notes NVARCHAR(MAX) NULL;
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'CreatedAt') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD CreatedAt DATETIME NULL;
+    IF COL_LENGTH(N'dbo.StudentTransportAssignments', N'UpdatedAt') IS NULL
+        ALTER TABLE dbo.StudentTransportAssignments ADD UpdatedAt DATETIME NULL;
+END;
+
 /* FeeTypes lookup table for dynamic fee screens. */
 IF OBJECT_ID(N'dbo.FeeTypes', N'U') IS NULL
 BEGIN
