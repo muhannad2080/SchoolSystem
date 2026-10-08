@@ -221,16 +221,18 @@ namespace SchoolSystem.UI
             // 
             // txtEmployeeNumber
             // 
-            this.txtEmployeeNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtEmployeeNumber.BackColor = System.Drawing.Color.White;
             this.txtEmployeeNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtEmployeeNumber.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtEmployeeNumber.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtEmployeeNumber.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtEmployeeNumber.Location = new System.Drawing.Point(1025, 8);
-            this.txtEmployeeNumber.Margin = new System.Windows.Forms.Padding(4);
+            this.txtEmployeeNumber.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtEmployeeNumber.Name = "txtEmployeeNumber";
             this.txtEmployeeNumber.ReadOnly = true;
             this.txtEmployeeNumber.Size = new System.Drawing.Size(236, 29);
             this.txtEmployeeNumber.TabIndex = 1;
+            this.txtEmployeeNumber.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtEmployeeNumber.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblFullName
             // 
@@ -246,16 +248,18 @@ namespace SchoolSystem.UI
             // 
             // txtFullName
             // 
-            this.txtFullName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtFullName.BackColor = System.Drawing.Color.White;
             this.txtFullName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.layoutPersonal.SetColumnSpan(this.txtFullName, 3);
             this.txtFullName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtFullName.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtFullName.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtFullName.Location = new System.Drawing.Point(347, 8);
-            this.txtFullName.Margin = new System.Windows.Forms.Padding(4);
+            this.txtFullName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFullName.Name = "txtFullName";
             this.txtFullName.Size = new System.Drawing.Size(575, 29);
             this.txtFullName.TabIndex = 3;
+            this.txtFullName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtFullName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblGender
             // 
@@ -271,20 +275,22 @@ namespace SchoolSystem.UI
             // 
             // cmbGender
             // 
-            this.cmbGender.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.cmbGender.BackColor = System.Drawing.Color.White;
             this.cmbGender.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbGender.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbGender.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbGender.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.cmbGender.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbGender.FormattingEnabled = true;
             this.cmbGender.Items.AddRange(new object[] {
             "ذكر",
             "أنثى"});
             this.cmbGender.Location = new System.Drawing.Point(8, 8);
-            this.cmbGender.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbGender.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbGender.Name = "cmbGender";
             this.cmbGender.Size = new System.Drawing.Size(236, 29);
             this.cmbGender.TabIndex = 5;
+            this.cmbGender.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbGender.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblBirthDate
             // 
@@ -323,15 +329,17 @@ namespace SchoolSystem.UI
             // 
             // txtBirthPlace
             // 
-            this.txtBirthPlace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtBirthPlace.BackColor = System.Drawing.Color.White;
             this.txtBirthPlace.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtBirthPlace.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtBirthPlace.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtBirthPlace.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtBirthPlace.Location = new System.Drawing.Point(686, 45);
-            this.txtBirthPlace.Margin = new System.Windows.Forms.Padding(4);
+            this.txtBirthPlace.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtBirthPlace.Name = "txtBirthPlace";
             this.txtBirthPlace.Size = new System.Drawing.Size(236, 29);
             this.txtBirthPlace.TabIndex = 9;
+            this.txtBirthPlace.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtBirthPlace.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNationality
             // 
@@ -347,17 +355,19 @@ namespace SchoolSystem.UI
             // 
             // cmbNationality
             // 
-            this.cmbNationality.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.cmbNationality.BackColor = System.Drawing.Color.White;
             this.cmbNationality.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbNationality.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbNationality.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbNationality.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.cmbNationality.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbNationality.FormattingEnabled = true;
             this.cmbNationality.Location = new System.Drawing.Point(347, 45);
-            this.cmbNationality.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbNationality.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbNationality.Name = "cmbNationality";
             this.cmbNationality.Size = new System.Drawing.Size(236, 29);
             this.cmbNationality.TabIndex = 11;
+            this.cmbNationality.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbNationality.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNationalID
             // 
@@ -373,15 +383,17 @@ namespace SchoolSystem.UI
             // 
             // txtNationalID
             // 
-            this.txtNationalID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtNationalID.BackColor = System.Drawing.Color.White;
             this.txtNationalID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtNationalID.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNationalID.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtNationalID.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtNationalID.Location = new System.Drawing.Point(8, 45);
-            this.txtNationalID.Margin = new System.Windows.Forms.Padding(4);
+            this.txtNationalID.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNationalID.Name = "txtNationalID";
             this.txtNationalID.Size = new System.Drawing.Size(236, 29);
             this.txtNationalID.TabIndex = 13;
+            this.txtNationalID.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNationalID.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblPhone
             // 
@@ -397,15 +409,17 @@ namespace SchoolSystem.UI
             // 
             // txtPhone
             // 
-            this.txtPhone.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtPhone.BackColor = System.Drawing.Color.White;
             this.txtPhone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtPhone.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtPhone.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtPhone.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtPhone.Location = new System.Drawing.Point(1025, 82);
-            this.txtPhone.Margin = new System.Windows.Forms.Padding(4);
+            this.txtPhone.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPhone.Name = "txtPhone";
             this.txtPhone.Size = new System.Drawing.Size(236, 29);
             this.txtPhone.TabIndex = 15;
+            this.txtPhone.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtPhone.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblEmail
             // 
@@ -421,16 +435,18 @@ namespace SchoolSystem.UI
             // 
             // txtEmail
             // 
-            this.txtEmail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtEmail.BackColor = System.Drawing.Color.White;
             this.txtEmail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.layoutPersonal.SetColumnSpan(this.txtEmail, 3);
             this.txtEmail.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtEmail.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtEmail.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtEmail.Location = new System.Drawing.Point(347, 82);
-            this.txtEmail.Margin = new System.Windows.Forms.Padding(4);
+            this.txtEmail.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtEmail.Name = "txtEmail";
             this.txtEmail.Size = new System.Drawing.Size(575, 29);
             this.txtEmail.TabIndex = 17;
+            this.txtEmail.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtEmail.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblHireDate
             // 
@@ -469,17 +485,19 @@ namespace SchoolSystem.UI
             // 
             // cmbQualification
             // 
-            this.cmbQualification.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.cmbQualification.BackColor = System.Drawing.Color.White;
             this.cmbQualification.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbQualification.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbQualification.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbQualification.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.cmbQualification.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbQualification.FormattingEnabled = true;
             this.cmbQualification.Location = new System.Drawing.Point(1025, 119);
-            this.cmbQualification.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbQualification.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbQualification.Name = "cmbQualification";
             this.cmbQualification.Size = new System.Drawing.Size(236, 29);
             this.cmbQualification.TabIndex = 21;
+            this.cmbQualification.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbQualification.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblSpecialization
             // 
@@ -495,15 +513,17 @@ namespace SchoolSystem.UI
             // 
             // txtSpecialization
             // 
-            this.txtSpecialization.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtSpecialization.BackColor = System.Drawing.Color.White;
             this.txtSpecialization.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSpecialization.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSpecialization.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtSpecialization.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtSpecialization.Location = new System.Drawing.Point(686, 119);
-            this.txtSpecialization.Margin = new System.Windows.Forms.Padding(4);
+            this.txtSpecialization.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtSpecialization.Name = "txtSpecialization";
             this.txtSpecialization.Size = new System.Drawing.Size(236, 29);
             this.txtSpecialization.TabIndex = 23;
+            this.txtSpecialization.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSpecialization.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblAddress
             // 
@@ -519,16 +539,18 @@ namespace SchoolSystem.UI
             // 
             // txtAddress
             // 
-            this.txtAddress.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtAddress.BackColor = System.Drawing.Color.White;
             this.txtAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.layoutPersonal.SetColumnSpan(this.txtAddress, 3);
             this.txtAddress.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtAddress.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtAddress.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtAddress.Location = new System.Drawing.Point(8, 119);
-            this.txtAddress.Margin = new System.Windows.Forms.Padding(4);
+            this.txtAddress.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtAddress.Name = "txtAddress";
             this.txtAddress.Size = new System.Drawing.Size(575, 29);
             this.txtAddress.TabIndex = 19;
+            this.txtAddress.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtAddress.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // groupBoxFinancial
             // 
@@ -681,21 +703,23 @@ namespace SchoolSystem.UI
             // 
             // cmbStatus
             // 
-            this.cmbStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.cmbStatus.BackColor = System.Drawing.Color.White;
             this.cmbStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbStatus.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.cmbStatus.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbStatus.FormattingEnabled = true;
             this.cmbStatus.Items.AddRange(new object[] {
             "نشط",
             "إجازة",
             "مستقيل"});
             this.cmbStatus.Location = new System.Drawing.Point(8, 7);
-            this.cmbStatus.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cmbStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.Size = new System.Drawing.Size(375, 29);
             this.cmbStatus.TabIndex = 7;
+            this.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNotes
             // 
@@ -711,16 +735,18 @@ namespace SchoolSystem.UI
             // 
             // txtNotes
             // 
-            this.txtNotes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtNotes.BackColor = System.Drawing.Color.White;
             this.txtNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.layoutFinancial.SetColumnSpan(this.txtNotes, 7);
             this.txtNotes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNotes.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.txtNotes.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtNotes.Location = new System.Drawing.Point(8, 32);
-            this.txtNotes.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.txtNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(1248, 29);
             this.txtNotes.TabIndex = 9;
+            this.txtNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelButtons
             // 
@@ -849,14 +875,17 @@ namespace SchoolSystem.UI
             // 
             // txtSearch
             // 
-            this.txtSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtSearch.BackColor = System.Drawing.Color.White;
             this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtSearch.Location = new System.Drawing.Point(10, 7);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(1260, 30);
             this.txtSearch.TabIndex = 1;
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblSearch
             // 
