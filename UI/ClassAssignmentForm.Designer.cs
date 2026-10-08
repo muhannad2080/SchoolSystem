@@ -83,11 +83,12 @@ namespace SchoolSystem.UI.Students
             // 
             // panelTitle
             // 
+            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
             this.panelTitle.Name = "panelTitle";
-            this.panelTitle.Size = new System.Drawing.Size(1120, 58);
+            this.panelTitle.Size = new System.Drawing.Size(1120, 60);
             this.panelTitle.TabIndex = 0;
             // 
             // lblTitle
@@ -111,7 +112,7 @@ namespace SchoolSystem.UI.Students
             this.mainContainer.Controls.Add(this.tableLayoutMain, 0, 1);
             this.mainContainer.Controls.Add(this.panelBottom, 0, 2);
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainContainer.Location = new System.Drawing.Point(0, 58);
+            this.mainContainer.Location = new System.Drawing.Point(0, 60);
             this.mainContainer.Name = "mainContainer";
             this.mainContainer.Padding = new System.Windows.Forms.Padding(12, 10, 12, 10);
             this.mainContainer.RowCount = 3;
