@@ -323,32 +323,55 @@ namespace SchoolSystem.UI
             if (allPayrolls == null)
                 return;
 
-            DataView view = allPayrolls.DefaultView;
+            string term = (searchText ?? string.Empty).Trim();
+            DataTable filtered = allPayrolls.Clone();
 
-            if (string.IsNullOrWhiteSpace(searchText))
+            foreach (DataRow row in allPayrolls.Rows)
             {
-                view.RowFilter = string.Empty;
-            }
-            else
-            {
-                string safe = UIHelper.EscapeDataViewFilterValue(searchText);
-                string textFilter =
-                    "TeacherName LIKE '%" + safe + "%'" +
-                    " OR PaymentMethod LIKE '%" + safe + "%'" +
-                    " OR Notes LIKE '%" + safe + "%'";
-
-                // الحقول الرقمية تُحوّل إلى نص قبل المقارنة لتجنب خطأ RowFilter
-                // عند استخدام LIKE على SalaryMonth / SalaryYear.
-                string numericFilter =
-                    "CONVERT(SalaryMonth, 'System.String') LIKE '%" + safe + "%'" +
-                    " OR CONVERT(SalaryYear, 'System.String') LIKE '%" + safe + "%'";
-
-                view.RowFilter = "(" + textFilter + ") OR (" + numericFilter + ")";
+                if (string.IsNullOrWhiteSpace(term) || PayrollRowContains(row, term))
+                    filtered.ImportRow(row);
             }
 
-            dataGridViewPayrolls.DataSource = view;
-            lblRecordCount.Text = "عدد سجلات الرواتب: " + view.Count;
+            dataGridViewPayrolls.DataSource = filtered.DefaultView;
+            lblRecordCount.Text = "عدد سجلات الرواتب: " + filtered.Rows.Count;
             FormatGridColumns();
+        }
+
+        private static bool PayrollRowContains(DataRow row, string term)
+        {
+            string comparison = term.Trim();
+
+            string[] searchableColumns =
+            {
+                "TeacherName",
+                "PaymentMethod",
+                "VoucherNumber",
+                "Notes",
+                "SalaryMonth",
+                "SalaryYear",
+                "BasicSalary",
+                "Allowances",
+                "Deductions",
+                "NetSalary",
+                "PaymentDate"
+            };
+
+            foreach (string column in searchableColumns)
+            {
+                if (!row.Table.Columns.Contains(column))
+                    continue;
+
+                object value = row[column];
+                if (value == null || value == DBNull.Value)
+                    continue;
+
+                string text = Convert.ToString(value, System.Globalization.CultureInfo.CurrentCulture);
+                if (!string.IsNullOrEmpty(text) &&
+                    text.IndexOf(comparison, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                    return true;
+            }
+
+            return false;
         }
 
         private void FormatGridColumns()
