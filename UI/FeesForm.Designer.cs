@@ -111,12 +111,13 @@
             // 
             // panelTitle
             // 
+            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
             this.panelTitle.Margin = new System.Windows.Forms.Padding(0);
             this.panelTitle.Name = "panelTitle";
-            this.panelTitle.Size = new System.Drawing.Size(1100, 49);
+            this.panelTitle.Size = new System.Drawing.Size(1100, 60);
             this.panelTitle.TabIndex = 0;
             // 
             // lblTitle
