@@ -69,6 +69,7 @@ namespace SchoolSystem.UI
             // 
             // panelTitle
             // 
+            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
             this.panelTitle.Controls.Add(this.lblTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
