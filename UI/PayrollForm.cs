@@ -51,7 +51,38 @@ namespace SchoolSystem.UI
             txtOther.MaxLength = 40;
             txtDeductions.MaxLength = 40;
 
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             this.Load += PayrollForm_Load;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                selectedContractId != 0)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Teachers") &&
+                !DataRefreshNotifier.IsRelated(e, "TeacherContracts") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
+                return;
+
+            try
+            {
+                await LoadTeachersAsync();
+                await LoadContractsAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة العقود الوظيفية: التحديث التلقائي",
+                    ex);
+            }
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
@@ -658,6 +689,7 @@ namespace SchoolSystem.UI
 
 
                 await LoadContractsAsync();
+                DataRefreshNotifier.Notify("TeacherContracts", this);
                 ClearInputs();
             }
 
@@ -697,6 +729,8 @@ namespace SchoolSystem.UI
 
 
                 await LoadContractsAsync();
+                if (updated)
+                    DataRefreshNotifier.Notify("TeacherContracts", this);
                 ClearInputs();
             }
 
@@ -742,6 +776,8 @@ namespace SchoolSystem.UI
 
 
                 await LoadContractsAsync();
+                if (deleted)
+                    DataRefreshNotifier.Notify("TeacherContracts", this);
                 ClearInputs();
             }
 
