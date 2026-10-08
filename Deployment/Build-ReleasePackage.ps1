@@ -44,6 +44,22 @@ if (-not (Test-Path (Join-Path $buildOutput 'SchoolSystem.exe'))) {
     throw "لم يُنتج البناء الملف التنفيذي في: $buildOutput"
 }
 
+foreach ($requiredRelativePath in @(
+    'Database\databaseschool.sql',
+    'Database\SeedAcademicStructure_2026_2027.sql'
+)) {
+    $requiredPath = Join-Path $buildOutput $requiredRelativePath
+    if (-not (Test-Path $requiredPath)) {
+        throw "ملف حزمة قاعدة البيانات المطلوب غير موجود: $requiredPath"
+    }
+}
+
+$migrationDirectory = Join-Path $buildOutput 'Database\migrations'
+$migrationFiles = Get-ChildItem -LiteralPath $migrationDirectory -Filter '*.sql' -File -ErrorAction SilentlyContinue
+if (-not $migrationFiles -or $migrationFiles.Count -eq 0) {
+    throw 'لا توجد migrations داخل مخرجات Release؛ لن نُنشئ حزمة عرض ناقصة.'
+}
+
 $buildItems = Get-ChildItem -LiteralPath $buildOutput -Force | Where-Object { $_.Name -ne '%(Dir)%(Filename)%(Extension)' }
 foreach ($buildItem in $buildItems) {
     Copy-Item -LiteralPath $buildItem.FullName -Destination $packageRoot -Recurse -Force
