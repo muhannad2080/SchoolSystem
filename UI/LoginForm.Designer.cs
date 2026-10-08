@@ -125,7 +125,7 @@ namespace SchoolSystem.UI
             this.panelBrand.Location = new Point(0, 0);
             this.panelBrand.Margin = new Padding(0);
             this.panelBrand.Name = "panelBrand";
-            this.panelBrand.Padding = new Padding(58, 48, 58, 36);
+            this.panelBrand.Padding = new Padding(54, 42, 54, 32);
             this.panelBrand.RightToLeft = RightToLeft.Yes;
             this.panelBrand.Size = new Size(531, 720);
             this.panelBrand.TabIndex = 0;
@@ -138,16 +138,16 @@ namespace SchoolSystem.UI
             this.brandLayout.Controls.Add(this.brandFeatureLayout, 0, 2);
             this.brandLayout.Controls.Add(this.lblBrandFooter, 0, 4);
             this.brandLayout.Dock = DockStyle.Fill;
-            this.brandLayout.Location = new Point(58, 48);
+            this.brandLayout.Location = new Point(54, 42);
             this.brandLayout.Margin = new Padding(0);
             this.brandLayout.Name = "brandLayout";
             this.brandLayout.RowCount = 5;
-            this.brandLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 204F));
-            this.brandLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
             this.brandLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 220F));
+            this.brandLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 18F));
+            this.brandLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 206F));
             this.brandLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             this.brandLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
-            this.brandLayout.Size = new Size(415, 636);
+            this.brandLayout.Size = new Size(423, 646);
             this.brandLayout.TabIndex = 0;
 
             // brandTop
@@ -163,8 +163,8 @@ namespace SchoolSystem.UI
             this.brandTop.Name = "brandTop";
             this.brandTop.RightToLeft = RightToLeft.Yes;
             this.brandTop.RowCount = 3;
-            this.brandTop.RowStyles.Add(new RowStyle(SizeType.Absolute, 84F));
-            this.brandTop.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
+            this.brandTop.RowStyles.Add(new RowStyle(SizeType.Absolute, 96F));
+            this.brandTop.RowStyles.Add(new RowStyle(SizeType.Absolute, 56F));
             this.brandTop.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             this.brandTop.Size = new Size(415, 204);
             this.brandTop.TabIndex = 0;
@@ -172,12 +172,13 @@ namespace SchoolSystem.UI
             // lblBrandMark
             this.lblBrandMark.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             this.lblBrandMark.BackColor = Color.FromArgb(13, 148, 136);
-            this.lblBrandMark.Font = new Font("Tahoma", 28F, FontStyle.Bold);
+            this.lblBrandMark.Font = new Font("Tahoma", 30F, FontStyle.Bold);
             this.lblBrandMark.ForeColor = Color.White;
-            this.lblBrandMark.Location = new Point(331, 0);
-            this.lblBrandMark.Margin = new Padding(0, 0, 0, 12);
+            this.lblBrandMark.Location = new Point(327, 0);
+            this.lblBrandMark.Margin = new Padding(0, 0, 0, 14);
             this.lblBrandMark.Name = "lblBrandMark";
-            this.lblBrandMark.Size = new Size(84, 84);
+            this.lblBrandMark.RightToLeft = RightToLeft.Yes;
+            this.lblBrandMark.Size = new Size(96, 96);
             this.lblBrandMark.TabIndex = 0;
             this.lblBrandMark.Text = "م";
             this.lblBrandMark.TextAlign = ContentAlignment.MiddleCenter;
@@ -186,11 +187,11 @@ namespace SchoolSystem.UI
             this.lblBrandName.Dock = DockStyle.Fill;
             this.lblBrandName.Font = new Font("Tahoma", 19F, FontStyle.Bold);
             this.lblBrandName.ForeColor = Color.White;
-            this.lblBrandName.Location = new Point(0, 84);
+            this.lblBrandName.Location = new Point(0, 96);
             this.lblBrandName.Margin = new Padding(0);
             this.lblBrandName.Name = "lblBrandName";
             this.lblBrandName.RightToLeft = RightToLeft.Yes;
-            this.lblBrandName.Size = new Size(415, 48);
+            this.lblBrandName.Size = new Size(423, 56);
             this.lblBrandName.TabIndex = 1;
             this.lblBrandName.Text = "نظام إدارة المدرسة";
             this.lblBrandName.TextAlign = ContentAlignment.MiddleRight;
@@ -199,11 +200,11 @@ namespace SchoolSystem.UI
             this.lblBrandTagline.Dock = DockStyle.Fill;
             this.lblBrandTagline.Font = new Font("Tahoma", 10.5F);
             this.lblBrandTagline.ForeColor = Color.FromArgb(203, 213, 225);
-            this.lblBrandTagline.Location = new Point(0, 132);
+            this.lblBrandTagline.Location = new Point(0, 152);
             this.lblBrandTagline.Margin = new Padding(0);
             this.lblBrandTagline.Name = "lblBrandTagline";
             this.lblBrandTagline.RightToLeft = RightToLeft.Yes;
-            this.lblBrandTagline.Size = new Size(415, 72);
+            this.lblBrandTagline.Size = new Size(423, 68);
             this.lblBrandTagline.TabIndex = 2;
             this.lblBrandTagline.Text = "منصة مدرسية موحّدة لإدارة الطلاب والمعلمين والحضور والرسوم والعمليات اليومية";
             this.lblBrandTagline.TextAlign = ContentAlignment.TopRight;
@@ -217,16 +218,16 @@ namespace SchoolSystem.UI
             this.brandFeatureLayout.Controls.Add(this.lblFeature2, 0, 2);
             this.brandFeatureLayout.Controls.Add(this.lblFeature3, 0, 3);
             this.brandFeatureLayout.Dock = DockStyle.Fill;
-            this.brandFeatureLayout.Location = new Point(0, 224);
+            this.brandFeatureLayout.Location = new Point(0, 238);
             this.brandFeatureLayout.Margin = new Padding(0);
             this.brandFeatureLayout.Name = "brandFeatureLayout";
             this.brandFeatureLayout.RightToLeft = RightToLeft.Yes;
             this.brandFeatureLayout.RowCount = 4;
-            this.brandFeatureLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
+            this.brandFeatureLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
             this.brandFeatureLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
             this.brandFeatureLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
             this.brandFeatureLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            this.brandFeatureLayout.Size = new Size(415, 220);
+            this.brandFeatureLayout.Size = new Size(423, 206);
             this.brandFeatureLayout.TabIndex = 1;
 
             // feature title
@@ -301,7 +302,7 @@ namespace SchoolSystem.UI
             this.panelLoginArea.Location = new Point(531, 0);
             this.panelLoginArea.Margin = new Padding(0);
             this.panelLoginArea.Name = "panelLoginArea";
-            this.panelLoginArea.Padding = new Padding(48, 24, 48, 30);
+            this.panelLoginArea.Padding = new Padding(40, 22, 40, 28);
             this.panelLoginArea.RightToLeft = RightToLeft.Yes;
             this.panelLoginArea.Size = new Size(649, 720);
             this.panelLoginArea.TabIndex = 1;
@@ -346,34 +347,34 @@ namespace SchoolSystem.UI
             this.loginCard.BackColor = Color.White;
             this.loginCard.BorderStyle = BorderStyle.FixedSingle;
             this.loginCard.Controls.Add(this.cardLayout);
-            this.loginCard.Location = new Point(46, 78);
+            this.loginCard.Location = new Point(32, 38);
             this.loginCard.Margin = new Padding(0);
             this.loginCard.Name = "loginCard";
-            this.loginCard.Padding = new Padding(30, 24, 30, 20);
+            this.loginCard.Padding = new Padding(32, 28, 32, 22);
             this.loginCard.RightToLeft = RightToLeft.Yes;
-            this.loginCard.Size = new Size(460, 560);
+            this.loginCard.Size = new Size(480, 590);
             this.loginCard.TabIndex = 1;
 
             // cardLayout
             this.cardLayout.ColumnCount = 1;
             this.cardLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             this.cardLayout.RowCount = 16;
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 38F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 50F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 36F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 44F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 54F));
             this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 48F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
             this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 26F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 1F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
-            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 14F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 26F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 14F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 54F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 28F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 2F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 32F));
+            this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 42F));
 
             this.cardLayout.BackColor = Color.White;
             this.cardLayout.Controls.Add(this.lblWelcome, 0, 0);
@@ -400,7 +401,7 @@ namespace SchoolSystem.UI
 
             // lblWelcome
             this.lblWelcome.Dock = DockStyle.Fill;
-            this.lblWelcome.Font = new Font("Tahoma", 10F, FontStyle.Bold);
+            this.lblWelcome.Font = new Font("Tahoma", 10.5F, FontStyle.Bold);
             this.lblWelcome.ForeColor = Color.FromArgb(13, 148, 136);
             this.lblWelcome.Location = new Point(3, 0);
             this.lblWelcome.Margin = new Padding(3, 0, 3, 0);
@@ -413,7 +414,7 @@ namespace SchoolSystem.UI
 
             // lblTitle
             this.lblTitle.Dock = DockStyle.Fill;
-            this.lblTitle.Font = new Font("Tahoma", 16F, FontStyle.Bold);
+            this.lblTitle.Font = new Font("Tahoma", 18F, FontStyle.Bold);
             this.lblTitle.ForeColor = Color.FromArgb(15, 23, 42);
             this.lblTitle.Location = new Point(3, 38);
             this.lblTitle.Margin = new Padding(3, 0, 3, 0);
@@ -426,7 +427,7 @@ namespace SchoolSystem.UI
 
             // lblSubtitle
             this.lblSubtitle.Dock = DockStyle.Fill;
-            this.lblSubtitle.Font = new Font("Tahoma", 9.5F);
+            this.lblSubtitle.Font = new Font("Tahoma", 9.75F);
             this.lblSubtitle.ForeColor = Color.FromArgb(71, 85, 105);
             this.lblSubtitle.Location = new Point(3, 78);
             this.lblSubtitle.Margin = new Padding(3, 0, 3, 0);
@@ -448,7 +449,7 @@ namespace SchoolSystem.UI
 
             // lblUserLabel
             this.lblUserLabel.Dock = DockStyle.Fill;
-            this.lblUserLabel.Font = new Font("Tahoma", 9.5F, FontStyle.Bold);
+            this.lblUserLabel.Font = new Font("Tahoma", 10F, FontStyle.Bold);
             this.lblUserLabel.ForeColor = Color.FromArgb(30, 41, 59);
             this.lblUserLabel.Location = new Point(3, 144);
             this.lblUserLabel.Margin = new Padding(3, 0, 3, 0);
@@ -470,7 +471,7 @@ namespace SchoolSystem.UI
             this.pnlUser.Name = "pnlUser";
             this.pnlUser.Padding = new Padding(12, 5, 12, 5);
             this.pnlUser.RightToLeft = RightToLeft.Yes;
-            this.pnlUser.Size = new Size(398, 48);
+            this.pnlUser.Size = new Size(416, 52);
             this.pnlUser.TabIndex = 5;
 
             // txtUserName
@@ -527,7 +528,7 @@ namespace SchoolSystem.UI
             this.pnlPassword.Name = "pnlPassword";
             this.pnlPassword.Padding = new Padding(12, 5, 12, 5);
             this.pnlPassword.RightToLeft = RightToLeft.Yes;
-            this.pnlPassword.Size = new Size(398, 48);
+            this.pnlPassword.Size = new Size(416, 52);
             this.pnlPassword.TabIndex = 7;
 
             // txtPassword
@@ -561,7 +562,7 @@ namespace SchoolSystem.UI
             this.btnTogglePassword.Margin = new Padding(0);
             this.btnTogglePassword.Name = "btnTogglePassword";
             this.btnTogglePassword.RightToLeft = RightToLeft.Yes;
-            this.btnTogglePassword.Size = new Size(40, 36);
+            this.btnTogglePassword.Size = new Size(92, 36);
             this.btnTogglePassword.TabIndex = 2;
             this.btnTogglePassword.Text = "إظهار";
             this.btnTogglePassword.UseVisualStyleBackColor = false;
@@ -585,7 +586,7 @@ namespace SchoolSystem.UI
             this.pnlLogin.Margin = new Padding(0);
             this.pnlLogin.Name = "pnlLogin";
             this.pnlLogin.Padding = new Padding(0, 2, 0, 0);
-            this.pnlLogin.Size = new Size(398, 52);
+            this.pnlLogin.Size = new Size(416, 54);
             this.pnlLogin.TabIndex = 8;
             this.pnlLogin.Controls.Add(this.btnLogin);
 
@@ -603,7 +604,7 @@ namespace SchoolSystem.UI
             this.btnLogin.Margin = new Padding(0);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.RightToLeft = RightToLeft.Yes;
-            this.btnLogin.Size = new Size(398, 50);
+            this.btnLogin.Size = new Size(416, 52);
             this.btnLogin.TabIndex = 3;
             this.btnLogin.Text = "تسجيل الدخول";
             this.btnLogin.UseVisualStyleBackColor = false;
@@ -622,7 +623,7 @@ namespace SchoolSystem.UI
             this.bottomActions.RightToLeft = RightToLeft.Yes;
             this.bottomActions.RowCount = 1;
             this.bottomActions.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            this.bottomActions.Size = new Size(398, 40);
+            this.bottomActions.Size = new Size(416, 42);
             this.bottomActions.TabIndex = 9;
 
             // btnClear
@@ -634,13 +635,13 @@ namespace SchoolSystem.UI
             this.btnClear.FlatAppearance.MouseDownBackColor = Color.FromArgb(241, 245, 249);
             this.btnClear.FlatAppearance.MouseOverBackColor = Color.FromArgb(248, 250, 252);
             this.btnClear.FlatStyle = FlatStyle.Flat;
-            this.btnClear.Font = new Font("Tahoma", 8.5F);
+            this.btnClear.Font = new Font("Tahoma", 9F);
             this.btnClear.ForeColor = Color.FromArgb(71, 85, 105);
             this.btnClear.Location = new Point(6, 4);
             this.btnClear.Margin = new Padding(0, 0, 6, 0);
             this.btnClear.Name = "btnClear";
             this.btnClear.RightToLeft = RightToLeft.Yes;
-            this.btnClear.Size = new Size(108, 32);
+            this.btnClear.Size = new Size(112, 36);
             this.btnClear.TabIndex = 4;
             this.btnClear.Text = "مسح الحقول";
             this.btnClear.UseVisualStyleBackColor = false;
@@ -656,13 +657,13 @@ namespace SchoolSystem.UI
             this.btnExit.FlatAppearance.MouseDownBackColor = Color.FromArgb(254, 226, 226);
             this.btnExit.FlatAppearance.MouseOverBackColor = Color.FromArgb(254, 242, 242);
             this.btnExit.FlatStyle = FlatStyle.Flat;
-            this.btnExit.Font = new Font("Tahoma", 8.5F);
+            this.btnExit.Font = new Font("Tahoma", 9F);
             this.btnExit.ForeColor = Color.FromArgb(185, 28, 28);
             this.btnExit.Location = new Point(284, 4);
             this.btnExit.Margin = new Padding(6, 0, 0, 0);
             this.btnExit.Name = "btnExit";
             this.btnExit.RightToLeft = RightToLeft.Yes;
-            this.btnExit.Size = new Size(108, 32);
+            this.btnExit.Size = new Size(112, 36);
             this.btnExit.TabIndex = 5;
             this.btnExit.Text = "خروج";
             this.btnExit.UseVisualStyleBackColor = false;
@@ -705,7 +706,7 @@ namespace SchoolSystem.UI
 
             // lblDevelopers
             this.lblDevelopers.Dock = DockStyle.Fill;
-            this.lblDevelopers.Font = new Font("Tahoma", 7.5F, FontStyle.Regular);
+            this.lblDevelopers.Font = new Font("Tahoma", 8F, FontStyle.Regular);
             this.lblDevelopers.ForeColor = Color.FromArgb(148, 163, 184);
             this.lblDevelopers.Location = new Point(3, 469);
             this.lblDevelopers.Margin = new Padding(3, 0, 3, 0);
