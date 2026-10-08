@@ -1222,10 +1222,6 @@ namespace SchoolSystem.UI
                     LoadData();
 
                     DataRefreshNotifier.Notify("All", this);
-                    DataRefreshNotifier.Notify("All", this);
-                    DataRefreshNotifier.Notify("All", this);
-                    DataRefreshNotifier.Notify("All", this);
-                    DataRefreshNotifier.Notify("All", this);
 
                     isEditMode =
                         false;
