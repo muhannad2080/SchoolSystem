@@ -17,6 +17,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            this.panelTitle = new System.Windows.Forms.Panel();
+            this.lblTitle = new System.Windows.Forms.Label();
             this.lblStudentNumber = new System.Windows.Forms.Label();
             this.txtStudentNumber = new System.Windows.Forms.TextBox();
             this.lblFullName = new System.Windows.Forms.Label();
@@ -703,7 +705,7 @@
             // splitContainerMain
             // 
             this.splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerMain.Location = new System.Drawing.Point(0, 66);
+            this.splitContainerMain.Location = new System.Drawing.Point(0, 132);
             this.splitContainerMain.Name = "splitContainerMain";
             // 
             // splitContainerMain.Panel1
@@ -748,7 +750,7 @@
             this.pnlSearch.Controls.Add(this.btnClearFilters);
             this.pnlSearch.Controls.Add(this.btnReload);
             this.pnlSearch.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlSearch.Location = new System.Drawing.Point(0, 0);
+            this.pnlSearch.Location = new System.Drawing.Point(0, 60);
             this.pnlSearch.Name = "pnlSearch";
             this.pnlSearch.Padding = new System.Windows.Forms.Padding(10);
             this.pnlSearch.Size = new System.Drawing.Size(1200, 72);
@@ -972,6 +974,31 @@
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
+            // panelTitle
+            // 
+            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.panelTitle.Controls.Add(this.lblTitle);
+            this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTitle.Location = new System.Drawing.Point(0, 0);
+            this.panelTitle.Margin = new System.Windows.Forms.Padding(0);
+            this.panelTitle.Name = "panelTitle";
+            this.panelTitle.Size = new System.Drawing.Size(1200, 60);
+            this.panelTitle.TabIndex = 2;
+            // 
+            // lblTitle
+            // 
+            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.ForeColor = System.Drawing.Color.White;
+            this.lblTitle.Location = new System.Drawing.Point(0, 0);
+            this.lblTitle.Margin = new System.Windows.Forms.Padding(0);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.lblTitle.Size = new System.Drawing.Size(1200, 60);
+            this.lblTitle.TabIndex = 0;
+            this.lblTitle.Text = "إدارة الطلاب";
+            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // StudentsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 18F);
@@ -981,6 +1008,7 @@
             this.Controls.Add(this.splitContainerMain);
             this.Controls.Add(this.pnlSearch);
             this.Controls.Add(this.pnlButtons);
+            this.Controls.Add(this.panelTitle);
             this.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MinimumSize = new System.Drawing.Size(1000, 700);
             this.CancelButton = this.btnCancel;
@@ -1512,6 +1540,9 @@
         // ================================================================
 
         private System.Windows.Forms.FlowLayoutPanel pnlButtons;
+
+        private System.Windows.Forms.Panel panelTitle;
+        private System.Windows.Forms.Label lblTitle;
 
         private System.Windows.Forms.Button btnClose;
         private System.Windows.Forms.Button btnStudentProfile;
