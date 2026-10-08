@@ -133,6 +133,7 @@ namespace SchoolSystem.UI
             // brandLayout
             this.brandLayout.ColumnCount = 1;
             this.brandLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            this.brandLayout.BackColor = Color.Transparent;
             this.brandLayout.Controls.Add(this.brandTop, 0, 0);
             this.brandLayout.Controls.Add(this.brandFeatureLayout, 0, 2);
             this.brandLayout.Controls.Add(this.lblBrandFooter, 0, 4);
@@ -152,6 +153,7 @@ namespace SchoolSystem.UI
             // brandTop
             this.brandTop.ColumnCount = 1;
             this.brandTop.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            this.brandTop.BackColor = Color.Transparent;
             this.brandTop.Controls.Add(this.lblBrandMark, 0, 0);
             this.brandTop.Controls.Add(this.lblBrandName, 0, 1);
             this.brandTop.Controls.Add(this.lblBrandTagline, 0, 2);
@@ -209,6 +211,7 @@ namespace SchoolSystem.UI
             // brandFeatureLayout
             this.brandFeatureLayout.ColumnCount = 1;
             this.brandFeatureLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+            this.brandFeatureLayout.BackColor = Color.Transparent;
             this.brandFeatureLayout.Controls.Add(this.lblFeatureTitle, 0, 0);
             this.brandFeatureLayout.Controls.Add(this.lblFeature1, 0, 1);
             this.brandFeatureLayout.Controls.Add(this.lblFeature2, 0, 2);
@@ -308,6 +311,7 @@ namespace SchoolSystem.UI
             this.loginAreaLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
             this.loginAreaLayout.RowCount = 1;
             this.loginAreaLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            this.loginAreaLayout.BackColor = Color.Transparent;
             this.loginAreaLayout.Controls.Add(this.loginCard, 0, 0);
             this.loginAreaLayout.Dock = DockStyle.Fill;
             this.loginAreaLayout.Location = new Point(48, 24);
@@ -371,6 +375,7 @@ namespace SchoolSystem.UI
             this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F));
             this.cardLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
 
+            this.cardLayout.BackColor = Color.White;
             this.cardLayout.Controls.Add(this.lblWelcome, 0, 0);
             this.cardLayout.Controls.Add(this.lblTitle, 0, 1);
             this.cardLayout.Controls.Add(this.lblSubtitle, 0, 2);
