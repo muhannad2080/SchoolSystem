@@ -36,6 +36,8 @@ def generate_designer_code():
     res.append("        }")
     res.append("        private void InitializeComponent() {")
     res.append("            this.components = new System.ComponentModel.Container();")
+    res.append("            this.panelTitle = new System.Windows.Forms.Panel();")
+    res.append("            this.lblTitle = new System.Windows.Forms.Label();")
 
     for name, lbl, typ, grp, isCombo in controls:
         res.append(f"            this.lbl{name} = new System.Windows.Forms.Label();")
@@ -231,6 +233,16 @@ def generate_designer_code():
     res.append("            this.Controls.Add(this.splitContainerMain);")
     res.append("            this.Controls.Add(this.pnlSearch);")
     res.append("            this.Controls.Add(this.pnlButtons);")
+    res.append("            this.panelTitle.Controls.Add(this.lblTitle);")
+    res.append("            this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;")
+    res.append("            this.panelTitle.Height = 60;")
+    res.append("            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);")
+    res.append("            this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;")
+    res.append("            this.lblTitle.Text = \"إدارة الطلاب\";")
+    res.append("            this.lblTitle.Font = new System.Drawing.Font(\"Tahoma\", 15F, System.Drawing.FontStyle.Bold);")
+    res.append("            this.lblTitle.ForeColor = System.Drawing.Color.White;")
+    res.append("            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;")
+    res.append("            this.Controls.Add(this.panelTitle);")
     res.append("            this.ClientSize = new System.Drawing.Size(1200, 750);")
     res.append("            this.Name = \"StudentsForm\";")
     res.append("            this.Text = \"إدارة الطلاب\";")
@@ -267,7 +279,9 @@ def generate_designer_code():
         "        private System.Windows.Forms.Button btnRemoveImage;",
         "        private System.Windows.Forms.DataGridView dgvStudents;",
         "        private System.Windows.Forms.ErrorProvider errorProvider1;",
-        "        private System.Windows.Forms.SplitContainer splitContainerMain;",
+        "        private System.Windows.Forms.Panel panelTitle;
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.SplitContainer splitContainerMain;",
         "        private System.Windows.Forms.Panel pnlSearch;",
         "        private System.Windows.Forms.TextBox txtSearch;",
         "        private System.Windows.Forms.Button btnSearch;",
