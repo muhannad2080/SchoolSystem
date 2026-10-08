@@ -24,7 +24,30 @@ SchoolSystem.sln
 
 ## البناء والتشغيل
 
-من Visual Studio اختر `Build > Rebuild Solution`، ثم شغّل المشروع باستخدام `F5`. يجب إعداد اتصال SQL Server في `App.config` قبل التشغيل الفعلي.
+من Visual Studio اختر `Build > Rebuild Solution`، ثم شغّل المشروع باستخدام `F5`.
+
+لإنشاء ملف التثبيت النهائي:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\Deployment\Build-Installers.ps1 -Configuration Release -Version 1.0.0
+```
+
+ينتج المثبت الأساسي:
+
+`dist\SchoolSystem-Setup-1.0.0.exe`
+
+### ماذا يفعل المثبت
+
+بعد تثبيت `Setup.exe` وتشغيل النظام لأول مرة:
+
+1. يكتشف مثيل SQL Server المحلي الشائع تلقائيًا عند استخدام Windows Authentication.
+2. إذا كانت `SchoolDB` موجودة، يستخدمها ويطبق فقط الـmigrations المعلقة دون حذف بياناتها.
+3. إذا لم تكن موجودة، ينشئها تلقائيًا من `Database\databaseschool.sql` ثم يطبق الـmigrations.
+4. يجهز بيانات العام الأكاديمي `2026/2027` للشحنة الجديدة فقط.
+5. يجهز حساب `admin` بكلمة مرور مؤقتة عشوائية ويطلب تغييرها عند أول دخول.
+6. يثبت المكتبات الأصلية المطلوبة للتقارير والتصدير.
+
+المتطلبات: Windows، و`.NET Framework 4.7.2` أو أحدث، وSQL Server/SQL Express/LocalDB متاح للمستخدم. إذا لم يوجد SQL Server محلي أو لم يكن الاتصال قابلاً للاستخدام، تظهر شاشة إعداد الاتصال داخل البرنامج.
 
 ## مزامنة التحديثات للنسخة الحالية
 
