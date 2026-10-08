@@ -659,7 +659,7 @@ namespace SchoolSystem.UI
             }
 
             if (!string.IsNullOrWhiteSpace(txtFee.Text) &&
-                (!UIHelper.TryParseDecimal(txtFee.Text, out decimal fee) || fee < 0))
+                (!UIHelper.TryParseDecimal(txtFee.Text, out decimal fee) || fee < 0m))
             {
 
                 UIHelper.ShowWarning("أدخل رسوم نقل رقمية غير سالبة.");
