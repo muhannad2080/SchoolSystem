@@ -146,6 +146,12 @@ namespace SchoolSystem.UI
             txtSqlPass.Focus();
         }
 
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
+        }
+
         private void btnBrowseBackup_Click(object sender, EventArgs e)
         {
             using (FolderBrowserDialog dialog = new FolderBrowserDialog())
