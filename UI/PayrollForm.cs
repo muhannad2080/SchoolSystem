@@ -41,8 +41,6 @@ namespace SchoolSystem.UI
             panelSearch.Visible = true;
             txtSearch.Visible = true;
             btnSearch.Visible = true;
-            panelSearch.BringToFront();
-            btnSearch.BringToFront();
 
             // تحديد أقصى طول للحقول المالية في عقد الراتب.
             txtBasicSalary.MaxLength = 40;
