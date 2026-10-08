@@ -196,25 +196,6 @@ namespace SchoolSystem.UI
             }
         }
 
-        // تعريف الدالة ShowInitializationError لتنفيذ العملية المرتبطة بها.
-        private void ShowInitializationError(Exception exception)
-        {
-            string message = exception == null ? string.Empty : exception.Message ?? string.Empty;
-
-            if (message.Contains("SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD"))
-            {
-                ShowError(
-                    "لم يتم إنشاء مدير النظام الأول. عيّن متغير البيئة SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD بطول 10 أحرف على الأقل، ثم أعد تشغيل البرنامج.",
-                    "تهيئة مدير النظام");
-
-                return;
-            }
-
-            ShowError(
-                "تعذر تهيئة بيانات الدخول. تحقق من اتصال قاعدة البيانات وتأكد من تنفيذ محرك الترحيل المدمج ثم حاول مرة أخرى.",
-                "تهيئة النظام");
-        }
-
         // تعريف الدالة txtUserName_Enter لتنفيذ العملية المرتبطة بها.
         private void txtUserName_Enter(object sender, EventArgs e)
         {
@@ -578,7 +559,7 @@ namespace SchoolSystem.UI
         }
 
         // تعريف الدالة ShowError لتنفيذ العملية المرتبطة بها.
-        private void ShowError(string message, string title = "فشل الدخول")
+        private void ShowError(string message)
         {
             UIHelper.ShowError(message);
         }
