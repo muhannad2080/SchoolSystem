@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using SchoolSystem.Models;
@@ -29,7 +28,6 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             ConfigureLoginExperience();
-            ConfigurePremiumSurface();
 
             FormClosed += delegate
             {
@@ -39,21 +37,6 @@ namespace SchoolSystem.UI
                     schoolBrandImage = null;
                 }
             };
-
-            // توحيد اللون الرئيسي مع هوية النظام مع الإبقاء على تخطيط شاشة الدخول المخصص.
-            btnLogin.BackColor = UIHelper.AccentColor;
-            btnLogin.ForeColor = System.Drawing.Color.White;
-
-            lblStatus.Text = "الحالة: جاهز لتسجيل الدخول";
-
-            // ============================================================
-            // ملاحظة:
-            // تم إزالة جميع أوامر التنسيق والتصميم من هنا حتى يكون
-            // LoginForm.Designer.cs هو المسؤول بالكامل عن شكل الواجهة.
-            //
-            // لم يتم تغيير أي منطق متعلق بتسجيل الدخول أو التحقق
-            // أو الأحداث أو معالجة الأخطاء.
-            // ============================================================
 
             // لا تُنفذ تهيئة قاعدة البيانات أثناء فتح WinForms Designer.
             if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
@@ -88,16 +71,19 @@ namespace SchoolSystem.UI
         }
 
         /// <summary>
-        /// يضبط الهوية البصرية العربية لشاشة الدخول ويضيف تذييل المطورين.
-        /// لا يغيّر مسار المصادقة أو الصلاحيات أو التعامل مع قاعدة البيانات.
+        /// يطبّق متطلبات التشغيل الديناميكية فقط.
+        /// كل النصوص والهوية البصرية الثابتة مصدرها LoginForm.Designer.cs
+        /// وقيم الهوية المركزية في UIHelper؛ لذلك لا تُعاد كتابة تعديلات المصمم
+        /// عند تشغيل البرنامج.
         /// </summary>
         private void ConfigureLoginExperience()
         {
-            DoubleBuffered = true;
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
-            FormBorderStyle = FormBorderStyle.None;
-            BackColor = UIHelper.BackgroundColor;
+
+            // لا نقرأ إعدادات المدرسة داخل المصمم حتى تبقى المعاينة مطابقة للـ Designer.
+            if (IsDesignMode())
+                return;
 
             SchoolSettings branding = SchoolSettingsService.Current();
 
@@ -106,7 +92,7 @@ namespace SchoolSystem.UI
                     ? branding.SchoolNameAr.Trim()
                     : branding != null && !string.IsNullOrWhiteSpace(branding.SchoolNameEn)
                         ? branding.SchoolNameEn.Trim()
-                        : "نظام إدارة المدرسة";
+                        : string.Empty;
 
             string organization =
                 branding != null && !string.IsNullOrWhiteSpace(branding.OrganizationNameAr)
@@ -127,192 +113,27 @@ namespace SchoolSystem.UI
                 new[] { organization, address, phone }
                 .Where(value => !string.IsNullOrWhiteSpace(value)));
 
-            lblBrandName.Text = schoolName;
-            lblBrandTagline.Text =
-                string.IsNullOrWhiteSpace(contact)
-                    ? "منصة مدرسية موحّدة لإدارة العمليات اليومية"
-                    : contact;
+            // الاسم والعنوان العام قد يكونان ديناميكيين من إعدادات المدرسة.
+            // بقية عناصر الواجهة تبقى من Designer ولا تُعاد كتابتها وقت التشغيل.
+            if (!string.IsNullOrWhiteSpace(schoolName))
+                lblBrandName.Text = schoolName;
+
+            if (!string.IsNullOrWhiteSpace(contact))
+                lblBrandTagline.Text = contact;
 
             LoadSchoolBrandLogo(branding);
-            lblFeatureTitle.Text = "إدارة مدرسية ذكية في منصة واحدة";
-            lblFeature1.Text = "✓  بيانات الطلاب والتسجيلات مترابطة ومنظمة";
-            lblFeature2.Text = "✓  الأكاديميات والرسوم والحضور في مسار واحد";
-            lblFeature3.Text = "✓  أدوار وصلاحيات وسجل تدقيق للعمليات";
-            lblBrandFooter.Text = "SchoolSystem • نظام إدارة المدرسة";
+        }
 
-            lblWelcome.Text = "مرحبًا بك في SchoolSystem";
-            lblTitle.Text = "تسجيل الدخول";
-            lblSubtitle.Text = "أدخل بيانات حسابك المصرّح له بالوصول إلى نظام إدارة المدرسة";
-
-            lblUserLabel.Text = "اسم المستخدم";
-            lblPasswordLabel.Text = "كلمة المرور";
-            txtUserName.TextAlign = HorizontalAlignment.Right;
-            txtPassword.TextAlign = HorizontalAlignment.Right;
-
-            btnLogin.Text = "تسجيل الدخول";
-            btnClear.Text = "مسح الحقول";
-            btnExit.Text = "خروج";
-            btnTogglePassword.Text = "إظهار";
-
-            lblStatus.TextAlign = ContentAlignment.MiddleRight;
-            lblFooter.Text = "الوصول إلى النظام متاح للحسابات المصرّح لها فقط";
-            lblFooter.TextAlign = ContentAlignment.MiddleRight;
-
-            lblDevelopers.Text =
-                "تطوير النظام\r\nالمهندس مهند علي علي علي سعد • عبد الرحمن سعد علي سعد • سامي الحاج";
-            lblDevelopers.TextAlign = ContentAlignment.MiddleCenter;
-
-            btnWindowClose.Text = "×";
-            btnWindowClose.RightToLeft = RightToLeft.No;
-
-            // توحيد اتجاه النصوص داخل الحاويات العربية.
-            foreach (Control control in new Control[]
-            {
-                panelBrand, brandLayout, brandTop, brandFeatureLayout,
-                panelLoginArea, loginAreaLayout, loginCard, cardLayout,
-                pnlUser, pnlPassword, pnlLogin, bottomActions
-            })
-            {
-                control.RightToLeft = RightToLeft.Yes;
-            }
+        private bool IsDesignMode()
+        {
+            return LicenseManager.UsageMode == LicenseUsageMode.Designtime ||
+                   (Site != null && Site.DesignMode);
         }
 
         private void ConfigurePremiumSurface()
         {
-            // طبقة بصرية خفيفة تحافظ على طابع عربي RTL دون الاعتماد على صور إضافية.
-            panelBrand.Paint -= panelBrand_Paint;
-            panelBrand.Paint += panelBrand_Paint;
-
-            panelLoginArea.Paint -= panelLoginArea_Paint;
-            panelLoginArea.Paint += panelLoginArea_Paint;
-
-            Resize -= LoginForm_Resize;
-            Resize += LoginForm_Resize;
-
-            loginCard.Resize -= LoginCard_Resize;
-            loginCard.Resize += LoginCard_Resize;
-
-            ApplyRoundedRegion(this, 16);
-            ApplyRoundedRegion(loginCard, 18);
-        }
-
-        private void LoginForm_Resize(object sender, EventArgs e)
-        {
-            ApplyRoundedRegion(this, 16);
-            ApplyRoundedRegion(loginCard, 18);
-            panelBrand.Invalidate();
-            panelLoginArea.Invalidate();
-        }
-
-        private void LoginCard_Resize(object sender, EventArgs e)
-        {
-            ApplyRoundedRegion(loginCard, 18);
-        }
-
-        private static void ApplyRoundedRegion(Control control, int radius)
-        {
-            if (control == null || control.Width <= 0 || control.Height <= 0)
-                return;
-
-            int diameter = Math.Min(
-                Math.Max(8, radius * 2),
-                Math.Min(control.Width, control.Height));
-
-            using (GraphicsPath path = new GraphicsPath())
-            {
-                path.AddArc(0, 0, diameter, diameter, 180, 90);
-                path.AddArc(control.Width - diameter, 0, diameter, diameter, 270, 90);
-                path.AddArc(
-                    control.Width - diameter,
-                    control.Height - diameter,
-                    diameter,
-                    diameter,
-                    0,
-                    90);
-                path.AddArc(
-                    0,
-                    control.Height - diameter,
-                    diameter,
-                    diameter,
-                    90,
-                    90);
-                path.CloseFigure();
-
-                Region oldRegion = control.Region;
-                control.Region = new Region(path);
-                if (oldRegion != null)
-                    oldRegion.Dispose();
-            }
-        }
-
-        private void panelBrand_Paint(object sender, PaintEventArgs e)
-        {
-            Rectangle bounds = panelBrand.ClientRectangle;
-            if (bounds.Width <= 0 || bounds.Height <= 0)
-                return;
-
-            using (LinearGradientBrush brush = new LinearGradientBrush(
-                bounds,
-                Color.FromArgb(15, 23, 42),
-                Color.FromArgb(15, 118, 110),
-                125F))
-            {
-                e.Graphics.FillRectangle(brush, bounds);
-            }
-
-            using (SolidBrush glow = new SolidBrush(Color.FromArgb(24, 94, 234, 212)))
-            {
-                e.Graphics.FillEllipse(
-                    glow,
-                    new Rectangle(bounds.Width - 210, -90, 270, 270));
-            }
-
-            using (SolidBrush glow = new SolidBrush(Color.FromArgb(18, 255, 255, 255)))
-            {
-                e.Graphics.FillEllipse(
-                    glow,
-                    new Rectangle(-120, bounds.Height - 170, 250, 250));
-            }
-
-            using (Pen accent = new Pen(Color.FromArgb(94, 234, 212), 3F))
-            {
-                e.Graphics.DrawLine(
-                    accent,
-                    bounds.Width - 6,
-                    42,
-                    bounds.Width - 6,
-                    bounds.Height - 42);
-            }
-        }
-
-        private void panelLoginArea_Paint(object sender, PaintEventArgs e)
-        {
-            Rectangle bounds = panelLoginArea.ClientRectangle;
-            if (bounds.Width <= 0 || bounds.Height <= 0)
-                return;
-
-            using (LinearGradientBrush brush = new LinearGradientBrush(
-                bounds,
-                Color.White,
-                Color.FromArgb(241, 245, 249),
-                90F))
-            {
-                e.Graphics.FillRectangle(brush, bounds);
-            }
-
-            using (SolidBrush accent = new SolidBrush(Color.FromArgb(12, 15, 118, 110)))
-            {
-                e.Graphics.FillEllipse(
-                    accent,
-                    new Rectangle(bounds.Width - 120, -40, 180, 180));
-            }
-
-            using (SolidBrush accent = new SolidBrush(Color.FromArgb(9, 37, 99, 235)))
-            {
-                e.Graphics.FillEllipse(
-                    accent,
-                    new Rectangle(-100, bounds.Height - 130, 180, 180));
-            }
+            // الهوية البصرية الثابتة ترسمها عناصر Designer مباشرة.
+            // لا توجد الآن طبقة Paint أو Region تغيّر الشكل بعد التشغيل.
         }
 
         private void SetStartupStatus(Exception exception)
@@ -349,7 +170,7 @@ namespace SchoolSystem.UI
             {
                 lblBrandMark.Text = "م";
                 lblBrandMark.BackgroundImage = null;
-                lblBrandMark.BackColor = Color.FromArgb(13, 148, 136);
+                lblBrandMark.BackColor = UIHelper.BrandColor;
                 return;
             }
 
@@ -370,7 +191,7 @@ namespace SchoolSystem.UI
             {
                 lblBrandMark.Text = "م";
                 lblBrandMark.BackgroundImage = null;
-                lblBrandMark.BackColor = Color.FromArgb(13, 148, 136);
+                lblBrandMark.BackColor = UIHelper.BrandColor;
                 ApplicationLogger.LogException("تحميل شعار المدرسة في شاشة الدخول", ex);
             }
         }
@@ -403,8 +224,8 @@ namespace SchoolSystem.UI
                 txtUserName.ForeColor = UIHelper.TextColor;
             }
 
-            pnlUser.BackColor = Color.FromArgb(240, 253, 250);
-            txtUserName.BackColor = Color.FromArgb(240, 253, 250);
+            pnlUser.BackColor = UIHelper.LoginInputFocusColor;
+            txtUserName.BackColor = UIHelper.LoginInputFocusColor;
         }
 
         // تعريف الدالة txtUserName_Leave لتنفيذ العملية المرتبطة بها.
@@ -435,8 +256,8 @@ namespace SchoolSystem.UI
                 txtPassword.PasswordChar = '●';
             }
 
-            pnlPassword.BackColor = Color.FromArgb(240, 253, 250);
-            txtPassword.BackColor = Color.FromArgb(240, 253, 250);
+            pnlPassword.BackColor = UIHelper.LoginInputFocusColor;
+            txtPassword.BackColor = UIHelper.LoginInputFocusColor;
         }
 
         // تعريف الدالة txtPassword_Leave لتنفيذ العملية المرتبطة بها.
@@ -464,7 +285,7 @@ namespace SchoolSystem.UI
             if (input == null)
                 return;
 
-            input.BackColor = Color.FromArgb(240, 253, 250);
+            input.BackColor = UIHelper.LoginInputFocusColor;
         }
 
         private void Input_Leave(object sender, EventArgs e)
