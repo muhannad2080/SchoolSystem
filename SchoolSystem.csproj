@@ -492,6 +492,9 @@
     <EmbeddedResource Include="UI\LibraryForm.resx">
       <DependentUpon>LibraryForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\PayrollRecordsForm.resx">
+      <DependentUpon>PayrollRecordsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\PayrollForm.resx">
       <DependentUpon>PayrollForm.cs</DependentUpon>
     </EmbeddedResource>
