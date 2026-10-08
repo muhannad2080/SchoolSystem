@@ -968,7 +968,7 @@ namespace SchoolSystem.UI
             this.tlpSearch.Location = new System.Drawing.Point(8, 8);
             this.tlpSearch.Margin = new System.Windows.Forms.Padding(0);
             this.tlpSearch.Name = "tlpSearch";
-            this.tlpSearch.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.tlpSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tlpSearch.RowCount = 1;
             this.tlpSearch.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpSearch.Size = new System.Drawing.Size(1184, 48);
