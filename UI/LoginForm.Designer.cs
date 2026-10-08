@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using SchoolSystem.Helpers;
 
 namespace SchoolSystem.UI
 {
@@ -82,7 +83,7 @@ namespace SchoolSystem.UI
             // 
             // panelBackground
             // 
-            this.panelBackground.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.panelBackground.BackColor = System.Drawing.UIHelper.BackgroundColor;
             this.panelBackground.Controls.Add(this.btnWindowClose);
             this.panelBackground.Controls.Add(this.layoutRoot);
             this.panelBackground.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -97,11 +98,11 @@ namespace SchoolSystem.UI
             this.btnWindowClose.BackColor = System.Drawing.Color.Transparent;
             this.btnWindowClose.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnWindowClose.FlatAppearance.BorderSize = 0;
-            this.btnWindowClose.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(254)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
-            this.btnWindowClose.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(254)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.btnWindowClose.FlatAppearance.MouseDownBackColor = System.Drawing.UIHelper.LoginDangerPressedColor;
+            this.btnWindowClose.FlatAppearance.MouseOverBackColor = System.Drawing.UIHelper.LoginDangerHoverColor;
             this.btnWindowClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnWindowClose.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.btnWindowClose.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
+            this.btnWindowClose.Font = new System.Drawing.Font(UIHelper.FontFamily, 12F, System.Drawing.FontStyle.Bold);
+            this.btnWindowClose.ForeColor = System.Drawing.UIHelper.LoginSecondaryTextColor;
             this.btnWindowClose.Location = new System.Drawing.Point(16, 16);
             this.btnWindowClose.Margin = new System.Windows.Forms.Padding(0);
             this.btnWindowClose.Name = "btnWindowClose";
@@ -131,7 +132,7 @@ namespace SchoolSystem.UI
             // 
             // panelBrand
             // 
-            this.panelBrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.panelBrand.BackColor = System.Drawing.UIHelper.PrimaryDarkColor;
             this.panelBrand.Controls.Add(this.brandLayout);
             this.panelBrand.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelBrand.Location = new System.Drawing.Point(685, 0);
@@ -184,9 +185,9 @@ namespace SchoolSystem.UI
             // lblBrandMark
             // 
             this.lblBrandMark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblBrandMark.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(148)))), ((int)(((byte)(136)))));
-            this.lblBrandMark.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
-            this.lblBrandMark.ForeColor = System.Drawing.Color.White;
+            this.lblBrandMark.BackColor = System.Drawing.UIHelper.BrandColor;
+            this.lblBrandMark.Font = new System.Drawing.Font(UIHelper.FontFamily, 24F, System.Drawing.FontStyle.Bold);
+            this.lblBrandMark.ForeColor = UIHelper.SurfaceColor;
             this.lblBrandMark.Location = new System.Drawing.Point(0, 0);
             this.lblBrandMark.Margin = new System.Windows.Forms.Padding(0, 0, 0, 16);
             this.lblBrandMark.Name = "lblBrandMark";
@@ -198,7 +199,7 @@ namespace SchoolSystem.UI
             // lblBrandName
             // 
             this.lblBrandName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblBrandName.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
+            this.lblBrandName.Font = new System.Drawing.Font(UIHelper.FontFamily, 18F, System.Drawing.FontStyle.Bold);
             this.lblBrandName.ForeColor = System.Drawing.Color.White;
             this.lblBrandName.Location = new System.Drawing.Point(0, 72);
             this.lblBrandName.Margin = new System.Windows.Forms.Padding(0);
@@ -212,8 +213,8 @@ namespace SchoolSystem.UI
             // lblBrandTagline
             // 
             this.lblBrandTagline.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblBrandTagline.Font = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.lblBrandTagline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(203)))), ((int)(((byte)(213)))), ((int)(((byte)(225)))));
+            this.lblBrandTagline.Font = new System.Drawing.Font(UIHelper.FontFamily, 9.5F);
+            this.lblBrandTagline.ForeColor = System.Drawing.UIHelper.BrandMutedTextColor;
             this.lblBrandTagline.Location = new System.Drawing.Point(0, 120);
             this.lblBrandTagline.Margin = new System.Windows.Forms.Padding(0);
             this.lblBrandTagline.Name = "lblBrandTagline";
@@ -248,8 +249,8 @@ namespace SchoolSystem.UI
             // lblFeatureTitle
             // 
             this.lblFeatureTitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblFeatureTitle.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.lblFeatureTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(234)))), ((int)(((byte)(212)))));
+            this.lblFeatureTitle.Font = new System.Drawing.Font(UIHelper.FontFamily, 11F, System.Drawing.FontStyle.Bold);
+            this.lblFeatureTitle.ForeColor = System.Drawing.UIHelper.BrandHighlightColor;
             this.lblFeatureTitle.Location = new System.Drawing.Point(0, 0);
             this.lblFeatureTitle.Margin = new System.Windows.Forms.Padding(0);
             this.lblFeatureTitle.Name = "lblFeatureTitle";
@@ -262,8 +263,8 @@ namespace SchoolSystem.UI
             // lblFeature1
             // 
             this.lblFeature1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblFeature1.Font = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.lblFeature1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
+            this.lblFeature1.Font = new System.Drawing.Font(UIHelper.FontFamily, 9.5F);
+            this.lblFeature1.ForeColor = System.Drawing.UIHelper.BrandFeatureTextColor;
             this.lblFeature1.Location = new System.Drawing.Point(0, 40);
             this.lblFeature1.Margin = new System.Windows.Forms.Padding(0);
             this.lblFeature1.Name = "lblFeature1";
@@ -276,8 +277,8 @@ namespace SchoolSystem.UI
             // lblFeature2
             // 
             this.lblFeature2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblFeature2.Font = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.lblFeature2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
+            this.lblFeature2.Font = new System.Drawing.Font(UIHelper.FontFamily, 9.5F);
+            this.lblFeature2.ForeColor = System.Drawing.UIHelper.BrandFeatureTextColor;
             this.lblFeature2.Location = new System.Drawing.Point(0, 78);
             this.lblFeature2.Margin = new System.Windows.Forms.Padding(0);
             this.lblFeature2.Name = "lblFeature2";
@@ -290,8 +291,8 @@ namespace SchoolSystem.UI
             // lblFeature3
             // 
             this.lblFeature3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblFeature3.Font = new System.Drawing.Font("Segoe UI", 9.5F);
-            this.lblFeature3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
+            this.lblFeature3.Font = new System.Drawing.Font(UIHelper.FontFamily, 9.5F);
+            this.lblFeature3.ForeColor = System.Drawing.UIHelper.BrandFeatureTextColor;
             this.lblFeature3.Location = new System.Drawing.Point(0, 116);
             this.lblFeature3.Margin = new System.Windows.Forms.Padding(0);
             this.lblFeature3.Name = "lblFeature3";
@@ -304,8 +305,8 @@ namespace SchoolSystem.UI
             // lblBrandFooter
             // 
             this.lblBrandFooter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblBrandFooter.Font = new System.Drawing.Font("Segoe UI", 8.5F);
-            this.lblBrandFooter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
+            this.lblBrandFooter.Font = new System.Drawing.Font(UIHelper.FontFamily, 8.5F);
+            this.lblBrandFooter.ForeColor = System.Drawing.UIHelper.TextDisabledColor;
             this.lblBrandFooter.Location = new System.Drawing.Point(0, 592);
             this.lblBrandFooter.Margin = new System.Windows.Forms.Padding(0);
             this.lblBrandFooter.Name = "lblBrandFooter";
@@ -317,7 +318,7 @@ namespace SchoolSystem.UI
             // 
             // panelLoginArea
             // 
-            this.panelLoginArea.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.panelLoginArea.BackColor = System.Drawing.UIHelper.BackgroundColor;
             this.panelLoginArea.Controls.Add(this.loginAreaLayout);
             this.panelLoginArea.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelLoginArea.Location = new System.Drawing.Point(0, 0);
@@ -403,8 +404,8 @@ namespace SchoolSystem.UI
             // lblWelcome
             // 
             this.lblWelcome.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblWelcome.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
-            this.lblWelcome.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(148)))), ((int)(((byte)(136)))));
+            this.lblWelcome.Font = new System.Drawing.Font(UIHelper.FontFamily, 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblWelcome.ForeColor = System.Drawing.UIHelper.BrandColor;
             this.lblWelcome.Location = new System.Drawing.Point(0, 0);
             this.lblWelcome.Margin = new System.Windows.Forms.Padding(0);
             this.lblWelcome.Name = "lblWelcome";
@@ -417,8 +418,8 @@ namespace SchoolSystem.UI
             // lblTitle
             // 
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.lblTitle.Font = new System.Drawing.Font(UIHelper.FontFamily, 18F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.ForeColor = System.Drawing.UIHelper.PrimaryDarkColor;
             this.lblTitle.Location = new System.Drawing.Point(0, 24);
             this.lblTitle.Margin = new System.Windows.Forms.Padding(0);
             this.lblTitle.Name = "lblTitle";
@@ -431,8 +432,8 @@ namespace SchoolSystem.UI
             // lblSubtitle
             // 
             this.lblSubtitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblSubtitle.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblSubtitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
+            this.lblSubtitle.Font = new System.Drawing.Font(UIHelper.FontFamily, 9F);
+            this.lblSubtitle.ForeColor = System.Drawing.UIHelper.LoginSecondaryTextColor;
             this.lblSubtitle.Location = new System.Drawing.Point(0, 66);
             this.lblSubtitle.Margin = new System.Windows.Forms.Padding(0);
             this.lblSubtitle.Name = "lblSubtitle";
@@ -444,7 +445,7 @@ namespace SchoolSystem.UI
             // 
             // sepTop
             // 
-            this.sepTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
+            this.sepTop.BackColor = System.Drawing.UIHelper.BrandFeatureTextColor;
             this.sepTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.sepTop.Location = new System.Drawing.Point(0, 112);
             this.sepTop.Margin = new System.Windows.Forms.Padding(0, 6, 0, 0);
@@ -455,8 +456,8 @@ namespace SchoolSystem.UI
             // lblUserLabel
             // 
             this.lblUserLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblUserLabel.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
-            this.lblUserLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.lblUserLabel.Font = new System.Drawing.Font(UIHelper.FontFamily, 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblUserLabel.ForeColor = System.Drawing.UIHelper.PrimaryColor;
             this.lblUserLabel.Location = new System.Drawing.Point(0, 122);
             this.lblUserLabel.Margin = new System.Windows.Forms.Padding(0);
             this.lblUserLabel.Name = "lblUserLabel";
@@ -468,7 +469,7 @@ namespace SchoolSystem.UI
             // 
             // pnlUser
             // 
-            this.pnlUser.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.pnlUser.BackColor = System.Drawing.UIHelper.BackgroundColor;
             this.pnlUser.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlUser.Controls.Add(this.txtUserName);
             this.pnlUser.Controls.Add(this.lblUserIcon);
@@ -483,11 +484,11 @@ namespace SchoolSystem.UI
             // 
             // txtUserName
             // 
-            this.txtUserName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.txtUserName.BackColor = System.Drawing.UIHelper.BackgroundColor;
             this.txtUserName.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtUserName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtUserName.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtUserName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
+            this.txtUserName.Font = new System.Drawing.Font(UIHelper.FontFamily, 10F);
+            this.txtUserName.ForeColor = System.Drawing.UIHelper.TextDisabledColor;
             this.txtUserName.Location = new System.Drawing.Point(10, 8);
             this.txtUserName.Margin = new System.Windows.Forms.Padding(0);
             this.txtUserName.Name = "txtUserName";
@@ -503,7 +504,7 @@ namespace SchoolSystem.UI
             // 
             this.lblUserIcon.Dock = System.Windows.Forms.DockStyle.Right;
             this.lblUserIcon.Font = new System.Drawing.Font("Segoe MDL2 Assets", 13F);
-            this.lblUserIcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(148)))), ((int)(((byte)(136)))));
+            this.lblUserIcon.ForeColor = System.Drawing.UIHelper.BrandColor;
             this.lblUserIcon.Location = new System.Drawing.Point(350, 8);
             this.lblUserIcon.Margin = new System.Windows.Forms.Padding(0);
             this.lblUserIcon.Name = "lblUserIcon";
@@ -515,8 +516,8 @@ namespace SchoolSystem.UI
             // lblPasswordLabel
             // 
             this.lblPasswordLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblPasswordLabel.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
-            this.lblPasswordLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
+            this.lblPasswordLabel.Font = new System.Drawing.Font(UIHelper.FontFamily, 9.5F, System.Drawing.FontStyle.Bold);
+            this.lblPasswordLabel.ForeColor = System.Drawing.UIHelper.PrimaryColor;
             this.lblPasswordLabel.Location = new System.Drawing.Point(0, 194);
             this.lblPasswordLabel.Margin = new System.Windows.Forms.Padding(0);
             this.lblPasswordLabel.Name = "lblPasswordLabel";
@@ -528,7 +529,7 @@ namespace SchoolSystem.UI
             // 
             // pnlPassword
             // 
-            this.pnlPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.pnlPassword.BackColor = System.Drawing.UIHelper.BackgroundColor;
             this.pnlPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlPassword.Controls.Add(this.txtPassword);
             this.pnlPassword.Controls.Add(this.btnTogglePassword);
@@ -544,11 +545,11 @@ namespace SchoolSystem.UI
             // 
             // txtPassword
             // 
-            this.txtPassword.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.txtPassword.BackColor = System.Drawing.UIHelper.BackgroundColor;
             this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtPassword.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtPassword.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
+            this.txtPassword.Font = new System.Drawing.Font(UIHelper.FontFamily, 10F);
+            this.txtPassword.ForeColor = System.Drawing.UIHelper.TextDisabledColor;
             this.txtPassword.Location = new System.Drawing.Point(91, 8);
             this.txtPassword.Margin = new System.Windows.Forms.Padding(0);
             this.txtPassword.Name = "txtPassword";
@@ -566,11 +567,11 @@ namespace SchoolSystem.UI
             this.btnTogglePassword.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnTogglePassword.Dock = System.Windows.Forms.DockStyle.Left;
             this.btnTogglePassword.FlatAppearance.BorderSize = 0;
-            this.btnTogglePassword.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
-            this.btnTogglePassword.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
+            this.btnTogglePassword.FlatAppearance.MouseDownBackColor = System.Drawing.UIHelper.BrandFeatureTextColor;
+            this.btnTogglePassword.FlatAppearance.MouseOverBackColor = System.Drawing.UIHelper.SurfaceSecondaryColor;
             this.btnTogglePassword.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnTogglePassword.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
-            this.btnTogglePassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
+            this.btnTogglePassword.Font = new System.Drawing.Font(UIHelper.FontFamily, 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnTogglePassword.ForeColor = System.Drawing.UIHelper.SecondaryColor;
             this.btnTogglePassword.Location = new System.Drawing.Point(10, 8);
             this.btnTogglePassword.Margin = new System.Windows.Forms.Padding(0);
             this.btnTogglePassword.Name = "btnTogglePassword";
@@ -585,7 +586,7 @@ namespace SchoolSystem.UI
             // 
             this.lblPasswordIcon.Dock = System.Windows.Forms.DockStyle.Right;
             this.lblPasswordIcon.Font = new System.Drawing.Font("Segoe MDL2 Assets", 13F);
-            this.lblPasswordIcon.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(148)))), ((int)(((byte)(136)))));
+            this.lblPasswordIcon.ForeColor = System.Drawing.UIHelper.BrandColor;
             this.lblPasswordIcon.Location = new System.Drawing.Point(350, 8);
             this.lblPasswordIcon.Margin = new System.Windows.Forms.Padding(0);
             this.lblPasswordIcon.Name = "lblPasswordIcon";
@@ -607,14 +608,14 @@ namespace SchoolSystem.UI
             // 
             // btnLogin
             // 
-            this.btnLogin.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(148)))), ((int)(((byte)(136)))));
+            this.btnLogin.BackColor = System.Drawing.UIHelper.BrandColor;
             this.btnLogin.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnLogin.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnLogin.FlatAppearance.BorderSize = 0;
-            this.btnLogin.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(118)))), ((int)(((byte)(110)))));
-            this.btnLogin.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(20)))), ((int)(((byte)(184)))), ((int)(((byte)(166)))));
+            this.btnLogin.FlatAppearance.MouseDownBackColor = System.Drawing.UIHelper.AccentColor;
+            this.btnLogin.FlatAppearance.MouseOverBackColor = System.Drawing.UIHelper.BrandHoverColor;
             this.btnLogin.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLogin.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnLogin.Font = new System.Drawing.Font(UIHelper.FontFamily, 11F, System.Drawing.FontStyle.Bold);
             this.btnLogin.ForeColor = System.Drawing.Color.White;
             this.btnLogin.Location = new System.Drawing.Point(0, 10);
             this.btnLogin.Margin = new System.Windows.Forms.Padding(0);
@@ -648,12 +649,12 @@ namespace SchoolSystem.UI
             this.btnClear.BackColor = System.Drawing.Color.White;
             this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnClear.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnClear.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(203)))), ((int)(((byte)(213)))), ((int)(((byte)(225)))));
-            this.btnClear.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(241)))), ((int)(((byte)(245)))), ((int)(((byte)(249)))));
-            this.btnClear.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.btnClear.FlatAppearance.BorderColor = System.Drawing.UIHelper.BrandMutedTextColor;
+            this.btnClear.FlatAppearance.MouseDownBackColor = System.Drawing.UIHelper.SurfaceSecondaryColor;
+            this.btnClear.FlatAppearance.MouseOverBackColor = System.Drawing.UIHelper.BackgroundColor;
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClear.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnClear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
+            this.btnClear.Font = new System.Drawing.Font(UIHelper.FontFamily, 9F);
+            this.btnClear.ForeColor = System.Drawing.UIHelper.SecondaryColor;
             this.btnClear.Location = new System.Drawing.Point(197, 1);
             this.btnClear.Margin = new System.Windows.Forms.Padding(4, 1, 0, 1);
             this.btnClear.Name = "btnClear";
@@ -670,12 +671,12 @@ namespace SchoolSystem.UI
             this.btnExit.BackColor = System.Drawing.Color.White;
             this.btnExit.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExit.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnExit.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(203)))), ((int)(((byte)(213)))), ((int)(((byte)(225)))));
-            this.btnExit.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(254)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
-            this.btnExit.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(254)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
+            this.btnExit.FlatAppearance.BorderColor = System.Drawing.UIHelper.BrandMutedTextColor;
+            this.btnExit.FlatAppearance.MouseDownBackColor = System.Drawing.UIHelper.LoginDangerPressedColor;
+            this.btnExit.FlatAppearance.MouseOverBackColor = System.Drawing.UIHelper.LoginDangerHoverColor;
             this.btnExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExit.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.btnExit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(185)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.btnExit.Font = new System.Drawing.Font(UIHelper.FontFamily, 9F);
+            this.btnExit.ForeColor = System.Drawing.UIHelper.LoginDangerTextColor;
             this.btnExit.Location = new System.Drawing.Point(4, 1);
             this.btnExit.Margin = new System.Windows.Forms.Padding(0, 1, 4, 1);
             this.btnExit.Name = "btnExit";
@@ -690,8 +691,8 @@ namespace SchoolSystem.UI
             // lblStatus
             // 
             this.lblStatus.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 8.5F);
-            this.lblStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(116)))), ((int)(((byte)(139)))));
+            this.lblStatus.Font = new System.Drawing.Font(UIHelper.FontFamily, 8.5F);
+            this.lblStatus.ForeColor = System.Drawing.UIHelper.LoginSecondaryTextColor;
             this.lblStatus.Location = new System.Drawing.Point(0, 362);
             this.lblStatus.Margin = new System.Windows.Forms.Padding(0);
             this.lblStatus.Name = "lblStatus";
@@ -703,7 +704,7 @@ namespace SchoolSystem.UI
             // 
             // sepBottom
             // 
-            this.sepBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(232)))), ((int)(((byte)(240)))));
+            this.sepBottom.BackColor = System.Drawing.UIHelper.BrandFeatureTextColor;
             this.sepBottom.Dock = System.Windows.Forms.DockStyle.Top;
             this.sepBottom.Location = new System.Drawing.Point(0, 394);
             this.sepBottom.Margin = new System.Windows.Forms.Padding(0, 4, 0, 0);
@@ -714,8 +715,8 @@ namespace SchoolSystem.UI
             // lblFooter
             // 
             this.lblFooter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblFooter.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.lblFooter.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
+            this.lblFooter.Font = new System.Drawing.Font(UIHelper.FontFamily, 8F);
+            this.lblFooter.ForeColor = System.Drawing.UIHelper.TextDisabledColor;
             this.lblFooter.Location = new System.Drawing.Point(0, 402);
             this.lblFooter.Margin = new System.Windows.Forms.Padding(0);
             this.lblFooter.Name = "lblFooter";
@@ -728,16 +729,15 @@ namespace SchoolSystem.UI
             // lblDevelopers
             // 
             this.lblDevelopers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblDevelopers.Font = new System.Drawing.Font("Segoe UI", 8F);
-            this.lblDevelopers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(148)))), ((int)(((byte)(163)))), ((int)(((byte)(184)))));
+            this.lblDevelopers.Font = new System.Drawing.Font(UIHelper.FontFamily, 8F);
+            this.lblDevelopers.ForeColor = System.Drawing.UIHelper.TextDisabledColor;
             this.lblDevelopers.Location = new System.Drawing.Point(0, 426);
             this.lblDevelopers.Margin = new System.Windows.Forms.Padding(0);
             this.lblDevelopers.Name = "lblDevelopers";
             this.lblDevelopers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblDevelopers.Size = new System.Drawing.Size(394, 120);
             this.lblDevelopers.TabIndex = 13;
-            this.lblDevelopers.Text = "تطوير النظام\r\nالمهندسين: مهند علي علي علي سعد • عبد الرحمن سعد علي سعد • سامي الح" +
-    "اج";
+            this.lblDevelopers.Text = UIHelper.LoginDeveloperCredits;
             this.lblDevelopers.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // toolTip
@@ -752,10 +752,10 @@ namespace SchoolSystem.UI
             this.AcceptButton = this.btnLogin;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.BackColor = System.Drawing.UIHelper.BackgroundColor;
             this.ClientSize = new System.Drawing.Size(1180, 720);
             this.Controls.Add(this.panelBackground);
-            this.Font = new System.Drawing.Font("Segoe UI", 9.5F);
+            this.Font = new System.Drawing.Font(UIHelper.FontFamily, 9.5F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -764,7 +764,7 @@ namespace SchoolSystem.UI
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.RightToLeftLayout = true;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "تسجيل الدخول | نظام إدارة المدرسة";
+            this.Text = UIHelper.LoginWindowTitle;
             this.panelBackground.ResumeLayout(false);
             this.layoutRoot.ResumeLayout(false);
             this.panelBrand.ResumeLayout(false);
