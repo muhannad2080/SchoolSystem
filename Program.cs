@@ -174,6 +174,8 @@ namespace SchoolSystem
                     server = discoveredServer;
                     masterConnection = BuildConnectionString(
                         server, "master", useSql, sqlUser, sqlPassword, 15);
+                    effectiveConnection = BuildConnectionString(
+                        server, database, useSql, sqlUser, sqlPassword, 15);
                     masterFailure = null;
                 }
 
@@ -198,25 +200,22 @@ namespace SchoolSystem
             ApplicationSettingsService.Save(config);
             DbConnection.Reload();
 
-            if (!DatabaseExists(masterConnection, database))
-            {
-                return new StartupCheckResult
-                {
-                    State = StartupState.DatabaseMissing,
-                    Message = "لم يتم العثور على قاعدة البيانات " + database + ". يمكنك إنشاء قاعدة البيانات أو استيراد النسخة الاحتياطية الأولية.",
-                    ShowSetupForm = true
-                };
-            }
+            bool databaseExists = DatabaseExists(masterConnection, database);
 
-            Exception databaseFailure;
-            if (!CanOpenConnection(effectiveConnection, out databaseFailure))
+            // إن كانت القاعدة موجودة نتحقق من فتحها قبل الترحيل.
+            // إن لم تكن موجودة، يترك محرك الترحيل مسار الإنشاء التلقائي يعمل مباشرة.
+            if (databaseExists)
             {
-                return new StartupCheckResult
+                Exception databaseFailure;
+                if (!CanOpenConnection(effectiveConnection, out databaseFailure))
                 {
-                    State = ClassifyDatabaseFailure(databaseFailure),
-                    Message = BuildDatabaseFailureMessage(database, databaseFailure),
-                    ShowSetupForm = true
-                };
+                    return new StartupCheckResult
+                    {
+                        State = ClassifyDatabaseFailure(databaseFailure),
+                        Message = BuildDatabaseFailureMessage(database, databaseFailure),
+                        ShowSetupForm = true
+                    };
+                }
             }
 
             string migrationFailure = null;
@@ -498,27 +497,3 @@ namespace SchoolSystem
             LogException(e.Exception);
 
             MessageBox.Show(
-
-                "حدث خطأ غير متوقع أثناء تنفيذ العملية. تم تسجيل الخطأ ويمكن متابعة العمل.",
-                "خطأ في النظام",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error);
-        }
-
-        // تعريف الدالة OnUnhandledException لتنفيذ العملية المرتبطة بها.
-        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            Exception exception = e.ExceptionObject as Exception;
-            if (exception != null)
-            {
-                LogException(exception);
-            }
-        }
-
-        // تعريف الدالة LogException لتنفيذ العملية المرتبطة بها.
-        private static void LogException(Exception exception)
-        {
-            ApplicationLogger.LogException("خطأ عام في التطبيق", exception);
-        }
-    }
-}
