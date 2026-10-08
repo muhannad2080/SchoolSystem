@@ -145,6 +145,8 @@ namespace SchoolSystem.Services
                 WHERE REPLACE(ISNULL(f.AcademicYear, N''), N'-', N'/') =
                       REPLACE(@AcademicYear, N'-', N'/')
                   AND ISNULL(f.RemainingAmount, 0) > 0
+                  AND LTRIM(RTRIM(ISNULL(f.FeeType, N''))) NOT IN
+                      (N'الرسوم الكلية', N'رسوم كلية', N'الرسوم الكليه', N'رسوم كليه', N'Total Fee')
                   AND ISNULL(s.Status, N'نشط') = N'نشط'
                   AND EXISTS
                   (
