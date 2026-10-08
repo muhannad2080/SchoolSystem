@@ -212,24 +212,55 @@ namespace SchoolSystem.UI
             if (allContracts == null)
                 return;
 
-            DataView dv = allContracts.DefaultView;
+            string term = (searchText ?? string.Empty).Trim();
+            DataTable filtered = allContracts.Clone();
 
-            if (!string.IsNullOrWhiteSpace(searchText))
+            foreach (DataRow row in allContracts.Rows)
             {
-                dv.RowFilter = UIHelper.BuildDataViewSearchFilter(searchText,
-                    "TeacherName", "ContractNumber", "ContractType",
-                    "ContractStatus", "PaymentMethod");
+                if (string.IsNullOrWhiteSpace(term) || ContractRowContains(row, term))
+                    filtered.ImportRow(row);
             }
 
-            else
-            {
-                dv.RowFilter = "";
-            }
-
-            dataGridViewContracts.DataSource = dv;
-            lblRecordCount.Text = "عدد العقود: " + dv.Count;
+            dataGridViewContracts.DataSource = filtered.DefaultView;
+            lblRecordCount.Text = "عدد العقود: " + filtered.Rows.Count;
 
             FormatGridColumns();
+        }
+
+        private static bool ContractRowContains(DataRow row, string term)
+        {
+            string comparison = term.Trim();
+
+            string[] searchableColumns =
+            {
+                "TeacherName",
+                "ContractNumber",
+                "ContractType",
+                "ContractStatus",
+                "PaymentMethod",
+                "StartDate",
+                "EndDate",
+                "BasicSalary",
+                "Allowances",
+                "Deductions"
+            };
+
+            foreach (string column in searchableColumns)
+            {
+                if (!row.Table.Columns.Contains(column))
+                    continue;
+
+                object value = row[column];
+                if (value == null || value == DBNull.Value)
+                    continue;
+
+                string text = Convert.ToString(value);
+                if (!string.IsNullOrEmpty(text) &&
+                    text.IndexOf(comparison, StringComparison.CurrentCultureIgnoreCase) >= 0)
+                    return true;
+            }
+
+            return false;
         }
 
         // تعريف الدالة FormatGridColumns لتنفيذ العملية المرتبطة بها.
