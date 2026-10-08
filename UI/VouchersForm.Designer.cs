@@ -203,17 +203,19 @@
             // 
             // txtVoucherNumber
             // 
-            this.txtVoucherNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(246)))), ((int)(((byte)(248)))));
+            this.txtVoucherNumber.BackColor = System.Drawing.Color.White;
             this.txtVoucherNumber.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtVoucherNumber.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtVoucherNumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(100)))), ((int)(((byte)(112)))));
+            this.txtVoucherNumber.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtVoucherNumber.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtVoucherNumber.Location = new System.Drawing.Point(789, 4);
-            this.txtVoucherNumber.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.txtVoucherNumber.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtVoucherNumber.Name = "txtVoucherNumber";
             this.txtVoucherNumber.ReadOnly = true;
             this.txtVoucherNumber.Size = new System.Drawing.Size(193, 27);
             this.txtVoucherNumber.TabIndex = 1;
             this.txtVoucherNumber.TabStop = false;
+            this.txtVoucherNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtVoucherNumber.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblVoucherType
             // 
@@ -233,13 +235,14 @@
             this.cmbVoucherType.BackColor = System.Drawing.Color.White;
             this.cmbVoucherType.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbVoucherType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVoucherType.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.cmbVoucherType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.cmbVoucherType.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbVoucherType.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbVoucherType.Location = new System.Drawing.Point(498, 4);
-            this.cmbVoucherType.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.cmbVoucherType.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbVoucherType.Name = "cmbVoucherType";
             this.cmbVoucherType.Size = new System.Drawing.Size(193, 28);
             this.cmbVoucherType.TabIndex = 3;
+            this.cmbVoucherType.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblAmount
             // 
@@ -258,15 +261,17 @@
             // 
             this.txtAmount.BackColor = System.Drawing.Color.White;
             this.txtAmount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtAmount.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.txtAmount.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtAmount.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtAmount.Location = new System.Drawing.Point(0, 4);
-            this.txtAmount.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            this.txtAmount.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtAmount.Name = "txtAmount";
             this.txtAmount.Size = new System.Drawing.Size(406, 27);
             this.txtAmount.TabIndex = 5;
             this.txtAmount.Text = "0";
             this.txtAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtAmount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtAmount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblVoucherDate
             // 
@@ -310,15 +315,16 @@
             // 
             this.cmbPartyName.BackColor = System.Drawing.Color.White;
             this.cmbPartyName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cmbPartyName.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.cmbPartyName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.cmbPartyName.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbPartyName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbPartyName.FormattingEnabled = true;
             this.cmbPartyName.Location = new System.Drawing.Point(498, 51);
-            this.cmbPartyName.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.cmbPartyName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbPartyName.Name = "cmbPartyName";
             this.cmbPartyName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.cmbPartyName.Size = new System.Drawing.Size(193, 28);
             this.cmbPartyName.TabIndex = 9;
+            this.cmbPartyName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // lblDescription
             // 
@@ -337,13 +343,15 @@
             // 
             this.txtDescription.BackColor = System.Drawing.Color.White;
             this.txtDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDescription.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.txtDescription.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtDescription.Location = new System.Drawing.Point(0, 51);
-            this.txtDescription.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            this.txtDescription.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(406, 27);
             this.txtDescription.TabIndex = 11;
+            this.txtDescription.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtDescription.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblPaymentMethod
             // 
@@ -363,13 +371,14 @@
             this.cmbPaymentMethod.BackColor = System.Drawing.Color.White;
             this.cmbPaymentMethod.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbPaymentMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPaymentMethod.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.cmbPaymentMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.cmbPaymentMethod.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbPaymentMethod.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbPaymentMethod.Location = new System.Drawing.Point(789, 98);
-            this.cmbPaymentMethod.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.cmbPaymentMethod.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbPaymentMethod.Name = "cmbPaymentMethod";
             this.cmbPaymentMethod.Size = new System.Drawing.Size(193, 28);
             this.cmbPaymentMethod.TabIndex = 13;
+            this.cmbPaymentMethod.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblReferenceType
             // 
@@ -389,13 +398,14 @@
             this.cmbReferenceType.BackColor = System.Drawing.Color.White;
             this.cmbReferenceType.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbReferenceType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbReferenceType.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.cmbReferenceType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.cmbReferenceType.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbReferenceType.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbReferenceType.Location = new System.Drawing.Point(498, 98);
-            this.cmbReferenceType.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.cmbReferenceType.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbReferenceType.Name = "cmbReferenceType";
             this.cmbReferenceType.Size = new System.Drawing.Size(193, 28);
             this.cmbReferenceType.TabIndex = 15;
+            this.cmbReferenceType.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblReferenceID
             // 
@@ -414,13 +424,15 @@
             // 
             this.txtReferenceID.BackColor = System.Drawing.Color.White;
             this.txtReferenceID.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtReferenceID.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtReferenceID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.txtReferenceID.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtReferenceID.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtReferenceID.Location = new System.Drawing.Point(0, 98);
-            this.txtReferenceID.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            this.txtReferenceID.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtReferenceID.Name = "txtReferenceID";
             this.txtReferenceID.Size = new System.Drawing.Size(406, 27);
             this.txtReferenceID.TabIndex = 17;
+            this.txtReferenceID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtReferenceID.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblIsAutoGenerated
             // 
@@ -467,13 +479,15 @@
             this.txtNotes.BackColor = System.Drawing.Color.White;
             this.tableLayoutFields.SetColumnSpan(this.txtNotes, 3);
             this.txtNotes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNotes.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtNotes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(45)))), ((int)(((byte)(58)))));
+            this.txtNotes.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtNotes.Location = new System.Drawing.Point(0, 145);
-            this.txtNotes.Margin = new System.Windows.Forms.Padding(0, 4, 0, 4);
+            this.txtNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(691, 27);
             this.txtNotes.TabIndex = 21;
+            this.txtNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelButtons
             // 
@@ -775,31 +789,33 @@
             // 
             // txtSearch
             // 
-            this.txtSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
+            this.txtSearch.BackColor = System.Drawing.Color.White;
             this.txtSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 8.5F);
-            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(55)))), ((int)(((byte)(72)))));
+            this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtSearch.Location = new System.Drawing.Point(670, 4);
-            this.txtSearch.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.txtSearch.Size = new System.Drawing.Size(350, 26);
             this.txtSearch.TabIndex = 1;
             this.txtSearch.TextChanged += new System.EventHandler(this.FilterControls_Changed);
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             // 
             // cmbFilterType
             // 
             this.cmbFilterType.BackColor = System.Drawing.Color.White;
             this.cmbFilterType.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbFilterType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFilterType.Font = new System.Drawing.Font("Segoe UI", 8.5F);
-            this.cmbFilterType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(55)))), ((int)(((byte)(72)))));
+            this.cmbFilterType.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbFilterType.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.cmbFilterType.Location = new System.Drawing.Point(565, 4);
-            this.cmbFilterType.Margin = new System.Windows.Forms.Padding(0, 4, 10, 4);
+            this.cmbFilterType.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbFilterType.Name = "cmbFilterType";
             this.cmbFilterType.Size = new System.Drawing.Size(95, 27);
             this.cmbFilterType.TabIndex = 2;
             this.cmbFilterType.SelectedIndexChanged += new System.EventHandler(this.FilterControls_Changed);
+            this.cmbFilterType.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblFilterFrom
             // 
