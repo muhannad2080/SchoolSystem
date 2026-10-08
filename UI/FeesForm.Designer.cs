@@ -123,7 +123,7 @@
             // lblTitle
             // 
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 15F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             this.lblTitle.Location = new System.Drawing.Point(0, 0);
             this.lblTitle.Name = "lblTitle";
