@@ -34,6 +34,11 @@ namespace SchoolSystem.UI.Students
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+
+            // عنوان الوحدة يُدار مركزيًا من MainForm؛ منع تكراره داخل UserControl.
+            if (panelTitle != null)
+                panelTitle.Visible = false;
+
             this.Dock = DockStyle.Fill;
 
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
