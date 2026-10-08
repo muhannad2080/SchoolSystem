@@ -1,10 +1,12 @@
 using System;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolSystem.Helpers;
 using SchoolSystem.Models;
+using SchoolSystem.Security;
 using SchoolSystem.Services;
 
 namespace SchoolSystem.UI
@@ -23,6 +25,7 @@ namespace SchoolSystem.UI
 
         private DataTable studentsPerClassTable;
         private Timer dashboardAutoRefreshTimer;
+        private FlowLayoutPanel quickActionsPanel;
         private bool isDashboardLoading;
 
         public DashboardHome()
@@ -38,6 +41,8 @@ namespace SchoolSystem.UI
 
             ConfigureDashboardVisuals();
             ConfigureArabicDashboardLayout();
+            ConfigureQuickActions();
+            ConfigureDashboardSurface();
 
             panelCards.Resize += (sender, e) => ResizeDashboardCards();
             panelChartBody.Resize += (sender, e) =>
@@ -74,8 +79,8 @@ namespace SchoolSystem.UI
 
             lblDashboardSubtitle.Text =
                 string.IsNullOrWhiteSpace(organization)
-                    ? "ملخص حي لمؤشرات المدرسة وحالتها التشغيلية"
-                    : organization + "  •  ملخص حي لمؤشرات المدرسة وحالتها التشغيلية";
+                    ? "مركز الإدارة لمتابعة الطلاب والهيئة التعليمية والرسوم والحالة التشغيلية"
+                    : organization + "  •  مركز الإدارة لمتابعة الطلاب والهيئة التعليمية والرسوم والحالة التشغيلية";
             lblActiveAcademicYear.Text =
                 "العام الدراسي: جاري التحميل...";
             lblLastUpdated.Text =
@@ -168,6 +173,323 @@ namespace SchoolSystem.UI
             lblOperationalStatus.AutoEllipsis = false;
             panelChartBody.BackColor = UIHelper.SurfaceColor;
             panelChartBody.AutoScroll = true;
+        }
+
+        private void ConfigureQuickActions()
+        {
+            if (quickActionsPanel != null && !quickActionsPanel.IsDisposed)
+                return;
+
+            panelSummary.Height = 154;
+            panelSummary.Padding = new Padding(18, 10, 18, 6);
+
+            quickActionsPanel = new FlowLayoutPanel
+            {
+                Name = "quickActionsPanel",
+                Dock = DockStyle.Bottom,
+                Height = 46,
+                AutoScroll = true,
+                WrapContents = false,
+                FlowDirection = FlowDirection.RightToLeft,
+                RightToLeft = RightToLeft.Yes,
+                BackColor = Color.Transparent,
+                Padding = new Padding(0, 2, 0, 0),
+                Margin = new Padding(0)
+            };
+
+            Label title = new Label
+            {
+                Name = "lblQuickActionsTitle",
+                Text = "إجراءات سريعة",
+                AutoSize = false,
+                Width = 108,
+                Height = 40,
+                Margin = new Padding(0, 0, 8, 0),
+                Padding = new Padding(0, 0, 8, 0),
+                TextAlign = ContentAlignment.MiddleRight,
+                RightToLeft = RightToLeft.Yes,
+                ForeColor = UIHelper.TextPrimaryColor,
+                Font = new Font(UIHelper.FontFamily, 9.5F, FontStyle.Bold)
+            };
+            quickActionsPanel.Controls.Add(title);
+
+            AddQuickAction(
+                "إضافة طالب",
+                "Students",
+                "Students.Add",
+                PermissionKeys.StudentsManage,
+                UIHelper.InfoColor,
+                delegate
+                {
+                    MainForm.Instance?.LoadFormInPanel(
+                        "Students",
+                        "ليس لديك صلاحية عرض الطلاب.",
+                        new StudentsForm(),
+                        PermissionKeys.StudentsView,
+                        PermissionKeys.StudentsManage);
+                });
+
+            AddQuickAction(
+                "قبول وتسجيل",
+                "Enrollment",
+                "Enrollment.Add",
+                PermissionKeys.EnrollmentManage,
+                UIHelper.SuccessColor,
+                delegate
+                {
+                    MainForm.Instance?.LoadFormInPanel(
+                        "Enrollment",
+                        "ليس لديك صلاحية عرض القبول والتسجيل.",
+                        new EnrollmentForm(),
+                        "Enrollment.View",
+                        PermissionKeys.EnrollmentManage);
+                });
+
+            AddQuickAction(
+                "الرسوم",
+                "Fees",
+                "Fees.View",
+                PermissionKeys.FeesManage,
+                UIHelper.WarningColor,
+                delegate
+                {
+                    MainForm.Instance?.LoadUserControl(
+                        "Fees",
+                        "ليس لديك صلاحية عرض الرسوم.",
+                        new FeesForm(),
+                        "Fees.View",
+                        PermissionKeys.FeesManage);
+                });
+
+            AddQuickAction(
+                "خطط الرسوم",
+                "FeePlans",
+                "FeePlans.View",
+                "FeePlans.Manage",
+                UIHelper.AccentColor,
+                delegate
+                {
+                    MainForm.Instance?.LoadUserControl(
+                        "FeePlans",
+                        "ليس لديك صلاحية عرض خطط الرسوم.",
+                        new FeePlansForm(),
+                        "FeePlans.View",
+                        "FeePlans.Manage");
+                });
+
+            AddQuickAction(
+                "سند قبض",
+                "Vouchers",
+                "Vouchers.Add",
+                PermissionKeys.VouchersManage,
+                UIHelper.DangerColor,
+                delegate
+                {
+                    MainForm.Instance?.LoadUserControl(
+                        "Vouchers",
+                        "ليس لديك صلاحية عرض السندات.",
+                        new VouchersForm(),
+                        "Vouchers.View",
+                        PermissionKeys.VouchersManage);
+                });
+
+            AddQuickAction(
+                "التقارير",
+                "Reports",
+                PermissionKeys.ReportsView,
+                string.Empty,
+                UIHelper.SecondaryColor,
+                delegate
+                {
+                    MainForm.Instance?.LoadUserControl(
+                        "Reports",
+                        "ليس لديك صلاحية عرض التقارير.",
+                        new ReportCenterForm(),
+                        PermissionKeys.ReportsView);
+                });
+
+            Button refresh = CreateQuickActionButton(
+                "تحديث الآن",
+                UIHelper.NeutralColor,
+                116);
+            refresh.Click += async delegate
+            {
+                await ReloadDashboardAsync();
+            };
+            quickActionsPanel.Controls.Add(refresh);
+
+            panelSummary.Controls.Add(quickActionsPanel);
+            quickActionsPanel.BringToFront();
+        }
+
+        private void AddQuickAction(
+            string text,
+            string module,
+            string permission,
+            string fallbackPermission,
+            Color accent,
+            Action action)
+        {
+            bool allowed =
+                CurrentUser.IsAdmin() ||
+                CurrentUser.HasPermission(permission) ||
+                (!string.IsNullOrWhiteSpace(fallbackPermission) &&
+                 CurrentUser.HasPermission(fallbackPermission));
+
+            if (!allowed)
+                return;
+
+            Button button = CreateQuickActionButton(
+                text,
+                accent,
+                text.Length >= 10 ? 122 : 106);
+
+            button.AccessibleName = text;
+            button.AccessibleDescription = "إجراء سريع لوحدة " + module;
+            button.Click += delegate
+            {
+                try
+                {
+                    action?.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    UIHelper.ShowException("فتح " + text, ex);
+                }
+            };
+
+            quickActionsPanel.Controls.Add(button);
+        }
+
+        private static Button CreateQuickActionButton(
+            string text,
+            Color accent,
+            int width)
+        {
+            Button button = new Button
+            {
+                Text = text,
+                Width = width,
+                Height = 40,
+                Margin = new Padding(4, 0, 4, 0),
+                Padding = new Padding(10, 0, 10, 0),
+                FlatStyle = FlatStyle.Flat,
+                BackColor = Color.White,
+                ForeColor = accent,
+                Font = new Font(UIHelper.FontFamily, 9F, FontStyle.Bold),
+                Cursor = Cursors.Hand,
+                TabStop = true,
+                UseVisualStyleBackColor = false
+            };
+
+            button.FlatAppearance.BorderColor = Color.FromArgb(226, 232, 240);
+            button.FlatAppearance.BorderSize = 1;
+            button.FlatAppearance.MouseOverBackColor = Color.FromArgb(248, 250, 252);
+            button.FlatAppearance.MouseDownBackColor = Color.FromArgb(241, 245, 249);
+
+            return button;
+        }
+
+        private void ConfigureDashboardSurface()
+        {
+            Panel[] panels = { panelSummary, panelAlerts, panelChart };
+            foreach (Panel panel in panels)
+            {
+                if (panel == null)
+                    continue;
+                panel.BorderStyle = BorderStyle.None;
+                panel.Paint += DashboardPanel_Paint;
+            }
+
+            Panel[] cards =
+            {
+                cardStudents,
+                cardTeachers,
+                cardSubjects,
+                cardClasses,
+                cardFees
+            };
+
+            foreach (Panel card in cards)
+            {
+                if (card == null)
+                    continue;
+                card.BorderStyle = BorderStyle.None;
+                card.Paint += DashboardCard_Paint;
+            }
+
+            lblOperationalStatus.Padding = new Padding(12, 8, 12, 8);
+            lblOperationalStatus.Font =
+                new Font(UIHelper.FontFamily, 9F, FontStyle.Bold);
+
+            lblPendingFees.Padding = new Padding(12, 8, 12, 8);
+            lblTodayAbsence.Padding = new Padding(12, 8, 12, 8);
+            lblAlertsTitle.Height = 42;
+            lblChartTitle.Height = 42;
+            panelChartBody.Padding = new Padding(10, 8, 10, 8);
+        }
+
+        private static void DashboardPanel_Paint(
+            object sender,
+            PaintEventArgs e)
+        {
+            Panel panel = sender as Panel;
+            if (panel == null)
+                return;
+
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            Rectangle bounds =
+                new Rectangle(0, 0,
+                    Math.Max(0, panel.Width - 1),
+                    Math.Max(0, panel.Height - 1));
+
+            using (GraphicsPath path = CreateRoundedPath(bounds, 12))
+            using (Pen pen = new Pen(Color.FromArgb(226, 232, 240), 1F))
+                e.Graphics.DrawPath(pen, path);
+        }
+
+        private static void DashboardCard_Paint(
+            object sender,
+            PaintEventArgs e)
+        {
+            Panel card = sender as Panel;
+            if (card == null)
+                return;
+
+            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            Rectangle bounds =
+                new Rectangle(0, 0,
+                    Math.Max(0, card.Width - 1),
+                    Math.Max(0, card.Height - 1));
+
+            using (GraphicsPath path = CreateRoundedPath(bounds, 14))
+            using (Pen pen = new Pen(Color.FromArgb(226, 232, 240), 1F))
+                e.Graphics.DrawPath(pen, path);
+        }
+
+        private static GraphicsPath CreateRoundedPath(
+            Rectangle bounds,
+            int radius)
+        {
+            int diameter = radius * 2;
+            GraphicsPath path = new GraphicsPath();
+
+            if (bounds.Width < diameter || bounds.Height < diameter)
+            {
+                path.AddRectangle(bounds);
+                return path;
+            }
+
+            Rectangle arc = new Rectangle(bounds.Location, new Size(diameter, diameter));
+            path.AddArc(arc, 180, 90);
+            arc.X = bounds.Right - diameter;
+            path.AddArc(arc, 270, 90);
+            arc.Y = bounds.Bottom - diameter;
+            path.AddArc(arc, 0, 90);
+            arc.X = bounds.Left;
+            path.AddArc(arc, 90, 90);
+            path.CloseFigure();
+            return path;
         }
 
         private void ConfigureDashboardVisuals()
@@ -301,7 +623,7 @@ namespace SchoolSystem.UI
             int columns =
                 width >= 1050
                     ? 5
-                    : width >= 730
+                    : width >= 780
                         ? 3
                         : 2;
 
