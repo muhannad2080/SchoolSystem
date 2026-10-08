@@ -679,7 +679,7 @@
             this.btnAdd.Location = new System.Drawing.Point(18, 10);
             this.btnAdd.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(88, 36);
+            this.btnAdd.Size = new System.Drawing.Size(110, 40);
             this.btnAdd.TabIndex = 0;
             this.btnAdd.Text = "إضافة";
             this.btnAdd.UseVisualStyleBackColor = false;
@@ -699,7 +699,7 @@
             this.btnUpdate.Location = new System.Drawing.Point(114, 10);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(88, 36);
+            this.btnUpdate.Size = new System.Drawing.Size(110, 40);
             this.btnUpdate.TabIndex = 1;
             this.btnUpdate.Text = "تعديل";
             this.btnUpdate.UseVisualStyleBackColor = false;
@@ -719,7 +719,7 @@
             this.btnDelete.Location = new System.Drawing.Point(210, 10);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(88, 36);
+            this.btnDelete.Size = new System.Drawing.Size(110, 40);
             this.btnDelete.TabIndex = 2;
             this.btnDelete.Text = "حذف";
             this.btnDelete.UseVisualStyleBackColor = false;
@@ -739,7 +739,7 @@
             this.btnClear.Location = new System.Drawing.Point(306, 10);
             this.btnClear.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(88, 36);
+            this.btnClear.Size = new System.Drawing.Size(110, 40);
             this.btnClear.TabIndex = 3;
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
@@ -759,7 +759,7 @@
             this.btnGenerateFees.Location = new System.Drawing.Point(402, 10);
             this.btnGenerateFees.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnGenerateFees.Name = "btnGenerateFees";
-            this.btnGenerateFees.Size = new System.Drawing.Size(122, 36);
+            this.btnGenerateFees.Size = new System.Drawing.Size(122, 40);
             this.btnGenerateFees.TabIndex = 4;
             this.btnGenerateFees.Text = "توليد الرسوم";
             this.btnGenerateFees.UseVisualStyleBackColor = false;
@@ -779,7 +779,7 @@
             this.btnExportExcel.Location = new System.Drawing.Point(532, 10);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnExportExcel.Name = "btnExportExcel";
-            this.btnExportExcel.Size = new System.Drawing.Size(112, 36);
+            this.btnExportExcel.Size = new System.Drawing.Size(112, 40);
             this.btnExportExcel.TabIndex = 5;
             this.btnExportExcel.Text = "تصدير Excel";
             this.btnExportExcel.UseVisualStyleBackColor = false;
@@ -799,7 +799,7 @@
             this.btnExportPdf.Location = new System.Drawing.Point(652, 10);
             this.btnExportPdf.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnExportPdf.Name = "btnExportPdf";
-            this.btnExportPdf.Size = new System.Drawing.Size(104, 36);
+            this.btnExportPdf.Size = new System.Drawing.Size(104, 40);
             this.btnExportPdf.TabIndex = 6;
             this.btnExportPdf.Text = "تصدير PDF";
             this.btnExportPdf.UseVisualStyleBackColor = false;
@@ -819,7 +819,7 @@
             this.btnRecordPayment.Location = new System.Drawing.Point(764, 10);
             this.btnRecordPayment.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnRecordPayment.Name = "btnRecordPayment";
-            this.btnRecordPayment.Size = new System.Drawing.Size(116, 36);
+            this.btnRecordPayment.Size = new System.Drawing.Size(116, 40);
             this.btnRecordPayment.TabIndex = 7;
             this.btnRecordPayment.Text = "تحصيل دفعة";
             this.btnRecordPayment.UseVisualStyleBackColor = false;
@@ -839,7 +839,7 @@
             this.btnOutstandingReport.Location = new System.Drawing.Point(888, 10);
             this.btnOutstandingReport.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnOutstandingReport.Name = "btnOutstandingReport";
-            this.btnOutstandingReport.Size = new System.Drawing.Size(126, 36);
+            this.btnOutstandingReport.Size = new System.Drawing.Size(126, 40);
             this.btnOutstandingReport.TabIndex = 8;
             this.btnOutstandingReport.Text = "تقرير المتأخرات";
             this.btnOutstandingReport.UseVisualStyleBackColor = false;
@@ -859,7 +859,7 @@
             this.panelSearch.Margin = new System.Windows.Forms.Padding(0);
             this.panelSearch.Name = "panelSearch";
             this.panelSearch.Padding = new System.Windows.Forms.Padding(18, 3, 18, 3);
-            this.panelSearch.Size = new System.Drawing.Size(1100, 28);
+            this.panelSearch.Size = new System.Drawing.Size(1100, 50);
             this.panelSearch.TabIndex = 4;
             // 
             // lblSearch
@@ -935,16 +935,16 @@
             this.dataGridViewFees.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewFees.EnableHeadersVisualStyles = false;
             this.dataGridViewFees.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
-            this.dataGridViewFees.Location = new System.Drawing.Point(0, 364);
+            this.dataGridViewFees.Location = new System.Drawing.Point(0, 484);
             this.dataGridViewFees.Margin = new System.Windows.Forms.Padding(0);
             this.dataGridViewFees.MultiSelect = false;
             this.dataGridViewFees.Name = "dataGridViewFees";
             this.dataGridViewFees.ReadOnly = true;
             this.dataGridViewFees.RowHeadersVisible = false;
-            this.dataGridViewFees.RowHeadersWidth = 51;
+            this.dataGridViewFees.RowHeadersWidth = 4;
             this.dataGridViewFees.RowTemplate.Height = 36;
             this.dataGridViewFees.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewFees.Size = new System.Drawing.Size(1100, 315);
+            this.dataGridViewFees.Size = new System.Drawing.Size(1100, 192);
             this.dataGridViewFees.TabIndex = 5;
             this.dataGridViewFees.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewFees_CellClick);
             this.dataGridViewFees.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -970,10 +970,10 @@
             this.panelBottom.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.panelBottom.Controls.Add(this.lblRecordCount);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(0, 679);
+            this.panelBottom.Location = new System.Drawing.Point(0, 676);
             this.panelBottom.Margin = new System.Windows.Forms.Padding(0);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1100, 21);
+            this.panelBottom.Size = new System.Drawing.Size(1100, 24);
             this.panelBottom.TabIndex = 6;
             // 
             // lblRecordCount
