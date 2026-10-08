@@ -77,6 +77,9 @@ if (-not (Test-Path (Join-Path $buildOutput 'SchoolSystem.exe'))) {
 }
 
 foreach ($requiredRelativePath in @(
+    'SchoolSystem.exe',
+    'SchoolSystem.exe.config',
+    'iTextSharp.LGPLv2.Core.dll',
     'Database\databaseschool.sql',
     'Database\SeedAcademicStructure_2026_2027.sql'
 )) {
