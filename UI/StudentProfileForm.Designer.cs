@@ -120,7 +120,7 @@ namespace SchoolSystem.UI
             this.studentPictureBox.TabStop = false;
 
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblTitle.Font = new System.Drawing.Font(SchoolSystem.Helpers.UIHelper.FontFamily, 16F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
             this.lblTitle.ForeColor = System.Drawing.Color.White;
             this.lblTitle.Location = new System.Drawing.Point(0, 0);
             this.lblTitle.Margin = new System.Windows.Forms.Padding(0);
@@ -130,7 +130,7 @@ namespace SchoolSystem.UI
             this.lblTitle.Size = new System.Drawing.Size(992, 68);
             this.lblTitle.TabIndex = 1;
             this.lblTitle.Text = "ملف الطالب الموحد";
-            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 
             // شريط الإجراءات: لا يعتمد على تموضع مطلق، ويمنع تراكب الأزرار.
             this.headerActionsPanel.AutoScroll = false;
