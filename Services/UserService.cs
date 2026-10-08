@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using SchoolSystem.DataAccess;
 using SchoolSystem.Helpers;
 using SchoolSystem.Models;
@@ -493,60 +494,92 @@ namespace SchoolSystem.Services
         // تعريف الدالة EnsureDefaultAdmin لتنفيذ العملية المرتبطة بها.
         public void EnsureDefaultAdmin()
         {
+            string ignored;
+            EnsureDefaultAdmin(out ignored);
+        }
+
+        /// <summary>
+        /// يضمن وجود مدير النظام الأول. عند التثبيت الجديد يمكن للنظام قبول كلمة
+        /// مرور يحددها مسؤول النشر عبر متغير البيئة، وإلا يولد كلمة مؤقتة عشوائية
+        /// تُعرض مرة واحدة للمستخدم ويُجبر المدير على تغييرها بعد الدخول.
+        /// </summary>
+        public bool EnsureDefaultAdmin(out string initialPassword)
+        {
+            initialPassword = string.Empty;
+
             // مزامنة كتالوج الصلاحيات في كل تشغيل لضمان أن قاعدة البيانات والواجهة
             // تستخدمان نفس المصدر البرمجي، بما في ذلك الأسماء العربية.
             userRepository.SyncPermissionCatalog();
 
             if (userRepository.CountUsers() > 0)
-                return;
+                return false;
 
-
-            // يحدد مسؤول النشر كلمة المرور الأولية خارج الكود قبل أول تشغيل.
-            // تجهيز قيمة كلمة المرور لمسار الحماية والحماية.
-            // كلمة مرور المدير الأول يجب أن تأتي من خارج الكود.
-            // لا توجد كلمة مرور افتراضية ثابتة داخل التطبيق.
-            string initialPassword = Environment.GetEnvironmentVariable(
+            string configuredPassword = Environment.GetEnvironmentVariable(
                 "SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD");
 
-            if (!IsValidInitialPassword(initialPassword))
-            {
-                throw new InvalidOperationException(
-                    "SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD يجب أن يحتوي على 10 أحرف على الأقل، مع حرف ورقم، قبل إنشاء مدير النظام الأول.");
-            }
+            bool generated = !IsValidInitialPassword(configuredPassword);
+            initialPassword = generated
+                ? GenerateInitialAdminPassword()
+                : configuredPassword;
 
-            // تمرير قيمة كلمة المرور إلى مسار الحماية والحماية.
             User admin = new User
             {
                 FullName = "مدير النظام",
                 UserName = "admin",
                 RoleName = "مدير النظام",
-                // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
                 Permissions = GetAllPermissionsString(),
                 Email = "",
                 Phone = "",
                 IsActive = true,
-                // تجهيز قيمة كلمة المرور لمسار الحماية والحماية.
                 MustChangePassword = true
-            // تمرير قيمة كلمة المرور إلى مسار الحماية والحماية.
             };
 
-            ApplicationLogger.Log("Security",
-                "جاري إنشاء مدير النظام الأول بحساب admin وكلمة مرور مأخوذة من متغير البيئة.");
+            ApplicationLogger.Log(
+                "Security",
+                generated
+                    ? "جاري إنشاء مدير النظام الأول بكلمة مرور مؤقتة عشوائية."
+                    : "جاري إنشاء مدير النظام الأول بكلمة مرور مقدمة من مسؤول النشر.");
+
             try
             {
                 AddUser(admin, initialPassword);
-
-                // إجبار المدير الأول على تغيير كلمة المرور عند أول دخول بغض النظر عن دوره.
                 userRepository.SetMustChangePassword(admin.UserID, true);
 
-                ApplicationLogger.Log("Security",
-                    "أنشئ مدير النظام الأول بنجاح (UserID=" + admin.UserID + ") بكلمة مرور من متغير البيئة.");
+                ApplicationLogger.Log(
+                    "Security",
+                    "تم إنشاء مدير النظام الأول بنجاح (UserID=" +
+                    admin.UserID + "). تغيير كلمة المرور الأولي مطلوب.");
+
+                return true;
             }
             catch (Exception ex)
             {
                 ApplicationLogger.LogException("Security", ex);
                 throw;
             }
+        }
+
+        private static string GenerateInitialAdminPassword()
+        {
+            const string alphabet =
+                "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789@#";
+            char[] result = new char[12];
+
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            {
+                byte[] bytes = new byte[result.Length];
+
+                do
+                {
+                    rng.GetBytes(bytes);
+
+                    for (int i = 0; i < result.Length; i++)
+                        result[i] = alphabet[bytes[i] % alphabet.Length];
+                }
+                while (!result.Any(char.IsLetter) || !result.Any(char.IsDigit));
+            }
+
+            return new string(result);
         }
 
         // تعريف الدالة IsValidInitialPassword لتنفيذ العملية المرتبطة بها.
