@@ -830,10 +830,10 @@ namespace SchoolSystem.UI
             actions.Dock = DockStyle.Fill;
             actions.AutoSize = true;
 
-            btnAddTransportAssignment = new Button { Text = "إضافة", Width = 100 };
-            btnUpdateTransportAssignment = new Button { Text = "تعديل", Width = 100 };
-            btnDeleteTransportAssignment = new Button { Text = "إلغاء التوزيع", Width = 120 };
-            btnClearTransportAssignment = new Button { Text = "تفريغ", Width = 100 };
+            btnAddTransportAssignment = new Button { Text = "إضافة", Width = 110, Height = 40, BackColor = UIHelper.SuccessColor, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5F, FontStyle.Bold), UseVisualStyleBackColor = false };
+            btnUpdateTransportAssignment = new Button { Text = "تعديل", Width = 110, Height = 40, BackColor = UIHelper.AccentColor, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5F, FontStyle.Bold), UseVisualStyleBackColor = false };
+            btnDeleteTransportAssignment = new Button { Text = "إلغاء التوزيع", Width = 120, Height = 40, BackColor = UIHelper.DangerColor, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5F, FontStyle.Bold), UseVisualStyleBackColor = false };
+            btnClearTransportAssignment = new Button { Text = "تفريغ", Width = 110, Height = 40, BackColor = UIHelper.NeutralColor, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5F, FontStyle.Bold), UseVisualStyleBackColor = false };
             lblTransportAssignmentCount = new Label { Text = "عدد التوزيعات: 0", AutoSize = true, Padding = new Padding(10, 8, 10, 0) };
 
             btnAddTransportAssignment.Click += async (s, e) => await AddTransportAssignmentAsync();
