@@ -190,17 +190,19 @@ namespace SchoolSystem.UI
             // 
             // cmbTeacher
             // 
-            this.cmbTeacher.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.cmbTeacher.BackColor = System.Drawing.Color.White;
             this.cmbTeacher.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbTeacher.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTeacher.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTeacher.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.cmbTeacher.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbTeacher.FormattingEnabled = true;
             this.cmbTeacher.Location = new System.Drawing.Point(667, 8);
-            this.cmbTeacher.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbTeacher.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbTeacher.Name = "cmbTeacher";
             this.cmbTeacher.Size = new System.Drawing.Size(206, 27);
             this.cmbTeacher.TabIndex = 0;
+            this.cmbTeacher.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbTeacher.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblDate
             // 
@@ -240,18 +242,20 @@ namespace SchoolSystem.UI
             // 
             // cmbStatus
             // 
-            this.cmbStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.cmbStatus.BackColor = System.Drawing.Color.White;
             this.cmbStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbStatus.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.cmbStatus.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbStatus.FormattingEnabled = true;
             this.cmbStatus.Location = new System.Drawing.Point(8, 8);
-            this.cmbStatus.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.Size = new System.Drawing.Size(207, 27);
             this.cmbStatus.TabIndex = 2;
             this.cmbStatus.SelectedIndexChanged += new System.EventHandler(this.cmbStatus_SelectedIndexChanged);
+            this.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblCheckIn
             // 
@@ -319,18 +323,20 @@ namespace SchoolSystem.UI
             // 
             // txtWorkHours
             // 
-            this.txtWorkHours.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtWorkHours.BackColor = System.Drawing.Color.White;
             this.txtWorkHours.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtWorkHours.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtWorkHours.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtWorkHours.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtWorkHours.Location = new System.Drawing.Point(8, 48);
-            this.txtWorkHours.Margin = new System.Windows.Forms.Padding(4);
+            this.txtWorkHours.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtWorkHours.Name = "txtWorkHours";
             this.txtWorkHours.ReadOnly = true;
             this.txtWorkHours.Size = new System.Drawing.Size(207, 27);
             this.txtWorkHours.TabIndex = 5;
             this.txtWorkHours.Text = "0";
             this.txtWorkHours.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtWorkHours.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtWorkHours.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblLateMinutes
             // 
@@ -346,18 +352,20 @@ namespace SchoolSystem.UI
             // 
             // txtLateMinutes
             // 
-            this.txtLateMinutes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtLateMinutes.BackColor = System.Drawing.Color.White;
             this.txtLateMinutes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtLateMinutes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtLateMinutes.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtLateMinutes.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtLateMinutes.Location = new System.Drawing.Point(667, 88);
-            this.txtLateMinutes.Margin = new System.Windows.Forms.Padding(4);
+            this.txtLateMinutes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtLateMinutes.Name = "txtLateMinutes";
             this.txtLateMinutes.ReadOnly = true;
             this.txtLateMinutes.Size = new System.Drawing.Size(206, 27);
             this.txtLateMinutes.TabIndex = 6;
             this.txtLateMinutes.Text = "0";
             this.txtLateMinutes.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtLateMinutes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtLateMinutes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblEarlyLeaveMinutes
             // 
@@ -373,18 +381,20 @@ namespace SchoolSystem.UI
             // 
             // txtEarlyLeaveMinutes
             // 
-            this.txtEarlyLeaveMinutes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtEarlyLeaveMinutes.BackColor = System.Drawing.Color.White;
             this.txtEarlyLeaveMinutes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtEarlyLeaveMinutes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtEarlyLeaveMinutes.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtEarlyLeaveMinutes.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtEarlyLeaveMinutes.Location = new System.Drawing.Point(338, 88);
-            this.txtEarlyLeaveMinutes.Margin = new System.Windows.Forms.Padding(4);
+            this.txtEarlyLeaveMinutes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtEarlyLeaveMinutes.Name = "txtEarlyLeaveMinutes";
             this.txtEarlyLeaveMinutes.ReadOnly = true;
             this.txtEarlyLeaveMinutes.Size = new System.Drawing.Size(206, 27);
             this.txtEarlyLeaveMinutes.TabIndex = 7;
             this.txtEarlyLeaveMinutes.Text = "0";
             this.txtEarlyLeaveMinutes.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtEarlyLeaveMinutes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtEarlyLeaveMinutes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblAbsenceReason
             // 
@@ -400,16 +410,18 @@ namespace SchoolSystem.UI
             // 
             // txtAbsenceReason
             // 
-            this.txtAbsenceReason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtAbsenceReason.BackColor = System.Drawing.Color.White;
             this.txtAbsenceReason.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtAbsenceReason.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtAbsenceReason.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtAbsenceReason.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtAbsenceReason.Location = new System.Drawing.Point(8, 88);
-            this.txtAbsenceReason.Margin = new System.Windows.Forms.Padding(4);
+            this.txtAbsenceReason.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtAbsenceReason.Name = "txtAbsenceReason";
             this.txtAbsenceReason.Size = new System.Drawing.Size(207, 27);
             this.txtAbsenceReason.TabIndex = 8;
             this.txtAbsenceReason.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtAbsenceReason_KeyPress);
+            this.txtAbsenceReason.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtAbsenceReason.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNotes
             // 
@@ -425,17 +437,19 @@ namespace SchoolSystem.UI
             // 
             // txtNotes
             // 
-            this.txtNotes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtNotes.BackColor = System.Drawing.Color.White;
             this.txtNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tableLayoutFields.SetColumnSpan(this.txtNotes, 5);
             this.txtNotes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNotes.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtNotes.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtNotes.Location = new System.Drawing.Point(8, 128);
-            this.txtNotes.Margin = new System.Windows.Forms.Padding(4);
+            this.txtNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(865, 27);
             this.txtNotes.TabIndex = 9;
             this.txtNotes.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNotes_KeyPress);
+            this.txtNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelButtons
             // 
@@ -569,7 +583,7 @@ namespace SchoolSystem.UI
             // 
             // txtSearch
             // 
-            this.txtSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtSearch.BackColor = System.Drawing.Color.White;
             this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
@@ -578,6 +592,9 @@ namespace SchoolSystem.UI
             this.txtSearch.Size = new System.Drawing.Size(880, 28);
             this.txtSearch.TabIndex = 15;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblSearch
             // 
