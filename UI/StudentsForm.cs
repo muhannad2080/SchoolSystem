@@ -33,7 +33,6 @@ namespace SchoolSystem.UI
         private Student _editingSnapshot;
         private List<Student> _filteredStudents = new List<Student>();
         private readonly ToolTip _toolTip = new ToolTip();
-        private TableLayoutPanel _searchLayout;
 
         // ================================================================
         // CONSTRUCTOR
