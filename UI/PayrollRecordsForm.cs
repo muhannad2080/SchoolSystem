@@ -320,21 +320,37 @@ namespace SchoolSystem.UI
 
         private void ApplyFilter(string searchText)
         {
-            if (allPayrolls == null)
-                return;
-
-            string term = (searchText ?? string.Empty).Trim();
-            DataTable filtered = allPayrolls.Clone();
-
-            foreach (DataRow row in allPayrolls.Rows)
+            try
             {
-                if (string.IsNullOrWhiteSpace(term) || PayrollRowContains(row, term))
-                    filtered.ImportRow(row);
-            }
+                if (allPayrolls == null)
+                {
+                    dataGridViewPayrolls.DataSource = null;
+                    lblRecordCount.Text = "عدد سجلات الرواتب: 0";
+                    return;
+                }
 
-            dataGridViewPayrolls.DataSource = filtered.DefaultView;
-            lblRecordCount.Text = "عدد سجلات الرواتب: " + filtered.Rows.Count;
-            FormatGridColumns();
+                string term = (searchText ?? string.Empty).Trim();
+                DataTable filtered = allPayrolls.Clone();
+
+                foreach (DataRow row in allPayrolls.Rows)
+                {
+                    if (row == null)
+                        continue;
+
+                    if (string.IsNullOrWhiteSpace(term) || PayrollRowContains(row, term))
+                        filtered.ImportRow(row);
+                }
+
+                dataGridViewPayrolls.DataSource = filtered.DefaultView;
+                lblRecordCount.Text = "عدد سجلات الرواتب: " + filtered.Rows.Count;
+                FormatGridColumns();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("شاشة مسير الرواتب: البحث", ex);
+                dataGridViewPayrolls.DataSource = allPayrolls != null ? allPayrolls.DefaultView : null;
+                lblRecordCount.Text = "عدد سجلات الرواتب: " + (allPayrolls != null ? allPayrolls.Rows.Count : 0);
+            }
         }
 
         private static bool PayrollRowContains(DataRow row, string term)
@@ -537,6 +553,12 @@ namespace SchoolSystem.UI
         private void btnClear_Click(object sender, EventArgs e)
         {
             ClearInputs();
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            ApplyFilter(txtSearch.Text);
+            txtSearch.Focus();
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
