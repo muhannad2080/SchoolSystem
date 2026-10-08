@@ -221,17 +221,19 @@ namespace SchoolSystem.UI
             // 
             // cmbTeacher
             // 
-            this.cmbTeacher.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.cmbTeacher.BackColor = System.Drawing.Color.White;
             this.cmbTeacher.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbTeacher.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbTeacher.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTeacher.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.cmbTeacher.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbTeacher.FormattingEnabled = true;
             this.cmbTeacher.Location = new System.Drawing.Point(700, 8);
-            this.cmbTeacher.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbTeacher.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbTeacher.Name = "cmbTeacher";
             this.cmbTeacher.Size = new System.Drawing.Size(218, 27);
             this.cmbTeacher.TabIndex = 0;
+            this.cmbTeacher.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbTeacher.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblContractNumber
             // 
@@ -247,15 +249,17 @@ namespace SchoolSystem.UI
             // 
             // txtContractNumber
             // 
-            this.txtContractNumber.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtContractNumber.BackColor = System.Drawing.Color.White;
             this.txtContractNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtContractNumber.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtContractNumber.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtContractNumber.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtContractNumber.Location = new System.Drawing.Point(354, 8);
-            this.txtContractNumber.Margin = new System.Windows.Forms.Padding(4);
+            this.txtContractNumber.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtContractNumber.Name = "txtContractNumber";
             this.txtContractNumber.Size = new System.Drawing.Size(218, 27);
             this.txtContractNumber.TabIndex = 1;
+            this.txtContractNumber.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtContractNumber.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblContractType
             // 
@@ -271,11 +275,11 @@ namespace SchoolSystem.UI
             // 
             // cmbContractType
             // 
-            this.cmbContractType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.cmbContractType.BackColor = System.Drawing.Color.White;
             this.cmbContractType.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbContractType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbContractType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbContractType.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.cmbContractType.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbContractType.FormattingEnabled = true;
             this.cmbContractType.Items.AddRange(new object[] {
             "دوام كامل",
@@ -284,10 +288,12 @@ namespace SchoolSystem.UI
             "مؤقت",
             "تعاقد سنوي"});
             this.cmbContractType.Location = new System.Drawing.Point(8, 8);
-            this.cmbContractType.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbContractType.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbContractType.Name = "cmbContractType";
             this.cmbContractType.Size = new System.Drawing.Size(218, 27);
             this.cmbContractType.TabIndex = 2;
+            this.cmbContractType.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbContractType.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblContractStatus
             // 
@@ -303,11 +309,11 @@ namespace SchoolSystem.UI
             // 
             // cmbContractStatus
             // 
-            this.cmbContractStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.cmbContractStatus.BackColor = System.Drawing.Color.White;
             this.cmbContractStatus.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbContractStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbContractStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbContractStatus.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.cmbContractStatus.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbContractStatus.FormattingEnabled = true;
             this.cmbContractStatus.Items.AddRange(new object[] {
             "ساري",
@@ -315,10 +321,12 @@ namespace SchoolSystem.UI
             "موقوف",
             "ملغي"});
             this.cmbContractStatus.Location = new System.Drawing.Point(700, 50);
-            this.cmbContractStatus.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbContractStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbContractStatus.Name = "cmbContractStatus";
             this.cmbContractStatus.Size = new System.Drawing.Size(218, 27);
             this.cmbContractStatus.TabIndex = 3;
+            this.cmbContractStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbContractStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblStartDate
             // 
@@ -384,17 +392,19 @@ namespace SchoolSystem.UI
             // 
             // txtBasicSalary
             // 
-            this.txtBasicSalary.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtBasicSalary.BackColor = System.Drawing.Color.White;
             this.txtBasicSalary.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtBasicSalary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtBasicSalary.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtBasicSalary.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtBasicSalary.Location = new System.Drawing.Point(700, 92);
-            this.txtBasicSalary.Margin = new System.Windows.Forms.Padding(4);
+            this.txtBasicSalary.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtBasicSalary.Name = "txtBasicSalary";
             this.txtBasicSalary.Size = new System.Drawing.Size(218, 27);
             this.txtBasicSalary.TabIndex = 6;
             this.txtBasicSalary.Text = "0";
             this.txtBasicSalary.TextChanged += new System.EventHandler(this.SalaryField_TextChanged);
+            this.txtBasicSalary.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtBasicSalary.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblHousing
             // 
@@ -410,17 +420,19 @@ namespace SchoolSystem.UI
             // 
             // txtHousing
             // 
-            this.txtHousing.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtHousing.BackColor = System.Drawing.Color.White;
             this.txtHousing.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtHousing.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtHousing.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtHousing.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtHousing.Location = new System.Drawing.Point(354, 92);
-            this.txtHousing.Margin = new System.Windows.Forms.Padding(4);
+            this.txtHousing.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtHousing.Name = "txtHousing";
             this.txtHousing.Size = new System.Drawing.Size(218, 27);
             this.txtHousing.TabIndex = 7;
             this.txtHousing.Text = "0";
             this.txtHousing.TextChanged += new System.EventHandler(this.SalaryField_TextChanged);
+            this.txtHousing.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtHousing.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblTransport
             // 
@@ -436,17 +448,19 @@ namespace SchoolSystem.UI
             // 
             // txtTransport
             // 
-            this.txtTransport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtTransport.BackColor = System.Drawing.Color.White;
             this.txtTransport.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtTransport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtTransport.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtTransport.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtTransport.Location = new System.Drawing.Point(8, 92);
-            this.txtTransport.Margin = new System.Windows.Forms.Padding(4);
+            this.txtTransport.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtTransport.Name = "txtTransport";
             this.txtTransport.Size = new System.Drawing.Size(218, 27);
             this.txtTransport.TabIndex = 8;
             this.txtTransport.Text = "0";
             this.txtTransport.TextChanged += new System.EventHandler(this.SalaryField_TextChanged);
+            this.txtTransport.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtTransport.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblOther
             // 
@@ -462,17 +476,19 @@ namespace SchoolSystem.UI
             // 
             // txtOther
             // 
-            this.txtOther.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtOther.BackColor = System.Drawing.Color.White;
             this.txtOther.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtOther.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtOther.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtOther.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtOther.Location = new System.Drawing.Point(700, 134);
-            this.txtOther.Margin = new System.Windows.Forms.Padding(4);
+            this.txtOther.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtOther.Name = "txtOther";
             this.txtOther.Size = new System.Drawing.Size(218, 27);
             this.txtOther.TabIndex = 9;
             this.txtOther.Text = "0";
             this.txtOther.TextChanged += new System.EventHandler(this.SalaryField_TextChanged);
+            this.txtOther.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtOther.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblDeductions
             // 
@@ -488,17 +504,19 @@ namespace SchoolSystem.UI
             // 
             // txtDeductions
             // 
-            this.txtDeductions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(247)))), ((int)(((byte)(247)))));
+            this.txtDeductions.BackColor = System.Drawing.Color.White;
             this.txtDeductions.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtDeductions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtDeductions.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtDeductions.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtDeductions.Location = new System.Drawing.Point(354, 134);
-            this.txtDeductions.Margin = new System.Windows.Forms.Padding(4);
+            this.txtDeductions.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtDeductions.Name = "txtDeductions";
             this.txtDeductions.Size = new System.Drawing.Size(218, 27);
             this.txtDeductions.TabIndex = 10;
             this.txtDeductions.Text = "0";
             this.txtDeductions.TextChanged += new System.EventHandler(this.SalaryField_TextChanged);
+            this.txtDeductions.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtDeductions.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblPaymentMethod
             // 
@@ -514,11 +532,11 @@ namespace SchoolSystem.UI
             // 
             // cmbPaymentMethod
             // 
-            this.cmbPaymentMethod.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.cmbPaymentMethod.BackColor = System.Drawing.Color.White;
             this.cmbPaymentMethod.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbPaymentMethod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPaymentMethod.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbPaymentMethod.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.cmbPaymentMethod.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbPaymentMethod.FormattingEnabled = true;
             this.cmbPaymentMethod.Items.AddRange(new object[] {
             "نقداً",
@@ -526,10 +544,12 @@ namespace SchoolSystem.UI
             "بنك",
             "محفظة إلكترونية"});
             this.cmbPaymentMethod.Location = new System.Drawing.Point(8, 134);
-            this.cmbPaymentMethod.Margin = new System.Windows.Forms.Padding(4);
+            this.cmbPaymentMethod.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbPaymentMethod.Name = "cmbPaymentMethod";
             this.cmbPaymentMethod.Size = new System.Drawing.Size(218, 27);
             this.cmbPaymentMethod.TabIndex = 11;
+            this.cmbPaymentMethod.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbPaymentMethod.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblTotal
             // 
@@ -545,13 +565,13 @@ namespace SchoolSystem.UI
             // 
             // txtTotal
             // 
-            this.txtTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(253)))), ((int)(((byte)(245)))));
+            this.txtTotal.BackColor = System.Drawing.Color.White;
             this.txtTotal.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtTotal.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtTotal.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
-            this.txtTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
+            this.txtTotal.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtTotal.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtTotal.Location = new System.Drawing.Point(700, 176);
-            this.txtTotal.Margin = new System.Windows.Forms.Padding(4);
+            this.txtTotal.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtTotal.Name = "txtTotal";
             this.txtTotal.ReadOnly = true;
             this.txtTotal.Size = new System.Drawing.Size(218, 27);
@@ -559,6 +579,7 @@ namespace SchoolSystem.UI
             this.txtTotal.TabStop = false;
             this.txtTotal.Text = "0";
             this.txtTotal.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtTotal.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNetSalary
             // 
@@ -574,13 +595,13 @@ namespace SchoolSystem.UI
             // 
             // txtNetSalary
             // 
-            this.txtNetSalary.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(246)))), ((int)(((byte)(255)))));
+            this.txtNetSalary.BackColor = System.Drawing.Color.White;
             this.txtNetSalary.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtNetSalary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNetSalary.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
-            this.txtNetSalary.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.txtNetSalary.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtNetSalary.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtNetSalary.Location = new System.Drawing.Point(354, 176);
-            this.txtNetSalary.Margin = new System.Windows.Forms.Padding(4);
+            this.txtNetSalary.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNetSalary.Name = "txtNetSalary";
             this.txtNetSalary.ReadOnly = true;
             this.txtNetSalary.Size = new System.Drawing.Size(218, 27);
@@ -588,6 +609,7 @@ namespace SchoolSystem.UI
             this.txtNetSalary.TabStop = false;
             this.txtNetSalary.Text = "0";
             this.txtNetSalary.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtNetSalary.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNotes
             // 
@@ -603,15 +625,17 @@ namespace SchoolSystem.UI
             // 
             // txtNotes
             // 
-            this.txtNotes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtNotes.BackColor = System.Drawing.Color.White;
             this.txtNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtNotes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNotes.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtNotes.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtNotes.Location = new System.Drawing.Point(8, 176);
-            this.txtNotes.Margin = new System.Windows.Forms.Padding(4);
+            this.txtNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(218, 27);
             this.txtNotes.TabIndex = 14;
+            this.txtNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelButtons
             // 
@@ -729,7 +753,7 @@ namespace SchoolSystem.UI
             // 
             // txtSearch
             // 
-            this.txtSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(249)))), ((int)(((byte)(250)))), ((int)(((byte)(251)))));
+            this.txtSearch.BackColor = System.Drawing.Color.White;
             this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
@@ -738,6 +762,9 @@ namespace SchoolSystem.UI
             this.txtSearch.Size = new System.Drawing.Size(930, 28);
             this.txtSearch.TabIndex = 19;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblSearch
             // 
