@@ -107,7 +107,7 @@ namespace SchoolSystem.UI
 
 
 
-            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(42)))), ((int)(((byte)(57)))));
+            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
             this.panelTitle.Controls.Add(this.lblFormTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
