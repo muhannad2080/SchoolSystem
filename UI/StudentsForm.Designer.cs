@@ -792,7 +792,7 @@
             this.dgvStudents.RowHeadersVisible = false;
             this.dgvStudents.RowTemplate.Height = 36;
             this.dgvStudents.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvStudents.Size = new System.Drawing.Size(652, 554);
+            this.dgvStudents.Size = new System.Drawing.Size(652, 536);
             this.dgvStudents.TabIndex = 0;
             this.dgvStudents.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStudents_CellClick);
             this.dgvStudents.SelectionChanged += new System.EventHandler(this.dgvStudents_SelectionChanged);
@@ -839,7 +839,7 @@
             this.splitContainerMain.Panel2.Padding = new System.Windows.Forms.Padding(10);
             this.splitContainerMain.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.splitContainerMain.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainerMain.Size = new System.Drawing.Size(1200, 574);
+            this.splitContainerMain.Size = new System.Drawing.Size(1200, 556);
             this.splitContainerMain.SplitterDistance = 672;
             this.splitContainerMain.SplitterWidth = 6;
             this.splitContainerMain.TabIndex = 0;
@@ -852,7 +852,7 @@
             this.pnlRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlRight.Location = new System.Drawing.Point(10, 10);
             this.pnlRight.Name = "pnlRight";
-            this.pnlRight.Size = new System.Drawing.Size(502, 554);
+            this.pnlRight.Size = new System.Drawing.Size(502, 536);
             this.pnlRight.TabIndex = 0;
             // 
             // pnlSearch
@@ -1004,22 +1004,22 @@
             // 
             this.pnlButtons.AutoScroll = false;
             this.pnlButtons.BackColor = System.Drawing.Color.White;
-            this.pnlButtons.Controls.Add(this.btnClose);
-            this.pnlButtons.Controls.Add(this.btnStudentProfile);
-            this.pnlButtons.Controls.Add(this.btnPrint);
-            this.pnlButtons.Controls.Add(this.btnExportExcel);
-            this.pnlButtons.Controls.Add(this.btnRefresh);
-            this.pnlButtons.Controls.Add(this.btnCancel);
-            this.pnlButtons.Controls.Add(this.btnDelete);
-            this.pnlButtons.Controls.Add(this.btnUpdate);
-            this.pnlButtons.Controls.Add(this.btnSave);
             this.pnlButtons.Controls.Add(this.btnAdd);
+            this.pnlButtons.Controls.Add(this.btnSave);
+            this.pnlButtons.Controls.Add(this.btnUpdate);
+            this.pnlButtons.Controls.Add(this.btnDelete);
+            this.pnlButtons.Controls.Add(this.btnCancel);
+            this.pnlButtons.Controls.Add(this.btnRefresh);
+            this.pnlButtons.Controls.Add(this.btnExportExcel);
+            this.pnlButtons.Controls.Add(this.btnPrint);
+            this.pnlButtons.Controls.Add(this.btnStudentProfile);
+            this.pnlButtons.Controls.Add(this.btnClose);
             this.pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;
-            this.pnlButtons.Location = new System.Drawing.Point(0, 640);
+            this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.pnlButtons.Location = new System.Drawing.Point(0, 688);
             this.pnlButtons.Name = "pnlButtons";
             this.pnlButtons.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);
-            this.pnlButtons.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.pnlButtons.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.pnlButtons.Size = new System.Drawing.Size(1200, 62);
             this.pnlButtons.TabIndex = 1;
             // 
@@ -1028,7 +1028,7 @@
             this.btnClose.Location = new System.Drawing.Point(14, 12);
             this.btnClose.Margin = new System.Windows.Forms.Padding(4);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(112, 38);
+            this.btnClose.Size = new System.Drawing.Size(110, 40);
             this.btnClose.TabIndex = 0;
             this.btnClose.Text = "إغلاق";
             this.btnClose.UseVisualStyleBackColor = false;
@@ -1048,7 +1048,7 @@
             this.btnStudentProfile.Location = new System.Drawing.Point(134, 12);
             this.btnStudentProfile.Margin = new System.Windows.Forms.Padding(4);
             this.btnStudentProfile.Name = "btnStudentProfile";
-            this.btnStudentProfile.Size = new System.Drawing.Size(112, 38);
+            this.btnStudentProfile.Size = new System.Drawing.Size(110, 40);
             this.btnStudentProfile.TabIndex = 1;
             this.btnStudentProfile.Text = "ملف الطالب";
             this.btnStudentProfile.UseVisualStyleBackColor = false;
@@ -1068,7 +1068,7 @@
             this.btnPrint.Location = new System.Drawing.Point(254, 12);
             this.btnPrint.Margin = new System.Windows.Forms.Padding(4);
             this.btnPrint.Name = "btnPrint";
-            this.btnPrint.Size = new System.Drawing.Size(125, 38);
+            this.btnPrint.Size = new System.Drawing.Size(110, 40);
             this.btnPrint.TabIndex = 2;
             this.btnPrint.Text = "طباعة البطاقة";
             this.btnPrint.UseVisualStyleBackColor = false;
@@ -1088,7 +1088,7 @@
             this.btnExportExcel.Location = new System.Drawing.Point(387, 12);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(4);
             this.btnExportExcel.Name = "btnExportExcel";
-            this.btnExportExcel.Size = new System.Drawing.Size(145, 38);
+            this.btnExportExcel.Size = new System.Drawing.Size(110, 40);
             this.btnExportExcel.TabIndex = 3;
             this.btnExportExcel.Text = "تصدير Excel";
             this.btnExportExcel.UseVisualStyleBackColor = false;
@@ -1108,7 +1108,7 @@
             this.btnRefresh.Location = new System.Drawing.Point(540, 12);
             this.btnRefresh.Margin = new System.Windows.Forms.Padding(4);
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(125, 38);
+            this.btnRefresh.Size = new System.Drawing.Size(110, 40);
             this.btnRefresh.TabIndex = 4;
             this.btnRefresh.Text = "تحديث القائمة";
             this.btnRefresh.UseVisualStyleBackColor = false;
@@ -1129,7 +1129,7 @@
             this.btnCancel.Location = new System.Drawing.Point(673, 12);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(120, 38);
+            this.btnCancel.Size = new System.Drawing.Size(110, 40);
             this.btnCancel.TabIndex = 5;
             this.btnCancel.Text = "إلغاء";
             this.btnCancel.UseVisualStyleBackColor = false;
@@ -1149,7 +1149,7 @@
             this.btnDelete.Location = new System.Drawing.Point(801, 12);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(4);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(110, 38);
+            this.btnDelete.Size = new System.Drawing.Size(110, 40);
             this.btnDelete.TabIndex = 6;
             this.btnDelete.Text = "أرشفة الطالب";
             this.btnDelete.UseVisualStyleBackColor = false;
@@ -1169,7 +1169,7 @@
             this.btnUpdate.Location = new System.Drawing.Point(919, 12);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(4);
             this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(125, 38);
+            this.btnUpdate.Size = new System.Drawing.Size(110, 40);
             this.btnUpdate.TabIndex = 7;
             this.btnUpdate.Text = "تعديل";
             this.btnUpdate.UseVisualStyleBackColor = false;
@@ -1189,7 +1189,7 @@
             this.btnSave.Location = new System.Drawing.Point(1052, 12);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(120, 38);
+            this.btnSave.Size = new System.Drawing.Size(110, 40);
             this.btnSave.TabIndex = 8;
             this.btnSave.Text = "حفظ";
             this.btnSave.UseVisualStyleBackColor = false;
@@ -1209,7 +1209,7 @@
             this.btnAdd.Location = new System.Drawing.Point(14, 58);
             this.btnAdd.Margin = new System.Windows.Forms.Padding(4);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(120, 38);
+            this.btnAdd.Size = new System.Drawing.Size(110, 40);
             this.btnAdd.TabIndex = 9;
             this.btnAdd.Text = "إضافة طالب";
             this.btnAdd.UseVisualStyleBackColor = false;
