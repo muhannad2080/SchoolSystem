@@ -99,12 +99,12 @@
             this.rootLayout.Margin = new System.Windows.Forms.Padding(0);
             this.rootLayout.Name = "rootLayout";
             this.rootLayout.RowCount = 6;
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 29F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 42F));
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 3F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 205F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 82F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 77F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
             this.rootLayout.Size = new System.Drawing.Size(1100, 700);
             this.rootLayout.TabIndex = 0;
             // 
@@ -124,10 +124,10 @@
             // 
             this.lblTitle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblTitle.Font = new System.Drawing.Font("Tahoma", 15F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
+            this.lblTitle.ForeColor = System.Drawing.Color.White;
             this.lblTitle.Location = new System.Drawing.Point(0, 0);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(1100, 49);
+            this.lblTitle.Size = new System.Drawing.Size(1100, 60);
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "إدارة السندات المالية - قبض / صرف";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -137,11 +137,11 @@
             this.panelFields.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.panelFields.Controls.Add(this.tableLayoutFields);
             this.panelFields.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelFields.Location = new System.Drawing.Point(0, 49);
+            this.panelFields.Location = new System.Drawing.Point(0, 60);
             this.panelFields.Margin = new System.Windows.Forms.Padding(0);
             this.panelFields.Name = "panelFields";
             this.panelFields.Padding = new System.Windows.Forms.Padding(18, 6, 18, 6);
-            this.panelFields.Size = new System.Drawing.Size(1100, 203);
+            this.panelFields.Size = new System.Drawing.Size(1100, 205);
             this.panelFields.TabIndex = 1;
             // 
             // tableLayoutFields
@@ -494,10 +494,10 @@
             this.panelButtons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(250)))), ((int)(((byte)(252)))));
             this.panelButtons.Controls.Add(this.actionLayout);
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelButtons.Location = new System.Drawing.Point(0, 252);
+            this.panelButtons.Location = new System.Drawing.Point(0, 265);
             this.panelButtons.Margin = new System.Windows.Forms.Padding(0);
             this.panelButtons.Name = "panelButtons";
-            this.panelButtons.Size = new System.Drawing.Size(1100, 56);
+            this.panelButtons.Size = new System.Drawing.Size(1100, 82);
             this.panelButtons.TabIndex = 2;
             // 
             // actionLayout
@@ -522,7 +522,7 @@
             this.actionLayout.Padding = new System.Windows.Forms.Padding(14, 5, 14, 5);
             this.actionLayout.Size = new System.Drawing.Size(1100, 56);
             this.actionLayout.TabIndex = 0;
-            this.actionLayout.WrapContents = false;
+            this.actionLayout.WrapContents = true;
             // 
             // btnAdd
             // 
@@ -535,14 +535,14 @@
             this.btnAdd.Location = new System.Drawing.Point(18, 10);
             this.btnAdd.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(82, 36);
+            this.btnAdd.Size = new System.Drawing.Size(110, 38);
             this.btnAdd.TabIndex = 0;
             this.btnAdd.Text = "إضافة";
             this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             this.btnAdd.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnAdd.AutoSize = false;
-            this.btnAdd.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnAdd.MinimumSize = new System.Drawing.Size(110, 38);
             // 
             // btnUpdate
             // 
@@ -555,14 +555,14 @@
             this.btnUpdate.Location = new System.Drawing.Point(108, 10);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnUpdate.Name = "btnUpdate";
-            this.btnUpdate.Size = new System.Drawing.Size(82, 36);
+            this.btnUpdate.Size = new System.Drawing.Size(110, 38);
             this.btnUpdate.TabIndex = 1;
             this.btnUpdate.Text = "تعديل";
             this.btnUpdate.UseVisualStyleBackColor = false;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
             this.btnUpdate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnUpdate.AutoSize = false;
-            this.btnUpdate.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnUpdate.MinimumSize = new System.Drawing.Size(110, 38);
             // 
             // btnDelete
             // 
@@ -575,14 +575,14 @@
             this.btnDelete.Location = new System.Drawing.Point(198, 10);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(82, 36);
+            this.btnDelete.Size = new System.Drawing.Size(110, 38);
             this.btnDelete.TabIndex = 2;
             this.btnDelete.Text = "حذف";
             this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             this.btnDelete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnDelete.AutoSize = false;
-            this.btnDelete.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnDelete.MinimumSize = new System.Drawing.Size(110, 38);
             // 
             // btnClear
             // 
@@ -595,14 +595,14 @@
             this.btnClear.Location = new System.Drawing.Point(288, 10);
             this.btnClear.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(82, 36);
+            this.btnClear.Size = new System.Drawing.Size(110, 38);
             this.btnClear.TabIndex = 3;
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             this.btnClear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnClear.AutoSize = false;
-            this.btnClear.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnClear.MinimumSize = new System.Drawing.Size(110, 38);
             // 
             // btnNewReceipt
             // 
@@ -617,13 +617,13 @@
             this.btnNewReceipt.Location = new System.Drawing.Point(378, 10);
             this.btnNewReceipt.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnNewReceipt.Name = "btnNewReceipt";
-            this.btnNewReceipt.Size = new System.Drawing.Size(112, 36);
+            this.btnNewReceipt.Size = new System.Drawing.Size(110, 38);
             this.btnNewReceipt.TabIndex = 4;
             this.btnNewReceipt.Text = "سند قبض جديد";
             this.btnNewReceipt.UseVisualStyleBackColor = false;
             this.btnNewReceipt.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnNewReceipt.AutoSize = false;
-            this.btnNewReceipt.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnNewReceipt.MinimumSize = new System.Drawing.Size(110, 38);
             // 
             // btnNewPayment
             // 
@@ -638,13 +638,13 @@
             this.btnNewPayment.Location = new System.Drawing.Point(498, 10);
             this.btnNewPayment.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnNewPayment.Name = "btnNewPayment";
-            this.btnNewPayment.Size = new System.Drawing.Size(112, 36);
+            this.btnNewPayment.Size = new System.Drawing.Size(110, 38);
             this.btnNewPayment.TabIndex = 5;
             this.btnNewPayment.Text = "سند صرف جديد";
             this.btnNewPayment.UseVisualStyleBackColor = false;
             this.btnNewPayment.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnNewPayment.AutoSize = false;
-            this.btnNewPayment.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnNewPayment.MinimumSize = new System.Drawing.Size(110, 38);
             // 
             // btnPreview
             // 
@@ -659,13 +659,13 @@
             this.btnPreview.Location = new System.Drawing.Point(618, 10);
             this.btnPreview.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnPreview.Name = "btnPreview";
-            this.btnPreview.Size = new System.Drawing.Size(104, 36);
+            this.btnPreview.Size = new System.Drawing.Size(110, 38);
             this.btnPreview.TabIndex = 6;
             this.btnPreview.Text = "معاينة السند";
             this.btnPreview.UseVisualStyleBackColor = false;
             this.btnPreview.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnPreview.AutoSize = false;
-            this.btnPreview.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnPreview.MinimumSize = new System.Drawing.Size(110, 38);
             // 
             // btnPrint
             // 
@@ -680,13 +680,13 @@
             this.btnPrint.Location = new System.Drawing.Point(730, 10);
             this.btnPrint.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnPrint.Name = "btnPrint";
-            this.btnPrint.Size = new System.Drawing.Size(96, 36);
+            this.btnPrint.Size = new System.Drawing.Size(110, 38);
             this.btnPrint.TabIndex = 7;
             this.btnPrint.Text = "طباعة";
             this.btnPrint.UseVisualStyleBackColor = false;
             this.btnPrint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnPrint.AutoSize = false;
-            this.btnPrint.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnPrint.MinimumSize = new System.Drawing.Size(110, 38);
             // 
             // btnExportExcel
             // 
@@ -701,13 +701,13 @@
             this.btnExportExcel.Location = new System.Drawing.Point(834, 10);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnExportExcel.Name = "btnExportExcel";
-            this.btnExportExcel.Size = new System.Drawing.Size(112, 36);
+            this.btnExportExcel.Size = new System.Drawing.Size(110, 38);
             this.btnExportExcel.TabIndex = 8;
             this.btnExportExcel.Text = "تصدير Excel";
             this.btnExportExcel.UseVisualStyleBackColor = false;
             this.btnExportExcel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnExportExcel.AutoSize = false;
-            this.btnExportExcel.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnExportExcel.MinimumSize = new System.Drawing.Size(110, 38);
             // 
             // btnExportPdf
             // 
@@ -722,20 +722,20 @@
             this.btnExportPdf.Location = new System.Drawing.Point(954, 10);
             this.btnExportPdf.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnExportPdf.Name = "btnExportPdf";
-            this.btnExportPdf.Size = new System.Drawing.Size(104, 36);
+            this.btnExportPdf.Size = new System.Drawing.Size(110, 38);
             this.btnExportPdf.TabIndex = 9;
             this.btnExportPdf.Text = "تصدير PDF";
             this.btnExportPdf.UseVisualStyleBackColor = false;
             this.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnExportPdf.AutoSize = false;
-            this.btnExportPdf.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnExportPdf.MinimumSize = new System.Drawing.Size(110, 38);
             // 
             // panelSearch
             // 
             this.panelSearch.BackColor = System.Drawing.Color.White;
             this.panelSearch.Controls.Add(this.filterTable);
             this.panelSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelSearch.Location = new System.Drawing.Point(0, 308);
+            this.panelSearch.Location = new System.Drawing.Point(0, 347);
             this.panelSearch.Margin = new System.Windows.Forms.Padding(0);
             this.panelSearch.Name = "panelSearch";
             this.panelSearch.Padding = new System.Windows.Forms.Padding(14, 5, 14, 5);
