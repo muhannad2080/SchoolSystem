@@ -163,8 +163,9 @@ namespace SchoolSystem.Security
         }
 
         /// <summary>
-        /// يتحقق إذا كان المستخدم يملك أي صلاحية تتعلق بالوحدة (الشاشة) المحددة.
-        /// مثال: CanAccessModule("Students") = true إذا كان لديه Students.View.
+        /// يتحقق إذا كان المستخدم يملك صلاحية عرض الشاشة المحددة.
+        /// امتلاك Action مثل Students.Edit أو Students.Delete وحده لا يفتح الشاشة؛
+        /// الدخول للشاشة يتطلب Module.View أو Module.Manage للتوافق مع النموذج القديم.
         /// مدير النظام يملك الوصول لكل الشاشات كسياسة مركزية واحدة.
         /// </summary>
         // تعريف الدالة CanAccessModule لتنفيذ العملية المرتبطة بها.
@@ -176,12 +177,9 @@ namespace SchoolSystem.Security
             if (IsAdmin())
                 return true;
 
-            string prefix = module.Trim() + ".";
-            // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
-            HashSet<string> permissions = ParsePermissions(User.Permissions);
+            string normalizedModule = module.Trim();
 
-            return permissions.Any(permission =>
-                permission.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+            return HasActionOrManage(normalizedModule, "View");
         }
 
         // تعريف الدالة DemandModule لتنفيذ العملية المرتبطة بها.
