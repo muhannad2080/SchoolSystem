@@ -449,6 +449,78 @@ namespace SchoolSystem.UiSmokeTests
             }
         }
 
+        private static void ValidateLoginLayout(Control control)
+        {
+            if (!(control is SchoolSystem.UI.LoginForm))
+                return;
+
+            Button closeButton = GetPrivateControl<Button>(control, "btnWindowClose");
+            Panel background = GetPrivateControl<Panel>(control, "panelBackground");
+            TableLayoutPanel root = GetPrivateControl<TableLayoutPanel>(control, "layoutRoot");
+            Panel brand = GetPrivateControl<Panel>(control, "panelBrand");
+            Panel loginArea = GetPrivateControl<Panel>(control, "panelLoginArea");
+            TextBox userName = GetPrivateControl<TextBox>(control, "txtUserName");
+            TextBox password = GetPrivateControl<TextBox>(control, "txtPassword");
+            Button toggle = GetPrivateControl<Button>(control, "btnTogglePassword");
+            Panel passwordPanel = GetPrivateControl<Panel>(control, "pnlPassword");
+            Panel userPanel = GetPrivateControl<Panel>(control, "pnlUser");
+            TableLayoutPanel bottomActions = GetPrivateControl<TableLayoutPanel>(control, "bottomActions");
+            Panel loginCard = GetPrivateControl<Panel>(control, "loginCard");
+
+            if (root.RightToLeft != RightToLeft.Yes)
+                throw new InvalidOperationException("Login root must use Arabic RTL column order.");
+
+            if (brand.Parent != root || loginArea.Parent != root)
+                throw new InvalidOperationException("Login brand and form areas must be direct children of the RTL root.");
+
+            if (closeButton.Parent != background)
+                throw new InvalidOperationException("Login close button must be attached to the window background.");
+
+            if (closeButton.RightToLeft != RightToLeft.No ||
+                closeButton.Anchor != (AnchorStyles.Top | AnchorStyles.Right))
+                throw new InvalidOperationException("Login close button must stay at the window top-right.");
+
+            if (loginCard.Parent != GetPrivateControl<TableLayoutPanel>(control, "loginAreaLayout"))
+                throw new InvalidOperationException("Login card must be centered inside the login area layout.");
+
+            if (userName.RightToLeft != RightToLeft.Yes ||
+                userName.TextAlign != HorizontalAlignment.Right ||
+                password.RightToLeft != RightToLeft.Yes ||
+                password.TextAlign != HorizontalAlignment.Right)
+            {
+                throw new InvalidOperationException("Login text fields must be Arabic RTL and right-aligned.");
+            }
+
+            if (userPanel.RightToLeft != RightToLeft.Yes ||
+                passwordPanel.RightToLeft != RightToLeft.Yes)
+                throw new InvalidOperationException("Login input panels must use Arabic RTL.");
+
+            if (toggle.Dock != DockStyle.Left)
+                throw new InvalidOperationException("Password visibility action must stay at the left side of the password field.");
+
+            if (bottomActions.RightToLeft != RightToLeft.Yes)
+                throw new InvalidOperationException("Login secondary actions must use Arabic RTL order.");
+
+            int[] expectedTabs = { 0, 1, 2, 3, 4, 5 };
+            int[] actualTabs =
+            {
+                userName.TabIndex,
+                password.TabIndex,
+                toggle.TabIndex,
+                GetPrivateControl<Button>(control, "btnLogin").TabIndex,
+                GetPrivateControl<Button>(control, "btnClear").TabIndex,
+                GetPrivateControl<Button>(control, "btnExit").TabIndex
+            };
+
+            for (int i = 0; i < expectedTabs.Length; i++)
+            {
+                if (actualTabs[i] != expectedTabs[i])
+                    throw new InvalidOperationException("Login keyboard tab order is not sequential.");
+            }
+
+            Console.WriteLine("[PASS] Login RTL visual hierarchy and keyboard order");
+        }
+
         private static void ValidateStudentProfile(Control control)
         {
             if (!(control is SchoolSystem.UI.StudentProfileForm))
@@ -697,6 +769,15 @@ namespace SchoolSystem.UiSmokeTests
                 ValidateSourceWiring();
                 ValidateButtonWiring();
                 ValidateDualDateSupport();
+                ValidateDualDateSupport();
+
+                using (SchoolSystem.UI.LoginForm loginForm = new SchoolSystem.UI.LoginForm())
+                {
+                    ValidateLayout(loginForm);
+                    ValidateTextFit(loginForm);
+                    ValidateLoginLayout(loginForm);
+                }
+
                 passed++;
             }
             catch (Exception ex)
