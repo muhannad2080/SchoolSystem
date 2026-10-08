@@ -45,6 +45,7 @@ def generate_designer_code():
     res.append("            this.components = new System.ComponentModel.Container();")
     res.append("            this.panelTitle = new System.Windows.Forms.Panel();")
     res.append("            this.lblTitle = new System.Windows.Forms.Label();")
+    res.append("            this.layoutMain = new System.Windows.Forms.TableLayoutPanel();")
 
     for name, lbl, typ, grp, isCombo in controls:
         res.append(f"            this.lbl{name} = new System.Windows.Forms.Label();")
@@ -268,10 +269,22 @@ def generate_designer_code():
     res.append("            this.btnSearch.BringToFront();")
     res.append("            this.txtSearch.BringToFront();")
 
-    res.append("            this.Controls.Add(this.splitContainerMain);")
-    res.append("            this.Controls.Add(this.pnlSearch);")
-    res.append("            this.Controls.Add(this.pnlButtons);")
-    res.append("            this.Controls.Add(this.panelTitle);")
+    res.append("            this.layoutMain.ColumnCount = 1;")
+    res.append("            this.layoutMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));")
+    res.append("            this.layoutMain.RowCount = 4;")
+    res.append("            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 54F));")
+    res.append("            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 66F));")
+    res.append("            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));")
+    res.append("            this.layoutMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 104F));")
+    res.append("            this.layoutMain.Dock = System.Windows.Forms.DockStyle.Fill;")
+    res.append("            this.layoutMain.Margin = new System.Windows.Forms.Padding(0);")
+    res.append("            this.layoutMain.Padding = new System.Windows.Forms.Padding(0);")
+    res.append("            this.layoutMain.RightToLeft = System.Windows.Forms.RightToLeft.Yes;")
+    res.append("            this.layoutMain.Controls.Add(this.panelTitle, 0, 0);")
+    res.append("            this.layoutMain.Controls.Add(this.pnlSearch, 0, 1);")
+    res.append("            this.layoutMain.Controls.Add(this.splitContainerMain, 0, 2);")
+    res.append("            this.layoutMain.Controls.Add(this.pnlButtons, 0, 3);")
+    res.append("            this.Controls.Add(this.layoutMain);")
     res.append("            this.ClientSize = new System.Drawing.Size(1200, 750);")
     res.append("            this.MinimumSize = new System.Drawing.Size(1050, 650);")
     res.append("            this.Name = \"EnrollmentForm\";")
@@ -318,6 +331,7 @@ def generate_designer_code():
 
         "        private System.Windows.Forms.Panel panelTitle;",
         "        private System.Windows.Forms.Label lblTitle;",
+        "        private System.Windows.Forms.TableLayoutPanel layoutMain;",
         "        private System.Windows.Forms.TableLayoutPanel tlpSearch;",
         "        private System.Windows.Forms.DataGridView dgvEnrollments;",
         "        private System.Windows.Forms.ErrorProvider errorProvider1;",
