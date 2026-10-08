@@ -712,22 +712,6 @@ namespace SchoolSystem.UI
         }
 
         // ============================================================
-        // FILTER ESCAPE
-        // ============================================================
-
-        private string EscapeFilter(string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return "";
-
-            return value
-                .Replace("'", "''")
-                .Replace("[", "[[]")
-                .Replace("%", "[%]")
-                .Replace("*", "[*]");
-        }
-
-        // ============================================================
         // GRID
         // ============================================================
 
