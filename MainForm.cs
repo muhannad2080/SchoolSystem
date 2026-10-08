@@ -593,6 +593,7 @@ namespace SchoolSystem
 
             PermissionUiHelper.Apply(uc, module);
             LoadUserControl(uc);
+            ShowScreenHeader(module);
         }
 
         // ================================================================
@@ -617,6 +618,7 @@ namespace SchoolSystem
 
             PermissionUiHelper.Apply(form, module);
             LoadFormInPanel(form);
+            ShowScreenHeader(module);
         }
 
         // ================================================================
