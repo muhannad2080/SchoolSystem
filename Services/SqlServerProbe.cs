@@ -257,7 +257,8 @@ WHERE t.schema_id = SCHEMA_ID(N'dbo')
                 host.Equals("localhost", StringComparison.OrdinalIgnoreCase))
                 return true;
 
-            if (serverInstance.EndsWith("\\SQLEXPRESS", StringComparison.OrdinalIgnoreCase))
+            if (serverInstance.EndsWith("\\SQLEXPRESS", StringComparison.OrdinalIgnoreCase) ||
+                serverInstance.StartsWith("(localdb)\\", StringComparison.OrdinalIgnoreCase))
                 return true;
 
             IPAddress[] addresses;
