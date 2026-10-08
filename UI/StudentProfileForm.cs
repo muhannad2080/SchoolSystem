@@ -55,7 +55,32 @@ namespace SchoolSystem.UI
             ConfigureGrid(dgvMarks);
             ConfigureGrid(dgvFees);
             ConfigureOutputButtons();
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
             Load += StudentProfileForm_Load;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                studentId <= 0)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Students") &&
+                !DataRefreshNotifier.IsRelated(e, "Enrollment") &&
+                !DataRefreshNotifier.IsRelated(e, "ClassAssignment") &&
+                !DataRefreshNotifier.IsRelated(e, "Attendance") &&
+                !DataRefreshNotifier.IsRelated(e, "Grades") &&
+                !DataRefreshNotifier.IsRelated(e, "Fees") &&
+                !DataRefreshNotifier.IsRelated(e, "Vouchers") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
+                return;
+
+            await LoadProfileAsync();
         }
 
         private void ApplyArabicRtlLayout()
