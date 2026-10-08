@@ -934,6 +934,7 @@ namespace SchoolSystem.UI
             btnRefresh.Enabled = mode == FormMode.View;
 
             btnSearch.Enabled = canSearch;
+            btnClearFilters.Enabled = canSearch;
             txtSearch.Enabled = canSearch;
             cmbFilterClass.Enabled = canSearch;
             cmbFilterStatus.Enabled = canSearch;
