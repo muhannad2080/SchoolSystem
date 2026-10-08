@@ -125,10 +125,15 @@
             // 
             this.txtStudentNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtStudentNumber.Location = new System.Drawing.Point(3, 1);
-            this.txtStudentNumber.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtStudentNumber.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtStudentNumber.Name = "txtStudentNumber";
             this.txtStudentNumber.Size = new System.Drawing.Size(380, 26);
             this.txtStudentNumber.TabIndex = 1;
+            this.txtStudentNumber.BackColor = System.Drawing.Color.White;
+            this.txtStudentNumber.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtStudentNumber.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtStudentNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtStudentNumber.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblFullName
             // 
@@ -145,10 +150,15 @@
             // 
             this.txtFullName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFullName.Location = new System.Drawing.Point(3, 26);
-            this.txtFullName.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtFullName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtFullName.Name = "txtFullName";
             this.txtFullName.Size = new System.Drawing.Size(380, 26);
             this.txtFullName.TabIndex = 3;
+            this.txtFullName.BackColor = System.Drawing.Color.White;
+            this.txtFullName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtFullName.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtFullName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFullName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblGender
             // 
@@ -167,10 +177,14 @@
             this.cmbGender.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbGender.FormattingEnabled = true;
             this.cmbGender.Location = new System.Drawing.Point(3, 51);
-            this.cmbGender.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.cmbGender.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbGender.Name = "cmbGender";
             this.cmbGender.Size = new System.Drawing.Size(380, 26);
             this.cmbGender.TabIndex = 5;
+            this.cmbGender.BackColor = System.Drawing.Color.White;
+            this.cmbGender.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbGender.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbGender.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblBirthDate
             // 
@@ -209,10 +223,15 @@
             // 
             this.txtBirthPlace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtBirthPlace.Location = new System.Drawing.Point(3, 101);
-            this.txtBirthPlace.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtBirthPlace.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtBirthPlace.Name = "txtBirthPlace";
             this.txtBirthPlace.Size = new System.Drawing.Size(380, 26);
             this.txtBirthPlace.TabIndex = 9;
+            this.txtBirthPlace.BackColor = System.Drawing.Color.White;
+            this.txtBirthPlace.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtBirthPlace.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtBirthPlace.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtBirthPlace.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNationality
             // 
@@ -229,10 +248,15 @@
             // 
             this.txtNationality.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtNationality.Location = new System.Drawing.Point(3, 126);
-            this.txtNationality.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtNationality.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNationality.Name = "txtNationality";
             this.txtNationality.Size = new System.Drawing.Size(380, 26);
             this.txtNationality.TabIndex = 11;
+            this.txtNationality.BackColor = System.Drawing.Color.White;
+            this.txtNationality.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNationality.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtNationality.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNationality.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblNationalId
             // 
@@ -249,10 +273,15 @@
             // 
             this.txtNationalId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtNationalId.Location = new System.Drawing.Point(3, 151);
-            this.txtNationalId.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtNationalId.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtNationalId.Name = "txtNationalId";
             this.txtNationalId.Size = new System.Drawing.Size(380, 26);
             this.txtNationalId.TabIndex = 13;
+            this.txtNationalId.BackColor = System.Drawing.Color.White;
+            this.txtNationalId.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNationalId.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtNationalId.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNationalId.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblPhone
             // 
@@ -269,10 +298,15 @@
             // 
             this.txtPhone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPhone.Location = new System.Drawing.Point(3, 176);
-            this.txtPhone.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtPhone.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtPhone.Name = "txtPhone";
             this.txtPhone.Size = new System.Drawing.Size(380, 26);
             this.txtPhone.TabIndex = 15;
+            this.txtPhone.BackColor = System.Drawing.Color.White;
+            this.txtPhone.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtPhone.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtPhone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPhone.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblStatus
             // 
@@ -291,10 +325,14 @@
             this.cmbStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbStatus.FormattingEnabled = true;
             this.cmbStatus.Location = new System.Drawing.Point(3, 201);
-            this.cmbStatus.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.cmbStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.Size = new System.Drawing.Size(380, 26);
             this.cmbStatus.TabIndex = 17;
+            this.cmbStatus.BackColor = System.Drawing.Color.White;
+            this.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbStatus.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblGuardianName
             // 
@@ -311,10 +349,15 @@
             // 
             this.txtGuardianName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtGuardianName.Location = new System.Drawing.Point(3, 1);
-            this.txtGuardianName.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtGuardianName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGuardianName.Name = "txtGuardianName";
             this.txtGuardianName.Size = new System.Drawing.Size(380, 26);
             this.txtGuardianName.TabIndex = 1;
+            this.txtGuardianName.BackColor = System.Drawing.Color.White;
+            this.txtGuardianName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGuardianName.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtGuardianName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGuardianName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblGuardianRelation
             // 
@@ -331,10 +374,15 @@
             // 
             this.txtGuardianRelation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtGuardianRelation.Location = new System.Drawing.Point(3, 26);
-            this.txtGuardianRelation.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtGuardianRelation.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGuardianRelation.Name = "txtGuardianRelation";
             this.txtGuardianRelation.Size = new System.Drawing.Size(380, 26);
             this.txtGuardianRelation.TabIndex = 3;
+            this.txtGuardianRelation.BackColor = System.Drawing.Color.White;
+            this.txtGuardianRelation.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGuardianRelation.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtGuardianRelation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGuardianRelation.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblGuardianPhone
             // 
@@ -351,10 +399,15 @@
             // 
             this.txtGuardianPhone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtGuardianPhone.Location = new System.Drawing.Point(3, 51);
-            this.txtGuardianPhone.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtGuardianPhone.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGuardianPhone.Name = "txtGuardianPhone";
             this.txtGuardianPhone.Size = new System.Drawing.Size(380, 26);
             this.txtGuardianPhone.TabIndex = 5;
+            this.txtGuardianPhone.BackColor = System.Drawing.Color.White;
+            this.txtGuardianPhone.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGuardianPhone.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtGuardianPhone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGuardianPhone.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblGuardianEmail
             // 
@@ -371,10 +424,15 @@
             // 
             this.txtGuardianEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtGuardianEmail.Location = new System.Drawing.Point(3, 76);
-            this.txtGuardianEmail.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtGuardianEmail.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGuardianEmail.Name = "txtGuardianEmail";
             this.txtGuardianEmail.Size = new System.Drawing.Size(380, 26);
             this.txtGuardianEmail.TabIndex = 7;
+            this.txtGuardianEmail.BackColor = System.Drawing.Color.White;
+            this.txtGuardianEmail.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGuardianEmail.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtGuardianEmail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGuardianEmail.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblGuardianJob
             // 
@@ -391,10 +449,15 @@
             // 
             this.txtGuardianJob.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.txtGuardianJob.Location = new System.Drawing.Point(3, 101);
-            this.txtGuardianJob.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
+            this.txtGuardianJob.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.txtGuardianJob.Name = "txtGuardianJob";
             this.txtGuardianJob.Size = new System.Drawing.Size(380, 26);
             this.txtGuardianJob.TabIndex = 9;
+            this.txtGuardianJob.BackColor = System.Drawing.Color.White;
+            this.txtGuardianJob.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGuardianJob.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtGuardianJob.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGuardianJob.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblGovernorate
             // 
@@ -414,6 +477,12 @@
             this.txtGovernorate.Name = "txtGovernorate";
             this.txtGovernorate.Size = new System.Drawing.Size(259, 26);
             this.txtGovernorate.TabIndex = 1;
+            this.txtGovernorate.BackColor = System.Drawing.Color.White;
+            this.txtGovernorate.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtGovernorate.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtGovernorate.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtGovernorate.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtGovernorate.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblDistrict
             // 
@@ -433,6 +502,12 @@
             this.txtDistrict.Name = "txtDistrict";
             this.txtDistrict.Size = new System.Drawing.Size(259, 26);
             this.txtDistrict.TabIndex = 3;
+            this.txtDistrict.BackColor = System.Drawing.Color.White;
+            this.txtDistrict.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtDistrict.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtDistrict.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtDistrict.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtDistrict.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblAddress
             // 
@@ -452,6 +527,12 @@
             this.txtAddress.Name = "txtAddress";
             this.txtAddress.Size = new System.Drawing.Size(259, 26);
             this.txtAddress.TabIndex = 5;
+            this.txtAddress.BackColor = System.Drawing.Color.White;
+            this.txtAddress.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtAddress.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtAddress.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtAddress.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtAddress.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // gbStudent
             // 
@@ -823,6 +904,11 @@
             this.cmbFilterClass.Name = "cmbFilterClass";
             this.cmbFilterClass.Size = new System.Drawing.Size(155, 30);
             this.cmbFilterClass.TabIndex = 0;
+            this.cmbFilterClass.BackColor = System.Drawing.Color.White;
+            this.cmbFilterClass.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbFilterClass.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbFilterClass.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbFilterClass.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // cmbFilterStatus
             // 
@@ -833,6 +919,11 @@
             this.cmbFilterStatus.Name = "cmbFilterStatus";
             this.cmbFilterStatus.Size = new System.Drawing.Size(135, 30);
             this.cmbFilterStatus.TabIndex = 1;
+            this.cmbFilterStatus.BackColor = System.Drawing.Color.White;
+            this.cmbFilterStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbFilterStatus.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbFilterStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbFilterStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // txtSearch
             // 
@@ -842,6 +933,12 @@
             this.txtSearch.Size = new System.Drawing.Size(300, 30);
             this.txtSearch.TabIndex = 2;
             this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
+            this.txtSearch.BackColor = System.Drawing.Color.White;
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // btnSearch
             // 
