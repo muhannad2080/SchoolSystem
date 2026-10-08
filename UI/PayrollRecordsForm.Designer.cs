@@ -194,6 +194,7 @@
             this.lblNetSalary.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
             this.txtNetSalary.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtNetSalary.Margin = new System.Windows.Forms.Padding(4);
+            this.txtNetSalary.BackColor = System.Drawing.Color.FromArgb(243, 244, 246);
             this.tableLayoutFields.Controls.Add(this.lblNetSalary, 0, 2);
             this.tableLayoutFields.Controls.Add(this.txtNetSalary, 1, 2);
 
@@ -305,6 +306,11 @@
 
             this.txtSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.txtSearch.BackColor = System.Drawing.Color.White;
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 
             this.dataGridViewPayrolls.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewPayrolls.AutoGenerateColumns = true;
