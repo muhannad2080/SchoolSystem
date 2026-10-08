@@ -34,7 +34,7 @@ powershell -ExecutionPolicy Bypass -File .\Deployment\Build-Installers.ps1 -Conf
 
 ينتج المثبت الأساسي:
 
-`dist\SchoolSystem-Setup-1.0.0.exe`
+`dist\SchoolSystem-1.0.0-Setup.exe`
 
 ### ماذا يفعل المثبت
 
