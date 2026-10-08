@@ -178,13 +178,18 @@ namespace SchoolSystem.UI
             // 
             // txtSubjectID
             // 
-            this.txtSubjectID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtSubjectID.BackColor = System.Drawing.Color.White;
             this.txtSubjectID.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSubjectID.Location = new System.Drawing.Point(526, 3);
             this.txtSubjectID.Name = "txtSubjectID";
             this.txtSubjectID.ReadOnly = true;
             this.txtSubjectID.Size = new System.Drawing.Size(387, 28);
             this.txtSubjectID.TabIndex = 0;
+            this.txtSubjectID.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSubjectID.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtSubjectID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSubjectID.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSubjectID.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblSubjectCode
             // 
@@ -198,13 +203,18 @@ namespace SchoolSystem.UI
             // 
             // txtSubjectCode
             // 
-            this.txtSubjectCode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtSubjectCode.BackColor = System.Drawing.Color.White;
             this.txtSubjectCode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSubjectCode.Location = new System.Drawing.Point(3, 3);
             this.txtSubjectCode.Name = "txtSubjectCode";
             this.txtSubjectCode.ReadOnly = true;
             this.txtSubjectCode.Size = new System.Drawing.Size(387, 28);
             this.txtSubjectCode.TabIndex = 1;
+            this.txtSubjectCode.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSubjectCode.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtSubjectCode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSubjectCode.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSubjectCode.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblSubjectName
             // 
@@ -218,13 +228,18 @@ namespace SchoolSystem.UI
             // 
             // txtSubjectName
             // 
-            this.txtSubjectName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.txtSubjectName.BackColor = System.Drawing.Color.White;
             this.txtSubjectName.Dock = System.Windows.Forms.DockStyle.Fill;
             this.txtSubjectName.Location = new System.Drawing.Point(526, 38);
             this.txtSubjectName.Name = "txtSubjectName";
             this.txtSubjectName.ReadOnly = false;
             this.txtSubjectName.Size = new System.Drawing.Size(387, 28);
             this.txtSubjectName.TabIndex = 2;
+            this.txtSubjectName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSubjectName.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtSubjectName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSubjectName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSubjectName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblClass
             // 
@@ -238,7 +253,7 @@ namespace SchoolSystem.UI
             // 
             // cmbClass
             // 
-            this.cmbClass.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(244)))), ((int)(((byte)(246)))));
+            this.cmbClass.BackColor = System.Drawing.Color.White;
             this.cmbClass.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbClass.FormattingEnabled = true;
@@ -246,6 +261,10 @@ namespace SchoolSystem.UI
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(387, 29);
             this.cmbClass.TabIndex = 3;
+            this.cmbClass.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbClass.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbClass.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbClass.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblMaxDegree
             // 
@@ -344,6 +363,12 @@ namespace SchoolSystem.UI
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(387, 28);
             this.txtNotes.TabIndex = 7;
+            this.txtNotes.BackColor = System.Drawing.Color.White;
+            this.txtNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNotes.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelButtons
             // 
@@ -478,6 +503,11 @@ namespace SchoolSystem.UI
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(930, 28);
             this.txtSearch.TabIndex = 0;
+            this.txtSearch.BackColor = System.Drawing.Color.White;
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblSearch
             // 
