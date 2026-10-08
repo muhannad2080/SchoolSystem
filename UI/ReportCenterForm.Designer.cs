@@ -195,6 +195,11 @@ namespace SchoolSystem.UI
             this.cmbReportType.Name = "cmbReportType";
             this.cmbReportType.Size = new System.Drawing.Size(170, 29);
             this.cmbReportType.TabIndex = 1;
+            this.cmbReportType.BackColor = System.Drawing.Color.White;
+            this.cmbReportType.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbReportType.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbReportType.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbReportType.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblAcademicYear
             // 
@@ -214,6 +219,11 @@ namespace SchoolSystem.UI
             this.txtAcademicYear.Name = "txtAcademicYear";
             this.txtAcademicYear.Size = new System.Drawing.Size(170, 29);
             this.txtAcademicYear.TabIndex = 3;
+            this.txtAcademicYear.BackColor = System.Drawing.Color.White;
+            this.txtAcademicYear.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtAcademicYear.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtAcademicYear.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtAcademicYear.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblClass
             // 
@@ -233,6 +243,11 @@ namespace SchoolSystem.UI
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(170, 29);
             this.cmbClass.TabIndex = 5;
+            this.cmbClass.BackColor = System.Drawing.Color.White;
+            this.cmbClass.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbClass.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbClass.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbClass.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblSection
             // 
@@ -252,6 +267,11 @@ namespace SchoolSystem.UI
             this.cmbSection.Name = "cmbSection";
             this.cmbSection.Size = new System.Drawing.Size(172, 29);
             this.cmbSection.TabIndex = 7;
+            this.cmbSection.BackColor = System.Drawing.Color.White;
+            this.cmbSection.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbSection.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbSection.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbSection.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblStatus
             // 
@@ -271,6 +291,11 @@ namespace SchoolSystem.UI
             this.cmbStatus.Name = "cmbStatus";
             this.cmbStatus.Size = new System.Drawing.Size(170, 29);
             this.cmbStatus.TabIndex = 9;
+            this.cmbStatus.BackColor = System.Drawing.Color.White;
+            this.cmbStatus.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbStatus.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbStatus.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbStatus.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblFromDate
             // 
@@ -327,6 +352,12 @@ namespace SchoolSystem.UI
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(172, 28);
             this.txtSearch.TabIndex = 15;
+            this.txtSearch.BackColor = System.Drawing.Color.White;
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblTerm
             // 
@@ -352,6 +383,11 @@ namespace SchoolSystem.UI
             this.cmbTerm.Name = "cmbTerm";
             this.cmbTerm.Size = new System.Drawing.Size(170, 29);
             this.cmbTerm.TabIndex = 19;
+            this.cmbTerm.BackColor = System.Drawing.Color.White;
+            this.cmbTerm.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbTerm.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbTerm.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbTerm.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelFilterActions
             // 
