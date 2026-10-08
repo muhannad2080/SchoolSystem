@@ -42,6 +42,20 @@ def generate_designer_code():
     for name, lbl, typ, grp, isCombo in controls:
         res.append(f"            this.lbl{name} = new System.Windows.Forms.Label();")
         res.append(f"            this.{'cmb' if isCombo else ('dtp' if typ=='DateTimePicker' else 'txt')}{name} = new System.Windows.Forms.{typ}();")
+        control_name = f"{'cmb' if isCombo else ('dtp' if typ=='DateTimePicker' else 'txt')}{name}"
+        if isCombo:
+            res.append(f"            this.{control_name}.BackColor = System.Drawing.Color.White;")
+            res.append(f"            this.{control_name}.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);")
+            res.append(f"            this.{control_name}.Font = new System.Drawing.Font(\"Tahoma\", 10F);")
+            res.append(f"            this.{control_name}.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);")
+            res.append(f"            this.{control_name}.RightToLeft = System.Windows.Forms.RightToLeft.Yes;")
+        elif typ == "TextBox":
+            res.append(f"            this.{control_name}.BackColor = System.Drawing.Color.White;")
+            res.append(f"            this.{control_name}.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);")
+            res.append(f"            this.{control_name}.Font = new System.Drawing.Font(\"Tahoma\", 10F);")
+            res.append(f"            this.{control_name}.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;")
+            res.append(f"            this.{control_name}.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);")
+            res.append(f"            this.{control_name}.RightToLeft = System.Windows.Forms.RightToLeft.Yes;")
 
     res.append("            this.gbStudent = new System.Windows.Forms.GroupBox();")
     res.append("            this.tlpStudent = new System.Windows.Forms.TableLayoutPanel();")
@@ -208,15 +222,26 @@ def generate_designer_code():
     res.append("            this.pnlButtons.RightToLeft = System.Windows.Forms.RightToLeft.No;")
 
     b_list = ["btnClose", "btnPrint", "btnExportExcel", "btnRefresh", "btnCancel", "btnDelete", "btnUpdate", "btnSave", "btnAdd"]
-    b_txts = ["إغلاق", "طباعة", "تصدير Excel", "تحديث", "إلغاء", "حذف", "تعديل", "حفظ", "جديد"]
+    b_txts = ["إغلاق", "طباعة البطاقة", "تصدير Excel", "تحديث القائمة", "إلغاء", "أرشفة", "تعديل", "حفظ", "إضافة طالب"]
     b_widths = [112, 125, 145, 112, 112, 112, 112, 112, 112]
+    b_colors = {
+        "btnClose": "71, 85, 105",
+        "btnPrint": "15, 118, 110",
+        "btnExportExcel": "13, 148, 136",
+        "btnRefresh": "71, 85, 105",
+        "btnCancel": "71, 85, 105",
+        "btnDelete": "198, 40, 40",
+        "btnUpdate": "15, 118, 110",
+        "btnSave": "22, 163, 74",
+        "btnAdd": "22, 163, 74"
+    }
     for b, t, w in zip(b_list, b_txts, b_widths):
         res.append(f"            this.{b}.Text = \"{t}\";")
         res.append(f"            this.{b}.Size = new System.Drawing.Size({w}, 40);")
         res.append(f"            this.{b}.MinimumSize = new System.Drawing.Size(110, 40);")
         res.append(f"            this.{b}.Margin = new System.Windows.Forms.Padding(4);")
         res.append(f"            this.{b}.AutoSize = false;")
-        res.append(f"            this.{b}.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);")
+        res.append(f"            this.{b}.BackColor = System.Drawing.Color.FromArgb({b_colors[b]});")
         res.append(f"            this.{b}.ForeColor = System.Drawing.Color.White;")
         res.append(f"            this.{b}.FlatStyle = System.Windows.Forms.FlatStyle.Flat;")
         res.append(f"            this.{b}.FlatAppearance.BorderSize = 0;")
