@@ -241,7 +241,6 @@ namespace SchoolSystem
 
             lblScreenTitle.Text = GetScreenTitle(moduleOrType);
             panelScreenHeader.Visible = true;
-            panelScreenHeader.BringToFront();
         }
 
         private void HideScreenHeader()
