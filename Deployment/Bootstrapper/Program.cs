@@ -265,7 +265,12 @@ namespace SchoolSystem.SetupBootstrapper
                     return;
 
                 root.SetValue("DisplayName", ProductName);
-                root.SetValue("DisplayVersion", "1.0.0");
+                string displayVersion = FileVersionInfo.GetVersionInfo(
+                    Assembly.GetExecutingAssembly().Location).ProductVersion;
+
+                root.SetValue(
+                    "DisplayVersion",
+                    string.IsNullOrWhiteSpace(displayVersion) ? "1.0.0" : displayVersion);
                 root.SetValue("Publisher", "SchoolSystem");
                 root.SetValue("InstallLocation",
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), InstallDirectoryName));
