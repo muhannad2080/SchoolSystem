@@ -69,6 +69,21 @@ if (-not (Test-Path (Join-Path $buildOutput 'SchoolSystem.exe'))) {
     throw "لم يُعثر على SchoolSystem.exe في: $buildOutput"
 }
 
+foreach ($requiredRelativePath in @(
+    'Database\databaseschool.sql',
+    'Database\SeedAcademicStructure_2026_2027.sql'
+)) {
+    $requiredPath = Join-Path $buildOutput $requiredRelativePath
+    if (-not (Test-Path $requiredPath)) {
+        throw "ملف التثبيت المطلوب غير موجود بعد البناء: $requiredPath"
+    }
+}
+
+$migrationFiles = Get-ChildItem -LiteralPath (Join-Path $buildOutput 'Database\migrations') -Filter '*.sql' -File -ErrorAction SilentlyContinue
+if (-not $migrationFiles -or $migrationFiles.Count -eq 0) {
+    throw 'لم توجد ترحيلات قاعدة البيانات داخل مخرجات Release؛ لن نبني حزمة تثبيت ناقصة.'
+}
+
 # ---------------------------------------------------------------------------
 # 1) بناء MSI عبر WiX v7 (توليد WXS من محتويات bin\Release)
 # ---------------------------------------------------------------------------
@@ -161,7 +176,7 @@ Write-Host "تم إنشاء MSI: $msiPath"
 # 2) بناء EXE عبر Inno Setup
 # ---------------------------------------------------------------------------
 Write-Host "بناء Setup.exe عبر Inno Setup ..."
-& $isccExe (Join-Path $installerDir 'SchoolSystem.iss')
+& $isccExe (Join-Path $installerDir 'SchoolSystem.iss') "/DMyAppVersion=$Version"
 if ($LASTEXITCODE -ne 0 -and -not (Test-Path $exeOut)) {
     throw 'فشل بناء Setup.exe بـ Inno.'
 }
