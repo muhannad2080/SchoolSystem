@@ -337,12 +337,28 @@ namespace SchoolSystem.UI
 
         private async Task LoadClassesAsync()
         {
-            DataTable classes = await Task.Run(() => classService.GetAllClasses());
-            cmbClass.DataSource = classes;
+            DataTable classes =
+                await Task.Run(() => classService.GetAllClasses());
+
+            DataTable choices = classes == null
+                ? new DataTable()
+                : classes.Copy();
+
+            if (!choices.Columns.Contains("ClassID"))
+                choices.Columns.Add("ClassID", typeof(int));
+
+            if (!choices.Columns.Contains("ClassName"))
+                choices.Columns.Add("ClassName", typeof(string));
+
+            DataRow allRow = choices.NewRow();
+            allRow["ClassID"] = 0;
+            allRow["ClassName"] = "كل الصفوف";
+            choices.Rows.InsertAt(allRow, 0);
+
+            cmbClass.DataSource = choices;
             cmbClass.DisplayMember = "ClassName";
             cmbClass.ValueMember = "ClassID";
-            if (classes.Rows.Count > 0)
-                cmbClass.SelectedIndex = 0;
+            cmbClass.SelectedIndex = 0;
         }
 
         private async Task LoadSectionsAsync()
