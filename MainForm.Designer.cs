@@ -133,14 +133,14 @@ namespace SchoolSystem
             // 
             this.tsmiStudentsEnroll.Name = "tsmiStudentsEnroll";
             this.tsmiStudentsEnroll.Size = new System.Drawing.Size(214, 26);
-            this.tsmiStudentsEnroll.Text = "التسجيل والقبول";
+            this.tsmiStudentsEnroll.Text = "القبول والتسجيل";
             this.tsmiStudentsEnroll.Click += new System.EventHandler(this.tsmiStudentsEnroll_Click);
             // 
             // tsmiStudentsClasses
             // 
             this.tsmiStudentsClasses.Name = "tsmiStudentsClasses";
             this.tsmiStudentsClasses.Size = new System.Drawing.Size(214, 26);
-            this.tsmiStudentsClasses.Text = "توزيع الفصول";
+            this.tsmiStudentsClasses.Text = "توزيع الطلاب";
             this.tsmiStudentsClasses.Click += new System.EventHandler(this.tsmiStudentsClasses_Click);
             // 
             // tsmiTeachers
