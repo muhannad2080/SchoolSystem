@@ -60,8 +60,9 @@ if (Test-Path (Join-Path $assetRoot 'Welcome\welcome_hero.png')) {
 
 Copy-Item (Join-Path $PSScriptRoot 'Install-SchoolSystem.ps1') $packageRoot -Force
 
-# قاعدة البيانات تُحدَّث تلقائياً عند أول تشغيل عبر محرك الترحيل المدمج
-# (Database\initial + Database\migrations)، وقد نُسخت مع مخرجات البناء أعلاه.
+# قاعدة البيانات تُحدَّث تلقائياً عند أول تشغيل عبر محرك الترحيل المدمج.
+# الحزمة الحالية تحتوي databaseschool.sql + migrations؛ عند غياب مجلد initial
+# يستخدم محرك الترحيل databaseschool.sql بعد إزالة مقدمته غير المناسبة للتنفيذ داخل القاعدة.
 # تُوضع سكربتات البرنامج الخام المرجعية في مجلد منفصل لا يُستخدَم للتشغيل.
 $legacyScriptsTarget = Join-Path $packageRoot 'Database\Legacy-Reference'
 New-Item -ItemType Directory -Path $legacyScriptsTarget -Force | Out-Null
@@ -101,7 +102,7 @@ SchoolSystem $Version
 
 ابدأ بقراءة ملفات Documentation الموجودة في الحزمة، وخصوصًا دليل الاختبار والتشغيل إن توفر.
 ينشئ البرنامج قاعدة البيانات ويحدّثها تلقائياً عند أول تشغيل عبر محرك الترحيل المدمج:
-  Database\initial\001_InitialSchema.sql  (المخطط الأولي)
+  Database\databaseschool.sql              (المخطط الأولي/مصدر الاستعادة)
   Database\migrations\*.sql               (ترحيلات مرقّمة تلقائية)
 الفهرس المرجعي للقاعدة السابق موجود في Database\Legacy-Reference\ ولا يُستخدَم للتشغيل.
 الملف التنفيذي: SchoolSystem.exe
