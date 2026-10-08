@@ -88,8 +88,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewPayrolls)).BeginInit();
             this.SuspendLayout();
 
+            this.panelTitle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTitle.Height = 58;
+            this.panelTitle.Height = 60;
             this.panelTitle.Name = "panelTitle";
             this.panelTitle.Controls.Add(this.lblTitle);
 
