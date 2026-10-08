@@ -777,7 +777,7 @@
             // lblSearch
             // 
             this.lblSearch.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblSearch.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.lblSearch.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
             this.lblSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
             this.lblSearch.Location = new System.Drawing.Point(1026, 0);
             this.lblSearch.Margin = new System.Windows.Forms.Padding(0, 0, 6, 0);
@@ -957,7 +957,7 @@
             this.dataGridViewVouchers.Name = "dataGridViewVouchers";
             this.dataGridViewVouchers.ReadOnly = true;
             this.dataGridViewVouchers.RowHeadersVisible = false;
-            this.dataGridViewVouchers.RowHeadersWidth = 51;
+            this.dataGridViewVouchers.RowHeadersWidth = 4;
             this.dataGridViewVouchers.RowTemplate.Height = 36;
             this.dataGridViewVouchers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewVouchers.Size = new System.Drawing.Size(1100, 252);
