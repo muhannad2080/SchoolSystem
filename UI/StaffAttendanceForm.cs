@@ -35,7 +35,38 @@ namespace SchoolSystem.UI
             ApplyCustomStyles();
             this.Dock = DockStyle.Fill;
 
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             this.Load += StaffAttendanceForm_Load;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                selectedAttendanceId != 0)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Teachers") &&
+                !DataRefreshNotifier.IsRelated(e, "StaffAttendance") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
+                return;
+
+            try
+            {
+                await LoadTeachersAsync();
+                await LoadAttendanceAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة حضور الموظفين: التحديث التلقائي",
+                    ex);
+            }
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
@@ -487,6 +518,7 @@ namespace SchoolSystem.UI
 
 
                 await LoadAttendanceAsync();
+                DataRefreshNotifier.Notify("StaffAttendance", this);
                 ClearInputs();
             }
 
@@ -540,6 +572,8 @@ namespace SchoolSystem.UI
 
 
                 await LoadAttendanceAsync();
+                if (updated)
+                    DataRefreshNotifier.Notify("StaffAttendance", this);
                 ClearInputs();
             }
 
@@ -588,6 +622,8 @@ namespace SchoolSystem.UI
 
 
                 await LoadAttendanceAsync();
+                if (deleted)
+                    DataRefreshNotifier.Notify("StaffAttendance", this);
                 ClearInputs();
             }
 
