@@ -209,22 +209,37 @@ namespace SchoolSystem.UI
         // تعريف الدالة ApplyFilter لتنفيذ العملية المرتبطة بها.
         private void ApplyFilter(string searchText)
         {
-            if (allContracts == null)
-                return;
-
-            string term = (searchText ?? string.Empty).Trim();
-            DataTable filtered = allContracts.Clone();
-
-            foreach (DataRow row in allContracts.Rows)
+            try
             {
-                if (string.IsNullOrWhiteSpace(term) || ContractRowContains(row, term))
-                    filtered.ImportRow(row);
+                if (allContracts == null)
+                {
+                    dataGridViewContracts.DataSource = null;
+                    lblRecordCount.Text = "عدد العقود: 0";
+                    return;
+                }
+
+                string term = (searchText ?? string.Empty).Trim();
+                DataTable filtered = allContracts.Clone();
+
+                foreach (DataRow row in allContracts.Rows)
+                {
+                    if (row == null)
+                        continue;
+
+                    if (string.IsNullOrWhiteSpace(term) || ContractRowContains(row, term))
+                        filtered.ImportRow(row);
+                }
+
+                dataGridViewContracts.DataSource = filtered.DefaultView;
+                lblRecordCount.Text = "عدد العقود: " + filtered.Rows.Count;
+                FormatGridColumns();
             }
-
-            dataGridViewContracts.DataSource = filtered.DefaultView;
-            lblRecordCount.Text = "عدد العقود: " + filtered.Rows.Count;
-
-            FormatGridColumns();
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("شاشة العقود الوظيفية: البحث", ex);
+                dataGridViewContracts.DataSource = allContracts != null ? allContracts.DefaultView : null;
+                lblRecordCount.Text = "عدد العقود: " + (allContracts != null ? allContracts.Rows.Count : 0);
+            }
         }
 
         private static bool ContractRowContains(DataRow row, string term)
