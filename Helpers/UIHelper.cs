@@ -1907,39 +1907,44 @@ namespace SchoolSystem.Helpers
             if (dgv == null)
                 return;
 
-            dgv.BackgroundColor = SurfaceElevatedColor;
-            dgv.BorderStyle = BorderStyle.None;
-            dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
-            dgv.RightToLeft = RightToLeft.Yes;
-            dgv.RowHeadersVisible = false;
-            dgv.MultiSelect = false;
-            dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            dgv.AllowUserToResizeRows = false;
+            // إذا كان الـDesigner قد حدد مظهر الجدول صراحةً، نحافظ عليه.
+            // العناصر الديناميكية فقط تستفيد من الهوية الافتراضية هنا.
+            if (ShouldApplyCentralGridStyle(dgv))
+            {
+                dgv.BackgroundColor = SurfaceElevatedColor;
+                dgv.BorderStyle = BorderStyle.None;
+                dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dgv.RightToLeft = RightToLeft.Yes;
+                dgv.RowHeadersVisible = false;
+                dgv.MultiSelect = false;
+                dgv.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+                dgv.AllowUserToResizeRows = false;
 
-            dgv.EnableHeadersVisualStyles = false;
-            dgv.ColumnHeadersDefaultCellStyle.BackColor = PrimaryColor;
-            dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgv.ColumnHeadersDefaultCellStyle.Font = new Font(FontFamily, BodyFontSize, FontStyle.Bold);
-            dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dgv.ColumnHeadersHeight = 42;
+                dgv.EnableHeadersVisualStyles = false;
+                dgv.ColumnHeadersDefaultCellStyle.BackColor = PrimaryColor;
+                dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dgv.ColumnHeadersDefaultCellStyle.Font = new Font(FontFamily, BodyFontSize, FontStyle.Bold);
+                dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dgv.ColumnHeadersHeight = 42;
 
-            dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
-            dgv.DefaultCellStyle.SelectionForeColor = TextColor;
-            dgv.DefaultCellStyle.ForeColor = TextColor;
-            dgv.DefaultCellStyle.Font = GridFont;
-            dgv.DefaultCellStyle.Padding = new Padding(6, 3, 6, 3);
-            dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(219, 234, 254);
+                dgv.DefaultCellStyle.SelectionForeColor = TextColor;
+                dgv.DefaultCellStyle.ForeColor = TextColor;
+                dgv.DefaultCellStyle.Font = GridFont;
+                dgv.DefaultCellStyle.Padding = new Padding(6, 3, 6, 3);
+                dgv.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
 
-            dgv.AlternatingRowsDefaultCellStyle.BackColor = AlternateRowColor;
-            dgv.RowsDefaultCellStyle.BackColor = SurfaceColor;
-            dgv.RowsDefaultCellStyle.ForeColor = TextColor;
-            dgv.RowTemplate.Height = 36;
-            dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgv.AllowUserToAddRows = false;
-            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgv.GridColor = BorderColor;
-            dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(6, 4, 6, 4);
+                dgv.AlternatingRowsDefaultCellStyle.BackColor = AlternateRowColor;
+                dgv.RowsDefaultCellStyle.BackColor = SurfaceColor;
+                dgv.RowsDefaultCellStyle.ForeColor = TextColor;
+                dgv.RowTemplate.Height = 36;
+                dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dgv.AllowUserToAddRows = false;
+                dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgv.GridColor = BorderColor;
+                dgv.ColumnHeadersDefaultCellStyle.Padding = new Padding(6, 4, 6, 4);
+            }
 
             dgv.CellFormatting -= DataGridView_DualDateFormatting;
             dgv.CellFormatting += DataGridView_DualDateFormatting;
@@ -1998,14 +2003,26 @@ namespace SchoolSystem.Helpers
         // تعريف الدالة StyleButton لتنفيذ العملية المرتبطة بها.
         public static void StyleButton(Button btn, Color backColor)
         {
-            btn.FlatStyle = FlatStyle.Flat;
-            btn.BackColor = backColor;
-            btn.ForeColor = Color.White;
-            btn.FlatAppearance.BorderSize = 0;
-            btn.FlatAppearance.MouseOverBackColor = Lighten(backColor, 0.10f);
-            btn.FlatAppearance.MouseDownBackColor = Darken(backColor, 0.10f);
-            btn.Cursor = Cursors.Hand;
-            btn.Font = HeadingFont;
+            if (btn == null)
+                return;
+
+            if (ShouldApplyCentralControlStyle(btn))
+            {
+                btn.FlatStyle = FlatStyle.Flat;
+                btn.BackColor = backColor;
+                btn.ForeColor = Color.White;
+                btn.FlatAppearance.BorderSize = 0;
+                btn.FlatAppearance.MouseOverBackColor = Lighten(backColor, 0.10f);
+                btn.FlatAppearance.MouseDownBackColor = Darken(backColor, 0.10f);
+                btn.Cursor = Cursors.Hand;
+                btn.Font = HeadingFont;
+            }
+
+            else
+            {
+                btn.Cursor = Cursors.Hand;
+            }
+
             EnsureButtonTextFits(btn);
         }
 
@@ -2156,11 +2173,17 @@ namespace SchoolSystem.Helpers
         // تعريف الدالة StyleTextBox لتنفيذ العملية المرتبطة بها.
         public static void StyleTextBox(TextBox txt)
         {
-            txt.BorderStyle = BorderStyle.FixedSingle;
-            txt.BackColor = SurfaceColor;
-            txt.ForeColor = TextColor;
-            txt.Font = BodyFont;
-            txt.Margin = new Padding(3, 4, 3, 4);
+            if (txt == null)
+                return;
+
+            if (ShouldApplyCentralControlStyle(txt))
+            {
+                txt.BorderStyle = BorderStyle.FixedSingle;
+                txt.BackColor = SurfaceColor;
+                txt.ForeColor = TextColor;
+                txt.Font = BodyFont;
+                txt.Margin = new Padding(3, 4, 3, 4);
+            }
         }
 
         // تعريف الدالة StyleTextBox لتنفيذ العملية المرتبطة بها.
@@ -2177,15 +2200,22 @@ namespace SchoolSystem.Helpers
         // تعريف الدالة StyleComboBox لتنفيذ العملية المرتبطة بها.
         public static void StyleComboBox(ComboBox cmb)
         {
-            if (cmb.DropDownStyle != ComboBoxStyle.DropDownList &&
-                !ContainsAny((cmb.Name ?? string.Empty).ToLowerInvariant(), "search", "بحث", "filter", "تصفية"))
+            if (cmb == null)
+                return;
+
+            if (ShouldApplyCentralControlStyle(cmb))
             {
-                cmb.DropDownStyle = ComboBoxStyle.DropDownList;
+                if (cmb.DropDownStyle != ComboBoxStyle.DropDownList &&
+                    !ContainsAny((cmb.Name ?? string.Empty).ToLowerInvariant(), "search", "بحث", "filter", "تصفية"))
+                {
+                    cmb.DropDownStyle = ComboBoxStyle.DropDownList;
+                }
+
+                cmb.BackColor = SurfaceColor;
+                cmb.ForeColor = TextColor;
+                cmb.Font = BodyFont;
+                cmb.Margin = new Padding(3, 4, 3, 4);
             }
-            cmb.BackColor = SurfaceColor;
-            cmb.ForeColor = TextColor;
-            cmb.Font = BodyFont;
-            cmb.Margin = new Padding(3, 4, 3, 4);
         }
 
         // تعريف الدالة ShowException لتنفيذ العملية المرتبطة بها.
