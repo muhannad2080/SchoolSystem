@@ -47,7 +47,6 @@ namespace SchoolSystem.UI
             UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
 
-            ApplyProfessionalLayout();
 
             // ============================================================
             // تمت إزالة جميع أوامر التصميم والتنسيق من هنا.
@@ -90,116 +89,6 @@ namespace SchoolSystem.UI
             voucherPrintDocument.PrintPage += VoucherPrintDocument_PrintPage;
 
             Load += VouchersForm_Load;
-        }
-
-        // ============================================================
-        // PROFESSIONAL LAYOUT
-        // ============================================================
-
-        private void ApplyProfessionalLayout()
-        {
-            RightToLeft = RightToLeft.Yes;
-            Dock = DockStyle.Fill;
-            MinimumSize = new System.Drawing.Size(1000, 650);
-
-            rootLayout.RowStyles.Clear();
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 52F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 205F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 100F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 82F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            rootLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 24F));
-
-            tableLayoutFields.Padding = new Padding(8, 4, 8, 4);
-
-            foreach (Control control in tableLayoutFields.Controls)
-            {
-                if (control is Label label)
-                {
-                    label.TextAlign = ContentAlignment.MiddleRight;
-                    label.Margin = new Padding(0, 0, 6, 0);
-                }
-                else if (control is TextBox textBox)
-                {
-                    textBox.RightToLeft = RightToLeft.Yes;
-                    textBox.TextAlign = HorizontalAlignment.Right;
-                    textBox.Margin = new Padding(0, 4, 8, 4);
-                }
-                else if (control is ComboBox comboBox)
-                {
-                    comboBox.RightToLeft = RightToLeft.Yes;
-                    comboBox.Margin = new Padding(0, 4, 8, 4);
-                }
-                else if (control is DateTimePicker datePicker)
-                {
-                    datePicker.RightToLeft = RightToLeft.Yes;
-                    datePicker.RightToLeftLayout = true;
-                    datePicker.Margin = new Padding(0, 4, 8, 4);
-                }
-                else if (control is CheckBox checkBox)
-                {
-                    checkBox.RightToLeft = RightToLeft.Yes;
-                    checkBox.TextAlign = ContentAlignment.MiddleRight;
-                }
-            }
-
-            actionLayout.FlowDirection = FlowDirection.RightToLeft;
-            actionLayout.WrapContents = true;
-            actionLayout.AutoScroll = true;
-            actionLayout.Padding = new Padding(12, 6, 12, 6);
-
-            Control[] buttons =
-            {
-                btnNewReceipt, btnNewPayment,
-                btnAdd, btnUpdate, btnDelete, btnClear,
-                btnPreview, btnPrint, btnExportExcel, btnExportPdf
-            };
-
-            actionLayout.Controls.Clear();
-            actionLayout.Controls.AddRange(buttons);
-
-            int[] widths = { 108, 108, 84, 84, 84, 84, 96, 88, 108, 104 };
-            for (int i = 0; i < buttons.Length; i++)
-            {
-                Button button = buttons[i] as Button;
-                if (button == null)
-                    continue;
-
-                button.AutoSize = true;
-                button.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-                button.MinimumSize = new Size(Math.Max(90, widths[i]), 38);
-                button.Height = 38;
-                button.Margin = new Padding(4, 3, 4, 3);
-                button.TextAlign = ContentAlignment.MiddleCenter;
-                button.RightToLeft = RightToLeft.Yes;
-                button.UseCompatibleTextRendering = true;
-            }
-
-            filterTable.Padding = new Padding(10, 4, 10, 4);
-
-            txtSearch.RightToLeft = RightToLeft.Yes;
-            txtSearch.TextAlign = HorizontalAlignment.Right;
-            cmbFilterType.RightToLeft = RightToLeft.Yes;
-
-            dataGridViewVouchers.RightToLeft = RightToLeft.Yes;
-            dataGridViewVouchers.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewVouchers.AutoSizeRowsMode =
-                DataGridViewAutoSizeRowsMode.None;
-            dataGridViewVouchers.AllowUserToOrderColumns = true;
-            dataGridViewVouchers.AllowUserToResizeColumns = true;
-            dataGridViewVouchers.AllowUserToResizeRows = false;
-            dataGridViewVouchers.RowHeadersVisible = false;
-            dataGridViewVouchers.SelectionMode =
-                DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewVouchers.MultiSelect = false;
-            dataGridViewVouchers.ReadOnly = true;
-            dataGridViewVouchers.ColumnHeadersHeight = 40;
-            dataGridViewVouchers.RowTemplate.Height = 36;
-            dataGridViewVouchers.DefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleRight;
-            dataGridViewVouchers.ColumnHeadersDefaultCellStyle.Alignment =
-                DataGridViewContentAlignment.MiddleCenter;
         }
 
         private async void DataRefreshNotifier_DataChanged(
