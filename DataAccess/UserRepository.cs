@@ -1059,6 +1059,139 @@ namespace SchoolSystem.DataAccess
             }
         }
 
+        /// <summary>
+        /// يجهز حساب مدير النظام لقاعدة جديدة تم إنشاؤها للتثبيت:
+        /// يعيد ضبط كلمة المرور، يجبر التغيير عند أول دخول، ويعطل الحسابات غير
+        /// الإدارية التي قد تكون ضمن Snapshot قاعدة البيانات المرجعية.
+        /// لا تُستدعى لقاعدة موجودة للمستخدم.
+        /// </summary>
+        public int InitializeFreshInstallationAdministrator(
+            string userName,
+            string fullName,
+            string passwordHash,
+            string passwordSalt,
+            string permissions)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+                throw new ArgumentException("اسم المستخدم الأولي غير صالح.", "userName");
+
+            using (SqlConnection con = DbConnection.GetConnection())
+            {
+                con.Open();
+
+                using (SqlTransaction transaction =
+                    con.BeginTransaction(IsolationLevel.Serializable))
+                {
+                    int adminUserId = 0;
+
+                    using (SqlCommand findCommand = new SqlCommand(@"
+                        SELECT TOP 1 UserID
+                        FROM dbo.Users WITH (UPDLOCK, HOLDLOCK)
+                        WHERE LTRIM(RTRIM(RoleName)) IN
+                            (N'مدير النظام', N'Admin', N'Administrator')
+                        ORDER BY CASE WHEN LTRIM(RTRIM(UserName)) = LTRIM(RTRIM(@UserName)) THEN 0 ELSE 1 END,
+                                 UserID;", con, transaction))
+                    {
+                        findCommand.Parameters.Add("@UserName", SqlDbType.NVarChar, 50).Value = userName.Trim();
+                        object value = findCommand.ExecuteScalar();
+                        if (value != null && value != DBNull.Value)
+                            adminUserId = Convert.ToInt32(value);
+                    }
+
+                    if (adminUserId <= 0)
+                    {
+                        using (SqlCommand insertCommand = new SqlCommand(@"
+                            INSERT INTO dbo.Users
+                            (
+                                FullName, UserName, PasswordHash, PasswordSalt,
+                                RoleName, Permissions, Email, Phone, IsActive,
+                                MustChangePassword, FailedLoginAttempts, LockedAt,
+                                CreatedAt, UpdatedAt
+                            )
+                            VALUES
+                            (
+                                @FullName, @UserName, @PasswordHash, @PasswordSalt,
+                                N'مدير النظام', @Permissions, N'', N'', 1,
+                                1, 0, NULL, GETDATE(), GETDATE()
+                            );
+                            SELECT CAST(SCOPE_IDENTITY() AS INT);", con, transaction))
+                        {
+                            insertCommand.Parameters.Add("@FullName", SqlDbType.NVarChar, 200).Value = fullName ?? "مدير النظام";
+                            insertCommand.Parameters.Add("@UserName", SqlDbType.NVarChar, 50).Value = userName.Trim();
+                            insertCommand.Parameters.Add("@PasswordHash", SqlDbType.NVarChar, -1).Value = passwordHash ?? string.Empty;
+                            insertCommand.Parameters.Add("@PasswordSalt", SqlDbType.NVarChar, -1).Value = passwordSalt ?? string.Empty;
+                            insertCommand.Parameters.Add("@Permissions", SqlDbType.NVarChar, -1).Value = permissions ?? string.Empty;
+
+                            adminUserId = Convert.ToInt32(insertCommand.ExecuteScalar());
+                        }
+                    }
+                    else
+                    {
+                        using (SqlCommand updateCommand = new SqlCommand(@"
+                            UPDATE dbo.Users
+                            SET FullName = @FullName,
+                                UserName = @UserName,
+                                PasswordHash = @PasswordHash,
+                                PasswordSalt = @PasswordSalt,
+                                RoleName = N'مدير النظام',
+                                Permissions = @Permissions,
+                                IsActive = 1,
+                                MustChangePassword = 1,
+                                FailedLoginAttempts = 0,
+                                LockedAt = NULL,
+                                UpdatedAt = GETDATE()
+                            WHERE UserID = @UserID;", con, transaction))
+                        {
+                            updateCommand.Parameters.Add("@FullName", SqlDbType.NVarChar, 200).Value = fullName ?? "مدير النظام";
+                            updateCommand.Parameters.Add("@UserName", SqlDbType.NVarChar, 50).Value = userName.Trim();
+                            updateCommand.Parameters.Add("@PasswordHash", SqlDbType.NVarChar, -1).Value = passwordHash ?? string.Empty;
+                            updateCommand.Parameters.Add("@PasswordSalt", SqlDbType.NVarChar, -1).Value = passwordSalt ?? string.Empty;
+                            updateCommand.Parameters.Add("@Permissions", SqlDbType.NVarChar, -1).Value = permissions ?? string.Empty;
+                            updateCommand.Parameters.Add("@UserID", SqlDbType.Int).Value = adminUserId;
+                            updateCommand.ExecuteNonQuery();
+                        }
+                    }
+
+                    int adminRoleId = EnsureRole(con, transaction, "مدير النظام");
+                    if (adminRoleId > 0)
+                    {
+                        using (SqlCommand roleDelete = new SqlCommand(
+                            "DELETE FROM dbo.UserRoles WHERE UserID = @UserID;", con, transaction))
+                        {
+                            roleDelete.Parameters.Add("@UserID", SqlDbType.Int).Value = adminUserId;
+                            roleDelete.ExecuteNonQuery();
+                        }
+
+                        using (SqlCommand roleInsert = new SqlCommand(@"
+                            INSERT INTO dbo.UserRoles (UserID, RoleID, AssignedAt)
+                            VALUES (@UserID, @RoleID, GETDATE());", con, transaction))
+                        {
+                            roleInsert.Parameters.Add("@UserID", SqlDbType.Int).Value = adminUserId;
+                            roleInsert.Parameters.Add("@RoleID", SqlDbType.Int).Value = adminRoleId;
+                            roleInsert.ExecuteNonQuery();
+                        }
+                    }
+
+                    // لا نحذف المستخدمين غير الإداريين حتى لا نكسر سجل التدقيق أو العلاقات
+                    // التاريخية؛ نعطلهم فقط في نسخة التثبيت المرجعية.
+                    using (SqlCommand disableOthers = new SqlCommand(@"
+                        UPDATE dbo.Users
+                        SET IsActive = 0,
+                            UpdatedAt = GETDATE()
+                        WHERE UserID <> @AdminUserID
+                          AND LTRIM(RTRIM(RoleName)) NOT IN
+                              (N'مدير النظام', N'Admin', N'Administrator');", con, transaction))
+                    {
+                        disableOthers.Parameters.Add("@AdminUserID", SqlDbType.Int).Value = adminUserId;
+                        disableOthers.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                    return adminUserId;
+                }
+            }
+        }
+
         // تعريف الدالة UpdatePermissions لتنفيذ العملية المرتبطة بها.
         public bool UpdatePermissions(int userId, string permissions)
         {
