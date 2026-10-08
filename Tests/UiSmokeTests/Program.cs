@@ -545,7 +545,7 @@ namespace SchoolSystem.UiSmokeTests
                 throw new InvalidOperationException("Login placeholders must be initialized in Arabic.");
             }
 
-            if (password.PasswordChar != ' ')
+            if (password.PasswordChar != '\0')
                 throw new InvalidOperationException("Password placeholder must not be masked.");
 
             if (toggle.Width < 92 || clear.Height < 36 || exit.Height < 36)
@@ -564,7 +564,7 @@ namespace SchoolSystem.UiSmokeTests
             toggle.Text = "إخفاء";
             toggle.PerformClick();
 
-            if (password.PasswordChar != ' ' ||
+            if (password.PasswordChar != '\0' ||
                 !string.Equals(toggle.Text, "إظهار", StringComparison.Ordinal))
             {
                 throw new InvalidOperationException("Password visibility toggle did not expose the password state correctly.");
@@ -572,7 +572,7 @@ namespace SchoolSystem.UiSmokeTests
 
             toggle.PerformClick();
 
-            if (password.PasswordChar == ' ' ||
+            if (password.PasswordChar == '\0' ||
                 !string.Equals(toggle.Text, "إخفاء", StringComparison.Ordinal))
             {
                 throw new InvalidOperationException("Password visibility toggle did not restore the masked state.");
@@ -581,7 +581,7 @@ namespace SchoolSystem.UiSmokeTests
             clear.PerformClick();
 
             if (!string.Equals(password.Text, "كلمة المرور", StringComparison.Ordinal) ||
-                password.PasswordChar != ' ' ||
+                password.PasswordChar != '\0' ||
                 !string.Equals(toggle.Text, "إظهار", StringComparison.Ordinal))
             {
                 throw new InvalidOperationException("Clear action did not restore the password input state.");
