@@ -66,7 +66,7 @@ def generate_designer_code():
     res.append("            this.cmbFilterStatus = new System.Windows.Forms.ComboBox();")
     res.append("            this.lblSearch = new System.Windows.Forms.Label();")
     res.append("            this.lblCount = new System.Windows.Forms.Label();")
-    res.append("            this.pnlButtons = new System.Windows.Forms.Panel();")
+    res.append("            this.pnlButtons = new System.Windows.Forms.FlowLayoutPanel();")
     res.append("            this.btnAdd = new System.Windows.Forms.Button();")
     res.append("            this.btnSave = new System.Windows.Forms.Button();")
     res.append("            this.btnUpdate = new System.Windows.Forms.Button();")
@@ -172,18 +172,31 @@ def generate_designer_code():
     res.append("            this.dgvStudents.SelectionChanged += new System.EventHandler(this.dgvStudents_SelectionChanged);")
 
     res.append("            this.pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;")
-    res.append("            this.pnlButtons.Height = 70;")
-    res.append("            this.pnlButtons.Padding = new System.Windows.Forms.Padding(10);")
+    res.append("            this.pnlButtons.Height = 62;")
+    res.append("            this.pnlButtons.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);")
+    res.append("            this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;")
+    res.append("            this.pnlButtons.WrapContents = false;")
+    res.append("            this.pnlButtons.AutoScroll = false;")
+    res.append("            this.pnlButtons.RightToLeft = System.Windows.Forms.RightToLeft.No;")
 
     b_list = ["btnClose", "btnPrint", "btnExportExcel", "btnRefresh", "btnCancel", "btnDelete", "btnUpdate", "btnSave", "btnAdd"]
     b_txts = ["إغلاق", "طباعة", "تصدير Excel", "تحديث", "إلغاء", "حذف", "تعديل", "حفظ", "جديد"]
-    for i, (b, t) in enumerate(zip(b_list, b_txts)):
+    b_widths = [112, 125, 145, 112, 112, 112, 112, 112, 112]
+    for b, t, w in zip(b_list, b_txts, b_widths):
         res.append(f"            this.{b}.Text = \"{t}\";")
-        res.append(f"            this.{b}.Dock = System.Windows.Forms.DockStyle.Right;")
-        res.append(f"            this.{b}.Width = 90;")
-        res.append(f"            this.{b}.Margin = new System.Windows.Forms.Padding(5);")
+        res.append(f"            this.{b}.Size = new System.Drawing.Size({w}, 40);")
+        res.append(f"            this.{b}.MinimumSize = new System.Drawing.Size(110, 40);")
+        res.append(f"            this.{b}.Margin = new System.Windows.Forms.Padding(4);")
+        res.append(f"            this.{b}.AutoSize = false;")
+        res.append(f"            this.{b}.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);")
+        res.append(f"            this.{b}.ForeColor = System.Drawing.Color.White;")
+        res.append(f"            this.{b}.FlatStyle = System.Windows.Forms.FlatStyle.Flat;")
+        res.append(f"            this.{b}.FlatAppearance.BorderSize = 0;")
+        res.append(f"            this.{b}.Font = new System.Drawing.Font(\"Tahoma\", 10.5F, System.Drawing.FontStyle.Bold);")
+        res.append(f"            this.{b}.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;")
+        res.append(f"            this.{b}.UseVisualStyleBackColor = false;")
+        res.append(f"            this.{b}.Cursor = System.Windows.Forms.Cursors.Hand;")
         res.append(f"            this.pnlButtons.Controls.Add(this.{b});")
-        res.append(f"            this.{b}.BringToFront();") # So they order correctly
         if b=="btnCancel":
             res.append(f"            this.{b}.Click += new System.EventHandler(this.btnCancel_Click);")
         elif b=="btnRefresh":
@@ -192,28 +205,42 @@ def generate_designer_code():
             res.append(f"            this.{b}.Click += new System.EventHandler(this.{b}_Click);")
 
     res.append("            this.pnlSearch.Dock = System.Windows.Forms.DockStyle.Top;")
-    res.append("            this.pnlSearch.Height = 60;")
+    res.append("            this.pnlSearch.Height = 72;")
     res.append("            this.pnlSearch.Padding = new System.Windows.Forms.Padding(10);")
-    res.append("            this.btnReload.Text = \"تحديث\";")
-    res.append("            this.btnReload.Dock = System.Windows.Forms.DockStyle.Right;")
-    res.append("            this.btnReload.Width = 80;")
-    res.append("            this.btnReload.Click += new System.EventHandler(this.btnRefresh_Click);")
-    res.append("            this.btnSearch.Text = \"بحث\";")
-    res.append("            this.btnClearFilters.Text = \"مسح الفلاتر\";")
-    res.append("            this.btnSearch.Dock = System.Windows.Forms.DockStyle.Right;")
-    res.append("            this.btnSearch.Width = 80;")
-    res.append("            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);")
-    res.append("            this.btnClearFilters.Click += new System.EventHandler(this.btnClearFilters_Click);")
-    res.append("            this.txtSearch.Dock = System.Windows.Forms.DockStyle.Right;")
-    res.append("            this.txtSearch.Width = 250;")
-    res.append("            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);")
-    res.append("            this.cmbFilterStatus.Dock = System.Windows.Forms.DockStyle.Right;")
-    res.append("            this.cmbFilterStatus.Width = 120;")
-    res.append("            this.cmbFilterClass.Dock = System.Windows.Forms.DockStyle.Right;")
-    res.append("            this.cmbFilterClass.Width = 120;")
-    res.append("            this.lblCount.Dock = System.Windows.Forms.DockStyle.Left;")
-    res.append("            this.lblCount.AutoSize = true;")
+    res.append("            this.pnlSearch.BackColor = System.Drawing.Color.White;")
 
+    res.append("            this.lblCount.Location = new System.Drawing.Point(20, 24);")
+    res.append("            this.lblCount.Size = new System.Drawing.Size(90, 24);")
+    res.append("            this.lblCount.AutoSize = false;")
+    res.append("            this.lblCount.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;")
+
+    res.append("            this.lblSearch.Location = new System.Drawing.Point(430, 24);")
+    res.append("            this.lblSearch.Size = new System.Drawing.Size(54, 24);")
+    res.append("            this.lblSearch.AutoSize = false;")
+    res.append("            this.lblSearch.Text = \"بحث:\";")
+    res.append("            this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;")
+
+    for b,x,y,w,h in [
+        ("cmbFilterClass",115,21,155,30),
+        ("cmbFilterStatus",280,21,135,30),
+        ("txtSearch",485,21,300,30),
+        ("btnSearch",820,16,96,40),
+        ("btnClearFilters",922,16,118,40),
+        ("btnReload",1045,16,136,40)
+    ]:
+        res.append(f"            this.{b}.Location = new System.Drawing.Point({x}, {y});")
+        res.append(f"            this.{b}.Size = new System.Drawing.Size({w}, {h});")
+        res.append(f"            this.{b}.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));")
+
+    res.append("            this.btnSearch.Text = \"بحث\";")
+    res.append("            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);")
+    res.append("            this.btnClearFilters.Text = \"مسح الفلاتر\";")
+    res.append("            this.btnClearFilters.Click += new System.EventHandler(this.btnClearFilters_Click);")
+    res.append("            this.btnReload.Text = \"تحديث البيانات\";")
+    res.append("            this.btnReload.Click += new System.EventHandler(this.btnRefresh_Click);")
+    res.append("            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);")
+
+    res.append("            this.pnlSearch.Controls.Add(this.lblCount);")
     res.append("            this.pnlSearch.Controls.Add(this.cmbFilterClass);")
     res.append("            this.pnlSearch.Controls.Add(this.cmbFilterStatus);")
     res.append("            this.pnlSearch.Controls.Add(this.lblSearch);")
@@ -221,7 +248,6 @@ def generate_designer_code():
     res.append("            this.pnlSearch.Controls.Add(this.btnSearch);")
     res.append("            this.pnlSearch.Controls.Add(this.btnClearFilters);")
     res.append("            this.pnlSearch.Controls.Add(this.btnReload);")
-    res.append("            this.pnlSearch.Controls.Add(this.lblCount);")
 
     res.append("            this.lblCount.BringToFront();")
     res.append("            this.btnReload.BringToFront();")
@@ -291,7 +317,7 @@ def generate_designer_code():
         "        private System.Windows.Forms.ComboBox cmbFilterStatus;",
         "        private System.Windows.Forms.Label lblSearch;",
         "        private System.Windows.Forms.Label lblCount;",
-        "        private System.Windows.Forms.Panel pnlButtons;",
+        "        private System.Windows.Forms.FlowLayoutPanel pnlButtons;",
         "        private System.Windows.Forms.Button btnAdd;",
         "        private System.Windows.Forms.Button btnSave;",
         "        private System.Windows.Forms.Button btnUpdate;",
