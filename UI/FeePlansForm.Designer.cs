@@ -149,11 +149,15 @@ namespace SchoolSystem.UI
             // 
             this.cmbAcademicYear.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbAcademicYear.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbAcademicYear.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.cmbAcademicYear.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbAcademicYear.Location = new System.Drawing.Point(538, 3);
             this.cmbAcademicYear.Name = "cmbAcademicYear";
             this.cmbAcademicYear.Size = new System.Drawing.Size(404, 27);
             this.cmbAcademicYear.TabIndex = 1;
+            this.cmbAcademicYear.BackColor = System.Drawing.Color.White;
+            this.cmbAcademicYear.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbAcademicYear.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbAcademicYear.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblClass
             // 
@@ -170,11 +174,15 @@ namespace SchoolSystem.UI
             // 
             this.cmbClass.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cmbClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbClass.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.cmbClass.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbClass.Location = new System.Drawing.Point(3, 3);
             this.cmbClass.Name = "cmbClass";
             this.cmbClass.Size = new System.Drawing.Size(404, 27);
             this.cmbClass.TabIndex = 3;
+            this.cmbClass.BackColor = System.Drawing.Color.White;
+            this.cmbClass.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbClass.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbClass.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblFeeType
             // 
@@ -190,11 +198,16 @@ namespace SchoolSystem.UI
             // cmbFeeType
             // 
             this.cmbFeeType.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cmbFeeType.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.cmbFeeType.Font = new System.Drawing.Font("Tahoma", 10F);
             this.cmbFeeType.Location = new System.Drawing.Point(538, 41);
             this.cmbFeeType.Name = "cmbFeeType";
             this.cmbFeeType.Size = new System.Drawing.Size(404, 27);
             this.cmbFeeType.TabIndex = 5;
+            this.cmbFeeType.BackColor = System.Drawing.Color.White;
+            this.cmbFeeType.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbFeeType.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbFeeType.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.cmbFeeType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // lblAmount
             // 
@@ -210,12 +223,17 @@ namespace SchoolSystem.UI
             // txtAmount
             // 
             this.txtAmount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtAmount.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtAmount.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtAmount.Location = new System.Drawing.Point(3, 41);
             this.txtAmount.Name = "txtAmount";
             this.txtAmount.Size = new System.Drawing.Size(404, 27);
             this.txtAmount.TabIndex = 7;
             this.txtAmount.Text = "0";
+            this.txtAmount.BackColor = System.Drawing.Color.White;
+            this.txtAmount.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtAmount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtAmount.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtAmount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblTotalFeeAmount
             // 
@@ -230,10 +248,10 @@ namespace SchoolSystem.UI
             // 
             // txtTotalFeeAmount
             // 
-            this.txtTotalFeeAmount.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.txtTotalFeeAmount.BackColor = System.Drawing.Color.White;
             this.txtTotalFeeAmount.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtTotalFeeAmount.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
-            this.txtTotalFeeAmount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
+            this.txtTotalFeeAmount.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtTotalFeeAmount.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             this.txtTotalFeeAmount.Location = new System.Drawing.Point(538, 79);
             this.txtTotalFeeAmount.Name = "txtTotalFeeAmount";
             this.txtTotalFeeAmount.ReadOnly = true;
@@ -241,6 +259,9 @@ namespace SchoolSystem.UI
             this.txtTotalFeeAmount.TabIndex = 9;
             this.txtTotalFeeAmount.Text = "0.00";
             this.txtTotalFeeAmount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtTotalFeeAmount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtTotalFeeAmount.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtTotalFeeAmount.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblPlanNumber
             // 
@@ -255,15 +276,19 @@ namespace SchoolSystem.UI
             // 
             // txtPlanNumber
             // 
-            this.txtPlanNumber.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.txtPlanNumber.BackColor = System.Drawing.Color.White;
             this.txtPlanNumber.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtPlanNumber.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtPlanNumber.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtPlanNumber.Location = new System.Drawing.Point(3, 79);
             this.txtPlanNumber.Name = "txtPlanNumber";
             this.txtPlanNumber.ReadOnly = true;
             this.txtPlanNumber.Size = new System.Drawing.Size(404, 27);
             this.txtPlanNumber.TabIndex = 11;
             this.txtPlanNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.txtPlanNumber.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtPlanNumber.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPlanNumber.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtPlanNumber.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // 
             // lblDueDate
@@ -327,11 +352,16 @@ namespace SchoolSystem.UI
             // 
             this.tableFields.SetColumnSpan(this.txtNotes, 3);
             this.txtNotes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtNotes.Font = new System.Drawing.Font("Tahoma", 9.5F);
+            this.txtNotes.Font = new System.Drawing.Font("Tahoma", 10F);
             this.txtNotes.Location = new System.Drawing.Point(3, 155);
             this.txtNotes.Name = "txtNotes";
             this.txtNotes.Size = new System.Drawing.Size(939, 27);
             this.txtNotes.TabIndex = 13;
+            this.txtNotes.BackColor = System.Drawing.Color.White;
+            this.txtNotes.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtNotes.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtNotes.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // panelButtons
             // 
@@ -464,6 +494,11 @@ namespace SchoolSystem.UI
             this.txtSearch.Size = new System.Drawing.Size(240, 28);
             this.txtSearch.TabIndex = 1;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
+            this.txtSearch.BackColor = System.Drawing.Color.White;
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // dataGridViewFeePlans
             // 
