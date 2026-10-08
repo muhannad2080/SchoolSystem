@@ -216,7 +216,7 @@ def generate_designer_code():
             res.append(f"            this.{b}.Click += new System.EventHandler(this.{b}_Click);")
 
     res.append("            this.pnlSearch.Dock = System.Windows.Forms.DockStyle.Top;")
-    res.append("            this.pnlSearch.Height = 60;")
+    res.append("            this.pnlSearch.Height = 72;")
     res.append("            this.pnlSearch.Padding = new System.Windows.Forms.Padding(10);")
     res.append("            this.btnReload.Text = \"مسح البحث\";")
     res.append("            this.btnReload.Dock = System.Windows.Forms.DockStyle.Right;")
@@ -227,7 +227,7 @@ def generate_designer_code():
     res.append("            this.btnSearch.Width = 90;")
     res.append("            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);")
     res.append("            this.txtSearch.Dock = System.Windows.Forms.DockStyle.Right;")
-    res.append("            this.txtSearch.Width = 300;")
+    res.append("            this.txtSearch.Width = 350;")
     res.append("            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);")
     res.append("            this.lblCount.Dock = System.Windows.Forms.DockStyle.Left;")
     res.append("            this.lblCount.AutoSize = true;")
