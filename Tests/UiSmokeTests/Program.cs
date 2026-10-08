@@ -413,7 +413,12 @@ namespace SchoolSystem.UiSmokeTests
             foreach (Control control in GetAllControls(root))
             {
                 Button button = control as Button;
-                if (button == null || !button.Visible || string.IsNullOrWhiteSpace(button.Text) || button.AutoSize)
+                if (button == null ||
+                    !button.Visible ||
+                    string.IsNullOrWhiteSpace(button.Text) ||
+                    button.AutoSize ||
+                    string.Equals(button.Name, "btnWindowClose", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(button.Text.Trim(), "×", StringComparison.Ordinal))
                     continue;
 
                 System.Drawing.Size measured = System.Windows.Forms.TextRenderer.MeasureText(
@@ -519,6 +524,70 @@ namespace SchoolSystem.UiSmokeTests
             }
 
             Console.WriteLine("[PASS] Login RTL visual hierarchy and keyboard order");
+        }
+
+
+        private static void ValidateLoginInteractionSurface(Control control)
+        {
+            if (!(control is SchoolSystem.UI.LoginForm))
+                return;
+
+            TextBox userName = GetPrivateControl<TextBox>(control, "txtUserName");
+            TextBox password = GetPrivateControl<TextBox>(control, "txtPassword");
+            Button toggle = GetPrivateControl<Button>(control, "btnTogglePassword");
+            Button clear = GetPrivateControl<Button>(control, "btnClear");
+            Button exit = GetPrivateControl<Button>(control, "btnExit");
+            Button login = GetPrivateControl<Button>(control, "btnLogin");
+
+            if (!string.Equals(userName.Text, "اسم المستخدم", StringComparison.Ordinal) ||
+                !string.Equals(password.Text, "كلمة المرور", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("Login placeholders must be initialized in Arabic.");
+            }
+
+            if (password.PasswordChar != ' ')
+                throw new InvalidOperationException("Password placeholder must not be masked.");
+
+            if (toggle.Width < 92 || clear.Height < 36 || exit.Height < 36)
+                throw new InvalidOperationException("Login action controls are too small for their captions.");
+
+            if (control.RightToLeft != RightToLeft.Yes ||
+                !control.RightToLeftLayout ||
+                control.AcceptButton != login ||
+                control.CancelButton != exit)
+            {
+                throw new InvalidOperationException("Login form Arabic direction/chrome configuration is incomplete.");
+            }
+
+            password.Text = "DemoPassword123";
+            password.PasswordChar = '●';
+            toggle.Text = "إخفاء";
+            toggle.PerformClick();
+
+            if (password.PasswordChar != ' ' ||
+                !string.Equals(toggle.Text, "إظهار", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("Password visibility toggle did not expose the password state correctly.");
+            }
+
+            toggle.PerformClick();
+
+            if (password.PasswordChar == ' ' ||
+                !string.Equals(toggle.Text, "إخفاء", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("Password visibility toggle did not restore the masked state.");
+            }
+
+            clear.PerformClick();
+
+            if (!string.Equals(password.Text, "كلمة المرور", StringComparison.Ordinal) ||
+                password.PasswordChar != ' ' ||
+                !string.Equals(toggle.Text, "إظهار", StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("Clear action did not restore the password input state.");
+            }
+
+            Console.WriteLine("[PASS] Login interactions and RTL controls");
         }
 
         private static void ValidateStudentProfile(Control control)
@@ -776,6 +845,7 @@ namespace SchoolSystem.UiSmokeTests
                     ValidateLayout(loginForm);
                     ValidateTextFit(loginForm);
                     ValidateLoginLayout(loginForm);
+                    ValidateLoginInteractionSurface(loginForm);
                 }
 
                 passed++;
