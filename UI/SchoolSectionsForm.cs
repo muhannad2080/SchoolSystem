@@ -61,7 +61,7 @@ namespace SchoolSystem.UI
             lblTitle = new Label
             {
                 Dock = DockStyle.Top,
-                Height = 54,
+                Height = 60,
                 Text = "إدارة الشعب الدراسية",
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Tahoma", 15F, FontStyle.Bold),
@@ -134,9 +134,9 @@ namespace SchoolSystem.UI
             FlowLayoutPanel buttons = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
-                Height = 54,
+                Height = 48,
                 FlowDirection = FlowDirection.RightToLeft,
-                Padding = new Padding(0, 8, 0, 0)
+                Padding = new Padding(0, 4, 0, 4)
             };
 
             btnRefresh = MakeButton("تحديث", 110);
@@ -154,9 +154,9 @@ namespace SchoolSystem.UI
             Panel searchPanel = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 44,
+                Height = 50,
                 BackColor = Color.White,
-                Padding = new Padding(10, 7, 10, 7)
+                Padding = new Padding(10, 6, 10, 6)
             };
 
             Label searchLabel = MakeLabel("بحث سريع:");
@@ -177,7 +177,39 @@ namespace SchoolSystem.UI
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
                 BackgroundColor = Color.White,
                 BorderStyle = BorderStyle.None,
-                RowHeadersVisible = false
+                RowHeadersVisible = false,
+                AllowUserToResizeRows = false,
+                EnableHeadersVisualStyles = false,
+                ColumnHeadersHeight = 42,
+                ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing,
+                ColumnHeadersDefaultCellStyle =
+                {
+                    BackColor = UIHelper.PrimaryColor,
+                    ForeColor = Color.White,
+                    Font = new Font("Tahoma", 10F, FontStyle.Bold),
+                    Alignment = DataGridViewContentAlignment.MiddleCenter
+                },
+                DefaultCellStyle =
+                {
+                    BackColor = Color.White,
+                    ForeColor = UIHelper.TextColor,
+                    Font = new Font("Tahoma", 10F),
+                    Alignment = DataGridViewContentAlignment.MiddleRight,
+                    SelectionBackColor = Color.FromArgb(219, 234, 254),
+                    SelectionForeColor = UIHelper.TextColor,
+                    Padding = new Padding(6, 3, 6, 3)
+                },
+                AlternatingRowsDefaultCellStyle =
+                {
+                    BackColor = UIHelper.BackgroundColor
+                },
+                RowsDefaultCellStyle =
+                {
+                    BackColor = Color.White,
+                    ForeColor = UIHelper.TextColor
+                },
+                GridColor = UIHelper.BorderColor,
+                RowTemplate = { Height = 36 }
             };
 
             Panel bottom = new Panel
@@ -228,10 +260,17 @@ namespace SchoolSystem.UI
             {
                 Text = text,
                 Width = width,
-                Height = 36,
+                Height = 40,
+                MinimumSize = new Size(110, 40),
                 FlatStyle = FlatStyle.Flat,
-                Font = new Font("Tahoma", 9F, FontStyle.Bold),
-                ForeColor = Color.White
+                Font = new Font("Tahoma", 10.5F, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = UIHelper.AccentColor,
+                FlatAppearance = { BorderSize = 0 },
+                UseVisualStyleBackColor = false,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Cursor = Cursors.Hand,
+                Margin = new Padding(4)
             };
         }
 
