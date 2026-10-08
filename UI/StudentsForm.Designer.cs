@@ -690,18 +690,18 @@
             this.picStudent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.picStudent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.picStudent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picStudent.Location = new System.Drawing.Point(20, 25);
+            this.picStudent.Location = new System.Drawing.Point(34, 24);
             this.picStudent.Name = "picStudent";
-            this.picStudent.Size = new System.Drawing.Size(100, 100);
+            this.picStudent.Size = new System.Drawing.Size(72, 72);
             this.picStudent.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picStudent.TabIndex = 0;
             this.picStudent.TabStop = false;
             // 
             // btnChooseImage
             // 
-            this.btnChooseImage.Location = new System.Drawing.Point(72, 130);
+            this.btnChooseImage.Location = new System.Drawing.Point(8, 105);
             this.btnChooseImage.Name = "btnChooseImage";
-            this.btnChooseImage.Size = new System.Drawing.Size(58, 34);
+            this.btnChooseImage.Size = new System.Drawing.Size(58, 30);
             this.btnChooseImage.TabIndex = 1;
             this.btnChooseImage.Text = "اختيار";
             this.btnChooseImage.UseVisualStyleBackColor = false;
@@ -710,17 +710,17 @@
             this.btnChooseImage.ForeColor = System.Drawing.Color.White;
             this.btnChooseImage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnChooseImage.FlatAppearance.BorderSize = 0;
-            this.btnChooseImage.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnChooseImage.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnChooseImage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnChooseImage.AutoSize = false;
-            this.btnChooseImage.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnChooseImage.MinimumSize = new System.Drawing.Size(58, 30);
             this.btnChooseImage.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnRemoveImage
             // 
-            this.btnRemoveImage.Location = new System.Drawing.Point(10, 130);
+            this.btnRemoveImage.Location = new System.Drawing.Point(75, 105);
             this.btnRemoveImage.Name = "btnRemoveImage";
-            this.btnRemoveImage.Size = new System.Drawing.Size(58, 34);
+            this.btnRemoveImage.Size = new System.Drawing.Size(58, 30);
             this.btnRemoveImage.TabIndex = 2;
             this.btnRemoveImage.Text = "إزالة";
             this.btnRemoveImage.UseVisualStyleBackColor = false;
@@ -729,10 +729,10 @@
             this.btnRemoveImage.ForeColor = System.Drawing.Color.White;
             this.btnRemoveImage.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRemoveImage.FlatAppearance.BorderSize = 0;
-            this.btnRemoveImage.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
+            this.btnRemoveImage.Font = new System.Drawing.Font("Tahoma", 9.5F, System.Drawing.FontStyle.Bold);
             this.btnRemoveImage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.btnRemoveImage.AutoSize = false;
-            this.btnRemoveImage.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnRemoveImage.MinimumSize = new System.Drawing.Size(58, 30);
             this.btnRemoveImage.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // layoutRight
