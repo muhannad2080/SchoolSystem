@@ -32,6 +32,9 @@ namespace SchoolSystem.Services
         /// </summary>
         public static bool DatabaseCreatedInLastRun { get; private set; }
 
+        /// <summary>يحدد ما إذا كانت آخر عملية Apply استُخدمت فيها استعادة من ملف BAK.</summary>
+        public static bool DatabaseRestoredInLastRun { get; private set; }
+
         /// <summary>اسم ملف النسخة الاحتياطية التي تُستخدم للاستعادة عند التثبيت أول مرة.</summary>
         public const string BackupFileName = "SchoolDB_14480309_230530.bak";
 
@@ -55,6 +58,7 @@ namespace SchoolSystem.Services
         {
             AppliedInLastRun = 0;
             DatabaseCreatedInLastRun = false;
+            DatabaseRestoredInLastRun = false;
 
             string databaseFolderFull =
                 (databaseFolder ?? string.Empty).Trim();
@@ -76,6 +80,7 @@ namespace SchoolSystem.Services
                     ApplicationLogger.Log("DatabaseMigration",
                         "استعادة قاعدة البيانات من النسخة الاحتياطية: " + backupPath);
                     RestoreDatabase(masterConnection, database, backupPath);
+                    DatabaseRestoredInLastRun = true;
                 }
                 else
                 {
@@ -157,6 +162,44 @@ namespace SchoolSystem.Services
             if (AppliedInLastRun == 0)
                 return "قاعدة البيانات محدَّثة بالفعل (الإصدار " + currentVersion + ").";
             return "تم تطبيق " + AppliedInLastRun + " ترحيل بنجاح، الإصدار الحالي: " + currentVersion + ".";
+        }
+
+        /// <summary>
+        /// يطبق بيانات المرجع الأكاديمي لقاعدة تم إنشاؤها للتثبيت الأول فقط.
+        /// هذا لا يُستدعى على قاعدة موجودة للمستخدم حتى لا يغيّر بياناتها المرجعية.
+        /// </summary>
+        public static void ApplyFreshInstallationReferenceData(
+            string server,
+            string database,
+            bool useSqlAuth,
+            string sqlUser,
+            string sqlPassword,
+            string databaseFolder)
+        {
+            string folder = (databaseFolder ?? string.Empty).Trim();
+            string seedPath = Path.Combine(folder, "SeedAcademicStructure_2026_2027.sql");
+
+            if (!File.Exists(seedPath))
+            {
+                ApplicationLogger.Log(
+                    "DatabaseMigration",
+                    "لا يوجد SeedAcademicStructure_2026_2027.sql ضمن حزمة التثبيت؛ تم تخطي بيانات المرجع الأكاديمي.");
+                return;
+            }
+
+            string dbConnection =
+                BuildConnection(server, database, useSqlAuth, sqlUser, sqlPassword, 60);
+
+            using (SqlConnection con = new SqlConnection(dbConnection))
+            {
+                con.Open();
+                SetSessionOptions(con);
+                ExecuteScript(con, ReadSqlScript(seedPath));
+            }
+
+            ApplicationLogger.Log(
+                "DatabaseMigration",
+                "تم تحميل بيانات المرجع الأكاديمي 2026/2027 لقاعدة التثبيت الجديدة.");
         }
 
         /// <summary>اسم ملف السكربت الكامل الذي يُنشئ قاعدة البيانات من الصفر (v3 dump).</summary>
