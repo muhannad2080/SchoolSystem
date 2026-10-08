@@ -977,14 +977,14 @@ namespace SchoolSystem.UI
             this.btnReload.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnReload.Margin = new System.Windows.Forms.Padding(4);
             this.btnReload.Name = "btnReload";
-            this.btnReload.Size = new System.Drawing.Size(118, 36);
+            this.btnReload.Size = new System.Drawing.Size(118, 40);
             this.btnReload.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnReload.TabIndex = 2;
             this.btnReload.Text = "مسح البحث";
             this.btnReload.UseVisualStyleBackColor = false;
             this.btnReload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReload.FlatAppearance.BorderSize = 0;
-            this.btnReload.BackColor = System.Drawing.Color.FromArgb(37, 99, 235);
+            this.btnReload.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnReload.ForeColor = System.Drawing.Color.White;
             this.btnReload.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnReload.UseCompatibleTextRendering = true;
@@ -1000,7 +1000,7 @@ namespace SchoolSystem.UI
             this.btnSearch.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnSearch.Margin = new System.Windows.Forms.Padding(4);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(110, 36);
+            this.btnSearch.Size = new System.Drawing.Size(110, 40);
             this.btnSearch.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnSearch.TabIndex = 1;
             this.btnSearch.Text = "بحث";
