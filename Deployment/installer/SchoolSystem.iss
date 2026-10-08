@@ -36,7 +36,7 @@ Name: "desktopicon"; Description: "إنشاء اختصار على سطح الم�
 [Files]
 Source: "..\..\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.pdb,runtimes\*"
 
-[Files]
+
 Source: "..\..\packages\SkiaSharp.NativeAssets.Win32.4.148.0\runtimes\win-x86\native\libSkiaSharp.dll"; DestDir: "{app}\runtimes\win-x86\native"; Flags: ignoreversion skipifsourcedoesntexist
 Source: "..\..\packages\SkiaSharp.NativeAssets.Win32.4.148.0\runtimes\win-x64\native\libSkiaSharp.dll"; DestDir: "{app}\runtimes\win-x64\native"; Flags: ignoreversion skipifsourcedoesntexist
 Source: "..\..\packages\SkiaSharp.NativeAssets.Win32.4.148.0\runtimes\win-arm64\native\libSkiaSharp.dll"; DestDir: "{app}\runtimes\win-arm64\native"; Flags: ignoreversion skipifsourcedoesntexist
