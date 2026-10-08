@@ -1,7 +1,8 @@
 ﻿[CmdletBinding()]
 param(
     [string]$Configuration = 'Release',
-    [string]$Version = '1.0.0'
+    [string]$Version = '1.0.0',
+    [switch]$BuildMsi
 )
 
 Set-StrictMode -Version Latest
@@ -32,14 +33,18 @@ function Convert-ComponentGuid([string]$key) {
 # اكتشاف أدوات البناء
 # ---------------------------------------------------------------------------
 $wixExe = $null
-foreach ($candidate in @(
-        'C:\Program Files\WiX Toolset v7.0\bin\wix.exe',
-        'C:\Program Files (x86)\WiX Toolset v7.0\bin\wix.exe',
-        (Join-Path $env:USERPROFILE '.dotnet\tools\wix.exe'),
-        (Get-Command wix.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source))) {
-    if ($candidate -and (Test-Path $candidate)) { $wixExe = $candidate; break }
+if ($BuildMsi) {
+    foreach ($candidate in @(
+            'C:\Program Files\WiX Toolset v7.0\bin\wix.exe',
+            'C:\Program Files (x86)\WiX Toolset v7.0\bin\wix.exe',
+            (Join-Path $env:USERPROFILE '.dotnet\tools\wix.exe'),
+            (Get-Command wix.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source))) {
+        if ($candidate -and (Test-Path $candidate)) { $wixExe = $candidate; break }
+    }
+    if (-not $wixExe) {
+        throw 'لم يتم العثور على wix.exe. بناء Setup.exe لا يحتاج WiX؛ استخدم -BuildMsi فقط عند الحاجة إلى MSI.'
+    }
 }
-if (-not $wixExe) { throw 'لم يتم العثور على wix.exe (WiX Toolset v7). ثبّته عبر winget: winget install WiXToolset.WiXCLI' }
 
 $isccExe = $null
 foreach ($candidate in @(
@@ -48,7 +53,9 @@ foreach ($candidate in @(
         (Get-Command ISCC.exe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source))) {
     if ($candidate -and (Test-Path $candidate)) { $isccExe = $candidate; break }
 }
-if (-not $isccExe) { throw 'لم يتم العثور على ISCC.exe (Inno Setup). ثبّته عبر winget: winget install JRSoftware.InnoSetup' }
+if (-not $isccExe) {
+    throw 'لم يتم العثور على ISCC.exe (Inno Setup). ثبّته عبر winget: winget install JRSoftware.InnoSetup'
+}
 
 # ---------------------------------------------------------------------------
 # إعادة بناء إصدار Release من المصدر ليكون في الملفات أحدث نسخة
@@ -84,6 +91,7 @@ if (-not $migrationFiles -or $migrationFiles.Count -eq 0) {
     throw 'لم توجد ترحيلات قاعدة البيانات داخل مخرجات Release؛ لن نبني حزمة تثبيت ناقصة.'
 }
 
+if ($BuildMsi) {
 # ---------------------------------------------------------------------------
 # 1) بناء MSI عبر WiX v7 (توليد WXS من محتويات bin\Release)
 # ---------------------------------------------------------------------------
@@ -172,6 +180,8 @@ if ($LASTEXITCODE -ne 0 -and -not (Test-Path $msiPath)) {
 }
 Write-Host "تم إنشاء MSI: $msiPath"
 
+
+}
 # ---------------------------------------------------------------------------
 # 2) بناء EXE عبر Inno Setup
 # ---------------------------------------------------------------------------
@@ -195,6 +205,9 @@ foreach ($artifact in @($msiPath, $exeOut)) {
 }
 
 Write-Host ''
-Write-Host "اكتمل بناء الحزم:"
-Write-Host "  MSI: $msiPath"
-Write-Host "  EXE: $exeOut"
+Write-Host "اكتمل بناء حزمة التثبيت الأساسية:"
+Write-Host "  Setup EXE: $exeOut"
+if ($BuildMsi) {
+    Write-Host "  MSI: $msiPath"
+}
+Write-Host "  قاعدة البيانات والـmigrations والبيانات المرجعية مضمّنة داخل Setup.exe."
