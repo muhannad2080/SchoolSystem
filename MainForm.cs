@@ -279,20 +279,6 @@ namespace SchoolSystem
             }
         }
 
-        // ================================================================
-        // EMBEDDED SCREEN HEADER
-        //
-        // MainForm provides the hosting surface only. The screen owns its
-        // 60px header so its content starts below the title with no overlap.
-        // ================================================================
-
-        private static void ConfigureEmbeddedScreenHeader(
-            Control root,
-            string title)
-        {
-            UIHelper.ConfigureEmbeddedScreenHeader(root, title);
-        }
-
         private void HideMainHeader()
         {
             if (IsDisposed || Disposing)
@@ -499,7 +485,8 @@ namespace SchoolSystem
 
                 ClearPanelContent();
 
-                // الشاشة الفرعية تملك رأسها داخل حدودها، وليس في MainForm.
+                // الشاشة المدمجة تملك رأسها وتصميمها بنفسها.
+                // MainForm مسؤول فقط عن الحاوية والـRTL.
                 HideMainHeader();
                 HideScreenHeader();
 
@@ -508,10 +495,6 @@ namespace SchoolSystem
 
                 panelContent.Controls.Add(
                     uc);
-
-                ConfigureEmbeddedScreenHeader(
-                    uc,
-                    GetScreenTitle(uc.GetType().Name));
 
                 uc.BringToFront();
 
@@ -549,7 +532,8 @@ namespace SchoolSystem
 
                 ClearPanelContent();
 
-                // الشاشة الفرعية تملك رأسها داخل حدودها، وليس في MainForm.
+                // الشاشة المدمجة تملك رأسها وتصميمها بنفسها.
+                // لا يتم إنشاء أو حقن عنوان خارجي من MainForm.
                 HideMainHeader();
                 HideScreenHeader();
 
@@ -570,12 +554,6 @@ namespace SchoolSystem
                     GetScreenTitle(form.GetType().Name));
 
                 form.Show();
-
-                // تثبيت الرأس بعد Load أيضًا لأن بعض النماذج القديمة
-                // تعيد ضبط خصائصها أثناء التهيئة.
-                ConfigureEmbeddedScreenHeader(
-                    form,
-                    GetScreenTitle(form.GetType().Name));
 
                 form.BringToFront();
 
