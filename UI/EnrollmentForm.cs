@@ -194,35 +194,23 @@ namespace SchoolSystem.UI
 
             try
             {
-                panelTitle.Dock = DockStyle.Top;
+                layoutMain.Dock = DockStyle.Fill;
+
+                panelTitle.Dock = DockStyle.Fill;
                 panelTitle.Height = 54;
 
-                pnlSearch.Dock = DockStyle.Top;
+                pnlSearch.Dock = DockStyle.Fill;
                 pnlSearch.Height = 66;
                 pnlSearch.Visible = true;
 
-                pnlButtons.Dock = DockStyle.Bottom;
-                pnlButtons.Height = 104;
-
                 splitContainerMain.Dock = DockStyle.Fill;
 
-                // ترتيب الإرساء المقصود: الرأس ← شريط البحث ← المحتوى ← شريط الإجراءات.
-                // لا نستخدم BringToFront لشريط البحث حتى لا يقفز فوق الرأس أثناء دورة الـDock.
-                Controls.SetChildIndex(panelTitle, 0);
-                Controls.SetChildIndex(pnlSearch, 1);
-                Controls.SetChildIndex(pnlButtons, 2);
-                Controls.SetChildIndex(splitContainerMain, 3);
+                pnlButtons.Dock = DockStyle.Fill;
+                pnlButtons.Height = 104;
 
                 txtSearch.Visible = true;
-                txtSearch.Dock = DockStyle.Fill;
-                txtSearch.MinimumSize = new System.Drawing.Size(300, 34);
-
                 btnSearch.Visible = true;
-                btnSearch.Dock = DockStyle.Fill;
-
                 btnReload.Visible = true;
-                btnReload.Dock = DockStyle.Fill;
-
                 lblSearch.Visible = true;
                 lblCount.Visible = true;
                 tlpSearch.Dock = DockStyle.Fill;
