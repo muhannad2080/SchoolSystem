@@ -89,6 +89,7 @@ def generate_designer_code():
     res.append("            this.btnRefresh = new System.Windows.Forms.Button();")
     res.append("            this.btnExportExcel = new System.Windows.Forms.Button();")
     res.append("            this.btnPrint = new System.Windows.Forms.Button();")
+    res.append("            this.btnStudentProfile = new System.Windows.Forms.Button();")
     res.append("            this.btnClose = new System.Windows.Forms.Button();")
     res.append("            this.pnlRight = new System.Windows.Forms.Panel();")
 
@@ -406,6 +407,7 @@ def generate_designer_code():
         "        private System.Windows.Forms.Button btnRefresh;",
         "        private System.Windows.Forms.Button btnExportExcel;",
         "        private System.Windows.Forms.Button btnPrint;",
+        "        private System.Windows.Forms.Button btnStudentProfile;",
         "        private System.Windows.Forms.Button btnClose;",
         "        private System.Windows.Forms.Panel pnlRight;",
         "    }",
