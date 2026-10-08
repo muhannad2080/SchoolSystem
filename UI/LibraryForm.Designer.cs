@@ -112,7 +112,7 @@ namespace SchoolSystem.UI
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
             this.panelTitle.Name = "panelTitle";
-            this.panelTitle.Size = new System.Drawing.Size(950, 55);
+            this.panelTitle.Size = new System.Drawing.Size(950, 60);
             this.panelTitle.TabIndex = 0;
 
 
@@ -122,7 +122,7 @@ namespace SchoolSystem.UI
             this.lblFormTitle.ForeColor = System.Drawing.Color.White;
             this.lblFormTitle.Location = new System.Drawing.Point(0, 0);
             this.lblFormTitle.Name = "lblFormTitle";
-            this.lblFormTitle.Size = new System.Drawing.Size(950, 55);
+            this.lblFormTitle.Size = new System.Drawing.Size(950, 60);
             this.lblFormTitle.TabIndex = 0;
             this.lblFormTitle.Text = "📖  المكتبة المدرسية";
             this.lblFormTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -133,7 +133,7 @@ namespace SchoolSystem.UI
             this.tabControl.Controls.Add(this.tabBorrowing);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Font = new System.Drawing.Font("Tahoma", 10F);
-            this.tabControl.Location = new System.Drawing.Point(0, 55);
+            this.tabControl.Location = new System.Drawing.Point(0, 60);
             this.tabControl.Name = "tabControl";
             this.tabControl.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tabControl.SelectedIndex = 0;
