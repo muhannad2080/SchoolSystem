@@ -111,7 +111,7 @@ namespace SchoolSystem.UI
             this.rootLayout.Name = "rootLayout";
             this.rootLayout.Padding = new System.Windows.Forms.Padding(16);
             this.rootLayout.RowCount = 7;
-            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 52F));
+            this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 60F));
             this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 42F));
             this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 82F));
             this.rootLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
@@ -126,14 +126,14 @@ namespace SchoolSystem.UI
             this.rootLayout.SetColumnSpan(this.titleLabel, 2);
             this.titleLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.titleLabel.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
-            this.titleLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(78)))), ((int)(((byte)(121)))));
-            this.titleLabel.Location = new System.Drawing.Point(19, 19);
-            this.titleLabel.Margin = new System.Windows.Forms.Padding(3);
+            this.titleLabel.ForeColor = System.Drawing.Color.White;
+            this.titleLabel.Location = new System.Drawing.Point(16, 16);
+            this.titleLabel.Margin = new System.Windows.Forms.Padding(0);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(1062, 46);
+            this.titleLabel.Size = new System.Drawing.Size(1068, 60);
             this.titleLabel.TabIndex = 0;
             this.titleLabel.Text = "الإغلاق السنوي والترحيل";
-            this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // yearLabel
             // 
