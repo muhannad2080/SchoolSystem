@@ -93,6 +93,7 @@ namespace SchoolSystem.UI
             // panelBackground
             this.panelBackground.BackColor = Color.FromArgb(248, 250, 252);
             this.panelBackground.Controls.Add(this.layoutRoot);
+            this.panelBackground.Controls.Add(this.btnWindowClose);
             this.panelBackground.Dock = DockStyle.Fill;
             this.panelBackground.Location = new Point(0, 0);
             this.panelBackground.Margin = new Padding(0);
@@ -305,11 +306,9 @@ namespace SchoolSystem.UI
             // loginAreaLayout
             this.loginAreaLayout.ColumnCount = 1;
             this.loginAreaLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-            this.loginAreaLayout.RowCount = 2;
-            this.loginAreaLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40F));
+            this.loginAreaLayout.RowCount = 1;
             this.loginAreaLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            this.loginAreaLayout.Controls.Add(this.btnWindowClose, 0, 0);
-            this.loginAreaLayout.Controls.Add(this.loginCard, 0, 1);
+            this.loginAreaLayout.Controls.Add(this.loginCard, 0, 0);
             this.loginAreaLayout.Dock = DockStyle.Fill;
             this.loginAreaLayout.Location = new Point(48, 24);
             this.loginAreaLayout.Margin = new Padding(0);
@@ -328,7 +327,7 @@ namespace SchoolSystem.UI
             this.btnWindowClose.FlatStyle = FlatStyle.Flat;
             this.btnWindowClose.Font = new Font("Tahoma", 14F, FontStyle.Bold);
             this.btnWindowClose.ForeColor = Color.FromArgb(100, 116, 139);
-            this.btnWindowClose.Location = new Point(513, 2);
+            this.btnWindowClose.Location = new Point(1128, 18);
             this.btnWindowClose.Margin = new Padding(0);
             this.btnWindowClose.Name = "btnWindowClose";
             this.btnWindowClose.RightToLeft = RightToLeft.No;
