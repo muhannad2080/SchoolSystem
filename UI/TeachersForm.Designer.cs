@@ -130,7 +130,7 @@ namespace SchoolSystem.UI
             this.mainContainer.Controls.Add(this.panelSearch, 0, 3);
             this.mainContainer.Controls.Add(this.dataGridViewTeachers, 0, 4);
             this.mainContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mainContainer.Location = new System.Drawing.Point(0, 56);
+            this.mainContainer.Location = new System.Drawing.Point(0, 60);
             this.mainContainer.Name = "mainContainer";
             this.mainContainer.Padding = new System.Windows.Forms.Padding(12, 10, 12, 12);
             this.mainContainer.RowCount = 5;
