@@ -517,10 +517,10 @@ namespace SchoolSystem.UI
             // 
             // btnRefresh
             // 
-            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
+            this.btnRefresh.BackColor = System.Drawing.Color.FromArgb(71, 85, 105);
             this.btnRefresh.FlatAppearance.BorderSize = 0;
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRefresh.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnRefresh.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
             this.btnRefresh.Location = new System.Drawing.Point(3, 13);
             this.btnRefresh.Name = "btnRefresh";
@@ -529,13 +529,17 @@ namespace SchoolSystem.UI
             this.btnRefresh.Text = "تحديث";
             this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            this.btnRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnRefresh.AutoSize = false;
+            this.btnRefresh.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnClear
             // 
-            this.btnClear.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
+            this.btnClear.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnClear.FlatAppearance.BorderSize = 0;
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClear.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnClear.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnClear.ForeColor = System.Drawing.Color.White;
             this.btnClear.Location = new System.Drawing.Point(119, 13);
             this.btnClear.Name = "btnClear";
@@ -544,13 +548,17 @@ namespace SchoolSystem.UI
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            this.btnClear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnClear.AutoSize = false;
+            this.btnClear.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnDelete
             // 
-            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
+            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnDelete.FlatAppearance.BorderSize = 0;
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnDelete.ForeColor = System.Drawing.Color.White;
             this.btnDelete.Location = new System.Drawing.Point(235, 13);
             this.btnDelete.Name = "btnDelete";
@@ -559,13 +567,17 @@ namespace SchoolSystem.UI
             this.btnDelete.Text = "حذف";
             this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnDelete.AutoSize = false;
+            this.btnDelete.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnUpdate
             // 
-            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnUpdate.FlatAppearance.BorderSize = 0;
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnUpdate.ForeColor = System.Drawing.Color.White;
             this.btnUpdate.Location = new System.Drawing.Point(351, 13);
             this.btnUpdate.Name = "btnUpdate";
@@ -574,13 +586,17 @@ namespace SchoolSystem.UI
             this.btnUpdate.Text = "تعديل";
             this.btnUpdate.UseVisualStyleBackColor = false;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnUpdate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnUpdate.AutoSize = false;
+            this.btnUpdate.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnAdd
             // 
-            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
+            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAdd.FlatAppearance.BorderSize = 0;
             this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold);
+            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnAdd.ForeColor = System.Drawing.Color.White;
             this.btnAdd.Location = new System.Drawing.Point(467, 13);
             this.btnAdd.Name = "btnAdd";
@@ -589,6 +605,10 @@ namespace SchoolSystem.UI
             this.btnAdd.Text = "إضافة";
             this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            this.btnAdd.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnAdd.AutoSize = false;
+            this.btnAdd.MinimumSize = new System.Drawing.Size(110, 40);
+            this.btnAdd.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // panelSearch
             // 
@@ -631,7 +651,7 @@ namespace SchoolSystem.UI
             this.dataGridViewTimetable.BackgroundColor = System.Drawing.Color.White;
             this.dataGridViewTimetable.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridViewTimetable.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.dataGridViewTimetable.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.dataGridViewTimetable.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(41)))), ((int)(((byte)(55)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 9.5F);
@@ -640,7 +660,7 @@ namespace SchoolSystem.UI
             this.dataGridViewTimetable.ColumnHeadersHeight = 42;
             this.dataGridViewTimetable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewTimetable.EnableHeadersVisualStyles = false;
-            this.dataGridViewTimetable.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(229)))), ((int)(((byte)(231)))), ((int)(((byte)(235)))));
+            this.dataGridViewTimetable.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
             this.dataGridViewTimetable.Location = new System.Drawing.Point(15, 324);
             this.dataGridViewTimetable.MultiSelect = false;
             this.dataGridViewTimetable.Name = "dataGridViewTimetable";
@@ -652,11 +672,29 @@ namespace SchoolSystem.UI
             dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(219)))), ((int)(((byte)(234)))), ((int)(((byte)(254)))));
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(64)))), ((int)(((byte)(175)))));
             this.dataGridViewTimetable.RowsDefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewTimetable.RowTemplate.Height = 34;
+            this.dataGridViewTimetable.RowTemplate.Height = 36;
             this.dataGridViewTimetable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewTimetable.Size = new System.Drawing.Size(1150, 301);
             this.dataGridViewTimetable.TabIndex = 3;
             this.dataGridViewTimetable.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewTimetable_CellClick);
+            this.dataGridViewTimetable.AllowUserToResizeRows = false;
+            this.dataGridViewTimetable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dataGridViewTimetable.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dataGridViewTimetable.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dataGridViewTimetable.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.dataGridViewTimetable.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dataGridViewTimetable.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dataGridViewTimetable.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewTimetable.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewTimetable.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewTimetable.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dataGridViewTimetable.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.dataGridViewTimetable.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dataGridViewTimetable.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewTimetable.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewTimetable.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.dataGridViewTimetable.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewTimetable.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             // 
             // panelBottom
             // 
