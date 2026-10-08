@@ -353,79 +353,87 @@ namespace SchoolSystem.UI
             // 
             // btnAdd
             // 
-            this.btnAdd.AutoSize = true;
+            this.btnAdd.AutoSize = false;
             this.btnAdd.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(174)))), ((int)(((byte)(96)))));
+            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAdd.FlatAppearance.BorderSize = 0;
             this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnAdd.ForeColor = System.Drawing.Color.White;
             this.btnAdd.Location = new System.Drawing.Point(18, 9);
             this.btnAdd.Margin = new System.Windows.Forms.Padding(6, 2, 6, 2);
-            this.btnAdd.MinimumSize = new System.Drawing.Size(150, 42);
+            this.btnAdd.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(150, 42);
             this.btnAdd.TabIndex = 0;
             this.btnAdd.Text = "إضافة";
             this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            this.btnAdd.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnAdd.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnUpdate
             // 
-            this.btnUpdate.AutoSize = true;
+            this.btnUpdate.AutoSize = false;
             this.btnUpdate.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(230)))), ((int)(((byte)(126)))), ((int)(((byte)(34)))));
+            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnUpdate.FlatAppearance.BorderSize = 0;
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnUpdate.ForeColor = System.Drawing.Color.White;
             this.btnUpdate.Location = new System.Drawing.Point(180, 9);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(6, 2, 6, 2);
-            this.btnUpdate.MinimumSize = new System.Drawing.Size(150, 42);
+            this.btnUpdate.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(150, 42);
             this.btnUpdate.TabIndex = 1;
             this.btnUpdate.Text = "تعديل";
             this.btnUpdate.UseVisualStyleBackColor = false;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnUpdate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnDelete
             // 
-            this.btnDelete.AutoSize = true;
+            this.btnDelete.AutoSize = false;
             this.btnDelete.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(57)))), ((int)(((byte)(43)))));
+            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnDelete.FlatAppearance.BorderSize = 0;
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnDelete.ForeColor = System.Drawing.Color.White;
             this.btnDelete.Location = new System.Drawing.Point(342, 9);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(6, 2, 6, 2);
-            this.btnDelete.MinimumSize = new System.Drawing.Size(150, 42);
+            this.btnDelete.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(150, 42);
             this.btnDelete.TabIndex = 2;
             this.btnDelete.Text = "حذف";
             this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // btnClear
             // 
-            this.btnClear.AutoSize = true;
+            this.btnClear.AutoSize = false;
             this.btnClear.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnClear.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(140)))), ((int)(((byte)(141)))));
+            this.btnClear.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnClear.FlatAppearance.BorderSize = 0;
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClear.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.btnClear.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnClear.ForeColor = System.Drawing.Color.White;
             this.btnClear.Location = new System.Drawing.Point(504, 9);
             this.btnClear.Margin = new System.Windows.Forms.Padding(6, 2, 6, 2);
-            this.btnClear.MinimumSize = new System.Drawing.Size(150, 42);
+            this.btnClear.MinimumSize = new System.Drawing.Size(110, 40);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(150, 42);
             this.btnClear.TabIndex = 3;
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            this.btnClear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
             // 
             // panelSearch
             // 
@@ -469,7 +477,7 @@ namespace SchoolSystem.UI
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Tahoma", 9.5F);
             dataGridViewCellStyle1.ForeColor = System.Drawing.Color.White;
             this.dataGridViewFeePlans.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridViewFeePlans.ColumnHeadersHeight = 38;
+            this.dataGridViewFeePlans.ColumnHeadersHeight = 42;
             this.dataGridViewFeePlans.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewFeePlans.EnableHeadersVisualStyles = false;
             this.dataGridViewFeePlans.Location = new System.Drawing.Point(0, 381);
@@ -478,11 +486,33 @@ namespace SchoolSystem.UI
             this.dataGridViewFeePlans.ReadOnly = true;
             this.dataGridViewFeePlans.RowHeadersVisible = false;
             this.dataGridViewFeePlans.RowHeadersWidth = 51;
-            this.dataGridViewFeePlans.RowTemplate.Height = 34;
+            this.dataGridViewFeePlans.RowTemplate.Height = 36;
             this.dataGridViewFeePlans.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewFeePlans.Size = new System.Drawing.Size(1100, 327);
             this.dataGridViewFeePlans.TabIndex = 0;
             this.dataGridViewFeePlans.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewFeePlans_CellClick);
+            this.dataGridViewFeePlans.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.dataGridViewFeePlans.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.dataGridViewFeePlans.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
+            this.dataGridViewFeePlans.AllowUserToResizeRows = false;
+            this.dataGridViewFeePlans.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dataGridViewFeePlans.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
+            this.dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dataGridViewFeePlans.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewFeePlans.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewFeePlans.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewFeePlans.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dataGridViewFeePlans.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.dataGridViewFeePlans.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dataGridViewFeePlans.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewFeePlans.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewFeePlans.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.dataGridViewFeePlans.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewFeePlans.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             // 
             // panelBottom
             // 
