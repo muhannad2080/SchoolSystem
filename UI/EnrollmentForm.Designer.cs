@@ -784,7 +784,7 @@ namespace SchoolSystem.UI
             // splitContainerMain
             // 
             this.splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerMain.Location = new System.Drawing.Point(0, 60);
+            this.splitContainerMain.Location = new System.Drawing.Point(0, 64);
             this.splitContainerMain.Name = "splitContainerMain";
             // 
             // splitContainerMain.Panel1
@@ -803,7 +803,7 @@ namespace SchoolSystem.UI
             this.splitContainerMain.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.splitContainerMain.Panel2MinSize = 420;
             this.splitContainerMain.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainerMain.Size = new System.Drawing.Size(1200, 554);
+            this.splitContainerMain.Size = new System.Drawing.Size(1200, 574);
             this.splitContainerMain.SplitterDistance = 672;
             this.splitContainerMain.SplitterWidth = 6;
             this.splitContainerMain.TabIndex = 0;
@@ -827,7 +827,7 @@ namespace SchoolSystem.UI
             this.pnlSearch.Location = new System.Drawing.Point(0, 0);
             this.pnlSearch.Name = "pnlSearch";
             this.pnlSearch.Padding = new System.Windows.Forms.Padding(8);
-            this.pnlSearch.Size = new System.Drawing.Size(1200, 72);
+            this.pnlSearch.Size = new System.Drawing.Size(1200, 64);
             this.pnlSearch.TabIndex = 1;
             // 
             // tlpSearch
@@ -851,7 +851,7 @@ namespace SchoolSystem.UI
             this.tlpSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.tlpSearch.RowCount = 1;
             this.tlpSearch.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpSearch.Size = new System.Drawing.Size(1184, 44);
+            this.tlpSearch.Size = new System.Drawing.Size(1184, 48);
             this.tlpSearch.TabIndex = 0;
             // 
             // btnReload
@@ -918,7 +918,7 @@ namespace SchoolSystem.UI
             this.lblSearch.Name = "lblSearch";
             this.lblSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.lblSearch.TabIndex = 4;
-            this.lblSearch.Text = "بحث:";
+            this.lblSearch.Text = "البحث في التسجيلات:";
             this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblCount
@@ -949,11 +949,11 @@ namespace SchoolSystem.UI
             this.pnlButtons.Controls.Add(this.btnAdd);
             this.pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.pnlButtons.Location = new System.Drawing.Point(0, 614);
+            this.pnlButtons.Location = new System.Drawing.Point(0, 638);
             this.pnlButtons.Name = "pnlButtons";
             this.pnlButtons.Padding = new System.Windows.Forms.Padding(10, 8, 10, 8);
             this.pnlButtons.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.pnlButtons.Size = new System.Drawing.Size(1200, 136);
+            this.pnlButtons.Size = new System.Drawing.Size(1200, 112);
             this.pnlButtons.TabIndex = 2;
             // 
             // btnClose
