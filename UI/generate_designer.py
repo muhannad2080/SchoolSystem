@@ -58,9 +58,11 @@ def generate_designer_code():
     res.append("            this.pnlSearch = new System.Windows.Forms.Panel();")
     res.append("            this.txtSearch = new System.Windows.Forms.TextBox();")
     res.append("            this.btnSearch = new System.Windows.Forms.Button();")
+    res.append("            this.btnClearFilters = new System.Windows.Forms.Button();")
     res.append("            this.btnReload = new System.Windows.Forms.Button();")
     res.append("            this.cmbFilterClass = new System.Windows.Forms.ComboBox();")
     res.append("            this.cmbFilterStatus = new System.Windows.Forms.ComboBox();")
+    res.append("            this.lblSearch = new System.Windows.Forms.Label();")
     res.append("            this.lblCount = new System.Windows.Forms.Label();")
     res.append("            this.pnlButtons = new System.Windows.Forms.Panel();")
     res.append("            this.btnAdd = new System.Windows.Forms.Button();")
@@ -195,9 +197,11 @@ def generate_designer_code():
     res.append("            this.btnReload.Width = 80;")
     res.append("            this.btnReload.Click += new System.EventHandler(this.btnRefresh_Click);")
     res.append("            this.btnSearch.Text = \"بحث\";")
+    res.append("            this.btnClearFilters.Text = \"مسح الفلاتر\";")
     res.append("            this.btnSearch.Dock = System.Windows.Forms.DockStyle.Right;")
     res.append("            this.btnSearch.Width = 80;")
     res.append("            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);")
+    res.append("            this.btnClearFilters.Click += new System.EventHandler(this.btnClearFilters_Click);")
     res.append("            this.txtSearch.Dock = System.Windows.Forms.DockStyle.Right;")
     res.append("            this.txtSearch.Width = 250;")
     res.append("            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);")
@@ -210,8 +214,10 @@ def generate_designer_code():
 
     res.append("            this.pnlSearch.Controls.Add(this.cmbFilterClass);")
     res.append("            this.pnlSearch.Controls.Add(this.cmbFilterStatus);")
+    res.append("            this.pnlSearch.Controls.Add(this.lblSearch);")
     res.append("            this.pnlSearch.Controls.Add(this.txtSearch);")
     res.append("            this.pnlSearch.Controls.Add(this.btnSearch);")
+    res.append("            this.pnlSearch.Controls.Add(this.btnClearFilters);")
     res.append("            this.pnlSearch.Controls.Add(this.btnReload);")
     res.append("            this.pnlSearch.Controls.Add(this.lblCount);")
 
@@ -265,9 +271,11 @@ def generate_designer_code():
         "        private System.Windows.Forms.Panel pnlSearch;",
         "        private System.Windows.Forms.TextBox txtSearch;",
         "        private System.Windows.Forms.Button btnSearch;",
+        "        private System.Windows.Forms.Button btnClearFilters;",
         "        private System.Windows.Forms.Button btnReload;",
         "        private System.Windows.Forms.ComboBox cmbFilterClass;",
         "        private System.Windows.Forms.ComboBox cmbFilterStatus;",
+        "        private System.Windows.Forms.Label lblSearch;",
         "        private System.Windows.Forms.Label lblCount;",
         "        private System.Windows.Forms.Panel pnlButtons;",
         "        private System.Windows.Forms.Button btnAdd;",
