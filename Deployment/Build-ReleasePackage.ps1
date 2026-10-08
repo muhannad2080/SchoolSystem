@@ -74,10 +74,17 @@ foreach ($referenceFile in @('SchoolDB_Schema.sql', 'SchoolDB_OperationalData.sq
 
 $docsTarget = Join-Path $packageRoot 'Documentation'
 New-Item -ItemType Directory -Path $docsTarget -Force | Out-Null
-Copy-Item (Join-Path $root 'docs\Deployment_and_Operations_Guide_AR.md') $docsTarget -Force
-Copy-Item (Join-Path $root 'docs\Windows_Release_Package_Guide_AR.md') $docsTarget -Force
-Copy-Item (Join-Path $root 'docs\Database_Script_Catalog_AR.md') $docsTarget -Force
-Copy-Item (Join-Path $root 'docs\Database_Scripts_Complete_Runbook_AR.md') $docsTarget -Force
+
+# انسخ كل ملفات التوثيق الموجودة فعليًا بدل الاعتماد على أسماء قديمة
+# حتى لا تفشل حزمة العرض إذا تغير كتالوج الوثائق.
+$docsSource = Join-Path $root 'docs'
+if (Test-Path $docsSource) {
+    Get-ChildItem -LiteralPath $docsSource -File |
+        Where-Object { $_.Extension -in @('.md', '.txt', '.pdf') } |
+        ForEach-Object {
+            Copy-Item -LiteralPath $_.FullName -Destination $docsTarget -Force
+        }
+}
 
 $skiaRuntimeRoot = Join-Path $root 'packages\SkiaSharp.NativeAssets.Win32.4.148.0\runtimes'
 foreach ($runtime in @('win-x86', 'win-x64', 'win-arm64')) {
@@ -92,7 +99,7 @@ foreach ($runtime in @('win-x86', 'win-x64', 'win-arm64')) {
 $readme = @"
 SchoolSystem $Version
 
-ابدأ بقراءة Documentation\Windows_Release_Package_Guide_AR.md.
+ابدأ بقراءة ملفات Documentation الموجودة في الحزمة، وخصوصًا دليل الاختبار والتشغيل إن توفر.
 ينشئ البرنامج قاعدة البيانات ويحدّثها تلقائياً عند أول تشغيل عبر محرك الترحيل المدمج:
   Database\initial\001_InitialSchema.sql  (المخطط الأولي)
   Database\migrations\*.sql               (ترحيلات مرقّمة تلقائية)
