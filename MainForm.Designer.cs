@@ -504,7 +504,7 @@ namespace SchoolSystem
             this.panelScreenHeader.Location = new System.Drawing.Point(0, 116);
             this.panelScreenHeader.Name = "panelScreenHeader";
             this.panelScreenHeader.Padding = new System.Windows.Forms.Padding(0);
-            this.panelScreenHeader.Size = new System.Drawing.Size(1280, 54);
+            this.panelScreenHeader.Size = new System.Drawing.Size(1280, 0);
             this.panelScreenHeader.TabIndex = 3;
             this.panelScreenHeader.Visible = false;
             // 
@@ -516,9 +516,9 @@ namespace SchoolSystem
             this.lblScreenTitle.Location = new System.Drawing.Point(18, 0);
             this.lblScreenTitle.Name = "lblScreenTitle";
             this.lblScreenTitle.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.lblScreenTitle.Size = new System.Drawing.Size(1244, 54);
+            this.lblScreenTitle.Size = new System.Drawing.Size(1280, 0);
             this.lblScreenTitle.TabIndex = 0;
-            this.lblScreenTitle.Text = "الشاشة الحالية";
+            this.lblScreenTitle.Text = "";
             this.lblScreenTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // statusStripMain
