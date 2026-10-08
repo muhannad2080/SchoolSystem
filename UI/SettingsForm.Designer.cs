@@ -321,41 +321,41 @@ namespace SchoolSystem.UI
             // 
             // headerPanel
             // 
-            this.headerPanel.BackColor = System.Drawing.Color.White;
+            this.headerPanel.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
             this.headerPanel.Controls.Add(this.subtitleLabel);
             this.headerPanel.Controls.Add(this.titleLabel);
             this.headerPanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.headerPanel.Location = new System.Drawing.Point(0, 0);
             this.headerPanel.Name = "headerPanel";
             this.headerPanel.Padding = new System.Windows.Forms.Padding(22, 10, 22, 8);
-            this.headerPanel.Size = new System.Drawing.Size(1299, 78);
+            this.headerPanel.Size = new System.Drawing.Size(1299, 76);
             this.headerPanel.TabIndex = 2;
             // 
             // subtitleLabel
             // 
             this.subtitleLabel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.subtitleLabel.Font = new System.Drawing.Font("Tahoma", 9F);
-            this.subtitleLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(85)))), ((int)(((byte)(105)))));
+            this.subtitleLabel.ForeColor = System.Drawing.Color.FromArgb(226, 232, 240);
             this.subtitleLabel.Location = new System.Drawing.Point(22, 44);
             this.subtitleLabel.Name = "subtitleLabel";
             this.subtitleLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.subtitleLabel.Size = new System.Drawing.Size(1255, 26);
             this.subtitleLabel.TabIndex = 0;
             this.subtitleLabel.Text = "هوية المدرسة وبياناتها الرسمية المستخدمة في التقارير والطباعة والتصدير";
-            this.subtitleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.subtitleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // titleLabel
             // 
             this.titleLabel.Dock = System.Windows.Forms.DockStyle.Top;
             this.titleLabel.Font = new System.Drawing.Font("Tahoma", 16F, System.Drawing.FontStyle.Bold);
-            this.titleLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
+            this.titleLabel.ForeColor = System.Drawing.Color.White;
             this.titleLabel.Location = new System.Drawing.Point(22, 10);
             this.titleLabel.Name = "titleLabel";
             this.titleLabel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.titleLabel.Size = new System.Drawing.Size(1255, 34);
             this.titleLabel.TabIndex = 1;
             this.titleLabel.Text = "إعدادات المدرسة";
-            this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.titleLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // contentPanel
             // 
