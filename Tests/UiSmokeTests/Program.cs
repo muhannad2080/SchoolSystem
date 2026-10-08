@@ -479,6 +479,68 @@ namespace SchoolSystem.UiSmokeTests
                 throw new InvalidOperationException("StudentProfile must expose attendance, academic grades, and fees tabs.");
         }
 
+        private static void ValidateDashboard(Control control)
+        {
+            if (!(control is SchoolSystem.UI.DashboardHome))
+                return;
+
+            FlowLayoutPanel quickActions =
+                GetPrivateControl<FlowLayoutPanel>(
+                    control,
+                    "quickActionsPanel");
+
+            Panel summary =
+                GetPrivateControl<Panel>(
+                    control,
+                    "panelSummary");
+
+            FlowLayoutPanel cards =
+                GetPrivateControl<FlowLayoutPanel>(
+                    control,
+                    "panelCards");
+
+            if (summary.Height < 140)
+                throw new InvalidOperationException(
+                    "Dashboard summary area is too short for the header and quick actions.");
+
+            if (quickActions.Height < 40)
+                throw new InvalidOperationException(
+                    "Dashboard quick-action bar is too short.");
+
+            if (!quickActions.Controls.Cast<Control>()
+                .Any(item => string.Equals(
+                    item.Name,
+                    "lblQuickActionsTitle",
+                    StringComparison.Ordinal)))
+            {
+                throw new InvalidOperationException(
+                    "Dashboard quick-action title is missing.");
+            }
+
+            int cardCount =
+                cards.Controls.Cast<Control>()
+                    .Count(controlItem =>
+                        controlItem is Panel &&
+                        controlItem.Name.StartsWith(
+                            "card",
+                            StringComparison.OrdinalIgnoreCase));
+
+            if (cardCount != 5)
+                throw new InvalidOperationException(
+                    "Dashboard must expose five KPI cards. Found: " + cardCount);
+
+            Control title =
+                GetPrivateControl<Control>(
+                    control,
+                    "lblDashboardTitle");
+
+            if (string.IsNullOrWhiteSpace(title.Text))
+                throw new InvalidOperationException(
+                    "Dashboard title must not be empty.");
+
+            Console.WriteLine("[PASS] Dashboard structure and quick actions");
+        }
+
         private static void ValidatePayrollScreens(Control control)
         {
             if (control is SchoolSystem.UI.PayrollForm)
@@ -665,6 +727,7 @@ namespace SchoolSystem.UiSmokeTests
                         ValidateLayout(control);
                         ValidateTextFit(control);
                         ValidateDatePickers(control);
+                        ValidateDashboard(control);
                         ValidatePayrollScreens(control);
                         ValidateStudentProfile(control);
                     }
