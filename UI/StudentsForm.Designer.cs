@@ -742,8 +742,10 @@
             this.pnlSearch.Controls.Add(this.lblCount);
             this.pnlSearch.Controls.Add(this.cmbFilterClass);
             this.pnlSearch.Controls.Add(this.cmbFilterStatus);
+            this.pnlSearch.Controls.Add(this.lblSearch);
             this.pnlSearch.Controls.Add(this.txtSearch);
             this.pnlSearch.Controls.Add(this.btnSearch);
+            this.pnlSearch.Controls.Add(this.btnClearFilters);
             this.pnlSearch.Controls.Add(this.btnReload);
             this.pnlSearch.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlSearch.Location = new System.Drawing.Point(0, 0);
@@ -767,7 +769,7 @@
             this.lblSearch.AutoSize = false;
             this.lblSearch.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
-            this.lblSearch.Location = new System.Drawing.Point(850, 24);
+            this.lblSearch.Location = new System.Drawing.Point(430, 24);
             this.lblSearch.Name = "lblSearch";
             this.lblSearch.Size = new System.Drawing.Size(54, 24);
             this.lblSearch.TabIndex = 6;
@@ -779,7 +781,7 @@
             this.cmbFilterClass.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbFilterClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbFilterClass.FormattingEnabled = true;
-            this.cmbFilterClass.Location = new System.Drawing.Point(350, 20);
+            this.cmbFilterClass.Location = new System.Drawing.Point(115, 21);
             this.cmbFilterClass.Name = "cmbFilterClass";
             this.cmbFilterClass.Size = new System.Drawing.Size(155, 30);
             this.cmbFilterClass.TabIndex = 0;
@@ -789,7 +791,7 @@
             this.cmbFilterStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbFilterStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbFilterStatus.FormattingEnabled = true;
-            this.cmbFilterStatus.Location = new System.Drawing.Point(538, 20);
+            this.cmbFilterStatus.Location = new System.Drawing.Point(280, 21);
             this.cmbFilterStatus.Name = "cmbFilterStatus";
             this.cmbFilterStatus.Size = new System.Drawing.Size(135, 30);
             this.cmbFilterStatus.TabIndex = 1;
@@ -797,7 +799,7 @@
             // txtSearch
             // 
             this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSearch.Location = new System.Drawing.Point(676, 20);
+            this.txtSearch.Location = new System.Drawing.Point(485, 21);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(300, 30);
             this.txtSearch.TabIndex = 2;
@@ -806,9 +808,9 @@
             // btnSearch
             // 
             this.btnSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSearch.Location = new System.Drawing.Point(896, 13);
+            this.btnSearch.Location = new System.Drawing.Point(820, 16);
             this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(118, 40);
+            this.btnSearch.Size = new System.Drawing.Size(96, 40);
             this.btnSearch.TabIndex = 3;
             this.btnSearch.Text = "بحث";
             this.btnSearch.UseVisualStyleBackColor = true;
@@ -817,7 +819,7 @@
             // btnClearFilters
             // 
             this.btnClearFilters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearFilters.Location = new System.Drawing.Point(1018, 13);
+            this.btnClearFilters.Location = new System.Drawing.Point(922, 16);
             this.btnClearFilters.Name = "btnClearFilters";
             this.btnClearFilters.Size = new System.Drawing.Size(118, 40);
             this.btnClearFilters.TabIndex = 4;
@@ -828,7 +830,7 @@
             // btnReload
             // 
             this.btnReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReload.Location = new System.Drawing.Point(1142, 13);
+            this.btnReload.Location = new System.Drawing.Point(1045, 16);
             this.btnReload.Name = "btnReload";
             this.btnReload.Size = new System.Drawing.Size(136, 40);
             this.btnReload.TabIndex = 4;
