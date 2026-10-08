@@ -216,14 +216,14 @@ def generate_designer_code():
     res.append("            this.pnlButtons.Dock = System.Windows.Forms.DockStyle.Bottom;")
     res.append("            this.pnlButtons.Height = 62;")
     res.append("            this.pnlButtons.Padding = new System.Windows.Forms.Padding(8, 8, 8, 8);")
-    res.append("            this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.LeftToRight;")
+    res.append("            this.pnlButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;")
     res.append("            this.pnlButtons.WrapContents = false;")
     res.append("            this.pnlButtons.AutoScroll = false;")
-    res.append("            this.pnlButtons.RightToLeft = System.Windows.Forms.RightToLeft.No;")
+    res.append("            this.pnlButtons.RightToLeft = System.Windows.Forms.RightToLeft.Yes;")
 
-    b_list = ["btnClose", "btnPrint", "btnExportExcel", "btnRefresh", "btnCancel", "btnDelete", "btnUpdate", "btnSave", "btnAdd"]
-    b_txts = ["إغلاق", "طباعة البطاقة", "تصدير Excel", "تحديث القائمة", "إلغاء", "أرشفة", "تعديل", "حفظ", "إضافة طالب"]
-    b_widths = [112, 125, 145, 112, 112, 112, 112, 112, 112]
+    b_list = ["btnAdd", "btnSave", "btnUpdate", "btnDelete", "btnCancel", "btnRefresh", "btnExportExcel", "btnPrint", "btnStudentProfile", "btnClose"]
+    b_txts = ["إضافة طالب", "حفظ", "تعديل", "أرشفة", "إلغاء", "تحديث القائمة", "تصدير Excel", "طباعة البطاقة", "ملف الطالب", "إغلاق"]
+    b_widths = [110, 110, 110, 110, 110, 110, 110, 110, 110, 110]
     b_colors = {
         "btnClose": "71, 85, 105",
         "btnPrint": "15, 118, 110",
