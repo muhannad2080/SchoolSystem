@@ -114,7 +114,7 @@ namespace SchoolSystem.UI
             this.lblTitle.ForeColor = System.Drawing.Color.White;
             this.lblTitle.Location = new System.Drawing.Point(0, 0);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(1428, 56);
+            this.lblTitle.Size = new System.Drawing.Size(1428, 60);
             this.lblTitle.TabIndex = 0;
             this.lblTitle.Text = "إدارة شؤون المعلمين والموظفين";
             this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
