@@ -110,7 +110,8 @@ namespace SchoolSystem.UI
             this.layoutRoot.Location = new Point(0, 0);
             this.layoutRoot.Margin = new Padding(0);
             this.layoutRoot.Name = "layoutRoot";
-            this.layoutRoot.RightToLeft = RightToLeft.No;
+            // ترتيب الأعمدة عربي RTL: الهوية البصرية في اليمين، ونموذج الدخول في اليسار.
+            this.layoutRoot.RightToLeft = RightToLeft.Yes;
             this.layoutRoot.RowCount = 1;
             this.layoutRoot.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             this.layoutRoot.Size = new Size(1180, 720);
@@ -332,7 +333,7 @@ namespace SchoolSystem.UI
             this.btnWindowClose.Name = "btnWindowClose";
             this.btnWindowClose.RightToLeft = RightToLeft.No;
             this.btnWindowClose.Size = new Size(40, 36);
-            this.btnWindowClose.TabIndex = 0;
+            this.btnWindowClose.TabIndex = 6;
             this.btnWindowClose.Text = "×";
             this.btnWindowClose.UseVisualStyleBackColor = false;
             this.btnWindowClose.Click += new EventHandler(this.btnWindowClose_Click);
@@ -536,7 +537,7 @@ namespace SchoolSystem.UI
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.RightToLeft = RightToLeft.Yes;
             this.txtPassword.Size = new Size(294, 26);
-            this.txtPassword.TabIndex = 0;
+            this.txtPassword.TabIndex = 1;
             this.txtPassword.Text = "كلمة المرور";
             this.txtPassword.TextAlign = HorizontalAlignment.Right;
             this.txtPassword.Enter += new EventHandler(this.txtPassword_Enter);
@@ -557,7 +558,7 @@ namespace SchoolSystem.UI
             this.btnTogglePassword.Name = "btnTogglePassword";
             this.btnTogglePassword.RightToLeft = RightToLeft.Yes;
             this.btnTogglePassword.Size = new Size(40, 36);
-            this.btnTogglePassword.TabIndex = 1;
+            this.btnTogglePassword.TabIndex = 2;
             this.btnTogglePassword.Text = "إظهار";
             this.btnTogglePassword.UseVisualStyleBackColor = false;
             this.btnTogglePassword.Click += new EventHandler(this.btnTogglePassword_Click);
@@ -599,7 +600,7 @@ namespace SchoolSystem.UI
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.RightToLeft = RightToLeft.Yes;
             this.btnLogin.Size = new Size(398, 50);
-            this.btnLogin.TabIndex = 2;
+            this.btnLogin.TabIndex = 3;
             this.btnLogin.Text = "تسجيل الدخول";
             this.btnLogin.UseVisualStyleBackColor = false;
             this.btnLogin.Click += new EventHandler(this.btnLogin_Click);
@@ -636,7 +637,7 @@ namespace SchoolSystem.UI
             this.btnClear.Name = "btnClear";
             this.btnClear.RightToLeft = RightToLeft.Yes;
             this.btnClear.Size = new Size(108, 32);
-            this.btnClear.TabIndex = 3;
+            this.btnClear.TabIndex = 4;
             this.btnClear.Text = "مسح الحقول";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new EventHandler(this.btnClear_Click);
@@ -658,7 +659,7 @@ namespace SchoolSystem.UI
             this.btnExit.Name = "btnExit";
             this.btnExit.RightToLeft = RightToLeft.Yes;
             this.btnExit.Size = new Size(108, 32);
-            this.btnExit.TabIndex = 4;
+            this.btnExit.TabIndex = 5;
             this.btnExit.Text = "خروج";
             this.btnExit.UseVisualStyleBackColor = false;
             this.btnExit.Click += new EventHandler(this.btnExit_Click);
