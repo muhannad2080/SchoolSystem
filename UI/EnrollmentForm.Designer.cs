@@ -827,17 +827,17 @@ namespace SchoolSystem.UI
             this.pnlSearch.Location = new System.Drawing.Point(0, 0);
             this.pnlSearch.Name = "pnlSearch";
             this.pnlSearch.Padding = new System.Windows.Forms.Padding(8);
-            this.pnlSearch.Size = new System.Drawing.Size(1200, 60);
+            this.pnlSearch.Size = new System.Drawing.Size(1200, 72);
             this.pnlSearch.TabIndex = 1;
             // 
             // tlpSearch
             // 
             this.tlpSearch.ColumnCount = 6;
-            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 126F));
-            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 118F));
-            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 255F));
-            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 60F));
-            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 8F));
+            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 130F));
+            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 112F));
+            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 350F));
+            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 180F));
+            this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 10F));
             this.tlpSearch.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpSearch.Controls.Add(this.btnReload, 0, 0);
             this.tlpSearch.Controls.Add(this.btnSearch, 1, 0);
@@ -862,7 +862,7 @@ namespace SchoolSystem.UI
             this.btnReload.Size = new System.Drawing.Size(118, 36);
             this.btnReload.MinimumSize = new System.Drawing.Size(118, 36);
             this.btnReload.TabIndex = 2;
-            this.btnReload.Text = "مسح الفلاتر";
+            this.btnReload.Text = "مسح البحث";
             this.btnReload.UseVisualStyleBackColor = false;
             this.btnReload.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnReload.FlatAppearance.BorderSize = 0;
@@ -1185,7 +1185,7 @@ namespace SchoolSystem.UI
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.RightToLeftLayout = true;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "إدارة التسجيل والقبول";
+            this.Text = "القبول والتسجيل";
             this.Load += new System.EventHandler(this.EnrollmentForm_Load);
             this.gbBasic.ResumeLayout(false);
             this.tlpBasic.ResumeLayout(false);
