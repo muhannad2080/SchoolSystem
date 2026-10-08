@@ -240,6 +240,13 @@ namespace SchoolSystem.UI
             await LoadAttendanceAsync();
         }
 
+        // تنفيذ زر البحث على البيانات المحملة دون إعادة بناء ورقة التحضير.
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            txtSearch_TextChanged(txtSearch, EventArgs.Empty);
+            txtSearch.Focus();
+        }
+
         // تعريف الدالة btnRefresh_Click لتنفيذ العملية المرتبطة بها.
         private async void btnRefresh_Click(object sender, EventArgs e)
         {
