@@ -620,6 +620,69 @@ namespace SchoolSystem.UiSmokeTests
                 throw new InvalidOperationException("StudentProfile must expose attendance, academic grades, and fees tabs.");
         }
 
+        private static void ValidateEnrollmentLayout(Control control)
+        {
+            if (!(control is SchoolSystem.UI.EnrollmentForm))
+                return;
+
+            Panel title = GetPrivateControl<Panel>(control, "panelTitle");
+            Panel search = GetPrivateControl<Panel>(control, "pnlSearch");
+            TableLayoutPanel searchLayout = GetPrivateControl<TableLayoutPanel>(control, "tlpSearch");
+            TextBox searchBox = GetPrivateControl<TextBox>(control, "txtSearch");
+            Button searchButton = GetPrivateControl<Button>(control, "btnSearch");
+            Button clearButton = GetPrivateControl<Button>(control, "btnReload");
+            Label count = GetPrivateControl<Label>(control, "lblCount");
+            Panel actions = GetPrivateControl<Panel>(control, "pnlButtons");
+            SplitContainer split = GetPrivateControl<SplitContainer>(control, "splitContainerMain");
+
+            if (!title.Visible || !search.Visible || !searchBox.Visible || !searchButton.Visible || !clearButton.Visible)
+                throw new InvalidOperationException("Enrollment search/header controls must be visible after construction.");
+
+            if (title.Height > 58)
+                throw new InvalidOperationException("Enrollment header is too tall and is consuming excessive content space.");
+
+            if (search.Top != title.Bottom)
+                throw new InvalidOperationException("Enrollment search bar must sit directly below the header.");
+
+            if (split.Top != search.Bottom)
+                throw new InvalidOperationException("Enrollment main content must start directly below the search bar.");
+
+            if (split.Bottom != actions.Top)
+                throw new InvalidOperationException("Enrollment action bar must remain below the main content without overlap.");
+
+            if (control.Controls.GetChildIndex(title) != 0 ||
+                control.Controls.GetChildIndex(search) != 1 ||
+                control.Controls.GetChildIndex(actions) != 2 ||
+                control.Controls.GetChildIndex(split) != 3)
+            {
+                throw new InvalidOperationException("Enrollment dock order must be header, search, content, actions.");
+            }
+
+            if (searchLayout.Parent != search ||
+                searchLayout.RightToLeft != RightToLeft.Yes ||
+                searchLayout.ColumnCount != 6)
+            {
+                throw new InvalidOperationException("Enrollment search layout is not configured for Arabic RTL.");
+            }
+
+            searchBox.PerformLayout();
+
+            if (searchBox.Width < 300)
+                throw new InvalidOperationException(
+                    "Enrollment search field is too narrow or hidden by the header/search layout.");
+
+            if (string.Equals(clearButton.Text, "مسح الفلاتر", StringComparison.Ordinal))
+                throw new InvalidOperationException("Enrollment screen must not expose an unrelated filter-clear caption.");
+
+            if (!string.Equals(clearButton.Text, "مسح البحث", StringComparison.Ordinal))
+                throw new InvalidOperationException("Enrollment clear action must be labeled مسح البحث.");
+
+            if (string.IsNullOrWhiteSpace(count.Text))
+                throw new InvalidOperationException("Enrollment record count label must remain visible.");
+
+            Console.WriteLine("[PASS] Enrollment RTL header/search layout and visibility");
+        }
+
         private static void ValidateDashboard(Control control)
         {
             if (!(control is SchoolSystem.UI.DashboardHome))
@@ -878,6 +941,7 @@ namespace SchoolSystem.UiSmokeTests
                         ValidateLayout(control);
                         ValidateTextFit(control);
                         ValidateDatePickers(control);
+                        ValidateEnrollmentLayout(control);
                         ValidateDashboard(control);
                         ValidatePayrollScreens(control);
                         ValidateStudentProfile(control);
