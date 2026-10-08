@@ -85,7 +85,7 @@ namespace SchoolSystem.UI
             this.SuspendLayout();
 
             // الرأس الرئيسي: صف العنوان + شريط الإجراءات.
-            this.headerPanel.BackColor = SchoolSystem.Helpers.UIHelper.PrimaryColor;
+            this.headerPanel.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
             this.headerPanel.Controls.Add(this.headerActionsPanel);
             this.headerPanel.Controls.Add(this.headerTitlePanel);
             this.headerPanel.Dock = System.Windows.Forms.DockStyle.Top;
@@ -108,7 +108,7 @@ namespace SchoolSystem.UI
             this.headerTitlePanel.Size = new System.Drawing.Size(1084, 64);
             this.headerTitlePanel.TabIndex = 0;
 
-            this.studentPictureBox.BackColor = SchoolSystem.Helpers.UIHelper.PrimaryLightColor;
+            this.studentPictureBox.BackColor = System.Drawing.Color.FromArgb(226, 232, 240);
             this.studentPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.studentPictureBox.Dock = System.Windows.Forms.DockStyle.Right;
             this.studentPictureBox.Location = new System.Drawing.Point(1028, 4);
@@ -223,7 +223,7 @@ namespace SchoolSystem.UI
             this.btnExportProfileExcel.Cursor = System.Windows.Forms.Cursors.Hand;
 
             // ملخصات الطالب: 3 بطاقات معلومات + 3 بطاقات مؤشرات.
-            this.summaryTable.BackColor = SchoolSystem.Helpers.UIHelper.BackgroundColor;
+            this.summaryTable.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
             this.summaryTable.ColumnCount = 3;
             this.summaryTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.3333F));
             this.summaryTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.3333F));
@@ -439,7 +439,7 @@ namespace SchoolSystem.UI
             this.tabs.Controls.Add(this.marksTab);
             this.tabs.Controls.Add(this.feesTab);
             this.tabs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabs.Font = new System.Drawing.Font(SchoolSystem.Helpers.UIHelper.FontFamily, 10F, System.Drawing.FontStyle.Bold);
+            this.tabs.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             this.tabs.ItemSize = new System.Drawing.Size(130, 38);
             this.tabs.Location = new System.Drawing.Point(0, 342);
             this.tabs.Margin = new System.Windows.Forms.Padding(0);
@@ -452,7 +452,7 @@ namespace SchoolSystem.UI
             this.tabs.TabIndex = 0;
 
 
-            this.BackColor = SchoolSystem.Helpers.UIHelper.BackgroundColor;
+            this.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
             this.Controls.Add(this.tabs);
             this.Controls.Add(this.summaryTable);
             this.Controls.Add(this.headerPanel);
@@ -461,7 +461,7 @@ namespace SchoolSystem.UI
             this.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Font = new System.Drawing.Font(SchoolSystem.Helpers.UIHelper.FontFamily, 9.5F);
+            this.Font = new System.Drawing.Font("Tahoma", 9.5F);
             this.Size = new System.Drawing.Size(1100, 760);
 
             this.headerActionsPanel.ResumeLayout(false);
