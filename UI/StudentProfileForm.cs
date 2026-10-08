@@ -88,7 +88,7 @@ namespace SchoolSystem.UI
             button.BackColor = UIHelper.AccentColor;
             button.FlatAppearance.BorderSize = 0;
             button.FlatStyle = FlatStyle.Flat;
-            button.Font = new Font(UIHelper.FontFamily, 9.5F, FontStyle.Bold);
+            button.Font = new Font(UIHelper.FontFamily, 10.5F, FontStyle.Bold);
             button.ForeColor = Color.White;
             button.Margin = new Padding(4, 0, 4, 0);
             button.MinimumSize = new Size(width, 40);
