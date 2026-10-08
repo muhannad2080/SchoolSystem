@@ -68,11 +68,13 @@
             this.splitContainerMain = new System.Windows.Forms.SplitContainer();
             this.pnlRight = new System.Windows.Forms.Panel();
             this.pnlSearch = new System.Windows.Forms.Panel();
+            this.lblSearch = new System.Windows.Forms.Label();
             this.lblCount = new System.Windows.Forms.Label();
             this.cmbFilterClass = new System.Windows.Forms.ComboBox();
             this.cmbFilterStatus = new System.Windows.Forms.ComboBox();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.btnSearch = new System.Windows.Forms.Button();
+            this.btnClearFilters = new System.Windows.Forms.Button();
             this.btnReload = new System.Windows.Forms.Button();
             this.pnlButtons = new System.Windows.Forms.FlowLayoutPanel();
             this.btnClose = new System.Windows.Forms.Button();
@@ -747,7 +749,7 @@
             this.pnlSearch.Location = new System.Drawing.Point(0, 0);
             this.pnlSearch.Name = "pnlSearch";
             this.pnlSearch.Padding = new System.Windows.Forms.Padding(10);
-            this.pnlSearch.Size = new System.Drawing.Size(1200, 66);
+            this.pnlSearch.Size = new System.Drawing.Size(1200, 72);
             this.pnlSearch.TabIndex = 1;
             // 
             // lblCount
@@ -757,8 +759,20 @@
             this.lblCount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(85)))), ((int)(((byte)(99)))));
             this.lblCount.Location = new System.Drawing.Point(20, 24);
             this.lblCount.Name = "lblCount";
-            this.lblCount.Size = new System.Drawing.Size(0, 18);
+            this.lblCount.Size = new System.Drawing.Size(90, 24);
             this.lblCount.TabIndex = 5;
+            // 
+            // lblSearch
+            // 
+            this.lblSearch.AutoSize = false;
+            this.lblSearch.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.lblSearch.Location = new System.Drawing.Point(850, 24);
+            this.lblSearch.Name = "lblSearch";
+            this.lblSearch.Size = new System.Drawing.Size(54, 24);
+            this.lblSearch.TabIndex = 6;
+            this.lblSearch.Text = "بحث:";
+            this.lblSearch.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // cmbFilterClass
             // 
@@ -767,7 +781,7 @@
             this.cmbFilterClass.FormattingEnabled = true;
             this.cmbFilterClass.Location = new System.Drawing.Point(350, 20);
             this.cmbFilterClass.Name = "cmbFilterClass";
-            this.cmbFilterClass.Size = new System.Drawing.Size(180, 26);
+            this.cmbFilterClass.Size = new System.Drawing.Size(155, 30);
             this.cmbFilterClass.TabIndex = 0;
             // 
             // cmbFilterStatus
@@ -777,7 +791,7 @@
             this.cmbFilterStatus.FormattingEnabled = true;
             this.cmbFilterStatus.Location = new System.Drawing.Point(538, 20);
             this.cmbFilterStatus.Name = "cmbFilterStatus";
-            this.cmbFilterStatus.Size = new System.Drawing.Size(130, 26);
+            this.cmbFilterStatus.Size = new System.Drawing.Size(135, 30);
             this.cmbFilterStatus.TabIndex = 1;
             // 
             // txtSearch
@@ -785,7 +799,7 @@
             this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearch.Location = new System.Drawing.Point(676, 20);
             this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(235, 26);
+            this.txtSearch.Size = new System.Drawing.Size(300, 30);
             this.txtSearch.TabIndex = 2;
             this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
             // 
@@ -796,16 +810,27 @@
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(118, 40);
             this.btnSearch.TabIndex = 3;
-            this.btnSearch.Text = "مسح الفلاتر";
+            this.btnSearch.Text = "بحث";
             this.btnSearch.UseVisualStyleBackColor = true;
             this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            // 
+            // btnClearFilters
+            // 
+            this.btnClearFilters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearFilters.Location = new System.Drawing.Point(1018, 13);
+            this.btnClearFilters.Name = "btnClearFilters";
+            this.btnClearFilters.Size = new System.Drawing.Size(118, 40);
+            this.btnClearFilters.TabIndex = 4;
+            this.btnClearFilters.Text = "مسح الفلاتر";
+            this.btnClearFilters.UseVisualStyleBackColor = true;
+            this.btnClearFilters.Click += new System.EventHandler(this.btnClearFilters_Click);
             // 
             // btnReload
             // 
             this.btnReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReload.Location = new System.Drawing.Point(1020, 13);
+            this.btnReload.Location = new System.Drawing.Point(1142, 13);
             this.btnReload.Name = "btnReload";
-            this.btnReload.Size = new System.Drawing.Size(160, 40);
+            this.btnReload.Size = new System.Drawing.Size(136, 40);
             this.btnReload.TabIndex = 4;
             this.btnReload.Text = "تحديث البيانات";
             this.btnReload.UseVisualStyleBackColor = true;
@@ -1468,6 +1493,7 @@
         // ================================================================
 
         private System.Windows.Forms.Panel pnlSearch;
+        private System.Windows.Forms.Label lblSearch;
         private System.Windows.Forms.Label lblCount;
 
         private System.Windows.Forms.ComboBox cmbFilterClass;
@@ -1476,6 +1502,7 @@
         private System.Windows.Forms.TextBox txtSearch;
 
         private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.Button btnClearFilters;
         private System.Windows.Forms.Button btnReload;
 
         // ================================================================
