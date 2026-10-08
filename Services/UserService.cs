@@ -592,6 +592,41 @@ namespace SchoolSystem.Services
                 && password.Any(char.IsDigit);
         }
 
+        /// <summary>
+        /// يهيئ حساب مدير النظام لقاعدة تم إنشاؤها حديثًا بواسطة المثبت فقط.
+        /// يعيد كلمة مرور مؤقتة عشوائية إن لم يحدد مسؤول النشر كلمة مرور خارجية.
+        /// </summary>
+        public bool InitializeFreshInstallation(out string initialPassword)
+        {
+            string configuredPassword = Environment.GetEnvironmentVariable(
+                "SCHOOL_SYSTEM_INITIAL_ADMIN_PASSWORD");
+
+            initialPassword = IsValidInitialPassword(configuredPassword)
+                ? configuredPassword
+                : GenerateInitialAdminPassword();
+
+            PasswordHasher.CreatePasswordHash(
+                initialPassword,
+                out string hash,
+                out string salt);
+
+            int adminUserId = userRepository.InitializeFreshInstallationAdministrator(
+                "admin",
+                "مدير النظام",
+                hash,
+                salt,
+                GetAllPermissionsString());
+
+            if (adminUserId <= 0)
+                throw new InvalidOperationException("تعذر تهيئة حساب مدير النظام الأول.");
+
+            ApplicationLogger.Log(
+                "Security",
+                "تم تجهيز حساب admin لقاعدة التثبيت الجديدة. يلزم تغيير كلمة المرور عند أول دخول.");
+
+            return true;
+        }
+
         // تعريف الدالة ChangeCurrentUserPassword لتنفيذ العملية المرتبطة بها.
         public bool ChangeCurrentUserPassword(string currentPassword, string newPassword, string confirmation)
         {
