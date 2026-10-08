@@ -786,7 +786,7 @@ namespace SchoolSystem.UI
             // splitContainerMain
             // 
             this.splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerMain.Location = new System.Drawing.Point(0, 64);
+            this.splitContainerMain.Location = new System.Drawing.Point(0, 124);
             this.splitContainerMain.Name = "splitContainerMain";
             // 
             // splitContainerMain.Panel1
@@ -826,7 +826,7 @@ namespace SchoolSystem.UI
             this.pnlSearch.BackColor = System.Drawing.Color.White;
             this.pnlSearch.Controls.Add(this.tlpSearch);
             this.pnlSearch.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlSearch.Location = new System.Drawing.Point(0, 0);
+            this.pnlSearch.Location = new System.Drawing.Point(0, 60);
             this.pnlSearch.Name = "pnlSearch";
             this.pnlSearch.Padding = new System.Windows.Forms.Padding(8);
             this.pnlSearch.Size = new System.Drawing.Size(1200, 64);
