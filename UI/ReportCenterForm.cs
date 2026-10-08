@@ -75,6 +75,12 @@ namespace SchoolSystem.UI
                 !DataRefreshNotifier.IsRelated(e, "Classes") &&
                 !DataRefreshNotifier.IsRelated(e, "Sections") &&
                 !DataRefreshNotifier.IsRelated(e, "Fees") &&
+                !DataRefreshNotifier.IsRelated(e, "Grades") &&
+                !DataRefreshNotifier.IsRelated(e, "Attendance") &&
+                !DataRefreshNotifier.IsRelated(e, "StaffAttendance") &&
+                !DataRefreshNotifier.IsRelated(e, "Payroll") &&
+                !DataRefreshNotifier.IsRelated(e, "Vouchers") &&
+                !DataRefreshNotifier.IsRelated(e, "Expenses") &&
                 !DataRefreshNotifier.IsRelated(e, "Users") &&
                 !DataRefreshNotifier.IsRelated(e, "AcademicYears") &&
                 !DataRefreshNotifier.IsRelated(e, "All"))
