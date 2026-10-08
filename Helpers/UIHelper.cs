@@ -2068,12 +2068,20 @@ namespace SchoolSystem.Helpers
             if (btn == null)
                 return;
 
-            NormalizeButtonCaption(btn);
-            btn.BackColor = backColor;
-            btn.ForeColor = Color.White;
-            btn.Cursor = Cursors.Hand;
-            btn.Font = HeadingFont;
-            EnsureKryptonButtonTextFits(btn);
+            if (ShouldApplyCentralControlStyle(btn))
+            {
+                NormalizeButtonCaption(btn);
+                btn.BackColor = backColor;
+                btn.ForeColor = Color.White;
+                btn.Cursor = Cursors.Hand;
+                btn.Font = HeadingFont;
+                EnsureKryptonButtonTextFits(btn);
+            }
+            else
+            {
+                // مظهر زر Krypton المحدد في Designer هو المرجع؛ نضمن فقط قابلية النقر.
+                btn.Cursor = Cursors.Hand;
+            }
         }
 
         // تعريف الدالة EnsureKryptonButtonTextFits لتنفيذ العملية المرتبطة بها.
