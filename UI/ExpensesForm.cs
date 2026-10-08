@@ -414,6 +414,7 @@ namespace SchoolSystem.UI
                 ApplicationLogger.LogUsage("شاشة المصروفات", "إضافة مصروف", "تمت إضافة مصروف بنجاح");
 
                 await LoadExpensesAsync();
+                DataRefreshNotifier.Notify("Expenses", this);
                 ClearInputs();
             }
 
@@ -450,6 +451,8 @@ namespace SchoolSystem.UI
                 if (result) ApplicationLogger.LogUsage("شاشة المصروفات", "تعديل مصروف", "تم تعديل المصروف بنجاح");
 
                 await LoadExpensesAsync();
+                if (result)
+                    DataRefreshNotifier.Notify("Expenses", this);
                 ClearInputs();
             }
 
@@ -487,6 +490,8 @@ namespace SchoolSystem.UI
                 if (result) ApplicationLogger.LogUsage("شاشة المصروفات", "حذف مصروف", "تم حذف المصروف بنجاح");
 
                 await LoadExpensesAsync();
+                if (result)
+                    DataRefreshNotifier.Notify("Expenses", this);
                 ClearInputs();
             }
 
