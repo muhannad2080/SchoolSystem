@@ -557,8 +557,9 @@ namespace SchoolSystem.UI
                 ShowInfo("تم حفظ حضور " + savedCount + " طالب بنجاح.");
                 ApplicationLogger.LogUsage("شاشة الحضور اليومي", "حفظ الحضور", "تم حفظ حضور " + savedCount + " طالب بنجاح");
 
-
                 await LoadAttendanceAsync();
+                if (savedCount > 0)
+                    DataRefreshNotifier.Notify("Attendance", this);
             }
 
             catch (Exception ex)
