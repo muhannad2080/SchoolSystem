@@ -20,6 +20,12 @@ namespace SchoolSystem.UI
         {
         private bool serverTested;
 
+        /// <summary>
+        /// كلمة مرور مدير النظام التي تم توليدها أثناء تجهيز قاعدة تثبيت جديدة.
+        /// تبقى في ذاكرة العملية فقط حتى يعرضها Program مرة واحدة بعد إغلاق شاشة الإعداد.
+        /// </summary>
+        public static string LastFreshInstallAdminPassword { get; private set; }
+
         public DatabaseSetupForm()
         {
             InitializeComponent();
@@ -307,7 +313,9 @@ namespace SchoolSystem.UI
 
                     UserService userService = new UserService();
                     userService.InitializeFreshInstallation(
-                        out string ignoredInitialAdminPassword);
+                        out string initialAdminPassword);
+
+                    LastFreshInstallAdminPassword = initialAdminPassword;
 
                     ApplicationLogger.Log(
                         "DatabaseMigration",
