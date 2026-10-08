@@ -1657,6 +1657,7 @@ namespace SchoolSystem.UI
                 LoadStudents();
                 SelectStudentInGrid(savedStudentId);
                 SetFormMode(FormMode.View);
+                DataRefreshNotifier.Notify("Students", this);
             }
             catch (Exception ex)
             {
