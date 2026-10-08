@@ -659,7 +659,7 @@ namespace SchoolSystem.UI
             }
 
             if (!string.IsNullOrWhiteSpace(txtFee.Text) &&
-                (!UIHelper.TryParseDecimal(txtFee.Text, out decimal fee) || fee < 0m))
+                !UIHelper.IsValidNonNegativeDecimal(txtFee.Text, out _))
             {
 
                 UIHelper.ShowWarning("أدخل رسوم نقل رقمية غير سالبة.");
@@ -830,10 +830,10 @@ namespace SchoolSystem.UI
             actions.Dock = DockStyle.Fill;
             actions.AutoSize = true;
 
-            btnAddTransportAssignment = new Button { Text = "إضافة", Width = 110, Height = 40, BackColor = UIHelper.SuccessColor, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5F, FontStyle.Bold), UseVisualStyleBackColor = false };
-            btnUpdateTransportAssignment = new Button { Text = "تعديل", Width = 110, Height = 40, BackColor = UIHelper.AccentColor, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5F, FontStyle.Bold), UseVisualStyleBackColor = false };
-            btnDeleteTransportAssignment = new Button { Text = "إلغاء التوزيع", Width = 120, Height = 40, BackColor = UIHelper.DangerColor, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5F, FontStyle.Bold), UseVisualStyleBackColor = false };
-            btnClearTransportAssignment = new Button { Text = "تفريغ", Width = 110, Height = 40, BackColor = UIHelper.NeutralColor, ForeColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Tahoma", 10.5F, FontStyle.Bold), UseVisualStyleBackColor = false };
+            btnAddTransportAssignment = new Button { Text = "إضافة", Width = 110, Height = 40, BackColor = UIHelper.SuccessColor, ForeColor = System.Drawing.Color.White, FlatStyle = FlatStyle.Flat, Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold), UseVisualStyleBackColor = false };
+            btnUpdateTransportAssignment = new Button { Text = "تعديل", Width = 110, Height = 40, BackColor = UIHelper.AccentColor, ForeColor = System.Drawing.Color.White, FlatStyle = FlatStyle.Flat, Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold), UseVisualStyleBackColor = false };
+            btnDeleteTransportAssignment = new Button { Text = "إلغاء التوزيع", Width = 120, Height = 40, BackColor = UIHelper.DangerColor, ForeColor = System.Drawing.Color.White, FlatStyle = FlatStyle.Flat, Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold), UseVisualStyleBackColor = false };
+            btnClearTransportAssignment = new Button { Text = "تفريغ", Width = 110, Height = 40, BackColor = UIHelper.NeutralColor, ForeColor = System.Drawing.Color.White, FlatStyle = FlatStyle.Flat, Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold), UseVisualStyleBackColor = false };
             lblTransportAssignmentCount = new Label { Text = "عدد التوزيعات: 0", AutoSize = true, Padding = new Padding(10, 8, 10, 0) };
 
             btnAddTransportAssignment.Click += async (s, e) => await AddTransportAssignmentAsync();
@@ -869,7 +869,7 @@ namespace SchoolSystem.UI
             dataGridViewStudentTransport.ColumnHeadersHeight = 42;
             dataGridViewStudentTransport.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
             dataGridViewStudentTransport.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dataGridViewStudentTransport.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 10F, FontStyle.Bold);
+            dataGridViewStudentTransport.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
             dataGridViewStudentTransport.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewStudentTransport.DefaultCellStyle.BackColor = Color.White;
             dataGridViewStudentTransport.DefaultCellStyle.ForeColor = UIHelper.TextColor;
