@@ -512,11 +512,11 @@
             // 
             // btnAdd
             // 
-            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(163)))), ((int)(((byte)(74)))));
+            this.btnAdd.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnAdd.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnAdd.FlatAppearance.BorderSize = 0;
             this.btnAdd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAdd.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnAdd.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnAdd.ForeColor = System.Drawing.Color.White;
             this.btnAdd.Location = new System.Drawing.Point(18, 10);
             this.btnAdd.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -526,14 +526,17 @@
             this.btnAdd.Text = "إضافة";
             this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            this.btnAdd.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnAdd.AutoSize = false;
+            this.btnAdd.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnUpdate
             // 
-            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(234)))), ((int)(((byte)(138)))), ((int)(((byte)(42)))));
+            this.btnUpdate.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnUpdate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnUpdate.FlatAppearance.BorderSize = 0;
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpdate.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnUpdate.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnUpdate.ForeColor = System.Drawing.Color.White;
             this.btnUpdate.Location = new System.Drawing.Point(108, 10);
             this.btnUpdate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -543,14 +546,17 @@
             this.btnUpdate.Text = "تعديل";
             this.btnUpdate.UseVisualStyleBackColor = false;
             this.btnUpdate.Click += new System.EventHandler(this.btnUpdate_Click);
+            this.btnUpdate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnUpdate.AutoSize = false;
+            this.btnUpdate.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnDelete
             // 
-            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(62)))), ((int)(((byte)(62)))));
+            this.btnDelete.BackColor = System.Drawing.Color.FromArgb(198, 40, 40);
             this.btnDelete.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDelete.FlatAppearance.BorderSize = 0;
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelete.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnDelete.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnDelete.ForeColor = System.Drawing.Color.White;
             this.btnDelete.Location = new System.Drawing.Point(198, 10);
             this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -560,14 +566,17 @@
             this.btnDelete.Text = "حذف";
             this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            this.btnDelete.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnDelete.AutoSize = false;
+            this.btnDelete.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnClear
             // 
-            this.btnClear.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(107)))), ((int)(((byte)(114)))), ((int)(((byte)(128)))));
+            this.btnClear.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnClear.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnClear.FlatAppearance.BorderSize = 0;
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClear.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnClear.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnClear.ForeColor = System.Drawing.Color.White;
             this.btnClear.Location = new System.Drawing.Point(288, 10);
             this.btnClear.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -577,16 +586,19 @@
             this.btnClear.Text = "تفريغ";
             this.btnClear.UseVisualStyleBackColor = false;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            this.btnClear.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnClear.AutoSize = false;
+            this.btnClear.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnNewReceipt
             // 
             this.btnNewReceipt.AccessibleDescription = "إنشاء سند قبض جديد";
             this.btnNewReceipt.AccessibleName = "إنشاء سند قبض جديد";
-            this.btnNewReceipt.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(124)))), ((int)(((byte)(89)))));
+            this.btnNewReceipt.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnNewReceipt.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnNewReceipt.FlatAppearance.BorderSize = 0;
             this.btnNewReceipt.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNewReceipt.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnNewReceipt.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnNewReceipt.ForeColor = System.Drawing.Color.White;
             this.btnNewReceipt.Location = new System.Drawing.Point(378, 10);
             this.btnNewReceipt.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -595,16 +607,19 @@
             this.btnNewReceipt.TabIndex = 4;
             this.btnNewReceipt.Text = "سند قبض جديد";
             this.btnNewReceipt.UseVisualStyleBackColor = false;
+            this.btnNewReceipt.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnNewReceipt.AutoSize = false;
+            this.btnNewReceipt.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnNewPayment
             // 
             this.btnNewPayment.AccessibleDescription = "إنشاء سند صرف جديد";
             this.btnNewPayment.AccessibleName = "إنشاء سند صرف جديد";
-            this.btnNewPayment.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(124)))), ((int)(((byte)(58)))), ((int)(((byte)(237)))));
+            this.btnNewPayment.BackColor = System.Drawing.Color.FromArgb(22, 163, 74);
             this.btnNewPayment.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnNewPayment.FlatAppearance.BorderSize = 0;
             this.btnNewPayment.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnNewPayment.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnNewPayment.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnNewPayment.ForeColor = System.Drawing.Color.White;
             this.btnNewPayment.Location = new System.Drawing.Point(498, 10);
             this.btnNewPayment.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -613,16 +628,19 @@
             this.btnNewPayment.TabIndex = 5;
             this.btnNewPayment.Text = "سند صرف جديد";
             this.btnNewPayment.UseVisualStyleBackColor = false;
+            this.btnNewPayment.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnNewPayment.AutoSize = false;
+            this.btnNewPayment.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnPreview
             // 
             this.btnPreview.AccessibleDescription = "معاينة السند المحدد";
             this.btnPreview.AccessibleName = "معاينة السند المحدد";
-            this.btnPreview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(37)))), ((int)(((byte)(99)))), ((int)(((byte)(235)))));
+            this.btnPreview.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnPreview.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnPreview.FlatAppearance.BorderSize = 0;
             this.btnPreview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPreview.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnPreview.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnPreview.ForeColor = System.Drawing.Color.White;
             this.btnPreview.Location = new System.Drawing.Point(618, 10);
             this.btnPreview.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -631,16 +649,19 @@
             this.btnPreview.TabIndex = 6;
             this.btnPreview.Text = "معاينة السند";
             this.btnPreview.UseVisualStyleBackColor = false;
+            this.btnPreview.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnPreview.AutoSize = false;
+            this.btnPreview.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnPrint
             // 
             this.btnPrint.AccessibleDescription = "طباعة السند المحدد";
             this.btnPrint.AccessibleName = "طباعة السند المحدد";
-            this.btnPrint.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(64)))), ((int)(((byte)(175)))));
+            this.btnPrint.BackColor = System.Drawing.Color.FromArgb(15, 118, 110);
             this.btnPrint.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnPrint.FlatAppearance.BorderSize = 0;
             this.btnPrint.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnPrint.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnPrint.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnPrint.ForeColor = System.Drawing.Color.White;
             this.btnPrint.Location = new System.Drawing.Point(730, 10);
             this.btnPrint.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -649,16 +670,19 @@
             this.btnPrint.TabIndex = 7;
             this.btnPrint.Text = "طباعة";
             this.btnPrint.UseVisualStyleBackColor = false;
+            this.btnPrint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnPrint.AutoSize = false;
+            this.btnPrint.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnExportExcel
             // 
             this.btnExportExcel.AccessibleDescription = "تصدير القائمة إلى Excel";
             this.btnExportExcel.AccessibleName = "تصدير القائمة إلى Excel";
-            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(150)))), ((int)(((byte)(105)))));
+            this.btnExportExcel.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportExcel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExportExcel.FlatAppearance.BorderSize = 0;
             this.btnExportExcel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportExcel.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportExcel.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnExportExcel.ForeColor = System.Drawing.Color.White;
             this.btnExportExcel.Location = new System.Drawing.Point(834, 10);
             this.btnExportExcel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -667,16 +691,19 @@
             this.btnExportExcel.TabIndex = 8;
             this.btnExportExcel.Text = "تصدير Excel";
             this.btnExportExcel.UseVisualStyleBackColor = false;
+            this.btnExportExcel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportExcel.AutoSize = false;
+            this.btnExportExcel.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // btnExportPdf
             // 
             this.btnExportPdf.AccessibleDescription = "تصدير السند إلى PDF";
             this.btnExportPdf.AccessibleName = "تصدير السند إلى PDF";
-            this.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
+            this.btnExportPdf.BackColor = System.Drawing.Color.FromArgb(13, 148, 136);
             this.btnExportPdf.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnExportPdf.FlatAppearance.BorderSize = 0;
             this.btnExportPdf.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportPdf.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnExportPdf.Font = new System.Drawing.Font("Tahoma", 10.5F, System.Drawing.FontStyle.Bold);
             this.btnExportPdf.ForeColor = System.Drawing.Color.White;
             this.btnExportPdf.Location = new System.Drawing.Point(954, 10);
             this.btnExportPdf.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -685,6 +712,9 @@
             this.btnExportPdf.TabIndex = 9;
             this.btnExportPdf.Text = "تصدير PDF";
             this.btnExportPdf.UseVisualStyleBackColor = false;
+            this.btnExportPdf.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.btnExportPdf.AutoSize = false;
+            this.btnExportPdf.MinimumSize = new System.Drawing.Size(110, 40);
             // 
             // panelSearch
             // 
@@ -883,7 +913,7 @@
             this.dataGridViewVouchers.BackgroundColor = System.Drawing.Color.White;
             this.dataGridViewVouchers.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridViewVouchers.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
-            this.dataGridViewVouchers.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
+            this.dataGridViewVouchers.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(41)))), ((int)(((byte)(59)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -892,7 +922,7 @@
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.White;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.dataGridViewVouchers.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dataGridViewVouchers.ColumnHeadersHeight = 38;
+            this.dataGridViewVouchers.ColumnHeadersHeight = 42;
             this.dataGridViewVouchers.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.White;
@@ -904,7 +934,7 @@
             this.dataGridViewVouchers.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGridViewVouchers.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewVouchers.EnableHeadersVisualStyles = false;
-            this.dataGridViewVouchers.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(235)))), ((int)(((byte)(240)))));
+            this.dataGridViewVouchers.GridColor = System.Drawing.Color.FromArgb(203, 213, 225);
             this.dataGridViewVouchers.Location = new System.Drawing.Point(0, 385);
             this.dataGridViewVouchers.Margin = new System.Windows.Forms.Padding(0);
             this.dataGridViewVouchers.MultiSelect = false;
@@ -912,11 +942,28 @@
             this.dataGridViewVouchers.ReadOnly = true;
             this.dataGridViewVouchers.RowHeadersVisible = false;
             this.dataGridViewVouchers.RowHeadersWidth = 51;
-            this.dataGridViewVouchers.RowTemplate.Height = 34;
+            this.dataGridViewVouchers.RowTemplate.Height = 36;
             this.dataGridViewVouchers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridViewVouchers.Size = new System.Drawing.Size(1100, 294);
             this.dataGridViewVouchers.TabIndex = 4;
             this.dataGridViewVouchers.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewVouchers_CellClick);
+            this.dataGridViewVouchers.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.dataGridViewVouchers.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(30, 41, 59);
+            this.dataGridViewVouchers.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.dataGridViewVouchers.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
+            this.dataGridViewVouchers.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.dataGridViewVouchers.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
+            this.dataGridViewVouchers.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.dataGridViewVouchers.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewVouchers.DefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewVouchers.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.dataGridViewVouchers.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
+            this.dataGridViewVouchers.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
+            this.dataGridViewVouchers.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.dataGridViewVouchers.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewVouchers.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+            this.dataGridViewVouchers.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.dataGridViewVouchers.RowsDefaultCellStyle.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
             // 
             // panelBottom
             // 
