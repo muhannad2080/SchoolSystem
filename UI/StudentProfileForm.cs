@@ -29,7 +29,6 @@ namespace SchoolSystem.UI
         {
 
             InitializeComponent();
-            ConfigureProfileUiLayout();
 
             ApplyArabicRtlLayout();
             UIHelper.ApplyStyle(this);
@@ -49,7 +48,6 @@ namespace SchoolSystem.UI
             this.studentId = studentId;
 
             InitializeComponent();
-            ConfigureProfileUiLayout();
 
             ApplyArabicRtlLayout();
             UIHelper.ApplyStyle(this);
@@ -58,26 +56,6 @@ namespace SchoolSystem.UI
             ConfigureGrid(dgvFees);
             ConfigureOutputButtons();
             Load += StudentProfileForm_Load;
-        }
-
-        private void ConfigureProfileUiLayout()
-        {
-            ConfigureHeaderButton(btnBack, "رجوع", 92);
-            ConfigureHeaderButton(btnRefresh, "تحديث", 92);
-            ConfigureHeaderButton(btnPrintProfile, "طباعة الملف", 140);
-            ConfigureHeaderButton(btnExportProfilePdf, "تصدير PDF", 138);
-            ConfigureHeaderButton(btnExportProfileExcel, "تصدير Excel", 148);
-
-            ConfigureSummaryCard(lblIdentity, "بيانات الطالب", false);
-            ConfigureSummaryCard(lblContact, "بيانات التواصل", false);
-            ConfigureSummaryCard(lblClassStatus, "الدراسة والحالة", false);
-            ConfigureSummaryCard(lblAttendanceSummary, "الحضور والانتظام", true);
-            ConfigureSummaryCard(lblAcademicSummary, "الأداء الأكاديمي", true);
-            ConfigureSummaryCard(lblFinancialSummary, "الوضع المالي", true);
-
-            ConfigureTabPage(attendanceTab, dgvAttendance, "الحضور والغياب");
-            ConfigureTabPage(marksTab, dgvMarks, "الدرجات الأكاديمية");
-            ConfigureTabPage(feesTab, dgvFees, "الرسوم والمدفوعات");
         }
 
         private static void ConfigureHeaderButton(Button button, string text, int width)
