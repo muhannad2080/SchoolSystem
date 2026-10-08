@@ -207,6 +207,12 @@ namespace SchoolSystem.UI
             this.txtFullName.Name = "txtFullName";
             this.txtFullName.Size = new System.Drawing.Size(187, 28);
             this.txtFullName.TabIndex = 1;
+            this.txtFullName.BackColor = System.Drawing.Color.White;
+            this.txtFullName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtFullName.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtFullName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtFullName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtFullName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblUserName
             // 
@@ -225,6 +231,12 @@ namespace SchoolSystem.UI
             this.txtUserName.Name = "txtUserName";
             this.txtUserName.Size = new System.Drawing.Size(188, 28);
             this.txtUserName.TabIndex = 3;
+            this.txtUserName.BackColor = System.Drawing.Color.White;
+            this.txtUserName.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtUserName.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtUserName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtUserName.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtUserName.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblPassword
             // 
@@ -244,6 +256,12 @@ namespace SchoolSystem.UI
             this.txtPassword.PasswordChar = '●';
             this.txtPassword.Size = new System.Drawing.Size(187, 28);
             this.txtPassword.TabIndex = 5;
+            this.txtPassword.BackColor = System.Drawing.Color.White;
+            this.txtPassword.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtPassword.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPassword.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtPassword.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblConfirmPassword
             // 
@@ -263,6 +281,12 @@ namespace SchoolSystem.UI
             this.txtConfirmPassword.PasswordChar = '●';
             this.txtConfirmPassword.Size = new System.Drawing.Size(188, 28);
             this.txtConfirmPassword.TabIndex = 7;
+            this.txtConfirmPassword.BackColor = System.Drawing.Color.White;
+            this.txtConfirmPassword.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtConfirmPassword.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtConfirmPassword.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtConfirmPassword.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtConfirmPassword.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblRole
             // 
@@ -282,6 +306,11 @@ namespace SchoolSystem.UI
             this.cmbRole.Name = "cmbRole";
             this.cmbRole.Size = new System.Drawing.Size(187, 29);
             this.cmbRole.TabIndex = 9;
+            this.cmbRole.BackColor = System.Drawing.Color.White;
+            this.cmbRole.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.cmbRole.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.cmbRole.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.cmbRole.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblEmail
             // 
@@ -300,6 +329,12 @@ namespace SchoolSystem.UI
             this.txtEmail.Name = "txtEmail";
             this.txtEmail.Size = new System.Drawing.Size(188, 28);
             this.txtEmail.TabIndex = 11;
+            this.txtEmail.BackColor = System.Drawing.Color.White;
+            this.txtEmail.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtEmail.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtEmail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtEmail.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtEmail.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblPhone
             // 
@@ -318,6 +353,12 @@ namespace SchoolSystem.UI
             this.txtPhone.Name = "txtPhone";
             this.txtPhone.Size = new System.Drawing.Size(187, 28);
             this.txtPhone.TabIndex = 13;
+            this.txtPhone.BackColor = System.Drawing.Color.White;
+            this.txtPhone.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtPhone.Font = new System.Drawing.Font("Tahoma", 10F);
+            this.txtPhone.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPhone.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtPhone.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblIsActive
             // 
@@ -721,6 +762,11 @@ namespace SchoolSystem.UI
             this.txtSearch.Size = new System.Drawing.Size(521, 28);
             this.txtSearch.TabIndex = 0;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
+            this.txtSearch.BackColor = System.Drawing.Color.White;
+            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(15, 23, 42);
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.txtSearch.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             // 
             // lblSearch
             // 
