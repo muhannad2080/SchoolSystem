@@ -30,7 +30,41 @@ namespace SchoolSystem.UI
             UIHelper.ApplyStyle(this);
             this.Dock = DockStyle.Fill;
             ConfigureControls();
+
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             this.Load += PayrollRecordsForm_Load;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (ReferenceEquals(sender, this) ||
+                IsDisposed ||
+                isBusy)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Teachers") &&
+                !DataRefreshNotifier.IsRelated(e, "TeacherContracts") &&
+                !DataRefreshNotifier.IsRelated(e, "Payroll") &&
+                !DataRefreshNotifier.IsRelated(e, "Vouchers") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
+                return;
+
+            try
+            {
+                await LoadTeachersAsync();
+                await LoadPayrollsAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة مسير الرواتب: التحديث التلقائي",
+                    ex);
+            }
         }
 
         private void ConfigureControls()
@@ -533,6 +567,7 @@ namespace SchoolSystem.UI
                     " وإنشاء سند الصرف المرتبط به بنجاح.");
 
                 await LoadPayrollsAsync();
+                DataRefreshNotifier.Notify("Payroll", this);
                 ClearInputs();
             }
             catch (Exception ex)
