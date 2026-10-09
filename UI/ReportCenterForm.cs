@@ -50,6 +50,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            UIHelper.NormalizeActionBar(panelActions);
             Dock = DockStyle.Fill;
             studentSearchTimer = new Timer { Interval = 350 };
 
