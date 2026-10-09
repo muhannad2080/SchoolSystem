@@ -747,7 +747,7 @@ namespace SchoolSystem.UI
 
                 cmbStudentID.DataSource = null;
                 cmbStudentID.DisplayMember = "FullName";
-                cmbStudentID.ValueMember = "StudentID";
+                cmbStudentID.ValueMember = "StudentId";
                 cmbStudentID.DataSource = students;
                 cmbStudentID.SelectedIndex = -1;
                 txtStudentName.Clear();
