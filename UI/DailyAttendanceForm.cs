@@ -31,6 +31,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ConfigureDailyAttendanceGrid();
             UIHelper.NormalizeActionBar(panelActions);
 
             btnSearch.Visible = true;
@@ -59,12 +60,27 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
-                isLoading)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // تُنفذ إعادة تحميل صفوف الحضور وربط مصدر الجدول على خيط واجهة WinForms.
+            if (InvokeRequired)
             {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة أثناء جدولة تحديثها.
+                }
+
                 return;
             }
+
+            if (ReferenceEquals(sender, this) || isLoading)
+                return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Enrollment")
                 && !DataRefreshNotifier.IsRelated(e, "ClassAssignment")
@@ -73,7 +89,6 @@ namespace SchoolSystem.UI
                 && !DataRefreshNotifier.IsRelated(e, "Sections")
                 && !DataRefreshNotifier.IsRelated(e, "AcademicYears"))
                 return;
-
 
             try
             {
@@ -90,6 +105,83 @@ namespace SchoolSystem.UI
             finally
             {
                 isLoading = false;
+            }
+        }
+
+        // جدول التحضير تفاعلي؛ تبقى أعمدة الحالة والعذر قابلة للتعديل بينما تظهر بقية البيانات للقراءة.
+        private void ConfigureDailyAttendanceGrid()
+        {
+            if (dataGridViewAttendance == null)
+                return;
+
+            dataGridViewAttendance.SuspendLayout();
+            try
+            {
+                dataGridViewAttendance.AllowUserToAddRows = false;
+                dataGridViewAttendance.AllowUserToDeleteRows = false;
+                dataGridViewAttendance.AllowUserToResizeRows = false;
+                dataGridViewAttendance.AllowUserToResizeColumns = true;
+                dataGridViewAttendance.AllowUserToOrderColumns = true;
+                dataGridViewAttendance.ReadOnly = false;
+                dataGridViewAttendance.MultiSelect = true;
+                dataGridViewAttendance.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewAttendance.RowHeadersVisible = false;
+                dataGridViewAttendance.RightToLeft = RightToLeft.Yes;
+                dataGridViewAttendance.ScrollBars = ScrollBars.Both;
+                dataGridViewAttendance.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewAttendance.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewAttendance.BackgroundColor = Color.White;
+                dataGridViewAttendance.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewAttendance.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewAttendance.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewAttendance.EnableHeadersVisualStyles = false;
+                dataGridViewAttendance.GridColor = UIHelper.BorderColor;
+                dataGridViewAttendance.ColumnHeadersHeight = 44;
+                dataGridViewAttendance.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewAttendance.RowTemplate.Height = 38;
+                dataGridViewAttendance.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewAttendance.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewAttendance.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewAttendance.ColumnHeadersDefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewAttendance.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewAttendance.ColumnHeadersDefaultCellStyle.WrapMode =
+                    DataGridViewTriState.True;
+                dataGridViewAttendance.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                    UIHelper.PrimaryColor;
+                dataGridViewAttendance.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewAttendance.ColumnHeadersDefaultCellStyle.Padding =
+                    new Padding(8, 4, 8, 4);
+
+                dataGridViewAttendance.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewAttendance.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewAttendance.DefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+                dataGridViewAttendance.DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+                dataGridViewAttendance.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewAttendance.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewAttendance.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewAttendance.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dataGridViewAttendance.AlternatingRowsDefaultCellStyle.BackColor =
+                    Color.FromArgb(241, 245, 249);
+                dataGridViewAttendance.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewAttendance.AlternatingRowsDefaultCellStyle.SelectionBackColor =
+                    UIHelper.AccentColor;
+                dataGridViewAttendance.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewAttendance.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewAttendance.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewAttendance.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewAttendance.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                dataGridViewAttendance.ResumeLayout();
             }
         }
 
@@ -314,6 +406,7 @@ namespace SchoolSystem.UI
         // تعريف الدالة LoadAttendanceAsync لتنفيذ العملية المرتبطة بها.
         private async Task LoadAttendanceAsync()
         {
+            bool previousLoadingState = isLoading;
             // بدء مسار قد ينتج عنه استثناء ليتم التعامل معه بأمان.
             try
             {
@@ -326,30 +419,32 @@ namespace SchoolSystem.UI
                 string academicYear = txtAcademicYear.Text.Trim();
                 DateTime attendanceDate = dtpDate.Value.Date;
 
+                isLoading = true;
                 Cursor = Cursors.WaitCursor;
 
-
-                currentAttendanceTable = await Task.Run(() =>
+                DataTable loadedAttendance = await Task.Run(() =>
                     attendanceService.GetAttendanceSheet(
                         classId,
                         section,
                         academicYear,
                         attendanceDate));
 
+                currentAttendanceTable = loadedAttendance;
                 dataGridViewAttendance.DataSource = currentAttendanceTable;
 
                 FormatGrid();
                 BuildSummary();
 
                 lblRecordCount.Text = "عدد الطلاب: " + currentAttendanceTable.Rows.Count;
-
-                Cursor = Cursors.Default;
             }
-
             catch (Exception ex)
             {
-                Cursor = Cursors.Default;
                 UIHelper.ShowException("خطأ أثناء تحميل التحضير:\n", ex);
+            }
+            finally
+            {
+                isLoading = previousLoadingState;
+                Cursor = Cursors.Default;
             }
         }
 
@@ -412,7 +507,39 @@ namespace SchoolSystem.UI
                 dataGridViewAttendance.Columns.Insert(index, col);
             }
 
-            dataGridViewAttendance.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewAttendance.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            SetAttendanceColumnWidth("StudentNumber", 125);
+            SetAttendanceColumnWidth("StudentName", 205);
+            SetAttendanceColumnWidth("Gender", 82);
+            SetAttendanceColumnWidth("Status", 120);
+            SetAttendanceColumnWidth("ExcuseStatus", 135);
+            SetAttendanceColumnWidth("ArrivalTime", 115);
+            SetAttendanceColumnWidth("DepartureTime", 120);
+            SetAttendanceColumnWidth("AbsenceReason", 220);
+            SetAttendanceColumnWidth("Notes", 220);
+
+            foreach (DataGridViewColumn column in dataGridViewAttendance.Columns)
+            {
+                if (!column.Visible)
+                    continue;
+
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
+        }
+
+        private void SetAttendanceColumnWidth(string name, int width)
+        {
+            if (!dataGridViewAttendance.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = dataGridViewAttendance.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(90, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
         }
 
         // تعريف الدالة SetHeader لتنفيذ العملية المرتبطة بها.
