@@ -360,36 +360,6 @@ namespace SchoolSystem.UI
             LoadStudents();
         }
 
-        private static void ConfigurePreviewButton(
-            Button button,
-            Color backColor,
-            string text,
-            float fontSize,
-            int width)
-        {
-            button.Visible = true;
-            button.AutoSize = false;
-            button.Size = new Size(width, 40);
-            button.Margin = new Padding(3, 0, 3, 0);
-            button.Text = text;
-            button.Font = new Font(
-                UIHelper.FontFamily,
-                fontSize,
-                FontStyle.Bold);
-            button.ForeColor = Color.White;
-            button.BackColor = backColor;
-            button.FlatStyle = FlatStyle.Flat;
-            button.FlatAppearance.BorderSize = 0;
-            button.FlatAppearance.MouseOverBackColor = backColor;
-            button.FlatAppearance.MouseDownBackColor = backColor;
-            button.TextAlign = ContentAlignment.MiddleCenter;
-            button.Padding = new Padding(3, 0, 3, 0);
-            button.UseCompatibleTextRendering = true;
-            button.UseVisualStyleBackColor = false;
-            button.RightToLeft = RightToLeft.Yes;
-            button.Cursor = Cursors.Hand;
-        }
-
         private void ConfigureFieldConstraints()
         {
             txtStudentNumber.ReadOnly = true;
