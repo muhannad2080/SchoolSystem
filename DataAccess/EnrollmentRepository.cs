@@ -81,6 +81,18 @@ IF NOT EXISTS
 )
     THROW 50003, N'لا يمكن تسجيل طالب غير نشط.', 1;
 
+
+IF EXISTS
+(
+    SELECT 1
+    FROM Enrollments e WITH (UPDLOCK, HOLDLOCK)
+    WHERE e.StudentID = @StudentID
+      AND REPLACE(LTRIM(RTRIM(ISNULL(e.AcademicYear, N''))), N'-', N'/') =
+          REPLACE(LTRIM(RTRIM(ISNULL(@AcademicYear, N''))), N'-', N'/')
+      AND (e.Status IS NULL OR LTRIM(RTRIM(e.Status)) <> N'مرفوض')
+)
+    THROW 50004, N'هذا الطالب مسجل بالفعل في هذا العام الدراسي.', 1;
+
 INSERT INTO Enrollments
 (
     StudentID, ApplicationDate, ApplicationType, AcademicYear, ClassID, Section, SeatNumber, Status,
@@ -172,6 +184,18 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
                           AND ISNULL(Status, N'نشط') = N'نشط'
                     )
                         THROW 50003, N'لا يمكن ربط تسجيل بطالب غير نشط.', 1;
+
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM Enrollments e WITH (UPDLOCK, HOLDLOCK)
+                        WHERE e.StudentID = @StudentID
+                          AND REPLACE(LTRIM(RTRIM(ISNULL(e.AcademicYear, N''))), N'-', N'/') =
+                              REPLACE(LTRIM(RTRIM(ISNULL(@AcademicYear, N''))), N'-', N'/')
+                          AND e.EnrollmentID <> @EnrollmentID
+                          AND (e.Status IS NULL OR LTRIM(RTRIM(e.Status)) <> N'مرفوض')
+                    )
+                        THROW 50004, N'هذا الطالب مسجل بالفعل في هذا العام الدراسي.', 1;
 
                     DECLARE @AssignedStudentClassID INT = NULL;
                     DECLARE @StudentClassAcademicYear NVARCHAR(20) = NULL;
