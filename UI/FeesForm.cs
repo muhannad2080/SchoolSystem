@@ -61,6 +61,7 @@ namespace SchoolSystem.UI
 
             UIHelper.ApplyStyle(this);
             Dock = DockStyle.Fill;
+            ConfigureResponsiveActionPanel();
 
 
             // التحقق والسلوك الخاصان بشاشة الرسوم.
@@ -89,6 +90,46 @@ namespace SchoolSystem.UI
 
             Load += FeesForm_Load;
             VisibleChanged += FeesForm_VisibleChanged;
+        }
+
+        /// <summary>
+        /// Reserves enough space for fee actions to wrap into two visible rows
+        /// on standard and smaller window sizes.
+        /// </summary>
+        private void ConfigureResponsiveActionPanel()
+        {
+            panelButtons.SuspendLayout();
+            rootLayout.SuspendLayout();
+
+            try
+            {
+                panelButtons.AutoScroll = true;
+                panelButtons.WrapContents = true;
+                panelButtons.FlowDirection = FlowDirection.RightToLeft;
+                panelButtons.Padding = new Padding(12, 6, 12, 6);
+
+                foreach (Control control in panelButtons.Controls)
+                {
+                    Button button = control as Button;
+                    if (button == null)
+                        continue;
+
+                    button.Margin = new Padding(4, 2, 4, 2);
+                    button.Height = 40;
+                }
+
+                // Row 2 is the financial summary; row 3 contains the actions.
+                if (rootLayout.RowStyles.Count > 3)
+                {
+                    rootLayout.RowStyles[2].Height = 80F;
+                    rootLayout.RowStyles[3].Height = 104F;
+                }
+            }
+            finally
+            {
+                rootLayout.ResumeLayout(true);
+                panelButtons.ResumeLayout(true);
+            }
         }
 
         private async void DataRefreshNotifier_DataChanged(
