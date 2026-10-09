@@ -2627,6 +2627,9 @@ namespace SchoolSystem.UI
                 LoadStudents();
                 ClearForm();
                 SetFormMode(FormMode.View);
+
+                // Archive affects enrollment pickers, student profiles and related reports.
+                DataRefreshNotifier.Notify("Students", this);
             }
             catch (Exception ex)
             {
