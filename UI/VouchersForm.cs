@@ -45,6 +45,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             UIHelper.ApplyStyle(this);
+            ConfigureVouchersGridAppearance();
             Dock = DockStyle.Fill;
 
 
@@ -95,8 +96,26 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // إعادة ربط السندات على خيط الواجهة لتجنب Cross-thread operation.
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // قد تكون الشاشة أُغلقت قبل تنفيذ التحديث.
+                }
+
+                return;
+            }
+
             if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
                 (!DataRefreshNotifier.IsRelated(e, "Vouchers") &&
                  !DataRefreshNotifier.IsRelated(e, "Fees") &&
                  !DataRefreshNotifier.IsRelated(e, "Enrollment") &&
@@ -105,8 +124,102 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            await LoadVoucherPartiesAsync();
-            await LoadVouchersAsync();
+            if (isLoading)
+                return;
+
+            try
+            {
+                isLoading = true;
+                await LoadVoucherPartiesAsync();
+                await LoadVouchersAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "شاشة السندات: التحديث التلقائي",
+                    ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+
+        // جدول السندات بأسلوب Excel مع الاحتفاظ به للقراءة فقط؛ العمليات تتم من أزرار القبض والصرف.
+        private void ConfigureVouchersGridAppearance()
+        {
+            if (dataGridViewVouchers == null)
+                return;
+
+            dataGridViewVouchers.SuspendLayout();
+            try
+            {
+                dataGridViewVouchers.AllowUserToAddRows = false;
+                dataGridViewVouchers.AllowUserToDeleteRows = false;
+                dataGridViewVouchers.AllowUserToResizeRows = false;
+                dataGridViewVouchers.AllowUserToResizeColumns = true;
+                dataGridViewVouchers.AllowUserToOrderColumns = true;
+                dataGridViewVouchers.ReadOnly = true;
+                dataGridViewVouchers.MultiSelect = false;
+                dataGridViewVouchers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewVouchers.RowHeadersVisible = false;
+                dataGridViewVouchers.RightToLeft = RightToLeft.Yes;
+                dataGridViewVouchers.ScrollBars = ScrollBars.Both;
+                dataGridViewVouchers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewVouchers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewVouchers.BackgroundColor = Color.White;
+                dataGridViewVouchers.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewVouchers.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewVouchers.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewVouchers.EnableHeadersVisualStyles = false;
+                dataGridViewVouchers.GridColor = UIHelper.BorderColor;
+                dataGridViewVouchers.ColumnHeadersHeight = 44;
+                dataGridViewVouchers.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewVouchers.RowTemplate.Height = 38;
+                dataGridViewVouchers.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewVouchers.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewVouchers.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewVouchers.ColumnHeadersDefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewVouchers.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewVouchers.ColumnHeadersDefaultCellStyle.WrapMode =
+                    DataGridViewTriState.True;
+                dataGridViewVouchers.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                    UIHelper.PrimaryColor;
+                dataGridViewVouchers.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewVouchers.ColumnHeadersDefaultCellStyle.Padding =
+                    new Padding(8, 4, 8, 4);
+
+                dataGridViewVouchers.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewVouchers.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewVouchers.DefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+                dataGridViewVouchers.DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+                dataGridViewVouchers.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewVouchers.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewVouchers.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewVouchers.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dataGridViewVouchers.AlternatingRowsDefaultCellStyle.BackColor =
+                    Color.FromArgb(241, 245, 249);
+                dataGridViewVouchers.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewVouchers.AlternatingRowsDefaultCellStyle.SelectionBackColor =
+                    UIHelper.AccentColor;
+                dataGridViewVouchers.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewVouchers.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewVouchers.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewVouchers.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewVouchers.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                dataGridViewVouchers.ResumeLayout();
+            }
         }
 
         // تعريف الدالة PrepareNewVoucher لتنفيذ العملية المرتبطة بها.
@@ -1480,13 +1593,9 @@ namespace SchoolSystem.UI
             ConfigureVoucherColumn("Notes", 150, 110);
             ConfigureVoucherColumn("IsAutoGenerated", 85, 75);
 
-            // ============================================================
-            // أبقي هذا لأنه جزء من تحديث عرض الجدول المرتبط بالبيانات
-            // وليس تهيئة التصميم الأساسية من خارج الـDesigner.
-            // ============================================================
-
+            // أعمدة ثابتة مع تمرير أفقي، لتبقى الأرقام والبيانات الطويلة مقروءة.
             dataGridViewVouchers.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.Fill;
+                DataGridViewAutoSizeColumnsMode.None;
         }
 
         private void ConfigureVoucherColumn(
@@ -1500,12 +1609,11 @@ namespace SchoolSystem.UI
             DataGridViewColumn column =
                 dataGridViewVouchers.Columns[columnName];
 
-            column.AutoSizeMode =
-                DataGridViewAutoSizeColumnMode.Fill;
-            column.FillWeight = Math.Max(1, width);
-            column.MinimumWidth = minimumWidth;
-            column.SortMode =
-                DataGridViewColumnSortMode.Automatic;
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(width, Math.Max(55, minimumWidth));
+            column.Width = Math.Max(width, minimumWidth);
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         // تعريف الدالة HideColumn لتنفيذ العملية المرتبطة بها.
