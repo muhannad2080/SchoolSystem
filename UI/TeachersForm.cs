@@ -31,6 +31,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            UIHelper.NormalizeActionBar(panelButtons);
             InitializeEvents();
             PopulateComboBoxes();
 
