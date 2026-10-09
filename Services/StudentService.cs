@@ -155,6 +155,24 @@ namespace SchoolSystem.Services
             return ConvertStudentsToDataTable(_studentRepository.GetActive());
         }
 
+        /// <summary>
+        /// Lists active students who may be enrolled in the requested academic year.
+        /// Existing registration is excluded consistently with EnrollmentService.
+        /// </summary>
+        public DataTable GetStudentsAvailableForEnrollment(string academicYear, int excludeEnrollmentId = 0)
+        {
+            EnsureCanLookupStudents();
+
+            if (string.IsNullOrWhiteSpace(academicYear))
+                throw new ArgumentException("العام الدراسي مطلوب.", nameof(academicYear));
+
+            if (excludeEnrollmentId < 0)
+                throw new ArgumentOutOfRangeException(nameof(excludeEnrollmentId));
+
+            return ConvertStudentsToDataTable(
+                _studentRepository.GetActiveNotEnrolledForAcademicYear(academicYear, excludeEnrollmentId));
+        }
+
         // تعريف الدالة GetStudentById لتنفيذ العملية المرتبطة بها.
         public Student GetStudentById(int studentId)
         {
