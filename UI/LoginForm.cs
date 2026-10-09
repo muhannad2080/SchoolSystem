@@ -81,11 +81,32 @@ namespace SchoolSystem.UI
             RightToLeft = RightToLeft.Yes;
             RightToLeftLayout = true;
 
+            // حماية التسميات الطويلة من تجاوز حدودها عندما يختلف اسم المدرسة أو بيانات التواصل.
+            if (lblBrandName != null)
+                lblBrandName.AutoEllipsis = true;
+            if (lblBrandTagline != null)
+                lblBrandTagline.AutoEllipsis = true;
+            if (lblStatus != null)
+                lblStatus.AutoEllipsis = true;
+
             // لا نقرأ إعدادات المدرسة داخل المصمم حتى تبقى المعاينة مطابقة للـ Designer.
             if (IsDesignMode())
                 return;
 
-            SchoolSettings branding = SchoolSettingsService.Current();
+            // تعذّر قراءة بيانات الهوية البصرية لا يجب أن يمنع فتح شاشة الدخول.
+            // تبقى القيم الافتراضية الموجودة في المصمم ظاهرة، ويسجّل الخطأ للتشخيص.
+            SchoolSettings branding;
+            try
+            {
+                branding = SchoolSettingsService.Current();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(
+                    "قراءة إعدادات المدرسة في شاشة الدخول",
+                    ex);
+                return;
+            }
 
             string schoolName =
                 branding != null && !string.IsNullOrWhiteSpace(branding.SchoolNameAr)
@@ -121,7 +142,50 @@ namespace SchoolSystem.UI
             if (!string.IsNullOrWhiteSpace(contact))
                 lblBrandTagline.Text = contact;
 
+            FitBrandNameToAvailableWidth();
             LoadSchoolBrandLogo(branding);
+        }
+
+        // تصغير عنوان المدرسة قليلًا عند الحاجة بدل اقتطاعه أو تداخله مع الشعار.
+        private void FitBrandNameToAvailableWidth()
+        {
+            if (lblBrandName == null || lblBrandName.ClientSize.Width <= 0 ||
+                string.IsNullOrWhiteSpace(lblBrandName.Text))
+                return;
+
+            const float maximumSize = 18F;
+            const float minimumSize = 13F;
+
+            for (float size = maximumSize; size >= minimumSize; size -= 0.5F)
+            {
+                using (Font candidate = new Font(
+                    UIHelper.FontFamily,
+                    size,
+                    FontStyle.Bold))
+                {
+                    Size measured = TextRenderer.MeasureText(
+                        lblBrandName.Text,
+                        candidate,
+                        new Size(int.MaxValue, lblBrandName.ClientSize.Height),
+                        TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
+
+                    if (measured.Width <= lblBrandName.ClientSize.Width - 8)
+                    {
+                        lblBrandName.Font = new Font(
+                            UIHelper.FontFamily,
+                            size,
+                            FontStyle.Bold);
+                        return;
+                    }
+                }
+            }
+
+            // حد أدنى مقروء مع Ellipsis كخطة احتياطية للأسماء الطويلة جدًا.
+            lblBrandName.Font = new Font(
+                UIHelper.FontFamily,
+                minimumSize,
+                FontStyle.Bold);
+            lblBrandName.AutoEllipsis = true;
         }
 
         private bool IsDesignMode()
