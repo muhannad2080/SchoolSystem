@@ -45,7 +45,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             UIHelper.ApplyStyle(this);
-            UIHelper.NormalizeActionBar(panelActions);
+            ConfigureGradeActionLayout();
             Dock = DockStyle.Fill;
 
             // تطبيق قواعد التحقق من الحقول (فلترة الأحرف، أقصى طول، والتحقق عند
@@ -65,6 +65,88 @@ namespace SchoolSystem.UI
             cmbTerm.SelectedIndexChanged += cmbTerm_SelectedIndexChanged;
 
             dataGridViewGrades.CellValidating += dataGridViewGrades_CellValidating;
+        }
+
+        /// <summary>
+        /// Keeps the grade actions on one row when there is room and expands the
+        /// action row when a smaller host window requires a second row.
+        /// </summary>
+        private void ConfigureGradeActionLayout()
+        {
+            panelActions.SuspendLayout();
+            mainContainer.SuspendLayout();
+
+            try
+            {
+                panelActions.FlowDirection = FlowDirection.RightToLeft;
+                panelActions.RightToLeft = RightToLeft.Yes;
+                panelActions.Padding = new Padding(8, 2, 8, 2);
+                panelActions.WrapContents = false;
+                panelActions.AutoScroll = false;
+
+                foreach (Control control in panelActions.Controls)
+                {
+                    Button button = control as Button;
+                    if (button == null)
+                        continue;
+
+                    int width = Math.Max(button.Width, button.MinimumSize.Width);
+                    int height = Math.Max(40, button.MinimumSize.Height);
+                    button.AutoSize = false;
+                    button.Size = new Size(width, height);
+                    button.Margin = new Padding(4, 2, 4, 2);
+                    button.TextAlign = ContentAlignment.MiddleCenter;
+                }
+
+                panelActions.Resize -= PanelActions_Resize;
+                panelActions.Resize += PanelActions_Resize;
+                LayoutGradeActionPanel();
+            }
+            finally
+            {
+                mainContainer.ResumeLayout(true);
+                panelActions.ResumeLayout(true);
+            }
+        }
+
+        private void PanelActions_Resize(object sender, EventArgs e)
+        {
+            LayoutGradeActionPanel();
+        }
+
+        private void LayoutGradeActionPanel()
+        {
+            if (panelActions == null || panelActions.IsDisposed)
+                return;
+
+            int requiredWidth = panelActions.Padding.Horizontal;
+            foreach (Control control in panelActions.Controls)
+            {
+                Button button = control as Button;
+                if (button != null)
+                    requiredWidth += button.Width + button.Margin.Horizontal;
+            }
+
+            bool wrapActions = requiredWidth > panelActions.ClientSize.Width;
+            panelActions.WrapContents = wrapActions;
+            panelActions.AutoScroll = wrapActions;
+
+            TableLayoutPanel parentLayout = panelActions.Parent as TableLayoutPanel;
+            if (parentLayout == null)
+                return;
+
+            int rowIndex = parentLayout.GetRow(panelActions);
+            if (rowIndex < 0 || rowIndex >= parentLayout.RowStyles.Count)
+                return;
+
+            float targetHeight = wrapActions ? 116F : 60F;
+            RowStyle rowStyle = parentLayout.RowStyles[rowIndex];
+            if (rowStyle.SizeType != SizeType.Absolute ||
+                Math.Abs(rowStyle.Height - targetHeight) > 0.5F)
+            {
+                rowStyle.SizeType = SizeType.Absolute;
+                rowStyle.Height = targetHeight;
+            }
         }
 
         private async void DataRefreshNotifier_DataChanged(
