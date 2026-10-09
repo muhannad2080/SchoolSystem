@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Drawing;
 using System.IO;
 using System.Data.SqlClient;
@@ -201,7 +202,7 @@ namespace SchoolSystem.UI
             return true;
         }
 
-        private void btnTest_Click(object sender, EventArgs e)
+        private async void btnTest_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtServer.Text))
             {
@@ -239,10 +240,15 @@ namespace SchoolSystem.UI
                     b.IntegratedSecurity = true;
                 }
 
-                using (var con = new System.Data.SqlClient.SqlConnection(b.ConnectionString))
+                // فتح الاتصال على خيط عمل حتى لا تتجمد شاشة الإعداد أثناء مهلة الاتصال.
+                string connectionString = b.ConnectionString;
+                await Task.Run(() =>
                 {
-                    con.Open();
-                }
+                    using (var con = new System.Data.SqlClient.SqlConnection(connectionString))
+                    {
+                        con.Open();
+                    }
+                });
 
                 // الخادم متوفر وناجح: تفعيل زر إنشاء قاعدة البيانات.
                 serverTested = true;
@@ -366,8 +372,26 @@ namespace SchoolSystem.UI
         {
             btnTest.Enabled = !busy;
             btnCancel.Enabled = !busy;
-            // زر الإنشاء يبقى مرتبطاً بنتيجة اختبار الخادم لا بحالة الانشغال.
             btnCreate.Enabled = !busy && serverTested;
+
+            // لا تسمح بتعديل بيانات الاتصال أثناء اختبارها أو أثناء الإنشاء،
+            // حتى لا تصبح نتيجة الاختبار مرتبطة بقيم تختلف عن القيم المعروضة.
+            txtServer.Enabled = !busy;
+            txtDatabase.Enabled = !busy;
+            rbWindows.Enabled = !busy;
+            rbSql.Enabled = !busy;
+            txtBackupDir.Enabled = !busy;
+            btnBrowseBackup.Enabled = !busy;
+
+            bool sqlAuthenticationEnabled = !busy && rbSql.Checked;
+            lblSqlUser.Enabled = sqlAuthenticationEnabled;
+            pnlSqlUser.Enabled = sqlAuthenticationEnabled;
+            txtSqlUser.Enabled = sqlAuthenticationEnabled;
+            lblSqlPass.Enabled = sqlAuthenticationEnabled;
+            pnlSqlPass.Enabled = sqlAuthenticationEnabled;
+            txtSqlPass.Enabled = sqlAuthenticationEnabled;
+            btnTogglePassword.Enabled = sqlAuthenticationEnabled;
+
             UseWaitCursor = busy;
         }
 
