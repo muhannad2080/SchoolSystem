@@ -31,6 +31,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            UIHelper.NormalizeActionBar(panelActions);
 
             btnSearch.Visible = true;
             txtSearch.Visible = true;
