@@ -274,7 +274,7 @@ namespace SchoolSystem.UI
             }
         }
 
-        private void btnCreate_Click(object sender, EventArgs e)
+        private async void btnCreate_Click(object sender, EventArgs e)
         {
             if (!serverTested)
             {
@@ -299,56 +299,64 @@ namespace SchoolSystem.UI
                 DbConnection.Reload();
 
                 string databaseFolder = ResolveDatabaseFolder();
+                string sqlPassword = ApplicationSettingsService.GetSqlPassword(updated);
 
-                ApplicationLogger.Log(
-                    "DatabaseMigration",
-                    "بدء تجهيز قاعدة البيانات بشكل غير هدّام على " +
-                    updated.ServerInstance + " وقاعدة " + updated.DatabaseName + ".");
-
-                string migrationResult = DatabaseMigrationService.Apply(
-                    updated.ServerInstance,
-                    updated.DatabaseName,
-                    updated.UseSqlAuthentication,
-                    updated.SqlUser,
-                    ApplicationSettingsService.GetSqlPassword(updated),
-                    databaseFolder);
-
-                ApplicationLogger.Log("DatabaseMigration", migrationResult);
-
-                if (DatabaseMigrationService.DatabaseCreatedInLastRun &&
-                    !DatabaseMigrationService.DatabaseRestoredInLastRun)
+                // تنفيذ الترحيل وفحص سلامة القاعدة في الخلفية حتى تبقى النافذة مستجيبة.
+                // جميع رسائل الحالة والتعامل مع النتيجة النهائية يبقيان على خيط الواجهة.
+                Tuple<string, string, HealthCheckResult> result = await Task.Run(() =>
                 {
-                    DatabaseMigrationService.ApplyFreshInstallationReferenceData(
+                    ApplicationLogger.Log(
+                        "DatabaseMigration",
+                        "بدء تجهيز قاعدة البيانات بشكل غير هدّام على " +
+                        updated.ServerInstance + " وقاعدة " + updated.DatabaseName + ".");
+
+                    string migrationResult = DatabaseMigrationService.Apply(
                         updated.ServerInstance,
                         updated.DatabaseName,
                         updated.UseSqlAuthentication,
                         updated.SqlUser,
-                        ApplicationSettingsService.GetSqlPassword(updated),
+                        sqlPassword,
                         databaseFolder);
 
-                    UserService userService = new UserService();
-                    userService.InitializeFreshInstallation(
-                        out string initialAdminPassword);
+                    ApplicationLogger.Log("DatabaseMigration", migrationResult);
 
-                    LastFreshInstallAdminPassword = initialAdminPassword;
+                    string initialAdminPassword = null;
+                    if (DatabaseMigrationService.DatabaseCreatedInLastRun &&
+                        !DatabaseMigrationService.DatabaseRestoredInLastRun)
+                    {
+                        DatabaseMigrationService.ApplyFreshInstallationReferenceData(
+                            updated.ServerInstance,
+                            updated.DatabaseName,
+                            updated.UseSqlAuthentication,
+                            updated.SqlUser,
+                            sqlPassword,
+                            databaseFolder);
 
-                    ApplicationLogger.Log(
-                        "DatabaseMigration",
-                        "تم إكمال تهيئة التثبيت الأول: البيانات المرجعية وحساب مدير النظام.");
-                }
+                        UserService userService = new UserService();
+                        userService.InitializeFreshInstallation(
+                            out initialAdminPassword);
 
-                HealthCheckResult health = DatabaseHealthCheckService.Check(
-                    updated.ServerInstance,
-                    updated.DatabaseName,
-                    updated.UseSqlAuthentication,
-                    updated.SqlUser,
-                    ApplicationSettingsService.GetSqlPassword(updated));
+                        ApplicationLogger.Log(
+                            "DatabaseMigration",
+                            "تم إكمال تهيئة التثبيت الأول: البيانات المرجعية وحساب مدير النظام.");
+                    }
 
-                ApplicationLogger.Log("DatabaseHealthCheck", health.Summarize());
+                    HealthCheckResult health = DatabaseHealthCheckService.Check(
+                        updated.ServerInstance,
+                        updated.DatabaseName,
+                        updated.UseSqlAuthentication,
+                        updated.SqlUser,
+                        sqlPassword);
 
-                if (!health.StructuralHealthy)
-                    throw new InvalidOperationException(health.Summarize());
+                    ApplicationLogger.Log("DatabaseHealthCheck", health.Summarize());
 
+                    if (!health.StructuralHealthy)
+                        throw new InvalidOperationException(health.Summarize());
+
+                    return Tuple.Create(migrationResult, initialAdminPassword, health);
+                });
+
+                LastFreshInstallAdminPassword = result.Item2;
                 SetStatus(
                     "تم تجهيز قاعدة البيانات والبيانات المرجعية بنجاح دون حذف بيانات قاعدة موجودة.",
                     UIHelper.SuccessColor);
