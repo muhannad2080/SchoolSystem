@@ -31,6 +31,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            SchoolSystem.Helpers.UIHelper.NormalizeActionBar(panelButtons);
 
             txtSearch.TextChanged += (sender, e) => ApplyFilter();
             Dock = DockStyle.Fill;
