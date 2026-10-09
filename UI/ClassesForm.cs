@@ -37,6 +37,8 @@ namespace SchoolSystem.UI
 
         private Button btnClassAdd;
 
+        private bool _isRefreshingData = false;
+
         // تعريف الدالة ClassesForm لتنفيذ العملية المرتبطة بها.
         public ClassesForm()
         {
@@ -52,6 +54,8 @@ namespace SchoolSystem.UI
             txtRoomCode.ReadOnly = true;
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            SetupGrid(dataGridViewClasses);
+            SetupGrid(dataGridViewRooms);
             UIHelper.NormalizeActionBar(panelClassButtons);
             UIHelper.NormalizeActionBar(panelRoomButtons);
             Dock = DockStyle.Fill;
@@ -67,17 +71,48 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الواجهة قبل تنفيذ التحديث المجدول.
+                }
+
+                return;
+            }
+
+            if (ReferenceEquals(sender, this) || _isRefreshingData)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Classes") &&
                 !DataRefreshNotifier.IsRelated(e, "Sections") &&
+                !DataRefreshNotifier.IsRelated(e, "Rooms") &&
                 !DataRefreshNotifier.IsRelated(e, "All"))
                 return;
 
-            await LoadClassesAsync();
-            await LoadNameDropdownsAsync();
+            try
+            {
+                _isRefreshingData = true;
+                await LoadClassesAsync();
+                await LoadRoomsAsync();
+                await LoadNameDropdownsAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("تحديث الصفوف والقاعات تلقائياً", ex);
+            }
+            finally
+            {
+                _isRefreshingData = false;
+            }
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
@@ -283,37 +318,61 @@ namespace SchoolSystem.UI
             if (grid == null)
                 return;
 
-            grid.AllowUserToAddRows = false;
-            grid.AllowUserToDeleteRows = false;
-            grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            grid.BackgroundColor = System.Drawing.Color.White;
-            grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            grid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            grid.EnableHeadersVisualStyles = false;
-            grid.ColumnHeadersHeight = 42;
-            grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            grid.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
-            grid.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
-            grid.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F, System.Drawing.FontStyle.Bold);
-            grid.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            grid.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 4, 6, 4);
-            grid.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            grid.DefaultCellStyle.Font = new System.Drawing.Font("Tahoma", 10F);
-            grid.DefaultCellStyle.ForeColor = UIHelper.TextColor;
-            grid.DefaultCellStyle.BackColor = System.Drawing.Color.White;
-            grid.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(219, 234, 254);
-            grid.DefaultCellStyle.SelectionForeColor = UIHelper.TextColor;
-            grid.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(6, 3, 6, 3);
-            grid.AlternatingRowsDefaultCellStyle.BackColor = UIHelper.BackgroundColor;
-            grid.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
-            grid.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
-            grid.GridColor = UIHelper.BorderColor;
-            grid.RowTemplate.Height = 36;
-            grid.Dock = System.Windows.Forms.DockStyle.Fill;
-            grid.MultiSelect = false;
-            grid.ReadOnly = true;
-            grid.RowHeadersVisible = false;
-            grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            grid.SuspendLayout();
+            try
+            {
+                grid.AllowUserToAddRows = false;
+                grid.AllowUserToDeleteRows = false;
+                grid.AllowUserToResizeRows = false;
+                grid.AllowUserToResizeColumns = true;
+                grid.AllowUserToOrderColumns = true;
+                grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.None;
+                grid.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+                grid.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.None;
+                grid.BackgroundColor = System.Drawing.Color.White;
+                grid.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+                grid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.Single;
+                grid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+                grid.EnableHeadersVisualStyles = false;
+                grid.ColumnHeadersHeight = 44;
+                grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                grid.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                grid.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+                grid.ColumnHeadersDefaultCellStyle.Font = new System.Drawing.Font(UIHelper.FontFamily, 10F, System.Drawing.FontStyle.Bold);
+                grid.ColumnHeadersDefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+                grid.ColumnHeadersDefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+                grid.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                grid.ColumnHeadersDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                grid.ColumnHeadersDefaultCellStyle.Padding = new System.Windows.Forms.Padding(8, 4, 8, 4);
+                grid.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+                grid.DefaultCellStyle.Font = new System.Drawing.Font(UIHelper.FontFamily, 9.5F);
+                grid.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+                grid.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                grid.DefaultCellStyle.Padding = new System.Windows.Forms.Padding(8, 4, 8, 4);
+                grid.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+                grid.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(241, 245, 249);
+                grid.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.AlternatingRowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                grid.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+                grid.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.RowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                grid.GridColor = UIHelper.BorderColor;
+                grid.RowTemplate.Height = 38;
+                grid.Dock = System.Windows.Forms.DockStyle.Fill;
+                grid.MultiSelect = false;
+                grid.ReadOnly = true;
+                grid.RowHeadersVisible = false;
+                grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+                grid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+            }
+            finally
+            {
+                grid.ResumeLayout();
+            }
         }
 
 
@@ -363,7 +422,35 @@ namespace SchoolSystem.UI
             SetHeader(dataGridViewClasses, "CreatedAt", "تاريخ الإضافة");
             SetHeader(dataGridViewClasses, "UpdatedAt", "آخر تعديل");
 
-            dataGridViewClasses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewClasses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            SetClassOrRoomColumnWidth(dataGridViewClasses, "ClassID", 78);
+            SetClassOrRoomColumnWidth(dataGridViewClasses, "ClassCode", 125);
+            SetClassOrRoomColumnWidth(dataGridViewClasses, "ClassName", 180);
+            SetClassOrRoomColumnWidth(dataGridViewClasses, "StageName", 145);
+            SetClassOrRoomColumnWidth(dataGridViewClasses, "GradeOrder", 100);
+            SetClassOrRoomColumnWidth(dataGridViewClasses, "IsActive", 90);
+            SetClassOrRoomColumnWidth(dataGridViewClasses, "Notes", 220);
+            SetClassOrRoomColumnWidth(dataGridViewClasses, "CreatedAt", 145);
+            SetClassOrRoomColumnWidth(dataGridViewClasses, "UpdatedAt", 145);
+        }
+
+        private void SetClassOrRoomColumnWidth(
+            DataGridView grid,
+            string name,
+            int width)
+        {
+            if (grid == null || !grid.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = grid.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(100, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         // تعريف الدالة BuildClassModel لتنفيذ العملية المرتبطة بها.
@@ -724,7 +811,17 @@ namespace SchoolSystem.UI
             SetHeader(dataGridViewRooms, "CreatedAt", "تاريخ الإضافة");
             SetHeader(dataGridViewRooms, "UpdatedAt", "آخر تعديل");
 
-            dataGridViewRooms.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewRooms.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            SetClassOrRoomColumnWidth(dataGridViewRooms, "RoomID", 78);
+            SetClassOrRoomColumnWidth(dataGridViewRooms, "RoomCode", 125);
+            SetClassOrRoomColumnWidth(dataGridViewRooms, "RoomName", 180);
+            SetClassOrRoomColumnWidth(dataGridViewRooms, "RoomType", 125);
+            SetClassOrRoomColumnWidth(dataGridViewRooms, "Capacity", 95);
+            SetClassOrRoomColumnWidth(dataGridViewRooms, "Location", 180);
+            SetClassOrRoomColumnWidth(dataGridViewRooms, "IsActive", 90);
+            SetClassOrRoomColumnWidth(dataGridViewRooms, "Notes", 220);
+            SetClassOrRoomColumnWidth(dataGridViewRooms, "CreatedAt", 145);
+            SetClassOrRoomColumnWidth(dataGridViewRooms, "UpdatedAt", 145);
         }
 
         // تعريف الدالة BuildRoomModel لتنفيذ العملية المرتبطة بها.
