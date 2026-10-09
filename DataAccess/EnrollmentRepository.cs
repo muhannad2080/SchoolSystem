@@ -69,7 +69,7 @@ FROM Enrollments WITH (UPDLOCK, HOLDLOCK)
 WHERE REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
   AND ClassID = @ClassID
   AND ISNULL(Section, N'') = ISNULL(@Section, N'')
-  AND (Status IS NULL OR Status <> N'مرفوض');";
+  AND (Status IS NULL OR LTRIM(RTRIM(Status)) <> N'مرفوض');";
 
             const string insertQuery = @"
 IF NOT EXISTS
@@ -354,7 +354,7 @@ FROM Enrollments
 WHERE REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
   AND ClassID = @ClassID
   AND ISNULL(Section, N'') = ISNULL(@Section, N'')
-  AND (Status IS NULL OR Status <> N'مرفوض');";
+  AND (Status IS NULL OR LTRIM(RTRIM(Status)) <> N'مرفوض');";
 
             using (SqlConnection conn = DbConnection.GetConnection())
             using (SqlCommand cmd = new SqlCommand(query, conn))
@@ -497,7 +497,7 @@ WHERE REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'
                     FROM Enrollments
                     WHERE StudentID = @StudentID
                       AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                      AND (Status IS NULL OR Status <> N'مرفوض')
+                      AND (Status IS NULL OR LTRIM(RTRIM(Status)) <> N'مرفوض')
                       AND (@ExcludeEnrollmentID = 0 OR EnrollmentID <> @ExcludeEnrollmentID)";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
