@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using SchoolSystem.Helpers;
@@ -45,9 +46,18 @@ namespace SchoolSystem.UI
             lblUserName.Text = user == null
                 ? "المستخدم الحالي"
                 : "المستخدم: " + (user.FullName ?? user.UserName ?? string.Empty);
+            lblUserName.AutoSize = false;
+            lblUserName.Size = new Size(336, 22);
+            lblUserName.TextAlign = ContentAlignment.MiddleRight;
+            lblUserName.RightToLeft = RightToLeft.Yes;
+            lblUserName.AutoEllipsis = true;
+
             lblNotice.Text = isForced
                 ? "يجب تغيير كلمة المرور قبل المتابعة إلى النظام."
                 : "استخدم هذه الشاشة لتحديث كلمة مرور حسابك بأمان.";
+            lblNotice.AutoEllipsis = true;
+            lblNotice.TextAlign = ContentAlignment.MiddleRight;
+            lblNotice.RightToLeft = RightToLeft.Yes;
             btnCancel.Visible = !isForced;
             FormClosing += ChangePasswordForm_FormClosing;
         }
