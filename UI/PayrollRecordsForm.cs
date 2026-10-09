@@ -30,6 +30,7 @@ namespace SchoolSystem.UI
             UIHelper.ApplyStyle(this);
             this.Dock = DockStyle.Fill;
             ConfigureControls();
+            ConfigurePayrollGridAppearance();
             UIHelper.NormalizeActionBar(panelButtons);
 
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
@@ -43,9 +44,25 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
-                isBusy)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة أثناء جدولة التحديث.
+                }
+
+                return;
+            }
+
+            if (ReferenceEquals(sender, this) || isBusy)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Teachers") &&
@@ -430,7 +447,7 @@ namespace SchoolSystem.UI
             if (dataGridViewPayrolls.Columns.Count == 0)
                 return;
 
-            SetHeader("PayrollID", "الرقم", 60);
+            SetHeader("PayrollID", "الرقم");
             SetHeader("TeacherName", "المعلم");
             SetHeader("SalaryMonth", "الشهر");
             SetHeader("SalaryYear", "السنة");
@@ -446,16 +463,124 @@ namespace SchoolSystem.UI
 
             if (dataGridViewPayrolls.Columns.Contains("TeacherID"))
                 dataGridViewPayrolls.Columns["TeacherID"].Visible = false;
+
+            dataGridViewPayrolls.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            SetPayrollColumnWidth("PayrollID", 85);
+            SetPayrollColumnWidth("TeacherName", 195);
+            SetPayrollColumnWidth("SalaryMonth", 105);
+            SetPayrollColumnWidth("SalaryYear", 105);
+            SetPayrollColumnWidth("BasicSalary", 120);
+            SetPayrollColumnWidth("Allowances", 115);
+            SetPayrollColumnWidth("Deductions", 115);
+            SetPayrollColumnWidth("NetSalary", 125);
+            SetPayrollColumnWidth("PaymentDate", 135);
+            SetPayrollColumnWidth("PaymentMethod", 125);
+            SetPayrollColumnWidth("VoucherNumber", 155);
+            SetPayrollColumnWidth("Notes", 230);
+            SetPayrollColumnWidth("CreatedAt", 155);
+
+            FormatPayrollNumber("BasicSalary");
+            FormatPayrollNumber("Allowances");
+            FormatPayrollNumber("Deductions");
+            FormatPayrollNumber("NetSalary");
+            FormatPayrollDate("PaymentDate", "dd/MM/yyyy");
+            FormatPayrollDate("CreatedAt", "dd/MM/yyyy HH:mm");
         }
 
-        private void SetHeader(string columnName, string header, int width = 0)
+        private void ConfigurePayrollGridAppearance()
         {
-            if (!dataGridViewPayrolls.Columns.Contains(columnName))
+            if (dataGridViewPayrolls == null)
                 return;
 
-            dataGridViewPayrolls.Columns[columnName].HeaderText = header;
-            if (width > 0)
-                dataGridViewPayrolls.Columns[columnName].Width = width;
+            dataGridViewPayrolls.SuspendLayout();
+            try
+            {
+                dataGridViewPayrolls.AllowUserToAddRows = false;
+                dataGridViewPayrolls.AllowUserToDeleteRows = false;
+                dataGridViewPayrolls.AllowUserToResizeRows = false;
+                dataGridViewPayrolls.AllowUserToResizeColumns = true;
+                dataGridViewPayrolls.AllowUserToOrderColumns = true;
+                dataGridViewPayrolls.ReadOnly = true;
+                dataGridViewPayrolls.MultiSelect = false;
+                dataGridViewPayrolls.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewPayrolls.RowHeadersVisible = false;
+                dataGridViewPayrolls.RightToLeft = RightToLeft.Yes;
+                dataGridViewPayrolls.ScrollBars = ScrollBars.Both;
+                dataGridViewPayrolls.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewPayrolls.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewPayrolls.BackgroundColor = Color.White;
+                dataGridViewPayrolls.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewPayrolls.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewPayrolls.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewPayrolls.EnableHeadersVisualStyles = false;
+                dataGridViewPayrolls.GridColor = UIHelper.BorderColor;
+                dataGridViewPayrolls.ColumnHeadersHeight = 44;
+                dataGridViewPayrolls.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewPayrolls.RowTemplate.Height = 38;
+                dataGridViewPayrolls.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewPayrolls.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewPayrolls.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewPayrolls.ColumnHeadersDefaultCellStyle.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewPayrolls.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewPayrolls.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                dataGridViewPayrolls.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                dataGridViewPayrolls.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewPayrolls.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewPayrolls.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewPayrolls.DefaultCellStyle.Font = new Font(UIHelper.FontFamily, 9.5F);
+                dataGridViewPayrolls.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dataGridViewPayrolls.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewPayrolls.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewPayrolls.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewPayrolls.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                dataGridViewPayrolls.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                dataGridViewPayrolls.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewPayrolls.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewPayrolls.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewPayrolls.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewPayrolls.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewPayrolls.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewPayrolls.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                dataGridViewPayrolls.ResumeLayout();
+            }
+        }
+
+        private void SetPayrollColumnWidth(string name, int width)
+        {
+            if (!dataGridViewPayrolls.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = dataGridViewPayrolls.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(115, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
+        }
+
+        private void FormatPayrollNumber(string name)
+        {
+            if (dataGridViewPayrolls.Columns.Contains(name))
+                dataGridViewPayrolls.Columns[name].DefaultCellStyle.Format = "N2";
+        }
+
+        private void FormatPayrollDate(string name, string format)
+        {
+            if (dataGridViewPayrolls.Columns.Contains(name))
+                dataGridViewPayrolls.Columns[name].DefaultCellStyle.Format = format;
+        }
+
+        private void SetHeader(string columnName, string header)
+        {
+            if (dataGridViewPayrolls.Columns.Contains(columnName))
+                dataGridViewPayrolls.Columns[columnName].HeaderText = header;
         }
 
         private void SalaryField_TextChanged(object sender, EventArgs e)
