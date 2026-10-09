@@ -50,6 +50,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureReportGridAppearance();
             UIHelper.NormalizeActionBar(panelActions);
             Dock = DockStyle.Fill;
             studentSearchTimer = new Timer { Interval = 350 };
@@ -65,7 +66,25 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) || IsDisposed || Disposing)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة أثناء جدولة التحديث.
+                }
+
+                return;
+            }
+
+            if (ReferenceEquals(sender, this) || isLoadingFilters)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Students") &&
@@ -87,6 +106,7 @@ namespace SchoolSystem.UI
                 !DataRefreshNotifier.IsRelated(e, "All"))
                 return;
 
+            bool previousLoadingState = isLoadingFilters;
             try
             {
                 isLoadingFilters = true;
@@ -101,7 +121,7 @@ namespace SchoolSystem.UI
             }
             finally
             {
-                isLoadingFilters = false;
+                isLoadingFilters = previousLoadingState;
             }
         }
 
@@ -847,17 +867,108 @@ namespace SchoolSystem.UI
                 return;
 
             UIHelper.StyleDataGridView(dataGridViewReport);
-            dataGridViewReport.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewReport.MultiSelect = false;
-            dataGridViewReport.ReadOnly = true;
-            dataGridViewReport.AllowUserToAddRows = false;
-            dataGridViewReport.AllowUserToDeleteRows = false;
-            dataGridViewReport.RowHeadersVisible = false;
+            ConfigureReportGridAppearance();
 
             foreach (DataGridViewColumn column in dataGridViewReport.Columns)
             {
-                column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                 column.HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
+        }
+
+        // تقارير المركز تتبدل أعمدتها بحسب نوع التقرير؛ يُضبط عرض كل عمود من عنوانه
+        // بدل Fill، حتى تبقى النصوص والحقول المالية والتواريخ واضحة مع تمرير أفقي.
+        private void ConfigureReportGridAppearance()
+        {
+            if (dataGridViewReport == null)
+                return;
+
+            dataGridViewReport.SuspendLayout();
+            try
+            {
+                dataGridViewReport.ReadOnly = true;
+                dataGridViewReport.AllowUserToAddRows = false;
+                dataGridViewReport.AllowUserToDeleteRows = false;
+                dataGridViewReport.AllowUserToResizeRows = false;
+                dataGridViewReport.AllowUserToResizeColumns = true;
+                dataGridViewReport.AllowUserToOrderColumns = true;
+                dataGridViewReport.MultiSelect = false;
+                dataGridViewReport.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewReport.RowHeadersVisible = false;
+                dataGridViewReport.RightToLeft = RightToLeft.Yes;
+                dataGridViewReport.ScrollBars = ScrollBars.Both;
+                dataGridViewReport.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewReport.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewReport.BackgroundColor = Color.White;
+                dataGridViewReport.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewReport.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewReport.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewReport.EnableHeadersVisualStyles = false;
+                dataGridViewReport.GridColor = UIHelper.BorderColor;
+                dataGridViewReport.ColumnHeadersHeight = 44;
+                dataGridViewReport.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewReport.RowTemplate.Height = 38;
+                dataGridViewReport.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewReport.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewReport.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewReport.ColumnHeadersDefaultCellStyle.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewReport.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewReport.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                dataGridViewReport.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                dataGridViewReport.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewReport.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewReport.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewReport.DefaultCellStyle.Font = new Font(UIHelper.FontFamily, 9.5F);
+                dataGridViewReport.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dataGridViewReport.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewReport.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewReport.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewReport.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                dataGridViewReport.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                dataGridViewReport.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewReport.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewReport.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewReport.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewReport.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewReport.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewReport.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+
+                foreach (DataGridViewColumn column in dataGridViewReport.Columns)
+                {
+                    if (!column.Visible)
+                        continue;
+
+                    string columnText = ((column.HeaderText ?? string.Empty) + " " + column.Name).ToLowerInvariant();
+                    int width = 145;
+
+                    if (columnText.Contains("تفاصيل") || columnText.Contains("ملاحظات") ||
+                        columnText.Contains("details") || columnText.Contains("notes") ||
+                        columnText.Contains("اسم") || columnText.Contains("name") ||
+                        columnText.Contains("الطالب") || columnText.Contains("المعلم"))
+                        width = 190;
+                    if (columnText.Contains("تاريخ") || columnText.Contains("date") ||
+                        columnText.Contains("وقت") || columnText.Contains("time"))
+                        width = 135;
+                    if (columnText.Contains("إجمالي") || columnText.Contains("المبلغ") ||
+                        columnText.Contains("رسوم") || columnText.Contains("مدفوع") ||
+                        columnText.Contains("متبقي") || columnText.Contains("amount") ||
+                        columnText.Contains("total") || columnText.Contains("paid"))
+                        width = 115;
+                    if (columnText.Contains("تفاصيل") || columnText.Contains("details") ||
+                        columnText.Contains("ملاحظات") || columnText.Contains("notes"))
+                        width = 260;
+
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                    column.MinimumWidth = Math.Min(125, Math.Max(70, width));
+                    column.Width = width;
+                    column.Resizable = DataGridViewTriState.True;
+                    column.SortMode = DataGridViewColumnSortMode.Automatic;
+                }
+            }
+            finally
+            {
+                dataGridViewReport.ResumeLayout();
             }
         }
 
