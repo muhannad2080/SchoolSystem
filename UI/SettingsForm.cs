@@ -37,6 +37,7 @@ namespace SchoolSystem.UI
             if (LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
                 return;
 
+            ConfigureResponsiveSettingsLayout();
 
             saveButton.Click += SaveButton_Click;
 
@@ -71,6 +72,42 @@ namespace SchoolSystem.UI
             UIHelper.StylePrimaryButton(testConnectionButton);
             UIHelper.StylePrimaryButton(createBackupButton);
             UIHelper.StyleButton(restoreButton, UIHelper.WarningColor);
+        }
+
+        // حاوية الإعدادات تحتوي أقسامًا طويلة مثبتة أعلى بعضها؛ تحديد مساحة التمرير صراحةً
+        // يمنع قص الأقسام الأخيرة على الشاشات الأقصر مع الحفاظ على ترتيب Designer الحالي.
+        private void ConfigureResponsiveSettingsLayout()
+        {
+            if (contentPanel == null || contentPanel.IsDisposed)
+                return;
+
+            contentPanel.SuspendLayout();
+            try
+            {
+                contentPanel.Dock = DockStyle.Fill;
+                contentPanel.AutoScroll = true;
+                contentPanel.AutoSize = false;
+
+                // مجموع أطوال الأقسام والهوامش يتجاوز ارتفاع الشاشة المعتاد؛
+                // الاحتفاظ بحد أدنى رأسي ثابت يضمن إمكان الوصول إلى البريد والنسخ الاحتياطي.
+                contentPanel.AutoScrollMinSize = new Size(0, 1580);
+
+                schoolDataGroup.Dock = DockStyle.Top;
+                logoGroup.Dock = DockStyle.Top;
+                systemGroup.Dock = DockStyle.Top;
+                generalGroup.Dock = DockStyle.Top;
+                emailGroup.Dock = DockStyle.Top;
+
+                schoolDataGroup.Margin = new Padding(0, 0, 0, 12);
+                logoGroup.Margin = new Padding(0, 0, 0, 12);
+                systemGroup.Margin = new Padding(0, 0, 0, 12);
+                generalGroup.Margin = new Padding(0, 0, 0, 12);
+                emailGroup.Margin = new Padding(0, 0, 0, 12);
+            }
+            finally
+            {
+                contentPanel.ResumeLayout(true);
+            }
         }
 
         // تعريف الدالة SmtpPort_KeyPress للسماح بالأرقام فقط في منفذ SMTP.
