@@ -207,7 +207,20 @@ namespace SchoolSystem.UI
                 splitContainerMain.Dock = DockStyle.Fill;
 
                 pnlButtons.Dock = DockStyle.Fill;
-                pnlButtons.Height = 104;
+                pnlButtons.Height = 120;
+                pnlButtons.AutoScroll = true;
+                pnlButtons.WrapContents = true;
+
+                // Keep the two-row action bar fully visible on shorter screens.
+                if (layoutMain.RowStyles.Count > 3)
+                    layoutMain.RowStyles[3].Height = 120F;
+
+                foreach (Control actionControl in pnlButtons.Controls)
+                {
+                    Button actionButton = actionControl as Button;
+                    if (actionButton != null)
+                        actionButton.Margin = new Padding(4, 2, 4, 2);
+                }
 
                 txtSearch.Visible = true;
                 btnSearch.Visible = true;
