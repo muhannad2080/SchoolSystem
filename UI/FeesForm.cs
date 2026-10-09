@@ -241,6 +241,7 @@ namespace SchoolSystem.UI
                  !DataRefreshNotifier.IsRelated(e, "Sections") &&
                  !DataRefreshNotifier.IsRelated(e, "FeePlans") &&
                  !DataRefreshNotifier.IsRelated(e, "AcademicYears") &&
+                 !DataRefreshNotifier.IsRelated(e, "Students") &&
                  !DataRefreshNotifier.IsRelated(e, "All")))
             {
                 return;
@@ -537,7 +538,7 @@ namespace SchoolSystem.UI
                     studentService.GetActiveStudents());
 
             cmbStudent.DataSource = students;
-            cmbStudent.DisplayMember = "StudentName";
+            cmbStudent.DisplayMember = "FullName";
             cmbStudent.ValueMember = "StudentId";
 
             if (cmbStudent.Items.Count > 0)
