@@ -45,6 +45,7 @@ namespace SchoolSystem.UI
 
             UIHelper.ApplyStyle(this);
             ConfigureResponsiveLayout();
+            ConfigureStudentsGridAppearance();
 
             txtStudentNumber.ReadOnly = true;
             txtStudentNumber.TabStop = false;
@@ -85,6 +86,88 @@ namespace SchoolSystem.UI
         /// Rebuild the search toolbar with layout containers instead of fixed
         /// coordinates, and allow the command bar to wrap without hiding actions.
         /// </summary>
+        // مظهر موحد قريب من جداول Excel، مع إبقاء بيانات الطلاب للقراءة والتحديد الآمن.
+        private void ConfigureStudentsGridAppearance()
+        {
+            if (dgvStudents == null)
+                return;
+
+            dgvStudents.SuspendLayout();
+            try
+            {
+                dgvStudents.AutoGenerateColumns = true;
+                dgvStudents.AllowUserToAddRows = false;
+                dgvStudents.AllowUserToDeleteRows = false;
+                dgvStudents.AllowUserToResizeRows = false;
+                dgvStudents.AllowUserToResizeColumns = true;
+                dgvStudents.AllowUserToOrderColumns = true;
+                dgvStudents.ReadOnly = true;
+                dgvStudents.EditMode = DataGridViewEditMode.EditProgrammatically;
+                dgvStudents.MultiSelect = false;
+                dgvStudents.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dgvStudents.RowHeadersVisible = false;
+                dgvStudents.RightToLeft = RightToLeft.Yes;
+                dgvStudents.ScrollBars = ScrollBars.Both;
+                dgvStudents.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                dgvStudents.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dgvStudents.BackgroundColor = Color.White;
+                dgvStudents.BorderStyle = BorderStyle.FixedSingle;
+                dgvStudents.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dgvStudents.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dgvStudents.EnableHeadersVisualStyles = false;
+                dgvStudents.GridColor = UIHelper.BorderColor;
+                dgvStudents.ColumnHeadersHeight = 44;
+                dgvStudents.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dgvStudents.RowTemplate.Height = 38;
+                dgvStudents.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dgvStudents.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dgvStudents.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dgvStudents.ColumnHeadersDefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dgvStudents.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dgvStudents.ColumnHeadersDefaultCellStyle.WrapMode =
+                    DataGridViewTriState.True;
+                dgvStudents.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                    UIHelper.PrimaryColor;
+                dgvStudents.ColumnHeadersDefaultCellStyle.SelectionForeColor =
+                    Color.White;
+                dgvStudents.ColumnHeadersDefaultCellStyle.Padding =
+                    new Padding(8, 4, 8, 4);
+
+                dgvStudents.DefaultCellStyle.BackColor = Color.White;
+                dgvStudents.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dgvStudents.DefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+                dgvStudents.DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+                dgvStudents.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dgvStudents.DefaultCellStyle.SelectionForeColor = Color.White;
+                dgvStudents.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dgvStudents.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dgvStudents.AlternatingRowsDefaultCellStyle.BackColor =
+                    Color.FromArgb(241, 245, 249);
+                dgvStudents.AlternatingRowsDefaultCellStyle.ForeColor =
+                    UIHelper.TextColor;
+                dgvStudents.AlternatingRowsDefaultCellStyle.SelectionBackColor =
+                    UIHelper.AccentColor;
+                dgvStudents.AlternatingRowsDefaultCellStyle.SelectionForeColor =
+                    Color.White;
+                dgvStudents.RowsDefaultCellStyle.BackColor = Color.White;
+                dgvStudents.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dgvStudents.RowHeadersDefaultCellStyle.BackColor =
+                    UIHelper.SurfaceSecondaryColor;
+            }
+            finally
+            {
+                dgvStudents.ResumeLayout();
+            }
+        }
+
         private void ConfigureResponsiveLayout()
         {
             SuspendLayout();
@@ -239,16 +322,32 @@ namespace SchoolSystem.UI
             }
         }
 
-        private async void DataRefreshNotifier_DataChanged(
+        private void DataRefreshNotifier_DataChanged(
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
-                _isSaving)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // قد يأتي إشعار التغيير من خدمة تعمل خارج خيط الواجهة.
+            // إعادة التنفيذ على خيط WinForms تمنع أخطاء Cross-thread operation.
+            if (InvokeRequired)
             {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة أثناء جدولة التحديث؛ لا توجد واجهة يجب تحديثها.
+                }
+
                 return;
             }
+
+            if (ReferenceEquals(sender, this) || _isSaving)
+                return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Students") &&
                 !DataRefreshNotifier.IsRelated(e, "Enrollment") &&
