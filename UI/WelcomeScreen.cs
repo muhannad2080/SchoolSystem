@@ -39,7 +39,20 @@ namespace SchoolSystem.UI
 
         private void ConfigureSchoolIdentity()
         {
-            SchoolSettings settings = SchoolSettingsService.Current();
+            lblSystemName.AutoEllipsis = true;
+            lblTagline.AutoEllipsis = true;
+
+            SchoolSettings settings;
+            try
+            {
+                settings = SchoolSettingsService.Current();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("قراءة هوية المدرسة في الشاشة الترحيبية", ex);
+                return;
+            }
+
             if (settings == null)
                 return;
 
