@@ -36,6 +36,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureTimetableGridAppearance();
             UIHelper.NormalizeActionBar(panelButtons);
             Dock = DockStyle.Fill;
 
@@ -62,19 +63,33 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
-                isLoading)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
             {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة أثناء جدولة التحديث.
+                }
+
                 return;
             }
+
+            if (ReferenceEquals(sender, this) || isLoading)
+                return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Teachers")
                 && !DataRefreshNotifier.IsRelated(e, "Classes")
                 && !DataRefreshNotifier.IsRelated(e, "Sections")
-                && !DataRefreshNotifier.IsRelated(e, "Subjects"))
+                && !DataRefreshNotifier.IsRelated(e, "Subjects")
+                && !DataRefreshNotifier.IsRelated(e, "All"))
                 return;
-
 
             try
             {
@@ -113,6 +128,88 @@ namespace SchoolSystem.UI
             {
                 e.Handled = true;
             }
+        }
+
+        // عرض الجدول الدراسي بأسلوب Excel؛ التحرير يتم من عناصر الإدخال والأزرار المنفصلة.
+        private void ConfigureTimetableGridAppearance()
+        {
+            if (dataGridViewTimetable == null)
+                return;
+
+            dataGridViewTimetable.SuspendLayout();
+            try
+            {
+                dataGridViewTimetable.AllowUserToAddRows = false;
+                dataGridViewTimetable.AllowUserToDeleteRows = false;
+                dataGridViewTimetable.AllowUserToResizeRows = false;
+                dataGridViewTimetable.AllowUserToResizeColumns = true;
+                dataGridViewTimetable.AllowUserToOrderColumns = true;
+                dataGridViewTimetable.ReadOnly = true;
+                dataGridViewTimetable.MultiSelect = false;
+                dataGridViewTimetable.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewTimetable.RowHeadersVisible = false;
+                dataGridViewTimetable.RightToLeft = RightToLeft.Yes;
+                dataGridViewTimetable.ScrollBars = ScrollBars.Both;
+                dataGridViewTimetable.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewTimetable.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewTimetable.BackgroundColor = Color.White;
+                dataGridViewTimetable.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewTimetable.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewTimetable.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewTimetable.EnableHeadersVisualStyles = false;
+                dataGridViewTimetable.GridColor = UIHelper.BorderColor;
+                dataGridViewTimetable.ColumnHeadersHeight = 44;
+                dataGridViewTimetable.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewTimetable.RowTemplate.Height = 38;
+                dataGridViewTimetable.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewTimetable.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewTimetable.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewTimetable.ColumnHeadersDefaultCellStyle.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewTimetable.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewTimetable.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                dataGridViewTimetable.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                dataGridViewTimetable.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewTimetable.ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+
+                dataGridViewTimetable.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewTimetable.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewTimetable.DefaultCellStyle.Font = new Font(UIHelper.FontFamily, 9.5F);
+                dataGridViewTimetable.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dataGridViewTimetable.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewTimetable.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewTimetable.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewTimetable.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dataGridViewTimetable.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                dataGridViewTimetable.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewTimetable.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewTimetable.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewTimetable.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewTimetable.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewTimetable.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewTimetable.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                dataGridViewTimetable.ResumeLayout();
+            }
+        }
+
+        private void SetTimetableColumnWidth(string name, int width)
+        {
+            if (!dataGridViewTimetable.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = dataGridViewTimetable.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(100, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
@@ -437,7 +534,21 @@ namespace SchoolSystem.UI
             HideColumn("SubjectID");
             HideColumn("TeacherID");
 
-            dataGridViewTimetable.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewTimetable.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            SetTimetableColumnWidth("TimetableID", 80);
+            SetTimetableColumnWidth("AcademicYear", 120);
+            SetTimetableColumnWidth("TermName", 115);
+            SetTimetableColumnWidth("ClassName", 130);
+            SetTimetableColumnWidth("Section", 100);
+            SetTimetableColumnWidth("DayName", 100);
+            SetTimetableColumnWidth("PeriodNo", 85);
+            SetTimetableColumnWidth("StartTime", 105);
+            SetTimetableColumnWidth("EndTime", 105);
+            SetTimetableColumnWidth("SubjectName", 175);
+            SetTimetableColumnWidth("TeacherName", 180);
+            SetTimetableColumnWidth("RoomName", 130);
+            SetTimetableColumnWidth("Notes", 200);
+            SetTimetableColumnWidth("IsActive", 85);
         }
 
         // تعريف الدالة SetHeader لتنفيذ العملية المرتبطة بها.
