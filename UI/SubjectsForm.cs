@@ -31,6 +31,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureSubjectsGridAppearance();
             UIHelper.NormalizeActionBar(panelButtons);
 
             Dock = DockStyle.Fill;
@@ -49,7 +50,25 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) || IsDisposed || Disposing)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة أثناء جدولة تحديثها.
+                }
+
+                return;
+            }
+
+            if (ReferenceEquals(sender, this) || isLoading)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Subjects") &&
@@ -60,12 +79,91 @@ namespace SchoolSystem.UI
 
             try
             {
+                isLoading = true;
                 await LoadClassesAsync();
                 await LoadSubjectsAsync();
             }
             catch (Exception ex)
             {
                 ApplicationLogger.LogException("تحديث واجهة المواد تلقائياً", ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
+        }
+
+        private bool isLoading = false;
+
+        // جدول المواد بأسلوب Excel وبعرض أعمدة ثابت حتى تبقى أسماء المواد وملاحظاتها واضحة.
+        private void ConfigureSubjectsGridAppearance()
+        {
+            if (dataGridViewSubjects == null)
+                return;
+
+            dataGridViewSubjects.SuspendLayout();
+            try
+            {
+                dataGridViewSubjects.AllowUserToAddRows = false;
+                dataGridViewSubjects.AllowUserToDeleteRows = false;
+                dataGridViewSubjects.AllowUserToResizeRows = false;
+                dataGridViewSubjects.AllowUserToResizeColumns = true;
+                dataGridViewSubjects.AllowUserToOrderColumns = true;
+                dataGridViewSubjects.ReadOnly = true;
+                dataGridViewSubjects.MultiSelect = false;
+                dataGridViewSubjects.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewSubjects.RowHeadersVisible = false;
+                dataGridViewSubjects.RightToLeft = RightToLeft.Yes;
+                dataGridViewSubjects.ScrollBars = ScrollBars.Both;
+                dataGridViewSubjects.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewSubjects.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewSubjects.BackgroundColor = System.Drawing.Color.White;
+                dataGridViewSubjects.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewSubjects.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewSubjects.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewSubjects.EnableHeadersVisualStyles = false;
+                dataGridViewSubjects.GridColor = UIHelper.BorderColor;
+                dataGridViewSubjects.ColumnHeadersHeight = 44;
+                dataGridViewSubjects.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewSubjects.RowTemplate.Height = 38;
+                dataGridViewSubjects.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewSubjects.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewSubjects.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+                dataGridViewSubjects.ColumnHeadersDefaultCellStyle.Font =
+                    new System.Drawing.Font(UIHelper.FontFamily, 10F, System.Drawing.FontStyle.Bold);
+                dataGridViewSubjects.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewSubjects.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                dataGridViewSubjects.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                dataGridViewSubjects.ColumnHeadersDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                dataGridViewSubjects.ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+
+                dataGridViewSubjects.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+                dataGridViewSubjects.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewSubjects.DefaultCellStyle.Font =
+                    new System.Drawing.Font(UIHelper.FontFamily, 9.5F, System.Drawing.FontStyle.Regular);
+                dataGridViewSubjects.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dataGridViewSubjects.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewSubjects.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                dataGridViewSubjects.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewSubjects.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dataGridViewSubjects.AlternatingRowsDefaultCellStyle.BackColor =
+                    System.Drawing.Color.FromArgb(241, 245, 249);
+                dataGridViewSubjects.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewSubjects.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewSubjects.AlternatingRowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                dataGridViewSubjects.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+                dataGridViewSubjects.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewSubjects.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewSubjects.RowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+            }
+            finally
+            {
+                dataGridViewSubjects.ResumeLayout();
             }
         }
 
@@ -218,7 +316,38 @@ namespace SchoolSystem.UI
             HideColumn("DefaultClassID");
             HideColumn("MappedClassIDs");
 
-            dataGridViewSubjects.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewSubjects.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            SetSubjectColumnWidth("SubjectID", 80);
+            SetSubjectColumnWidth("SubjectCode", 125);
+            SetSubjectColumnWidth("SubjectName", 210);
+            SetSubjectColumnWidth("ClassName", 200);
+            SetSubjectColumnWidth("MaxDegree", 105);
+            SetSubjectColumnWidth("PassDegree", 105);
+            SetSubjectColumnWidth("IsActive", 85);
+            SetSubjectColumnWidth("Notes", 230);
+            SetSubjectColumnWidth("CreatedAt", 145);
+            SetSubjectColumnWidth("UpdatedAt", 145);
+
+            foreach (DataGridViewColumn column in dataGridViewSubjects.Columns)
+            {
+                if (column.Visible)
+                    column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
+        }
+
+        private void SetSubjectColumnWidth(string name, int width)
+        {
+            if (!dataGridViewSubjects.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = dataGridViewSubjects.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(95, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
         }
 
         // تعريف الدالة SetHeader لتنفيذ العملية المرتبطة بها.
