@@ -284,12 +284,13 @@ namespace SchoolSystem.UI
                 return;
             }
 
+            // التحقق قبل تعطيل الحقول حتى يستطيع المستخدم الانتقال إلى الحقل غير الصحيح.
+            if (!ValidateInputs())
+                return;
+
             SetBusy(true);
             try
             {
-                if (!ValidateInputs())
-                    return;
-
                 ApplicationSettingsData updated = BuildDraft();
                 if (rbSql.Checked)
                     ApplicationSettingsService.SetSqlPassword(updated, txtSqlPass.Text);
