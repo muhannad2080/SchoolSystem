@@ -65,6 +65,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            UIHelper.NormalizeActionBar(panelButtons);
             ConfigurePermissionActionsLayout();
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             ApplyPermissionUiState();
