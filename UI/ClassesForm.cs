@@ -52,6 +52,8 @@ namespace SchoolSystem.UI
             txtRoomCode.ReadOnly = true;
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            UIHelper.NormalizeActionBar(panelClassButtons);
+            UIHelper.NormalizeActionBar(panelRoomButtons);
             Dock = DockStyle.Fill;
 
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
