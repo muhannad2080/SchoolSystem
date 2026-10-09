@@ -23,10 +23,120 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             UIHelper.ApplyStyle(this);
+            ConfigureAnnualClosingGrid();
             UIHelper.NormalizeActionBar(actionsPanel);
             cmbYear.SelectedIndexChanged += cmbYear_SelectedIndexChanged;
             if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
                 LoadYears();
+        }
+
+        // تقرير الإغلاق يتغير حسب العملية (فحص، تخطيط، ترحيل)، لذا تُعاد تهيئة أعمدته بعد كل ربط.
+        private void ConfigureAnnualClosingGrid()
+        {
+            if (grid == null)
+                return;
+
+            grid.SuspendLayout();
+            try
+            {
+                grid.AllowUserToAddRows = false;
+                grid.AllowUserToDeleteRows = false;
+                grid.AllowUserToResizeRows = false;
+                grid.AllowUserToResizeColumns = true;
+                grid.AllowUserToOrderColumns = true;
+                grid.ReadOnly = true;
+                grid.MultiSelect = false;
+                grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                grid.RowHeadersVisible = false;
+                grid.RightToLeft = RightToLeft.Yes;
+                grid.ScrollBars = ScrollBars.Both;
+                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                grid.BackgroundColor = Color.White;
+                grid.BorderStyle = BorderStyle.FixedSingle;
+                grid.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                grid.EnableHeadersVisualStyles = false;
+                grid.GridColor = UIHelper.BorderColor;
+                grid.ColumnHeadersHeight = 44;
+                grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                grid.RowTemplate.Height = 38;
+                grid.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                grid.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                grid.ColumnHeadersDefaultCellStyle.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                grid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                grid.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                grid.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                grid.ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+
+                grid.DefaultCellStyle.BackColor = Color.White;
+                grid.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.DefaultCellStyle.Font = new Font(UIHelper.FontFamily, 9.5F);
+                grid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                grid.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.DefaultCellStyle.SelectionForeColor = Color.White;
+                grid.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                grid.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                grid.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                grid.RowsDefaultCellStyle.BackColor = Color.White;
+                grid.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+
+                grid.DataBindingComplete -= Grid_DataBindingComplete;
+                grid.DataBindingComplete += Grid_DataBindingComplete;
+            }
+            finally
+            {
+                grid.ResumeLayout();
+            }
+
+            ConfigureAnnualClosingGridColumns();
+        }
+
+        private void Grid_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            ConfigureAnnualClosingGridColumns();
+        }
+
+        private void ConfigureAnnualClosingGridColumns()
+        {
+            if (grid == null || grid.Columns.Count == 0)
+                return;
+
+            foreach (DataGridViewColumn column in grid.Columns)
+            {
+                if (!column.Visible)
+                    continue;
+
+                string text = ((column.HeaderText ?? string.Empty) + " " + column.Name).ToLowerInvariant();
+                int width = Math.Max(100, Math.Min(210, 28 + (column.HeaderText ?? string.Empty).Length * 13));
+
+                if (text.Contains("تفاصيل") || text.Contains("ملاحظات") ||
+                    text.Contains("details") || text.Contains("notes") ||
+                    text.Contains("الطالب") || text.Contains("student"))
+                    width = 220;
+                else if (text.Contains("تاريخ") || text.Contains("date") ||
+                         text.Contains("وقت") || text.Contains("time"))
+                    width = 145;
+                else if (text.Contains("issuecount") || text.Contains("عدد") ||
+                         text.Contains("العدد") || text.Contains("count"))
+                    width = 100;
+                else if (text.Contains("id") || text.Contains("رقم"))
+                    width = 90;
+
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                column.MinimumWidth = Math.Min(120, width);
+                column.Width = width;
+                column.Resizable = DataGridViewTriState.True;
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
         }
 
         // تعريف الدالة LoadYears لتنفيذ العملية المرتبطة بها.
