@@ -2383,6 +2383,46 @@ namespace SchoolSystem.Helpers
         }
 
         // تعريف الدالة ShowInfo لتنفيذ العملية المرتبطة بها.
+        /// <summary>
+        /// Applies a consistent single-row layout to a toolbar made up of buttons.
+        /// Call after the screen-specific styles so MinimumSize and margins cannot
+        /// make controls overlap or clip inside their FlowLayoutPanel.
+        /// </summary>
+        public static void NormalizeActionBar(FlowLayoutPanel panel)
+        {
+            if (panel == null || panel.IsDisposed)
+                return;
+
+            panel.SuspendLayout();
+            try
+            {
+                panel.FlowDirection = FlowDirection.RightToLeft;
+                panel.WrapContents = false;
+                panel.AutoScroll = false;
+                panel.Padding = new Padding(8, 4, 8, 4);
+
+                foreach (Control control in panel.Controls)
+                {
+                    Button button = control as Button;
+                    if (button == null)
+                        continue;
+
+                    int width = Math.Max(button.Width, button.MinimumSize.Width);
+                    int height = Math.Max(40, button.MinimumSize.Height);
+
+                    button.AutoSize = false;
+                    button.Size = new Size(width, height);
+                    button.Margin = new Padding(4, 0, 4, 0);
+                    button.TextAlign = ContentAlignment.MiddleCenter;
+                    button.Cursor = Cursors.Hand;
+                }
+            }
+            finally
+            {
+                panel.ResumeLayout(true);
+            }
+        }
+
         public static void ShowInfo(string message)
         {
 
