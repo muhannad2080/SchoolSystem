@@ -23,6 +23,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             UIHelper.ApplyStyle(this);
+            UIHelper.NormalizeActionBar(actionsPanel);
             cmbYear.SelectedIndexChanged += cmbYear_SelectedIndexChanged;
             if (LicenseManager.UsageMode != LicenseUsageMode.Designtime)
                 LoadYears();
