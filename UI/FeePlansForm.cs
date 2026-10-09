@@ -24,6 +24,8 @@ namespace SchoolSystem.UI
 
         private DataTable allFeePlans;
 
+        private bool isRefreshingData = false;
+
         // تعريف الدالة FeePlansForm لتنفيذ العملية المرتبطة بها.
         public FeePlansForm()
         {
@@ -31,7 +33,9 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
-            Dock = DockStyle.Fill;            SchoolSystem.Helpers.UIHelper.NormalizeActionBar(panelButtons);
+            ConfigureFeePlansGridAppearance();
+            Dock = DockStyle.Fill;
+            SchoolSystem.Helpers.UIHelper.NormalizeActionBar(panelButtons);
 
 
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
@@ -56,8 +60,26 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة قبل تنفيذ التحديث المجدول.
+                }
+
+                return;
+            }
+
+            // لا نعيد ملء الحقول أثناء أن المستخدم يعدّل خطة رسوم محددة.
+            if (ReferenceEquals(sender, this) || isRefreshingData || selectedFeePlanId > 0)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "FeePlans") &&
@@ -67,10 +89,22 @@ namespace SchoolSystem.UI
                 !DataRefreshNotifier.IsRelated(e, "All"))
                 return;
 
-            await LoadAcademicYearsAsync();
-            await LoadFeeTypesAsync();
-            await LoadClassesAsync();
-            await LoadFeePlansAsync();
+            try
+            {
+                isRefreshingData = true;
+                await LoadAcademicYearsAsync();
+                await LoadFeeTypesAsync();
+                await LoadClassesAsync();
+                await LoadFeePlansAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("تحديث خطط الرسوم تلقائياً", ex);
+            }
+            finally
+            {
+                isRefreshingData = false;
+            }
         }
 
         // تعريف الدالة FeePlansForm_Load لتنفيذ العملية المرتبطة بها.
@@ -336,6 +370,85 @@ namespace SchoolSystem.UI
                 .Replace("*", "[*]");
         }
 
+        // جدول خطط الرسوم بأسلوب Excel، مع تمييز الرؤوس والصفوف ودعم النسخ والتمرير.
+        private void ConfigureFeePlansGridAppearance()
+        {
+            if (dataGridViewFeePlans == null)
+                return;
+
+            dataGridViewFeePlans.SuspendLayout();
+            try
+            {
+                dataGridViewFeePlans.AllowUserToAddRows = false;
+                dataGridViewFeePlans.AllowUserToDeleteRows = false;
+                dataGridViewFeePlans.AllowUserToResizeRows = false;
+                dataGridViewFeePlans.AllowUserToResizeColumns = true;
+                dataGridViewFeePlans.AllowUserToOrderColumns = true;
+                dataGridViewFeePlans.ReadOnly = true;
+                dataGridViewFeePlans.MultiSelect = false;
+                dataGridViewFeePlans.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewFeePlans.RowHeadersVisible = false;
+                dataGridViewFeePlans.RightToLeft = RightToLeft.Yes;
+                dataGridViewFeePlans.ScrollBars = ScrollBars.Both;
+                dataGridViewFeePlans.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewFeePlans.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewFeePlans.BackgroundColor = Color.White;
+                dataGridViewFeePlans.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewFeePlans.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewFeePlans.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewFeePlans.EnableHeadersVisualStyles = false;
+                dataGridViewFeePlans.GridColor = UIHelper.BorderColor;
+                dataGridViewFeePlans.ColumnHeadersHeight = 44;
+                dataGridViewFeePlans.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewFeePlans.RowTemplate.Height = 38;
+                dataGridViewFeePlans.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                dataGridViewFeePlans.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewFeePlans.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewFeePlans.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewFeePlans.DefaultCellStyle.Font = new Font(UIHelper.FontFamily, 9.5F);
+                dataGridViewFeePlans.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dataGridViewFeePlans.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewFeePlans.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewFeePlans.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewFeePlans.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                dataGridViewFeePlans.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                dataGridViewFeePlans.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewFeePlans.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewFeePlans.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewFeePlans.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewFeePlans.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewFeePlans.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewFeePlans.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                dataGridViewFeePlans.ResumeLayout();
+            }
+        }
+
+        private void SetFeePlanColumnWidth(string name, int width)
+        {
+            if (!dataGridViewFeePlans.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = dataGridViewFeePlans.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(110, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
+        }
+
         // تعريف الدالة FormatGrid لتنفيذ العملية المرتبطة بها.
         private void FormatGrid()
         {
@@ -387,6 +500,16 @@ namespace SchoolSystem.UI
 
             if (dataGridViewFeePlans.Columns.Contains("DueDate"))
                 dataGridViewFeePlans.Columns["DueDate"].DefaultCellStyle.Format = "dd/MM/yyyy";
+
+            dataGridViewFeePlans.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            SetFeePlanColumnWidth("AcademicYear", 125);
+            SetFeePlanColumnWidth("ClassName", 165);
+            SetFeePlanColumnWidth("FeeType", 160);
+            SetFeePlanColumnWidth("Amount", 115);
+            SetFeePlanColumnWidth("TotalFeeAmount", 150);
+            SetFeePlanColumnWidth("DueDate", 130);
+            SetFeePlanColumnWidth("IsRequired", 105);
+            SetFeePlanColumnWidth("Notes", 230);
         }
 
         // تعريف الدالة HideColumn لتنفيذ العملية المرتبطة بها.
