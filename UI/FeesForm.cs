@@ -60,6 +60,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             UIHelper.ApplyStyle(this);
+            ConfigureFeesGridAppearance();
             Dock = DockStyle.Fill;
             ConfigureResponsiveActionPanel();
 
@@ -90,6 +91,83 @@ namespace SchoolSystem.UI
 
             Load += FeesForm_Load;
             VisibleChanged += FeesForm_VisibleChanged;
+        }
+
+        // جدول الرسوم بأسلوب Excel موحد مع بقية شاشات النظام.
+        private void ConfigureFeesGridAppearance()
+        {
+            if (dataGridViewFees == null)
+                return;
+
+            dataGridViewFees.SuspendLayout();
+            try
+            {
+                dataGridViewFees.AllowUserToAddRows = false;
+                dataGridViewFees.AllowUserToDeleteRows = false;
+                dataGridViewFees.AllowUserToResizeRows = false;
+                dataGridViewFees.AllowUserToResizeColumns = true;
+                dataGridViewFees.AllowUserToOrderColumns = true;
+                dataGridViewFees.ReadOnly = true;
+                dataGridViewFees.MultiSelect = false;
+                dataGridViewFees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewFees.RowHeadersVisible = false;
+                dataGridViewFees.RightToLeft = RightToLeft.Yes;
+                dataGridViewFees.ScrollBars = ScrollBars.Both;
+                dataGridViewFees.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewFees.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewFees.BackgroundColor = Color.White;
+                dataGridViewFees.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewFees.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewFees.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewFees.EnableHeadersVisualStyles = false;
+                dataGridViewFees.GridColor = UIHelper.BorderColor;
+                dataGridViewFees.ColumnHeadersHeight = 44;
+                dataGridViewFees.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewFees.RowTemplate.Height = 38;
+                dataGridViewFees.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewFees.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewFees.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewFees.ColumnHeadersDefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewFees.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewFees.ColumnHeadersDefaultCellStyle.WrapMode =
+                    DataGridViewTriState.True;
+                dataGridViewFees.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                    UIHelper.PrimaryColor;
+                dataGridViewFees.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewFees.ColumnHeadersDefaultCellStyle.Padding =
+                    new Padding(8, 4, 8, 4);
+
+                dataGridViewFees.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewFees.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewFees.DefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+                dataGridViewFees.DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+                dataGridViewFees.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewFees.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewFees.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewFees.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dataGridViewFees.AlternatingRowsDefaultCellStyle.BackColor =
+                    Color.FromArgb(241, 245, 249);
+                dataGridViewFees.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewFees.AlternatingRowsDefaultCellStyle.SelectionBackColor =
+                    UIHelper.AccentColor;
+                dataGridViewFees.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewFees.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewFees.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewFees.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewFees.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                dataGridViewFees.ResumeLayout();
+            }
         }
 
         /// <summary>
@@ -136,8 +214,26 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // أحداث التغيير قد تأتي من خدمات خلفية، وربط DataGridView يجب أن يحدث على UI thread.
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الواجهة أثناء جدولة التحديث.
+                }
+
+                return;
+            }
+
             if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
                 (!DataRefreshNotifier.IsRelated(e, "Fees") &&
                  !DataRefreshNotifier.IsRelated(e, "Vouchers") &&
                  !DataRefreshNotifier.IsRelated(e, "Enrollment") &&
@@ -729,12 +825,11 @@ namespace SchoolSystem.UI
             DataGridViewColumn column =
                 dataGridViewFees.Columns[columnName];
 
-            column.AutoSizeMode =
-                DataGridViewAutoSizeColumnMode.Fill;
-            column.FillWeight = Math.Max(1, width);
-            column.MinimumWidth = minimumWidth;
-            column.SortMode =
-                DataGridViewColumnSortMode.Automatic;
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(width, Math.Max(55, minimumWidth));
+            column.Width = Math.Max(width, minimumWidth);
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         private void HideColumn(string columnName)
