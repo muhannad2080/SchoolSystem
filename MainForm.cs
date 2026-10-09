@@ -35,6 +35,8 @@ namespace SchoolSystem
 
         private PictureBox schoolLogoBox;
         private Image schoolLogoImage;
+        private string schoolDisplayName = "نظام إدارة المدرسة";
+        private string schoolHeaderSubtitle = "الحل المتكامل لإدارة المؤسسات التعليمية";
 
         // ================================================================
         // DYNAMIC MENU ITEM
@@ -85,9 +87,8 @@ namespace SchoolSystem
             panelTop.Visible = true;
             HideScreenHeader();
 
-            // استعادة حالة العنوان الرئيسية فقط.
-            lblSystemTitle.Text =
-                "نظام إدارة المدرسة";
+            // استعادة اسم المدرسة الفعلي بدل استبداله بعنوان عام عند الرجوع للرئيسية.
+            lblSystemTitle.Text = schoolDisplayName;
 
             lblSystemTitle.Visible =
                 true;
@@ -95,8 +96,7 @@ namespace SchoolSystem
             lblSystemSubtitle.Visible =
                 true;
 
-            lblSystemSubtitle.Text =
-                "الحل المتكامل لإدارة المؤسسات التعليمية";
+            lblSystemSubtitle.Text = schoolHeaderSubtitle;
 
             lblUserRole.Visible =
                 true;
@@ -119,27 +119,82 @@ namespace SchoolSystem
         {
             EnsureSchoolLogoControl();
 
-            SchoolSettings settings = SchoolSettingsService.Current();
-            if (settings == null)
-                return;
+            // مساحة مستقلة للشعار حتى لا يغطي عنوان المدرسة أو بيانات المستخدم.
+            tblHeader.Padding = new Padding(0, 0, 92, 0);
+            lblSystemTitle.AutoEllipsis = true;
+            lblSystemSubtitle.AutoEllipsis = true;
 
-            string schoolName = !string.IsNullOrWhiteSpace(settings.SchoolNameAr)
+            SchoolSettings settings = ReadSchoolSettingsSafely(
+                "قراءة إعدادات المدرسة في الواجهة الرئيسية");
+            if (settings == null)
+            {
+                FitSystemHeaderTitle();
+                return;
+            }
+
+            schoolDisplayName = !string.IsNullOrWhiteSpace(settings.SchoolNameAr)
                 ? settings.SchoolNameAr.Trim()
                 : (!string.IsNullOrWhiteSpace(settings.SchoolNameEn)
                     ? settings.SchoolNameEn.Trim()
                     : "نظام إدارة المدرسة");
 
-            lblSystemTitle.Text = schoolName;
+            schoolHeaderSubtitle = BuildSchoolHeaderSubtitle(settings);
+
+            lblSystemTitle.Text = schoolDisplayName;
             lblSystemTitle.TextAlign = ContentAlignment.MiddleRight;
-            lblSystemTitle.Font = new Font("Tahoma", 20F, FontStyle.Bold, GraphicsUnit.Point);
             lblSystemTitle.ForeColor = Color.FromArgb(22, 50, 79);
 
-            lblSystemSubtitle.Text = BuildSchoolHeaderSubtitle(settings);
+            lblSystemSubtitle.Text = schoolHeaderSubtitle;
             lblSystemSubtitle.TextAlign = ContentAlignment.MiddleRight;
             lblSystemSubtitle.Font = new Font("Tahoma", 9.5F, FontStyle.Regular, GraphicsUnit.Point);
             lblSystemSubtitle.ForeColor = Color.FromArgb(71, 85, 105);
 
+            FitSystemHeaderTitle();
             LoadSchoolLogo(settings);
+        }
+
+        private SchoolSettings ReadSchoolSettingsSafely(string operation)
+        {
+            try
+            {
+                return SchoolSettingsService.Current();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException(operation, ex);
+                return null;
+            }
+        }
+
+        private void FitSystemHeaderTitle()
+        {
+            if (lblSystemTitle == null || lblSystemTitle.ClientSize.Width <= 0 ||
+                string.IsNullOrWhiteSpace(lblSystemTitle.Text))
+                return;
+
+            const float maximumSize = 20F;
+            const float minimumSize = 14F;
+
+            for (float size = maximumSize; size >= minimumSize; size -= 0.5F)
+            {
+                using (Font candidate = new Font("Tahoma", size, FontStyle.Bold, GraphicsUnit.Point))
+                {
+                    Size measured = TextRenderer.MeasureText(
+                        lblSystemTitle.Text,
+                        candidate,
+                        new Size(int.MaxValue, lblSystemTitle.ClientSize.Height),
+                        TextFormatFlags.SingleLine | TextFormatFlags.NoPadding);
+
+                    if (measured.Width <= lblSystemTitle.ClientSize.Width - 16)
+                    {
+                        lblSystemTitle.Font = new Font("Tahoma", size, FontStyle.Bold, GraphicsUnit.Point);
+                        return;
+                    }
+                }
+            }
+
+            lblSystemTitle.Font = new Font("Tahoma", minimumSize, FontStyle.Bold, GraphicsUnit.Point);
+            lblSystemTitle.AutoEllipsis = true;
         }
 
         private static string BuildSchoolHeaderSubtitle(SchoolSettings settings)
@@ -406,6 +461,9 @@ namespace SchoolSystem
         private void LoadWelcomeScreen()
         {
             ClearPanelContent();
+
+            // يعاد تحميل الهوية من الإعدادات بأمان عند العودة للرئيسية.
+            InitializeSchoolBranding();
             HideScreenHeader();
 
             // الرئيسية هي الحالة الوحيدة التي يظهر فيها الرأس.
@@ -414,14 +472,8 @@ namespace SchoolSystem
             var welcome =
                 new WelcomeScreen();
 
-            SchoolSettings branding = SchoolSettingsService.Current();
-            string schoolName =
-                branding != null && !string.IsNullOrWhiteSpace(branding.SchoolNameAr)
-                    ? branding.SchoolNameAr.Trim()
-                    : "نظام إدارة المدرسة";
-
             welcome.SystemName =
-                "أهلاً بك في " + schoolName;
+                "أهلاً بك في " + schoolDisplayName;
 
             welcome.Dock =
                 DockStyle.Fill;
