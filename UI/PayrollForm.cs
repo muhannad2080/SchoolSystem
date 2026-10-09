@@ -35,8 +35,8 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
-            SchoolSystem.Helpers.UIHelper.NormalizeActionBar(panelButtons);
             ApplyCustomStyles();
+            SchoolSystem.Helpers.UIHelper.NormalizeActionBar(panelButtons);
             this.Dock = DockStyle.Fill;
 
             panelSearch.Visible = true;
