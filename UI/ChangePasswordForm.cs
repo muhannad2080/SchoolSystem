@@ -48,16 +48,20 @@ namespace SchoolSystem.UI
                 : "المستخدم: " + (user.FullName ?? user.UserName ?? string.Empty);
             lblUserName.AutoSize = false;
             lblUserName.Size = new Size(336, 22);
-            lblUserName.TextAlign = ContentAlignment.MiddleRight;
+            // KryptonLabel uses palette text settings rather than the
+            // standard WinForms Label TextAlign/AutoEllipsis properties.
             lblUserName.RightToLeft = RightToLeft.Yes;
-            lblUserName.AutoEllipsis = true;
+            lblUserName.StateCommon.ShortText.TextH = PaletteRelativeAlign.Near;
+            lblUserName.StateCommon.ShortText.TextV = PaletteRelativeAlign.Center;
+            lblUserName.StateCommon.ShortText.Trim = PaletteTextTrim.EllipsisCharacter;
 
             lblNotice.Text = isForced
                 ? "يجب تغيير كلمة المرور قبل المتابعة إلى النظام."
                 : "استخدم هذه الشاشة لتحديث كلمة مرور حسابك بأمان.";
-            lblNotice.AutoEllipsis = true;
-            lblNotice.TextAlign = ContentAlignment.MiddleRight;
             lblNotice.RightToLeft = RightToLeft.Yes;
+            lblNotice.StateCommon.ShortText.TextH = PaletteRelativeAlign.Near;
+            lblNotice.StateCommon.ShortText.TextV = PaletteRelativeAlign.Center;
+            lblNotice.StateCommon.ShortText.Trim = PaletteTextTrim.EllipsisCharacter;
             btnCancel.Visible = !isForced;
             FormClosing += ChangePasswordForm_FormClosing;
         }
