@@ -31,11 +31,125 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
+            ConfigureExpensesGridAppearance();
             SchoolSystem.Helpers.UIHelper.NormalizeActionBar(panelButtons);
 
             txtSearch.TextChanged += (sender, e) => ApplyFilter();
             Dock = DockStyle.Fill;
+
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
+
             Load += ExpensesForm_Load;
+        }
+
+        // جدول المصروفات موحد مع بقية الجداول: حدود كاملة، صفوف متناوبة ونسخ مع رؤوس الأعمدة.
+        private void ConfigureExpensesGridAppearance()
+        {
+            if (dataGridViewExpenses == null)
+                return;
+
+            dataGridViewExpenses.SuspendLayout();
+            try
+            {
+                dataGridViewExpenses.AllowUserToAddRows = false;
+                dataGridViewExpenses.AllowUserToDeleteRows = false;
+                dataGridViewExpenses.AllowUserToResizeRows = false;
+                dataGridViewExpenses.AllowUserToResizeColumns = true;
+                dataGridViewExpenses.AllowUserToOrderColumns = true;
+                dataGridViewExpenses.ReadOnly = true;
+                dataGridViewExpenses.MultiSelect = false;
+                dataGridViewExpenses.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewExpenses.RowHeadersVisible = false;
+                dataGridViewExpenses.RightToLeft = RightToLeft.Yes;
+                dataGridViewExpenses.ScrollBars = ScrollBars.Both;
+                dataGridViewExpenses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewExpenses.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewExpenses.BackgroundColor = System.Drawing.Color.White;
+                dataGridViewExpenses.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewExpenses.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewExpenses.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewExpenses.EnableHeadersVisualStyles = false;
+                dataGridViewExpenses.GridColor = UIHelper.BorderColor;
+                dataGridViewExpenses.ColumnHeadersHeight = 44;
+                dataGridViewExpenses.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewExpenses.RowTemplate.Height = 38;
+                dataGridViewExpenses.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewExpenses.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewExpenses.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+                dataGridViewExpenses.ColumnHeadersDefaultCellStyle.Font =
+                    new System.Drawing.Font(UIHelper.FontFamily, 10F, System.Drawing.FontStyle.Bold);
+                dataGridViewExpenses.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewExpenses.ColumnHeadersDefaultCellStyle.WrapMode =
+                    DataGridViewTriState.True;
+                dataGridViewExpenses.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                    UIHelper.PrimaryColor;
+                dataGridViewExpenses.ColumnHeadersDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                dataGridViewExpenses.ColumnHeadersDefaultCellStyle.Padding =
+                    new Padding(8, 4, 8, 4);
+
+                dataGridViewExpenses.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+                dataGridViewExpenses.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewExpenses.DefaultCellStyle.Font =
+                    new System.Drawing.Font(UIHelper.FontFamily, 9.5F, System.Drawing.FontStyle.Regular);
+                dataGridViewExpenses.DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+                dataGridViewExpenses.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewExpenses.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                dataGridViewExpenses.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewExpenses.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dataGridViewExpenses.AlternatingRowsDefaultCellStyle.BackColor =
+                    System.Drawing.Color.FromArgb(241, 245, 249);
+                dataGridViewExpenses.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewExpenses.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewExpenses.AlternatingRowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                dataGridViewExpenses.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+                dataGridViewExpenses.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewExpenses.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewExpenses.RowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+            }
+            finally
+            {
+                dataGridViewExpenses.ResumeLayout();
+            }
+        }
+
+        private void DataRefreshNotifier_DataChanged(object sender, DataRefreshEventArgs e)
+        {
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // خدمات المصروفات والمال قد تبث الحدث من خيط خلفي.
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة قبل معالجة الإشعار.
+                }
+
+                return;
+            }
+
+            if (ReferenceEquals(sender, this) || isLoading || selectedExpenseId > 0)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Expenses") &&
+                !DataRefreshNotifier.IsRelated(e, "Vouchers") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
+                return;
+
+            _ = LoadExpensesAsync();
         }
 
         // تعريف الدالة ExpensesForm_Load لتنفيذ العملية المرتبطة بها.
@@ -211,7 +325,37 @@ namespace SchoolSystem.UI
             FormatDate("CreatedAt");
             FormatDate("UpdatedAt");
 
-            dataGridViewExpenses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewExpenses.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            SetExpenseColumnWidth("ExpenseNumber", 120);
+            SetExpenseColumnWidth("Amount", 110);
+            SetExpenseColumnWidth("ExpenseDate", 115);
+            SetExpenseColumnWidth("Category", 145);
+            SetExpenseColumnWidth("PayeeName", 180);
+            SetExpenseColumnWidth("PaymentMethod", 125);
+            SetExpenseColumnWidth("Description", 245);
+            SetExpenseColumnWidth("CreatedAt", 145);
+            SetExpenseColumnWidth("UpdatedAt", 145);
+
+            foreach (DataGridViewColumn column in dataGridViewExpenses.Columns)
+            {
+                if (column.Visible)
+                    column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
+        }
+
+        private void SetExpenseColumnWidth(string name, int width)
+        {
+            if (!dataGridViewExpenses.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = dataGridViewExpenses.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(95, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
         }
 
         // تعريف الدالة HideColumn لتنفيذ العملية المرتبطة بها.
