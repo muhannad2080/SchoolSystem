@@ -32,6 +32,7 @@ namespace SchoolSystem.UI
 
             ApplyArabicRtlLayout();
             UIHelper.ApplyStyle(this);
+            ConfigureStudentTabs();
             ConfigureGrid(dgvAttendance);
             ConfigureGrid(dgvMarks);
             ConfigureGrid(dgvFees);
@@ -51,6 +52,7 @@ namespace SchoolSystem.UI
 
             ApplyArabicRtlLayout();
             UIHelper.ApplyStyle(this);
+            ConfigureStudentTabs();
             ConfigureGrid(dgvAttendance);
             ConfigureGrid(dgvMarks);
             ConfigureGrid(dgvFees);
@@ -81,6 +83,81 @@ namespace SchoolSystem.UI
                 return;
 
             await LoadProfileAsync();
+        }
+
+        // تهيئة تبويبات ملف الطالب برؤوس واضحة تدعم العربية ولا تعتمد على ألوان Windows الافتراضية.
+        private void ConfigureStudentTabs()
+        {
+            if (tabs == null || attendanceTab == null || marksTab == null || feesTab == null)
+                return;
+
+            // كانت خصائص Text غير محددة في المصمم، ولذلك كانت عناوين الصفحات لا تظهر.
+            attendanceTab.Text = "الحضور";
+            marksTab.Text = "الأكاديمي";
+            feesTab.Text = "الرسوم";
+
+            foreach (TabPage page in tabs.TabPages)
+            {
+                page.BackColor = Color.White;
+                page.ForeColor = UIHelper.TextColor;
+                page.UseVisualStyleBackColor = false;
+            }
+
+            tabs.RightToLeft = RightToLeft.Yes;
+            tabs.RightToLeftLayout = true;
+            tabs.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tabs.Appearance = TabAppearance.Normal;
+            tabs.SizeMode = TabSizeMode.Fixed;
+            tabs.ItemSize = new Size(165, 42);
+            tabs.Font = new Font("Tahoma", 10F, FontStyle.Bold);
+            tabs.BackColor = Color.FromArgb(248, 250, 252);
+
+            tabs.DrawItem -= Tabs_DrawItem;
+            tabs.DrawItem += Tabs_DrawItem;
+            tabs.SelectedIndexChanged -= Tabs_SelectedIndexChanged;
+            tabs.SelectedIndexChanged += Tabs_SelectedIndexChanged;
+        }
+
+        private void Tabs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (tabs != null)
+                tabs.Invalidate();
+        }
+
+        private void Tabs_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (tabs == null || e.Index < 0 || e.Index >= tabs.TabPages.Count)
+                return;
+
+            TabPage page = tabs.TabPages[e.Index];
+            bool selected = e.Index == tabs.SelectedIndex;
+            Rectangle bounds = e.Bounds;
+            bounds.Inflate(-2, -2);
+
+            Color backColor = selected
+                ? UIHelper.AccentColor
+                : Color.FromArgb(226, 232, 240);
+            Color textColor = selected
+                ? Color.White
+                : Color.FromArgb(30, 41, 59);
+
+            using (SolidBrush background = new SolidBrush(backColor))
+                e.Graphics.FillRectangle(background, bounds);
+
+            using (Pen border = new Pen(Color.FromArgb(203, 213, 225)))
+                e.Graphics.DrawRectangle(border, bounds);
+
+            TextRenderer.DrawText(
+                e.Graphics,
+                page.Text,
+                tabs.Font,
+                e.Bounds,
+                textColor,
+                TextFormatFlags.HorizontalCenter |
+                TextFormatFlags.VerticalCenter |
+                TextFormatFlags.SingleLine |
+                TextFormatFlags.RightToLeft |
+                TextFormatFlags.NoPrefix);
         }
 
         private void ApplyArabicRtlLayout()
@@ -178,6 +255,11 @@ namespace SchoolSystem.UI
             FormatAttendanceGrid();
             FormatMarksGrid();
             FormatFeesGrid();
+
+            // أحجام الأعمدة تُحسب بعد ربط البيانات حتى لا تظهر الأعمدة مقصوصة أو متساوية بلا حاجة.
+            ApplyExcelColumnSizing(dgvAttendance);
+            ApplyExcelColumnSizing(dgvMarks);
+            ApplyExcelColumnSizing(dgvFees);
 
             if (profile.CanViewFinancials)
             {
@@ -348,23 +430,102 @@ namespace SchoolSystem.UI
         // تعريف الدالة ConfigureGrid لتنفيذ العملية المرتبطة بها.
         private static void ConfigureGrid(DataGridView grid)
         {
-            grid.AllowUserToAddRows = false;
-            grid.AllowUserToDeleteRows = false;
-            grid.RightToLeft = RightToLeft.Yes;
-            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            grid.BackgroundColor = System.Drawing.Color.White;
-            grid.BorderStyle = BorderStyle.None;
-            grid.Dock = DockStyle.Fill;
-            grid.MultiSelect = false;
-            grid.ReadOnly = true;
-            grid.RowHeadersVisible = false;
-            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            grid.ScrollBars = ScrollBars.Both;
-            grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            UIHelper.StyleDataGridView(grid);
-            grid.RightToLeft = RightToLeft.Yes;
-            grid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-            grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            if (grid == null)
+                return;
+
+            grid.SuspendLayout();
+            try
+            {
+                grid.AllowUserToAddRows = false;
+                grid.AllowUserToDeleteRows = false;
+                grid.AllowUserToResizeRows = false;
+                grid.AllowUserToResizeColumns = true;
+                grid.RightToLeft = RightToLeft.Yes;
+                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                grid.BackgroundColor = Color.White;
+                grid.BorderStyle = BorderStyle.FixedSingle;
+                grid.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                grid.GridColor = Color.FromArgb(203, 213, 225);
+                grid.Dock = DockStyle.Fill;
+                grid.MultiSelect = false;
+                grid.ReadOnly = true;
+                grid.RowHeadersVisible = false;
+                grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                grid.ScrollBars = ScrollBars.Both;
+                grid.ColumnHeadersHeight = 44;
+                grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                grid.RowTemplate.Height = 36;
+                grid.EnableHeadersVisualStyles = false;
+
+                // استخدم الهوية العامة أولاً ثم ثبّت ألوان الجدول حتى لا تطغى عليها ثيمة Windows.
+                UIHelper.StyleDataGridView(grid);
+
+                grid.BackgroundColor = Color.White;
+                grid.BorderStyle = BorderStyle.FixedSingle;
+                grid.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                grid.GridColor = Color.FromArgb(203, 213, 225);
+                grid.EnableHeadersVisualStyles = false;
+                grid.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                grid.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 10F, FontStyle.Bold);
+                grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                grid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                grid.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                grid.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                grid.DefaultCellStyle.BackColor = Color.White;
+                grid.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.DefaultCellStyle.Font = new Font("Tahoma", 9.5F, FontStyle.Regular);
+                grid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                grid.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.DefaultCellStyle.SelectionForeColor = Color.White;
+                grid.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                grid.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                grid.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                grid.RowsDefaultCellStyle.BackColor = Color.White;
+                grid.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.RowHeadersVisible = false;
+                grid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            }
+            finally
+            {
+                grid.ResumeLayout();
+            }
+        }
+
+        // تنسيق الأعمدة كجدول بيانات: عرض طبيعي حسب المحتوى، مع حدود تمنع تمدد عمود واحد بلا قيود.
+        private static void ApplyExcelColumnSizing(DataGridView grid)
+        {
+            if (grid == null || grid.Columns.Count == 0)
+                return;
+
+            grid.SuspendLayout();
+            try
+            {
+                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                grid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+
+                foreach (DataGridViewColumn column in grid.Columns)
+                {
+                    int preferredWidth = column.Width;
+                    column.MinimumWidth = 80;
+                    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                    column.Width = Math.Max(90, Math.Min(preferredWidth, 240));
+                    column.SortMode = DataGridViewColumnSortMode.Automatic;
+                }
+
+                // إبقاء المقاسات ثابتة بعد الحساب يوفر تمريراً أفقياً واضحاً مثل الجداول الممتدة.
+                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            }
+            finally
+            {
+                grid.ResumeLayout();
+            }
         }
 
         // تعريف الدالة Sum لتنفيذ العملية المرتبطة بها.
