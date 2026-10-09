@@ -31,7 +31,8 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
-            Dock = DockStyle.Fill;
+            Dock = DockStyle.Fill;            SchoolSystem.Helpers.UIHelper.NormalizeActionBar(panelButtons);
+
 
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
             Disposed += (sender, e) =>
