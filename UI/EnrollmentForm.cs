@@ -94,10 +94,6 @@ namespace SchoolSystem.UI
             // تطبيق قواعد التحقق من الحقول (فلترة الأحرف، أقصى طول، والتحقق عند
             // المغادرة) دون تغيير تنسيق الشاشة.
             SchoolSystem.Helpers.UIHelper.ApplyFieldValidation(this);
-
-            txtAcademicYear.Leave +=
-                txtAcademicYear_Leave;
-
             txtRegistrationFee.ReadOnly = true;
             txtRegistrationFee.TabStop = false;
 
@@ -135,9 +131,6 @@ namespace SchoolSystem.UI
             // Output button event wiring only.
             // No styling is performed here.
             // ------------------------------------------------------------
-
-            txtAcademicYear.Leave += txtAcademicYear_Leave;
-
             ConfigureOutputButtons();
         }
 
@@ -727,57 +720,6 @@ namespace SchoolSystem.UI
             await LoadRegistrationFeePlanAsync(false);
         }
 
-        /// <summary>
-        /// Rebuilds the student selector against the academic year. During
-        /// editing, only the current registration is excluded from duplicate
-        /// detection so its student remains selectable in the existing record.
-        /// </summary>
-        private void txtAcademicYear_Leave(object sender, EventArgs e)
-        {
-            if (isLoading ||
-                isEditMode ||
-                !string.Equals(
-                    txtEnrollmentID.Text,
-                    "جديد",
-                    StringComparison.Ordinal))
-            {
-                return;
-            }
-
-            string academicYear = (txtAcademicYear.Text ?? string.Empty).Trim();
-            if (!IsSequentialAcademicYear(academicYear))
-            {
-                cmbStudentID.DataSource = null;
-                cmbStudentID.Items.Clear();
-                txtStudentName.Clear();
-                lblStatus.Text = "أدخل العام الدراسي بصيغة صحيحة، مثل 2026/2027، لعرض الطلاب غير المسجلين.";
-                return;
-            }
-
-            try
-            {
-                int selectedStudentId = TryGetSelectedId(cmbStudentID);
-                DataTable availableStudents =
-                    LoadStudentChoicesForAcademicYear(
-                        academicYear,
-                        0,
-                        selectedStudentId);
-
-                lblStatus.Text =
-                    availableStudents.Rows.Count == 0
-                        ? "لا يوجد طلاب نشطون غير مسجلين في هذا العام الدراسي."
-                        : "عدد الطلاب المتاحين للتسجيل: " + availableStudents.Rows.Count;
-            }
-            catch (Exception ex)
-            {
-                ApplicationLogger.LogException(
-                    "شاشة القيد: تحديث قائمة الطلاب عند تغيير العام الدراسي",
-                    ex);
-                UIHelper.ShowException(
-                    "تحديث الطلاب المتاحين للعام الدراسي",
-                    ex);
-            }
-        }
 
         private DataTable LoadStudentChoicesForAcademicYear(
             string academicYear,
@@ -2293,22 +2235,6 @@ namespace SchoolSystem.UI
             {
                 await LoadRegistrationFeePlanAsync(false);
             }
-        }
-
-        // ================================================================
-        // ACADEMIC YEAR LEAVE
-        // ================================================================
-
-        private async void txtAcademicYear_Leave(
-            object sender,
-            EventArgs e)
-        {
-            if (isLoading)
-                return;
-
-            await LoadSectionsAsync();
-
-            await LoadRegistrationFeePlanAsync(false);
         }
 
         // ================================================================
