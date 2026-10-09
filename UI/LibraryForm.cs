@@ -44,8 +44,13 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureLibraryGridAppearance();
             ConfigureLibraryActionPanels();
             Dock = DockStyle.Fill;
+
+            DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
+            Disposed += (sender, e) =>
+                DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
 
             Load += LibraryForm_Load;
 
@@ -57,6 +62,60 @@ namespace SchoolSystem.UI
             txtISBN.MaxLength = 30;
             txtISBN.KeyPress -= Isbn_KeyPress;
             txtISBN.KeyPress += Isbn_KeyPress;
+        }
+
+        private async void DataRefreshNotifier_DataChanged(
+            object sender,
+            DataRefreshEventArgs e)
+        {
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة قبل تنفيذ التحديث المجدول.
+                }
+
+                return;
+            }
+
+            // لا نغيّر الحقول التي يعمل عليها المستخدم في منتصف تعديل سجل.
+            if (ReferenceEquals(sender, this) ||
+                isLoading ||
+                selectedBookId > 0 ||
+                selectedBorrowingId > 0)
+                return;
+
+            if (!DataRefreshNotifier.IsRelated(e, "Books") &&
+                !DataRefreshNotifier.IsRelated(e, "Borrowings") &&
+                !DataRefreshNotifier.IsRelated(e, "Students") &&
+                !DataRefreshNotifier.IsRelated(e, "Teachers") &&
+                !DataRefreshNotifier.IsRelated(e, "All"))
+                return;
+
+            try
+            {
+                isLoading = true;
+                await LoadBooksAsync();
+                await LoadBooksIntoComboAsync();
+                await LoadBorrowersAsync();
+                await LoadBorrowingsAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("تحديث شاشة المكتبة تلقائياً", ex);
+            }
+            finally
+            {
+                isLoading = false;
+            }
         }
 
         // تعريف الدالة Isbn_KeyPress للسماح للأرقام والشرطات فقط في حقل ISBN.
@@ -163,6 +222,92 @@ namespace SchoolSystem.UI
             {
                 e.Handled = true;
             }
+        }
+
+        // توحيد جدول الكتب وجدول الإعارات بالهوية نفسها، مع الحفاظ على العرض للقراءة فقط.
+        private void ConfigureLibraryGridAppearance()
+        {
+            DataGridView[] grids = { dataGridViewBooks, dataGridViewBorrowings };
+            foreach (DataGridView grid in grids)
+            {
+                if (grid == null)
+                    continue;
+
+                grid.SuspendLayout();
+                try
+                {
+                    grid.AllowUserToAddRows = false;
+                    grid.AllowUserToDeleteRows = false;
+                    grid.AllowUserToResizeRows = false;
+                    grid.AllowUserToResizeColumns = true;
+                    grid.AllowUserToOrderColumns = true;
+                    grid.ReadOnly = true;
+                    grid.MultiSelect = false;
+                    grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                    grid.RowHeadersVisible = false;
+                    grid.RightToLeft = RightToLeft.Yes;
+                    grid.ScrollBars = ScrollBars.Both;
+                    grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                    grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                    grid.BackgroundColor = Color.White;
+                    grid.BorderStyle = BorderStyle.FixedSingle;
+                    grid.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                    grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                    grid.EnableHeadersVisualStyles = false;
+                    grid.GridColor = UIHelper.BorderColor;
+                    grid.ColumnHeadersHeight = 44;
+                    grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                    grid.RowTemplate.Height = 38;
+                    grid.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                    grid.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                    grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                    grid.ColumnHeadersDefaultCellStyle.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                    grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    grid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                    grid.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                    grid.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                    grid.ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+
+                    grid.DefaultCellStyle.BackColor = Color.White;
+                    grid.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                    grid.DefaultCellStyle.Font = new Font(UIHelper.FontFamily, 9.5F);
+                    grid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    grid.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                    grid.DefaultCellStyle.SelectionForeColor = Color.White;
+                    grid.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                    grid.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                    grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                    grid.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                    grid.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                    grid.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                    grid.RowsDefaultCellStyle.BackColor = Color.White;
+                    grid.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                    grid.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                    grid.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+                }
+                finally
+                {
+                    grid.ResumeLayout();
+                }
+            }
+        }
+
+        private void SetLibraryColumnWidth(DataGridView grid, string name, int width)
+        {
+            if (grid == null || !grid.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = grid.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(100, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
@@ -326,7 +471,17 @@ namespace SchoolSystem.UI
             SetBookHeader("ShelfLocation", "الرف");
             SetBookHeader("Notes", "ملاحظات");
 
-                    }
+            SetLibraryColumnWidth(dataGridViewBooks, "Title", 220);
+            SetLibraryColumnWidth(dataGridViewBooks, "Author", 175);
+            SetLibraryColumnWidth(dataGridViewBooks, "ISBN", 145);
+            SetLibraryColumnWidth(dataGridViewBooks, "Category", 125);
+            SetLibraryColumnWidth(dataGridViewBooks, "Publisher", 170);
+            SetLibraryColumnWidth(dataGridViewBooks, "PublicationYear", 105);
+            SetLibraryColumnWidth(dataGridViewBooks, "Copies", 90);
+            SetLibraryColumnWidth(dataGridViewBooks, "AvailableCopies", 105);
+            SetLibraryColumnWidth(dataGridViewBooks, "ShelfLocation", 115);
+            SetLibraryColumnWidth(dataGridViewBooks, "Notes", 220);
+        }
 
         // تعريف الدالة HideBookColumn لتنفيذ العملية المرتبطة بها.
         private void HideBookColumn(string columnName)
@@ -735,7 +890,15 @@ namespace SchoolSystem.UI
             FormatBorrowingDate("DueDate");
             FormatBorrowingDate("ReturnDate");
 
-                    }
+            SetLibraryColumnWidth(dataGridViewBorrowings, "BookTitle", 210);
+            SetLibraryColumnWidth(dataGridViewBorrowings, "BorrowerType", 120);
+            SetLibraryColumnWidth(dataGridViewBorrowings, "BorrowerName", 185);
+            SetLibraryColumnWidth(dataGridViewBorrowings, "BorrowDate", 115);
+            SetLibraryColumnWidth(dataGridViewBorrowings, "DueDate", 115);
+            SetLibraryColumnWidth(dataGridViewBorrowings, "ReturnDate", 120);
+            SetLibraryColumnWidth(dataGridViewBorrowings, "Status", 110);
+            SetLibraryColumnWidth(dataGridViewBorrowings, "Notes", 220);
+        }
 
         // تعريف الدالة HideBorrowingColumn لتنفيذ العملية المرتبطة بها.
         private void HideBorrowingColumn(string columnName)
