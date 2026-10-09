@@ -65,6 +65,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigurePermissionActionsLayout();
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
             ApplyPermissionUiState();
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
@@ -76,6 +77,47 @@ namespace SchoolSystem.UI
 
             // تحديد أقصى طول لأسماء المستخدمين.
             txtUserName.MaxLength = 50;
+        }
+
+        /// <summary>
+        /// Gives all six permission actions enough vertical space to remain visible.
+        /// The previous 48px single-row slot forced buttons into a clipped scroll area.
+        /// </summary>
+        private void ConfigurePermissionActionsLayout()
+        {
+            permissionLayout.SuspendLayout();
+            permissionActions.SuspendLayout();
+
+            try
+            {
+                permissionActions.AutoScroll = false;
+                permissionActions.WrapContents = true;
+                permissionActions.FlowDirection = FlowDirection.RightToLeft;
+                permissionActions.Padding = new Padding(4);
+
+                if (permissionLayout.RowStyles.Count > 3)
+                {
+                    permissionLayout.RowStyles[3].SizeType = SizeType.Absolute;
+                    permissionLayout.RowStyles[3].Height = 160F;
+                }
+
+                permissionActions.Height = 160;
+
+                foreach (Control control in permissionActions.Controls)
+                {
+                    Button button = control as Button;
+                    if (button == null)
+                        continue;
+
+                    button.Margin = new Padding(4);
+                    button.Height = 40;
+                }
+            }
+            finally
+            {
+                permissionActions.ResumeLayout(true);
+                permissionLayout.ResumeLayout(true);
+            }
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
