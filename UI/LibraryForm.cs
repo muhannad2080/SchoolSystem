@@ -43,6 +43,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureLibraryActionPanels();
             Dock = DockStyle.Fill;
 
             Load += LibraryForm_Load;
@@ -58,6 +59,94 @@ namespace SchoolSystem.UI
         }
 
         // تعريف الدالة Isbn_KeyPress للسماح للأرقام والشرطات فقط في حقل ISBN.
+        /// <summary>
+        /// Aligns library actions from the right edge and keeps them inside the tab.
+        /// The original fixed X position put the borrow button beyond its panel.
+        /// </summary>
+        private void ConfigureLibraryActionPanels()
+        {
+            LayoutBookActionButtons();
+            LayoutBorrowingActionButtons();
+
+            panelBooksButtons.Resize -= PanelBooksButtons_Resize;
+            panelBooksButtons.Resize += PanelBooksButtons_Resize;
+            panelBorrowingButtons.Resize -= PanelBorrowingButtons_Resize;
+            panelBorrowingButtons.Resize += PanelBorrowingButtons_Resize;
+        }
+
+        private void PanelBooksButtons_Resize(object sender, EventArgs e)
+        {
+            LayoutBookActionButtons();
+        }
+
+        private void PanelBorrowingButtons_Resize(object sender, EventArgs e)
+        {
+            LayoutBorrowingActionButtons();
+        }
+
+        private void LayoutBookActionButtons()
+        {
+            if (panelBooksButtons == null)
+                return;
+
+            const int gap = 8;
+            const int rightPadding = 12;
+            const int buttonWidth = 110;
+            const int buttonHeight = 40;
+            const int top = 7;
+
+            Button[] buttons =
+            {
+                btnAddBook,
+                btnUpdateBook,
+                btnDeleteBook,
+                btnClearBook
+            };
+
+            int x = panelBooksButtons.ClientSize.Width - rightPadding - buttonWidth;
+
+            foreach (Button button in buttons)
+            {
+                if (button == null)
+                    continue;
+
+                button.AutoSize = false;
+                button.Size = new System.Drawing.Size(buttonWidth, buttonHeight);
+                button.MinimumSize = new System.Drawing.Size(buttonWidth, buttonHeight);
+                button.Location = new System.Drawing.Point(Math.Max(0, x), top);
+                button.Margin = Padding.Empty;
+                button.TextAlign = ContentAlignment.MiddleCenter;
+                button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                x -= buttonWidth + gap;
+            }
+        }
+
+        private void LayoutBorrowingActionButtons()
+        {
+            if (panelBorrowingButtons == null ||
+                btnBorrow == null ||
+                btnReturn == null)
+                return;
+
+            const int gap = 10;
+            const int rightPadding = 12;
+            const int top = 7;
+
+            btnBorrow.Size = new System.Drawing.Size(140, 40);
+            btnReturn.Size = new System.Drawing.Size(160, 40);
+            btnBorrow.Location = new System.Drawing.Point(
+                Math.Max(0, panelBorrowingButtons.ClientSize.Width - rightPadding - btnBorrow.Width),
+                top);
+            btnReturn.Location = new System.Drawing.Point(
+                Math.Max(0, btnBorrow.Left - gap - btnReturn.Width),
+                top);
+
+            btnBorrow.TextAlign = ContentAlignment.MiddleCenter;
+            btnReturn.TextAlign = ContentAlignment.MiddleCenter;
+            btnBorrow.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnReturn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        }
+
         private void Isbn_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e == null)
