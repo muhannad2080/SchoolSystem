@@ -70,6 +70,7 @@ namespace SchoolSystem.UI
             UIHelper.ApplyStyle(this);
 
             ConfigureEnrollmentLayout();
+            ConfigureEnrollmentGridAppearance();
 
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
             Disposed += (sender, e) =>
@@ -142,8 +143,27 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // إشعارات الخدمات قد تصدر من خيط خلفي؛ جميع عمليات WinForms
+            // وإعادة ربط الجداول يجب أن تتم على خيط الواجهة.
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة أثناء جدولة التحديث.
+                }
+
+                return;
+            }
+
             if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
                 isLoading ||
                 isEditMode ||
                 isSaving)
@@ -234,6 +254,85 @@ namespace SchoolSystem.UI
             finally
             {
                 ResumeLayout(true);
+            }
+        }
+
+        // جدول التسجيل بأسلوب Excel موحّد مع ملف الطالب: خلايا واضحة، صفوف متناوبة
+        // وتحديد بلون الهوية مع عرض أعمدة طبيعي وتمرير أفقي عند كثرة البيانات.
+        private void ConfigureEnrollmentGridAppearance()
+        {
+            if (dgvEnrollments == null)
+                return;
+
+            dgvEnrollments.SuspendLayout();
+            try
+            {
+                dgvEnrollments.AllowUserToAddRows = false;
+                dgvEnrollments.AllowUserToDeleteRows = false;
+                dgvEnrollments.AllowUserToResizeRows = false;
+                dgvEnrollments.AllowUserToResizeColumns = true;
+                dgvEnrollments.AllowUserToOrderColumns = true;
+                dgvEnrollments.ReadOnly = true;
+                dgvEnrollments.EditMode = DataGridViewEditMode.EditProgrammatically;
+                dgvEnrollments.MultiSelect = false;
+                dgvEnrollments.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dgvEnrollments.RowHeadersVisible = false;
+                dgvEnrollments.RightToLeft = RightToLeft.Yes;
+                dgvEnrollments.ScrollBars = ScrollBars.Both;
+                dgvEnrollments.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dgvEnrollments.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dgvEnrollments.BackgroundColor = Color.White;
+                dgvEnrollments.BorderStyle = BorderStyle.FixedSingle;
+                dgvEnrollments.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dgvEnrollments.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dgvEnrollments.EnableHeadersVisualStyles = false;
+                dgvEnrollments.GridColor = UIHelper.BorderColor;
+                dgvEnrollments.ColumnHeadersHeight = 44;
+                dgvEnrollments.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dgvEnrollments.RowTemplate.Height = 38;
+                dgvEnrollments.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dgvEnrollments.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dgvEnrollments.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dgvEnrollments.ColumnHeadersDefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dgvEnrollments.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dgvEnrollments.ColumnHeadersDefaultCellStyle.WrapMode =
+                    DataGridViewTriState.True;
+                dgvEnrollments.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                    UIHelper.PrimaryColor;
+                dgvEnrollments.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dgvEnrollments.ColumnHeadersDefaultCellStyle.Padding =
+                    new Padding(8, 4, 8, 4);
+
+                dgvEnrollments.DefaultCellStyle.BackColor = Color.White;
+                dgvEnrollments.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dgvEnrollments.DefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+                dgvEnrollments.DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+                dgvEnrollments.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dgvEnrollments.DefaultCellStyle.SelectionForeColor = Color.White;
+                dgvEnrollments.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dgvEnrollments.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dgvEnrollments.AlternatingRowsDefaultCellStyle.BackColor =
+                    Color.FromArgb(241, 245, 249);
+                dgvEnrollments.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dgvEnrollments.AlternatingRowsDefaultCellStyle.SelectionBackColor =
+                    UIHelper.AccentColor;
+                dgvEnrollments.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dgvEnrollments.RowsDefaultCellStyle.BackColor = Color.White;
+                dgvEnrollments.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dgvEnrollments.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dgvEnrollments.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                dgvEnrollments.ResumeLayout();
             }
         }
 
@@ -812,22 +911,23 @@ namespace SchoolSystem.UI
                 "ApplicationDate",
                 "تاريخ التسجيل");
 
-            SetGridColumnLayout("EnrollmentID", 70);
-            SetGridColumnLayout("StudentName", 180);
-            SetGridColumnLayout("ClassName", 95);
-            SetGridColumnLayout("Section", 75);
-            SetGridColumnLayout("AcademicYear", 105);
-            SetGridColumnLayout("Status", 85);
-            SetGridColumnLayout("RegistrationFee", 90);
-            SetGridColumnLayout("PaidAmount", 85);
-            SetGridColumnLayout("RemainingAmount", 90);
-            SetGridColumnLayout("ApplicationDate", 105);
+            SetGridColumnLayout("EnrollmentID", 78);
+            SetGridColumnLayout("StudentName", 190);
+            SetGridColumnLayout("ClassName", 100);
+            SetGridColumnLayout("Section", 82);
+            SetGridColumnLayout("AcademicYear", 118);
+            SetGridColumnLayout("Status", 90);
+            SetGridColumnLayout("RegistrationFee", 105);
+            SetGridColumnLayout("PaidAmount", 100);
+            SetGridColumnLayout("RemainingAmount", 105);
+            SetGridColumnLayout("ApplicationDate", 118);
 
+            // لا نضغط الأعمدة في عرض الجدول؛ يبقى التمرير الأفقي متاحًا مثل Excel.
             dgvEnrollments.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.Fill;
+                DataGridViewAutoSizeColumnsMode.None;
             dgvEnrollments.AutoSizeRowsMode =
                 DataGridViewAutoSizeRowsMode.None;
-            dgvEnrollments.ColumnHeadersHeight = 42;
+            dgvEnrollments.ColumnHeadersHeight = 44;
             dgvEnrollments.RowTemplate.Height = 38;
         }
 
@@ -838,9 +938,12 @@ namespace SchoolSystem.UI
             if (!dgvEnrollments.Columns.Contains(name))
                 return;
 
-            dgvEnrollments.Columns[name].FillWeight = width;
-            dgvEnrollments.Columns[name].MinimumWidth =
-                Math.Max(55, (int)width);
+            DataGridViewColumn column = dgvEnrollments.Columns[name];
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(80, Math.Max(55, (int)width));
+            column.Width = (int)width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         // ================================================================
