@@ -315,7 +315,7 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            if (ReferenceEquals(sender, this) || isRefreshingData || selectedSectionId > 0)
+            if (ReferenceEquals(sender, this) || isRefreshingData)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Sections") &&
