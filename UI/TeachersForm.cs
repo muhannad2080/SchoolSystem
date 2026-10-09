@@ -109,9 +109,27 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // التحديثات قد تصدر من خدمات تعمل على خيط خلفي؛ اربط الجدول على خيط الواجهة فقط.
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // قد تُغلق الشاشة أثناء جدولة التحديث.
+                }
+
+                return;
+            }
+
             if (ReferenceEquals(sender, this) ||
-                !DataRefreshNotifier.IsRelated(e, "Teachers") ||
-                IsDisposed)
+                !DataRefreshNotifier.IsRelated(e, "Teachers"))
             {
                 return;
             }
@@ -141,10 +159,79 @@ namespace SchoolSystem.UI
         // تعريف الدالة ConfigureDataGridViewStyling لتنفيذ العملية المرتبطة بها.
         private void ConfigureDataGridViewStyling()
         {
-            dataGridViewTeachers.AlternatingRowsDefaultCellStyle.BackColor = UIHelper.AlternateRowColor;
-            dataGridViewTeachers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewTeachers.MultiSelect = false;
-            dataGridViewTeachers.ReadOnly = true;
+            if (dataGridViewTeachers == null)
+                return;
+
+            dataGridViewTeachers.SuspendLayout();
+            try
+            {
+                dataGridViewTeachers.AllowUserToAddRows = false;
+                dataGridViewTeachers.AllowUserToDeleteRows = false;
+                dataGridViewTeachers.AllowUserToResizeRows = false;
+                dataGridViewTeachers.AllowUserToResizeColumns = true;
+                dataGridViewTeachers.AllowUserToOrderColumns = true;
+                dataGridViewTeachers.ReadOnly = true;
+                dataGridViewTeachers.MultiSelect = false;
+                dataGridViewTeachers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewTeachers.RowHeadersVisible = false;
+                dataGridViewTeachers.RightToLeft = RightToLeft.Yes;
+                dataGridViewTeachers.ScrollBars = ScrollBars.Both;
+                dataGridViewTeachers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewTeachers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewTeachers.BackgroundColor = Color.White;
+                dataGridViewTeachers.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewTeachers.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewTeachers.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewTeachers.EnableHeadersVisualStyles = false;
+                dataGridViewTeachers.GridColor = UIHelper.BorderColor;
+                dataGridViewTeachers.ColumnHeadersHeight = 44;
+                dataGridViewTeachers.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewTeachers.RowTemplate.Height = 38;
+                dataGridViewTeachers.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewTeachers.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewTeachers.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewTeachers.ColumnHeadersDefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewTeachers.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewTeachers.ColumnHeadersDefaultCellStyle.WrapMode =
+                    DataGridViewTriState.True;
+                dataGridViewTeachers.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                    UIHelper.PrimaryColor;
+                dataGridViewTeachers.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewTeachers.ColumnHeadersDefaultCellStyle.Padding =
+                    new Padding(8, 4, 8, 4);
+
+                dataGridViewTeachers.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewTeachers.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewTeachers.DefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+                dataGridViewTeachers.DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+                dataGridViewTeachers.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewTeachers.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewTeachers.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewTeachers.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dataGridViewTeachers.AlternatingRowsDefaultCellStyle.BackColor =
+                    Color.FromArgb(241, 245, 249);
+                dataGridViewTeachers.AlternatingRowsDefaultCellStyle.ForeColor =
+                    UIHelper.TextColor;
+                dataGridViewTeachers.AlternatingRowsDefaultCellStyle.SelectionBackColor =
+                    UIHelper.AccentColor;
+                dataGridViewTeachers.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewTeachers.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewTeachers.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewTeachers.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewTeachers.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                dataGridViewTeachers.ResumeLayout();
+            }
         }
 
         // تعريف الدالة GenerateNewEmployeeNumber لتنفيذ العملية المرتبطة بها.
@@ -217,7 +304,8 @@ namespace SchoolSystem.UI
 
             dataGridViewTeachers.RightToLeft = RightToLeft.Yes;
             dataGridViewTeachers.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.Fill;
+                DataGridViewAutoSizeColumnsMode.None;
+            dataGridViewTeachers.ScrollBars = ScrollBars.Both;
             dataGridViewTeachers.AutoSizeRowsMode =
                 DataGridViewAutoSizeRowsMode.None;
             dataGridViewTeachers.ColumnHeadersHeight = 40;
@@ -281,10 +369,17 @@ namespace SchoolSystem.UI
             column.HeaderText = header;
             column.Visible = visible;
             column.DisplayIndex = displayIndex;
-            column.FillWeight = Math.Max(1F, fillWeight);
-            column.MinimumWidth = minimumWidth;
-            column.SortMode =
-                DataGridViewColumnSortMode.Automatic;
+
+            if (visible)
+            {
+                // fillWeight holds the intended width in pixels for this spreadsheet-style table.
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                column.MinimumWidth = Math.Min(95, Math.Max(55, minimumWidth));
+                column.Width = Math.Max(minimumWidth, (int)fillWeight);
+                column.Resizable = DataGridViewTriState.True;
+            }
+
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         private void FormatTeacherGridCell(
