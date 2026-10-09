@@ -65,6 +65,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureUsersGridAppearance();
             UIHelper.NormalizeActionBar(panelButtons);
             ConfigurePermissionActionsLayout();
             // التأكد من أن الجلسة تملك الصلاحية اللازمة للعملية.
@@ -119,6 +120,78 @@ namespace SchoolSystem.UI
                 permissionActions.ResumeLayout(true);
                 permissionLayout.ResumeLayout(true);
             }
+        }
+
+        // جدول المستخدمين والصلاحيات: عرض ثابت، تمرير أفقي وحدود واضحة مثل Excel.
+        private void ConfigureUsersGridAppearance()
+        {
+            if (dataGridViewUsers == null)
+                return;
+
+            dataGridViewUsers.SuspendLayout();
+            try
+            {
+                dataGridViewUsers.AllowUserToAddRows = false;
+                dataGridViewUsers.AllowUserToDeleteRows = false;
+                dataGridViewUsers.AllowUserToResizeRows = false;
+                dataGridViewUsers.AllowUserToResizeColumns = true;
+                dataGridViewUsers.AllowUserToOrderColumns = true;
+                dataGridViewUsers.ReadOnly = true;
+                dataGridViewUsers.MultiSelect = false;
+                dataGridViewUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewUsers.RowHeadersVisible = false;
+                dataGridViewUsers.RightToLeft = RightToLeft.Yes;
+                dataGridViewUsers.ScrollBars = ScrollBars.Both;
+                dataGridViewUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewUsers.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewUsers.BackgroundColor = Color.White;
+                dataGridViewUsers.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewUsers.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewUsers.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewUsers.EnableHeadersVisualStyles = false;
+                dataGridViewUsers.GridColor = UIHelper.BorderColor;
+                dataGridViewUsers.ColumnHeadersHeight = 44;
+                dataGridViewUsers.RowTemplate.Height = 38;
+                dataGridViewUsers.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+                dataGridViewUsers.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewUsers.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewUsers.ColumnHeadersDefaultCellStyle.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewUsers.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewUsers.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                dataGridViewUsers.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewUsers.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewUsers.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewUsers.DefaultCellStyle.Font = new Font(UIHelper.FontFamily, 9.5F);
+                dataGridViewUsers.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                dataGridViewUsers.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewUsers.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewUsers.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewUsers.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                dataGridViewUsers.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                dataGridViewUsers.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewUsers.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewUsers.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+            }
+            finally
+            {
+                dataGridViewUsers.ResumeLayout();
+            }
+        }
+
+        private void SetUserColumnWidth(string name, int width)
+        {
+            if (!dataGridViewUsers.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = dataGridViewUsers.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(110, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
@@ -273,7 +346,24 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) || IsDisposed || Disposing)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة قبل تنفيذ التحديث المجدول.
+                }
+                return;
+            }
+
+            if (ReferenceEquals(sender, this) || isLoading)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Users") &&
@@ -282,10 +372,10 @@ namespace SchoolSystem.UI
                 !DataRefreshNotifier.IsRelated(e, "All"))
                 return;
 
+            bool wasLoading = isLoading;
+            isLoading = true;
             try
             {
-                bool wasLoading = isLoading;
-                isLoading = true;
                 LoadRoles();
                 LoadPermissions();
                 await LoadUsersAsync();
@@ -305,13 +395,14 @@ namespace SchoolSystem.UI
                         }
                     }
                 }
-
-                isLoading = wasLoading;
             }
             catch (Exception ex)
             {
-                isLoading = false;
                 ApplicationLogger.LogException("تحديث واجهة المستخدمين تلقائياً", ex);
+            }
+            finally
+            {
+                isLoading = wasLoading;
             }
         }
 
@@ -411,6 +502,21 @@ namespace SchoolSystem.UI
 
             if (dataGridViewUsers.Columns.Contains("UserID"))
                 dataGridViewUsers.Columns["UserID"].Visible = false;
+
+            dataGridViewUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            SetUserColumnWidth("FullName", 190);
+            SetUserColumnWidth("UserName", 145);
+            SetUserColumnWidth("RoleName", 135);
+            SetUserColumnWidth("Permissions", 220);
+            SetUserColumnWidth("Email", 210);
+            SetUserColumnWidth("Phone", 135);
+            SetUserColumnWidth("IsActive", 90);
+            SetUserColumnWidth("MustChangePassword", 140);
+            SetUserColumnWidth("FailedLoginAttempts", 130);
+            SetUserColumnWidth("LockedAt", 150);
+            SetUserColumnWidth("LastLoginAt", 150);
+            SetUserColumnWidth("CreatedAt", 145);
+            SetUserColumnWidth("UpdatedAt", 145);
         }
 
         // تعريف الدالة SetHeader لتنفيذ العملية المرتبطة بها.
