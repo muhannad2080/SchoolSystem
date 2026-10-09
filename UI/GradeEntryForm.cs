@@ -46,6 +46,7 @@ namespace SchoolSystem.UI
 
             UIHelper.ApplyStyle(this);
             ConfigureGradeActionLayout();
+            ConfigureGradeGridAppearance();
             Dock = DockStyle.Fill;
 
             // تطبيق قواعد التحقق من الحقول (فلترة الأحرف، أقصى طول، والتحقق عند
@@ -153,12 +154,27 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
-                isLoading)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // يجب إعادة ربط درجات الطلاب على خيط واجهة WinForms فقط.
+            if (InvokeRequired)
             {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة أثناء جدولة التحديث.
+                }
+
                 return;
             }
+
+            if (ReferenceEquals(sender, this) || isLoading)
+                return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Enrollment")
                 && !DataRefreshNotifier.IsRelated(e, "ClassAssignment")
@@ -168,7 +184,6 @@ namespace SchoolSystem.UI
                 && !DataRefreshNotifier.IsRelated(e, "Subjects")
                 && !DataRefreshNotifier.IsRelated(e, "AcademicYears"))
                 return;
-
 
             try
             {
@@ -187,6 +202,83 @@ namespace SchoolSystem.UI
             finally
             {
                 isLoading = false;
+            }
+        }
+
+        // جدول الدرجات قابل للتحرير في أعمدة الدرجات والملاحظات فقط؛ بقية الأعمدة المحسوبة تبقى مقفلة.
+        private void ConfigureGradeGridAppearance()
+        {
+            if (dataGridViewGrades == null)
+                return;
+
+            dataGridViewGrades.SuspendLayout();
+            try
+            {
+                dataGridViewGrades.AllowUserToAddRows = false;
+                dataGridViewGrades.AllowUserToDeleteRows = false;
+                dataGridViewGrades.AllowUserToResizeRows = false;
+                dataGridViewGrades.AllowUserToResizeColumns = true;
+                dataGridViewGrades.AllowUserToOrderColumns = true;
+                dataGridViewGrades.ReadOnly = false;
+                dataGridViewGrades.MultiSelect = false;
+                dataGridViewGrades.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewGrades.RowHeadersVisible = false;
+                dataGridViewGrades.RightToLeft = RightToLeft.Yes;
+                dataGridViewGrades.ScrollBars = ScrollBars.Both;
+                dataGridViewGrades.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewGrades.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewGrades.BackgroundColor = Color.White;
+                dataGridViewGrades.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewGrades.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewGrades.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewGrades.EnableHeadersVisualStyles = false;
+                dataGridViewGrades.GridColor = UIHelper.BorderColor;
+                dataGridViewGrades.ColumnHeadersHeight = 44;
+                dataGridViewGrades.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewGrades.RowTemplate.Height = 38;
+                dataGridViewGrades.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewGrades.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewGrades.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewGrades.ColumnHeadersDefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewGrades.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewGrades.ColumnHeadersDefaultCellStyle.WrapMode =
+                    DataGridViewTriState.True;
+                dataGridViewGrades.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                    UIHelper.PrimaryColor;
+                dataGridViewGrades.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewGrades.ColumnHeadersDefaultCellStyle.Padding =
+                    new Padding(8, 4, 8, 4);
+
+                dataGridViewGrades.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewGrades.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewGrades.DefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+                dataGridViewGrades.DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+                dataGridViewGrades.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewGrades.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewGrades.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewGrades.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dataGridViewGrades.AlternatingRowsDefaultCellStyle.BackColor =
+                    Color.FromArgb(241, 245, 249);
+                dataGridViewGrades.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewGrades.AlternatingRowsDefaultCellStyle.SelectionBackColor =
+                    UIHelper.AccentColor;
+                dataGridViewGrades.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewGrades.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewGrades.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewGrades.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewGrades.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                dataGridViewGrades.ResumeLayout();
             }
         }
 
@@ -613,6 +705,7 @@ namespace SchoolSystem.UI
         // تحميل قائمة الطلاب والدرجات حسب الصف والشعبة والعام والمادة والفصل.
         private async Task LoadGradesAsync()
         {
+            bool previousLoadingState = isLoading;
             try
             {
                 if (!ValidateGradeFilters())
@@ -625,9 +718,10 @@ namespace SchoolSystem.UI
                 string academicYear = cmbAcademicYear.Text.Trim();
                 string term = cmbTerm.Text;
 
+                isLoading = true;
                 Cursor = Cursors.WaitCursor;
 
-                currentGradesTable =
+                DataTable loadedGrades =
                     await Task.Run(() =>
                         gradeService.GetGradeEntryStudents(
                             classId,
@@ -636,24 +730,25 @@ namespace SchoolSystem.UI
                             subjectId,
                             term));
 
+                currentGradesTable = loadedGrades;
                 showIncompleteOnly = false;
                 btnIncomplete.Text = "غير المكتملة";
 
-                dataGridViewGrades.DataSource =
-                    currentGradesTable;
+                dataGridViewGrades.DataSource = currentGradesTable;
 
                 FormatGrid();
                 ApplyGridFilter();
-
-                Cursor = Cursors.Default;
             }
             catch (Exception ex)
             {
-                Cursor = Cursors.Default;
-
                 UIHelper.ShowException(
                     "تحميل الطلاب والدرجات",
                     ex);
+            }
+            finally
+            {
+                isLoading = previousLoadingState;
+                Cursor = Cursors.Default;
             }
         }
 
@@ -706,7 +801,48 @@ namespace SchoolSystem.UI
             MakeReadOnly("ResultStatus");
 
             dataGridViewGrades.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.Fill;
+                DataGridViewAutoSizeColumnsMode.None;
+
+            SetGradeColumnWidth("StudentNumber", 125);
+            SetGradeColumnWidth("StudentName", 190);
+            SetGradeColumnWidth("Gender", 82);
+            SetGradeColumnWidth("TermName", 115);
+            SetGradeColumnWidth("SubjectName", 160);
+            SetGradeColumnWidth("Quiz1", 100);
+            SetGradeColumnWidth("Quiz2", 100);
+            SetGradeColumnWidth("CourseWork", 120);
+            SetGradeColumnWidth("FinalExam", 125);
+            SetGradeColumnWidth("Total", 105);
+            SetGradeColumnWidth("SubjectAverage", 125);
+            SetGradeColumnWidth("GradeLetter", 110);
+            SetGradeColumnWidth("ResultStatus", 110);
+            SetGradeColumnWidth("StudentTotal", 130);
+            SetGradeColumnWidth("StudentMaxTotal", 130);
+            SetGradeColumnWidth("StudentAverage", 130);
+            SetGradeColumnWidth("StudentGradeLetter", 120);
+            SetGradeColumnWidth("StudentResultStatus", 130);
+            SetGradeColumnWidth("Notes", 200);
+
+            foreach (DataGridViewColumn column in dataGridViewGrades.Columns)
+            {
+                if (column.Visible)
+                    column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
+        }
+
+        private void SetGradeColumnWidth(string name, int width)
+        {
+            if (!dataGridViewGrades.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = dataGridViewGrades.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(95, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
         }
 
         // تغيير عنوان عمود داخل جدول الدرجات إذا كان العمود موجودًا.
