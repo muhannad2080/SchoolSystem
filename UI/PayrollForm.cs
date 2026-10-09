@@ -36,6 +36,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureContractsGridAppearance();
             SchoolSystem.Helpers.UIHelper.NormalizeActionBar(panelButtons);
             this.Dock = DockStyle.Fill;
 
@@ -61,9 +62,26 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
-                selectedContractId != 0)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // تحديث قائمة العقود يجب أن يجري على خيط واجهة WinForms.
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة أثناء جدولة التحديث.
+                }
+
+                return;
+            }
+
+            if (ReferenceEquals(sender, this) || selectedContractId != 0)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Teachers") &&
@@ -81,6 +99,83 @@ namespace SchoolSystem.UI
                 ApplicationLogger.LogException(
                     "شاشة العقود الوظيفية: التحديث التلقائي",
                     ex);
+            }
+        }
+
+        // جدول العقود بأسلوب Excel؛ القيم الإجمالية والصافية تبقى للقراءة فقط ومميزة بصريًا.
+        private void ConfigureContractsGridAppearance()
+        {
+            if (dataGridViewContracts == null)
+                return;
+
+            dataGridViewContracts.SuspendLayout();
+            try
+            {
+                dataGridViewContracts.AllowUserToAddRows = false;
+                dataGridViewContracts.AllowUserToDeleteRows = false;
+                dataGridViewContracts.AllowUserToResizeRows = false;
+                dataGridViewContracts.AllowUserToResizeColumns = true;
+                dataGridViewContracts.AllowUserToOrderColumns = true;
+                dataGridViewContracts.ReadOnly = true;
+                dataGridViewContracts.MultiSelect = false;
+                dataGridViewContracts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewContracts.RowHeadersVisible = false;
+                dataGridViewContracts.RightToLeft = RightToLeft.Yes;
+                dataGridViewContracts.ScrollBars = ScrollBars.Both;
+                dataGridViewContracts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewContracts.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewContracts.BackgroundColor = System.Drawing.Color.White;
+                dataGridViewContracts.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewContracts.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewContracts.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewContracts.EnableHeadersVisualStyles = false;
+                dataGridViewContracts.GridColor = UIHelper.BorderColor;
+                dataGridViewContracts.ColumnHeadersHeight = 44;
+                dataGridViewContracts.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewContracts.RowTemplate.Height = 38;
+                dataGridViewContracts.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewContracts.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewContracts.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+                dataGridViewContracts.ColumnHeadersDefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewContracts.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewContracts.ColumnHeadersDefaultCellStyle.WrapMode =
+                    DataGridViewTriState.True;
+                dataGridViewContracts.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                    UIHelper.PrimaryColor;
+                dataGridViewContracts.ColumnHeadersDefaultCellStyle.SelectionForeColor =
+                    System.Drawing.Color.White;
+                dataGridViewContracts.ColumnHeadersDefaultCellStyle.Padding =
+                    new Padding(8, 4, 8, 4);
+
+                dataGridViewContracts.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+                dataGridViewContracts.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewContracts.DefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+                dataGridViewContracts.DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+                dataGridViewContracts.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewContracts.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                dataGridViewContracts.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewContracts.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dataGridViewContracts.AlternatingRowsDefaultCellStyle.BackColor =
+                    System.Drawing.Color.FromArgb(241, 245, 249);
+                dataGridViewContracts.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewContracts.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewContracts.AlternatingRowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                dataGridViewContracts.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+                dataGridViewContracts.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewContracts.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewContracts.RowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+            }
+            finally
+            {
+                dataGridViewContracts.ResumeLayout();
             }
         }
 
@@ -392,7 +487,58 @@ namespace SchoolSystem.UI
             if (dataGridViewContracts.Columns.Contains("UpdatedAt"))
                 dataGridViewContracts.Columns["UpdatedAt"].HeaderText = "آخر تعديل";
 
-            dataGridViewContracts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewContracts.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+
+            SetContractColumnWidth("ContractID", 78);
+            SetContractColumnWidth("TeacherName", 180);
+            SetContractColumnWidth("ContractNumber", 145);
+            SetContractColumnWidth("ContractType", 125);
+            SetContractColumnWidth("ContractStatus", 110);
+            SetContractColumnWidth("BasicSalary", 120);
+            SetContractColumnWidth("HousingAllowance", 120);
+            SetContractColumnWidth("TransportAllowance", 120);
+            SetContractColumnWidth("OtherAllowances", 120);
+            SetContractColumnWidth("Deductions", 115);
+            SetContractColumnWidth("TotalSalary", 125);
+            SetContractColumnWidth("NetSalary", 125);
+            SetContractColumnWidth("StartDate", 120);
+            SetContractColumnWidth("EndDate", 120);
+            SetContractColumnWidth("PaymentMethod", 125);
+            SetContractColumnWidth("Notes", 200);
+            SetContractColumnWidth("CreatedAt", 145);
+            SetContractColumnWidth("UpdatedAt", 145);
+
+            FormatContractDate("StartDate");
+            FormatContractDate("EndDate");
+            FormatContractDate("CreatedAt");
+            FormatContractDate("UpdatedAt");
+
+            foreach (DataGridViewColumn column in dataGridViewContracts.Columns)
+            {
+                if (column.Visible)
+                    column.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
+        }
+
+        private void SetContractColumnWidth(string name, int width)
+        {
+            if (!dataGridViewContracts.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = dataGridViewContracts.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(100, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+        }
+
+        private void FormatContractDate(string name)
+        {
+            if (dataGridViewContracts.Columns.Contains(name))
+                dataGridViewContracts.Columns[name].DefaultCellStyle.Format = "dd/MM/yyyy";
         }
 
         // تعريف زر البحث لتنفيذ تصفية العقود.
