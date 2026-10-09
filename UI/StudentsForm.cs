@@ -44,6 +44,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             UIHelper.ApplyStyle(this);
+            ConfigureResponsiveLayout();
 
             txtStudentNumber.ReadOnly = true;
             txtStudentNumber.TabStop = false;
@@ -78,6 +79,164 @@ namespace SchoolSystem.UI
                 DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
 
             SetFormMode(FormMode.View);
+        }
+
+        /// <summary>
+        /// Rebuild the search toolbar with layout containers instead of fixed
+        /// coordinates, and allow the command bar to wrap without hiding actions.
+        /// </summary>
+        private void ConfigureResponsiveLayout()
+        {
+            SuspendLayout();
+            pnlSearch.SuspendLayout();
+            pnlButtons.SuspendLayout();
+
+            try
+            {
+                pnlSearch.Controls.Clear();
+                pnlSearch.Dock = DockStyle.Top;
+                pnlSearch.Height = 112;
+                pnlSearch.Padding = new Padding(10, 6, 10, 6);
+                pnlSearch.BackColor = Color.White;
+
+                _searchLayout = new TableLayoutPanel
+                {
+                    Dock = DockStyle.Fill,
+                    ColumnCount = 1,
+                    RowCount = 2,
+                    Margin = Padding.Empty,
+                    Padding = Padding.Empty,
+                    BackColor = Color.White,
+                    RightToLeft = RightToLeft.Yes
+                };
+                _searchLayout.ColumnStyles.Add(
+                    new ColumnStyle(SizeType.Percent, 100F));
+                _searchLayout.RowStyles.Add(
+                    new RowStyle(SizeType.Percent, 50F));
+                _searchLayout.RowStyles.Add(
+                    new RowStyle(SizeType.Percent, 50F));
+
+                FlowLayoutPanel searchRow = new FlowLayoutPanel
+                {
+                    Dock = DockStyle.Fill,
+                    FlowDirection = FlowDirection.RightToLeft,
+                    WrapContents = false,
+                    AutoScroll = false,
+                    Margin = Padding.Empty,
+                    Padding = Padding.Empty,
+                    BackColor = Color.White,
+                    RightToLeft = RightToLeft.Yes
+                };
+
+                FlowLayoutPanel filterRow = new FlowLayoutPanel
+                {
+                    Dock = DockStyle.Fill,
+                    FlowDirection = FlowDirection.RightToLeft,
+                    WrapContents = false,
+                    AutoScroll = false,
+                    Margin = Padding.Empty,
+                    Padding = Padding.Empty,
+                    BackColor = Color.White,
+                    RightToLeft = RightToLeft.Yes
+                };
+
+                lblSearch.AutoSize = false;
+                lblSearch.Size = new Size(70, 40);
+                lblSearch.TextAlign = ContentAlignment.MiddleRight;
+                lblSearch.Margin = new Padding(4, 0, 4, 0);
+
+                txtSearch.Anchor = AnchorStyles.None;
+                txtSearch.Size = new Size(300, 32);
+                txtSearch.Margin = new Padding(4, 4, 4, 4);
+
+                btnSearch.Anchor = AnchorStyles.None;
+                btnSearch.Size = new Size(110, 40);
+                btnSearch.MinimumSize = new Size(110, 40);
+                btnSearch.Margin = new Padding(4, 0, 4, 0);
+
+                btnClearFilters.Anchor = AnchorStyles.None;
+                btnClearFilters.Size = new Size(120, 40);
+                btnClearFilters.MinimumSize = new Size(110, 40);
+                btnClearFilters.Margin = new Padding(4, 0, 4, 0);
+
+                btnReload.Anchor = AnchorStyles.None;
+                btnReload.Size = new Size(136, 40);
+                btnReload.MinimumSize = new Size(110, 40);
+                btnReload.Margin = new Padding(4, 0, 4, 0);
+
+                searchRow.Controls.Add(lblSearch);
+                searchRow.Controls.Add(txtSearch);
+                searchRow.Controls.Add(btnSearch);
+                searchRow.Controls.Add(btnClearFilters);
+                searchRow.Controls.Add(btnReload);
+
+                Label classFilterLabel = new Label
+                {
+                    AutoSize = false,
+                    Size = new Size(55, 32),
+                    Text = "الصف:",
+                    TextAlign = ContentAlignment.MiddleRight,
+                    Font = new Font("Tahoma", 9F, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(55, 65, 81),
+                    Margin = new Padding(4, 2, 4, 2)
+                };
+                Label statusFilterLabel = new Label
+                {
+                    AutoSize = false,
+                    Size = new Size(65, 32),
+                    Text = "الحالة:",
+                    TextAlign = ContentAlignment.MiddleRight,
+                    Font = new Font("Tahoma", 9F, FontStyle.Bold),
+                    ForeColor = Color.FromArgb(55, 65, 81),
+                    Margin = new Padding(4, 2, 4, 2)
+                };
+
+                cmbFilterClass.Anchor = AnchorStyles.None;
+                cmbFilterClass.Size = new Size(190, 32);
+                cmbFilterClass.Margin = new Padding(4, 2, 4, 2);
+
+                cmbFilterStatus.Anchor = AnchorStyles.None;
+                cmbFilterStatus.Size = new Size(160, 32);
+                cmbFilterStatus.Margin = new Padding(4, 2, 4, 2);
+
+                lblCount.AutoSize = false;
+                lblCount.Size = new Size(190, 32);
+                lblCount.TextAlign = ContentAlignment.MiddleCenter;
+                lblCount.Margin = new Padding(8, 2, 8, 2);
+
+                filterRow.Controls.Add(classFilterLabel);
+                filterRow.Controls.Add(cmbFilterClass);
+                filterRow.Controls.Add(statusFilterLabel);
+                filterRow.Controls.Add(cmbFilterStatus);
+                filterRow.Controls.Add(lblCount);
+
+                _searchLayout.Controls.Add(searchRow, 0, 0);
+                _searchLayout.Controls.Add(filterRow, 0, 1);
+                pnlSearch.Controls.Add(_searchLayout);
+
+                pnlButtons.Dock = DockStyle.Bottom;
+                pnlButtons.Height = 112;
+                pnlButtons.AutoScroll = true;
+                pnlButtons.WrapContents = true;
+                pnlButtons.FlowDirection = FlowDirection.RightToLeft;
+                pnlButtons.Padding = new Padding(8);
+
+                foreach (Control control in pnlButtons.Controls)
+                {
+                    Button button = control as Button;
+                    if (button == null)
+                        continue;
+
+                    button.Margin = new Padding(4, 2, 4, 2);
+                    button.Height = 40;
+                }
+            }
+            finally
+            {
+                pnlButtons.ResumeLayout(true);
+                pnlSearch.ResumeLayout(true);
+                ResumeLayout(true);
+            }
         }
 
         private async void DataRefreshNotifier_DataChanged(
