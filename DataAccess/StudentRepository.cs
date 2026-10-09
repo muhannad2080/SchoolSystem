@@ -76,6 +76,78 @@ ORDER BY s.StudentId DESC;";
                 string.Equals(student.Status, "نشط", System.StringComparison.OrdinalIgnoreCase));
         }
 
+        /// <summary>
+        /// Returns active students who do not already have a registration
+        /// in the requested academic year. When editing an existing
+        /// registration, exclude that registration only so its student can
+        /// remain selected without exposing students with another active request.
+        /// </summary>
+        public List<Student> GetActiveNotEnrolledForAcademicYear(string academicYear, int excludeEnrollmentId = 0)
+        {
+            if (string.IsNullOrWhiteSpace(academicYear))
+                throw new ArgumentException("العام الدراسي مطلوب.", nameof(academicYear));
+
+            var students = new List<Student>();
+
+            const string query = @"
+SELECT
+    s.StudentId,
+    ISNULL(s.StudentNumber, N'') AS StudentNumber,
+    ISNULL(s.FullName, N'') AS FullName,
+    ISNULL(s.Gender, N'') AS Gender,
+    s.BirthDate,
+    ISNULL(s.BirthPlace, N'') AS BirthPlace,
+    ISNULL(s.Nationality, N'') AS Nationality,
+    ISNULL(s.NationalId, N'') AS NationalId,
+    ISNULL(s.StudentPhone, N'') AS StudentPhone,
+    ISNULL(s.Status, N'') AS Status,
+    ISNULL(s.GuardianName, N'') AS GuardianName,
+    ISNULL(s.GuardianRelation, N'') AS GuardianRelation,
+    ISNULL(s.GuardianPhone, N'') AS GuardianPhone,
+    ISNULL(s.GuardianEmail, N'') AS GuardianEmail,
+    ISNULL(s.GuardianJob, N'') AS GuardianJob,
+    ISNULL(s.Governorate, N'') AS Governorate,
+    ISNULL(s.District, N'') AS District,
+    ISNULL(s.Address, N'') AS Address,
+    s.Photo,
+    s.CreatedAt,
+    s.UpdatedAt,
+    ISNULL(c.ClassName, N'') AS CurrentClassName,
+    ISNULL(s.Section, N'') AS CurrentSection,
+    ISNULL(s.AcademicYear, N'') AS AcademicYear
+FROM Students s
+LEFT JOIN Classes c ON c.ClassID = s.ClassID
+WHERE LTRIM(RTRIM(ISNULL(s.Status, N''))) = N'نشط'
+  AND NOT EXISTS
+  (
+      SELECT 1
+      FROM Enrollments e
+      WHERE e.StudentID = s.StudentID
+        AND REPLACE(LTRIM(RTRIM(ISNULL(e.AcademicYear, N''))), N'-', N'/') =
+            REPLACE(LTRIM(RTRIM(@AcademicYear)), N'-', N'/')
+        AND (e.Status IS NULL OR LTRIM(RTRIM(e.Status)) <> N'مرفوض')
+        AND (@ExcludeEnrollmentID <= 0 OR e.EnrollmentID <> @ExcludeEnrollmentID)
+  )
+ORDER BY s.StudentId DESC;";
+
+            using (SqlConnection conn = GetConnection())
+            using (SqlCommand cmd = new SqlCommand(query, conn))
+            {
+                cmd.Parameters.Add("@AcademicYear", SqlDbType.NVarChar, 20).Value = academicYear.Trim().Replace('-', '/');
+                cmd.Parameters.Add("@ExcludeEnrollmentID", SqlDbType.Int).Value = Math.Max(0, excludeEnrollmentId);
+
+                conn.Open();
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                        students.Add(MapStudent(reader));
+                }
+            }
+
+            return students;
+        }
+
         // تعريف الدالة GetById لتنفيذ العملية المرتبطة بها.
         public Student GetById(int studentId)
         {
