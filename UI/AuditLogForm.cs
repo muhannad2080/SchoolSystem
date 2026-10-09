@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ namespace SchoolSystem.UI
             UIHelper.StylePrimaryButton(refreshButton);
             UIHelper.StyleButton(exportButton, UIHelper.SuccessColor);
             UIHelper.StyleDataGridView(grid);
+            ConfigureAuditGridAppearance();
 
             userFilter.SelectedIndexChanged += Filter_SelectedIndexChanged;
 
@@ -57,9 +59,25 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
-                filterLoadInProgress)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => AuditLogForm_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الواجهة أثناء جدولة التحديث.
+                }
+
+                return;
+            }
+
+            if (ReferenceEquals(sender, this) || filterLoadInProgress)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "All"))
@@ -173,12 +191,91 @@ namespace SchoolSystem.UI
         // تعريف الدالة SetColumnWidths لتنفيذ العملية المرتبطة بها.
         private void SetColumnWidths()
         {
-            if (grid.Columns.Contains("Details"))
-                grid.Columns["Details"].FillWeight = 220;
-            if (grid.Columns.Contains("CreatedAt"))
-                grid.Columns["CreatedAt"].FillWeight = 95;
-            if (grid.Columns.Contains("AuditLogID"))
-                grid.Columns["AuditLogID"].FillWeight = 45;
+            SetAuditColumnWidth("AuditLogID", 82);
+            SetAuditColumnWidth("CreatedAt", 160);
+            SetAuditColumnWidth("UserName", 145);
+            SetAuditColumnWidth("ActionName", 140);
+            SetAuditColumnWidth("EntityName", 140);
+            SetAuditColumnWidth("EntityID", 105);
+            SetAuditColumnWidth("Details", 360);
+        }
+
+        private void SetAuditColumnWidth(string name, int width)
+        {
+            if (grid == null || !grid.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = grid.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(120, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
+        }
+
+        private void ConfigureAuditGridAppearance()
+        {
+            if (grid == null)
+                return;
+
+            grid.SuspendLayout();
+            try
+            {
+                grid.ReadOnly = true;
+                grid.AllowUserToAddRows = false;
+                grid.AllowUserToDeleteRows = false;
+                grid.AllowUserToResizeRows = false;
+                grid.AllowUserToResizeColumns = true;
+                grid.AllowUserToOrderColumns = true;
+                grid.MultiSelect = false;
+                grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                grid.RowHeadersVisible = false;
+                grid.RightToLeft = RightToLeft.Yes;
+                grid.ScrollBars = ScrollBars.Both;
+                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                grid.BackgroundColor = Color.White;
+                grid.BorderStyle = BorderStyle.FixedSingle;
+                grid.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                grid.EnableHeadersVisualStyles = false;
+                grid.GridColor = UIHelper.BorderColor;
+                grid.ColumnHeadersHeight = 44;
+                grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                grid.RowTemplate.Height = 38;
+                grid.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                grid.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                grid.ColumnHeadersDefaultCellStyle.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                grid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                grid.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                grid.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                grid.DefaultCellStyle.BackColor = Color.White;
+                grid.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.DefaultCellStyle.Font = new Font(UIHelper.FontFamily, 9.5F);
+                grid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                grid.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.DefaultCellStyle.SelectionForeColor = Color.White;
+                grid.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                grid.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                grid.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                grid.RowsDefaultCellStyle.BackColor = Color.White;
+                grid.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                grid.ResumeLayout();
+            }
         }
 
         // تعريف الدالة Filter_SelectedIndexChanged لتنفيذ العملية المرتبطة بها.
