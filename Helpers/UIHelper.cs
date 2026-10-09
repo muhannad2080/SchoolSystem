@@ -2397,6 +2397,7 @@ namespace SchoolSystem.Helpers
             try
             {
                 panel.FlowDirection = FlowDirection.RightToLeft;
+                panel.RightToLeft = RightToLeft.Yes;
                 panel.WrapContents = false;
                 panel.AutoScroll = false;
                 panel.Padding = new Padding(8, 4, 8, 4);
@@ -2414,6 +2415,7 @@ namespace SchoolSystem.Helpers
                     button.Size = new Size(width, height);
                     button.Margin = new Padding(4, 0, 4, 0);
                     button.TextAlign = ContentAlignment.MiddleCenter;
+                    button.RightToLeft = RightToLeft.Yes;
                     button.Cursor = Cursors.Hand;
                 }
             }
