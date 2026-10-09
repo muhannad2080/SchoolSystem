@@ -64,6 +64,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureTransportActionPanels();
             Dock = DockStyle.Fill;
 
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
@@ -78,6 +79,60 @@ namespace SchoolSystem.UI
             txtBusNumber.MaxLength = 30;
             txtBusNumber.KeyPress -= BusNumber_KeyPress;
             txtBusNumber.KeyPress += BusNumber_KeyPress;
+        }
+
+        /// <summary>
+        /// Normalizes bus and route action buttons. The designer used 95px widths
+        /// while each button required at least 110px, which could overlap controls
+        /// positioned only 101px apart.
+        /// </summary>
+        private void ConfigureTransportActionPanels()
+        {
+            ConfigureTransportActionButton(btnAddBus, 125);
+            ConfigureTransportActionButton(btnUpdateBus, 170);
+            ConfigureTransportActionButton(btnDeleteBus, 125);
+            ConfigureTransportActionButton(btnClearBus, 145);
+
+            ConfigureTransportActionButton(btnAddRoute, 125);
+            ConfigureTransportActionButton(btnUpdateRoute, 170);
+            ConfigureTransportActionButton(btnDeleteRoute, 125);
+            ConfigureTransportActionButton(btnClearRoute, 145);
+
+            FlowLayoutPanel[] panels =
+            {
+                panelBusesButtons,
+                panelRoutesButtons
+            };
+
+            foreach (FlowLayoutPanel panel in panels)
+            {
+                if (panel == null)
+                    continue;
+
+                panel.SuspendLayout();
+                panel.FlowDirection = FlowDirection.RightToLeft;
+                panel.WrapContents = true;
+                panel.AutoScroll = true;
+                panel.Padding = new Padding(8);
+                panel.ResumeLayout(true);
+            }
+        }
+
+        private static void ConfigureTransportActionButton(
+            Button button,
+            int width)
+        {
+            if (button == null)
+                return;
+
+            button.AutoSize = false;
+            button.Width = width;
+            button.Height = 40;
+            button.MinimumSize = new Size(width, 40);
+            button.Margin = new Padding(4, 2, 4, 2);
+            button.TextAlign = ContentAlignment.MiddleCenter;
+            button.Padding = new Padding(4, 0, 4, 0);
+            button.Cursor = Cursors.Hand;
         }
 
         private async void DataRefreshNotifier_DataChanged(
