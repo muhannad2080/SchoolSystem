@@ -189,6 +189,18 @@ namespace SchoolSystem.UI
             {
                 isLoading = true;
 
+                int displayedEnrollmentId;
+                if (!int.TryParse(txtEnrollmentID.Text.Trim(), out displayedEnrollmentId) ||
+                    displayedEnrollmentId <= 0)
+                {
+                    displayedEnrollmentId = 0;
+                }
+
+                LoadStudentChoicesForAcademicYear(
+                    txtAcademicYear.Text,
+                    displayedEnrollmentId,
+                    TryGetSelectedId(cmbStudentID));
+
                 LoadData();
                 await LoadSectionsAsync();
                 await LoadRegistrationFeePlanAsync(false);
@@ -694,9 +706,71 @@ namespace SchoolSystem.UI
 
             SetAutomaticAcademicYear();
 
+            if (string.Equals(
+                    txtEnrollmentID.Text,
+                    "جديد",
+                    StringComparison.Ordinal))
+            {
+                int currentlySelectedStudentId =
+                    TryGetSelectedId(cmbStudentID);
+
+                LoadStudentChoicesForAcademicYear(
+                    txtAcademicYear.Text,
+                    0,
+                    currentlySelectedStudentId);
+            }
+
             await LoadSectionsAsync();
 
             await LoadRegistrationFeePlanAsync(false);
+        }
+
+        /// <summary>
+        /// Rebuilds the student selector against the academic year. During
+        /// editing, only the current registration is excluded from duplicate
+        /// detection so its student remains selectable in the existing record.
+        /// </summary>
+        private DataTable LoadStudentChoicesForAcademicYear(
+            string academicYear,
+            int excludeEnrollmentId = 0,
+            int selectedStudentId = 0)
+        {
+            bool wasLoading = isLoading;
+            isLoading = true;
+
+            try
+            {
+                DataTable students =
+                    studentService.GetStudentsAvailableForEnrollment(
+                        academicYear,
+                        excludeEnrollmentId);
+
+                cmbStudentID.DataSource = null;
+                cmbStudentID.DisplayMember = "FullName";
+                cmbStudentID.ValueMember = "StudentID";
+                cmbStudentID.DataSource = students;
+                cmbStudentID.SelectedIndex = -1;
+                txtStudentName.Clear();
+
+                if (selectedStudentId > 0 &&
+                    students.Columns.Contains("StudentId") &&
+                    students.AsEnumerable().Any(
+                        row => Convert.ToInt32(row["StudentId"]) == selectedStudentId))
+                {
+                    cmbStudentID.SelectedValue = selectedStudentId;
+                    DataRowView selectedStudent =
+                        cmbStudentID.SelectedItem as DataRowView;
+
+                    if (selectedStudent != null)
+                        txtStudentName.Text = Convert.ToString(selectedStudent["FullName"]);
+                }
+
+                return students;
+            }
+            finally
+            {
+                isLoading = wasLoading;
+            }
         }
 
         // ================================================================
@@ -713,20 +787,7 @@ namespace SchoolSystem.UI
                 // Students
                 // --------------------------------------------------------
 
-                DataTable dtStudents =
-                    studentService.GetActiveStudents();
-
-                cmbStudentID.DataSource =
-                    dtStudents;
-
-                cmbStudentID.DisplayMember =
-                    "FullName";
-
-                cmbStudentID.ValueMember =
-                    "StudentID";
-
-                cmbStudentID.SelectedIndex =
-                    -1;
+                LoadStudentChoicesForAcademicYear(txtAcademicYear.Text);
 
                 // --------------------------------------------------------
                 // Classes
@@ -1142,7 +1203,25 @@ namespace SchoolSystem.UI
                 return;
             }
 
-            LoadData();
+            int displayedEnrollmentId;
+            if (!int.TryParse(txtEnrollmentID.Text.Trim(), out displayedEnrollmentId) ||
+                displayedEnrollmentId <= 0)
+            {
+                displayedEnrollmentId = 0;
+            }
+
+            try
+            {
+                LoadStudentChoicesForAcademicYear(
+                    txtAcademicYear.Text,
+                    displayedEnrollmentId,
+                    TryGetSelectedId(cmbStudentID));
+                LoadData();
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("تحديث بيانات التسجيل والطلاب المتاحين", ex);
+            }
         }
 
         // ================================================================
@@ -1162,6 +1241,19 @@ namespace SchoolSystem.UI
 
             ClearInputs();
 
+            DataTable availableStudents;
+            try
+            {
+                availableStudents =
+                    LoadStudentChoicesForAcademicYear(txtAcademicYear.Text);
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("تحميل الطلاب غير المسجلين للعام الدراسي", ex);
+                DisableInputs();
+                return;
+            }
+
             EnableInputs();
 
             txtEnrollmentID.Text =
@@ -1175,6 +1267,21 @@ namespace SchoolSystem.UI
 
             cmbStatus.SelectedItem =
                 "جديد";
+
+            if (availableStudents.Rows.Count == 0)
+            {
+                lblStatus.Text =
+                    "لا يوجد طلاب نشطون غير مسجلين في العام الدراسي " +
+                    txtAcademicYear.Text +
+                    ". أضف طالباً أو تحقق من التسجيلات الحالية.";
+
+                UIHelper.ShowWarning(lblStatus.Text);
+                return;
+            }
+
+            lblStatus.Text =
+                "عدد الطلاب المتاحين للتسجيل: " +
+                availableStudents.Rows.Count;
 
             cmbStudentID.Focus();
         }
@@ -1333,17 +1440,35 @@ namespace SchoolSystem.UI
 
                 if (success)
                 {
-                    UIHelper.ShowInfo(
-                        "تم الحفظ بنجاح.");
+                    if (enrollment.EnrollmentID > 0)
+                        txtEnrollmentID.Text = enrollment.EnrollmentID.ToString();
+
+                    if (!string.IsNullOrWhiteSpace(enrollment.SeatNumber))
+                        txtSeatNumber.Text = enrollment.SeatNumber;
+
+                    isEditMode = false;
+                    DisableInputs();
 
                     LoadData();
-
                     DataRefreshNotifier.Notify("All", this);
 
-                    isEditMode =
-                        false;
+                    try
+                    {
+                        LoadStudentChoicesForAcademicYear(
+                            enrollment.AcademicYear,
+                            enrollment.EnrollmentID,
+                            enrollment.StudentID);
+                    }
+                    catch (Exception refreshEx)
+                    {
+                        ApplicationLogger.LogException(
+                            "شاشة القيد: تحديث قائمة الطلاب بعد الحفظ",
+                            refreshEx);
+                        UIHelper.ShowWarning(
+                            "تم حفظ التسجيل، لكن تعذر تحديث قائمة الطلاب المتاحين. استخدم زر تحديث البيانات.");
+                    }
 
-                    DisableInputs();
+                    UIHelper.ShowInfo("تم الحفظ بنجاح.");
                 }
             }
             catch (Exception ex)
@@ -1370,8 +1495,13 @@ namespace SchoolSystem.UI
             {
                 isSaving = false;
 
+                // لا نعيد تفعيل الحفظ بعد نجاح العملية وإغلاق وضع الإدخال.
                 btnSave.Enabled =
-                    true;
+                    isEditMode ||
+                    string.Equals(
+                        txtEnrollmentID.Text.Trim(),
+                        "جديد",
+                        StringComparison.Ordinal);
             }
         }
 
@@ -1524,11 +1654,21 @@ namespace SchoolSystem.UI
                         LoadData();
 
                         ClearInputs();
+                        isEditMode = false;
 
-                        isEditMode =
-                            false;
+                        try
+                        {
+                            LoadStudentChoicesForAcademicYear(txtAcademicYear.Text);
+                        }
+                        catch (Exception refreshEx)
+                        {
+                            ApplicationLogger.LogException(
+                                "شاشة القيد: تحديث قائمة الطلاب بعد حذف الطلب",
+                                refreshEx);
+                        }
 
                         DisableInputs();
+                        DataRefreshNotifier.Notify("All", this);
                     }
                 }
                 catch (Exception ex)
@@ -1548,12 +1688,19 @@ namespace SchoolSystem.UI
             object sender,
             EventArgs e)
         {
+            isEditMode = false;
             ClearInputs();
 
-            DisableInputs();
+            try
+            {
+                LoadStudentChoicesForAcademicYear(txtAcademicYear.Text);
+            }
+            catch (Exception ex)
+            {
+                UIHelper.ShowException("تحديث قائمة الطلاب بعد إلغاء الإدخال", ex);
+            }
 
-            isEditMode =
-                false;
+            DisableInputs();
         }
 
         // ================================================================
@@ -2428,18 +2575,25 @@ namespace SchoolSystem.UI
                         row,
                         "EnrollmentID");
 
+                txtAcademicYear.Text =
+                    SafeCell(
+                        row,
+                        "AcademicYear");
+
+                int recordEnrollmentId;
+                int recordStudentId;
+                int.TryParse(txtEnrollmentID.Text.Trim(), out recordEnrollmentId);
+                int.TryParse(SafeCell(row, "StudentID"), out recordStudentId);
+
+                LoadStudentChoicesForAcademicYear(
+                    txtAcademicYear.Text,
+                    recordEnrollmentId,
+                    recordStudentId);
+
                 txtStudentName.Text =
                     SafeCell(
                         row,
                         "StudentName");
-
-                if (row.DataGridView.Columns.Contains(
-                        "StudentID"))
-                {
-                    cmbStudentID.SelectedValue =
-                        row.Cells[
-                            "StudentID"].Value;
-                }
 
                 SafeSetDate(
                     dtpApplicationDate,
@@ -2453,11 +2607,6 @@ namespace SchoolSystem.UI
                     SafeCell(
                         row,
                         "ApplicationType");
-
-                txtAcademicYear.Text =
-                    SafeCell(
-                        row,
-                        "AcademicYear");
 
                 if (row.DataGridView.Columns.Contains(
                         "ClassID"))
