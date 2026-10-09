@@ -64,6 +64,7 @@ namespace SchoolSystem.UI
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureTransportGridAppearance();
             ConfigureTransportActionPanels();
             Dock = DockStyle.Fill;
 
@@ -139,6 +140,25 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الواجهة أثناء جدولة التحديث.
+                }
+
+                return;
+            }
+
+
             if (ReferenceEquals(sender, this) ||
                 IsDisposed ||
                 isLoading)
@@ -187,6 +207,101 @@ namespace SchoolSystem.UI
             {
                 e.Handled = true;
             }
+        }
+
+        // تنسيق موحد لجداول الحافلات والمسارات وتوزيعات النقل، مع السماح بالتمرير والنسخ إلى Excel.
+        private void ConfigureTransportGridAppearance()
+        {
+            DataGridView[] grids =
+            {
+                dataGridViewBuses,
+                dataGridViewRoutes,
+                dataGridViewStudentTransport
+            };
+
+            foreach (DataGridView grid in grids)
+            {
+                if (grid == null)
+                    continue;
+
+                grid.SuspendLayout();
+                try
+                {
+                    grid.AllowUserToAddRows = false;
+                    grid.AllowUserToDeleteRows = false;
+                    grid.AllowUserToResizeRows = false;
+                    grid.AllowUserToResizeColumns = true;
+                    grid.AllowUserToOrderColumns = true;
+                    grid.ReadOnly = true;
+                    grid.MultiSelect = false;
+                    grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                    grid.RowHeadersVisible = false;
+                    grid.RightToLeft = RightToLeft.Yes;
+                    grid.ScrollBars = ScrollBars.Both;
+                    grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                    grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                    grid.BackgroundColor = System.Drawing.Color.White;
+                    grid.BorderStyle = BorderStyle.FixedSingle;
+                    grid.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                    grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                    grid.EnableHeadersVisualStyles = false;
+                    grid.GridColor = UIHelper.BorderColor;
+                    grid.ColumnHeadersHeight = 44;
+                    grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                    grid.RowTemplate.Height = 38;
+                    grid.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                    grid.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                    grid.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+                    grid.ColumnHeadersDefaultCellStyle.Font =
+                        new System.Drawing.Font(UIHelper.FontFamily, 10F, System.Drawing.FontStyle.Bold);
+                    grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    grid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                    grid.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                    grid.ColumnHeadersDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                    grid.ColumnHeadersDefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+
+                    grid.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+                    grid.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                    grid.DefaultCellStyle.Font =
+                        new System.Drawing.Font(UIHelper.FontFamily, 9.5F);
+                    grid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    grid.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                    grid.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                    grid.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                    grid.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                    grid.AlternatingRowsDefaultCellStyle.BackColor =
+                        System.Drawing.Color.FromArgb(241, 245, 249);
+                    grid.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                    grid.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                    grid.AlternatingRowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                    grid.RowsDefaultCellStyle.BackColor = System.Drawing.Color.White;
+                    grid.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                    grid.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                    grid.RowsDefaultCellStyle.SelectionForeColor = System.Drawing.Color.White;
+                }
+                finally
+                {
+                    grid.ResumeLayout();
+                }
+            }
+        }
+
+        private void SetTransportGridColumnWidth(DataGridView grid, string name, int width)
+        {
+            if (grid == null || !grid.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = grid.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(100, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
@@ -330,7 +445,12 @@ namespace SchoolSystem.UI
             SetBusHeader("Capacity", "السعة");
             SetBusHeader("Notes", "ملاحظات");
 
-                    }
+            SetTransportGridColumnWidth(dataGridViewBuses, "BusNumber", 135);
+            SetTransportGridColumnWidth(dataGridViewBuses, "DriverName", 190);
+            SetTransportGridColumnWidth(dataGridViewBuses, "DriverPhone", 140);
+            SetTransportGridColumnWidth(dataGridViewBuses, "Capacity", 95);
+            SetTransportGridColumnWidth(dataGridViewBuses, "Notes", 230);
+        }
 
         // تعريف الدالة HideBusColumn لتنفيذ العملية المرتبطة بها.
         private void HideBusColumn(string columnName)
@@ -654,7 +774,15 @@ namespace SchoolSystem.UI
             if (dataGridViewRoutes.Columns.Contains("Fee"))
                 dataGridViewRoutes.Columns["Fee"].DefaultCellStyle.Format = "N2";
 
-                    }
+            SetTransportGridColumnWidth(dataGridViewRoutes, "RouteName", 180);
+            SetTransportGridColumnWidth(dataGridViewRoutes, "BusNumber", 125);
+            SetTransportGridColumnWidth(dataGridViewRoutes, "StartPoint", 180);
+            SetTransportGridColumnWidth(dataGridViewRoutes, "EndPoint", 180);
+            SetTransportGridColumnWidth(dataGridViewRoutes, "DepartureTime", 125);
+            SetTransportGridColumnWidth(dataGridViewRoutes, "ArrivalTime", 125);
+            SetTransportGridColumnWidth(dataGridViewRoutes, "Fee", 115);
+            SetTransportGridColumnWidth(dataGridViewRoutes, "Notes", 220);
+        }
 
         // تعريف الدالة HideRouteColumn لتنفيذ العملية المرتبطة بها.
         private void HideRouteColumn(string columnName)
@@ -915,7 +1043,7 @@ namespace SchoolSystem.UI
             dataGridViewStudentTransport.RowHeadersVisible = false;
             dataGridViewStudentTransport.AllowUserToDeleteRows = false;
             dataGridViewStudentTransport.AllowUserToResizeRows = false;
-            dataGridViewStudentTransport.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewStudentTransport.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             dataGridViewStudentTransport.BackgroundColor = System.Drawing.Color.White;
             dataGridViewStudentTransport.BorderStyle = BorderStyle.None;
             dataGridViewStudentTransport.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
@@ -1018,6 +1146,18 @@ namespace SchoolSystem.UI
             SetTransportAssignmentHeader("StartDate", "بداية النقل");
             SetTransportAssignmentHeader("EndDate", "نهاية النقل");
             SetTransportAssignmentHeader("Notes", "ملاحظات");
+
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "StudentNumber", 125);
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "StudentName", 190);
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "RouteName", 170);
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "BusNumber", 125);
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "AcademicYear", 115);
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "PickupPoint", 180);
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "DropoffPoint", 180);
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "IsActive", 85);
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "StartDate", 115);
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "EndDate", 115);
+            SetTransportGridColumnWidth(dataGridViewStudentTransport, "Notes", 220);
         }
 
         private void HideTransportAssignmentColumn(string columnName)
