@@ -550,10 +550,6 @@
     <Content Include="Assets\Brand\SchoolSystem.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="packages\iTextSharp.LGPLv2.Core.3.8.1\lib\net462\iTextSharp.LGPLv2.Core.dll">
-      <Link>iTextSharp.LGPLv2.Core.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Database\initial\**\*.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
