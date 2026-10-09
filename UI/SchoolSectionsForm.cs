@@ -21,6 +21,8 @@ namespace SchoolSystem.UI
         private DataTable sectionsTable;
         private int selectedSectionId;
 
+        private bool isRefreshingData;
+
         private Label lblTitle;
         private TextBox txtYear;
         private ComboBox cmbClass;
@@ -42,6 +44,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureSectionsGridAppearance();
             Dock = DockStyle.Fill;
 
             DataRefreshNotifier.DataChanged += DataRefreshNotifier_DataChanged;
@@ -294,8 +297,25 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الشاشة أثناء جدولة التحديث.
+                }
+
+                return;
+            }
+
+            if (ReferenceEquals(sender, this) || isRefreshingData || selectedSectionId > 0)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "Sections") &&
@@ -303,8 +323,20 @@ namespace SchoolSystem.UI
                 !DataRefreshNotifier.IsRelated(e, "All"))
                 return;
 
-            await LoadClassesAsync();
-            await LoadSectionsAsync();
+            try
+            {
+                isRefreshingData = true;
+                await LoadClassesAsync();
+                await LoadSectionsAsync();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("تحديث الشعب الدراسية تلقائياً", ex);
+            }
+            finally
+            {
+                isRefreshingData = false;
+            }
         }
 
         private async void SchoolSectionsForm_Load(object sender, EventArgs e)
@@ -398,6 +430,85 @@ namespace SchoolSystem.UI
             lblCount.Text = "عدد الشعب: " + sectionsTable.DefaultView.Count;
         }
 
+        // جدول الشعب قابل للقراءة والفرز، مع خطوط واضحة وتمرير أفقي دون ضغط الأعمدة.
+        private void ConfigureSectionsGridAppearance()
+        {
+            if (grid == null)
+                return;
+
+            grid.SuspendLayout();
+            try
+            {
+                grid.AllowUserToAddRows = false;
+                grid.AllowUserToDeleteRows = false;
+                grid.AllowUserToResizeRows = false;
+                grid.AllowUserToResizeColumns = true;
+                grid.AllowUserToOrderColumns = true;
+                grid.ReadOnly = true;
+                grid.MultiSelect = false;
+                grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                grid.RowHeadersVisible = false;
+                grid.RightToLeft = RightToLeft.Yes;
+                grid.ScrollBars = ScrollBars.Both;
+                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                grid.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                grid.BackgroundColor = Color.White;
+                grid.BorderStyle = BorderStyle.FixedSingle;
+                grid.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                grid.EnableHeadersVisualStyles = false;
+                grid.GridColor = UIHelper.BorderColor;
+                grid.ColumnHeadersHeight = 44;
+                grid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                grid.RowTemplate.Height = 38;
+                grid.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                grid.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                grid.ColumnHeadersDefaultCellStyle.Font = new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                grid.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                grid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                grid.ColumnHeadersDefaultCellStyle.SelectionBackColor = UIHelper.PrimaryColor;
+                grid.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                grid.DefaultCellStyle.BackColor = Color.White;
+                grid.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.DefaultCellStyle.Font = new Font(UIHelper.FontFamily, 9.5F);
+                grid.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                grid.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.DefaultCellStyle.SelectionForeColor = Color.White;
+                grid.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                grid.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+                grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(241, 245, 249);
+                grid.AlternatingRowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.AlternatingRowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                grid.RowsDefaultCellStyle.BackColor = Color.White;
+                grid.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                grid.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                grid.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                grid.ResumeLayout();
+            }
+        }
+
+        private void SetSectionColumnWidth(string name, int width)
+        {
+            if (!grid.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = grid.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(100, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
+        }
+
         private void FormatGrid()
         {
             SetHeader("SectionID", "الرقم");
@@ -411,6 +522,17 @@ namespace SchoolSystem.UI
             SetHeader("CreatedAt", "تاريخ الإنشاء");
             if (grid.Columns.Contains("ClassID"))
                 grid.Columns["ClassID"].Visible = false;
+
+            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            SetSectionColumnWidth("SectionID", 85);
+            SetSectionColumnWidth("ClassName", 165);
+            SetSectionColumnWidth("AcademicYear", 125);
+            SetSectionColumnWidth("SectionName", 160);
+            SetSectionColumnWidth("Capacity", 95);
+            SetSectionColumnWidth("AssignedCount", 100);
+            SetSectionColumnWidth("AllowedGender", 110);
+            SetSectionColumnWidth("IsActive", 90);
+            SetSectionColumnWidth("CreatedAt", 145);
         }
 
         private void SetHeader(string column, string title)
