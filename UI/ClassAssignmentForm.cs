@@ -34,6 +34,7 @@ namespace SchoolSystem.UI.Students
 
             SchoolSystem.Helpers.UIHelper.ApplyStyle(this);
             ApplyCustomStyles();
+            ConfigureAssignedGridAppearance();
 
             // رأس الشاشة يُضبط موحدًا بواسطة UIHelper داخل حدود الواجهة.
             this.Dock = DockStyle.Fill;
@@ -43,6 +44,85 @@ namespace SchoolSystem.UI.Students
                 DataRefreshNotifier.DataChanged -= DataRefreshNotifier_DataChanged;
 
             this.Load += ClassAssignmentForm_Load;
+        }
+
+        // توحيد جدول الطلاب الموزعين مع هوية جداول Excel المستخدمة في ملف الطالب.
+        // يُحافظ على MultiSelect لأن عمليتي الإزالة والنقل قد تعتمدان على تحديد عدة سجلات.
+        private void ConfigureAssignedGridAppearance()
+        {
+            if (dataGridViewAssigned == null)
+                return;
+
+            dataGridViewAssigned.SuspendLayout();
+            try
+            {
+                dataGridViewAssigned.AllowUserToAddRows = false;
+                dataGridViewAssigned.AllowUserToDeleteRows = false;
+                dataGridViewAssigned.AllowUserToResizeRows = false;
+                dataGridViewAssigned.AllowUserToResizeColumns = true;
+                dataGridViewAssigned.AllowUserToOrderColumns = true;
+                dataGridViewAssigned.ReadOnly = true;
+                dataGridViewAssigned.MultiSelect = true;
+                dataGridViewAssigned.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridViewAssigned.RowHeadersVisible = false;
+                dataGridViewAssigned.RightToLeft = RightToLeft.Yes;
+                dataGridViewAssigned.ScrollBars = ScrollBars.Both;
+                dataGridViewAssigned.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+                dataGridViewAssigned.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.None;
+                dataGridViewAssigned.BackgroundColor = Color.White;
+                dataGridViewAssigned.BorderStyle = BorderStyle.FixedSingle;
+                dataGridViewAssigned.CellBorderStyle = DataGridViewCellBorderStyle.Single;
+                dataGridViewAssigned.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
+                dataGridViewAssigned.EnableHeadersVisualStyles = false;
+                dataGridViewAssigned.GridColor = UIHelper.BorderColor;
+                dataGridViewAssigned.ColumnHeadersHeight = 44;
+                dataGridViewAssigned.ColumnHeadersHeightSizeMode =
+                    DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+                dataGridViewAssigned.RowTemplate.Height = 38;
+                dataGridViewAssigned.ClipboardCopyMode =
+                    DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+
+                dataGridViewAssigned.ColumnHeadersDefaultCellStyle.BackColor = UIHelper.PrimaryColor;
+                dataGridViewAssigned.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+                dataGridViewAssigned.ColumnHeadersDefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 10F, FontStyle.Bold);
+                dataGridViewAssigned.ColumnHeadersDefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleCenter;
+                dataGridViewAssigned.ColumnHeadersDefaultCellStyle.WrapMode =
+                    DataGridViewTriState.True;
+                dataGridViewAssigned.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                    UIHelper.PrimaryColor;
+                dataGridViewAssigned.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewAssigned.ColumnHeadersDefaultCellStyle.Padding =
+                    new Padding(8, 4, 8, 4);
+
+                dataGridViewAssigned.DefaultCellStyle.BackColor = Color.White;
+                dataGridViewAssigned.DefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewAssigned.DefaultCellStyle.Font =
+                    new Font(UIHelper.FontFamily, 9.5F, FontStyle.Regular);
+                dataGridViewAssigned.DefaultCellStyle.Alignment =
+                    DataGridViewContentAlignment.MiddleRight;
+                dataGridViewAssigned.DefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewAssigned.DefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewAssigned.DefaultCellStyle.Padding = new Padding(8, 4, 8, 4);
+                dataGridViewAssigned.DefaultCellStyle.WrapMode = DataGridViewTriState.False;
+
+                dataGridViewAssigned.AlternatingRowsDefaultCellStyle.BackColor =
+                    Color.FromArgb(241, 245, 249);
+                dataGridViewAssigned.AlternatingRowsDefaultCellStyle.ForeColor =
+                    UIHelper.TextColor;
+                dataGridViewAssigned.AlternatingRowsDefaultCellStyle.SelectionBackColor =
+                    UIHelper.AccentColor;
+                dataGridViewAssigned.AlternatingRowsDefaultCellStyle.SelectionForeColor = Color.White;
+                dataGridViewAssigned.RowsDefaultCellStyle.BackColor = Color.White;
+                dataGridViewAssigned.RowsDefaultCellStyle.ForeColor = UIHelper.TextColor;
+                dataGridViewAssigned.RowsDefaultCellStyle.SelectionBackColor = UIHelper.AccentColor;
+                dataGridViewAssigned.RowsDefaultCellStyle.SelectionForeColor = Color.White;
+            }
+            finally
+            {
+                dataGridViewAssigned.ResumeLayout();
+            }
         }
 
         // تعريف الدالة ApplyCustomStyles لتنفيذ العملية المرتبطة بها.
@@ -71,8 +151,26 @@ namespace SchoolSystem.UI.Students
             object sender,
             DataRefreshEventArgs e)
         {
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // وصول الإشعارات من خدمة أو شاشة أخرى لا يضمن أنها تعمل على خيط WinForms.
+            if (InvokeRequired)
+            {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DataRefreshNotifier_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت الواجهة قبل تنفيذ التحديث المجدول.
+                }
+
+                return;
+            }
+
             if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
                 (!DataRefreshNotifier.IsRelated(e, "Enrollment") &&
                  !DataRefreshNotifier.IsRelated(e, "ClassAssignment") &&
                  !DataRefreshNotifier.IsRelated(e, "Students") &&
@@ -82,6 +180,9 @@ namespace SchoolSystem.UI.Students
             {
                 return;
             }
+
+            if (isLoading)
+                return;
 
             await LoadDataAsync();
         }
@@ -500,13 +601,41 @@ namespace SchoolSystem.UI.Students
             if (dataGridViewAssigned.Columns.Contains("AssignedDate"))
                 dataGridViewAssigned.Columns["AssignedDate"].HeaderText = "تاريخ التوزيع";
 
-            dataGridViewAssigned.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridViewAssigned.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
             dataGridViewAssigned.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridViewAssigned.MultiSelect = true;
             dataGridViewAssigned.ReadOnly = true;
             dataGridViewAssigned.AllowUserToAddRows = false;
             dataGridViewAssigned.AllowUserToDeleteRows = false;
             dataGridViewAssigned.RowHeadersVisible = false;
+
+            // عرض أعمدة مضبوط بدل توزيع Fill الذي يضغط الأعمدة في المساحات الصغيرة.
+            SetAssignedGridColumnWidth("StudentClassID", 95);
+            SetAssignedGridColumnWidth("StudentNumber", 125);
+            SetAssignedGridColumnWidth("StudentName", 190);
+            SetAssignedGridColumnWidth("Gender", 78);
+            SetAssignedGridColumnWidth("Phone", 125);
+            SetAssignedGridColumnWidth("ClassName", 105);
+            SetAssignedGridColumnWidth("Section", 90);
+            SetAssignedGridColumnWidth("AcademicYear", 118);
+            SetAssignedGridColumnWidth("AssignedDate", 125);
+        }
+
+        private void SetAssignedGridColumnWidth(string name, int width)
+        {
+            if (dataGridViewAssigned == null ||
+                !dataGridViewAssigned.Columns.Contains(name))
+                return;
+
+            DataGridViewColumn column = dataGridViewAssigned.Columns[name];
+            if (!column.Visible)
+                return;
+
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            column.MinimumWidth = Math.Min(85, Math.Max(55, width));
+            column.Width = width;
+            column.Resizable = DataGridViewTriState.True;
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         // تعريف الدالة btnLoad_Click لتنفيذ العملية المرتبطة بها.
