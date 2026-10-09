@@ -45,6 +45,7 @@ namespace SchoolSystem.UI
             InitializeComponent();
 
             UIHelper.ApplyStyle(this);
+            UIHelper.NormalizeActionBar(panelActions);
             Dock = DockStyle.Fill;
 
             // تطبيق قواعد التحقق من الحقول (فلترة الأحرف، أقصى طول، والتحقق عند
