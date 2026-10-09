@@ -63,7 +63,16 @@ namespace SchoolSystem.UI
         /// </summary>
         private void ConfigureArabicDashboardLayout()
         {
-            SchoolSettings branding = SchoolSettingsService.Current();
+            // اسم المدرسة يأتي من الإعدادات، لكن تعذّر قراءة الإعدادات لا يجب أن يمنع فتح لوحة التحكم.
+            SchoolSettings branding = null;
+            try
+            {
+                branding = SchoolSettingsService.Current();
+            }
+            catch (Exception ex)
+            {
+                ApplicationLogger.LogException("قراءة هوية المدرسة في لوحة التحكم", ex);
+            }
 
             string schoolName =
                 branding != null && !string.IsNullOrWhiteSpace(branding.SchoolNameAr)
@@ -75,6 +84,8 @@ namespace SchoolSystem.UI
                     ? branding.OrganizationNameAr.Trim()
                     : string.Empty;
 
+            lblDashboardTitle.AutoEllipsis = true;
+            lblDashboardSubtitle.AutoEllipsis = true;
             lblDashboardTitle.Text = "لوحة تحكم " + schoolName;
 
             lblDashboardSubtitle.Text =
@@ -693,12 +704,27 @@ namespace SchoolSystem.UI
             object sender,
             DataRefreshEventArgs e)
         {
-            if (ReferenceEquals(sender, this) ||
-                IsDisposed ||
-                Disposing)
+            if (IsDisposed || Disposing || !IsHandleCreated)
+                return;
+
+            // إشعارات التغيير قد تصل من شاشة أو خدمة تعمل على خيط آخر.
+            if (InvokeRequired)
             {
+                try
+                {
+                    BeginInvoke(new MethodInvoker(
+                        () => DashboardHome_DataChanged(sender, e)));
+                }
+                catch (InvalidOperationException)
+                {
+                    // أُغلقت لوحة التحكم قبل تنفيذ التحديث.
+                }
+
                 return;
             }
+
+            if (ReferenceEquals(sender, this) || isDashboardLoading)
+                return;
 
             // لوحة التحكم لا تعرض بيانات محلية؛ كل مؤشر يعاد قراءته من قاعدة البيانات
             // بعد أي تغيير من أي وحدة حتى تبقى المؤشرات والمخطط حيّة.
