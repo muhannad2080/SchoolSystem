@@ -80,7 +80,7 @@ namespace SchoolSystem.UI
             }
 
             // لا نعيد ملء الحقول أثناء أن المستخدم يعدّل خطة رسوم محددة.
-            if (ReferenceEquals(sender, this) || isRefreshingData || selectedFeePlanId > 0)
+            if (ReferenceEquals(sender, this) || isRefreshingData)
                 return;
 
             if (!DataRefreshNotifier.IsRelated(e, "FeePlans") &&
