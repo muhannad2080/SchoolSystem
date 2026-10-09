@@ -461,7 +461,7 @@ namespace SchoolSystem.UI
             ScheduleAutomaticReportLoad();
         }
 
-        private async void cmbSection_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbSection_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (isLoadingFilters)
                 return;
