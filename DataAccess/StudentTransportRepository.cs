@@ -252,7 +252,8 @@ BEGIN
     SELECT @Assigned = COUNT(*)
     FROM dbo.StudentTransportAssignments
     WHERE RouteID = @RouteID
-      AND AcademicYear = @AcademicYear
+      AND REPLACE(LTRIM(RTRIM(ISNULL(AcademicYear, N''))), N'-', N'/') =
+          REPLACE(LTRIM(RTRIM(ISNULL(@AcademicYear, N''))), N'-', N'/')
       AND IsActive = 1
       AND AssignmentID <> @ExcludedAssignmentID;
 
