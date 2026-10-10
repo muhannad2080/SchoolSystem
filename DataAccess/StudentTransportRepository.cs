@@ -217,12 +217,25 @@ IF NOT EXISTS
 
 IF @IsActive = 1
 BEGIN
+    IF NOT EXISTS
+    (
+        SELECT 1
+        FROM dbo.Enrollments e WITH (UPDLOCK, HOLDLOCK)
+        WHERE e.StudentID = @StudentID
+          AND REPLACE(LTRIM(RTRIM(ISNULL(e.AcademicYear, N''))), N'-', N'/') =
+              REPLACE(LTRIM(RTRIM(ISNULL(@AcademicYear, N''))), N'-', N'/')
+          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN
+              (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
+    )
+        THROW 51405, N'لا يمكن تفعيل اشتراك النقل قبل قبول تسجيل الطالب في العام الدراسي نفسه.', 1;
+
     IF EXISTS
     (
         SELECT 1
         FROM dbo.StudentTransportAssignments WITH (UPDLOCK, HOLDLOCK)
         WHERE StudentID = @StudentID
-          AND AcademicYear = @AcademicYear
+          AND REPLACE(LTRIM(RTRIM(ISNULL(AcademicYear, N''))), N'-', N'/') =
+              REPLACE(LTRIM(RTRIM(ISNULL(@AcademicYear, N''))), N'-', N'/')
           AND IsActive = 1
           AND AssignmentID <> @ExcludedAssignmentID
     )
