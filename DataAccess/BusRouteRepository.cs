@@ -92,6 +92,7 @@ namespace SchoolSystem.DataAccess
                             Fee,
                             Notes
                         )
+                        OUTPUT INSERTED.RouteID
                         VALUES
                         (
                             @RouteName,
@@ -107,11 +108,14 @@ namespace SchoolSystem.DataAccess
                     using (SqlCommand cmd = new SqlCommand(query, con, transaction))
                     {
                         AddParameters(cmd, route);
-                        if (cmd.ExecuteNonQuery() == 0)
+                        object result = cmd.ExecuteScalar();
+                        if (result == null || result == DBNull.Value)
                         {
                             transaction.Rollback();
                             return false;
                         }
+
+                        route.RouteID = Convert.ToInt32(result);
                     }
 
                     transaction.Commit();
