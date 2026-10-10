@@ -72,6 +72,7 @@ namespace SchoolSystem.DataAccess
                                 Capacity,
                                 Notes
                             )
+                            OUTPUT INSERTED.BusID
                             VALUES
                             (
                                 @BusNumber,
@@ -84,11 +85,14 @@ namespace SchoolSystem.DataAccess
                         using (SqlCommand cmd = new SqlCommand(query, con, transaction))
                         {
                             AddParameters(cmd, bus);
-                            if (cmd.ExecuteNonQuery() == 0)
+                            object result = cmd.ExecuteScalar();
+                            if (result == null || result == DBNull.Value)
                             {
                                 transaction.Rollback();
                                 return false;
                             }
+
+                            bus.BusID = Convert.ToInt32(result);
                         }
 
                         transaction.Commit();
