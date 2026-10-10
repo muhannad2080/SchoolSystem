@@ -127,16 +127,16 @@ namespace SchoolSystem.DataAccess
 
                         IF EXISTS
                         (
-                            SELECT 1
+                            SELECT REPLACE(LTRIM(RTRIM(ISNULL(a.AcademicYear, N''))), N'-', N'/')
                             FROM dbo.BusRoutes r WITH (UPDLOCK, HOLDLOCK)
                             INNER JOIN dbo.StudentTransportAssignments a WITH (UPDLOCK, HOLDLOCK)
                                 ON a.RouteID = r.RouteID
                                AND a.IsActive = 1
                             WHERE r.BusID = @BusID
-                            GROUP BY r.BusID
+                            GROUP BY REPLACE(LTRIM(RTRIM(ISNULL(a.AcademicYear, N''))), N'-', N'/')
                             HAVING COUNT(*) > @Capacity
                         )
-                            THROW 51003, N'لا يمكن تقليل سعة الحافلة إلى أقل من عدد الطلاب المسجلين عليها حالياً.', 1;";
+                            THROW 51003, N'لا يمكن تقليل سعة الحافلة إلى أقل من عدد الطلاب المسجلين في أحد الأعوام الدراسية.', 1;";
 
                     using (SqlCommand check = new SqlCommand(validation, con, transaction))
                     {
