@@ -1166,6 +1166,32 @@ namespace SchoolSystem.UI.Students
             int targetClassId =
                 GetSelectedClassId();
 
+            // تغيير الصف يبدأ من التسجيل والقبول؛ شاشة التوزيع تسمح بنقل الشعبة
+            // داخل الصف المعتمد فقط حتى لا ينفصل StudentClasses عن Enrollments.
+            if (targetClassId <= 0 ||
+                !dataGridViewAssigned.Columns.Contains("ClassID"))
+            {
+                ShowWarning("تعذر تحديد الصف الحالي أو الهدف. حدّث بيانات التوزيع ثم أعد المحاولة.");
+                return;
+            }
+
+            foreach (DataGridViewRow selectedRow in dataGridViewAssigned.SelectedRows)
+            {
+                if (selectedRow == null || selectedRow.IsNewRow)
+                    continue;
+
+                int currentClassId;
+                object classValue = selectedRow.Cells["ClassID"].Value;
+                if (classValue == null ||
+                    classValue == DBNull.Value ||
+                    !int.TryParse(classValue.ToString(), out currentClassId) ||
+                    currentClassId != targetClassId)
+                {
+                    ShowWarning("لا يمكن تغيير صف الطالب من شاشة توزيع الفصول. عدّل الصف من شاشة التسجيل والقبول أولاً، ثم أعد تحميل التوزيع.");
+                    return;
+                }
+            }
+
             string targetSection =
                 cmbTransferSection.Text == null
                     ? string.Empty
