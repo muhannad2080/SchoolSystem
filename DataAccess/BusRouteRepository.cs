@@ -149,20 +149,22 @@ namespace SchoolSystem.DataAccess
                         )
                             THROW 51014, N'الحافلة المحددة غير موجودة.', 1;
 
-                        DECLARE @CurrentAssignments INT;
                         DECLARE @TargetCapacity INT;
 
                         SELECT @TargetCapacity = Capacity
                         FROM dbo.Buses WITH (UPDLOCK, HOLDLOCK)
                         WHERE BusID = @BusID;
 
-                        SELECT @CurrentAssignments = COUNT(*)
-                        FROM dbo.StudentTransportAssignments WITH (UPDLOCK, HOLDLOCK)
-                        WHERE RouteID = @RouteID
-                          AND IsActive = 1;
-
-                        IF ISNULL(@CurrentAssignments, 0) > ISNULL(@TargetCapacity, 0)
-                            THROW 51019, N'لا يمكن نقل المسار إلى حافلة سعتها أقل من عدد الطلاب المرتبطين به حالياً.', 1;
+                        IF EXISTS
+                        (
+                            SELECT REPLACE(LTRIM(RTRIM(ISNULL(AcademicYear, N''))), N'-', N'/')
+                            FROM dbo.StudentTransportAssignments WITH (UPDLOCK, HOLDLOCK)
+                            WHERE RouteID = @RouteID
+                              AND IsActive = 1
+                            GROUP BY REPLACE(LTRIM(RTRIM(ISNULL(AcademicYear, N''))), N'-', N'/')
+                            HAVING COUNT(*) > ISNULL(@TargetCapacity, 0)
+                        )
+                            THROW 51019, N'لا يمكن نقل المسار إلى حافلة سعتها أقل من عدد الطلاب المرتبطين به في أحد الأعوام الدراسية.', 1;
 
                         IF @DepartureTime IS NOT NULL
                            AND @ArrivalTime IS NOT NULL
