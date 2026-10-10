@@ -946,6 +946,11 @@ namespace SchoolSystem.UI.Students
                     cmbClass.Text + " - شعبة " + section);
 
                 await LoadDataAsync();
+
+                // Refresh dependent screens (student profile, enrollment, reports, etc.)
+                // after at least one assignment was persisted successfully.
+                if (successCount > 0)
+                    DataRefreshNotifier.Notify("All", this);
             }
             catch (Exception ex)
             {
