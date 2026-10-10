@@ -604,7 +604,12 @@ namespace SchoolSystem.UI
                 Bus bus = GetBusFromInputs();
 
 
-                await Task.Run(() => busService.AddBus(bus));
+                bool added = await Task.Run(() => busService.AddBus(bus));
+                if (!added)
+                {
+                    UIHelper.ShowWarning("لم تتم إضافة الحافلة. تحقق من البيانات ثم أعد المحاولة.");
+                    return;
+                }
 
                 UIHelper.ShowInfo("تمت إضافة الحافلة بنجاح.");
                 ApplicationLogger.LogUsage("شاشة النقل", "إضافة حافلة", "تمت إضافة الحافلة بنجاح");
@@ -614,6 +619,7 @@ namespace SchoolSystem.UI
                 ClearBusInputs();
 
                 lblRecordCount.Text = "عدد الحافلات: " + (allBuses == null ? 0 : allBuses.Rows.Count);
+                DataRefreshNotifier.Notify("All", this);
             }
 
             catch (Exception ex)
@@ -660,6 +666,9 @@ namespace SchoolSystem.UI
 
                 await LoadRoutesAsync();
                 ClearBusInputs();
+
+                if (result)
+                    DataRefreshNotifier.Notify("All", this);
             }
 
             catch (Exception ex)
@@ -705,6 +714,9 @@ namespace SchoolSystem.UI
 
                 await LoadRoutesAsync();
                 ClearBusInputs();
+
+                if (result)
+                    DataRefreshNotifier.Notify("All", this);
             }
 
             catch (Exception ex)
@@ -1202,10 +1214,17 @@ namespace SchoolSystem.UI
             try
             {
                 StudentTransportAssignment assignment = GetTransportAssignmentFromInputs();
-                await Task.Run(() => studentTransportService.Add(assignment));
+                bool added = await Task.Run(() => studentTransportService.Add(assignment));
+                if (!added)
+                {
+                    UIHelper.ShowWarning("لم يتم حفظ توزيع النقل. تحقق من البيانات ثم أعد المحاولة.");
+                    return;
+                }
+
                 UIHelper.ShowInfo("تم توزيع الطالب على مسار النقل بنجاح.");
                 ClearTransportAssignmentInputs();
                 await LoadStudentTransportAsync();
+                DataRefreshNotifier.Notify("All", this);
             }
             catch (Exception ex) { UIHelper.ShowException("إضافة توزيع النقل", ex); }
         }
@@ -1227,6 +1246,7 @@ namespace SchoolSystem.UI
                 {
                     ClearTransportAssignmentInputs();
                     await LoadStudentTransportAsync();
+                    DataRefreshNotifier.Notify("All", this);
                 }
             }
             catch (Exception ex) { UIHelper.ShowException("تعديل توزيع النقل", ex); }
@@ -1253,6 +1273,7 @@ namespace SchoolSystem.UI
                 {
                     ClearTransportAssignmentInputs();
                     await LoadStudentTransportAsync();
+                    DataRefreshNotifier.Notify("All", this);
                 }
             }
             catch (Exception ex) { UIHelper.ShowException("إلغاء توزيع النقل", ex); }
@@ -1326,8 +1347,12 @@ namespace SchoolSystem.UI
                 BusRoute route = GetRouteFromInputs();
 
 
-                await Task.Run(() => routeService.AddRoute(route));
-
+                bool added = await Task.Run(() => routeService.AddRoute(route));
+                if (!added)
+                {
+                    UIHelper.ShowWarning("لم تتم إضافة المسار. تحقق من البيانات ثم أعد المحاولة.");
+                    return;
+                }
 
                 UIHelper.ShowInfo("تمت إضافة المسار بنجاح.");
                 ApplicationLogger.LogUsage("شاشة النقل", "إضافة مسار", "تمت إضافة المسار بنجاح");
@@ -1337,6 +1362,7 @@ namespace SchoolSystem.UI
                 ClearRouteInputs();
 
                 lblRecordCount.Text = "عدد المسارات: " + (allRoutes == null ? 0 : allRoutes.Rows.Count);
+                DataRefreshNotifier.Notify("All", this);
             }
 
             catch (Exception ex)
@@ -1376,6 +1402,9 @@ namespace SchoolSystem.UI
 
                 await LoadRoutesAsync();
                 ClearRouteInputs();
+
+                if (result)
+                    DataRefreshNotifier.Notify("All", this);
             }
 
             catch (Exception ex)
@@ -1415,6 +1444,9 @@ namespace SchoolSystem.UI
 
                 await LoadRoutesAsync();
                 ClearRouteInputs();
+
+                if (result)
+                    DataRefreshNotifier.Notify("All", this);
             }
 
             catch (Exception ex)
