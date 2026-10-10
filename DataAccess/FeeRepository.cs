@@ -1193,18 +1193,19 @@ namespace SchoolSystem.DataAccess
                         THROW 51041, N'لا يوجد صف صالح في تسجيل الطالب المقبول؛ أكمل بيانات الصف قبل توليد الرسوم.', 1;
                     END;
 
-                    /* التوزيع يجب أن يتوافق مع صف التسجيل؛ نرفض البيانات القديمة المتعارضة
-                       بدل إنشاء رسوم للصف الخطأ. */
-                    SELECT TOP (1) @ClassID = sc.ClassID
-                    FROM StudentClasses sc
-                    WHERE sc.StudentID = @StudentID
-                      AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                    ORDER BY sc.AssignedDate DESC, sc.StudentClassID DESC;
-
-                    IF @ClassID IS NOT NULL AND @ClassID <> @EnrollmentClassID
+                    /* يجب أن تتوافق جميع توزيعات الطالب في هذا العام مع التسجيل المقبول؛
+                       لا نكتفي بأحدث سجل إذا كانت هناك بيانات تاريخية متعارضة. */
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM StudentClasses sc
+                        WHERE sc.StudentID = @StudentID
+                          AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                          AND ISNULL(sc.ClassID, 0) <> @EnrollmentClassID
+                    )
                     BEGIN
                         ROLLBACK TRANSACTION;
-                        THROW 51043, N'صف توزيع الطالب لا يطابق الصف المعتمد في التسجيل المقبول. صحح التوزيع من شاشة توزيع الفصول قبل توليد الرسوم.', 1;
+                        THROW 51043, N'يوجد توزيع للطالب لا يطابق الصف المعتمد في التسجيل المقبول. صحح توزيعات الطالب من شاشة توزيع الفصول قبل توليد الرسوم.', 1;
                     END;
 
                     SET @ClassID = @EnrollmentClassID;
