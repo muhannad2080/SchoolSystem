@@ -1163,6 +1163,7 @@ namespace SchoolSystem.DataAccess
                     SET XACT_ABORT ON;
                     BEGIN TRANSACTION;
                     DECLARE @ClassID INT;
+                    DECLARE @EnrollmentClassID INT;
 
                     /* لا رسوم صفية قبل قبول التسجيل في العام المحدد. */
                     IF NOT EXISTS
@@ -1178,29 +1179,35 @@ namespace SchoolSystem.DataAccess
                         THROW 51040, N'لا يمكن توليد رسوم الصف قبل قبول تسجيل الطالب في العام الدراسي المحدد.', 1;
                     END;
 
-                    /* الأولوية للتوزيع الفعلي؛ وقبل التوزيع نستخدم صف التسجيل المقبول
-                       حتى تظهر خطط الرسوم مباشرة في سيناريو التسجيل والقبول. */
+                    /* التسجيل المقبول هو مصدر الصف المعتمد لتوليد الرسوم. */
+                    SELECT TOP (1) @EnrollmentClassID = e.ClassID
+                    FROM Enrollments e
+                    WHERE e.StudentID = @StudentID
+                      AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                      AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
+                    ORDER BY e.EnrollmentID DESC;
+
+                    IF @EnrollmentClassID IS NULL OR @EnrollmentClassID <= 0
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                        THROW 51041, N'لا يوجد صف صالح في تسجيل الطالب المقبول؛ أكمل بيانات الصف قبل توليد الرسوم.', 1;
+                    END;
+
+                    /* التوزيع يجب أن يتوافق مع صف التسجيل؛ نرفض البيانات القديمة المتعارضة
+                       بدل إنشاء رسوم للصف الخطأ. */
                     SELECT TOP (1) @ClassID = sc.ClassID
                     FROM StudentClasses sc
                     WHERE sc.StudentID = @StudentID
                       AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                     ORDER BY sc.AssignedDate DESC, sc.StudentClassID DESC;
 
-                    IF @ClassID IS NULL
-                    BEGIN
-                        SELECT TOP (1) @ClassID = e.ClassID
-                        FROM Enrollments e
-                        WHERE e.StudentID = @StudentID
-                          AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
-                        ORDER BY e.EnrollmentID DESC;
-                    END
-
-                    IF @ClassID IS NULL
+                    IF @ClassID IS NOT NULL AND @ClassID <> @EnrollmentClassID
                     BEGIN
                         ROLLBACK TRANSACTION;
-                        THROW 51041, N'لا يوجد صف مرتبط بتسجيل الطالب المقبول؛ أكمل الصف أو التوزيع أولاً.', 1;
-                    END
+                        THROW 51043, N'صف توزيع الطالب لا يطابق الصف المعتمد في التسجيل المقبول. صحح التوزيع من شاشة توزيع الفصول قبل توليد الرسوم.', 1;
+                    END;
+
+                    SET @ClassID = @EnrollmentClassID;
 
                     /*
                        الرسوم الكلية بند حقيقي يظهر لكل طالب كسطر مستقل بنفس
