@@ -209,6 +209,10 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
                           REPLACE(@AcademicYear, N'-', N'/')
                     ORDER BY sc.AssignedDate DESC, sc.StudentClassID DESC;
 
+                    IF @AssignedStudentClassID IS NOT NULL
+                       AND LTRIM(RTRIM(ISNULL(@Status, N''))) NOT IN (N'مقبول', N'Accepted')
+                        THROW 50022, N'لا يمكن تغيير حالة تسجيل طالب موزع إلى حالة غير مقبولة. أزل التوزيع أولاً ثم غيّر الحالة.', 1;
+
                     /* إذا كان الطالب موزعاً فعلياً، يجب أن يعكس التوزيع
                        الصف والشعبة الجديدين في التسجيل، وإلا ستنشأ نسختان مختلفتان
                        من بيانات الطالب في الواجهات المرتبطة. */
@@ -330,6 +334,28 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
                             AcademicYear = REPLACE(@AcademicYear, N'-', N'/'),
                             UpdatedAt = GETDATE()
                         WHERE StudentID = @StudentID;
+                    END
+                    ELSE
+                    BEGIN
+                        /* إلغاء/رفض تسجيل غير موزع يجب ألا يترك صفاً وشعبة قديمين
+                           في سجل الطالب إذا كانت بياناته الحالية تخص هذا العام. */
+                        UPDATE Students
+                        SET
+                            ClassID = NULL,
+                            Section = NULL,
+                            AcademicYear = NULL,
+                            UpdatedAt = GETDATE()
+                        WHERE StudentID = @StudentID
+                          AND REPLACE(ISNULL(AcademicYear, N''), N'-', N'/') =
+                              REPLACE(@AcademicYear, N'-', N'/')
+                          AND NOT EXISTS
+                          (
+                              SELECT 1
+                              FROM StudentClasses sc
+                              WHERE sc.StudentID = @StudentID
+                                AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') =
+                                    REPLACE(@AcademicYear, N'-', N'/')
+                          );
                     END;
 
                     COMMIT TRANSACTION;
@@ -355,16 +381,57 @@ SELECT CAST(SCOPE_IDENTITY() AS INT);";
         {
             using (SqlConnection conn = DbConnection.GetConnection())
             {
-                string query = "DELETE FROM Enrollments WHERE EnrollmentID = @EnrollmentID";
+                const string query = @"
+                    SET NOCOUNT ON;
+                    SET XACT_ABORT ON;
+                    SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+                    BEGIN TRANSACTION;
+
+                    DECLARE @StudentID INT = NULL;
+                    DECLARE @AcademicYear NVARCHAR(20) = NULL;
+
+                    SELECT
+                        @StudentID = StudentID,
+                        @AcademicYear = AcademicYear
+                    FROM Enrollments WITH (UPDLOCK, HOLDLOCK)
+                    WHERE EnrollmentID = @EnrollmentID;
+
+                    IF @StudentID IS NULL
+                    BEGIN
+                        COMMIT TRANSACTION;
+                        SELECT 0;
+                        RETURN;
+                    END;
+
+                    IF EXISTS
+                    (
+                        SELECT 1
+                        FROM StudentClasses sc WITH (UPDLOCK, HOLDLOCK)
+                        WHERE sc.StudentID = @StudentID
+                          AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') =
+                              REPLACE(ISNULL(@AcademicYear, N''), N'-', N'/')
+                    )
+                    BEGIN
+                        ROLLBACK TRANSACTION;
+                        THROW 50023, N'لا يمكن حذف تسجيل له توزيع مرتبط. أزل توزيع الطالب أولاً حتى لا يتبقى سجل توزيع دون تسجيل.', 1;
+                    END;
+
+                    DELETE FROM Enrollments
+                    WHERE EnrollmentID = @EnrollmentID;
+
+                    DECLARE @Deleted INT = @@ROWCOUNT;
+                    COMMIT TRANSACTION;
+                    SELECT @Deleted;";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-
-                    cmd.Parameters.AddWithValue("@EnrollmentID", enrollmentId);
-
+                    cmd.Parameters.Add("@EnrollmentID", SqlDbType.Int).Value = enrollmentId;
                     conn.Open();
 
-                    return cmd.ExecuteNonQuery() > 0;
+                    object result = cmd.ExecuteScalar();
+                    return result != null &&
+                           result != DBNull.Value &&
+                           Convert.ToInt32(result) > 0;
                 }
             }
         }
