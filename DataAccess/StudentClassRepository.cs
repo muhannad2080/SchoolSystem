@@ -192,12 +192,21 @@ namespace SchoolSystem.DataAccess
                     IF NOT EXISTS
                     (
                         SELECT 1
-                        FROM Enrollments e
-                        WHERE e.StudentID = @StudentID
-                          AND REPLACE(e.AcademicYear, N'/', N'-') = REPLACE(@AcademicYear, N'/', N'-')
-                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted')
+                        FROM
+                        (
+                            SELECT
+                                e.ClassID,
+                                ROW_NUMBER() OVER (ORDER BY e.EnrollmentID DESC) AS rn
+                            FROM Enrollments e
+                            WHERE e.StudentID = @StudentID
+                              AND REPLACE(ISNULL(e.AcademicYear, N''), N'/', N'-')
+                                  = REPLACE(@AcademicYear, N'/', N'-')
+                              AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted')
+                        ) acceptedEnrollment
+                        WHERE acceptedEnrollment.rn = 1
+                          AND acceptedEnrollment.ClassID = @ClassID
                     )
-                        THROW 50014, N'لا يمكن توزيع الطالب قبل قبول تسجيله في العام الدراسي المحدد.', 1;
+                        THROW 50014, N'لا يمكن توزيع الطالب على صف يختلف عن الصف المعتمد في تسجيله المقبول للعام الدراسي.', 1;
 
                     IF NOT EXISTS
                     (
@@ -511,13 +520,21 @@ namespace SchoolSystem.DataAccess
                     IF NOT EXISTS
                     (
                         SELECT 1
-                        FROM Enrollments e
-                        WHERE e.StudentID = @StudentID
-                          AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/')
-                              = REPLACE(@AcademicYear, N'-', N'/')
-                          AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted')
+                        FROM
+                        (
+                            SELECT
+                                e.ClassID,
+                                ROW_NUMBER() OVER (ORDER BY e.EnrollmentID DESC) AS rn
+                            FROM Enrollments e
+                            WHERE e.StudentID = @StudentID
+                              AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/')
+                                  = REPLACE(@AcademicYear, N'-', N'/')
+                              AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted')
+                        ) acceptedEnrollment
+                        WHERE acceptedEnrollment.rn = 1
+                          AND acceptedEnrollment.ClassID = @ClassID
                     )
-                        THROW 50018, N'لا يمكن نقل طالب ليس لديه تسجيل مقبول في العام الدراسي.', 1;
+                        THROW 50018, N'لا يمكن التوزيع أو النقل إلى صف لا يطابق الصف المعتمد في التسجيل المقبول للعام الدراسي.', 1;
 
                     IF NOT EXISTS
                     (
