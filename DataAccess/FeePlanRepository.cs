@@ -164,25 +164,23 @@ namespace SchoolSystem.DataAccess
                     INNER JOIN Classes c ON c.ClassID = fp.ClassID
                     WHERE REPLACE(ISNULL(fp.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
                       AND LTRIM(RTRIM(ISNULL(fp.FeeType, N''))) = LTRIM(RTRIM(@FeeType))
-                      AND
+                      AND EXISTS
                       (
-                          EXISTS
-                          (
-                              SELECT 1
-                              FROM StudentClasses sc
-                              WHERE sc.StudentID = @StudentID
-                                AND sc.ClassID = fp.ClassID
-                                AND REPLACE(ISNULL(sc.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                          )
-                          OR EXISTS
-                          (
-                              SELECT 1
-                              FROM Enrollments e
-                              WHERE e.StudentID = @StudentID
-                                AND e.ClassID = fp.ClassID
-                                AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
-                                AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
-                          )
+                          SELECT 1
+                          FROM Enrollments e
+                          WHERE e.StudentID = @StudentID
+                            AND e.ClassID = fp.ClassID
+                            AND REPLACE(ISNULL(e.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                            AND LTRIM(RTRIM(ISNULL(e.Status, N''))) IN (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
+                            AND NOT EXISTS
+                            (
+                                SELECT 1
+                                FROM Enrollments newer
+                                WHERE newer.StudentID = e.StudentID
+                                  AND REPLACE(ISNULL(newer.AcademicYear, N''), N'-', N'/') = REPLACE(@AcademicYear, N'-', N'/')
+                                  AND LTRIM(RTRIM(ISNULL(newer.Status, N''))) IN (N'مقبول', N'Accepted', N'Approved', N'نشط', N'Active')
+                                  AND newer.EnrollmentID > e.EnrollmentID
+                            )
                       )
                     ORDER BY fp.FeePlanID;";
 
