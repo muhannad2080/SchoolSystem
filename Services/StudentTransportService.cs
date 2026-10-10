@@ -105,6 +105,11 @@ namespace SchoolSystem.Services
 
             if (assignment.EndDate.HasValue && assignment.EndDate.Value.Date < assignment.StartDate.Date)
                 throw new ArgumentException("تاريخ انتهاء النقل لا يمكن أن يسبق تاريخ البداية.");
+
+            if (assignment.IsActive &&
+                assignment.EndDate.HasValue &&
+                assignment.EndDate.Value.Date < DateTime.Today)
+                throw new ArgumentException("لا يمكن تفعيل اشتراك انتهى تاريخه. عدّل تاريخ النهاية أو ألغِ تفعيل الاشتراك.");
         }
 
         private static string NormalizeYear(string value)
